@@ -4,6 +4,7 @@
     padding:20px 20px 20px 40px;
     display: flex;
     justify-content: space-between;
+    align-items: center;
     .header_logo{
         height:30px;
     }
@@ -11,5 +12,6 @@
         padding:6px;
         background-color: #343B43;
         border-radius: 3px;
+        font-size: 14px;
     }
 }

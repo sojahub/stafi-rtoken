@@ -2,7 +2,8 @@ import React from 'react';
 import { renderRoutes } from 'react-router-config';
 import { Switch, BrowserRouter, Redirect } from 'react-router-dom';
 
-import Home from './pages/template'
+import Home from './pages/template';
+import RDOTHOME from './pages/rDotHome'
 
 const routeFn = (props:any) => {
   return <BrowserRouter>{renderRoutes(props.route.routes)}</BrowserRouter>;
@@ -21,7 +22,12 @@ const routesFactory=(role?:any)=>{
     {
       id:"home",
       path:"/home",
-      component: Home
+      component: Home,
+      routes:[{
+        id:"RDOTHome",
+        path:"/home",
+        component:RDOTHOME
+      }]
     }
   ]
 

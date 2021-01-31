@@ -1,0 +1,27 @@
+.stafi_left_sider {
+    padding-top:40px;
+    width:176px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    .sider_item{
+        padding:3px 9px;
+        min-width: 110px;
+        display: flex; 
+        align-items: center;
+        margin-bottom: 37px;
+        font-size: 16px;
+        font-weight: bold;
+        cursor:pointer;
+        img{
+            width: 36px;
+            height:36px;
+            margin-right: 10px;
+        } 
+    }
+    .sider_item.selected{
+        background-color: #E7FFF8;
+        border-radius: 21px;
+        color:#00F3AB;
+    }
+}
