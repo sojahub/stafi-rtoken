@@ -1,11 +1,10 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
-import { Provider } from 'react-redux';
-import { configuredStore } from './store'; 
-import App from './app'; 
+import ReactDOM from 'react-dom'; 
+import { configuredStore } from './store';  
 import  './index.scss';
+import App from './app'; 
 
-const store = configuredStore();
+ 
 const Div:any=<div> <App/>  </div> 
 ReactDOM.render(
     Div,

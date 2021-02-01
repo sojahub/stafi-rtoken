@@ -1,10 +1,37 @@
-.stafi_connect_button{
-    padding:10px 12px 10px 24px !important;
-    height: fit-content !important;
-    background-color: #23292F !important;
-    color:#fff !important;
-    border-color:#BFBFBF !important;
+.stafi_connect_button,.stafi_connect_button:hover,.stafi_connect_button:focus, .stafi_connect_button:active{
+    padding:10px 12px 10px 24px ;
+    height: fit-content ;
+    background-color: #23292F ;
+    color:#fff ;
+    border-color:#BFBFBF ;
     img{
         margin-right: 25px;
     }
+} 
+
+.stafi_button,.stafi_button:hover,.stafi_button:focus,.stafi_button:active{
+    padding:12px 23px;
+    font-size: 16px;
+    font-weight: bold;;
+    background-color: #00F3AB ;
+    color:#23292F ;
+    border: 0px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    line-height: 16px; 
+    height: fit-content;
+    // border-radius: 20px;
+}
+.stafi_button[disabled], .stafi_button[disabled]:hover, .stafi_button[disabled]:focus, .stafi_button[disabled]:active{
+    background-color: #00F3AB;
+    color:#23292F;
+    opacity: 0.4;
+}
+.stafi_button.ellipse{
+    border-radius: 21px;
+}
+.stafi_button.square{
+    border-radius: 2.4px;
+    font-style:italic
 }

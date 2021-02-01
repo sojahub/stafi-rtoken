@@ -4,6 +4,7 @@ const HtmlWebPackPlugin = require('html-webpack-plugin');
 const {CleanWebpackPlugin} = require('clean-webpack-plugin');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin"); 
 const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
+// var UglifyJsPlugin = require('uglifyjs-webpack-plugin')
 const CopyPlugin = require("copy-webpack-plugin");
 
 const resolve = dir => path.resolve(__dirname, dir); 
@@ -53,17 +54,21 @@ function webpackCommonConfigCreator(options){
                         ],
                     }
                 }
-            },// 处理sass
+            },
             {
-                test: /\.s[ac]ss$/,
-                use: [{
-                    loader: "style-loader" // 将 JS 字符串生成为 style 节点
-                }, {
-                    loader: "css-loader" // 将 CSS 转化成 CommonJS 模块
-                }, {
-                    loader: "sass-loader" // 将 Sass 编译成 CSS
-                }]
-              }, // 处理less
+                test: /\.css$/,   // 正则表达式，表示.css后缀的文件
+                use: ['style-loader','css-loader']   // 针对css文件使用的loader，注意有先后顺序，数组项越靠后越先执行
+            },
+            // 处理sass
+            {
+                test: /\.s[ac]ss$/i,
+                use: [
+                MiniCssExtractPlugin.loader, 
+                "css-loader",
+                "postcss-loader", // 因为这里处理的是css文件，所以要放在sass-loader的上面
+                "sass-loader" // 将 Sass 编译成 CSS，默认使用 Node Sass
+                ]
+            }, // 处理less
             {
               test: /\.less$/,
               use: [MiniCssExtractPlugin.loader, "css-loader", "less-loader"]
@@ -86,20 +91,20 @@ function webpackCommonConfigCreator(options){
         },
         plugins:[
              
+            
+            new CleanWebpackPlugin(),
             new CopyPlugin({
                 patterns: [
                     { from: path.join(__dirname,'../public/favicon.ico'),
                         to: './' }
                 ],
             }),
-            new CleanWebpackPlugin(),
-           
             new HtmlWebPackPlugin({
                 template:'public/index.html',
                 filename:'index.html'
             }),
             new MiniCssExtractPlugin({
-                filename: "[name].[contenthash:4].css",
+                filename: "css/[name].[contenthash:4].css",
                 chunkFilename: "[id].[contenthash:4].css"
             }),
     

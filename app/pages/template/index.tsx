@@ -6,8 +6,7 @@ import {renderRoutes}  from 'react-router-config';
 import './index.scss';
 
 export default function Index(props:any){
-  useEffect(()=>{
-    console.log(props)
+  useEffect(()=>{ 
   },[])
   return <div>
     <Header />

@@ -3,7 +3,9 @@ import { renderRoutes } from 'react-router-config';
 import { Switch, BrowserRouter, Redirect } from 'react-router-dom';
 
 import Home from './pages/template';
-import RDOTHOME from './pages/rDotHome'
+import RDOTHome from './pages/rDOT/home'
+import RDOTWallet from './pages/rDOT/selectWallet';
+import RDOTStake from './pages/rDOT/stake'
 
 const routeFn = (props:any) => {
   return <BrowserRouter>{renderRoutes(props.route.routes)}</BrowserRouter>;
@@ -16,17 +18,28 @@ const routesFactory=(role?:any)=>{
       path:'/',
       exact:true,
       render:()=>{
-        return <Redirect to={"/home"}/>
+        return <Redirect to={"/rDOT/home"}/>
       }
     },
     {
       id:"home",
-      path:"/home",
+      path:"/rDOT",
       component: Home,
       routes:[{
-        id:"RDOTHome",
-        path:"/home",
-        component:RDOTHOME
+        id:"RDOT_home",
+        path:"/rDOT/home",
+        component:RDOTHome
+      },{
+        id:"RDOT_wallet",
+        path:"/rDOT/wallet",
+        component:RDOTWallet
+      },{
+        id:"RDOT_stake",
+        path:"/rDOT/stake",
+        component:RDOTStake
+      },{
+        path: '*',
+        component: () => <Redirect to="/rDOT/home"/>
       }]
     }
   ]

@@ -2,7 +2,7 @@ const webpackConfigCreator = require("./webpack.common");
 const merge = require("webpack-merge");
 const path =require("path");
 
-const config={ 
+const config={  
     devServer:{
         contentBase:path.join(__dirname,"./build"),
         historyApiFallback: true,
@@ -14,7 +14,7 @@ const config={
     }
 }
 
-const options={
+const options={ 
     mode:"development"
 }
 
