@@ -4,3 +4,41 @@
     background-color: #2B3239;
     border-radius: 19px;
 }
+.stafi_stake_context{
+    padding: 36px 0px 0px 46px;
+    width: 100%;
+    .title{
+        font-size:30px;
+        font-weight: bold;
+    }
+    .input_panel{
+        width:100%;
+        margin-top:60px;
+    }
+    .pool_panel{
+        margin-top:30px;
+        font-size: 16px;
+        a{
+            color:#00F3AB;
+        }
+    }
+    .money_panel{
+        margin-top:60px;
+        .money_panel_item{
+            >div:last-child{
+                font-size: 30px;
+                font-weight: bold;
+                color:#00F3AB;
+                line-height: 30px;
+            }
+        }
+        .money_panel_item:last-child{
+            margin-top:30px;
+        }
+        .btns{
+            margin-top: 25px;
+            display: flex;
+            justify-content: flex-end;
+        }
+    }
+}
