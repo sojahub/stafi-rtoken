@@ -21,8 +21,7 @@ export default function Index(){
   const click=(e:string)=>{
       setValue(e);
   }
-  return <div className="stafi_stake_sider">
-          
+  return <div className="stafi_stake_sider"> 
           {data.map((item)=>{
             return <Item text={item.text} selectValue={value} key={item.text} child={item.child}  onClick={click}/>
           })}

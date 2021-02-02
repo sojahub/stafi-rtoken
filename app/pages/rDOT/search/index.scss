@@ -1,0 +1,30 @@
+.stafi_search_container{
+  padding:34px 106px;
+  >div{
+    display: flex;
+    justify-content: center;
+  }
+  .title{
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+  .sub_title{
+    font-size: 14px;
+    margin-bottom: 52px;
+  }
+
+  .ant-form-item{
+    .ant-form-item-label{
+      label{
+        color:#fff;
+      }
+    }
+  }
+  .btns{
+    display: flex;
+    justify-content: flex-end;
+    margin-top:40px;
+  }
+
+}

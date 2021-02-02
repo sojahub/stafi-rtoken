@@ -1,6 +1,7 @@
 import React from 'react';
 import Input from '../input/amountInput';
 import Button from '../button/button'
+import A from '../button/a'
 import rDOT from '@images/selected_rDOT.svg'
 
 export default function Index(){
@@ -10,7 +11,7 @@ export default function Index(){
             <Input placeholder="DOT AMOUNT" icon={rDOT}/>
         </div>
         <div  className="pool_panel">
-        You staked DOT will be in this <a>pool</a>
+        You staked DOT will be in this <A>pool</A>
         </div>
         <div className="money_panel">
             <div className="money_panel_item">
@@ -27,7 +28,7 @@ export default function Index(){
             </div>
         </div>
         <div className="btns">
-         <Button disabled={true}>Stake</Button>
+         <A bold={true}>Recovery</A><Button disabled={true}>Stake</Button>
         </div>
     </div>
 }

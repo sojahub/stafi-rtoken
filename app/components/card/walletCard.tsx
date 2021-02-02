@@ -21,7 +21,10 @@ const data=[
   }
 ]
 
-export default function Index(){
+type Props={
+  onConfirm?:Function
+}
+export default function Index(props:Props){
   const [selected,setSelected]=useState("F1C");
   return <div className="wallet_card">
       <div>
@@ -34,7 +37,9 @@ export default function Index(){
  
       </div>
       <div className="btn_panel">
-         <Button>Confirm</Button>
+         <Button onClick={()=>{
+           props.onConfirm && props.onConfirm();
+         }}>Confirm</Button>
       </div>
   </div>
 }

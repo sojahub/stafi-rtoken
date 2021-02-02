@@ -18,9 +18,7 @@
     .pool_panel{
         margin-top:30px;
         font-size: 16px;
-        a{
-            color:#00F3AB;
-        }
+   
     }
     .money_panel{
         margin-top:60px;
@@ -35,10 +33,15 @@
         .money_panel_item:last-child{
             margin-top:30px;
         }
-        .btns{
-            margin-top: 25px;
-            display: flex;
-            justify-content: flex-end;
+        
+    }
+    .btns{
+        margin-top: 25px;
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        a{
+            margin-right: 18px;
         }
     }
 }

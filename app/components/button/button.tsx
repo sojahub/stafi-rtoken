@@ -8,6 +8,7 @@ type Props={
   children:any,
   disabled?:boolean,
   onClick?:Function,
+  htmlType?:string
 }
 export default function Index(props:Props){
     return <Button disabled={props.disabled} onClick={()=>{
