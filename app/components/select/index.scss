@@ -1,0 +1,24 @@
+.stafi_select{
+  color:#fff;
+  font-size: 12px;
+  .ant-select-arrow{
+    top: 9px;
+    right: 3px;
+    width: 27px;
+    height: 27px;
+  }
+}
+.stafi_select:not(.ant-select-customize-input){
+  background-color: #23292F;
+  height:34px;
+  .ant-select-selector,.ant-select-selector .ant-select-selection-search-input{
+    height:34px;
+  }
+  .ant-select-selector{
+    background-color: #23292F;
+    padding-right: 30px;
+    .ant-select-selection-item,.ant-select-selection-placeholder{
+      line-height: 34px;
+    }
+  }
+} 

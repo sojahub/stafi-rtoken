@@ -1,5 +1,12 @@
 .stafi_search_container{
   padding:34px 106px;
+  position: relative;
+  .back_icon{
+    position: absolute;
+    left:63px;
+    top:42px;
+    cursor: pointer;
+  }
   >div{
     display: flex;
     justify-content: center;
@@ -11,7 +18,9 @@
   }
   .sub_title{
     font-size: 14px;
-    margin-bottom: 52px;
+    margin-bottom: 35px;
+    width: 395px;
+    text-align: center;
   }
 
   .ant-form-item{

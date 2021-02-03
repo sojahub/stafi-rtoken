@@ -4,7 +4,10 @@ import Button from '../button/button'
 import A from '../button/a'
 import rDOT from '@images/selected_rDOT.svg'
 
-export default function Index(){
+type Props={
+    onRecovery:Function
+}
+export default function Index(props:Props){
     return <div className="stafi_stake_context">
         <label className="title">Stake DOT</label>
         <div className="input_panel">
@@ -28,7 +31,9 @@ export default function Index(){
             </div>
         </div>
         <div className="btns">
-         <A bold={true}>Recovery</A><Button disabled={true}>Stake</Button>
+         <A bold={true} onClick={()=>{
+            props.onRecovery && props.onRecovery()
+         }}>Recovery</A><Button disabled={true}>Stake</Button>
         </div>
     </div>
 }

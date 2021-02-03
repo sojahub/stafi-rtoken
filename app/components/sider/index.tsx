@@ -6,9 +6,18 @@ import rFIS_svg from '@images/rFIS.svg';
 import selected_rFIS_svg from '@images/selected_rFIS.svg';
 import rDOT_svg from '@images/rDOT.svg';
 import selected_rDOT_svg from '@images/selected_rDOT.svg';
+
+import rAsset_svg from '@images/rAsset.svg';
+import rKSM_svg from '@images/rKSM.svg';
+
 import './index.scss'
 
 const siderData=[
+    {
+        icon:rAsset_svg,
+        selectedIcon:rAsset_svg,
+        text:"rAsset", 
+    },
     {
         icon:rETH_svg,
         selectedIcon:selected_rETH_svg,
@@ -23,6 +32,11 @@ const siderData=[
         icon:rDOT_svg,
         selectedIcon:selected_rDOT_svg,
         text:"rDOT", 
+    },
+    {
+        icon:rKSM_svg,
+        selectedIcon:rKSM_svg,
+        text:"rKSM", 
     }
 ]
 

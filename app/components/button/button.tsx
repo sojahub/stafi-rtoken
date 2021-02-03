@@ -8,10 +8,10 @@ type Props={
   children:any,
   disabled?:boolean,
   onClick?:Function,
-  htmlType?:string
+  htmlType?:"button"|"submit"|"reset"
 }
 export default function Index(props:Props){
-    return <Button disabled={props.disabled} onClick={()=>{
+    return <Button htmlType={props.htmlType} disabled={props.disabled} onClick={()=>{
       props.onClick && props.onClick();
     }} className={`stafi_button ${props.btnType || "ellipse"}`}>
       {props.children}
