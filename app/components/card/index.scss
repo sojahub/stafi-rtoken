@@ -1,3 +1,31 @@
+.stafi_home_card{
+  padding-top:148px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  .title{
+      font-size: 30px; 
+      font-weight: bold;
+      label{
+         color:#00F3AB;
+         font-weight: bolder;
+         font-style: italic;
+         
+      }
+  }
+  .sub_title{
+      font-size: 14px;
+      margin-top:10px;
+      margin-bottom: 63px;
+  }
+  .stafi_a{
+      margin-top:102px;
+      font-size:14px;
+      color:#fff;
+  }
+}
+
+
 .wallet_card{
   padding:36px 51px 16px 51px;
   height: 100%;
@@ -58,4 +86,57 @@
   padding:11.5px 50px 15.5px 32px;
   height:100%;
   display: flex;
+}
+
+.stafi_type_card{
+  display: flex;
+  height:100%;
+  border-radius: 19px;
+  overflow: hidden;;
+  .type_card_item{
+    flex:1;
+    padding-top:104px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height:100%;
+    cursor: pointer;
+    .title{
+      font-size: 40px;
+      color:#00F3AB;
+      line-height: 40px;
+      font-weight: bold;
+    }
+    .sub_title{
+      font-size: 16px;
+      color:#777777;
+      margin-bottom: 55px;
+    }
+    .apr_panel{
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 25px;
+      label{ 
+        color:#C1C1C1;
+        font-size: 18px;
+        
+      }
+    }
+    .r_panel{
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      img{
+        width:33px;
+        height:33px;
+      }
+      div{
+        color:#00F3AB;
+      }
+    }
+  }
+  .type_card_item:hover{
+    background-color: #374049;
+  }
 }

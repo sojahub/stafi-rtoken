@@ -16,3 +16,9 @@ html,body{
     background-color: #23292F;
 }
  
+
+input:-internal-autofill-previewed,
+input:-internal-autofill-selected  { 
+    -webkit-text-fill-color: #fff !important;
+    transition: background-color 5000s ease-in-out 0s !important;
+}

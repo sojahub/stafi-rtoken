@@ -5,6 +5,6 @@ import './index.scss';
 export default function Index(props:any){
     console.log(props)
     return <WalletCard onConfirm={()=>{
-        props.history.push("/rDOT/stake")
+        props.history.push("/rDOT/type")
     }}/>
 }

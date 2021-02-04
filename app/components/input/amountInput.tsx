@@ -6,6 +6,7 @@ import './index.scss';
 type Props={
     placeholder?:string,
     icon:any,
+    unit?:string,
     value?:string | number ,
     onChange?:Function
 }
@@ -17,5 +18,5 @@ export default function Index(props:Props){
     }}
     value={props.value}
     placeholder={props.placeholder} 
-    suffix={<img src={props.icon}/>}/>
+    suffix={<><label className="input_unit">{props.unit}</label><img src={props.icon}/></>}/>
 }

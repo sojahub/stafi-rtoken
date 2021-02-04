@@ -5,8 +5,12 @@ import { Switch, BrowserRouter, Redirect } from 'react-router-dom';
 import Home from './pages/template';
 import RDOTHome from './pages/rDOT/home'
 import RDOTWallet from './pages/rDOT/selectWallet';
-import RDOTStake from './pages/rDOT/stake';
+import RDOTStaker from './pages/rDOT/staker';
+import RDOTValidator from './pages/rDOT/validator';
+import RDOTStakerIndex from './pages/rDOT/staker/home';
+import RDOTStakerInfo from './pages/rDOT/staker/info';
 import RDOTSeach from './pages/rDOT/search';
+import RDOTType from './pages/rDOT/selectType';
 
 const routeFn = (props:any) => {
   return <BrowserRouter>{renderRoutes(props.route.routes)}</BrowserRouter>;
@@ -35,13 +39,37 @@ const routesFactory=(role?:any)=>{
         path:"/rDOT/wallet",
         component:RDOTWallet
       },{
-        id:"RDOT_stake",
-        path:"/rDOT/stake",
-        component:RDOTStake
+        id:"RDOT_staker",
+        type:"Staker",
+        path:"/rDOT/staker",
+        component:RDOTStaker,
+        routes:[
+          {
+            id:"RDOT_staker_index",
+            path:"/rDOT/staker/index",
+            component:RDOTStakerIndex
+          },{
+            id:"RDOT_staker_index_info",
+            path:"/rDOT/staker/info",
+            component:RDOTStakerInfo
+          },{
+            path: '*',
+            component: () => <Redirect to="/rDOT/staker/index"/>
+          }
+        ]
+      },{
+        id:"RDOT_validator",
+        type:"Validator",
+        path:"/rDOT/validator",
+        component:RDOTValidator 
       },{
         id:"RDOT_search",
         path:"/rDOT/search",
         component:RDOTSeach
+      },{
+        id:"RDOT_type",
+        path:"/rDOT/type",
+        component:RDOTType
       },{
         path: '*',
         component: () => <Redirect to="/rDOT/home"/>

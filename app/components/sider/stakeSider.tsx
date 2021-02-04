@@ -2,28 +2,20 @@ import React, { useState } from 'react';
 import Item from './stakeSiderItem'
 import './index.scss';
 
-const data=[{
-  text:"Staker",
-},{
-  text:"Validator",
-  child:[
-    {
-      text:'-OV'
-    },
-    {
-      text:'-SSV'
-    }
-  ]
-}]
-export default function Index(){
-  const [value,setValue]=useState("Staker");
+
+type Props={
+  type:string,
+  data:any
+}
+export default function Index(props:Props){
+ // const [value,setValue]=useState();
 
   const click=(e:string)=>{
-      setValue(e);
+      //setValue(e);
   }
   return <div className="stafi_stake_sider"> 
-          {data.map((item)=>{
-            return <Item text={item.text} selectValue={value} key={item.text} child={item.child}  onClick={click}/>
+          {props.data.map((item:any)=>{
+            return <Item text={item.text} selectValue={props.type} key={item.text} child={item.child}  onClick={click}/>
           })}
   </div>
 }

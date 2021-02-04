@@ -4,9 +4,13 @@
     background-color: #2B3239;
     border-radius: 19px;
 }
-.stafi_stake_context{
-    padding: 36px 0px 0px 46px;
+.stafi_left_context{
+    padding: 24px 0px 0px 46px;
     width: 100%;
+}
+.stafi_stake_context{
+    // padding: 36px 0px 0px 46px;
+    // width: 100%;
     .title{
         font-size:30px;
         font-weight: bold;
@@ -23,6 +27,7 @@
     .money_panel{
         margin-top:60px;
         .money_panel_item{
+            font-size: 16px;;
             >div:last-child{
                 font-size: 30px;
                 font-weight: bold;
@@ -30,18 +35,47 @@
                 line-height: 30px;
             }
         }
-        .money_panel_item:last-child{
+        >div:last-child{
             margin-top:30px;
         }
         
     }
+    .money_panel_row{
+        display: flex;
+        .add_icon{
+            width:54px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+    }
+    .dot_input_panel{
+        margin-top:28px;
+        .tip{
+            margin-bottom: 10px;
+            font-size: 16px;
+            text-align: right;
+            color:#C4C4C4;
+        }
+        .pool{
+            margin-top:10px;
+            font-size: 16px; 
+            color:#C4C4C4;
+        }
+    }
     .btns{
-        margin-top: 25px;
+        margin-top: 44px;
         display: flex;
         justify-content: flex-end;
         align-items: center;
         a{
             margin-right: 18px;
         }
+    }
+}
+
+.stafi_stake_info_context{
+    .item{
+        
     }
 }

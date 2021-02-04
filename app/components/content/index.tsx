@@ -1,5 +1,4 @@
-import React from 'react';
-import { ProgressPlugin } from 'webpack';
+import React from 'react'; 
 import './index.scss';
 type Props={
     children:any

@@ -5,11 +5,7 @@
     font-size: 12px;
     color:#fff; 
 }
-input:-internal-autofill-previewed,
-input:-internal-autofill-selected  { 
-    -webkit-text-fill-color: #fff !important;
-    transition: background-color 5000s ease-in-out 0s !important;
-}
+
 .amount_input{
     background: #23292F;
     width: 100%;
@@ -22,10 +18,13 @@ input:-internal-autofill-selected  {
         font-size: 22px;
         font-weight: bold;
         margin-right: 10px;
-    }
-    input:-internal-autofill-selected{
-        background: #23292F;
-        color:#fff;
+    } 
+    .ant-input-suffix{
+        .input_unit{
+            color:#fff;
+            font-size: 16px;
+            margin-right: 14px;;
+        }
     }
 }
 
