@@ -3,5 +3,7 @@ import Content from '@components/content/stakeInfoContent';
 
 export default function Index(props:any){
   console.log(props)
-  return  <Content ></Content>
+  return  <Content onRdeemClick={()=>{
+    props.history.push("/rDOT/staker/redeem")
+  }}></Content>
 }

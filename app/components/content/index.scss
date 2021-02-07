@@ -75,7 +75,83 @@
 }
 
 .stafi_stake_info_context{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    .item:first-child{
+        border-bottom:1px solid #474747;
+    }
     .item{
-        
+        flex:1;
+        .title{
+            padding-top:15px;
+            font-size: 30px;
+            img{
+                margin:0px 10px;
+            }
+        }
+        .content{
+            display: flex;
+            justify-content: space-between;
+            margin-top:20px;
+            font-size: 30px;
+            color:#00F3AB;
+            font-weight: bold;
+            padding-left:65px;
+            .btns{
+                display: flex;
+                align-items: center;
+                button{
+                    margin-left:10px;
+                }
+            }
+            
+        }
+        .describe{
+            padding-left:65px;
+            color:#C4C4C4;
+            margin-top:50px;
+        }
+    
+    }
+}
+.stafi_stake_redeem_context{
+    .title{
+        font-size:30px;
+        font-weight: bold;
+    }
+    .subTitle{
+        font-size: 20px;
+        margin-top:40px;
+        margin-bottom: 10px;
+    }
+    .input_panel{
+        .balance{
+            font-size: 12px;
+            text-align: right;
+            color:#c4c4c4;
+            margin-top:10px
+        }
+    }
+    .btns{
+        margin-top:23px;
+        display: flex;
+        align-items: center;
+        color:#707070;
+        font-size: 12px;
+        button{
+            margin-right: 10px;
+        }
+    }
+    .unbonding{
+        font-size: 12px;
+        margin-bottom: 33px;
+        label{
+            font-size: 30px;
+            font-weight: bold;
+            color:#00F3AB;
+            margin-right: 20px;
+            
+        };
     }
 }

@@ -8,7 +8,8 @@ import add_svg from '@images/add.svg'
 
 import './index.scss';
 type Props={
-    onRecovery:Function
+    onRecovery:Function,
+    onStakeClick:Function
 }
 export default function Index(props:Props){
     return <LeftContent className="stafi_stake_context">
@@ -51,7 +52,9 @@ export default function Index(props:Props){
         <div className="btns">
          <A bold={true} onClick={()=>{
             props.onRecovery && props.onRecovery()
-         }}>Recovery</A><Button disabled={true}>Stake</Button>
+         }}>Recovery</A><Button onClick={()=>{
+             props.onStakeClick && props.onStakeClick()
+         }}>Stake</Button>
         </div>
     </LeftContent>
 }

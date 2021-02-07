@@ -9,6 +9,7 @@ import RDOTStaker from './pages/rDOT/staker';
 import RDOTValidator from './pages/rDOT/validator';
 import RDOTStakerIndex from './pages/rDOT/staker/home';
 import RDOTStakerInfo from './pages/rDOT/staker/info';
+import RDOTStakerRedeem from './pages/rDOT/staker/redeem';
 import RDOTSeach from './pages/rDOT/search';
 import RDOTType from './pages/rDOT/selectType';
 
@@ -52,6 +53,10 @@ const routesFactory=(role?:any)=>{
             id:"RDOT_staker_index_info",
             path:"/rDOT/staker/info",
             component:RDOTStakerInfo
+          },,{
+            id:"RDOT_staker_index_redeem",
+            path:"/rDOT/staker/redeem",
+            component:RDOTStakerRedeem
           },{
             path: '*',
             component: () => <Redirect to="/rDOT/staker/index"/>
