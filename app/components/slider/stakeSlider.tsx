@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import Item from './stakeSiderItem'
+import Item from './stakeSliderItem'
 import './index.scss';
 
 

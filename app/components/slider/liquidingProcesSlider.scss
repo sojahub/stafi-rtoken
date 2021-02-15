@@ -1,0 +1,34 @@
+.stafi_liquiding_proces_slider{
+  position: absolute;
+  width:253px;
+  min-height:569px;
+  top:40px;
+  right: 0px;
+  background-color: #2B3239;
+  border-radius: 6px; 
+  .header{
+      display: flex;
+      
+      align-items: center;
+      padding:20px;
+      font-size: 14px;
+      font-weight: bold;
+      img{
+          margin-right: 19px;
+      }
+  }
+  .body{
+      padding:0px 20px 21px 15px; 
+  }
+  animation:stafi_liquiding_proces_slider_show 1s;
+}
+
+@keyframes stafi_liquiding_proces_slider_show
+{
+  from {
+      right: -253px;
+  }
+  to {
+      right:0px;
+  }
+}

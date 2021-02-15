@@ -9,7 +9,7 @@ type Props={
   disabled?:boolean,
   onClick?:Function,
   htmlType?:"button"|"submit"|"reset",
-  size?:"large"|"medium" | "small"
+  size?:"large" | "medium" | "small"
 }
 export default function Index(props:Props){
     return <Button htmlType={props.htmlType} disabled={props.disabled} onClick={()=>{
