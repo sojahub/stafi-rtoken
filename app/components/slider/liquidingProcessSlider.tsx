@@ -1,12 +1,22 @@
-import React from 'react';
-import Item from './liquidingProcesSliderItem'
-import Liquiding_heard from '@images/liquiding_heard.svg'
+import React, { useState } from 'react';
+import Item from './liquidingProcessSliderItem';
+import {useSelector} from 'react-redux'
+import Liquiding_heard from '@images/liquiding_heard.svg';
 
-import './liquidingProcesSlider.scss';
+import './liquidingProcessSlider.scss';
 type Props={
 
 }
 export default function Index(props:Props){
+  const {show} =useSelector((state:any)=>{ 
+    return {
+      show:state.globalModule.processSlider
+    }
+  })
+  console.log(show,"=======show")
+  if(!show){
+    return null;
+  }
   return <div className="stafi_liquiding_proces_slider">
     <div className="header">
       <img src={Liquiding_heard}/> Liquiding Process

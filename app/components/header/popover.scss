@@ -1,0 +1,51 @@
+.stafi_notice_popover{
+  width:270px;
+  
+  .ant-popover-title{
+    padding:10px;
+    font-size: 14px;
+    font-weight: bold;
+    color:#23292F;
+  }
+  .ant-popover-content{
+    .ant-popover-arrow{
+      left:6px !important;
+    }
+  }
+  .ant-popover-inner-content{
+    padding:0px;
+    max-height: 490px;
+    overflow: auto;
+   
+    .ant-popover-inner{
+      border-radius: 6px;
+    }
+    .popover_item{
+      padding:11px 19px 6px 15px;
+      border-bottom: 1px solid #D8D8D8;
+      
+      .title{
+        font-size: 14px;
+        font-weight: bold;
+        color:#23292F;
+        padding-bottom: 5px;
+      }
+      .context{
+        font-size: 12px;
+        color:#8E8E8E;
+      }
+      .footer{
+        margin-top:10px;
+        display: flex;
+        justify-content: space-between;
+        font-size: 10px;
+        color:#8E8E8E;
+        a{
+          color:#00F3AB;
+        }
+      }
+
+    }
+
+  }
+}

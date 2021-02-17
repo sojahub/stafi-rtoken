@@ -3,7 +3,7 @@ import Button from '../button/button'
 import success from '@images/success.png'
 import failure from '@images/failure.svg'
 import doubt from "@images/doubt.svg"
-import './liquidingProcesSliderItem.scss';
+import './liquidingProcessSliderItem.scss';
 
 type Props={
   index:number,

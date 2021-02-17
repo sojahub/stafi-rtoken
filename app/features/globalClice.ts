@@ -8,11 +8,15 @@ const globalClice = createSlice({
   name: 'globalModule',
   initialState: {
     provinces: [],
+    processSlider:false
   },
   reducers: { 
+    setProcessSlider(state,{payload}){
+      state.processSlider=payload
+    }
   },
 });
-export const {  } = globalClice.actions;
+export const { setProcessSlider } = globalClice.actions;
  
 
 export default globalClice.reducer;

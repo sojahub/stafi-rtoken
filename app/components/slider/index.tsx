@@ -39,13 +39,18 @@ const siderData=[
         text:"rKSM", 
     }
 ]
-
-export default function Index(){
-    const [selectIndex,setSelectIndex]=useState(0);
+type Props={
+    route:any,
+    histroy:any
+}
+export default function Index(props:Props){
+    // const [selectIndex,setSelectIndex]=useState(0);
     return <div className="stafi_left_sider">
         {siderData.map((item,i)=>{
-            return <Item key={item.text} icon={item.icon} selectedIcon={item.selectedIcon} text={item.text} selected={selectIndex==i} onClick={()=>{
-                setSelectIndex(i)
+            return <Item key={item.text} icon={item.icon} 
+            selectedIcon={item.selectedIcon} text={item.text} 
+            selected={props.route.type==item.text} onClick={()=>{
+                //props.histroy.push("")
             }}/>
         })} 
 </div>

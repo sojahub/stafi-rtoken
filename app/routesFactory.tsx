@@ -30,6 +30,7 @@ const routesFactory=(role?:any)=>{
     {
       id:"home",
       path:"/rDOT",
+      type:"rDOT",
       component: Home,
       routes:[{
         id:"RDOT_home",

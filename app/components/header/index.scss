@@ -14,4 +14,27 @@
         border-radius: 3px;
         font-size: 14px;
     }
+    .header_tools{
+        display: flex;
+        .header_tool{
+            margin-right: 20px;
+        }
+        .header_tool.notice{
+            background-color:transparent;
+            position: relative;
+        }
+        .header_tool.new::after{
+            content: "";
+            display: block;
+            position: absolute;
+            width:4px;
+            height:4px;
+            border-radius: 50%;
+            background-color: #FF6464;
+            top: 10px;
+            left: 3px;
+        }
+
+    }
+    
 }
