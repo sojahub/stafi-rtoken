@@ -22,19 +22,14 @@ const data=[
 ]
 
 type Props={
-  onConfirm?:Function
+  onConfirm?:Function,
+  children?:any
 }
-export default function Index(props:Props){
-  const [selected,setSelected]=useState("F1C");
+export default function Index(props:Props){ 
   return <div className="wallet_card">
       <div>
-        <label className="title">Select a wallet</label>
-        {data.map((item)=>{
-          return <Item data={item} key={item.title} selected={item.title==selected} onClick={()=>{
-                setSelected(item.title);
-          }}/>
-        })}  
- 
+        <label className="title">Select a wallet</label> 
+        {props.children}
       </div>
       <div className="btn_panel">
          <Button onClick={()=>{

@@ -3,17 +3,20 @@ import React from 'react';
 import {includes} from 'lodash'; 
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux'; 
-
+import { Redirect } from 'react-router-dom';
 export const authorized = (allowed:any[], currentRole:any) => includes(allowed, currentRole);
 
  
-const AuthorizeRoute = (allowed: any[], currentRole: string) => {
+const AuthorizeRoute = (currentRole: string,url:string) => {
   return (WrappedComponent: any) => {
-    class WithAuthorization extends React.Component<any> {
+    class WithAuthorization extends React.Component<any> { 
       static propTypes: any;
-   
-      render() {
-        return <WrappedComponent {...this.props} />;
+      render() { 
+        if(this.props[currentRole] && this.props[currentRole].accounts.length>0){
+          return <WrappedComponent {...this.props} />;
+        }else{
+          return <Redirect to={url}/>
+        }
       }
     }
 
@@ -24,7 +27,7 @@ const AuthorizeRoute = (allowed: any[], currentRole: string) => {
       
     };
 
-    return connect(() => ({}), mapDispatchToProps)(WithAuthorization);
+    return connect((state) => (state), mapDispatchToProps)(WithAuthorization);
   };
 };
 

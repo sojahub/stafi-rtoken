@@ -23,7 +23,12 @@ function webpackCommonConfigCreator(options){
             alias: {
                 crypto: false,   
                 '@components': resolve('../app/components'),// 这样配置后 @ 可以指向 src 目录
-                '@images': resolve('../app/assets/images')// 这样配置后 @ 可以指向 src 目录
+                '@images': resolve('../app/assets/images'),// 这样配置后 @ 可以指向 src 目录
+                "@features": resolve('../app/features'),
+                "@servers": resolve('../app/servers'),
+                "@util":resolve('../app/util'),
+                "@keyring":resolve('../app/keyring'),
+                "@config":resolve('../app/config'),
             }
         },
         output:{
@@ -123,3 +128,4 @@ function webpackCommonConfigCreator(options){
 }
 
 module.exports = webpackCommonConfigCreator;
+// process.env.NODE_ENV

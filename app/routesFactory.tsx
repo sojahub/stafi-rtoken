@@ -1,6 +1,7 @@
 import React from 'react';
 import { renderRoutes } from 'react-router-config';
 import { Switch, BrowserRouter, Redirect } from 'react-router-dom';
+import authorizedRoute from '@components/route/authorizedRoute'
 
 import Home from './pages/template';
 import RDOTHome from './pages/rDOT/home'
@@ -13,10 +14,7 @@ import RDOTStakerRedeem from './pages/rDOT/staker/redeem';
 import RDOTSeach from './pages/rDOT/search';
 import RDOTType from './pages/rDOT/selectType';
 
-const routeFn = (props:any) => {
-  return <BrowserRouter>{renderRoutes(props.route.routes)}</BrowserRouter>;
-};
-
+  
 const routesFactory=(role?:any)=>{ 
   const routes=[
     {
@@ -39,12 +37,12 @@ const routesFactory=(role?:any)=>{
       },{
         id:"RDOT_wallet",
         path:"/rDOT/wallet",
-        component:RDOTWallet
+        component:authorizedRoute("rDOTModule","/rDOT/home")(RDOTWallet)
       },{
         id:"RDOT_staker",
         type:"Staker",
         path:"/rDOT/staker",
-        component:RDOTStaker,
+        component:authorizedRoute("rDOTModule","/rDOT/home")(RDOTStaker),
         routes:[
           {
             id:"RDOT_staker_index",

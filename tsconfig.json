@@ -14,6 +14,11 @@
       "paths": { 
         "@components/*": ["app/components/*"], // 要使用别名下的模块的，配置这个。 
         "@images/*": ["app/assets/images/*"], // 要使用别名下的模块的，配置这个。 
+        "@features/*": ["app/features/*"],
+        "@servers/*": ["app/servers/*"],
+        "@util/*": ["app/util/*"],
+        "@keyring/*": ["app/keyring/*"],
+        "@config/*": ["app/config/*"],
       } 
   },
   "include": [

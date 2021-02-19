@@ -12,11 +12,11 @@ export default function Index(props:Props){
     props.onClick && props.onClick();
   }}>
     <div>
-<label className="item_title">{props.data.title}</label>
+<label className="item_title">{props.data.name}</label>
 <label className="item_address">{props.data.address}</label>
     </div>
     <div className="item_money">
-      {props.data.money} <img src={props.selected?selected_svg:unSelected_svg} />
+      {props.data.balance} <img src={props.selected?selected_svg:unSelected_svg} />
     </div>
   </div>
 }

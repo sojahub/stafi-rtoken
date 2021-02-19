@@ -1,14 +1,11 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { AppThunk, RootState } from '../store';
- 
-
-// const server = new Server();
+import { AppThunk, RootState } from '../store'; 
 
 const globalClice = createSlice({
   name: 'globalModule',
   initialState: {
     provinces: [],
-    processSlider:false
+    processSlider:false,
   },
   reducers: { 
     setProcessSlider(state,{payload}){
