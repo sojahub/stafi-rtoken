@@ -23,18 +23,20 @@ const data=[
 
 type Props={
   onConfirm?:Function,
-  children?:any
+  children?:any,
+  title?:string,
+  btnText?:string
 }
 export default function Index(props:Props){ 
   return <div className="wallet_card">
       <div>
-        <label className="title">Select a wallet</label> 
+        <label className="title">{props.title}</label> 
         {props.children}
       </div>
       <div className="btn_panel">
          <Button onClick={()=>{
            props.onConfirm && props.onConfirm();
-         }}>Confirm</Button>
+         }}>{props.btnText?props.btnText:"Confirm"}</Button>
       </div>
   </div>
 }

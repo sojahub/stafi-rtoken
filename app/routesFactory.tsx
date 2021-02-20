@@ -1,11 +1,13 @@
 import React from 'react';
 import { renderRoutes } from 'react-router-config';
 import { Switch, BrowserRouter, Redirect } from 'react-router-dom';
-import authorizedRoute from '@components/route/authorizedRoute'
+import authorizedRoute from '@components/route/authorizedRoute';
+import {Symbol} from '@keyring/defaults'
 
 import Home from './pages/template';
 import RDOTHome from './pages/rDOT/home'
 import RDOTWallet from './pages/rDOT/selectWallet';
+import RDOTWalletFIS from './pages/rDOT/selectWallet_rFIS';
 import RDOTStaker from './pages/rDOT/staker';
 import RDOTValidator from './pages/rDOT/validator';
 import RDOTStakerIndex from './pages/rDOT/staker/home';
@@ -37,12 +39,16 @@ const routesFactory=(role?:any)=>{
       },{
         id:"RDOT_wallet",
         path:"/rDOT/wallet",
-        component:authorizedRoute("rDOTModule","/rDOT/home")(RDOTWallet)
+        component:RDOTWallet
+      },{
+        id:"RDOT_wallet",
+        path:"/rDOT/fiswallet",
+        component:RDOTWalletFIS
       },{
         id:"RDOT_staker",
         type:"Staker",
         path:"/rDOT/staker",
-        component:authorizedRoute("rDOTModule","/rDOT/home")(RDOTStaker),
+        component:authorizedRoute(Symbol.Dot,"/rDOT/home")(RDOTStaker),
         routes:[
           {
             id:"RDOT_staker_index",
@@ -65,15 +71,15 @@ const routesFactory=(role?:any)=>{
         id:"RDOT_validator",
         type:"Validator",
         path:"/rDOT/validator",
-        component:RDOTValidator 
+        component:authorizedRoute(Symbol.Dot,"/rDOT/home")(RDOTValidator)
       },{
         id:"RDOT_search",
         path:"/rDOT/search",
-        component:RDOTSeach
+        component:authorizedRoute(Symbol.Dot,"/rDOT/home")(RDOTSeach)
       },{
         id:"RDOT_type",
         path:"/rDOT/type",
-        component:RDOTType
+        component:authorizedRoute(Symbol.Dot,"/rDOT/home")(RDOTType)
       },{
         path: '*',
         component: () => <Redirect to="/rDOT/home"/>

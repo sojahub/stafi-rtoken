@@ -19,6 +19,26 @@
         .header_tool{
             margin-right: 20px;
         }
+        .header_tool.account{
+            padding:3px 10px;
+            border-radius: 3px;
+            border:1px solid  #979797;
+            background-color: #343B43;
+            color:#979797;
+            text-align: center;
+             
+            >div:first-child{
+                font-size: 14px;
+                font-weight: bold; 
+            }
+            >div:last-child{
+                font-size: 10px;
+            }
+        }
+        .header_tool.account.dot{
+            background-image: linear-gradient(to right, #3DDDC4 , #37BFA5,#00EBA2);
+            color:#fff;
+        }
         .header_tool.notice{
             background-color:transparent;
             position: relative;

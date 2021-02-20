@@ -1,0 +1,41 @@
+import React,{useState,useEffect} from 'react';
+import {useSelector,useDispatch} from 'react-redux'
+import WalletCard from '@components/card/walletCard'
+import Item from '@components/card/walletCardItem';
+import {setFisAccount} from '@features/FISClice';
+import {connectPolkadotjs} from '@features/globalClice';
+import {Symbol} from '@keyring/defaults'
+import {message} from 'antd';
+import './index.scss';
+
+export default function Index(props:any){
+    const dispatch=useDispatch();
+    // const [address,setAddress]=useState("");
+    const {fisAccounts,fisAccount} = useSelector((state:any)=>{
+        return {
+            fisAccounts:state.FISModule.fisAccounts,
+            fisAccount:state.FISModule.fisAccount || {}
+        }
+    })
+    useEffect(()=>{
+        dispatch(connectPolkadotjs(Symbol.Fis));  
+    },[])
+    return <WalletCard 
+        title="Select a FIS wallet"
+        btnText="Confirm"
+        onConfirm={()=>{
+            if(fisAccount.address){
+                props.history.push("/rDOT/type");
+            }else{
+                message.error("请选择FIS钱包");
+            }
+        }}>
+
+    {fisAccounts.map((item:any)=>{
+        return <Item data={item} key={item.address} selected={item.address==fisAccount.address} onClick={()=>{
+            dispatch(setFisAccount(item))
+            // setAddress(item.address);
+        }}/>
+    })}  
+    </WalletCard>
+}

@@ -2,7 +2,7 @@ import React from 'react';
 import {useDispatch} from 'react-redux';
 import { Popover} from 'antd';
 import Item from './popoverItem';
-import {setProcessSlider} from '../../features/globalClice'
+import {setProcessSlider} from '@features/globalClice'
 import './popover.scss';
 
 type Props={

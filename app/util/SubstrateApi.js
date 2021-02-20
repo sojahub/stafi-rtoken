@@ -1,7 +1,7 @@
 
 
 import { ApiPromise, WsProvider } from '@polkadot/api';
-import config from '../config/env';
+import config from '@config/index';
 
 var stafiApi = null;
 
@@ -48,8 +48,8 @@ export default {
             return stafiApi;
         }
 
-        stafiApi = this.createSubstrateApi(config.apis.stafiChain, types);
-
+        stafiApi = this.createSubstrateApi(config.stafiChain(), types);
+        console.log(stafiApi,"=======stafiApistafiApistafiApistafiApistafiApi")
         return stafiApi;
     },
     

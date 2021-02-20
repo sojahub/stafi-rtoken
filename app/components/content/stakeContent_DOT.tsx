@@ -9,7 +9,9 @@ import add_svg from '@images/add.svg'
 import './index.scss';
 type Props={
     onRecovery:Function,
-    onStakeClick:Function
+    onStakeClick:Function,
+    amount?:number,
+    onChange?:Function
 }
 export default function Index(props:Props){
     return <LeftContent className="stafi_stake_context">
@@ -18,7 +20,9 @@ export default function Index(props:Props){
             <div className="tip">
                 Transferable DOT: 123.342
             </div>
-            <Input placeholder="DOT AMOUNT" unit={"Max"} icon={rDOT}/>
+            <Input placeholder="DOT AMOUNT" value={props.amount} onChange={(e:any)=>{
+                props.onChange && props.onChange(e.target.value);
+            }} unit={"Max"} icon={rDOT}/>
             <div  className="pool">
                 234,234 DOT is staked via rDOT <A>stats</A>
             </div>

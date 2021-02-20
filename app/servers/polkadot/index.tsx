@@ -6,8 +6,16 @@ import { ApiPromise, WsProvider } from '@polkadot/api';
 import config from '@config/index';
 import Stafi from '../stafi'
 
+import { KeypairType } from '@polkadot/util-crypto/types';
+import { SubstrateKeyring } from '@keyring/SubstrateKeyring';
 
-export default class ExtensionDapp{
+ 
+export default class ExtensionDapp extends SubstrateKeyring{
+  constructor(keypairType: KeypairType = 'sr25519') {
+    super(keypairType);
+    this._ss58_format = 0;
+    this._symbol = 'dot';
+  }
   connectPolkadotjs() {
     const stafi=new Stafi();
     return web3Enable(stafi.getWeb3EnalbeName()).then(() => web3Accounts());
@@ -19,4 +27,9 @@ export default class ExtensionDapp{
         types
     });
   }
+  transfer(){
+    //const 
+  }
+  
 }
+
