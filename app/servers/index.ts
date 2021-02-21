@@ -2,7 +2,7 @@ import { Symbol } from '@keyring/defaults'
 import PolkadotKeyring from './polkadot'
 import { KeyringStruct } from '@keyring/types';
 // import { TezosKeyring } from './TezosKeyring';
-import { StafiKeyring } from '@keyring/StafiKeyring';
+import StafiKeyring from './stafi/index';
 // import { KusamaKeyring } from './KusamaKeyring';
 // import { PolkadotKeyring } from './PolkadotKeyring';
 // import { CosmosKeyring } from './CosmosKeyring';

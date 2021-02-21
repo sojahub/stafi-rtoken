@@ -1,4 +1,5 @@
  
+import NumberUtil from './numberUtil'
 export enum Keys {
   FisAccountKey = 'stafi_fis_account', 
   DotAccountKey = 'stafi_dot_account', 
@@ -27,3 +28,10 @@ export const getLocalStorageItem = (key:string) => {
   }
   return null;
 };
+
+export const ratioToAmount=(amount:number,ratio:number)=>{
+  if (amount && ratio) {
+    return  NumberUtil.handleFisAmountToFixed(amount / ratio);;
+  }
+  return 0;
+}

@@ -1,8 +1,7 @@
 import axios from 'axios';
-import config from '../config/env';
-import { Toast } from 'mint-ui';
-
-const toastDuration = 3000;
+import config from '@config/index';
+import { message } from 'antd';
+ 
 const toastTimeout = 500;
 
 export default {
@@ -10,7 +9,7 @@ export default {
   // get stafi staker apr
   fetchStafiStakerApr: function (postData) {
     return this.post(
-      config.apis.api1 + '/stafi/v1/webapi/rfis/stakerapr',
+      config.api() + '/stafi/v1/webapi/rfis/stakerapr',
       postData
     );
   },
@@ -18,7 +17,7 @@ export default {
   // get stafi validator apr
   fetchStafiValidatorApr: function (postData) {
     return this.post(
-      config.apis.api1 + '/stafi/v1/webapi/rfis/validatorapr',
+      config.api() + '/stafi/v1/webapi/rfis/validatorapr',
       postData
     );
   },
@@ -26,7 +25,7 @@ export default {
   // get apr
   fetchArp: function (postData) {
     return this.post(
-      config.apis.api1 + '/stafi/v1/webapi/reth/arp',
+      config.api() + '/stafi/v1/webapi/reth/arp',
       postData
     );
   },
@@ -34,7 +33,7 @@ export default {
   // get pool list
   fetchStakingPoolList: function (postData) {
     return this.post(
-      config.apis.api1 + '/stafi/v1/webapi/reth/poolist',
+      config.api() + '/stafi/v1/webapi/reth/poolist',
       postData
     );
   },
@@ -42,7 +41,7 @@ export default {
   // get pool detail
   fetchStakingPoolDetail: function (postData) {
     return this.post(
-      config.apis.api1 + '/stafi/v1/webapi/reth/poolinfo',
+      config.api() + '/stafi/v1/webapi/reth/poolinfo',
       postData
     );
   },
@@ -50,7 +49,7 @@ export default {
   // get pool status
   fetchStakingPoolStatus: function (postData) {
     return this.post(
-      config.apis.api1 + '/stafi/v1/webapi/reth/poolstatus',
+      config.api() + '/stafi/v1/webapi/reth/poolstatus',
       postData
     );
   },
@@ -72,10 +71,7 @@ export default {
           let isToast = postData.isLoading === true ? true : false;
           if (isToast) {
             setTimeout(function() {
-              Toast({
-                message: 'Error: please try again',
-                duration: toastDuration
-              });
+              message.error('Error: please try again');
             }, toastTimeout);
           }
         });

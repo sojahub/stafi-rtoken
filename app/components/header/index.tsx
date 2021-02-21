@@ -10,9 +10,9 @@ type Props={
     route:any
 }
 export default function Index(props:any){
-    const account=useSelector((state:any)=>{
-        console.log(state,"======statestate")
+    const account=useSelector((state:any)=>{  
         if(props.route.type=="rDOT"){
+           
             if(state.rDOTModule.dotAccount && state.FISModule.fisAccount){
                 return {
                     dotAccount:state.rDOTModule.dotAccount,
@@ -35,14 +35,15 @@ export default function Index(props:any){
                 <img src={notice} />
                 </Popover>
             </div> 
-            {account.dotAccount && <div className="header_tool account dot">
+            {account.fisAccount && <div className="header_tool account fis">
+                <div>{account.fisAccount.balance} FIS</div>
+                <div>{StringUtil.replacePkh(account.fisAccount.address,6,44)}</div>
+            </div>}
+            {account.dotAccount && <div className="header_tool account">
                 <div>{account.dotAccount.balance} DOT</div>
                 <div>{StringUtil.replacePkh(account.dotAccount.address,6,44)}</div>
             </div>} 
-           {account.fisAccount && <div className="header_tool account">
-                <div>{account.fisAccount.balance} FIS</div>
-                <div>{StringUtil.replacePkh(account.fisAccount.address,6,44)}</div>
-            </div>} 
+            
         </div>}
     </div>
 }

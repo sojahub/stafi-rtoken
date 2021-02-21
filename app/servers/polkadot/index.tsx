@@ -27,8 +27,10 @@ export default class ExtensionDapp extends SubstrateKeyring{
         types
     });
   }
-  transfer(){
+  async transfer(poolAddress:string,amount:string){
     //const 
+    const polkadotApi=await this.createSubstrateApi();
+    polkadotApi.tx.balances.transfer(poolAddress, amount.toString()); 
   }
   
 }

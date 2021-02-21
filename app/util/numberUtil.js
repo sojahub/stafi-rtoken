@@ -130,5 +130,7 @@ export default {
   // 收取的手续费 2位小数点
   fisFeeToFixed(fee) {
     return this.handleEthAmountRound(fee * 100).toFixed(2);
-  },
-};
+  }
+}; 
+
+ 

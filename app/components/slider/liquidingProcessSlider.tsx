@@ -12,8 +12,7 @@ export default function Index(props:Props){
     return {
       show:state.globalModule.processSlider
     }
-  })
-  console.log(show,"=======show")
+  }) 
   if(!show){
     return null;
   }

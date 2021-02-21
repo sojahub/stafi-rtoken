@@ -1,5 +1,6 @@
 import React from 'react';
 import {Input} from 'antd';
+import {regular,parseInterge} from '@util/utils'
 
 import './index.scss';
 
@@ -13,8 +14,9 @@ type Props={
 export default function Index(props:Props){
     return <Input 
     className="amount_input" 
-    onChange={(e)=>{
-        props.onChange && props.onChange(e);
+    onChange={(e)=>{  
+        let value:any = e.target.value.replace(/[^\d\.]/g,'')
+        props.onChange && props.onChange(value);
     }}
     value={props.value}
     placeholder={props.placeholder} 

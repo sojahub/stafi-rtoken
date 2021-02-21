@@ -3,7 +3,7 @@ import {useSelector,useDispatch} from 'react-redux'
 import WalletCard from '@components/card/walletCard'
 import Item from '@components/card/walletCardItem';
 import {setDotAccount} from '@features/rDOTClice';
-import {connectPolkadotjs} from '@features/globalClice';
+import {connectPolkadotjs,fetchStafiStakerApr} from '@features/globalClice';
 import {Symbol} from '@keyring/defaults'
 import {message} from 'antd'
 import './index.scss';
@@ -17,7 +17,7 @@ export default function Index(props:any){
         }
     })
     useEffect(()=>{
-        dispatch(connectPolkadotjs(Symbol.Dot));  
+        dispatch(connectPolkadotjs(Symbol.Dot)); 
     },[])
     return <WalletCard
     title="Select a DOT wallet"

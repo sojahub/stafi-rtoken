@@ -10,18 +10,21 @@ import './index.scss';
 type Props={
     onRecovery:Function,
     onStakeClick:Function,
+    transferrableAmountShow:string,
     amount?:number,
-    onChange?:Function
+    onChange?:Function,
+    willAmount?:string | 0,
+    apr?:string
 }
 export default function Index(props:Props){
     return <LeftContent className="stafi_stake_context">
         <label className="title">Stake DOT</label>
         <div className="input_panel dot_input_panel">
             <div className="tip">
-                Transferable DOT: 123.342
+                Transferable {props.transferrableAmountShow}
             </div>
             <Input placeholder="DOT AMOUNT" value={props.amount} onChange={(e:any)=>{
-                props.onChange && props.onChange(e.target.value);
+                props.onChange && props.onChange(e);
             }} unit={"Max"} icon={rDOT}/>
             <div  className="pool">
                 234,234 DOT is staked via rDOT <A>stats</A>
@@ -33,7 +36,7 @@ export default function Index(props:Props){
             <div className="money_panel_item">
                 <div>Estimated APR</div>
                 <div>
-                    18.23%
+                    {props.apr}
                 </div>
             </div>
             <div className="add_icon">
@@ -49,7 +52,7 @@ export default function Index(props:Props){
             <div className="money_panel_item">
                 <div>You will get rDOT</div>
                 <div>
-                    23.45
+                    {props.willAmount}
                 </div>
             </div>
         </div>

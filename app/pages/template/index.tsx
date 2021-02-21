@@ -1,13 +1,17 @@
 import React, { useEffect } from 'react'; 
+import {useDispatch} from 'react-redux';
 import Header from '@components/header';
 import Sider from '@components/slider';
 import Content from '@components/content';
 import {renderRoutes}  from 'react-router-config';
-import LiquidingProcesSlider from '@components/slider/liquidingProcessSlider'
+import LiquidingProcesSlider from '@components/slider/liquidingProcessSlider';
+import {fetchStafiStakerApr} from '@features/globalClice'
 import './index.scss';
 
 export default function Index(props:any){
+  const dispatch = useDispatch();
   useEffect(()=>{ 
+    dispatch(fetchStafiStakerApr()); 
   },[])
   console.log(props)
   return <div>

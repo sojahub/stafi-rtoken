@@ -48,8 +48,8 @@ export default {
             return stafiApi;
         }
 
-        stafiApi = this.createSubstrateApi(config.stafiChain(), types);
-        console.log(stafiApi,"=======stafiApistafiApistafiApistafiApistafiApi")
+        console.log(config.stafiChain(), types)
+        stafiApi = this.createSubstrateApi(config.stafiChain(), types); 
         return stafiApi;
     },
     

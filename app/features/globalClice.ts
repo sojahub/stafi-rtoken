@@ -5,7 +5,8 @@ import {message} from 'antd';
 import keyring from '@servers/index';
 import {Symbol} from '@keyring/defaults'; 
 import { createSubstrate as dotCreateSubstrate } from './rDOTClice';
-import { createSubstrate as fisCreateSubstrate } from './FISClice'
+import { createSubstrate as fisCreateSubstrate } from './FISClice';
+import Rpc from '@util/rpc';
 
 
 const polkadotServer=new PolkadotServer();
@@ -14,7 +15,8 @@ const globalClice = createSlice({
   initialState: {
     provinces: [],
     processSlider:false,
-    accounts:[]
+    accounts:[],
+    stafiStakerApr:'',
   },
   reducers: { 
     setProcessSlider(state,{payload}){
@@ -22,10 +24,13 @@ const globalClice = createSlice({
     },
     setAccounts(state,{payload}){
       state.accounts=payload;
+    },
+    setStafiStakerApr(state,{payload}){
+      state.stafiStakerApr=payload;
     }
   },
 });
-export const { setAccounts,setProcessSlider } = globalClice.actions;
+export const { setAccounts,setProcessSlider,setStafiStakerApr } = globalClice.actions;
  
 export const connectPolkadotjs = (type:Symbol,cb?:Function): AppThunk=>async (dispatch, getState)=>{ 
   const accounts:any =await polkadotServer.connectPolkadotjs()  
@@ -42,10 +47,7 @@ export const connectPolkadotjs = (type:Symbol,cb?:Function): AppThunk=>async (di
        address: address,
        balance: '--'
      }
-   })   
-  //  dispatch(createSubstrate(dotAccounts,setDotAccounts));
-  //  dispatch(createSubstrate(fisAccounts,setFisAccounts))
-  console.log(accountsList,"========aaccountsList")
+   })    
   accountsList.forEach((account:any) => {   
     dispatch(clice(type).createSubstrate(account));
   });
@@ -75,5 +77,17 @@ const clice=(symbol: string)=>{
     } 
   
 }
+
+export const fetchStafiStakerApr=():AppThunk=>async (dispatch, getState)=>{
+  Rpc.fetchStafiStakerApr({}).then(result => {
+    if (result.status == '80000') {
+      if (result.data && result.data.apr) {
+        const apr = result.data.apr + '%';
+        dispatch(setStafiStakerApr(apr))
+      }
+    } 
+  });
+}
+
 
 export default globalClice.reducer;

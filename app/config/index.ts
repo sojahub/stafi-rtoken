@@ -13,5 +13,12 @@ export default {
     }else{
       return 'wss://stafi-seiya.stafi.io'
     } 
-  }
+  },
+  api: ()=>{
+    if(process.env.NODE_ENV=="production"){
+      return 'https://rtoken-api.stafi.io';
+    }else{
+      return 'https://rtoken-api.stafi.io';
+    }  
+  },
 } 

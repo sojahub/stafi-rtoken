@@ -9,9 +9,10 @@ import {message} from 'antd';
 import './index.scss';
 
 export default function Index(props:any){
+    
     const dispatch=useDispatch();
     // const [address,setAddress]=useState("");
-    const {fisAccounts,fisAccount} = useSelector((state:any)=>{
+    const {fisAccounts,fisAccount} = useSelector((state:any)=>{ 
         return {
             fisAccounts:state.FISModule.fisAccounts,
             fisAccount:state.FISModule.fisAccount || {}

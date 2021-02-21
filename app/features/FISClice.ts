@@ -1,6 +1,12 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { AppThunk, RootState } from '../store'; 
-import PolkadotServer from '@servers/polkadot/index'; 
+import {message as M} from 'antd';
+import { AppThunk, RootState } from '../store';  
+import stafi from '@util/SubstrateApi'
+import {
+  web3Enable,
+  web3FromSource,
+} from '@polkadot/extension-dapp';
+
 import NumberUtil from '@util/numberUtil';   
 import {setLocalStorageItem,getLocalStorageItem,Keys} from '@util/common'
 
@@ -14,7 +20,9 @@ const FISClice = createSlice({
       
     },{
       address:"32FDY8ksrm1ihB7NWJ5U5dojPiwoXJtLpajytb6GvkGKURXd"
-    }]
+    }],
+    transferrableAmountShow:0,
+    ratio:0
   },
   reducers: {   
     setFisAccounts(state,{payload}){
@@ -32,24 +40,104 @@ const FISClice = createSlice({
       setLocalStorageItem(Keys.FisAccountKey,payload)
       state.fisAccount=payload;
     },
+    setTransferrableAmountShow(state,{payload}){
+      state.transferrableAmountShow=payload;
+    },
+    setRatio(state,{payload}){
+      state.ratio=payload;
+    }
   },
 });
-const polkadotServer=new PolkadotServer();
-export const { setFisAccounts,setFisAccount } = FISClice.actions; 
+
+export const { setFisAccounts,setFisAccount,setTransferrableAmountShow,setRatio } = FISClice.actions; 
 
 export const createSubstrate = (account:any): AppThunk=>async (dispatch, getState)=>{ 
-      queryBalance(account,dispatch)
+      queryBalance(account,dispatch,getState)
 }
 
-const queryBalance=async (account:any,dispatch:any)=>{
-  let account2:any= {...account}
-  const api= await polkadotServer.createSubstrateApi();
+const queryBalance=async (account:any,dispatch:any,getState:any)=>{
+  dispatch(setFisAccounts(account));
+  let account2:any= {...account}  
+  const api= await stafi.createStafiApi(); 
   const result = await  api.query.system.account(account2.address); 
   if (result) {
     let fisFreeBalance = NumberUtil.fisAmountToHuman(result.data.free);
     account2.balance = NumberUtil.handleEthAmountRound(fisFreeBalance);
-  } 
+  }   
+  const fisAccount=getState().FISModule.fisAccount;
+  if(fisAccount && fisAccount.address==account2.address){
+    dispatch(setFisAccount(account2));
+  }
   dispatch(setFisAccounts(account2));
 }
+
+export const  transfer=(amount:string):AppThunk=>async (dispatch, getState)=>{ 
+  const validPools=getState().FISModule.validPools;
+  const address=getState().FISModule.fisAccount.address; 
+  web3Enable(stafi.getWeb3EnalbeName());
+  const injector =await web3FromSource(stafi.getPolkadotJsSource()) 
+
+
+  const stafiApi=await stafi.createStafiApi();  
+  stafiApi.tx.balances.transfer(validPools[0].address, amount.toString()).signAndSend(address, { signer: injector.signer }, (result:any)=>{
+    try{ 
+        if (result.status.isInBlock) {
+
+          result.events
+            .filter((e:any) => {
+              return e.event.section=="system"
+            }).forEach((data:any) => { 
+                if (data.event.method === 'ExtrinsicFailed') {
+                  const [dispatchError] = data.event.data;
+                  if (dispatchError.isModule) {
+                    try {
+                      const mod = dispatchError.asModule;
+                      const error = data.registry.findMetaError(new Uint8Array([mod.index.toNumber(), mod.error.toNumber()]));
+
+                      let message:string = 'Something is wrong, please try again later!';
+                      if (error.name == '') {
+                        message = '';
+                      } 
+                      message && M.info(message);
+                    } catch (error) {
+                      M.error(error.message);
+                    }
+                  }
+                }else if (data.event.method === 'ExtrinsicSuccess') {
+                  M.success('Successfully');
+                }
+
+            })
+          }else if (result.isError) {
+            M.error(result.toHuman());
+          } 
+        }catch(e:any){
+            M.error(e.message)
+        }
+  }); 
+ 
+
+}
+
+export const balancesAll=():AppThunk=>async (dispatch, getState)=>{
+  const api=await stafi.createStafiApi(); 
+  const address=getState().FISModule.fisAccount.address; 
+  const result =await api.derive.balances.all(address);
+  if (result) {  
+   const transferrableAmount = NumberUtil.fisAmountToHuman(result.availableBalance); 
+   const transferrableAmountShow = NumberUtil.handleFisAmountToFixed(transferrableAmount);
+   dispatch(setTransferrableAmountShow(transferrableAmountShow));
+  }
+}
+
+
+export const rTokenRate=():AppThunk=>async (dispatch,getState)=>{
+  const api=await stafi.createStafiApi(); 
+  const result = await api.query.rTokenRate.rate(0);   //1代表DOT    0代表FIS
+  const ratio = NumberUtil.fisAmountToHuman(result.toJSON());
+  dispatch(setRatio(ratio)) 
+}
+
+ 
 
 export default FISClice.reducer;
