@@ -7,20 +7,27 @@
   background-color: #2B3239;
   border-radius: 6px; 
   .header{
-      display: flex;
-      
+      display: flex; 
       align-items: center;
       padding:20px;
+      padding-left: 40px;
       font-size: 14px;
       font-weight: bold;
-      img{
+      position: relative;
+      img.logo{
           margin-right: 19px;
+      }
+      img.close{
+          position: absolute;
+          top: 15px;
+          left: 15px;
+          cursor: pointer;
       }
   }
   .body{
       padding:0px 20px 21px 15px; 
   }
-  animation:stafi_liquiding_proces_slider_show 1s;
+  animation:stafi_liquiding_proces_slider_show 0.5s;
 }
 
 @keyframes stafi_liquiding_proces_slider_show

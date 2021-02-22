@@ -8,8 +8,32 @@ import { createSubstrate as dotCreateSubstrate } from './rDOTClice';
 import { createSubstrate as fisCreateSubstrate } from './FISClice';
 import Rpc from '@util/rpc';
 
-
+export enum processStatus {
+  default=0,
+  success = 1,
+  failure = 2
+}
 const polkadotServer=new PolkadotServer();
+const process={ 
+  sending:{
+    brocasting:processStatus.default,     // 0|1|2   0无状态  1成功    3失败
+    packing:processStatus.default,        // 0|1|2   0无状态  1成功    3失败
+    finalizing:processStatus.default,     // 0|1|2   0无状态  1成功    3失败
+    checkTx: ""        // 
+  },
+  staking:{
+    brocasting:processStatus.default,     // 0|1|2   0无状态  1成功    3失败
+    packing:processStatus.default,        // 0|1|2   0无状态  1成功    3失败
+    finalizing:processStatus.default,      // 0|1|2   0无状态  1成功    3失败
+    checkTx: ""        // 
+  },
+  minting:{
+    brocasting:processStatus.default,     // 0|1|2   0无状态  1成功    3失败
+    packing:processStatus.default,        // 0|1|2   0无状态  1成功    3失败
+    finalizing:processStatus.default,      // 0|1|2   0无状态  1成功    3失败
+    checkTx: ""        // 
+  }
+}
 const globalClice = createSlice({
   name: 'globalModule',
   initialState: {
@@ -17,6 +41,7 @@ const globalClice = createSlice({
     processSlider:false,
     accounts:[],
     stafiStakerApr:'',
+    process:process,
   },
   reducers: { 
     setProcessSlider(state,{payload}){
@@ -27,10 +52,23 @@ const globalClice = createSlice({
     },
     setStafiStakerApr(state,{payload}){
       state.stafiStakerApr=payload;
+    },
+    setProcessSending(state,{payload}){
+      state.process={...process,...{sending:payload}}
+    },
+    setProcessStaking(state,{payload}){
+      state.process={...state.process,...{staking:payload}}
+    },
+    setProcessMinting(state,{payload}){
+      state.process={...state.process,...{minting:payload}}
     }
   },
 });
-export const { setAccounts,setProcessSlider,setStafiStakerApr } = globalClice.actions;
+export const { setAccounts,setProcessSlider,setStafiStakerApr,
+  setProcessSending,
+  setProcessStaking,
+  setProcessMinting
+ } = globalClice.actions;
  
 export const connectPolkadotjs = (type:Symbol,cb?:Function): AppThunk=>async (dispatch, getState)=>{ 
   const accounts:any =await polkadotServer.connectPolkadotjs()  

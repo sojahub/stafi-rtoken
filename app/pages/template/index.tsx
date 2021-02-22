@@ -12,15 +12,13 @@ export default function Index(props:any){
   const dispatch = useDispatch();
   useEffect(()=>{ 
     dispatch(fetchStafiStakerApr()); 
-  },[])
-  console.log(props)
+  },[]) 
   return <div>
     <Header route={props.route}/>
     <div className="stafi_layout">
       <Sider route={props.route} histroy={props.histroy}/> 
       <LiquidingProcesSlider />
       <div className="stafi_container">
-        
          <Content>
            {renderRoutes(props.route.routes)}
          </Content>
