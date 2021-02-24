@@ -11,8 +11,10 @@ import Rpc from '@util/rpc';
 export enum processStatus {
   default=0,
   success = 1,
-  failure = 2
+  failure = 2,
+  loading=4
 }
+//0|1|2|4   0无状态  1成功    3失败 4加载
 const polkadotServer=new PolkadotServer();
 const process={ 
   sending:{
@@ -42,9 +44,13 @@ const globalClice = createSlice({
     accounts:[],
     stafiStakerApr:'',
     process:process,
+    timeOutFunc:null,
   },
   reducers: { 
     setProcessSlider(state,{payload}){
+      if(payload==false && state.timeOutFunc){
+        clearTimeout(state.timeOutFunc);
+      }
       state.processSlider=payload
     },
     setAccounts(state,{payload}){
@@ -61,13 +67,17 @@ const globalClice = createSlice({
     },
     setProcessMinting(state,{payload}){
       state.process={...state.process,...{minting:payload}}
+    },
+    setTimeOutFunc(state,{payload}){
+      state.timeOutFunc=payload;
     }
   },
 });
 export const { setAccounts,setProcessSlider,setStafiStakerApr,
   setProcessSending,
   setProcessStaking,
-  setProcessMinting
+  setProcessMinting,
+  setTimeOutFunc
  } = globalClice.actions;
  
 export const connectPolkadotjs = (type:Symbol,cb?:Function): AppThunk=>async (dispatch, getState)=>{ 
@@ -127,5 +137,16 @@ export const fetchStafiStakerApr=():AppThunk=>async (dispatch, getState)=>{
   });
 }
 
+
+export const gSetTimeOut=(cb:Function,time:number):AppThunk=>(dispatch,getState)=>{
+  var time=setTimeout(cb,100);
+  dispatch(setTimeOutFunc(time)); 
+}
+export const gClearTimeOut=():AppThunk=>(dispatch,getState)=>{
+  const time=getState().globalModule.timeOutFunc;
+  if(time){
+    clearTimeout(time);
+  }
+}
 
 export default globalClice.reducer;

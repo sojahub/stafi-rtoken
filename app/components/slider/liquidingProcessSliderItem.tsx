@@ -4,7 +4,8 @@ import Button from '../button/button'
 import success from '@images/success.png'
 import failure from '@images/failure.svg'
 import doubt from "@images/doubt.svg"
-import StringUtil from '@util/stringUtil'
+import StringUtil from '@util/stringUtil';
+import {SyncOutlined} from '@ant-design/icons';
 import './liquidingProcessSliderItem.scss';
 
 type Props={
@@ -24,17 +25,21 @@ export default function Index(props:Props){
       <label>Brocasting...</label>
       {(props.data && props.data.brocasting==processStatus.success) && <img src={success}/>}
       {(props.data && props.data.brocasting==processStatus.failure) && <img src={failure}/>}
+      {(props.data && props.data.brocasting==processStatus.loading) && <SyncOutlined type="spin" spin={true}/>}
+      
     </div>
-    <div className="item">
+    {props.index!=3 && <div className="item">
       <label>Packing...</label> 
       {(props.data && props.data.packing==processStatus.success) && <img src={success}/>}
       {(props.data && props.data.packing==processStatus.failure) && <img src={failure}/>}
-    </div>
-    <div className="item">
+      {(props.data && props.data.packing==processStatus.loading) && <SyncOutlined type="spin" spin={true}/>}
+    </div>}
+    {props.index!=3 && <div className="item">
       <label>Finalizing...</label>
-      {(props.data && props.data.minting==processStatus.success) && <img src={success}/>}
-      {(props.data && props.data.minting==processStatus.failure) && <img src={failure}/>}
-    </div>
+      {(props.data && props.data.finalizing==processStatus.success) && <img src={success}/>}
+      {(props.data && props.data.finalizing==processStatus.failure) && <img src={failure}/>}
+      {(props.data && props.data.finalizing==processStatus.loading) && <SyncOutlined type="spin" spin={true}/>}
+    </div>}
     {(props.data && props.data.checkTx) && <div className="item">
       <label>Check Tx <label className="address">{StringUtil.replacePkh(props.data.checkTx,6,60)}</label></label> 
     </div>}

@@ -12,6 +12,7 @@
   "author": "shanzhiping",
   "registory": "https://github.com/stafiprotocol/stafi-rtoken",
   "dependencies": {
+    "@ant-design/icons": "^4.5.0",
     "@polkadot/api": "^3.6.4",
     "@polkadot/extension-dapp": "^0.36.1",
     "@polkadot/keyring": "^5.4.4",

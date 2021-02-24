@@ -1,14 +1,19 @@
 import React from 'react';
 import {Form} from 'antd';
+import {useDispatch} from 'react-redux';
 import Input from '@components/input/index';
 import Button from '@components/button/button';
 import Select,{Option} from '@components/select';
-import leftArrowSvg from '@images/left_arrow.svg'
+import leftArrowSvg from '@images/left_arrow.svg';
+import {getBlock} from '@features/FISClice'
 import './index.scss';
 export default function Index(props:any){
   const [form] = Form.useForm();
+  const dispatch = useDispatch();
   const onFinish = (values: any) => {
     console.log(values);
+    dispatch(getBlock(values.blockHash,values.txHash))
+    
   };
   return <div className="stafi_search_container">
     <img className="back_icon" onClick={()=>{
@@ -27,9 +32,7 @@ export default function Index(props:any){
     > 
         <Form.Item label="Token" name="token"> 
           <Select>
-            <Option value="1">123</Option>
-            <Option value="2">222</Option>
-            <Option value="3">333</Option>
+            <Option value="XZT">XZT</Option> 
           </Select>
         </Form.Item> 
         <Form.Item label="TxHash" name="txHash">

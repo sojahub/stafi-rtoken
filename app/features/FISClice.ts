@@ -2,13 +2,16 @@ import { createSlice } from '@reduxjs/toolkit';
 import { message as M } from 'antd';
 import { AppThunk, RootState } from '../store';
 import stafi from '@util/SubstrateApi';
-import { processStatus, setProcessSlider, setProcessSending } from './globalClice';
+import { processStatus, setProcessSlider, setProcessSending,setProcessStaking,setProcessMinting,gSetTimeOut,gClearTimeOut } from './globalClice';
 import {
   web3Enable,
   web3FromSource,
 } from '@polkadot/extension-dapp';
 
-import NumberUtil from '@util/numberUtil';
+import {stringToHex,u8aToHex} from '@polkadot/util'
+import NumberUtil from '@util/numberUtil'; 
+import keyring from '@servers/index';
+import {Symbol} from '@keyring/defaults'; 
 
 import { setLocalStorageItem, getLocalStorageItem, Keys } from '@util/common'
 
@@ -80,17 +83,24 @@ export const transfer = (amount: string): AppThunk => async (dispatch, getState)
   web3Enable(stafi.getWeb3EnalbeName());
   const injector = await web3FromSource(stafi.getPolkadotJsSource())
   const stafiApi = await stafi.createStafiApi(); 
-  stafiApi.tx.balances.transfer(validPools[0].address, amount.toString()).signAndSend(address, { signer: injector.signer }, (result: any) => {
+  const ex = stafiApi.tx.balances.transfer(validPools[0].address,NumberUtil.fisAmountToChain(amount));
+  const tx=ex.hash.toHex().toString();
+  ex.signAndSend(address, { signer: injector.signer }, (result: any) => {
     try { 
-      // console.log(result.status.asInBlock, result.status.asInBlock.toHex().toString(), stafiApi.hash, "==========exHash")
-      dispatch(setProcessSending({
-        brocasting: processStatus.success,
-        packing: processStatus.default,
-        finalizing: processStatus.default,
-        checkTx: ''
-      }));
-      if (result.status.isInBlock) {
-        const blockHash = result.status.asInBlock.toHex().toString();
+      let asInBlock=""
+      try{
+        asInBlock = ""+result.status.asInBlock;
+      }catch(e){
+        //忽略异常
+      }
+      if (result.status.isInBlock) { 
+        dispatch(setProcessSending({
+          brocasting: processStatus.success,
+          packing: processStatus.loading,
+          finalizing: processStatus.default,
+          checkTx: tx
+        }));
+        
         result.events
           .filter((e: any) => {
             return e.event.section == "system"
@@ -110,48 +120,87 @@ export const transfer = (amount: string): AppThunk => async (dispatch, getState)
                 } catch (error) {
                   M.error(error.message);
                 }
-              }
+              } 
               dispatch(setProcessSending({
                 brocasting: processStatus.success,
                 packing: processStatus.failure,
                 finalizing: processStatus.default,
-                checkTx: blockHash
+                checkTx: tx
               }));
-            } else if (data.event.method === 'ExtrinsicSuccess') {
+            } else if (data.event.method === 'ExtrinsicSuccess') { 
               M.success('Successfully');
               dispatch(setProcessSending({
                 brocasting: processStatus.success,
                 packing: processStatus.success,
-                finalizing: processStatus.default,
-                checkTx: blockHash
+                finalizing: processStatus.loading,
+                checkTx: tx
               }));
+
+              //十分钟后   finalizing失败处理 
+              gSetTimeOut(()=>{
+                dispatch(setProcessSending({
+                  brocasting: processStatus.success,
+                  packing: processStatus.success,
+                  finalizing: processStatus.failure,
+                  checkTx: ''
+                }));
+              },10*60*1000);
             }
           })
       } else if (result.isError) {
         M.error(result.toHuman());
-      }
-      console.log(result.status)
-      if (result.status.isFinalized) {
-        const blockHash = result.status.asInBlock.toHex().toString();
+      } 
+      if (result.status.isFinalized) { 
+        console.log(result.status.isFinalized,"===========")
         dispatch(setProcessSending({
           brocasting: processStatus.success,
           packing: processStatus.success,
           finalizing: processStatus.success,
-          checkTx: blockHash
-        }));
-      }else if (result.status.isFinalized==false) {
-        const blockHash = result.status.asInBlock.toHex().toString();
-        dispatch(setProcessSending({
-          brocasting: processStatus.success,
-          packing: processStatus.success,
-          finalizing: processStatus.failure,
-          checkTx: blockHash
-        }));
+          checkTx: tx
+        })); 
+        dispatch(setProcessStaking({
+          brocasting: processStatus.loading,
+          packing: processStatus.default,
+          finalizing: processStatus.default,
+          checkTx: tx
+        })); 
+        //finalizing 成功清除定时器
+        gClearTimeOut();
+        
       }
+
+      
     } catch (e: any) {
       M.error(e.message)
     }
+  }); 
+}
+
+
+export const stakingSignature=async (address:any,txHash:string)=>{
+  // const stafiApi = await stafi.createStafiApi(); 
+  const injector = await web3FromSource(stafi.getPolkadotJsSource());
+  const signRaw = injector?.signer?.signRaw;
+  const { signature } = await signRaw({
+      address:address,
+      data: stringToHex(txHash),
+      type: 'bytes'
   });
+
+  return signature
+}
+
+export const bound=(address:string,txhash:string,blockhash: string,amount: number):AppThunk=>async (dispatch, getState)=>{
+  //进入 staking 签名
+  const signature =await stakingSignature(address,txhash);
+  const stafiApi = await stafi.createStafiApi(); 
+  const validPools=getState().FISModule.validPools;
+  const keyringInstance = keyring.init(Symbol.Fis); 
+  let pubkey = u8aToHex(keyringInstance.decodeAddress(address));
+
+
+  // const pubkey=
+  const result=await stafiApi.tx.rTokenSeries.liquidityBond(pubkey, stringToHex(signature), validPools[0], blockhash, txhash, NumberUtil.fisAmountToChain(amount), 0)
 
 
 }
@@ -175,6 +224,19 @@ export const rTokenRate = (): AppThunk => async (dispatch, getState) => {
   dispatch(setRatio(ratio))
 }
 
-
+export const getBlock=(blockHash:string,txHash:string):AppThunk=>async (dispatch,getState)=>{
+  const api = await stafi.createStafiApi();
+  const result = await api.rpc.chain.getBlock(blockHash);
+  result.block.extrinsics.forEach((ex:any) => {
+    if (ex.hash.toHex() == txHash) {
+      const { method: { args, method, section } } = ex; 
+      if (section == 'balances' && (method == 'transfer' || method == 'transferKeepAlive')) {
+        let amount = args[1].toJSON();
+        console.log(amount,"===========amount")
+      }
+    }
+  });
+  
+}
 
 export default FISClice.reducer;

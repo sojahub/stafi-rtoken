@@ -10,17 +10,14 @@ import './index.scss';
 
 export default function Index(props:any){
     
-    const dispatch=useDispatch();
-    // const [address,setAddress]=useState("");
+    const dispatch=useDispatch(); 
     const {fisAccounts,fisAccount} = useSelector((state:any)=>{ 
         return {
             fisAccounts:state.FISModule.fisAccounts,
             fisAccount:state.FISModule.fisAccount || {}
         }
     })
-    useEffect(()=>{
-        dispatch(connectPolkadotjs(Symbol.Fis));  
-    },[])
+   
     return <WalletCard 
         title="Select a FIS wallet"
         btnText="Confirm"

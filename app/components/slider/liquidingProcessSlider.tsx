@@ -31,7 +31,7 @@ export default function Index(props:Props){
     </div>
     <div className="body">
         <Item index={1} title="Sending" data={process.sending} showButton={true}/>
-        <Item index={2} title="Staking" failure={true} showButton={true}/>
+        <Item index={2} title="Staking"  data={process.staking}  failure={true} showButton={true}/>
         <Item index={3} title="Minting" showButton={false}/>
     </div>
   </div>

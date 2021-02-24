@@ -4,14 +4,17 @@ import Header from '@components/header';
 import Sider from '@components/slider';
 import Content from '@components/content';
 import {renderRoutes}  from 'react-router-config';
-import LiquidingProcesSlider from '@components/slider/liquidingProcessSlider';
-import {fetchStafiStakerApr} from '@features/globalClice'
+import LiquidingProcesSlider from '@components/slider/liquidingProcessSlider'; 
+import {Symbol} from '@keyring/defaults'
+import {fetchStafiStakerApr,connectPolkadotjs} from '@features/globalClice'
 import './index.scss';
 
 export default function Index(props:any){
   const dispatch = useDispatch();
   useEffect(()=>{ 
     dispatch(fetchStafiStakerApr()); 
+    dispatch(connectPolkadotjs(Symbol.Dot)); 
+    dispatch(connectPolkadotjs(Symbol.Fis)); 
   },[]) 
   return <div>
     <Header route={props.route}/>
