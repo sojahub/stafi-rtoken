@@ -4,7 +4,7 @@ export default {
     if(process.env.NODE_ENV=="production"){
       return 'wss://rpc.polkadot.io';
     }else{
-      return 'wss://westend-rpc.polkadot.io'
+      return 'wss://polkadot-test-rpc.stafi.io'
     }
   },
   stafiChain: ()=>{
@@ -22,3 +22,4 @@ export default {
     }  
   },
 } 
+ 

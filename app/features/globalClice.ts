@@ -84,7 +84,7 @@ export const connectPolkadotjs = (type:Symbol,cb?:Function): AppThunk=>async (di
   const accounts:any =await polkadotServer.connectPolkadotjs()  
   if(accounts==false ||  accounts && accounts.length==0){
      message.error("请安装波卡扩展");
-     return;
+    //  return;
   }else{
    dispatch(setAccounts(accounts)); 
    const dotKeyringInstance=keyring.init(type);

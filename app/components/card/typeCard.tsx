@@ -8,7 +8,8 @@ import './index.scss';
 
 type Props={
   type:"rDOT"|"rETH"|"rFIS",
-  onClick:Function
+  onClick:Function,
+  stafiStakerApr?:any
 }
 export default function Index(props:Props){
   return <div className="stafi_type_card"> 
@@ -25,7 +26,7 @@ export default function Index(props:Props){
           </div>
           <div className="apr_panel">
               <img src={apr_svg} /> 
-              <label>11.12%</label>
+              <label>{props.stafiStakerApr}</label>
           </div>
           <div className="r_panel">
             {props.type=="rDOT" && <img src={rDOT_svg} />}

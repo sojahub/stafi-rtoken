@@ -77,6 +77,8 @@ const queryBalance = async (account: any, dispatch: any, getState: any) => {
 }
 
 export const transfer = (amount: string): AppThunk => async (dispatch, getState) => {
+ 
+  
   dispatch(setProcessSlider(true));
   const validPools = getState().FISModule.validPools;
   const address = getState().FISModule.fisAccount.address;
@@ -85,6 +87,12 @@ export const transfer = (amount: string): AppThunk => async (dispatch, getState)
   const stafiApi = await stafi.createStafiApi(); 
   const ex = stafiApi.tx.balances.transfer(validPools[0].address,NumberUtil.fisAmountToChain(amount));
   const tx=ex.hash.toHex().toString();
+  dispatch(setProcessSending({
+    brocasting: processStatus.loading,
+    packing: processStatus.default,
+    finalizing: processStatus.default,
+    checkTx: tx
+  }));
   ex.signAndSend(address, { signer: injector.signer }, (result: any) => {
     try { 
       let asInBlock=""
@@ -144,14 +152,13 @@ export const transfer = (amount: string): AppThunk => async (dispatch, getState)
                   finalizing: processStatus.failure,
                   checkTx: ''
                 }));
-              },10*60*1000);
+              }, 10*60*1000);
             }
           })
       } else if (result.isError) {
         M.error(result.toHuman());
       } 
-      if (result.status.isFinalized) { 
-        console.log(result.status.isFinalized,"===========")
+      if (result.status.isFinalized) {  
         dispatch(setProcessSending({
           brocasting: processStatus.success,
           packing: processStatus.success,
@@ -164,9 +171,10 @@ export const transfer = (amount: string): AppThunk => async (dispatch, getState)
           finalizing: processStatus.default,
           checkTx: tx
         })); 
+    
         //finalizing 成功清除定时器
-        gClearTimeOut();
-        
+        gClearTimeOut(); 
+        dispatch(bound(address,tx,asInBlock,amount))
       }
 
       
@@ -190,7 +198,7 @@ export const stakingSignature=async (address:any,txHash:string)=>{
   return signature
 }
 
-export const bound=(address:string,txhash:string,blockhash: string,amount: number):AppThunk=>async (dispatch, getState)=>{
+export const bound=(address:string,txhash:string,blockhash: string,amount: string):AppThunk=>async (dispatch, getState)=>{
   //进入 staking 签名
   const signature =await stakingSignature(address,txhash);
   const stafiApi = await stafi.createStafiApi(); 
@@ -200,8 +208,10 @@ export const bound=(address:string,txhash:string,blockhash: string,amount: numbe
 
 
   // const pubkey=
-  const result=await stafiApi.tx.rTokenSeries.liquidityBond(pubkey, stringToHex(signature), validPools[0], blockhash, txhash, NumberUtil.fisAmountToChain(amount), 0)
+  const result=await stafiApi.tx.rTokenSeries.liquidityBond(pubkey, stringToHex(signature), validPools[0], stringToHex(blockhash), stringToHex(txhash), NumberUtil.fisAmountToChain(amount), 1)
 
+
+  console.log(result,"==============boundresultresult")
 
 }
 

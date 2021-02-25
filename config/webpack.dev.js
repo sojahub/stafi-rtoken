@@ -10,7 +10,7 @@ const config={
         port:3111,
         open:true, 
        // inline: true,
-      //  hot:true
+       // hot:true
     }
 }
 
