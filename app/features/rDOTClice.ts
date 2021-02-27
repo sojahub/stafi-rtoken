@@ -15,7 +15,8 @@ import {
 import {stringToHex,u8aToHex} from '@polkadot/util'
 import NumberUtil from '@util/numberUtil'; 
 import keyring from '@servers/index';
-import {Symbol} from '@keyring/defaults'; 
+import {Symbol} from '@keyring/defaults';
+import {bound} from './FISClice' 
 
 const rDOTClice = createSlice({
   name: 'rDOTModule',
@@ -113,6 +114,7 @@ export const  transfer=(amount:string):AppThunk=>async (dispatch, getState)=>{
       }catch(e){
         //忽略异常
       }
+      console.log(asInBlock,"++++++++asInBlock")
         if (result.status.isInBlock) {
           dispatch(setProcessSending({
             brocasting: processStatus.success,
@@ -164,7 +166,7 @@ export const  transfer=(amount:string):AppThunk=>async (dispatch, getState)=>{
                       checkTx: tx 
                     }));
                   }, 10*60*1000));
-
+                  asInBlock && dispatch(bound(address,tx,asInBlock,amount,validPools[0].address))
                  
                 } 
             })
@@ -185,7 +187,7 @@ export const  transfer=(amount:string):AppThunk=>async (dispatch, getState)=>{
                   }));  
                   gClearTimeOut();  
 
-                  dispatch(bound(address,tx,asInBlock,amount))
+                 
                 }
           }else if (result.isError) {
             M.error(result.toHuman());
@@ -209,33 +211,7 @@ export const balancesAll=():AppThunk=>async (dispatch, getState)=>{
 }
 
  
-export const stakingSignature=async (address:any,txHash:string)=>{
-  // const stafiApi = await stafi.createStafiApi(); 
-  const injector = await web3FromSource(stafiServer.getPolkadotJsSource());
-  const signRaw = injector?.signer?.signRaw;
-  const { signature } = await signRaw({
-      address:address,
-      data: txHash,
-      type: 'bytes'
-  });
+ 
 
-  return signature
-}
-export const bound=(address:string,txhash:string,blockhash: string,amount: string):AppThunk=>async (dispatch, getState)=>{
-  //进入 staking 签名
-  const signature =await stakingSignature(address,txhash);
-  const api = await polkadotServer.createPolkadotApi(); 
-  const validPools=getState().FISModule.validPools;
-  const keyringInstance = keyring.init(Symbol.Fis); 
-  let pubkey = u8aToHex(keyringInstance.decodeAddress(address));
-
-
-  // const pubkey=
-  const result=await api.tx.rTokenSeries.liquidityBond(pubkey, signature, validPools[0].address, blockhash, txhash, NumberUtil.fisAmountToChain(amount), 1)
-
-
-  console.log(result,"==============boundresultresult")
-
-}
 
 export default rDOTClice.reducer;

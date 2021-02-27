@@ -172,7 +172,7 @@ export const transfer = (amount: string): AppThunk => async (dispatch, getState)
           checkTx: tx
         })); 
         console.log("asdfasfasf=====")
-        dispatch(bound(address,tx,asInBlock,amount))
+        asInBlock && dispatch(bound(address,tx,asInBlock,amount,validPools[0].address))
         //finalizing 成功清除定时器
         gClearTimeOut(); 
       
@@ -197,19 +197,34 @@ export const stakingSignature=async (address:any,txHash:string)=>{
   return signature
 }
 
-export const bound=(address:string,txhash:string,blockhash: string,amount: string):AppThunk=>async (dispatch, getState)=>{
+export const bound=(address:string,txhash:string,blockhash: string,amount: string,pooladdress:string):AppThunk=>async (dispatch, getState)=>{
   //进入 staking 签名 
   const signature =await stakingSignature(address,txhash);
   const stafiApi = await stafi.createStafiApi(); 
   const validPools=getState().FISModule.validPools;
   const keyringInstance = keyring.init(Symbol.Fis); 
   let pubkey = u8aToHex(keyringInstance.decodeAddress(address));
+  let poolPubkey = u8aToHex(keyringInstance.decodeAddress(pooladdress));
+
+  console.log(address,"======address")
+   console.log(pubkey,"=========pubkey")
+   console.log(signature,"=========signature")
+   console.log(poolPubkey,"=========poolPubkey") 
+   console.log(blockhash,"=========blockhash")
+   console.log(txhash,"=========txhash")
+   console.log(pooladdress,"=========pooladdress")
+   console.log(NumberUtil.fisAmountToChain(amount),"=========NumberUtil.fisAmountToChain(amount)")
+  const result=await stafiApi.tx.rTokenSeries.liquidityBond(pubkey, 
+    signature,  
+    poolPubkey,
+    blockhash, 
+    txhash, 
+    NumberUtil.fisAmountToChain(amount), 1)
 
 
-   
-  const result=await stafiApi.tx.rTokenSeries.liquidityBond(pubkey, signature, validPools[0].address, blockhash, txhash, NumberUtil.fisAmountToChain(amount), 1)
-
-
+  if(result){ 
+    console.log(result.status,"======")
+  }
   console.log(result,"==============boundresultresult")
 
 }

@@ -45,6 +45,7 @@ export default {
                 status: 'ProposalStatus',
                 expiry: 'BlockNumber'
             },
+            ChainEra:"u32",
             BondKey: {
                 symbol: 'RSymbol',
                 bond_id: 'H256'
