@@ -2,20 +2,32 @@ import { createSlice } from '@reduxjs/toolkit';
 import { AppThunk, RootState } from '../store'; 
 import PolkadotServer from '@servers/polkadot/index';
 import Stafi from '@servers/stafi/index';
-import {message as M} from 'antd';
-import NumberUtil from '@util/numberUtil';   
+import {message as M} from 'antd';   
 import {setLocalStorageItem,getLocalStorageItem,Keys} from '@util/common'
+ 
+
+import { processStatus, setProcessSlider, setProcessSending,setProcessStaking,setProcessMinting,gSetTimeOut,gClearTimeOut } from './globalClice';
 import {
   web3Enable,
   web3FromSource,
 } from '@polkadot/extension-dapp';
+
+import {stringToHex,u8aToHex} from '@polkadot/util'
+import NumberUtil from '@util/numberUtil'; 
+import keyring from '@servers/index';
+import {Symbol} from '@keyring/defaults'; 
 
 const rDOTClice = createSlice({
   name: 'rDOTModule',
   initialState: {  
     dotAccounts:[], 
     dotAccount:getLocalStorageItem(Keys.DotAccountKey),    //选中的账号 
-    validPools:[],
+    validPools:[{
+      address: "15T6mxJVnJTUoSQZdCXNeKCNTLDMg2jXQ5rSjcEbQ37c5xhg"
+
+    }, {
+      address: "15o269Duu45ua5x2UT92C4wBS8LyHpvLFuARJcUECtSe3m95"
+    }],
     transferrableAmountShow:0,
     ratio:0
   },
@@ -57,31 +69,57 @@ const queryBalance=async (account:any,dispatch:any,getState:any)=>{
   dispatch(setDotAccounts(account));
   let account2:any= {...account}
   
-  const api= await polkadotServer.createSubstrateApi();
+  const api= await polkadotServer.createPolkadotApi();
   const result = await  api.query.system.account(account2.address); 
   if (result) {
-    let fisFreeBalance = NumberUtil.fisAmountToHuman(result.data.free);
+    let fisFreeBalance = NumberUtil.fisAmountToHuman(result.data.free); 
     account2.balance = NumberUtil.handleEthAmountRound(fisFreeBalance);
   } 
   const dotAccount=getState().rDOTModule.dotAccount;
-  if(dotAccount && dotAccount.address==account2.address){
+  if(dotAccount && dotAccount.address==account2.address){ 
     dispatch(setDotAccount(account2));
   }
   dispatch(setDotAccounts(account2));
 }
 
 export const  transfer=(amount:string):AppThunk=>async (dispatch, getState)=>{ 
+  dispatch(setProcessSlider(true));
   const validPools=getState().rDOTModule.validPools;
   const address=getState().rDOTModule.dotAccount.address; 
   web3Enable(stafiServer.getWeb3EnalbeName());
   const injector =await web3FromSource(stafiServer.getPolkadotJsSource()) 
 
-
-  const stafiApi=await polkadotServer.createSubstrateApi();
-  stafiApi.tx.balances.transfer(validPools[0].address, amount.toString()).signAndSend(address, { signer: injector.signer }, (result:any)=>{
-    try{ 
+  const dotApi=await polkadotServer.createPolkadotApi();
+  console.log(address,"Accountaddress")
+  console.log(injector,"injector")
+  console.log(stafiServer.getWeb3EnalbeName(),"stafiServer.getWeb3EnalbeName()")
+  console.log(validPools[0].address,"==========validPools[0].address");
+  console.log(NumberUtil.fisAmountToChain(amount).toString(),"=======NumberUtil.fisAmountToChain(amount)")
+  const ex = dotApi.tx.balances.transfer(validPools[0].address,NumberUtil.fisAmountToChain(amount).toString());
+  const tx=ex.hash.toHex().toString();
+  console.log(tx,"=========tx")
+  dispatch(setProcessSending({
+    brocasting: processStatus.loading,
+    packing: processStatus.default,
+    finalizing: processStatus.default,
+    checkTx: tx
+  }));
+  
+  ex.signAndSend(address, { signer: injector.signer }, (result:any)=>{ 
+    try{  
+      let asInBlock=""
+      try{
+        asInBlock = ""+result.status.asInBlock;
+      }catch(e){
+        //忽略异常
+      }
         if (result.status.isInBlock) {
-
+          dispatch(setProcessSending({
+            brocasting: processStatus.success,
+            packing: processStatus.loading,
+            finalizing: processStatus.default,
+            checkTx: tx
+          }));
           result.events
             .filter((e:any) => {
               return e.event.section=="system"
@@ -102,11 +140,53 @@ export const  transfer=(amount:string):AppThunk=>async (dispatch, getState)=>{
                       M.error(error.message);
                     }
                   }
+                  dispatch(setProcessSending({
+                    brocasting: processStatus.success,
+                    packing: processStatus.failure,
+                    finalizing: processStatus.default,
+                    checkTx: tx
+                  }));
                 }else if (data.event.method === 'ExtrinsicSuccess') {
                   M.success('Successfully');
-                }
+                  dispatch(setProcessSending({
+                    brocasting: processStatus.success,
+                    packing: processStatus.success,
+                    finalizing: processStatus.loading,
+                    checkTx: tx
+                  }));
+                  //十分钟后   finalizing失败处理 
+                  dispatch(gSetTimeOut(()=>{
+                    console.log("asdfasdf")
+                    dispatch(setProcessSending({
+                      brocasting: processStatus.success,
+                      packing: processStatus.success,
+                      finalizing: processStatus.failure,
+                      checkTx: tx 
+                    }));
+                  }, 10*60*1000));
 
+                 
+                } 
             })
+
+            console.log(result.status.isFinalized)
+             if (result.status.isFinalized) {  
+                  dispatch(setProcessSending({
+                    brocasting: processStatus.success,
+                    packing: processStatus.success,
+                    finalizing: processStatus.success,
+                    checkTx: tx
+                  })); 
+                  dispatch(setProcessStaking({
+                    brocasting: processStatus.loading,
+                    packing: processStatus.default,
+                    finalizing: processStatus.default,
+                    checkTx: tx
+                  }));  
+                  gClearTimeOut();  
+
+                  dispatch(bound(address,tx,asInBlock,amount))
+                }
           }else if (result.isError) {
             M.error(result.toHuman());
           } 
@@ -117,9 +197,10 @@ export const  transfer=(amount:string):AppThunk=>async (dispatch, getState)=>{
 
 }
 export const balancesAll=():AppThunk=>async (dispatch, getState)=>{
-  const api=await polkadotServer.createSubstrateApi();
+  const api=await polkadotServer.createPolkadotApi();
   const address=getState().rDOTModule.dotAccount.address; 
   const result =await api.derive.balances.all(address);
+  console.log(result,"======balancesAllbalancesAll")
   if (result) {  
    const transferrableAmount = NumberUtil.fisAmountToHuman(result.availableBalance); 
    const transferrableAmountShow = NumberUtil.handleFisAmountToFixed(transferrableAmount);
@@ -127,13 +208,34 @@ export const balancesAll=():AppThunk=>async (dispatch, getState)=>{
   }
 }
 
-export const rTokenRate=():AppThunk=>async (dispatch,getState)=>{
-  const api=await polkadotServer.createSubstrateApi();
-  const result = await api.query.rTokenRate.rate(1);   //1代表DOT    0代表FIS
-  const ratio = NumberUtil.fisAmountToHuman(result.toJSON());
-  dispatch(setRatio(ratio)) 
-}
-
  
+export const stakingSignature=async (address:any,txHash:string)=>{
+  // const stafiApi = await stafi.createStafiApi(); 
+  const injector = await web3FromSource(stafiServer.getPolkadotJsSource());
+  const signRaw = injector?.signer?.signRaw;
+  const { signature } = await signRaw({
+      address:address,
+      data: txHash,
+      type: 'bytes'
+  });
+
+  return signature
+}
+export const bound=(address:string,txhash:string,blockhash: string,amount: string):AppThunk=>async (dispatch, getState)=>{
+  //进入 staking 签名
+  const signature =await stakingSignature(address,txhash);
+  const api = await polkadotServer.createPolkadotApi(); 
+  const validPools=getState().FISModule.validPools;
+  const keyringInstance = keyring.init(Symbol.Fis); 
+  let pubkey = u8aToHex(keyringInstance.decodeAddress(address));
+
+
+  // const pubkey=
+  const result=await api.tx.rTokenSeries.liquidityBond(pubkey, signature, validPools[0].address, blockhash, txhash, NumberUtil.fisAmountToChain(amount), 1)
+
+
+  console.log(result,"==============boundresultresult")
+
+}
 
 export default rDOTClice.reducer;

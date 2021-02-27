@@ -31,7 +31,9 @@ export default function Index(props:Props){
   return <div className="wallet_card">
       <div>
         <label className="title">{props.title}</label> 
-        {props.children}
+        <div className="wallet_card_content">
+        {props.children} 
+        </div>
       </div>
       <div className="btn_panel">
          <Button onClick={()=>{

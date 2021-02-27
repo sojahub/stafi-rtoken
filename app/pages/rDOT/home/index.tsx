@@ -10,7 +10,7 @@ export default function Inde(props:any){
  
   const dispatch = useDispatch();  
     return <HomeCard 
-        title={<><label>Liquefy</label> Your Staking DOT</>}
+        title={<><label>Liquify</label> Your Staking DOT</>}
         subTitle={"Staking via StaFi Staking Contract and get rDOT in return"}
         btnText="Connect to Polkadotjs extension"
         btnIcon={rDOT_svg}

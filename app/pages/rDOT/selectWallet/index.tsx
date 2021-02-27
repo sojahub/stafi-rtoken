@@ -27,7 +27,7 @@ export default function Index(props:any){
     }}>
 
     {dotAccounts.map((item:any)=>{
-        return <Item data={item} key={item.address} selected={item.address==dotAccount.address} onClick={()=>{
+        return <Item data={item} type="DOT" key={item.address} selected={item.address==dotAccount.address} onClick={()=>{
             dispatch(setDotAccount(item)) 
         }}/>
     })}  

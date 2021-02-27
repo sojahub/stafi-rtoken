@@ -6,8 +6,8 @@ import { configuredStore } from './store';
 const store = configuredStore();
 export default function Index(){ 
   return   <Provider store={store}>
-          <Fragment>
-              <BrowserRouter> {routesFactory()} </BrowserRouter> 
-          </Fragment>  
-          </Provider>
+    <Fragment>
+        <BrowserRouter> {routesFactory()} </BrowserRouter> 
+    </Fragment>  
+  </Provider>
 }

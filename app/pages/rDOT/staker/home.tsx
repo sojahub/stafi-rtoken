@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react'; 
 import {useDispatch,useSelector} from 'react-redux';
 import Content from '@components/content/stakeContent_DOT'; 
-import {transfer,balancesAll,rTokenRate} from '@features/FISClice'; 
+import {transfer,balancesAll} from '@features/rDOTClice'; 
+import { rTokenRate } from '@features/FISClice';
 import {ratioToAmount} from '@util/common'
 import { message } from 'antd';
 
@@ -17,7 +18,7 @@ export default function Index(props:any){
   },[])
   const {transferrableAmountShow,ratio,stafiStakerApr}=useSelector((state:any)=>{
     return {
-      transferrableAmountShow:"DOT: "+state.FISModule.transferrableAmountShow,
+      transferrableAmountShow:"DOT: "+state.rDOTModule.transferrableAmountShow,
       ratio:state.FISModule.ratio,
       stafiStakerApr:state.globalModule.stafiStakerApr
     }

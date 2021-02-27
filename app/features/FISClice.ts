@@ -145,14 +145,14 @@ export const transfer = (amount: string): AppThunk => async (dispatch, getState)
               }));
 
               //十分钟后   finalizing失败处理 
-              gSetTimeOut(()=>{
+              dispatch(gSetTimeOut(()=>{ 
                 dispatch(setProcessSending({
                   brocasting: processStatus.success,
                   packing: processStatus.success,
                   finalizing: processStatus.failure,
                   checkTx: ''
                 }));
-              }, 10*60*1000);
+              }, 10*60*1000));
             }
           })
       } else if (result.isError) {
@@ -171,10 +171,11 @@ export const transfer = (amount: string): AppThunk => async (dispatch, getState)
           finalizing: processStatus.default,
           checkTx: tx
         })); 
-    
+        console.log("asdfasfasf=====")
+        dispatch(bound(address,tx,asInBlock,amount))
         //finalizing 成功清除定时器
         gClearTimeOut(); 
-        dispatch(bound(address,tx,asInBlock,amount))
+      
       }
 
       
@@ -185,21 +186,19 @@ export const transfer = (amount: string): AppThunk => async (dispatch, getState)
 }
 
 
-export const stakingSignature=async (address:any,txHash:string)=>{
-  // const stafiApi = await stafi.createStafiApi(); 
+export const stakingSignature=async (address:any,txHash:string)=>{ 
   const injector = await web3FromSource(stafi.getPolkadotJsSource());
   const signRaw = injector?.signer?.signRaw;
   const { signature } = await signRaw({
       address:address,
-      data: stringToHex(txHash),
+      data: txHash,
       type: 'bytes'
-  });
-
+  }); 
   return signature
 }
 
 export const bound=(address:string,txhash:string,blockhash: string,amount: string):AppThunk=>async (dispatch, getState)=>{
-  //进入 staking 签名
+  //进入 staking 签名 
   const signature =await stakingSignature(address,txhash);
   const stafiApi = await stafi.createStafiApi(); 
   const validPools=getState().FISModule.validPools;
@@ -207,8 +206,8 @@ export const bound=(address:string,txhash:string,blockhash: string,amount: strin
   let pubkey = u8aToHex(keyringInstance.decodeAddress(address));
 
 
-  // const pubkey=
-  const result=await stafiApi.tx.rTokenSeries.liquidityBond(pubkey, stringToHex(signature), validPools[0], stringToHex(blockhash), stringToHex(txhash), NumberUtil.fisAmountToChain(amount), 1)
+   
+  const result=await stafiApi.tx.rTokenSeries.liquidityBond(pubkey, signature, validPools[0].address, blockhash, txhash, NumberUtil.fisAmountToChain(amount), 1)
 
 
   console.log(result,"==============boundresultresult")

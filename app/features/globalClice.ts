@@ -82,10 +82,7 @@ export const { setAccounts,setProcessSlider,setStafiStakerApr,
  
 export const connectPolkadotjs = (type:Symbol,cb?:Function): AppThunk=>async (dispatch, getState)=>{ 
   const accounts:any =await polkadotServer.connectPolkadotjs()  
-  if(accounts==false ||  accounts && accounts.length==0){
-     message.error("请安装波卡扩展");
-    //  return;
-  }else{
+  if(accounts){
    dispatch(setAccounts(accounts)); 
    const dotKeyringInstance=keyring.init(type);
    const accountsList=accounts.map((element:any)=>{ 
@@ -139,8 +136,8 @@ export const fetchStafiStakerApr=():AppThunk=>async (dispatch, getState)=>{
 
 
 export const gSetTimeOut=(cb:Function,time:number):AppThunk=>(dispatch,getState)=>{
-  var time=setTimeout(cb,100);
-  dispatch(setTimeOutFunc(time)); 
+  const timeoutFunc=setTimeout(cb,time);
+  dispatch(setTimeOutFunc(timeoutFunc)); 
 }
 export const gClearTimeOut=():AppThunk=>(dispatch,getState)=>{
   const time=getState().globalModule.timeOutFunc;

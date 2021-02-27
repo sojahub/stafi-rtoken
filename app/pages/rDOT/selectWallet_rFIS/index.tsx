@@ -30,9 +30,8 @@ export default function Index(props:any){
         }}>
 
     {fisAccounts.map((item:any)=>{
-        return <Item data={item} key={item.address} selected={item.address==fisAccount.address} onClick={()=>{
-            dispatch(setFisAccount(item))
-            // setAddress(item.address);
+        return <Item data={item} key={item.address} type="FIS" selected={item.address==fisAccount.address} onClick={()=>{
+            dispatch(setFisAccount(item)) 
         }}/>
     })}  
     </WalletCard>

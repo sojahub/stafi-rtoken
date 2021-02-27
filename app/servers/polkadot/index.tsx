@@ -20,18 +20,13 @@ export default class ExtensionDapp extends SubstrateKeyring{
     const stafi=new Stafi();
     return web3Enable(stafi.getWeb3EnalbeName()).then(() => web3Accounts());
   } 
-  createSubstrateApi(types?:any) {
+  createPolkadotApi(types?:any) {
     const wsProvider = new WsProvider(config.polkadotChain());
     return ApiPromise.create({
         provider: wsProvider,
         types
     });
-  }
-  async transfer(poolAddress:string,amount:string){
-    //const 
-    const polkadotApi=await this.createSubstrateApi();
-    polkadotApi.tx.balances.transfer(poolAddress, amount.toString()); 
-  }
+  } 
   
 }
 
