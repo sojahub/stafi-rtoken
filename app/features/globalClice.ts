@@ -12,7 +12,7 @@ export enum processStatus {
   default=0,
   success = 1,
   failure = 2,
-  loading=4
+  loading=3
 }
 //0|1|2|4   0无状态  1成功    3失败 4加载
 const polkadotServer=new PolkadotServer();
@@ -60,13 +60,24 @@ const globalClice = createSlice({
       state.stafiStakerApr=payload;
     },
     setProcessSending(state,{payload}){
-      state.process={...process,...{sending:payload}}
+      console.log(payload)
+      state.process.sending={...state.process.sending,...payload}
+      console.log(state.process.sending,"====state.process.sending")
     },
     setProcessStaking(state,{payload}){
-      state.process={...state.process,...{staking:payload}}
+      state.process.staking={...state.process.staking,...payload}
     },
     setProcessMinting(state,{payload}){
-      state.process={...state.process,...{minting:payload}}
+      state.process.minting={...state.process.minting,...payload}
+    },
+    setProcessBrocasting(state,{payload}){
+      if(payload.type=="sending"){
+        state.process.sending={...state.process.sending,...{brocasting:payload.value}}
+      }else if(payload=="staking"){
+        state.process.staking={...state.process.staking,...{brocasting:payload.value}}
+      }else{
+        state.process.minting={...state.process.minting,...{brocasting:payload.value}}
+      }
     },
     setTimeOutFunc(state,{payload}){
       state.timeOutFunc=payload;

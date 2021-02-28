@@ -85,24 +85,19 @@ const queryBalance=async (account:any,dispatch:any,getState:any)=>{
 
 export const  transfer=(amount:string):AppThunk=>async (dispatch, getState)=>{ 
   dispatch(setProcessSlider(true));
+  dispatch(setProcessSending({
+    brocasting: processStatus.loading,  
+  }));
   const validPools=getState().rDOTModule.validPools;
   const address=getState().rDOTModule.dotAccount.address; 
   web3Enable(stafiServer.getWeb3EnalbeName());
   const injector =await web3FromSource(stafiServer.getPolkadotJsSource()) 
 
   const dotApi=await polkadotServer.createPolkadotApi();
-  console.log(address,"Accountaddress")
-  console.log(injector,"injector")
-  console.log(stafiServer.getWeb3EnalbeName(),"stafiServer.getWeb3EnalbeName()")
-  console.log(validPools[0].address,"==========validPools[0].address");
-  console.log(NumberUtil.fisAmountToChain(amount).toString(),"=======NumberUtil.fisAmountToChain(amount)")
+  
   const ex = dotApi.tx.balances.transfer(validPools[0].address,NumberUtil.fisAmountToChain(amount).toString());
-  const tx=ex.hash.toHex().toString();
-  console.log(tx,"=========tx")
-  dispatch(setProcessSending({
-    brocasting: processStatus.loading,
-    packing: processStatus.default,
-    finalizing: processStatus.default,
+  const tx=ex.hash.toHex().toString(); 
+  dispatch(setProcessSending({ 
     checkTx: tx
   }));
   
@@ -113,14 +108,11 @@ export const  transfer=(amount:string):AppThunk=>async (dispatch, getState)=>{
         asInBlock = ""+result.status.asInBlock;
       }catch(e){
         //忽略异常
-      }
-      console.log(asInBlock,"++++++++asInBlock")
+      } 
         if (result.status.isInBlock) {
           dispatch(setProcessSending({
             brocasting: processStatus.success,
-            packing: processStatus.loading,
-            finalizing: processStatus.default,
-            checkTx: tx
+            packing: processStatus.loading,  
           }));
           result.events
             .filter((e:any) => {
@@ -142,52 +134,33 @@ export const  transfer=(amount:string):AppThunk=>async (dispatch, getState)=>{
                       M.error(error.message);
                     }
                   }
-                  dispatch(setProcessSending({
-                    brocasting: processStatus.success,
-                    packing: processStatus.failure,
-                    finalizing: processStatus.default,
+                  dispatch(setProcessSending({ 
+                    packing: processStatus.failure, 
                     checkTx: tx
                   }));
                 }else if (data.event.method === 'ExtrinsicSuccess') {
                   M.success('Successfully');
-                  dispatch(setProcessSending({
-                    brocasting: processStatus.success,
-                    packing: processStatus.success,
-                    finalizing: processStatus.loading,
-                    checkTx: tx
+                  dispatch(setProcessSending({  
+                    packing:processStatus.success,
+                    finalizing: processStatus.loading, 
                   }));
                   //十分钟后   finalizing失败处理 
-                  dispatch(gSetTimeOut(()=>{
-                    console.log("asdfasdf")
-                    dispatch(setProcessSending({
-                      brocasting: processStatus.success,
-                      packing: processStatus.success,
-                      finalizing: processStatus.failure,
-                      checkTx: tx 
+                  dispatch(gSetTimeOut(()=>{ 
+                    dispatch(setProcessSending({ 
+                      finalizing: processStatus.failure, 
                     }));
                   }, 10*60*1000));
-                  asInBlock && dispatch(bound(address,tx,asInBlock,amount,validPools[0].address))
+                  asInBlock && dispatch(bound(address,tx,asInBlock,amount,validPools[0].address,1))
                  
                 } 
             })
 
             console.log(result.status.isFinalized)
              if (result.status.isFinalized) {  
-                  dispatch(setProcessSending({
-                    brocasting: processStatus.success,
-                    packing: processStatus.success,
-                    finalizing: processStatus.success,
-                    checkTx: tx
-                  })); 
-                  dispatch(setProcessStaking({
-                    brocasting: processStatus.loading,
-                    packing: processStatus.default,
-                    finalizing: processStatus.default,
-                    checkTx: tx
+                  dispatch(setProcessSending({ 
+                    finalizing: processStatus.success, 
                   }));  
-                  gClearTimeOut();  
-
-                 
+                  gClearTimeOut();   
                 }
           }else if (result.isError) {
             M.error(result.toHuman());
@@ -201,8 +174,7 @@ export const  transfer=(amount:string):AppThunk=>async (dispatch, getState)=>{
 export const balancesAll=():AppThunk=>async (dispatch, getState)=>{
   const api=await polkadotServer.createPolkadotApi();
   const address=getState().rDOTModule.dotAccount.address; 
-  const result =await api.derive.balances.all(address);
-  console.log(result,"======balancesAllbalancesAll")
+  const result =await api.derive.balances.all(address); 
   if (result) {  
    const transferrableAmount = NumberUtil.fisAmountToHuman(result.availableBalance); 
    const transferrableAmountShow = NumberUtil.handleFisAmountToFixed(transferrableAmount);

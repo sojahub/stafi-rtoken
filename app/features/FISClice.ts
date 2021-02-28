@@ -78,7 +78,9 @@ const queryBalance = async (account: any, dispatch: any, getState: any) => {
 
 export const transfer = (amount: string): AppThunk => async (dispatch, getState) => {
  
-  
+  dispatch(setProcessSending({
+    brocasting: processStatus.loading
+  }));
   dispatch(setProcessSlider(true));
   const validPools = getState().FISModule.validPools;
   const address = getState().FISModule.fisAccount.address;
@@ -87,10 +89,7 @@ export const transfer = (amount: string): AppThunk => async (dispatch, getState)
   const stafiApi = await stafi.createStafiApi(); 
   const ex = stafiApi.tx.balances.transfer(validPools[0].address,NumberUtil.fisAmountToChain(amount));
   const tx=ex.hash.toHex().toString();
-  dispatch(setProcessSending({
-    brocasting: processStatus.loading,
-    packing: processStatus.default,
-    finalizing: processStatus.default,
+  dispatch(setProcessSending({ 
     checkTx: tx
   }));
   ex.signAndSend(address, { signer: injector.signer }, (result: any) => {
@@ -104,9 +103,7 @@ export const transfer = (amount: string): AppThunk => async (dispatch, getState)
       if (result.status.isInBlock) { 
         dispatch(setProcessSending({
           brocasting: processStatus.success,
-          packing: processStatus.loading,
-          finalizing: processStatus.default,
-          checkTx: tx
+          packing: processStatus.loading
         }));
         
         result.events
@@ -129,28 +126,20 @@ export const transfer = (amount: string): AppThunk => async (dispatch, getState)
                   M.error(error.message);
                 }
               } 
-              dispatch(setProcessSending({
-                brocasting: processStatus.success,
-                packing: processStatus.failure,
-                finalizing: processStatus.default,
-                checkTx: tx
+              dispatch(setProcessSending({ 
+                packing: processStatus.failure, 
               }));
             } else if (data.event.method === 'ExtrinsicSuccess') { 
               M.success('Successfully');
-              dispatch(setProcessSending({
-                brocasting: processStatus.success,
+              dispatch(setProcessSending({ 
                 packing: processStatus.success,
-                finalizing: processStatus.loading,
-                checkTx: tx
+                finalizing: processStatus.loading, 
               }));
 
               //十分钟后   finalizing失败处理 
               dispatch(gSetTimeOut(()=>{ 
-                dispatch(setProcessSending({
-                  brocasting: processStatus.success,
-                  packing: processStatus.success,
-                  finalizing: processStatus.failure,
-                  checkTx: ''
+                dispatch(setProcessSending({ 
+                  finalizing: processStatus.failure, 
                 }));
               }, 10*60*1000));
             }
@@ -159,20 +148,10 @@ export const transfer = (amount: string): AppThunk => async (dispatch, getState)
         M.error(result.toHuman());
       } 
       if (result.status.isFinalized) {  
-        dispatch(setProcessSending({
-          brocasting: processStatus.success,
-          packing: processStatus.success,
-          finalizing: processStatus.success,
-          checkTx: tx
-        })); 
-        dispatch(setProcessStaking({
-          brocasting: processStatus.loading,
-          packing: processStatus.default,
-          finalizing: processStatus.default,
-          checkTx: tx
-        })); 
-        console.log("asdfasfasf=====")
-        asInBlock && dispatch(bound(address,tx,asInBlock,amount,validPools[0].address))
+        dispatch(setProcessSending({ 
+          finalizing: processStatus.success
+        }));  
+        asInBlock && dispatch(bound(address,tx,asInBlock,amount,validPools[0].address,0))
         //finalizing 成功清除定时器
         gClearTimeOut(); 
       
@@ -197,35 +176,107 @@ export const stakingSignature=async (address:any,txHash:string)=>{
   return signature
 }
 
-export const bound=(address:string,txhash:string,blockhash: string,amount: string,pooladdress:string):AppThunk=>async (dispatch, getState)=>{
+export const bound=(address:string,txhash:string,blockhash: string,amount: string,pooladdress:string,type:number):AppThunk=>async (dispatch, getState)=>{
   //进入 staking 签名 
+  dispatch(setProcessStaking({
+    brocasting: processStatus.loading, 
+  }));
   const signature =await stakingSignature(address,txhash);
   const stafiApi = await stafi.createStafiApi(); 
   const validPools=getState().FISModule.validPools;
   const keyringInstance = keyring.init(Symbol.Fis); 
   let pubkey = u8aToHex(keyringInstance.decodeAddress(address));
   let poolPubkey = u8aToHex(keyringInstance.decodeAddress(pooladdress));
-
-  console.log(address,"======address")
-   console.log(pubkey,"=========pubkey")
-   console.log(signature,"=========signature")
-   console.log(poolPubkey,"=========poolPubkey") 
-   console.log(blockhash,"=========blockhash")
-   console.log(txhash,"=========txhash")
-   console.log(pooladdress,"=========pooladdress")
-   console.log(NumberUtil.fisAmountToChain(amount),"=========NumberUtil.fisAmountToChain(amount)")
-  const result=await stafiApi.tx.rTokenSeries.liquidityBond(pubkey, 
+  const injector = await web3FromSource(stafi.getPolkadotJsSource())
+   
+  const bondResult=await stafiApi.tx.rTokenSeries.liquidityBond(pubkey, 
     signature,  
     poolPubkey,
     blockhash, 
     txhash, 
-    NumberUtil.fisAmountToChain(amount), 1)
+    NumberUtil.fisAmountToChain(amount), 
+    type);
+  const tx=bondResult.hash.toHex().toString(); 
+  dispatch(setProcessStaking({
+    checkTx: tx
+  }));
+  bondResult.signAndSend(address, { signer: injector.signer },(result:any)=>{
+    try { 
+      // let asInBlock=""
+      // try{
+      //   asInBlock = ""+result.status.asInBlock;
+      // }catch(e){
+      //   //忽略异常
+      // }
+      if (result.status.isInBlock) { 
+        dispatch(setProcessStaking({
+          brocasting: processStatus.success,
+          packing: processStatus.loading, 
+        }));
+        
+        result.events
+          .filter((e: any) => {
+            return e.event.section == "system"
+          }).forEach((data: any) => { 
+            if (data.event.method === 'ExtrinsicFailed') {
+              const [dispatchError] = data.event.data;
+              if (dispatchError.isModule) {
+                try {
+                  const mod = dispatchError.asModule;
+                  const error = data.registry.findMetaError(new Uint8Array([mod.index.toNumber(), mod.error.toNumber()]));
 
+                  let message: string = 'Something is wrong, please try again later!';
+                  if (error.name == '') {
+                    message = '';
+                  }
+                  message && M.info(message);
+                } catch (error) {
+                  M.error(error.message);
+                }
+              } 
+              dispatch(setProcessStaking({ 
+                packing: processStatus.failure, 
+              }));
+            } else if (data.event.method === 'ExtrinsicSuccess') { 
+              M.success('Successfully');
+              dispatch(setProcessStaking({ 
+                packing: processStatus.success,
+                finalizing: processStatus.loading, 
+              }));
 
-  if(result){ 
-    console.log(result.status,"======")
-  }
-  console.log(result,"==============boundresultresult")
+              //十分钟后   finalizing失败处理 
+              dispatch(gSetTimeOut(()=>{ 
+                dispatch(setProcessStaking({ 
+                  finalizing: processStatus.failure, 
+                }));
+              }, 10*60*1000));
+            }
+          })
+      } else if (result.isError) {
+        M.error(result.toHuman());
+      } 
+      if (result.status.isFinalized) {  
+        dispatch(setProcessStaking({ 
+          finalizing: processStatus.success
+        })); 
+        // dispatch(setProcessMinting({
+        //   brocasting: processStatus.loading,
+        //   packing: processStatus.default,
+        //   finalizing: processStatus.default,
+        //   checkTx: tx
+        // }));   
+        //finalizing 成功清除定时器
+        gClearTimeOut(); 
+      
+      }
+
+      
+    } catch (e: any) {
+      M.error(e.message)
+    }
+  })
+
+ 
 
 }
 
