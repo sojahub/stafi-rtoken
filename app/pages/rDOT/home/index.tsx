@@ -1,13 +1,12 @@
-import React, { useEffect } from 'react';
-import {useDispatch,useSelector,DefaultRootState} from 'react-redux'
-import HomeCard from '@components/card/homeCard';
-import rDOT_svg from '@images/rDOT.svg'
-import {connectPolkadotjs} from '@features/globalClice';
-import {Symbol} from '@keyring/defaults'
+import React from 'react';
+import {useDispatch} from 'react-redux'
+import HomeCard from '@components/card/homeCard'; 
+import rDOT_svg from '@images/rDOT.svg' 
 import './index.scss';
 
 export default function Inde(props:any){
  
+  console.log(props)
   const dispatch = useDispatch();  
     return <HomeCard 
         title={<><label>Liquify</label> Your Staking DOT</>}

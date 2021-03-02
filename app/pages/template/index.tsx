@@ -14,7 +14,7 @@ export default function Index(props:any){
   useEffect(()=>{ 
     dispatch(fetchStafiStakerApr()); 
     dispatch(connectPolkadotjs(Symbol.Dot)); 
-    dispatch(connectPolkadotjs(Symbol.Fis)); 
+    dispatch(connectPolkadotjs(Symbol.Fis));  
   },[]) 
   return <div>
     <Header route={props.route}/>

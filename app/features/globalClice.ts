@@ -46,7 +46,7 @@ const globalClice = createSlice({
     process:process,
     timeOutFunc:null,
   },
-  reducers: { 
+  reducers: {  
     setProcessSlider(state,{payload}){
       if(payload==false && state.timeOutFunc){
         clearTimeout(state.timeOutFunc);
@@ -61,30 +61,21 @@ const globalClice = createSlice({
     },
     setProcessSending(state,{payload}){
       console.log(payload)
-      state.process.sending={...state.process.sending,...payload}
-      console.log(state.process.sending,"====state.process.sending")
+      state.process.sending={...state.process.sending,...payload} 
     },
     setProcessStaking(state,{payload}){
       state.process.staking={...state.process.staking,...payload}
     },
     setProcessMinting(state,{payload}){
       state.process.minting={...state.process.minting,...payload}
-    },
-    setProcessBrocasting(state,{payload}){
-      if(payload.type=="sending"){
-        state.process.sending={...state.process.sending,...{brocasting:payload.value}}
-      }else if(payload=="staking"){
-        state.process.staking={...state.process.staking,...{brocasting:payload.value}}
-      }else{
-        state.process.minting={...state.process.minting,...{brocasting:payload.value}}
-      }
-    },
+    }, 
     setTimeOutFunc(state,{payload}){
       state.timeOutFunc=payload;
     }
   },
 });
-export const { setAccounts,setProcessSlider,setStafiStakerApr,
+export const {
+  setAccounts,setProcessSlider,setStafiStakerApr,
   setProcessSending,
   setProcessStaking,
   setProcessMinting,

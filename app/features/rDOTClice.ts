@@ -2,7 +2,8 @@ import { createSlice } from '@reduxjs/toolkit';
 import { AppThunk, RootState } from '../store'; 
 import PolkadotServer from '@servers/polkadot/index';
 import Stafi from '@servers/stafi/index';
-import {message as M} from 'antd';   
+import {message as M} from 'antd';    
+ 
 import {setLocalStorageItem,getLocalStorageItem,Keys} from '@util/common'
  
 
@@ -10,12 +11,8 @@ import { processStatus, setProcessSlider, setProcessSending,setProcessStaking,se
 import {
   web3Enable,
   web3FromSource,
-} from '@polkadot/extension-dapp';
-
-import {stringToHex,u8aToHex} from '@polkadot/util'
-import NumberUtil from '@util/numberUtil'; 
-import keyring from '@servers/index';
-import {Symbol} from '@keyring/defaults';
+} from '@polkadot/extension-dapp'; 
+import NumberUtil from '@util/numberUtil';  
 import {bound} from './FISClice' 
 
 const rDOTClice = createSlice({
@@ -29,8 +26,9 @@ const rDOTClice = createSlice({
     }, {
       address: "15o269Duu45ua5x2UT92C4wBS8LyHpvLFuARJcUECtSe3m95"
     }],
-    transferrableAmountShow:0,
-    ratio:0
+    transferrableAmountShow:"--",
+    ratio:"--",
+    tokenAmount:"--"
   },
   reducers: {  
     setDotAccounts(state,{payload}){
@@ -53,15 +51,16 @@ const rDOTClice = createSlice({
     }, 
     setRatio(state,{payload}){
       state.ratio=payload;
+    },
+    setTokenAmount(state,{payload}){
+      state.tokenAmount=payload
     }
   },
 });
 const polkadotServer=new PolkadotServer();
 const stafiServer=new Stafi();
-export const { setDotAccounts,setDotAccount,setTransferrableAmountShow,setRatio } = rDOTClice.actions;
- 
- 
-
+export const { setDotAccounts,setDotAccount,setTransferrableAmountShow,setRatio,setTokenAmount } = rDOTClice.actions;
+  
 export const createSubstrate = (account:any): AppThunk=>async (dispatch, getState)=>{ 
       queryBalance(account,dispatch,getState)
 }
@@ -83,7 +82,7 @@ const queryBalance=async (account:any,dispatch:any,getState:any)=>{
   dispatch(setDotAccounts(account2));
 }
 
-export const  transfer=(amount:string):AppThunk=>async (dispatch, getState)=>{ 
+export const  transfer=(amount:string,cb?:Function):AppThunk=>async (dispatch, getState)=>{ 
   dispatch(setProcessSlider(true));
   dispatch(setProcessSending({
     brocasting: processStatus.loading,  
@@ -150,7 +149,7 @@ export const  transfer=(amount:string):AppThunk=>async (dispatch, getState)=>{
                       finalizing: processStatus.failure, 
                     }));
                   }, 10*60*1000));
-                  asInBlock && dispatch(bound(address,tx,asInBlock,amount,validPools[0].address,1))
+                  asInBlock && dispatch(bound(address,tx,asInBlock,amount,validPools[0].address,1,cb))
                  
                 } 
             })
@@ -159,7 +158,7 @@ export const  transfer=(amount:string):AppThunk=>async (dispatch, getState)=>{
              if (result.status.isFinalized) {  
                   dispatch(setProcessSending({ 
                     finalizing: processStatus.success, 
-                  }));  
+                  }));   
                   gClearTimeOut();   
                 }
           }else if (result.isError) {
@@ -180,10 +179,18 @@ export const balancesAll=():AppThunk=>async (dispatch, getState)=>{
    const transferrableAmountShow = NumberUtil.handleFisAmountToFixed(transferrableAmount);
    dispatch(setTransferrableAmountShow(transferrableAmountShow));
   }
-}
+} 
 
  
- 
-
-
+export const query_rBalances_account=():AppThunk=>async (dispatch,getState)=>{
+  const address = getState().FISModule.fisAccount.address; // 当前用户的FIS账号
+  const stafiApi = await stafiServer.createStafiApi();
+  const accountData = await  stafiApi.query.rBalances.account(1, address);
+  let data = accountData.toJSON(); 
+  if (data == null) {
+    dispatch(setTokenAmount(NumberUtil.handleFisAmountToFixed(0))) 
+  } else { 
+    dispatch(setTokenAmount(NumberUtil.fisAmountToHuman(data.free))) 
+  } 
+} 
 export default rDOTClice.reducer;

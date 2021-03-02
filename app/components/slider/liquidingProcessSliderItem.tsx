@@ -15,7 +15,7 @@ type Props={
   showButton?:boolean,
   data?:any
 }
-export default function Index(props:Props){
+export default function Index(props:Props){ 
   return <div className="liquidingProcesSliderItem">
     <div className="title">
       <div className="sequence">{props.index}</div> <label>{props.title}</label>

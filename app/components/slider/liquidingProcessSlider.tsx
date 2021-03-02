@@ -32,7 +32,7 @@ export default function Index(props:Props){
     <div className="body">
         <Item index={1} title="Sending" data={process.sending} showButton={true}/>
         <Item index={2} title="Staking"  data={process.staking} showButton={true}/>
-        <Item index={3} title="Minting" showButton={false}/>
+        <Item index={3} title="Minting" data={process.minting} showButton={false}/>
     </div>
   </div>
 }

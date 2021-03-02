@@ -3,8 +3,8 @@ import { createBrowserHistory } from 'history';
 import { createLogger } from 'redux-logger';
 import { ThunkAction } from 'redux-thunk';
 import createRootReducer from './features/rootReducer';
-
-const rootReducer = createRootReducer();
+export const history = createBrowserHistory();
+const rootReducer = createRootReducer(history);
 export type RootState = ReturnType<typeof rootReducer>;
 const middleware = [...getDefaultMiddleware()];
 

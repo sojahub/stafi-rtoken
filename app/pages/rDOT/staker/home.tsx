@@ -14,7 +14,7 @@ export default function Index(props:any){
   const [amount,setAmount]=useState(); 
   useEffect(()=>{
     dispatch(balancesAll());
-    dispatch(rTokenRate())
+    dispatch(rTokenRate(1))
   },[])
   const {transferrableAmountShow,ratio,stafiStakerApr}=useSelector((state:any)=>{
     return {
@@ -31,12 +31,14 @@ export default function Index(props:any){
   onChange={(value:any)=>{   
     setAmount(value); 
   }}
-  onRecovery={()=>{
-    props.history.push("/rDOT/search")
+  onRecovery={()=>{ 
+     props.history.push("/rDOT/search")
   }}
   onStakeClick={()=>{
     if(amount){
-      dispatch(transfer(amount));
+      dispatch(transfer(amount,()=>{
+        props.history.push("/rDOT/staker/info")
+      }));
     }else{
       message.error("请输入金额")
     }

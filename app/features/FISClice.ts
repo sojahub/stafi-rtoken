@@ -1,12 +1,13 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { message as M } from 'antd';
+import {Route} from 'react-router-dom'
 import { AppThunk, RootState } from '../store';
 import stafi from '@util/SubstrateApi';
 import { processStatus, setProcessSlider, setProcessSending,setProcessStaking,setProcessMinting,gSetTimeOut,gClearTimeOut } from './globalClice';
 import {
   web3Enable,
   web3FromSource,
-} from '@polkadot/extension-dapp';
+} from '@polkadot/extension-dapp'; 
 
 import {stringToHex,u8aToHex} from '@polkadot/util'
 import NumberUtil from '@util/numberUtil'; 
@@ -26,8 +27,10 @@ const FISClice = createSlice({
     }, {
       address: "32FDY8ksrm1ihB7NWJ5U5dojPiwoXJtLpajytb6GvkGKURXd"
     }],
-    transferrableAmountShow: 0,
-    ratio: 0
+    transferrableAmountShow: "--",
+    ratio: "--",   //汇率
+    ratioShow: "--",
+    tokenAmount:"--"
   },
   reducers: {
     setFisAccounts(state, { payload }) {
@@ -50,11 +53,22 @@ const FISClice = createSlice({
     },
     setRatio(state, { payload }) {
       state.ratio = payload;
+    },
+    setRatioShow(state,{payload}){
+      state.ratioShow = payload;
+    },
+    setTokenAmount(state,{payload}){
+      state.tokenAmount=payload
     }
   },
 });
 
-export const { setFisAccounts, setFisAccount, setTransferrableAmountShow, setRatio } = FISClice.actions;
+export const { setTokenAmount,
+  setFisAccounts, 
+  setFisAccount, 
+  setTransferrableAmountShow, 
+  setRatio,
+  setRatioShow } = FISClice.actions;
 
 export const createSubstrate = (account: any): AppThunk => async (dispatch, getState) => {
   queryBalance(account, dispatch, getState)
@@ -76,7 +90,7 @@ const queryBalance = async (account: any, dispatch: any, getState: any) => {
   dispatch(setFisAccounts(account2));
 }
 
-export const transfer = (amount: string): AppThunk => async (dispatch, getState) => {
+export const transfer = (amount: string,cb?:Function): AppThunk => async (dispatch, getState) => {
  
   dispatch(setProcessSending({
     brocasting: processStatus.loading
@@ -135,7 +149,7 @@ export const transfer = (amount: string): AppThunk => async (dispatch, getState)
                 packing: processStatus.success,
                 finalizing: processStatus.loading, 
               }));
-
+              asInBlock && dispatch(bound(address,tx,asInBlock,amount,validPools[0].address,1,cb))
               //十分钟后   finalizing失败处理 
               dispatch(gSetTimeOut(()=>{ 
                 dispatch(setProcessSending({ 
@@ -176,14 +190,13 @@ export const stakingSignature=async (address:any,txHash:string)=>{
   return signature
 }
 
-export const bound=(address:string,txhash:string,blockhash: string,amount: string,pooladdress:string,type:number):AppThunk=>async (dispatch, getState)=>{
+export const bound=(address:string,txhash:string,blockhash: string,amount: string,pooladdress:string,type:number,cb?:Function):AppThunk=>async (dispatch, getState)=>{
   //进入 staking 签名 
   dispatch(setProcessStaking({
     brocasting: processStatus.loading, 
   }));
   const signature =await stakingSignature(address,txhash);
-  const stafiApi = await stafi.createStafiApi(); 
-  const validPools=getState().FISModule.validPools;
+  const stafiApi = await stafi.createStafiApi();  
   const keyringInstance = keyring.init(Symbol.Fis); 
   let pubkey = u8aToHex(keyringInstance.decodeAddress(address));
   let poolPubkey = u8aToHex(keyringInstance.decodeAddress(pooladdress));
@@ -243,7 +256,7 @@ export const bound=(address:string,txhash:string,blockhash: string,amount: strin
                 packing: processStatus.success,
                 finalizing: processStatus.loading, 
               }));
-
+              dispatch(getMinting(type,txhash,blockhash,cb));
               //十分钟后   finalizing失败处理 
               dispatch(gSetTimeOut(()=>{ 
                 dispatch(setProcessStaking({ 
@@ -258,26 +271,15 @@ export const bound=(address:string,txhash:string,blockhash: string,amount: strin
       if (result.status.isFinalized) {  
         dispatch(setProcessStaking({ 
           finalizing: processStatus.success
-        })); 
-        // dispatch(setProcessMinting({
-        //   brocasting: processStatus.loading,
-        //   packing: processStatus.default,
-        //   finalizing: processStatus.default,
-        //   checkTx: tx
-        // }));   
+        }));   
         //finalizing 成功清除定时器
         gClearTimeOut(); 
       
-      }
-
-      
+      } 
     } catch (e: any) {
       M.error(e.message)
     }
-  })
-
- 
-
+  }) 
 }
 
 export const balancesAll = (): AppThunk => async (dispatch, getState) => {
@@ -292,11 +294,28 @@ export const balancesAll = (): AppThunk => async (dispatch, getState) => {
 }
 
 
-export const rTokenRate = (): AppThunk => async (dispatch, getState) => {
+export const rTokenRate = (type:number): AppThunk => async (dispatch, getState) => {
   const api = await stafi.createStafiApi();
-  const result = await api.query.rTokenRate.rate(0);   //1代表DOT    0代表FIS
-  const ratio = NumberUtil.fisAmountToHuman(result.toJSON());
+  const result = await api.query.rTokenRate.rate(type);   //1代表DOT    0代表FIS
+  let ratio = NumberUtil.fisAmountToHuman(result.toJSON());
+  if(!ratio){
+    ratio=1;
+  } 
   dispatch(setRatio(ratio))
+  let count = 0;
+  let totalCount = 10;
+  let ratioAmount = 0;
+  let piece = ratio / totalCount;
+  
+  let interval = setInterval(() => {
+    count++; 
+    ratioAmount += piece;
+    if (count == totalCount) {
+      ratioAmount = ratio;
+      window.clearInterval(interval);
+    } 
+    dispatch(setRatioShow(NumberUtil.handleFisAmountRateToFixed(ratioAmount)))
+  }, 100); 
 }
 
 export const getBlock=(blockHash:string,txHash:string):AppThunk=>async (dispatch,getState)=>{
@@ -314,4 +333,41 @@ export const getBlock=(blockHash:string,txHash:string):AppThunk=>async (dispatch
   
 }
 
+
+export const getMinting=(type:number,txHash:string,blockHash:string,cb?:Function):AppThunk=>async (dispatch, getState)=>{
+  dispatch(setProcessMinting({ 
+    brocasting: processStatus.loading
+  }));  
+  let bondSuccessParamArr = [];
+  bondSuccessParamArr.push(type);
+  bondSuccessParamArr.push(blockHash);
+  bondSuccessParamArr.push(txHash);
+  const stafiApi = await stafi.createStafiApi(); 
+  stafiApi.query.rTokenSeries.bondSuccess(bondSuccessParamArr).then((result:any) => { 
+    let isSuccess = result.toJSON();  
+    if(isSuccess){
+      dispatch(setProcessMinting({ 
+        brocasting: processStatus.success
+      }));  
+      cb && cb();
+    }else if(isSuccess===false){
+      dispatch(setProcessMinting({ 
+        brocasting: processStatus.failure
+      })); 
+    }
+    // isSuccess为null，代表结果还未知；isSuccess为false代表失败；isSuccess为true则代表minting成功
+  });
+}
+
+export const query_rBalances_account=():AppThunk=>async (dispatch,getState)=>{
+  const address = getState().FISModule.fisAccount.address; // 当前用户的FIS账号
+  const stafiApi = await stafi.createStafiApi();
+  const accountData = await  stafiApi.query.rBalances.account(0, address);
+  let data = accountData.toJSON(); 
+  if (data == null) {
+    dispatch(setTokenAmount(NumberUtil.handleFisAmountToFixed(0))) 
+  } else { 
+    dispatch(setTokenAmount(NumberUtil.fisAmountToHuman(data.free))) 
+  } 
+} 
 export default FISClice.reducer;

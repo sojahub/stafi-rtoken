@@ -8,7 +8,7 @@ import './index.scss';
 
 export default function Index(props:any){
     const dispatch=useDispatch(); 
-    const {dotAccounts,dotAccount} = useSelector((state:any)=>{
+    const {dotAccounts,dotAccount} = useSelector((state:any)=>{ 
         return {
             dotAccounts:state.rDOTModule.dotAccounts,
             dotAccount:state.rDOTModule.dotAccount || {}
