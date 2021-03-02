@@ -2,7 +2,9 @@
 import NumberUtil from './numberUtil'
 export enum Keys {
   FisAccountKey = 'stafi_fis_account', 
+  FisProcessParameter = 'stafi_fis_processParameter', 
   DotAccountKey = 'stafi_dot_account', 
+  DotProcessParameter = 'stafi_dot_processParameter', 
 }
 
 export const setSessionStorageItem = (key:string, val:any) => {
@@ -28,6 +30,10 @@ export const getLocalStorageItem = (key:string) => {
   }
   return null;
 };
+
+export const removeLocalStorageItem = (key:string) =>{
+  localStorage.removeItem(key); 
+}
 
 export const ratioToAmount=(amount:number,ratio:number)=>{
   if (amount && ratio) {

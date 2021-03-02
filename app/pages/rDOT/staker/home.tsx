@@ -23,11 +23,13 @@ export default function Index(props:any){
       stafiStakerApr:state.globalModule.stafiStakerApr
     }
   })
+
+
   return  <Content
   amount={amount}
   willAmount={ratioToAmount(amount,ratio)}
   transferrableAmountShow={transferrableAmountShow}
-  apr={stafiStakerApr}
+  apr={stafiStakerApr} 
   onChange={(value:any)=>{   
     setAmount(value); 
   }}

@@ -93,7 +93,9 @@ const queryBalance = async (account: any, dispatch: any, getState: any) => {
 export const transfer = (amount: string,cb?:Function): AppThunk => async (dispatch, getState) => {
  
   dispatch(setProcessSending({
-    brocasting: processStatus.loading
+    brocasting: processStatus.loading,
+    packing:processStatus.default,
+    finalizing:processStatus.default
   }));
   dispatch(setProcessSlider(true));
   const validPools = getState().FISModule.validPools;
@@ -194,6 +196,8 @@ export const bound=(address:string,txhash:string,blockhash: string,amount: strin
   //进入 staking 签名 
   dispatch(setProcessStaking({
     brocasting: processStatus.loading, 
+    packing:processStatus.default,
+    finalizing:processStatus.default
   }));
   const signature =await stakingSignature(address,txhash);
   const stafiApi = await stafi.createStafiApi();  

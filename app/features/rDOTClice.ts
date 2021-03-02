@@ -4,7 +4,7 @@ import PolkadotServer from '@servers/polkadot/index';
 import Stafi from '@servers/stafi/index';
 import {message as M} from 'antd';    
  
-import {setLocalStorageItem,getLocalStorageItem,Keys} from '@util/common'
+import {setLocalStorageItem,getLocalStorageItem,removeLocalStorageItem,Keys} from '@util/common'
  
 
 import { processStatus, setProcessSlider, setProcessSending,setProcessStaking,setProcessMinting,gSetTimeOut,gClearTimeOut } from './globalClice';
@@ -21,14 +21,14 @@ const rDOTClice = createSlice({
     dotAccounts:[], 
     dotAccount:getLocalStorageItem(Keys.DotAccountKey),    //选中的账号 
     validPools:[{
-      address: "15T6mxJVnJTUoSQZdCXNeKCNTLDMg2jXQ5rSjcEbQ37c5xhg"
-
+      address: "15T6mxJVnJTUoSQZdCXNeKCNTLDMg2jXQ5rSjcEbQ37c5xhg" 
     }, {
       address: "15o269Duu45ua5x2UT92C4wBS8LyHpvLFuARJcUECtSe3m95"
     }],
     transferrableAmountShow:"--",
     ratio:"--",
-    tokenAmount:"--"
+    tokenAmount:"--",
+    processParameter:getLocalStorageItem(Keys.DotProcessParameter),      //process参数
   },
   reducers: {  
     setDotAccounts(state,{payload}){
@@ -54,12 +54,27 @@ const rDOTClice = createSlice({
     },
     setTokenAmount(state,{payload}){
       state.tokenAmount=payload
+    },
+    setProcessParameter(state,{payload}){
+      if(payload==null){
+        removeLocalStorageItem(Keys.DotProcessParameter)
+        state.processParameter=payload 
+      }else{
+        let param = {...state.processParameter,...payload}
+        setLocalStorageItem(Keys.DotProcessParameter,param),
+        state.processParameter=param;
+      } 
     }
   },
 });
 const polkadotServer=new PolkadotServer();
 const stafiServer=new Stafi();
-export const { setDotAccounts,setDotAccount,setTransferrableAmountShow,setRatio,setTokenAmount } = rDOTClice.actions;
+export const { setDotAccounts,
+  setDotAccount,
+  setTransferrableAmountShow,
+  setRatio,
+  setTokenAmount,
+  setProcessParameter } = rDOTClice.actions;
   
 export const createSubstrate = (account:any): AppThunk=>async (dispatch, getState)=>{ 
       queryBalance(account,dispatch,getState)
@@ -85,7 +100,9 @@ const queryBalance=async (account:any,dispatch:any,getState:any)=>{
 export const  transfer=(amount:string,cb?:Function):AppThunk=>async (dispatch, getState)=>{ 
   dispatch(setProcessSlider(true));
   dispatch(setProcessSending({
-    brocasting: processStatus.loading,  
+    brocasting: processStatus.loading, 
+    packing:processStatus.default,
+    finalizing:processStatus.default 
   }));
   const validPools=getState().rDOTModule.validPools;
   const address=getState().rDOTModule.dotAccount.address; 
@@ -96,10 +113,12 @@ export const  transfer=(amount:string,cb?:Function):AppThunk=>async (dispatch, g
   
   const ex = dotApi.tx.balances.transfer(validPools[0].address,NumberUtil.fisAmountToChain(amount).toString());
   const tx=ex.hash.toHex().toString(); 
+
+  
   dispatch(setProcessSending({ 
     checkTx: tx
   }));
-  
+
   ex.signAndSend(address, { signer: injector.signer }, (result:any)=>{ 
     try{  
       let asInBlock=""
@@ -108,6 +127,15 @@ export const  transfer=(amount:string,cb?:Function):AppThunk=>async (dispatch, g
       }catch(e){
         //忽略异常
       } 
+      if(asInBlock){
+        dispatch(setProcessParameter({sending:{
+          amount:amount,
+          txHash:tx,
+          blockHash:asInBlock,
+          address
+        }}))
+      }
+      
         if (result.status.isInBlock) {
           dispatch(setProcessSending({
             brocasting: processStatus.success,
@@ -149,6 +177,15 @@ export const  transfer=(amount:string,cb?:Function):AppThunk=>async (dispatch, g
                       finalizing: processStatus.failure, 
                     }));
                   }, 10*60*1000));
+
+                  dispatch(setProcessParameter({staking:{
+                    amount:amount,
+                    txHash:tx,
+                    blockHash:asInBlock,
+                    address,
+                    type:1,
+                    poolAddress:validPools[0].address
+                  }}))
                   asInBlock && dispatch(bound(address,tx,asInBlock,amount,validPools[0].address,1,cb))
                  
                 } 
@@ -193,4 +230,28 @@ export const query_rBalances_account=():AppThunk=>async (dispatch,getState)=>{
     dispatch(setTokenAmount(NumberUtil.fisAmountToHuman(data.free))) 
   } 
 } 
+
+export const reSending=(cb?:Function):AppThunk=>async (dispatch,getState)=>{ 
+  const processParameter=getState().rDOTModule.processParameter
+  if(processParameter){ 
+    dispatch(transfer(processParameter.sending.amount,cb));
+  }
+}
+
+export const reStaking=(cb?:Function):AppThunk=>async (dispatch,getState)=>{ 
+  const processParameter=getState().rDOTModule.processParameter
+  if(processParameter){
+  const  staking= processParameter.staking
+  // const callBack= processParameter.cb;
+  processParameter && dispatch(bound(staking.address,
+    staking.txHash,
+    staking.blockHash,
+    staking.amount,
+    staking.poolAddress,
+    staking.type,
+    cb
+    ));
+  }
+ 
+}
 export default rDOTClice.reducer;

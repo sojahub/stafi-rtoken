@@ -43,7 +43,7 @@ const globalClice = createSlice({
     processSlider:false,
     accounts:[],
     stafiStakerApr:'',
-    process:process,
+    process:process,  
     timeOutFunc:null,
   },
   reducers: {  

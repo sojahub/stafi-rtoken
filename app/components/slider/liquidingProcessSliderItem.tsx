@@ -13,7 +13,8 @@ type Props={
   title:string,
   failure?:boolean,
   showButton?:boolean,
-  data?:any
+  data?:any,
+  onClick?:Function
 }
 export default function Index(props:Props){ 
   return <div className="liquidingProcesSliderItem">
@@ -44,9 +45,11 @@ export default function Index(props:Props){
       <label>Check Tx <label className="address">{StringUtil.replacePkh(props.data.checkTx,6,60)}</label></label> 
     </div>}
 
-    {(props.data && (props.data.brocasting==processStatus.failure || props.data.packing==processStatus.failure || props.data.finalizing==processStatus.failure)) && <div className="item failure">
+    {(props.data && (props.data.brocasting==processStatus.failure || props.data.packing==processStatus.failure)) && <div className="item failure">
         <label>{props.title} is fail</label> 
-        {props.showButton && <Button btnType="square" size="small">Re-{props.title}</Button>}
+        {props.showButton && <Button btnType="square" size="small" onClick={()=>{
+          props.onClick && props.onClick();
+        }}>Re-{props.title}</Button>}
     </div>}
   </div>
 }
