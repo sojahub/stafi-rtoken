@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="44px" height="44px" viewBox="0 0 44 44" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 48.1 (47250) - http://www.bohemiancoding.com/sketch -->
+    <title>Group 3</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <filter x="-19.4%" y="-13.9%" width="138.9%" height="138.9%" filterUnits="objectBoundingBox" id="filter-1">
+            <feOffset dx="0" dy="2" in="SourceAlpha" result="shadowOffsetOuter1"></feOffset>
+            <feGaussianBlur stdDeviation="2" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur>
+            <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.5 0" type="matrix" in="shadowBlurOuter1" result="shadowMatrixOuter1"></feColorMatrix>
+            <feMerge>
+                <feMergeNode in="shadowMatrixOuter1"></feMergeNode>
+                <feMergeNode in="SourceGraphic"></feMergeNode>
+            </feMerge>
+        </filter>
+    </defs>
+    <g id="Stafi-Product-1-Copy-21" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" transform="translate(-477.000000, -441.000000)">
+        <g id="Group-3" filter="url(#filter-1)" transform="translate(481.000000, 443.000000)">
+            <path d="M18,36 C27.9411255,36 36,27.9411255 36,18 C36,15.3054589 33.2,12.5054589 27.6,9.6 C25.1328759,3.2 21.9328759,0 18,0 C8.0588745,0 0,8.0588745 0,18 C0,27.9411255 8.0588745,36 18,36 Z" id="Oval-2" fill="#00F3AB"></path>
+            <g id="Group-2" transform="translate(19.200000, 19.200000) rotate(-135.000000) translate(-19.200000, -19.200000) translate(12.000000, 7.200000)" fill="#23292F">
+                <rect id="Rectangle-5" x="4.8" y="0" width="4.8" height="15.6"></rect>
+                <polygon id="Triangle-Copy" points="0 13.2 14.4 13.2 7.2 22.8"></polygon>
+            </g>
+        </g>
+    </g>
+</svg>

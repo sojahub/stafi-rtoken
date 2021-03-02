@@ -1,16 +1,19 @@
-import React from 'react'; 
+import React, { useState } from 'react'; 
 import LeftContent from './leftContent'  
 import rDOT_stafi_svg from '@images/rDOT_stafi.svg'
-import selected_rDOT_svg from '@images/selected_rDOT.svg'
+import rDOT_DOT_svg from '@images/rDOT_DOT.svg'
 import Button from '../button/button'
-import NumberUtil from '@util/numberUtil'
+import NumberUtil from '@util/numberUtil';
+import Modal from '../modal/swapModal' 
 type Props={
      onRdeemClick?:Function,
      ratio?:any,
      tokenAmount?:any
-     ratioShow?:any
+     ratioShow?:any,
+     onStakeClick?:any
 }
 export default function Index(props:Props){
+  const [visibleModal,setVisibleModal]=useState(false);
     return <LeftContent className="stafi_stake_info_context">
       <div className="item">
           <div className="title">
@@ -22,7 +25,9 @@ export default function Index(props:Props){
               <Button size="small" btnType="ellipse" onClick={()=>{
                   props.onRdeemClick && props.onRdeemClick();
               }}>redeem</Button>
-              <Button size="small" btnType="ellipse">Stake</Button>
+              <Button onClick={()=>{
+                setVisibleModal(true);
+              }} size="small" btnType="ellipse">Trade</Button>
             </div>
           </div>
           <div className="describe">
@@ -31,19 +36,24 @@ export default function Index(props:Props){
       </div>
       <div  className="item">
           <div className="title">
-            <img src={selected_rDOT_svg} />rDOT / DOT
+            <img src={rDOT_DOT_svg} />rDOT / DOT
           </div>
           <div className="content">
             <div>
               {props.ratioShow}
             </div>
             <div className="btns"> 
-              <Button size="small" btnType="ellipse">Stake</Button>
+              <Button onClick={()=>{
+                 props.onStakeClick && props.onStakeClick()
+              }} size="small" btnType="ellipse">Stake</Button>
             </div>
           </div>
           <div className="describe">
               update every 8 hours
           </div>
       </div>
+      <Modal visible={visibleModal} onCancel={()=>{
+        setVisibleModal(false)
+      }}/>
     </LeftContent>
 }

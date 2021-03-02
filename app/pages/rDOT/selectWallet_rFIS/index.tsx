@@ -25,7 +25,7 @@ export default function Index(props:any){
             if(fisAccount.address){
                 props.history.push("/rDOT/type");
             }else{
-                message.error("请选择FIS钱包");
+                message.error("Please select the FIS wallet");
             }
         }}>
 

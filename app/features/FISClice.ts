@@ -1,9 +1,11 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { message as M } from 'antd';
+import { Button, message as M, message } from 'antd';
 import {Route} from 'react-router-dom'
 import { AppThunk, RootState } from '../store';
 import stafi from '@util/SubstrateApi';
-import { processStatus, setProcessSlider, setProcessSending,setProcessStaking,setProcessMinting,gSetTimeOut,gClearTimeOut } from './globalClice';
+import { processStatus, setProcessSlider, setProcessSending,setProcessStaking,
+  setProcessMinting,gSetTimeOut,gClearTimeOut,
+initProcess,process } from './globalClice';
 import {
   web3Enable,
   web3FromSource,
@@ -322,19 +324,33 @@ export const rTokenRate = (type:number): AppThunk => async (dispatch, getState) 
   }, 100); 
 }
 
-export const getBlock=(blockHash:string,txHash:string):AppThunk=>async (dispatch,getState)=>{
+export const getBlock=(blockHash:string,txHash:string,type:number,cb?:Function):AppThunk=>async (dispatch,getState)=>{
   const api = await stafi.createStafiApi();
+  const address = getState().FISModule.fisAccount.address;
+  const validPools = getState().FISModule.validPools;
   const result = await api.rpc.chain.getBlock(blockHash);
+  let u=false;
   result.block.extrinsics.forEach((ex:any) => {
     if (ex.hash.toHex() == txHash) {
+     
       const { method: { args, method, section } } = ex; 
       if (section == 'balances' && (method == 'transfer' || method == 'transferKeepAlive')) {
+        u=true;
         let amount = args[1].toJSON();
-        console.log(amount,"===========amount")
+        dispatch(setProcessSlider(true));
+        dispatch(initProcess({...process,sending:{
+          packing:processStatus.success,
+          brocasting:processStatus.success,
+          finalizing:processStatus.success,
+        }}))  
+        bound(address,txHash,blockHash,amount,validPools[0].address,type);
       }
     }
   });
-  
+
+  if(!u){
+    message.error("No results were found");
+  }
 }
 
 

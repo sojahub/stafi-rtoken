@@ -10,7 +10,7 @@ import {reStaking,reSending} from '@features/rDOTClice'
 import './liquidingProcessSlider.scss';
 type Props={
   route:any,
-  histroy:any
+  history:any
 }
 export default function Index(props:Props){ 
 
@@ -25,14 +25,14 @@ export default function Index(props:Props){
   const reSendingClick=()=>{
     if(props.route.type=="rDOT"){
       dispatch(reSending((href:any)=>{
-        href && props.histroy.push(href)
+        href && props.history.push(href)
       }));
     }
   }
   const reStakingClick=()=>{
     if(props.route.type=="rDOT"){
       dispatch(reStaking((href:any)=>{
-        href && props.histroy.push(href)
+        href && props.history.push(href)
       }));
     }
   }

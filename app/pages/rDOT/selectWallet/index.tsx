@@ -22,7 +22,7 @@ export default function Index(props:any){
         if(dotAccount.address){
             props.history.push("/rDOT/fiswallet");
         }else{
-            message.error("请选择DOT钱包");
+            message.error("Please select the DOT wallet");
         }
     }}>
 

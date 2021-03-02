@@ -17,10 +17,10 @@ export default function Index(props:any){
     dispatch(connectPolkadotjs(Symbol.Fis));  
   },[]) 
   return <div>
-    <Header route={props.route}/>
+    <Header route={props.route}  history={props.history}/>
     <div className="stafi_layout">
       <Sider route={props.route} histroy={props.histroy}/> 
-      <LiquidingProcesSlider route={props.route}  histroy={props.histroy}/>
+      <LiquidingProcesSlider route={props.route}  history={props.history}/>
       <div className="stafi_container">
          <Content>
            {renderRoutes(props.route.routes)}

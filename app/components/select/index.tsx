@@ -5,7 +5,7 @@ import selectedIcon from '@images/selectedIcon.svg'
 import './index.scss';
 
 export default function Index(props:any){
-  return <Select {...props} className="stafi_select" placeholder="请选择" suffixIcon={
+  return <Select {...props} className="stafi_select" placeholder="Please select" suffixIcon={
     <img src={selectedIcon} className="pec_select_suffixIcon" />
   }>
     {props.children}
@@ -13,7 +13,7 @@ export default function Index(props:any){
 }
 
 // const Index = forwardRef((props: any, ref: any) => {
-//   return (<Select {...props} placeholder="请选择" suffixIcon={
+//   return (<Select {...props} placeholder="Please select" suffixIcon={
 //     <img src={selectedIcon} className="pec_select_suffixIcon" />
 //   }>
 //     {props.children}

@@ -27,6 +27,9 @@ export default function Index(props:any){
   ratio={ratio}
   ratioShow={ratioShow}
   tokenAmount={tokenAmount}
+  onStakeClick={()=>{
+    props.history.push("/rDOT/staker/index")
+  }}
   onRdeemClick={()=>{
     props.history.push("/rDOT/staker/redeem")
   }}></Content>

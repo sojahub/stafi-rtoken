@@ -7,9 +7,10 @@ import Popover from './popover';
 import './index.scss';
 
 type Props={
-    route:any
+    route:any,
+    history:any
 }
-export default function Index(props:any){
+export default function Index(props:Props){
     const account=useSelector((state:any)=>{  
         if(props.route.type=="rDOT"){
            
@@ -35,11 +36,16 @@ export default function Index(props:any){
                 <img src={notice} />
                 </Popover>
             </div> 
-            {account.fisAccount && <div className="header_tool account fis">
+            {account.fisAccount && <div onClick={()=>{
+               
+                props.history.push("/rDOT/fiswallet")
+            }} className="header_tool account fis">
                 <div>{account.fisAccount.balance} FIS</div>
                 <div>{StringUtil.replacePkh(account.fisAccount.address,6,44)}</div>
             </div>}
-            {account.dotAccount && <div className="header_tool account">
+            {account.dotAccount && <div onClick={()=>{
+                 props.history.push("/rDOT/wallet")
+            }} className="header_tool account">
                 <div>{account.dotAccount.balance} DOT</div>
                 <div>{StringUtil.replacePkh(account.dotAccount.address,6,44)}</div>
             </div>} 

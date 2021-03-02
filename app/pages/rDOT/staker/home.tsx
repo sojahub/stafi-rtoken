@@ -42,8 +42,7 @@ export default function Index(props:any){
         props.history.push("/rDOT/staker/info")
       }));
     }else{
-      message.error("请输入金额")
-    }
-  //  props.history.push("/rDOT/staker/info")
+      message.error("Please enter the amount")
+    } 
   }}></Content>
 }

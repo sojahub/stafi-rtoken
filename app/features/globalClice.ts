@@ -16,7 +16,7 @@ export enum processStatus {
 }
 //0|1|2|4   0无状态  1成功    3失败 4加载
 const polkadotServer=new PolkadotServer();
-const process={ 
+export const process={ 
   sending:{
     brocasting:processStatus.default,     // 0|1|2   0无状态  1成功    3失败
     packing:processStatus.default,        // 0|1|2   0无状态  1成功    3失败
@@ -59,6 +59,9 @@ const globalClice = createSlice({
     setStafiStakerApr(state,{payload}){
       state.stafiStakerApr=payload;
     },
+    initProcess(state,{payload}){
+      state.process=payload;
+    },
     setProcessSending(state,{payload}){
       console.log(payload)
       state.process.sending={...state.process.sending,...payload} 
@@ -79,7 +82,8 @@ export const {
   setProcessSending,
   setProcessStaking,
   setProcessMinting,
-  setTimeOutFunc
+  setTimeOutFunc,
+  initProcess
  } = globalClice.actions;
  
 export const connectPolkadotjs = (type:Symbol,cb?:Function): AppThunk=>async (dispatch, getState)=>{ 

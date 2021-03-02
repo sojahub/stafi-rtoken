@@ -10,9 +10,8 @@ import './index.scss';
 export default function Index(props:any){
   const [form] = Form.useForm();
   const dispatch = useDispatch();
-  const onFinish = (values: any) => {
-    console.log(values);
-    dispatch(getBlock(values.blockHash,values.txHash))
+  const onFinish = (values: any) => { 
+    dispatch(getBlock(values.blockHash,values.txHash,1))
     
   };
   return <div className="stafi_search_container">
@@ -42,7 +41,7 @@ export default function Index(props:any){
           <Input placeholder="input placeholder" />
         </Form.Item> 
         <div className="btns">
-          <Button btnType="square" htmlType="submit">Search</Button>
+          <Button btnType="square" htmlType="submit">Proceed</Button>
         </div> 
     </Form>
   </div>

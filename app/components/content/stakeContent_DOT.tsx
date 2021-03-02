@@ -59,7 +59,7 @@ export default function Index(props:Props){
         <div className="btns">
          <A bold={true} onClick={()=>{
             props.onRecovery && props.onRecovery()
-         }}>Recovery</A><Button onClick={()=>{
+         }}>Recovery</A><Button disabled={!props.amount} onClick={()=>{
              props.onStakeClick && props.onStakeClick()
          }}>Stake</Button>
         </div>

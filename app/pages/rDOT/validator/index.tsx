@@ -5,8 +5,9 @@ import Content from './validatorContent';
 import {rDOT_data} from '../systemData';
 export default function Index(props:any){
   console.log(props)
+  
   return <Card>
-      <Slider data={rDOT_data} type={props.route.type}/>
+      <Slider  history={props.history} data={rDOT_data} type={props.route.type}/>
       <Content onRecovery={()=>{
         props.history.push("/rDOT/search")
       }}></Content>
