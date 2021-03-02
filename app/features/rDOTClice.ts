@@ -133,7 +133,8 @@ export const  transfer=(amount:string,cb?:Function):AppThunk=>async (dispatch, g
           txHash:tx,
           blockHash:asInBlock,
           address
-        }}))
+        },
+        href:cb?"/rDOT/wallet":null}))
       }
       
         if (result.status.isInBlock) {
@@ -186,7 +187,10 @@ export const  transfer=(amount:string,cb?:Function):AppThunk=>async (dispatch, g
                     type:1,
                     poolAddress:validPools[0].address
                   }}))
-                  asInBlock && dispatch(bound(address,tx,asInBlock,amount,validPools[0].address,1,cb))
+                  asInBlock && dispatch(bound(address,tx,asInBlock,amount,validPools[0].address,1,()=>{
+                    dispatch(setProcessParameter(null))
+                    cb && cb()
+                  }))
                  
                 } 
             })
@@ -234,7 +238,10 @@ export const query_rBalances_account=():AppThunk=>async (dispatch,getState)=>{
 export const reSending=(cb?:Function):AppThunk=>async (dispatch,getState)=>{ 
   const processParameter=getState().rDOTModule.processParameter
   if(processParameter){ 
-    dispatch(transfer(processParameter.sending.amount,cb));
+    const  href= processParameter.href
+    dispatch(transfer(processParameter.sending.amount,()=>{
+      cb && cb(href)
+    }));
   }
 }
 
@@ -242,14 +249,16 @@ export const reStaking=(cb?:Function):AppThunk=>async (dispatch,getState)=>{
   const processParameter=getState().rDOTModule.processParameter
   if(processParameter){
   const  staking= processParameter.staking
-  // const callBack= processParameter.cb;
+  const  href= processParameter.href 
   processParameter && dispatch(bound(staking.address,
     staking.txHash,
     staking.blockHash,
     staking.amount,
     staking.poolAddress,
     staking.type,
-    cb
+    ()=>{
+      cb && cb(href)
+    }
     ));
   }
  

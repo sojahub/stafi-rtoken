@@ -20,7 +20,7 @@ export default function Index(props:any){
     <Header route={props.route}/>
     <div className="stafi_layout">
       <Sider route={props.route} histroy={props.histroy}/> 
-      <LiquidingProcesSlider route={props.route}/>
+      <LiquidingProcesSlider route={props.route}  histroy={props.histroy}/>
       <div className="stafi_container">
          <Content>
            {renderRoutes(props.route.routes)}
