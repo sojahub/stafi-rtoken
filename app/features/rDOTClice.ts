@@ -2,7 +2,7 @@ import { createSlice } from '@reduxjs/toolkit';
 import { AppThunk, RootState } from '../store'; 
 import PolkadotServer from '@servers/polkadot/index';
 import Stafi from '@servers/stafi/index';
-import {message as M} from 'antd';    
+import {message as M, message} from 'antd';    
  
 import {setLocalStorageItem,getLocalStorageItem,removeLocalStorageItem,Keys} from '@util/common'
  
@@ -194,8 +194,7 @@ export const  transfer=(amount:string,cb?:Function):AppThunk=>async (dispatch, g
                  
                 } 
             })
-
-            console.log(result.status.isFinalized)
+ 
              if (result.status.isFinalized) {  
                   dispatch(setProcessSending({ 
                     finalizing: processStatus.success, 
@@ -262,5 +261,44 @@ export const reStaking=(cb?:Function):AppThunk=>async (dispatch,getState)=>{
     ));
   }
  
+}
+
+
+export const unbond=(amount:string,cb?:Function):AppThunk=>async (dispatch,getState)=>{
+  try{
+    let rSymbol = 1;
+    const recipient=getState().rDOTModule.dotAccount.address;
+    const address=getState().FISModule.fisAccount.address; 
+    let selectedPool =getState().rDOTModule.validPools[0].address;
+    //  this.validPools.some(item => {
+    //  if (item.active >= amount) {
+    //    selectedPool = item.address;
+    //    return true;
+    //  }
+    // });
+    const stafiApi = await stafiServer.createStafiApi();
+    web3Enable(stafiServer.getWeb3EnalbeName());
+    const injector =await web3FromSource(stafiServer.getPolkadotJsSource()) 
+
+    const api=stafiApi.tx.rTokenSeries.liquidityUnbond(rSymbol, selectedPool, NumberUtil.fisAmountToChain(amount).toString(), recipient);
+
+    api.signAndSend(address, { signer: injector.signer }, (result:any) => {
+ 
+      if (result.status.isInBlock){
+        result.events
+        .filter((e:any) => {
+          return e.event.section=="system"
+        }).forEach((data:any) => {  
+          if (data.event.method === 'ExtrinsicSuccess') { 
+            message.success("Unbond successfully, you can withdraw your unbonded DOT 29 days later.")
+          }else if(data.event.method === 'ExtrinsicFailed'){
+            message.error("Unbond failure")
+          }
+        }) 
+      }
+    });
+  }catch(e:any){
+    message.error("Unbond failure")
+  }
 }
 export default rDOTClice.reducer;

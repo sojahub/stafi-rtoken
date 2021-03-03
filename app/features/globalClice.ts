@@ -62,8 +62,7 @@ const globalClice = createSlice({
     initProcess(state,{payload}){
       state.process=payload;
     },
-    setProcessSending(state,{payload}){
-      console.log(payload)
+    setProcessSending(state,{payload}){ 
       state.process.sending={...state.process.sending,...payload} 
     },
     setProcessStaking(state,{payload}){
@@ -129,15 +128,17 @@ const clice=(symbol: string)=>{
   
 }
 
-export const fetchStafiStakerApr=():AppThunk=>async (dispatch, getState)=>{
-  Rpc.fetchStafiStakerApr({}).then(result => {
-    if (result.status == '80000') {
-      if (result.data && result.data.apr) {
-        const apr = result.data.apr + '%';
-        dispatch(setStafiStakerApr(apr))
-      }
-    } 
-  });
+export const fetchStafiStakerApr=(cb?:Function):AppThunk=>async (dispatch, getState)=>{
+  const result= await Rpc.fetchStafiStakerApr({});
+  if (result.status == '80000') {
+    if (result.data && result.data.apr) {
+      const apr = result.data.apr + '%';
+      dispatch(setStafiStakerApr(apr))
+      await dispatch(connectPolkadotjs(Symbol.Dot)); 
+      await dispatch(connectPolkadotjs(Symbol.Fis)); 
+      cb && cb();
+    }
+  } 
 }
 
 

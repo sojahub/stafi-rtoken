@@ -9,8 +9,7 @@ import { message } from 'antd';
 export default function Index(props:any){
 
  const dispatch=useDispatch();
-
-  console.log(props)
+ 
   const [amount,setAmount]=useState(); 
   useEffect(()=>{
     dispatch(balancesAll());

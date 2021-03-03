@@ -1,11 +1,14 @@
 import React from 'react';
-import {useSelector} from 'react-redux';
+import {useSelector,useDispatch} from 'react-redux';
 import {Redirect} from 'react-router'
 import HomeCard from '@components/card/homeCard'; 
-import rDOT_svg from '@images/rDOT.svg' 
+import rDOT_svg from '@images/rDOT.svg'  
+import {Symbol} from '@keyring/defaults'
+import {fetchStafiStakerApr,connectPolkadotjs} from '@features/globalClice'
 import './index.scss';
 
 export default function Inde(props:any){
+  const dispatch = useDispatch();
   const hasAcount=useSelector((state:any)=>{
     if(state.rDOTModule.dotAccount && state.FISModule.fisAccount){
       return true
@@ -22,7 +25,10 @@ export default function Inde(props:any){
       btnText="Connect to Polkadotjs extension"
       btnIcon={rDOT_svg}
       onBtnClick={()=>{ 
-        props.history.push("/rDOT/type")
+        dispatch(fetchStafiStakerApr(()=>{
+         
+           props.history.push("/rDOT/wallet")
+        }));   
       }}
       onIntroClick={()=>{
 

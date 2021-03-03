@@ -1,6 +1,5 @@
-
 export default {
-  polkadotChain: ()=>{
+  polkadotChain: ()=>{ 
     if(process.env.NODE_ENV=="production"){
       return 'wss://rpc.polkadot.io';
     }else{

@@ -10,7 +10,7 @@ type Props={
   onBtnClick?:Function,
   onIntroClick?:Function
 }
-export default function Index(props:Props){
+export default function Index(props:Props){ 
     return <div className="stafi_home_card">
             <div className="title"> 
               {props.title}
@@ -18,7 +18,7 @@ export default function Index(props:Props){
             <div className="sub_title"> 
               {props.subTitle}
             </div>
-            <Button icon={props.btnIcon || rDOT_svg} onClick={()=>{  
+            <Button icon={props.btnIcon || rDOT_svg} onClick={()=>{   
               props.onBtnClick && props.onBtnClick();
             }}>
             {props.btnText}

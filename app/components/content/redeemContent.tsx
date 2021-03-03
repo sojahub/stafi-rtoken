@@ -6,7 +6,9 @@ import rDOT_stafi_svg from '@images/rDOT_stafi.svg'
 import selected_rDOT_svg from '@images/selected_rDOT.svg'
 import Button from '../button/button'
 type Props={
-     onRdeemClick?:Function
+     onRdeemClick?:Function,
+     amount?:string,
+     onAmountChange?:Function
 }
 export default function Index(props:Props){
     return <LeftContent className="stafi_stake_redeem_context"> 
@@ -17,13 +19,17 @@ export default function Index(props:Props){
                 1. Unbond DOT
              </div>
          <div className="input_panel"> 
-            <Input placeholder="DOT AMOUNT"   icon={rDOT}/>
+            <Input placeholder="DOT AMOUNT" value={props.amount}  onChange={(e:string)=>{
+                props.onAmountChange && props.onAmountChange(e);
+            }}  icon={rDOT}/>
             <div className="balance">
                 rDOT balance 233.424 
              </div>
          </div>
          <div className="btns">
-           <Button size="small" btnType="ellipse">Unbond</Button> Unbond will take 28 days
+           <Button disabled={!props.amount} size="small" btnType="ellipse" onClick={()=>{
+               props.onRdeemClick && props.onRdeemClick();
+           }}>Unbond</Button> Unbond will take 28 days
          </div>
          <div className="subTitle">
          2. Withdraw unbonded DOT

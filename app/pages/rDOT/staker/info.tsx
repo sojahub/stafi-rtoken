@@ -6,8 +6,7 @@ import {query_rBalances_account} from '@features/rDOTClice'
 import Content from '@components/content/stakeInfoContent'; 
 
 
-export default function Index(props:any){
-  console.log(props)
+export default function Index(props:any){ 
 
   const dispatch=useDispatch();
   useEffect(()=>{ 

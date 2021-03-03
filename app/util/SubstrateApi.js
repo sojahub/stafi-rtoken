@@ -103,8 +103,7 @@ export default {
         if (stafiApi) {
             return stafiApi;
         }
-
-        console.log(config.stafiChain(), types)
+ 
         stafiApi = this.createSubstrateApi(config.stafiChain(), types); 
         return stafiApi;
     },

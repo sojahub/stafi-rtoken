@@ -390,4 +390,7 @@ export const query_rBalances_account=():AppThunk=>async (dispatch,getState)=>{
     dispatch(setTokenAmount(NumberUtil.fisAmountToHuman(data.free))) 
   } 
 } 
+
+
+
 export default FISClice.reducer;

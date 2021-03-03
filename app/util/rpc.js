@@ -66,8 +66,7 @@ export default {
           let data = response.data;
           resolve(data);
         })
-        .then(null, function(error) {
-          console.log(error);
+        .then(null, function(error) { 
           let isToast = postData.isLoading === true ? true : false;
           if (isToast) {
             setTimeout(function() {
