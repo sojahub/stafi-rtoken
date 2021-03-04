@@ -2,9 +2,7 @@ import React,{useState,useEffect} from 'react';
 import {useSelector,useDispatch} from 'react-redux'
 import WalletCard from '@components/card/walletCard'
 import Item from '@components/card/walletCardItem';
-import {setFisAccount} from '@features/FISClice';
-import {connectPolkadotjs} from '@features/globalClice';
-import {Symbol} from '@keyring/defaults'
+import {setFisAccount} from '@features/FISClice';  
 import {message} from 'antd';
 import './index.scss';
 
@@ -17,7 +15,11 @@ export default function Index(props:any){
             fisAccount:state.FISModule.fisAccount || {}
         }
     })
-   
+    useEffect(()=>{
+        if(fisAccount && !fisAccount.address && fisAccounts.length>0){
+            dispatch(setFisAccount(fisAccounts[0]));
+        }
+    },[])
     return <WalletCard 
         title="Select a FIS wallet"
         btnText="Confirm"

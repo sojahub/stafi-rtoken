@@ -134,11 +134,15 @@ export const fetchStafiStakerApr=(cb?:Function):AppThunk=>async (dispatch, getSt
     if (result.data && result.data.apr) {
       const apr = result.data.apr + '%';
       dispatch(setStafiStakerApr(apr))
-      await dispatch(connectPolkadotjs(Symbol.Dot)); 
-      await dispatch(connectPolkadotjs(Symbol.Fis)); 
       cb && cb();
     }
   } 
+}
+
+export const connectPolkadot=(cb?:Function):AppThunk=>async (dispatch, getState)=>{
+  await dispatch(connectPolkadotjs(Symbol.Dot));
+  await dispatch(connectPolkadotjs(Symbol.Fis));
+  cb && cb()
 }
 
 

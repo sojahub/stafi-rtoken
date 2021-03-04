@@ -14,10 +14,11 @@ export default function Index(props:any){
   const dispatch = useDispatch();
   
   useEffect(()=>{ 
-      if(getLocalStorageItem(Keys.DotAccountKey) && getLocalStorageItem(Keys.FisAccountKey)){
-          dispatch(connectPolkadotjs(Symbol.Dot)); 
-           dispatch(connectPolkadotjs(Symbol.Fis)); 
-      }
+    dispatch(fetchStafiStakerApr());
+    if(getLocalStorageItem(Keys.DotAccountKey) && getLocalStorageItem(Keys.FisAccountKey)){
+        dispatch(connectPolkadotjs(Symbol.Dot)); 
+        dispatch(connectPolkadotjs(Symbol.Fis)); 
+    }
   },[]) 
   return <div>
     <Header route={props.route}  history={props.history}/>

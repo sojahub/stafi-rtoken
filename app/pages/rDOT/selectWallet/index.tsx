@@ -15,6 +15,11 @@ export default function Index(props:any){
         }
     })
     
+    useEffect(()=>{
+        if(dotAccount && !dotAccount.address && dotAccounts.length>0){
+            dispatch(setDotAccount(dotAccounts[0]));
+        }
+    },[])
     return <WalletCard
     title="Select a DOT wallet"
     btnText="Next"

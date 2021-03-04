@@ -125,7 +125,5 @@ export default class Index extends SubstrateKeyring{
     //const 
     const polkadotApi=await this.createStafiApi();
     polkadotApi.tx.balances.transfer(poolAddress, amount.toString()); 
-  }
-
-   
+  } 
 }
