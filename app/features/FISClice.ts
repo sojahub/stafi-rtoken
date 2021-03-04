@@ -18,6 +18,12 @@ import {Symbol} from '@keyring/defaults';
 
 import { setLocalStorageItem, getLocalStorageItem, Keys } from '@util/common'
 
+
+export const reloadData=():AppThunk=>async (dispatch, getState)=>{
+  const account=getState().FISModule.fisAccount;
+  dispatch(createSubstrate(account));   //更新账户数据
+  dispatch(balancesAll())    //更新Transferable DOT/FIS
+}
 const FISClice = createSlice({
   name: 'FISModule',
   initialState: {
@@ -147,12 +153,14 @@ export const transfer = (amount: string,cb?:Function): AppThunk => async (dispat
               dispatch(setProcessSending({ 
                 packing: processStatus.failure, 
               }));
+              dispatch(reloadData());
             } else if (data.event.method === 'ExtrinsicSuccess') { 
               M.success('Successfully');
               dispatch(setProcessSending({ 
                 packing: processStatus.success,
                 finalizing: processStatus.loading, 
               }));
+              dispatch(reloadData());
               asInBlock && dispatch(bound(address,tx,asInBlock,amount,validPools[0].address,1,cb))
               //十分钟后   finalizing失败处理 
               dispatch(gSetTimeOut(()=>{ 
@@ -256,6 +264,8 @@ export const bound=(address:string,txhash:string,blockhash: string,amount: strin
               dispatch(setProcessStaking({ 
                 packing: processStatus.failure, 
               }));
+              cb && cb("failure");
+              dispatch(reloadData());
             } else if (data.event.method === 'ExtrinsicSuccess') { 
               M.success('Successfully');
               dispatch(setProcessStaking({ 
@@ -269,6 +279,7 @@ export const bound=(address:string,txhash:string,blockhash: string,amount: strin
                   finalizing: processStatus.failure, 
                 }));
               }, 10*60*1000));
+              dispatch(reloadData());
             }
           })
       } else if (result.isError) {
@@ -325,6 +336,9 @@ export const rTokenRate = (type:number): AppThunk => async (dispatch, getState) 
 }
 
 export const getBlock=(blockHash:string,txHash:string,type:number,cb?:Function):AppThunk=>async (dispatch,getState)=>{
+  
+  try{
+  console.log(blockHash,txHash,"====txHash")
   const api = await stafi.createStafiApi();
   const address = getState().FISModule.fisAccount.address;
   const validPools = getState().FISModule.validPools;
@@ -351,6 +365,9 @@ export const getBlock=(blockHash:string,txHash:string,type:number,cb?:Function):
   if(!u){
     message.error("No results were found");
   }
+}catch(e:any){
+  message.error(e.message)
+}
 }
 
 
@@ -391,6 +408,6 @@ export const query_rBalances_account=():AppThunk=>async (dispatch,getState)=>{
   } 
 } 
 
-
+ 
 
 export default FISClice.reducer;

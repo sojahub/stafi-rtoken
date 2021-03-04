@@ -7,7 +7,8 @@ import {renderRoutes}  from 'react-router-config';
 import {getLocalStorageItem,Keys} from '@util/common';
 import LiquidingProcesSlider from '@components/slider/liquidingProcessSlider'; 
 import {Symbol} from '@keyring/defaults'
-import {fetchStafiStakerApr,connectPolkadotjs} from '@features/globalClice'
+import {fetchStafiStakerApr,connectPolkadotjs} from '@features/globalClice';
+import {continueProcess} from '@features/rDOTClice'
 import './index.scss';
 
 export default function Index(props:any){
@@ -16,6 +17,7 @@ export default function Index(props:any){
   useEffect(()=>{ 
     dispatch(fetchStafiStakerApr());
     if(getLocalStorageItem(Keys.DotAccountKey) && getLocalStorageItem(Keys.FisAccountKey)){
+        dispatch(continueProcess());
         dispatch(connectPolkadotjs(Symbol.Dot)); 
         dispatch(connectPolkadotjs(Symbol.Fis)); 
     }

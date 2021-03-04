@@ -9,7 +9,7 @@ import Stafi from '../stafi'
 import { KeypairType } from '@polkadot/util-crypto/types';
 import { SubstrateKeyring } from '@keyring/SubstrateKeyring';
 
- 
+let polkadotApi:any = null
 export default class ExtensionDapp extends SubstrateKeyring{
   constructor(keypairType: KeypairType = 'sr25519') {
     super(keypairType);
@@ -21,11 +21,16 @@ export default class ExtensionDapp extends SubstrateKeyring{
     return web3Enable(stafi.getWeb3EnalbeName()).then(() => web3Accounts());
   } 
   createPolkadotApi(types?:any) {
+    if (polkadotApi) {
+      return polkadotApi;
+    }
+ 
     const wsProvider = new WsProvider(config.polkadotChain());
-    return ApiPromise.create({
+    polkadotApi=  ApiPromise.create({
         provider: wsProvider,
         types
     });
+    return polkadotApi;
   } 
   
 }

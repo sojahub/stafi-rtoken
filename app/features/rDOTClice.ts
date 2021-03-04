@@ -13,7 +13,9 @@ import {
   web3FromSource,
 } from '@polkadot/extension-dapp'; 
 import NumberUtil from '@util/numberUtil';  
-import {bound} from './FISClice' 
+import {bound,getBlock} from './FISClice' 
+
+
 
 const rDOTClice = createSlice({
   name: 'rDOTModule',
@@ -76,6 +78,15 @@ export const { setDotAccounts,
   setTokenAmount,
   setProcessParameter } = rDOTClice.actions;
   
+
+
+
+export const reloadData=():AppThunk=>async (dispatch, getState)=>{
+  const account=getState().rDOTModule.dotAccount;
+  dispatch(createSubstrate(account));   //更新账户数据
+  dispatch(balancesAll())    //更新Transferable DOT/FIS
+   
+}
 export const createSubstrate = (account:any): AppThunk=>async (dispatch, getState)=>{ 
       queryBalance(account,dispatch,getState)
 }
@@ -162,6 +173,7 @@ export const  transfer=(amount:string,cb?:Function):AppThunk=>async (dispatch, g
                       M.error(error.message);
                     }
                   }
+                  dispatch(reloadData());
                   dispatch(setProcessSending({ 
                     packing: processStatus.failure, 
                     checkTx: tx
@@ -178,7 +190,7 @@ export const  transfer=(amount:string,cb?:Function):AppThunk=>async (dispatch, g
                       finalizing: processStatus.failure, 
                     }));
                   }, 10*60*1000));
-
+                  dispatch(reloadData());
                   dispatch(setProcessParameter({staking:{
                     amount:amount,
                     txHash:tx,
@@ -187,9 +199,11 @@ export const  transfer=(amount:string,cb?:Function):AppThunk=>async (dispatch, g
                     type:1,
                     poolAddress:validPools[0].address
                   }}))
-                  asInBlock && dispatch(bound(address,tx,asInBlock,amount,validPools[0].address,1,()=>{
-                    dispatch(setProcessParameter(null))
-                    cb && cb()
+                  asInBlock && dispatch(bound(address,tx,asInBlock,amount,validPools[0].address,1,(r:string)=>{
+                    dispatch(setProcessParameter(null));
+                    if(r!="failure"){
+                      cb && cb();
+                    }
                   }))
                  
                 } 
@@ -270,12 +284,7 @@ export const unbond=(amount:string,cb?:Function):AppThunk=>async (dispatch,getSt
     const recipient=getState().rDOTModule.dotAccount.address;
     const address=getState().FISModule.fisAccount.address; 
     let selectedPool =getState().rDOTModule.validPools[0].address;
-    //  this.validPools.some(item => {
-    //  if (item.active >= amount) {
-    //    selectedPool = item.address;
-    //    return true;
-    //  }
-    // });
+ 
     const stafiApi = await stafiServer.createStafiApi();
     web3Enable(stafiServer.getWeb3EnalbeName());
     const injector =await web3FromSource(stafiServer.getPolkadotJsSource()) 
@@ -290,8 +299,10 @@ export const unbond=(amount:string,cb?:Function):AppThunk=>async (dispatch,getSt
           return e.event.section=="system"
         }).forEach((data:any) => {  
           if (data.event.method === 'ExtrinsicSuccess') { 
+            dispatch(reloadData());
             message.success("Unbond successfully, you can withdraw your unbonded DOT 29 days later.")
           }else if(data.event.method === 'ExtrinsicFailed'){
+            dispatch(reloadData());
             message.error("Unbond failure")
           }
         }) 
@@ -299,6 +310,14 @@ export const unbond=(amount:string,cb?:Function):AppThunk=>async (dispatch,getSt
     });
   }catch(e:any){
     message.error("Unbond failure")
+  }
+}
+
+export const continueProcess=():AppThunk=>async (dispatch,getState)=>{
+  console.log(getState().rDOTModule.processParameter);
+  const processParameter=getState().rDOTModule.processParameter;
+  if(processParameter){
+    dispatch(getBlock(processParameter.sending.blockHash,processParameter.sending.txHash,1))
   }
 }
 export default rDOTClice.reducer;
