@@ -222,7 +222,7 @@ export const bound=(address:string,txhash:string,blockhash: string,amount: numbe
     poolPubkey,
     blockhash, 
     txhash, 
-    amount, 
+    amount.toString(), 
     type);
   const tx=bondResult.hash.toHex().toString(); 
   dispatch(setProcessStaking({
