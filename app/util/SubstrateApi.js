@@ -34,10 +34,10 @@ export default {
             },
             ProposalStatus: {
                 _enum: [
-                  'Active',
-                  'Passed',
-                  'Expired',
-                  'Executed'
+                    'Active',
+                    'Passed',
+                    'Expired',
+                    'Executed'
                 ]
             },
             ProposalVotes: {
@@ -45,7 +45,6 @@ export default {
                 status: 'ProposalStatus',
                 expiry: 'BlockNumber'
             },
-            ChainEra:"u32",
             BondKey: {
                 symbol: 'RSymbol',
                 bond_id: 'H256'
@@ -53,7 +52,6 @@ export default {
             BondRecord: {
                 bonder: 'AccountId',
                 symbol: 'RSymbol',
-                era: 'u32',
                 pubkey: 'Vec<u8>',
                 pool: 'Vec<u8>',
                 blockhash: 'Vec<u8>',
@@ -70,10 +68,16 @@ export default {
                     'AmountUnmatch'
                 ]
             },
+            SigVerifyResult: {
+                _enum: [
+                    'InvalidPubkey',
+                    'Fail',
+                    'Pass'
+                ]
+            },
             LinkChunk: {
-                pool: 'Vec<u8>',
-                bond_value: 'u128',
-                unbond_value: 'u128'
+                bond: 'u128',
+                unbond: 'u128'
             },
             BondUnlockChunk: {
                 value: 'u128',
@@ -81,9 +85,9 @@ export default {
             },
             WithdrawChunk: {
                 who: 'AccountId',
+                pool: 'Vec<u8>',
                 recipient: 'Vec<u8>',
-                value: 'u128',
-                pool: 'Vec<u8>'
+                value: 'u128'
             },
             RproposalStatus: {
                 _enum: [
