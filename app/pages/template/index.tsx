@@ -17,9 +17,9 @@ export default function Index(props:any){
   useEffect(()=>{ 
     dispatch(fetchStafiStakerApr());
     if(getLocalStorageItem(Keys.DotAccountKey) && getLocalStorageItem(Keys.FisAccountKey)){
-        dispatch(continueProcess());
         dispatch(connectPolkadotjs(Symbol.Dot)); 
         dispatch(connectPolkadotjs(Symbol.Fis)); 
+        dispatch(continueProcess());
     }
   },[]) 
   return <div>

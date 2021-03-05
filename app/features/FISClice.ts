@@ -98,7 +98,7 @@ const queryBalance = async (account: any, dispatch: any, getState: any) => {
   dispatch(setFisAccounts(account2));
 }
 
-export const transfer = (amount: string,cb?:Function): AppThunk => async (dispatch, getState) => {
+export const transfer = (amountparam: string,cb?:Function): AppThunk => async (dispatch, getState) => {
  
   dispatch(setProcessSending({
     brocasting: processStatus.loading,
@@ -108,10 +108,11 @@ export const transfer = (amount: string,cb?:Function): AppThunk => async (dispat
   dispatch(setProcessSlider(true));
   const validPools = getState().FISModule.validPools;
   const address = getState().FISModule.fisAccount.address;
+  const amount=NumberUtil.fisAmountToChain(amountparam)
   web3Enable(stafi.getWeb3EnalbeName());
   const injector = await web3FromSource(stafi.getPolkadotJsSource())
   const stafiApi = await stafi.createStafiApi(); 
-  const ex = stafiApi.tx.balances.transfer(validPools[0].address,NumberUtil.fisAmountToChain(amount));
+  const ex = stafiApi.tx.balances.transfer(validPools[0].address,amount);
   const tx=ex.hash.toHex().toString();
   dispatch(setProcessSending({ 
     checkTx: tx
@@ -176,8 +177,7 @@ export const transfer = (amount: string,cb?:Function): AppThunk => async (dispat
       if (result.status.isFinalized) {  
         dispatch(setProcessSending({ 
           finalizing: processStatus.success
-        }));  
-        asInBlock && dispatch(bound(address,tx,asInBlock,amount,validPools[0].address,0))
+        }));   
         //finalizing 成功清除定时器
         gClearTimeOut(); 
       
@@ -202,8 +202,9 @@ export const stakingSignature=async (address:any,txHash:string)=>{
   return signature
 }
 
-export const bound=(address:string,txhash:string,blockhash: string,amount: string,pooladdress:string,type:number,cb?:Function):AppThunk=>async (dispatch, getState)=>{
+export const bound=(address:string,txhash:string,blockhash: string,amount: number,pooladdress:string,type:number,cb?:Function):AppThunk=>async (dispatch, getState)=>{
   //进入 staking 签名 
+  console.log("=====asdfasdf")
   dispatch(setProcessStaking({
     brocasting: processStatus.loading, 
     packing:processStatus.default,
@@ -221,20 +222,14 @@ export const bound=(address:string,txhash:string,blockhash: string,amount: strin
     poolPubkey,
     blockhash, 
     txhash, 
-    NumberUtil.fisAmountToChain(amount), 
+    amount, 
     type);
   const tx=bondResult.hash.toHex().toString(); 
   dispatch(setProcessStaking({
     checkTx: tx
   }));
   bondResult.signAndSend(address, { signer: injector.signer },(result:any)=>{
-    try { 
-      // let asInBlock=""
-      // try{
-      //   asInBlock = ""+result.status.asInBlock;
-      // }catch(e){
-      //   //忽略异常
-      // }
+    try {  
       if (result.status.isInBlock) { 
         dispatch(setProcessStaking({
           brocasting: processStatus.success,

@@ -3,8 +3,10 @@ import NumberUtil from './numberUtil'
 export enum Keys {
   FisAccountKey = 'stafi_fis_account', 
   FisProcessParameter = 'stafi_fis_processParameter', 
+  FisStakeHash='stafi_fis_stakeHash', 
   DotAccountKey = 'stafi_dot_account', 
   DotProcessParameter = 'stafi_dot_processParameter', 
+  DotStakeHash='stafi_dot_stakeHash', 
 }
 
 export const setSessionStorageItem = (key:string, val:any) => {
