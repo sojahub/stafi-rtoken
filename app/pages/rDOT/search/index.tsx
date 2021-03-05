@@ -5,33 +5,32 @@ import Input from '@components/input/index';
 import Button from '@components/button/button';
 import Select,{Option} from '@components/select';
 import leftArrowSvg from '@images/left_arrow.svg';
-import {getBlock} from '@features/FISClice'
+import {getBlock} from '@features/rDOTClice'
 import './index.scss';
 export default function Index(props:any){
   const [form] = Form.useForm();
   const dispatch = useDispatch();
   const onFinish = (values: any) => { 
-    dispatch(getBlock(values.blockHash,values.txHash,1))
-    
+    dispatch(getBlock(values.blockHash,values.txHash)) 
   };
   return <div className="stafi_search_container">
     <img className="back_icon" onClick={()=>{
       props.history.goBack();
     }} src={leftArrowSvg}/>
     <div className="title">
-      Bond Minting Record Search
+      Stake Record
     </div>
     <div className="sub_title">
-    If you did not find your stake record in Notification，you can resubmmit to proceed
+      If you did not find your stake record in Notification，you can resubmmit to proceed
     </div>
     <Form
       layout="vertical"
       form={form}
       onFinish={onFinish}
     > 
-        <Form.Item label="Token" name="token"> 
-          <Select>
-            <Option value="XZT">XZT</Option> 
+        <Form.Item initialValue="1" label="Token" name="token"> 
+          <Select >
+            <Option value="1">DOT</Option> 
           </Select>
         </Form.Item> 
         <Form.Item label="TxHash" name="txHash">

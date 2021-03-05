@@ -7,13 +7,13 @@ import {message as M, message} from 'antd';
 import {setLocalStorageItem,getLocalStorageItem,removeLocalStorageItem,Keys} from '@util/common'
  
 
-import { processStatus, setProcessSlider, setProcessSending,setProcessStaking,setProcessMinting,gSetTimeOut,gClearTimeOut } from './globalClice';
+import { processStatus, setProcessSlider, setProcessSending,setProcessStaking,setProcessMinting,gSetTimeOut,gClearTimeOut,initProcess } from './globalClice';
 import {
   web3Enable,
   web3FromSource,
 } from '@polkadot/extension-dapp'; 
 import NumberUtil from '@util/numberUtil';  
-import {bound,getBlock} from './FISClice' 
+import {bound} from './FISClice' 
 
 
 
@@ -313,11 +313,47 @@ export const unbond=(amount:string,cb?:Function):AppThunk=>async (dispatch,getSt
   }
 }
 
-export const continueProcess=():AppThunk=>async (dispatch,getState)=>{
-  console.log(getState().rDOTModule.processParameter);
+export const continueProcess=():AppThunk=>async (dispatch,getState)=>{ 
   const processParameter=getState().rDOTModule.processParameter;
   if(processParameter){
-    dispatch(getBlock(processParameter.sending.blockHash,processParameter.sending.txHash,1))
+    dispatch(getBlock(processParameter.sending.blockHash,processParameter.sending.txHash))
   }
+}
+
+
+
+export const getBlock=(blockHash:string,txHash:string,cb?:Function):AppThunk=>async (dispatch,getState)=>{
+  
+  try{ 
+  const api = await polkadotServer.createPolkadotApi();
+  const address=getState().rDOTModule.dotAccount.address; 
+  const validPools = getState().rDOTModule.validPools;
+  const result = await api.rpc.chain.getBlock(blockHash);
+  let u=false;
+  result.block.extrinsics.forEach((ex:any) => { 
+    if (ex.hash.toHex() == txHash) { 
+      const { method: { args, method, section } } = ex; 
+      if (section == 'balances' && (method == 'transfer' || method == 'transferKeepAlive')) {
+        u=true;
+        let amount = args[1].toJSON();
+        dispatch(setProcessSlider(true));
+        dispatch(initProcess({...process,sending:{
+          packing:processStatus.success,
+          brocasting:processStatus.success,
+          finalizing:processStatus.success,
+        }}))  
+        bound(address,txHash,blockHash,amount,validPools[0].address,1,()=>{
+          dispatch(setProcessParameter(null));
+        });
+      }
+    }
+  });
+
+  if(!u){
+    message.error("No results were found");
+  }
+}catch(e:any){
+  message.error(e.message)
+}
 }
 export default rDOTClice.reducer;

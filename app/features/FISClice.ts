@@ -337,8 +337,7 @@ export const rTokenRate = (type:number): AppThunk => async (dispatch, getState) 
 
 export const getBlock=(blockHash:string,txHash:string,type:number,cb?:Function):AppThunk=>async (dispatch,getState)=>{
   
-  try{
-  console.log(blockHash,txHash,"====txHash")
+  try{ 
   const api = await stafi.createStafiApi();
   const address = getState().FISModule.fisAccount.address;
   const validPools = getState().FISModule.validPools;

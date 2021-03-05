@@ -24,7 +24,7 @@ export default function Index(props:Props){
             <div className="btns">
               <Button size="small" btnType="ellipse" onClick={()=>{
                   props.onRdeemClick && props.onRdeemClick();
-              }}>redeem</Button>
+              }}>Redeem</Button>
               <Button onClick={()=>{
                 setVisibleModal(true);
               }} size="small" btnType="ellipse">Trade</Button>
