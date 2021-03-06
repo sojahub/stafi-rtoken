@@ -1,6 +1,7 @@
 import { Symbol } from './defaults'
 import { KeyringStruct } from './types';
 import { StafiKeyring } from './StafiKeyring';
+import { PolkadotKeyring } from './PolkadotKeyring';
 
 export class Keyring {
 
@@ -8,6 +9,8 @@ export class Keyring {
     switch (symbol) {
       case Symbol.Fis:
         return new StafiKeyring();
+      case Symbol.Dot:
+        return new PolkadotKeyring();
       default:
         return new StafiKeyring();
     }
