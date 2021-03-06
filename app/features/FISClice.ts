@@ -19,11 +19,7 @@ import {Symbol} from '@keyring/defaults';
 import { setLocalStorageItem, getLocalStorageItem, Keys } from '@util/common'
 
 
-export const reloadData=():AppThunk=>async (dispatch, getState)=>{
-  const account=getState().FISModule.fisAccount;
-  dispatch(createSubstrate(account));   //更新账户数据
-  dispatch(balancesAll())    //更新Transferable DOT/FIS
-}
+
 const FISClice = createSlice({
   name: 'FISModule',
   initialState: {
@@ -78,6 +74,12 @@ export const { setTokenAmount,
   setRatio,
   setRatioShow } = FISClice.actions;
 
+
+export const reloadData=():AppThunk=>async (dispatch, getState)=>{
+    const account=getState().FISModule.fisAccount;
+    dispatch(createSubstrate(account));   //更新账户数据
+    dispatch(balancesAll())    //更新Transferable DOT/FIS
+  }
 export const createSubstrate = (account: any): AppThunk => async (dispatch, getState) => {
   queryBalance(account, dispatch, getState)
 }
@@ -112,7 +114,7 @@ export const transfer = (amountparam: string,cb?:Function): AppThunk => async (d
   web3Enable(stafi.getWeb3EnalbeName());
   const injector = await web3FromSource(stafi.getPolkadotJsSource())
   const stafiApi = await stafi.createStafiApi(); 
-  const ex = stafiApi.tx.balances.transfer(validPools[0].address,amount);
+  const ex = stafiApi.tx.balances.transferKeepAlive(validPools[0].address,amount);
   const tx=ex.hash.toHex().toString();
   dispatch(setProcessSending({ 
     checkTx: tx
@@ -203,8 +205,7 @@ export const stakingSignature=async (address:any,txHash:string)=>{
 }
 
 export const bound=(address:string,txhash:string,blockhash: string,amount: number,pooladdress:string,type:number,cb?:Function):AppThunk=>async (dispatch, getState)=>{
-  //进入 staking 签名 
-  console.log("=====asdfasdf")
+  //进入 staking 签名  
   dispatch(setProcessStaking({
     brocasting: processStatus.loading, 
     packing:processStatus.default,
@@ -217,6 +218,7 @@ export const bound=(address:string,txhash:string,blockhash: string,amount: numbe
   let poolPubkey = u8aToHex(keyringInstance.decodeAddress(pooladdress));
   const injector = await web3FromSource(stafi.getPolkadotJsSource())
    
+  let fisAddress=getState().FISModule.fisAccount.address
   const bondResult=await stafiApi.tx.rTokenSeries.liquidityBond(pubkey, 
     signature,  
     poolPubkey,
@@ -228,7 +230,7 @@ export const bound=(address:string,txhash:string,blockhash: string,amount: numbe
   dispatch(setProcessStaking({
     checkTx: tx
   }));
-  bondResult.signAndSend(address, { signer: injector.signer },(result:any)=>{
+  bondResult.signAndSend(fisAddress, { signer: injector.signer },(result:any)=>{
     try {  
       if (result.status.isInBlock) { 
         dispatch(setProcessStaking({
@@ -403,5 +405,42 @@ export const query_rBalances_account=():AppThunk=>async (dispatch,getState)=>{
 } 
 
  
+ 
+export const fisUnbond=(amount:string,rSymbol:number,recipient:string,selectedPool:string,cb?:Function):AppThunk=>async (dispatch,getState)=>{
+  try{
+    // let rSymbol = 1;
+    // const recipient=getState().rDOTModule.dotAccount.address;
+    const address=getState().FISModule.fisAccount.address; 
+    // let selectedPool =getState().rDOTModule.validPools[0].address;
+ 
+    const stafiApi = await stafi.createStafiApi();
+    web3Enable(stafi.getWeb3EnalbeName());
+    const injector =await web3FromSource(stafi.getPolkadotJsSource()) 
 
+    const api=stafiApi.tx.rTokenSeries.liquidityUnbond(rSymbol, selectedPool, NumberUtil.fisAmountToChain(amount).toString(), recipient);
+
+    api.signAndSend(address, { signer: injector.signer }, (result:any) => {
+ 
+      if (result.status.isInBlock){
+        result.events
+        .filter((e:any) => {
+          return e.event.section=="system"
+        }).forEach((data:any) => {  
+          if (data.event.method === 'ExtrinsicSuccess') { 
+            // dispatch(reloadData());
+            cb && cb("Success");
+            message.success("Unbond successfully, you can withdraw your unbonded DOT 29 days later.")
+          }else if(data.event.method === 'ExtrinsicFailed'){
+            // dispatch(reloadData());
+            cb && cb("Failed");
+            message.error("Unbond failure")
+          }
+        }) 
+      }
+    });
+  }catch(e:any){
+    message.error("Unbond failure")
+  }
+}
+  
 export default FISClice.reducer;

@@ -15,7 +15,7 @@ export default function Index(props:any){
     dispatch(balancesAll());
     dispatch(rTokenRate(1))
   },[])
-  const {transferrableAmountShow,ratio,stafiStakerApr}=useSelector((state:any)=>{
+  const {transferrableAmountShow,ratio,stafiStakerApr}=useSelector((state:any)=>{ 
     return {
       transferrableAmountShow:"DOT: "+state.rDOTModule.transferrableAmountShow,
       ratio:state.FISModule.ratio,

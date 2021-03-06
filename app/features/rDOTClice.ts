@@ -3,7 +3,7 @@ import { AppThunk, RootState } from '../store';
 import PolkadotServer from '@servers/polkadot/index';
 import Stafi from '@servers/stafi/index';
 import {message as M, message} from 'antd';    
- 
+import keyring from '@servers/index';
 import {setLocalStorageItem,getLocalStorageItem,removeLocalStorageItem,Keys} from '@util/common'
  
 
@@ -14,7 +14,7 @@ import {
   web3FromSource,
 } from '@polkadot/extension-dapp'; 
 import NumberUtil from '@util/numberUtil';  
-import {bound} from './FISClice' 
+import {bound,fisUnbond} from './FISClice' 
 
 
 
@@ -23,11 +23,8 @@ const rDOTClice = createSlice({
   initialState: {  
     dotAccounts:[], 
     dotAccount:getLocalStorageItem(Keys.DotAccountKey),    //选中的账号 
-    validPools:[{
-      address: "15T6mxJVnJTUoSQZdCXNeKCNTLDMg2jXQ5rSjcEbQ37c5xhg" 
-    }, {
-      address: "15o269Duu45ua5x2UT92C4wBS8LyHpvLFuARJcUECtSe3m95"
-    }],
+    validPools:[],
+    poolLimit:0,
     transferrableAmountShow:"--",
     ratio:"--",
     tokenAmount:"--",
@@ -78,8 +75,17 @@ const rDOTClice = createSlice({
         setLocalStorageItem(Keys.DotStakeHash,param),
         state.stakeHash=payload;
       } 
+    },
+    setValidPools(state,{payload}){
+      if(payload==null){
+        state.validPools=[]
+      }else{
+        state.validPools.push(payload)
+      }
+    },
+    setPoolLimit(state,{payload}){
+      state.poolLimit=payload
     }
-
   },
 });
 const polkadotServer=new PolkadotServer();
@@ -90,7 +96,9 @@ export const { setDotAccounts,
   setRatio,
   setTokenAmount,
   setProcessParameter,
-  setStakeHash
+  setStakeHash,
+  setValidPools,
+  setPoolLimit
  } = rDOTClice.actions;
   
 
@@ -132,13 +140,19 @@ export const  transfer=(amountparam:string,cb?:Function):AppThunk=>async (dispat
   }));
   const amount=NumberUtil.fisAmountToChain(amountparam)
   const validPools=getState().rDOTModule.validPools;
+  const poolLimit=getState().rDOTModule.poolLimit;
   const address=getState().rDOTModule.dotAccount.address; 
   web3Enable(stafiServer.getWeb3EnalbeName());
   const injector =await web3FromSource(stafiServer.getPolkadotJsSource()) 
 
   const dotApi=await polkadotServer.createPolkadotApi();
   
-  const ex = dotApi.tx.balances.transfer(validPools[0].address,amount.toString());
+  const selectedPool=getPool(amountparam,validPools,poolLimit);
+  if(selectedPool==null){
+    message.error("There is no matching pool, please try again later.");
+    return;
+  }
+  const ex = dotApi.tx.balances.transferKeepAlive(selectedPool,amount.toString());
  
 
   ex.signAndSend(address, { signer: injector.signer }, (result:any)=>{ 
@@ -150,8 +164,7 @@ export const  transfer=(amountparam:string,cb?:Function):AppThunk=>async (dispat
       }catch(e){
         //忽略异常
       } 
-      if(asInBlock){
-        console.log(ex.hash.toHex().toString(),tx,asInBlock,"=======txs,tx,asInBlock")
+      if(asInBlock){ 
         dispatch(setProcessParameter({sending:{
             amount:amount,
             txHash:tx,
@@ -215,9 +228,9 @@ export const  transfer=(amountparam:string,cb?:Function):AppThunk=>async (dispat
                     blockHash:asInBlock,
                     address,
                     type:1,
-                    poolAddress:validPools[0].address
+                    poolAddress:selectedPool
                   }}))
-                  asInBlock && dispatch(bound(address,tx,asInBlock,amount,validPools[0].address,1,(r:string)=>{
+                  asInBlock && dispatch(bound(address,tx,asInBlock,amount,selectedPool,1,(r:string)=>{
                     dispatch(setStakeHash(null)); 
                     if(r!="failure"){
                       cb && cb();
@@ -299,38 +312,13 @@ export const reStaking=(cb?:Function):AppThunk=>async (dispatch,getState)=>{
 
 
 export const unbond=(amount:string,cb?:Function):AppThunk=>async (dispatch,getState)=>{
-  try{
-    let rSymbol = 1;
-    const recipient=getState().rDOTModule.dotAccount.address;
-    const address=getState().FISModule.fisAccount.address; 
-    let selectedPool =getState().rDOTModule.validPools[0].address;
- 
-    const stafiApi = await stafiServer.createStafiApi();
-    web3Enable(stafiServer.getWeb3EnalbeName());
-    const injector =await web3FromSource(stafiServer.getPolkadotJsSource()) 
-
-    const api=stafiApi.tx.rTokenSeries.liquidityUnbond(rSymbol, selectedPool, NumberUtil.fisAmountToChain(amount).toString(), recipient);
-
-    api.signAndSend(address, { signer: injector.signer }, (result:any) => {
- 
-      if (result.status.isInBlock){
-        result.events
-        .filter((e:any) => {
-          return e.event.section=="system"
-        }).forEach((data:any) => {  
-          if (data.event.method === 'ExtrinsicSuccess') { 
-            dispatch(reloadData());
-            message.success("Unbond successfully, you can withdraw your unbonded DOT 29 days later.")
-          }else if(data.event.method === 'ExtrinsicFailed'){
-            dispatch(reloadData());
-            message.error("Unbond failure")
-          }
-        }) 
-      }
-    });
-  }catch(e:any){
-    message.error("Unbond failure")
-  }
+  const recipient=getState().rDOTModule.dotAccount.address;
+  const validPools=getState().rDOTModule.validPools;
+  const poolLimit = getState().rDOTModule.poolLimit;
+  let selectedPool =getPool(amount,validPools,poolLimit);
+  fisUnbond(amount,1,recipient,selectedPool,()=>{
+    dispatch(reloadData());
+  }) 
 }
 
 export const continueProcess=():AppThunk=>async (dispatch,getState)=>{ 
@@ -347,7 +335,8 @@ export const getBlock=(blockHash:string,txHash:string,cb?:Function):AppThunk=>as
   try{ 
     const api = await polkadotServer.createPolkadotApi();
     const address=getState().rDOTModule.dotAccount.address; 
-    const validPools = getState().rDOTModule.validPools;
+    const validPools=getState().rDOTModule.validPools;
+    const poolLimit = getState().rDOTModule.poolLimit;
     const result = await api.rpc.chain.getBlock(blockHash);
     let u=false;
     result.block.extrinsics.forEach((ex:any) => { 
@@ -356,6 +345,9 @@ export const getBlock=(blockHash:string,txHash:string,cb?:Function):AppThunk=>as
         if (section == 'balances' && (method == 'transfer' || method == 'transferKeepAlive')) {
           u=true;
           let amount = args[1].toJSON();
+
+          
+          let selectedPool =getPool(amount,validPools,poolLimit);
           dispatch(initProcess({sending:{
             packing:processStatus.success,
             brocasting:processStatus.success,
@@ -368,9 +360,9 @@ export const getBlock=(blockHash:string,txHash:string,cb?:Function):AppThunk=>as
             blockHash,
             address,
             type:1,
-            poolAddress:validPools[0].address
+            poolAddress:selectedPool
           }}))
-          dispatch(bound(address,txHash,blockHash,amount,validPools[0].address,1,()=>{
+          dispatch(bound(address,txHash,blockHash,amount,selectedPool,1,()=>{
             dispatch(setStakeHash(null));
           }));
         }
@@ -384,4 +376,57 @@ export const getBlock=(blockHash:string,txHash:string,cb?:Function):AppThunk=>as
     message.error(e.message)
   }
 }
+
+
+
+export const getPools=():AppThunk=>async (dispatch, getState)=>{
+
+  const rSymbol=1;
+  const stafiApi = await stafiServer.createStafiApi();
+  const poolsData = await stafiApi.query.rTokenLedger.pools(rSymbol)
+  let pools = poolsData.toJSON();
+  dispatch(setValidPools(null));
+  if (pools && pools.length > 0) {
+    // let count = 0;
+    pools.forEach((poolPubkey:any) => {
+      let arr = [];
+      arr.push(rSymbol);
+      arr.push(poolPubkey);
+      stafiApi.query.rTokenLedger.poolWillBonded(arr).then((bondedData:any) => {
+        // count++;
+        let bonded = bondedData.toJSON();
+        const keyringInstance = keyring.init('dot');
+        let poolAddress = keyringInstance.encodeAddress(poolPubkey);
+        dispatch(setValidPools({
+          address: poolAddress,
+          active: bonded || 0
+        }));
+      }).catch((error:any) => {}); 
+    })
+  };
+
+  dispatch(poolBalanceLimit());
+} 
+
+export const poolBalanceLimit=():AppThunk=>async (dispatch, getState)=>{
+  let rSymbol = 1;
+  const stafiApi = await stafiServer.createStafiApi();
+  stafiApi.query.rTokenSeries.poolBalanceLimit(rSymbol).then((result:any) => { 
+     dispatch(setPoolLimit(result.toJSON()));
+  }); 
+}
+export const getPool=(tokenAmount:any,validPools:any,poolLimit:any)=>{
+  const amount = NumberUtil.fisAmountToChain(tokenAmount.toString());   
+  const data=validPools.find((item:any) => {
+    if (poolLimit==0 || Number(item.active) + amount <= poolLimit) { 
+      return true;
+    }
+  });
+  if(data){
+    return data.address
+  }else{
+    return null;
+  }
+}
+
 export default rDOTClice.reducer;

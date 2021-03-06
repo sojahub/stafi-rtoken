@@ -8,7 +8,7 @@ import {getLocalStorageItem,Keys} from '@util/common';
 import LiquidingProcesSlider from '@components/slider/liquidingProcessSlider'; 
 import {Symbol} from '@keyring/defaults'
 import {fetchStafiStakerApr,connectPolkadotjs} from '@features/globalClice';
-import {continueProcess} from '@features/rDOTClice'
+import {continueProcess,getPools} from '@features/rDOTClice'
 import './index.scss';
 
 export default function Index(props:any){
@@ -20,6 +20,7 @@ export default function Index(props:any){
         dispatch(connectPolkadotjs(Symbol.Dot)); 
         dispatch(connectPolkadotjs(Symbol.Fis)); 
         dispatch(continueProcess());
+        dispatch(getPools());
     }
   },[]) 
   return <div>
