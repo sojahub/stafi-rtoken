@@ -238,17 +238,17 @@ export const  transfer=(amountparam:string,cb?:Function):AppThunk=>async (dispat
                   }))
                  
                 } 
-            })
- 
-             if (result.status.isFinalized) {  
-                  dispatch(setProcessSending({ 
-                    finalizing: processStatus.success, 
-                  }));   
-                  gClearTimeOut();   
-                }
-          }else if (result.isError) {
+            }) 
+          } else if (result.isError) {
             M.error(result.toHuman());
-          } 
+          }
+          if (result.status.isFinalized) {
+            dispatch(setProcessSending({ 
+              finalizing: processStatus.success, 
+            }));   
+            gClearTimeOut();   
+          }
+          
         }catch(e:any){
             M.error(e.message)
         }
