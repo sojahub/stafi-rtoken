@@ -32,7 +32,7 @@ function webpackCommonConfigCreator(options){
             }
         },
         output:{
-            filename:"js/bundle.js",
+            filename:"js/[chunkhash].bundle.js",
             path:path.resolve(__dirname,"../build"),
             publicPath:"/"
         }, 
