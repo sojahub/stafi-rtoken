@@ -147,7 +147,7 @@ export const  transfer=(amountparam:string,cb?:Function):AppThunk=>async (dispat
 
   const dotApi=await polkadotServer.createPolkadotApi();
   
-  const selectedPool=getPool(amountparam,validPools,poolLimit);
+  const selectedPool=getPool(amount,validPools,poolLimit);
   if(selectedPool==null){
     message.error("There is no matching pool, please try again later.");
     return;
@@ -315,7 +315,7 @@ export const unbond=(amount:string,cb?:Function):AppThunk=>async (dispatch,getSt
   const recipient=getState().rDOTModule.dotAccount.address;
   const validPools=getState().rDOTModule.validPools;
   const poolLimit = getState().rDOTModule.poolLimit;
-  let selectedPool =getPool(amount,validPools,poolLimit);
+  let selectedPool =getPool(NumberUtil.fisAmountToChain(amount),validPools,poolLimit);
   fisUnbond(amount,1,recipient,selectedPool,()=>{
     dispatch(reloadData());
   }) 
@@ -347,7 +347,7 @@ export const getBlock=(blockHash:string,txHash:string,cb?:Function):AppThunk=>as
           let amount = args[1].toJSON();
 
           
-          let selectedPool =getPool(amount,validPools,poolLimit);
+          let selectedPool = getPool(amount, validPools, poolLimit);
           dispatch(initProcess({sending:{
             packing:processStatus.success,
             brocasting:processStatus.success,
@@ -416,9 +416,8 @@ export const poolBalanceLimit=():AppThunk=>async (dispatch, getState)=>{
   }); 
 }
 export const getPool=(tokenAmount:any,validPools:any,poolLimit:any)=>{
-  const amount = NumberUtil.fisAmountToChain(tokenAmount.toString());   
   const data=validPools.find((item:any) => {
-    if (poolLimit==0 || Number(item.active) + amount <= poolLimit) { 
+    if (poolLimit==0 || Number(item.active) + tokenAmount <= poolLimit) { 
       return true;
     }
   });
