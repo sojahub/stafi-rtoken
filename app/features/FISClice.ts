@@ -16,7 +16,7 @@ import {
 import { stringToHex, u8aToHex } from '@polkadot/util'
 import NumberUtil from '@util/numberUtil';
 import keyring from '@servers/index';
-import { Symbol } from '@keyring/defaults';
+import { Symbol,rSymbol } from '@keyring/defaults';
 
 import { setLocalStorageItem, getLocalStorageItem, Keys, removeLocalStorageItem } from '@util/common'
 
@@ -226,11 +226,11 @@ export const transfer = (amountparam: string, cb?: Function): AppThunk => async 
                   txHash: tx,
                   blockHash: asInBlock,
                   address,
-                  type: 0,
+                  type: rSymbol.Fis,
                   poolAddress: selectedPool
                 }
               }))
-              asInBlock && dispatch(bound(address, tx, asInBlock, amount, selectedPool, 0, (r: any) => {
+              asInBlock && dispatch(bound(address, tx, asInBlock, amount, selectedPool, rSymbol.Fis, (r: any) => {
                 dispatch(setStakeHash(null));
                 if (r != "failure") {
                   cb && cb();
@@ -441,7 +441,7 @@ export const getBlock = (blockHash: string, txHash: string, cb?: Function): AppT
               txHash,
               blockHash,
               address,
-              type: 0,
+              type: rSymbol.Fis,
               poolAddress: selectedPool
             }
           }))
@@ -487,7 +487,7 @@ export const getMinting = (type: number, txHash: string, blockHash: string, cb?:
 export const query_rBalances_account = (): AppThunk => async (dispatch, getState) => {
   const address = getState().FISModule.fisAccount.address; // 当前用户的FIS账号
   const stafiApi = await stafi.createStafiApi();
-  const accountData = await stafiApi.query.rBalances.account(0, address);
+  const accountData = await stafiApi.query.rBalances.account(rSymbol.Fis, address);
   let data = accountData.toJSON();
   if (data == null) {
     dispatch(setTokenAmount(NumberUtil.handleFisAmountToFixed(0)))
@@ -501,7 +501,7 @@ export const unbond=(amount:string,cb?:Function):AppThunk=>async (dispatch,getSt
   const validPools=getState().FISModule.validPools;
   const poolLimit = getState().FISModule.poolLimit;
   let selectedPool =getPool(amount,validPools,poolLimit);
-  fisUnbond(amount,0,recipient,selectedPool,()=>{
+  fisUnbond(amount,rSymbol.Fis,recipient,selectedPool,()=>{
     dispatch(reloadData());
   }) 
 }
@@ -542,17 +542,15 @@ export const fisUnbond = (amount: string, rSymbol: number, recipient: string, se
 
 
 export const getPools = (): AppThunk => async (dispatch, getState) => {
-
-  const rSymbol = 0;
+ 
   const stafiApi = await stafi.createStafiApi();
   const poolsData = await stafiApi.query.rTokenLedger.pools(rSymbol)
   let pools = poolsData.toJSON();
   dispatch(setValidPools(null));
-  if (pools && pools.length > 0) {
-    // let count = 0;
+  if (pools && pools.length > 0) { 
     pools.forEach((poolPubkey: any) => {
       let arr = [];
-      arr.push(rSymbol);
+      arr.push(rSymbol.Fis);
       arr.push(poolPubkey);
       stafiApi.query.rTokenLedger.poolWillBonded(arr).then((bondedData: any) => {
         // count++;
@@ -571,9 +569,9 @@ export const getPools = (): AppThunk => async (dispatch, getState) => {
 }
 
 export const poolBalanceLimit = (): AppThunk => async (dispatch, getState) => {
-  let rSymbol = 0;
+ 
   const stafiApi = await stafi.createStafiApi();
-  stafiApi.query.rTokenSeries.poolBalanceLimit(rSymbol).then((result: any) => {
+  stafiApi.query.rTokenSeries.poolBalanceLimit(rSymbol.Fis).then((result: any) => {
     dispatch(setPoolLimit(result.toJSON()));
   });
 }

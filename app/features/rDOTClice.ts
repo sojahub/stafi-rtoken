@@ -6,7 +6,7 @@ import { message as M, message } from 'antd';
 import keyring from '@servers/index';
 import { setLocalStorageItem, getLocalStorageItem, removeLocalStorageItem, Keys } from '@util/common'
 
-
+import {rSymbol} from '@keyring/defaults'
 import {
   processStatus, setProcessSlider, setProcessSending,
   setProcessStaking, setProcessMinting, gSetTimeOut, gClearTimeOut, initProcess, process
@@ -31,7 +31,8 @@ const rDOTClice = createSlice({
     ratio: "--",
     tokenAmount: "--",
     processParameter: null,      //process参数
-    stakeHash: getLocalStorageItem(Keys.DotStakeHash)
+    stakeHash: getLocalStorageItem(Keys.DotStakeHash),
+    unbondCommission:"--",
   },
   reducers: {
     setDotAccounts(state, { payload }) {
@@ -87,6 +88,9 @@ const rDOTClice = createSlice({
     },
     setPoolLimit(state, { payload }) {
       state.poolLimit = payload
+    },
+    setUnbondCommission(state,{payload}){
+      state.unbondCommission=payload;
     }
   },
 });
@@ -100,7 +104,8 @@ export const { setDotAccounts,
   setProcessParameter,
   setStakeHash,
   setValidPools,
-  setPoolLimit
+  setPoolLimit,
+  setUnbondCommission
 } = rDOTClice.actions;
 
 
@@ -233,11 +238,11 @@ export const transfer = (amountparam: string, cb?: Function): AppThunk => async 
                   txHash: tx,
                   blockHash: asInBlock,
                   address,
-                  type: 1,
+                  type: rSymbol.Dot,
                   poolAddress: selectedPool
                 }
               }))
-              asInBlock && dispatch(bound(address, tx, asInBlock, amount, selectedPool, 1, (r: string) => {
+              asInBlock && dispatch(bound(address, tx, asInBlock, amount, selectedPool, rSymbol.Dot, (r: string) => {
                 dispatch(setStakeHash(null));
                 if (r != "failure") {
                   cb && cb();
@@ -277,7 +282,7 @@ export const balancesAll = (): AppThunk => async (dispatch, getState) => {
 export const query_rBalances_account = (): AppThunk => async (dispatch, getState) => {
   const address = getState().FISModule.fisAccount.address; // 当前用户的FIS账号
   const stafiApi = await stafiServer.createStafiApi();
-  const accountData = await stafiApi.query.rBalances.account(1, address);
+  const accountData = await stafiApi.query.rBalances.account(rSymbol.Dot, address);
   let data = accountData.toJSON();
   if (data == null) {
     dispatch(setTokenAmount(NumberUtil.handleFisAmountToFixed(0)))
@@ -323,7 +328,7 @@ export const unbond = (amount: string, cb?: Function): AppThunk => async (dispat
   const validPools = getState().rDOTModule.validPools;
   const poolLimit = getState().rDOTModule.poolLimit;
   let selectedPool = getPool(NumberUtil.fisAmountToChain(amount).toString(), validPools, poolLimit);
-  fisUnbond(amount, 1, recipient, selectedPool, () => {
+  fisUnbond(amount, rSymbol.Dot, recipient, selectedPool, () => {
     dispatch(reloadData());
   })
 }
@@ -368,11 +373,11 @@ export const getBlock = (blockHash: string, txHash: string, cb?: Function): AppT
               txHash,
               blockHash,
               address,
-              type: 1,
+              type: rSymbol.Dot,
               poolAddress: selectedPool
             }
           }))
-          dispatch(bound(address, txHash, blockHash, amount, selectedPool, 1, () => {
+          dispatch(bound(address, txHash, blockHash, amount, selectedPool, rSymbol.Dot, () => {
             dispatch(setStakeHash(null));
           }));
         }
@@ -391,7 +396,7 @@ export const getBlock = (blockHash: string, txHash: string, cb?: Function): AppT
 
 export const getPools = (): AppThunk => async (dispatch, getState) => {
 
-  const rSymbol = 1;
+ 
   const stafiApi = await stafiServer.createStafiApi();
   const poolsData = await stafiApi.query.rTokenLedger.pools(rSymbol)
   let pools = poolsData.toJSON();
@@ -400,7 +405,7 @@ export const getPools = (): AppThunk => async (dispatch, getState) => {
     // let count = 0;
     pools.forEach((poolPubkey: any) => {
       let arr = [];
-      arr.push(rSymbol);
+      arr.push(rSymbol.Dot);
       arr.push(poolPubkey);
       stafiApi.query.rTokenLedger.poolWillBonded(arr).then((bondedData: any) => {
         // count++;
@@ -419,9 +424,8 @@ export const getPools = (): AppThunk => async (dispatch, getState) => {
 }
 
 export const poolBalanceLimit = (): AppThunk => async (dispatch, getState) => {
-  let rSymbol = 1;
   const stafiApi = await stafiServer.createStafiApi();
-  stafiApi.query.rTokenSeries.poolBalanceLimit(rSymbol).then((result: any) => {
+  stafiApi.query.rTokenSeries.poolBalanceLimit(rSymbol.Dot).then((result: any) => {
     dispatch(setPoolLimit(result.toJSON()));
   });
 }
@@ -439,4 +443,13 @@ export const getPool = (tokenAmount: any, validPools: any, poolLimit: any) => {
   }
 }
 
+
+export const getUnbondCommission=():AppThunk=>async (dispatch, getState)=>{
+  const stafiApi = await stafiServer.createStafiApi();
+  const result=await stafiApi.query.rTokenSeries.unbondCommission();
+  const unbondCommission = NumberUtil.fisFeeToHuman(result.toJSON());
+  dispatch(setUnbondCommission(unbondCommission));
+    // unbondCommissionShow用于在页面中显示，比如0.2%
+  //const unbondCommissionShow = NumberUtil.fisFeeToFixed(this.unbondCommission) + '%';
+}
 export default rDOTClice.reducer;

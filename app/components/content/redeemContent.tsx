@@ -4,11 +4,14 @@ import Input from '../input/amountInput';
 import rDOT from '@images/selected_rDOT.svg'
 import rDOT_stafi_svg from '@images/rDOT_stafi.svg'
 import selected_rDOT_svg from '@images/selected_rDOT.svg'
+import NumberUtil from '@util/numberUtil'
 import Button from '../button/button'
 type Props={
      onRdeemClick?:Function,
      amount?:string,
-     onAmountChange?:Function
+     onAmountChange?:Function,
+     tokenAmount?:any,
+     unbondCommission?:any
 }
 export default function Index(props:Props){
     return <LeftContent className="stafi_stake_redeem_context"> 
@@ -16,14 +19,17 @@ export default function Index(props:Props){
             Redeem DOT
          </div>
          <div className="subTitle">
-                1. Unbond DOT
+               <div className="label"> 1. Unbond DOT</div>
+                <div className="balance">
+                rDOT balance {(props.tokenAmount=="--")? "--": NumberUtil.handleFisAmountToFixed(props.tokenAmount)}
              </div>
+        </div>
          <div className="input_panel"> 
             <Input placeholder="DOT AMOUNT" value={props.amount}  onChange={(e:string)=>{
                 props.onAmountChange && props.onAmountChange(e);
             }}  icon={rDOT}/>
             <div className="balance">
-                rDOT balance 233.424 
+                You will get {(props.unbondCommission=="--")? "--": `${NumberUtil.handleFisAmountToFixed(props.unbondCommission)} %`} DOT
              </div>
          </div>
          <div className="btns">

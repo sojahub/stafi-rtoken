@@ -10,6 +10,13 @@ enum Symbol {
   Matic = 'matic'
 }
 
+enum rSymbol {
+  Fis = 0, 
+  Dot = 1, 
+  Ksm = 2,
+  
+}
+
 const ACCOUNT_PREFIX = 'account:';
 const MAX_PASS_LEN = 32;
 
@@ -26,6 +33,7 @@ const addressesKey = (symbol: string): string =>
 
 export {
   Symbol,
+  rSymbol,
   accountKey,
   addressesKey,
   MAX_PASS_LEN,

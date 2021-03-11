@@ -3,6 +3,7 @@ import {useSelector,useDispatch} from 'react-redux';
 import NumberUtil from '@util/numberUtil';
 import { rTokenRate } from '@features/FISClice';
 import {query_rBalances_account} from '@features/rDOTClice'
+import {rSymbol} from '@keyring/defaults'
 import Content from '@components/content/stakeInfoContent'; 
 
 
@@ -11,7 +12,7 @@ export default function Index(props:any){
   const dispatch=useDispatch();
   useEffect(()=>{ 
     dispatch(query_rBalances_account())
-    dispatch(rTokenRate(1));
+    dispatch(rTokenRate(rSymbol.Dot));
   },[])
  
 
