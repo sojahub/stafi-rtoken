@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useMemo } from 'react';
+import {useSelector} from 'react-redux';
 import Input from '../input/amountInput';
 import LeftContent from './leftContent'
 import Button from '../button/button'
@@ -7,24 +8,43 @@ import rDOT from '@images/selected_rDOT.svg';
 import add_svg from '@images/add.svg'
 
 import './index.scss';
+import { message } from 'antd';
 type Props={
     onRecovery:Function,
     onStakeClick:Function,
-    transferrableAmountShow:string,
+    unit?:string, 
+    transferrableAmount?:any
     amount?:number,
     onChange?:Function,
     willAmount?:string | 0,
-    apr?:string
+    apr?:string,
+    validPools?:any[]
 }
 export default function Index(props:Props){
+    const {bondSwitch}=useSelector((state:any)=>{  
+        return { 
+          bondSwitch:state.FISModule.bondSwitch
+        }
+      })
+
+      const haswarn=useMemo(()=>{
+        return !bondSwitch && !(props.validPools && props.validPools.length>0)
+      },[props.validPools,bondSwitch])
     return <LeftContent className="stafi_stake_context">
         <label className="title">Stake DOT</label>
-        <div className="input_panel dot_input_panel">
+        {haswarn && <div className="warn">Unable to stake, system is waiting for matching validators</div>}
+        <div className={`input_panel dot_input_panel ${haswarn && 'showWarn'}`}>
             <div className="tip">
-                Transferable {props.transferrableAmountShow}
+                Transferable {props.unit}:{props.transferrableAmount}
             </div>
             <Input placeholder="DOT AMOUNT" value={props.amount} onChange={(e:any)=>{
-                props.onChange && props.onChange(e);
+                if(parseFloat(e)>parseFloat(props.transferrableAmount)){
+                    message.error("The input amount exceeds your transferrable balance.");
+                    props.onChange && props.onChange(undefined);
+                } else{
+                    props.onChange && props.onChange(e);
+                }
+                
             }} unit={"Max"} icon={rDOT}/>
             <div  className="pool">
                 234,234 DOT is staked via rDOT <A>stats</A>

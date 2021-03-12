@@ -34,7 +34,9 @@ const FISClice = createSlice({
     stakeHash: getLocalStorageItem(Keys.FisStakeHash),
     ratio: "--",   //汇率
     ratioShow: "--",
-    tokenAmount: "--"
+    tokenAmount: "--",
+
+    bondSwitch:true
   },
   reducers: {
     setFisAccounts(state, { payload }) {
@@ -94,6 +96,9 @@ const FISClice = createSlice({
         state.processParameter = param;
       }
     },
+    setBondSwitch(state,{payload}){
+      state.bondSwitch=payload
+    }
   },
 });
 
@@ -106,7 +111,8 @@ export const { setTokenAmount,
   setValidPools,
   setPoolLimit,
   setProcessParameter,
-  setStakeHash } = FISClice.actions;
+  setStakeHash,
+  setBondSwitch } = FISClice.actions;
 
 
 export const reloadData = (): AppThunk => async (dispatch, getState) => {
@@ -507,6 +513,7 @@ export const unbond=(amount:string,cb?:Function):AppThunk=>async (dispatch,getSt
 }
 
 export const fisUnbond = (amount: string, rSymbol: number, recipient: string, selectedPool: string, cb?: Function): AppThunk => async (dispatch, getState) => {
+  
   try { 
     const address = getState().FISModule.fisAccount.address; 
     const stafiApi = await stafi.createStafiApi();
@@ -588,4 +595,13 @@ export const getPool = (tokenAmount: any, validPools: any, poolLimit: any) => {
     return null;
   }
 }
+
+
+
+export const bondSwitch=():AppThunk=>async (dispatch, getState)=>{
+  const stafiApi = await stafi.createStafiApi();
+  const result=await stafiApi.query.rTokenSeries.bondSwitch(); 
+  dispatch(setBondSwitch(result.toJSON()))
+}
+
 export default FISClice.reducer;

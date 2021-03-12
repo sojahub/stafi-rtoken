@@ -5,6 +5,8 @@ import {transfer,balancesAll} from '@features/rDOTClice';
 import { rTokenRate } from '@features/FISClice';
 import {ratioToAmount} from '@util/common'
 import { message } from 'antd';
+import NumberUtil from '@util/numberUtil'
+import { parseNumber } from '@util/utils';
 
 export default function Index(props:any){
 
@@ -15,11 +17,14 @@ export default function Index(props:any){
     dispatch(balancesAll());
     dispatch(rTokenRate(1))
   },[])
-  const {transferrableAmountShow,ratio,stafiStakerApr}=useSelector((state:any)=>{ 
+  const {transferrableAmount,ratio,stafiStakerApr,fisCompare,validPools}=useSelector((state:any)=>{ 
+    const fisCompare= state.FISModule.fisAccount.balance<NumberUtil.fisAmountToHuman(state.rDOTModule.bondFees)+NumberUtil.fisAmountToHuman(state.rDOTModule.estimateTxFees);
     return {
-      transferrableAmountShow:"DOT: "+state.rDOTModule.transferrableAmountShow,
+      transferrableAmount:state.rDOTModule.transferrableAmountShow,
       ratio:state.FISModule.ratio,
-      stafiStakerApr:state.globalModule.stafiStakerApr
+      stafiStakerApr:state.globalModule.stafiStakerApr,
+      fisCompare:fisCompare,
+      validPools:state.rDOTModule.validPools
     }
   })
 
@@ -27,15 +32,21 @@ export default function Index(props:any){
   return  <Content
   amount={amount}
   willAmount={ratioToAmount(amount,ratio)}
-  transferrableAmountShow={transferrableAmountShow}
+  unit={"DOT"}
+  transferrableAmount={transferrableAmount}
   apr={stafiStakerApr} 
   onChange={(value:any)=>{   
-    setAmount(value); 
+      setAmount(value);   
   }}
   onRecovery={()=>{ 
      props.history.push("/rDOT/search")
   }}
+  validPools={validPools}
   onStakeClick={()=>{
+    if(fisCompare){
+      message.error("Insufficient FIS balance.");
+      return;
+    }
     if(amount){
       dispatch(transfer(amount,()=>{
         props.history.push("/rDOT/staker/info")

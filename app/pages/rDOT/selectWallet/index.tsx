@@ -1,9 +1,9 @@
-import React,{useState,useEffect} from 'react';
+import React,{useState,useEffect, useMemo} from 'react';
 import {useSelector,useDispatch} from 'react-redux'
 import WalletCard from '@components/card/walletCard'
 import Item from '@components/card/walletCardItem';
 import {setDotAccount} from '@features/rDOTClice'; 
-import {message} from 'antd'
+import {message,Modal} from 'antd'
 import './index.scss';
 
 export default function Index(props:any){
@@ -14,26 +14,50 @@ export default function Index(props:any){
             dotAccount:state.rDOTModule.dotAccount || {}
         }
     })
-    
+    const [account,setAccount]=useState<any>();
+
     useEffect(()=>{
         if(dotAccount && !dotAccount.address && dotAccounts.length>0){
-            dispatch(setDotAccount(dotAccounts[0]));
+        //    dispatch(setDotAccount(dotAccounts[0]));
+           setAccount(dotAccounts[0])
+        }else{
+           setAccount(dotAccount)
         }
-    },[])
+    },[dotAccounts]) 
+
+    const {showBackIcon,form}=useMemo(()=>{
+        props.location.state && props.location.state.showBackIcon
+        return {
+            showBackIcon:props.location.state ?props.location.state.showBackIcon:false,
+            form:props.location.state && props.location.state.form
+        }
+    },[props.location.state])
     return <WalletCard
     title="Select a DOT wallet"
-    btnText="Next"
+    btnText={form=="header"?"Confirm":"Next"}
+    history={props.history}
+    form={form}
     onConfirm={()=>{
-        if(dotAccount.address){
-            props.history.push("/rDOT/fiswallet");
+        if(account.address){
+            dispatch(setDotAccount(account));
+            if(form=="header"){
+                props.history.goBack();
+            }else{
+                props.history.push({
+                    pathname:"/rDOT/fiswallet",
+                    state:{
+                        showBackIcon:true, 
+                    }
+                });
+            }
         }else{
             message.error("Please select the DOT wallet");
         }
     }}>
 
     {dotAccounts.map((item:any)=>{
-        return <Item data={item} type="DOT" key={item.address} selected={item.address==dotAccount.address} onClick={()=>{
-            dispatch(setDotAccount(item)) 
+        return <Item data={item} type="DOT" key={item.address} selected={account ? (item.address==account.address) : false} onClick={()=>{
+            setAccount(item)
         }}/>
     })}  
     </WalletCard>

@@ -11,7 +11,7 @@
         align-items: center;
         margin-bottom: 37px;
         font-size: 16px;
-        font-weight: bold;
+      
         cursor:pointer;
         img{
             width: 36px;
@@ -22,6 +22,7 @@
     .sider_item.selected{
         background-color: #E7FFF8;
         border-radius: 21px;
+        font-weight: bold;
         color:#00F3AB;
     }
 }

@@ -33,6 +33,11 @@ const rDOTClice = createSlice({
     processParameter: null,      //process参数
     stakeHash: getLocalStorageItem(Keys.DotStakeHash),
     unbondCommission:"--",
+
+    bondFees:"--",    //交易的手续费
+    estimateTxFees : 30000000000,
+
+   
   },
   reducers: {
     setDotAccounts(state, { payload }) {
@@ -91,6 +96,9 @@ const rDOTClice = createSlice({
     },
     setUnbondCommission(state,{payload}){
       state.unbondCommission=payload;
+    },
+    setBondFees(state,{payload}){
+      state.bondFees=payload
     }
   },
 });
@@ -105,7 +113,9 @@ export const { setDotAccounts,
   setStakeHash,
   setValidPools,
   setPoolLimit,
-  setUnbondCommission
+  setUnbondCommission,
+  setBondFees,
+ 
 } = rDOTClice.actions;
 
 
@@ -324,13 +334,14 @@ export const reStaking = (cb?: Function): AppThunk => async (dispatch, getState)
 
 
 export const unbond = (amount: string, cb?: Function): AppThunk => async (dispatch, getState) => {
+  console.log(amount,"=======amount")
   const recipient = getState().rDOTModule.dotAccount.address;
   const validPools = getState().rDOTModule.validPools;
   const poolLimit = getState().rDOTModule.poolLimit;
   let selectedPool = getPool(NumberUtil.fisAmountToChain(amount), validPools, poolLimit);
-  fisUnbond(amount, rSymbol.Dot, recipient, selectedPool, () => {
+  dispatch(fisUnbond(amount, rSymbol.Dot, recipient, selectedPool, () => {
     dispatch(reloadData());
-  })
+  }))
 }
 
 export const continueProcess = (): AppThunk => async (dispatch, getState) => {
@@ -451,4 +462,16 @@ export const getUnbondCommission=():AppThunk=>async (dispatch, getState)=>{
     // unbondCommissionShow用于在页面中显示，比如0.2%
   //const unbondCommissionShow = NumberUtil.fisFeeToFixed(this.unbondCommission) + '%';
 }
+
+export const bondFees=():AppThunk=>async (dispatch, getState)=>{
+  const stafiApi = await stafiServer.createStafiApi();
+  const result = await stafiApi.query.rTokenSeries.bondFees(rSymbol.Dot)
+  //比如值为1500000000000，代表1.5个FIS
+  // this.bondFees = result.toJSON(); 
+  dispatch(setBondFees(result.toJSON()));
+}
+
+
+
+
 export default rDOTClice.reducer;

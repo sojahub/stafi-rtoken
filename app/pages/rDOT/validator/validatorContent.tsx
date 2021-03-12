@@ -2,6 +2,7 @@ import React from 'react';
 import Button from '@components/button/button';
 import LeftContent from '@components/content/leftContent';
 import './index.scss'; 
+import { message } from 'antd';
 
 type Props={
     onRecovery:Function
@@ -28,7 +29,9 @@ export default function Index(props:Props){
         In the start-up phase, in order to maximize revenue, StaFi chain will automatically nominate the elected validators on Polkadot. As the number of rDOT increases, validator will be open to the community
         </div>
         <div className="btns">
-            <Button disabled={true}>Apply</Button>
+            <Button  onClick={()=>{
+                message.warning("OV Registration is not open yet.")
+            }}>Apply</Button>
         </div>
     </LeftContent>
 }

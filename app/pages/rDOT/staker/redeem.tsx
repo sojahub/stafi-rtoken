@@ -34,6 +34,7 @@ export default function Index(props:any){
     dispatch(rTokenRate(rSymbol.Dot));
   },[])
   return  <Content 
+    history={props.history}
     amount={amount}
     tokenAmount={tokenAmount}
     unbondCommission={unbondCommission}
@@ -41,6 +42,7 @@ export default function Index(props:any){
       setAmount(e)
     }}
     onRdeemClick={()=>{
+      console.log('++++++onRdeemClick')
      dispatch(unbond(amount,()=>{
       setAmount('');
      }))

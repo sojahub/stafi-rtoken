@@ -29,6 +29,18 @@
         color:#fff;
       }
     }
+    .stafi_input{
+      border-radius: 7px;
+      color:#8F8F8F
+    }
+    .stafi_select {
+      .ant-select-selector{
+        border-radius: 7px;
+        .ant-select-selection-item{
+          color:#8F8F8F
+        }
+      }
+    }
   }
   .btns{
     display: flex;

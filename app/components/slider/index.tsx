@@ -17,31 +17,36 @@ const siderData=[
         icon:rAsset_svg,
         selectedIcon:rAsset_svg,
         text:"rAsset", 
+        url:""
     },
     {
         icon:rETH_svg,
         selectedIcon:selected_rETH_svg,
         text:"rETH", 
+        url:""
     },
     {
         icon:rFIS_svg,
         selectedIcon:selected_rFIS_svg,
         text:"rFIS", 
+        url:""
     },
     {
         icon:rDOT_svg,
         selectedIcon:selected_rDOT_svg,
         text:"rDOT", 
+        url:"/rDOT/home"
     },
     {
         icon:rKSM_svg,
         selectedIcon:rKSM_svg,
         text:"rKSM", 
+        url:""
     }
 ]
 type Props={
     route:any,
-    histroy:any
+    history:any
 }
 export default function Index(props:Props){
     // const [selectIndex,setSelectIndex]=useState(0);
@@ -50,7 +55,7 @@ export default function Index(props:Props){
             return <Item key={item.text} icon={item.icon} 
             selectedIcon={item.selectedIcon} text={item.text} 
             selected={props.route.type==item.text} onClick={()=>{
-                //props.histroy.push("")
+                props.history.push(item.url)
             }}/>
         })} 
 </div>

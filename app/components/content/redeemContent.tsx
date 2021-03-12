@@ -3,7 +3,7 @@ import LeftContent from './leftContent'
 import Input from '../input/amountInput';
 import rDOT from '@images/selected_rDOT.svg'
 import rDOT_stafi_svg from '@images/rDOT_stafi.svg'
-import selected_rDOT_svg from '@images/selected_rDOT.svg'
+import leftArrowSvg from '@images/left_arrow.svg'
 import NumberUtil from '@util/numberUtil'
 import Button from '../button/button'
 type Props={
@@ -11,10 +11,14 @@ type Props={
      amount?:string,
      onAmountChange?:Function,
      tokenAmount?:any,
-     unbondCommission?:any
+     unbondCommission?:any,
+     history?:any
 }
 export default function Index(props:Props){
     return <LeftContent className="stafi_stake_redeem_context"> 
+    <img className="back_icon" onClick={()=>{
+      props.history.goBack();
+    }} src={leftArrowSvg}/>
          <div className="title">
             Redeem DOT
          </div>

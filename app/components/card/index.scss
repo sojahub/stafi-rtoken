@@ -31,6 +31,13 @@
   height: 100%;
   display: flex;
   flex-direction: column;
+  position: relative;
+  .back_icon{
+    left: 26px;
+    position: absolute;
+    top: 46px;
+    cursor: pointer;
+  };
   >div:first-child{
     flex:1;
   }
@@ -48,6 +55,12 @@
   .btn_panel{
     display: flex;
     justify-content: flex-end;
+    align-items: center;
+    .stafi_a{
+      margin-right: 30px;
+      color:#C1C1C1;
+      font-size: 16px;
+    }
   }
   .wallet_card_content{
     height: 385px;

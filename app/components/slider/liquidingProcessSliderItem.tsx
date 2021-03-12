@@ -23,7 +23,7 @@ export default function Index(props:Props){
       <img className="doubt" src={doubt}/>
     </div>
     <div className="item">
-      <label>Brocasting...</label>
+      <label>{props.index==3?'Minting...' :'Brocasting...'} </label>
       {(props.data && props.data.brocasting==processStatus.success) && <img src={success}/>}
       {(props.data && props.data.brocasting==processStatus.failure) && <img src={failure}/>}
       {(props.data && props.data.brocasting==processStatus.loading) && <SyncOutlined type="spin" spin={true}/>}

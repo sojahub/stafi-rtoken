@@ -8,7 +8,8 @@ import {getLocalStorageItem,Keys} from '@util/common';
 import LiquidingProcesSlider from '@components/slider/liquidingProcessSlider'; 
 import {Symbol} from '@keyring/defaults'
 import {fetchStafiStakerApr,connectPolkadotjs} from '@features/globalClice';
-import {continueProcess,getPools} from '@features/rDOTClice'
+import {continueProcess,getPools,bondFees} from '@features/rDOTClice'
+import {bondSwitch} from '@features/FISClice'
 import './index.scss';
 
 export default function Index(props:any){
@@ -21,12 +22,14 @@ export default function Index(props:any){
         dispatch(connectPolkadotjs(Symbol.Fis)); 
         dispatch(continueProcess());
         dispatch(getPools());
+        dispatch(bondFees());
+        dispatch(bondSwitch());
     }
   },[]) 
   return <div>
     <Header route={props.route}  history={props.history}/>
     <div className="stafi_layout">
-      <Sider route={props.route} histroy={props.histroy}/> 
+      <Sider route={props.route} history={props.history}/> 
       <LiquidingProcesSlider route={props.route}  history={props.history}/>
       <div className="stafi_container">
          <Content>

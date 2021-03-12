@@ -34,10 +34,10 @@ export default function Index(props:any){
           </Select>
         </Form.Item> 
         <Form.Item label="TxHash" name="txHash">
-          <Input placeholder="input placeholder" />
+          <Input placeholder="" />
         </Form.Item> 
         <Form.Item label="BlockHash" name="blockHash">
-          <Input placeholder="input placeholder" />
+          <Input placeholder="" />
         </Form.Item> 
         <div className="btns">
           <Button btnType="square" htmlType="submit">Proceed</Button>
