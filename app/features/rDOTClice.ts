@@ -327,7 +327,7 @@ export const unbond = (amount: string, cb?: Function): AppThunk => async (dispat
   const recipient = getState().rDOTModule.dotAccount.address;
   const validPools = getState().rDOTModule.validPools;
   const poolLimit = getState().rDOTModule.poolLimit;
-  let selectedPool = getPool(NumberUtil.fisAmountToChain(amount).toString(), validPools, poolLimit);
+  let selectedPool = getPool(NumberUtil.fisAmountToChain(amount), validPools, poolLimit);
   fisUnbond(amount, rSymbol.Dot, recipient, selectedPool, () => {
     dispatch(reloadData());
   })
@@ -430,7 +430,6 @@ export const poolBalanceLimit = (): AppThunk => async (dispatch, getState) => {
   });
 }
 export const getPool = (tokenAmount: any, validPools: any, poolLimit: any) => {
-  // const amount = NumberUtil.fisAmountToChain(tokenAmount.toString()); 
   const data = validPools.find((item: any) => {
     if (poolLimit == 0 || Number(item.active) + tokenAmount <= poolLimit) {
       return true;
