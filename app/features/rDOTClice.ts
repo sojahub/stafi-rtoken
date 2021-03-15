@@ -409,7 +409,7 @@ export const getPools = (): AppThunk => async (dispatch, getState) => {
 
  
   const stafiApi = await stafiServer.createStafiApi();
-  const poolsData = await stafiApi.query.rTokenLedger.pools(rSymbol)
+  const poolsData = await stafiApi.query.rTokenLedger.pools(rSymbol.Dot)
   let pools = poolsData.toJSON();
   dispatch(setValidPools(null));
   if (pools && pools.length > 0) {

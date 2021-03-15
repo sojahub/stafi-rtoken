@@ -551,7 +551,7 @@ export const fisUnbond = (amount: string, rSymbol: number, recipient: string, se
 export const getPools = (): AppThunk => async (dispatch, getState) => {
  
   const stafiApi = await stafi.createStafiApi();
-  const poolsData = await stafiApi.query.rTokenLedger.pools(rSymbol)
+  const poolsData = await stafiApi.query.rTokenLedger.pools(rSymbol.Fis)
   let pools = poolsData.toJSON();
   dispatch(setValidPools(null));
   if (pools && pools.length > 0) { 
