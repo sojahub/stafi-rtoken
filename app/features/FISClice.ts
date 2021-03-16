@@ -345,14 +345,15 @@ export const bound = (address: string, txhash: string, blockhash: string, amount
               dispatch(setProcessStaking({
                 packing: processStatus.success,
                 finalizing: processStatus.loading,
-              }));
+              })); 
+              cb && cb("loading");
               dispatch(getMinting(type, txhash, blockhash, cb));
               //十分钟后   finalizing失败处理 
-              dispatch(gSetTimeOut(() => {
-                dispatch(setProcessStaking({
-                  finalizing: processStatus.failure,
-                }));
-              }, 10 * 60 * 1000));
+              // dispatch(gSetTimeOut(() => {
+              //   dispatch(setProcessStaking({
+              //     finalizing: processStatus.failure,
+              //   }));
+              // }, 10 * 60 * 1000));
               dispatch(reloadData());
             }
           })
@@ -363,8 +364,9 @@ export const bound = (address: string, txhash: string, blockhash: string, amount
         dispatch(setProcessStaking({
           finalizing: processStatus.success
         }));
+        cb && cb("loading");
         //finalizing 成功清除定时器
-        gClearTimeOut();
+        // gClearTimeOut();
 
       }
     } catch (e: any) {
@@ -480,11 +482,13 @@ export const getMinting = (type: number, txHash: string, blockHash: string, cb?:
       dispatch(setProcessMinting({
         brocasting: processStatus.success
       }));
-      cb && cb();
+      cb && cb("successful");
     } else if (isSuccess === false) {
+    
       dispatch(setProcessMinting({
         brocasting: processStatus.failure
       }));
+      cb && cb("failure");
     }
     // isSuccess为null，代表结果还未知；isSuccess为false代表失败；isSuccess为true则代表minting成功
   });

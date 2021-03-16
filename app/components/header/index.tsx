@@ -2,7 +2,7 @@ import React from 'react';
 import {useSelector} from 'react-redux';
 import logo from '@images/header_logo.png';
 import notice from '@images/notice.svg';
-import StringUtil from '@util/stringUtil'
+import StringUtil from '@util/stringUtil';
 import Popover from './popover';
 import './index.scss';
 
@@ -18,21 +18,25 @@ export default function Index(props:Props){
                 return {
                     dotAccount:state.rDOTModule.dotAccount,
                     fisAccount:state.FISModule.fisAccount,
+                    noticeData:state.noticeModule.noticeData,
                 }
             } 
         }
         return null
     })
-
+    const {noticeData}=useSelector((state:any)=>{  
+        return { 
+            noticeData:state.noticeModule.noticeData,
+        }
+    })
     return <div className="stafi_header">
         <img className="header_logo" src={logo} />
         {account==null && <div className="header_tool">
             Connect to Polkadotjs
         </div>}
         {account && <div className="header_tools">
-            <div className="header_tool notice new">
-                
-                <Popover>
+            <div className={`header_tool notice ${(noticeData && noticeData.showNew) && "new"}`}>
+                <Popover history={props.history}>
                 <img src={notice} />
                 </Popover>
             </div> 

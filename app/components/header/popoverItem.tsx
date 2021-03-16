@@ -1,28 +1,32 @@
 import React from 'react';
+import {Empty} from 'antd'; 
 
-type Props={
-  title:string,
-  content:string,
-  time:string,
-  status?:string,
-  onClick?:Function
+type Props={ 
+  data?:any,
+  onClick?:Function,
+  noData?:boolean
 }
-export default function Index(props:Props){
+export default function Index(props:Props){ 
+  if(props.noData){
+    return <div className="empty">
+        <Empty />
+    </div>
+  }
   return <div className="popover_item">
   <div className="title">
-   {props.title}
+   {props.data.title}
   </div>
   <div className="context">
-  {props.content}
+  {props.data.content}
   </div>
   <div className="footer">
     <div>
-      {props.time}
+      {props.data.dateTime}
     </div>
-    <a onClick={()=>{
+    <a className={`${props.data.status} ${props.data.type}`} onClick={()=>{
       props.onClick && props.onClick();
     }}>
-      Confirmed
+      {props.data.status}
     </a>
   </div>
 </div>

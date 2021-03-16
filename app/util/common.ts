@@ -7,6 +7,8 @@ export enum Keys {
   DotAccountKey = 'stafi_dot_account', 
   DotProcessParameter = 'stafi_dot_processParameter', 
   DotStakeHash='stafi_dot_stakeHash', 
+
+  StafiNoticeKey="stafi_notice",
 }
 
 export const setSessionStorageItem = (key:string, val:any) => {
@@ -42,4 +44,8 @@ export const ratioToAmount=(amount:number,ratio:number)=>{
     return  NumberUtil.handleFisAmountToFixed(amount / ratio);;
   }
   return 0;
+}
+
+export const stafi_uuid=()=>{
+  return Date.now().toString(36)
 }

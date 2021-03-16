@@ -6,17 +6,21 @@ import { message as M, message } from 'antd';
 import keyring from '@servers/index';
 import { setLocalStorageItem, getLocalStorageItem, removeLocalStorageItem, Keys } from '@util/common'
 
-import {rSymbol} from '@keyring/defaults'
+import {rSymbol,Symbol} from '@keyring/defaults'
 import {
   processStatus, setProcessSlider, setProcessSending,
   setProcessStaking, setProcessMinting, gSetTimeOut, gClearTimeOut, initProcess, process
 } from './globalClice';
+import {add_Notice} from './noticeClice'
 import {
   web3Enable,
   web3FromSource,
 } from '@polkadot/extension-dapp';
 import NumberUtil from '@util/numberUtil';
-import { bound, fisUnbond } from './FISClice'
+import { bound, fisUnbond } from './FISClice';
+import {stafi_uuid} from '@util/common'
+import {addNoticeModal,noticesubType,noticeStatus,noticeType} from './noticeClice';
+import moment from 'moment';
 
 
 
@@ -78,10 +82,9 @@ const rDOTClice = createSlice({
       if (payload == null) {
         removeLocalStorageItem(Keys.DotStakeHash)
         state.stakeHash = payload
-      } else {
-        let param = { ...state.processParameter, ...payload }
-        setLocalStorageItem(Keys.DotStakeHash, param),
-          state.stakeHash = payload;
+      } else { 
+        setLocalStorageItem(Keys.DotStakeHash, payload),
+        state.stakeHash = payload;
       }
     },
     setValidPools(state, { payload }) {
@@ -149,6 +152,8 @@ const queryBalance = async (account: any, dispatch: any, getState: any) => {
 }
 
 export const transfer = (amountparam: string, cb?: Function): AppThunk => async (dispatch, getState) => {
+  const processParameter=getState().rDOTModule.processParameter;
+  const notice_uuid=(processParameter && processParameter.uuid) || stafi_uuid();    //唯一标识 
   dispatch(setProcessSlider(true));
   dispatch(setProcessSending({
     brocasting: processStatus.loading,
@@ -168,10 +173,9 @@ export const transfer = (amountparam: string, cb?: Function): AppThunk => async 
   if (selectedPool == null) {
     message.error("There is no matching pool, please try again later.");
     return;
-  }
-  const ex = dotApi.tx.balances.transferKeepAlive(selectedPool, amount.toString());
-
-
+  } 
+  
+  const ex = dotApi.tx.balances.transferKeepAlive(selectedPool, amount.toString()); 
   ex.signAndSend(address, { signer: injector.signer }, (result: any) => {
     const tx = ex.hash.toHex()
     try {
@@ -187,13 +191,15 @@ export const transfer = (amountparam: string, cb?: Function): AppThunk => async 
             amount: amount,
             txHash: tx,
             blockHash: asInBlock,
-            address
+            address,
+            uuid:notice_uuid
           },
           href: cb ? "/rDOT/staker/info" : null
         }))
         dispatch(setStakeHash({
           txHash: tx,
           blockHash: asInBlock,
+          notice_uuid:notice_uuid
         }))
       }
 
@@ -203,7 +209,12 @@ export const transfer = (amountparam: string, cb?: Function): AppThunk => async 
           brocasting: processStatus.success,
           packing: processStatus.loading,
           checkTx: tx
-        }));
+        })); 
+        //消息通知 Pending
+        dispatch(add_DOT_stake_Notice(notice_uuid,amountparam,noticeStatus.Pending,{
+          process:getState().globalModule.process,
+          processParameter:getState().rDOTModule.processParameter}));
+
         result.events
           .filter((e: any) => {
             return e.event.section == "system"
@@ -228,19 +239,25 @@ export const transfer = (amountparam: string, cb?: Function): AppThunk => async 
               dispatch(setProcessSending({
                 packing: processStatus.failure,
                 checkTx: tx
-              }));
+              })); 
+              dispatch(setStakeHash(null));   //失败
+              //消息通知 
+              dispatch(add_DOT_stake_Notice(notice_uuid,amountparam,noticeStatus.Error,
+                {
+                  process:getState().globalModule.process,
+                  processParameter:getState().rDOTModule.processParameter}));
             } else if (data.event.method === 'ExtrinsicSuccess') {
               M.success('Successfully');
               dispatch(setProcessSending({
                 packing: processStatus.success,
                 finalizing: processStatus.loading,
-              }));
+              })); 
               //十分钟后   finalizing失败处理 
-              dispatch(gSetTimeOut(() => {
-                dispatch(setProcessSending({
-                  finalizing: processStatus.failure,
-                }));
-              }, 10 * 60 * 1000));
+              // dispatch(gSetTimeOut(() => {
+              //   dispatch(setProcessSending({
+              //     finalizing: processStatus.failure,
+              //   }));
+              // }, 10 * 60 * 1000));
               dispatch(reloadData());
               dispatch(setProcessParameter({
                 staking: {
@@ -251,12 +268,38 @@ export const transfer = (amountparam: string, cb?: Function): AppThunk => async 
                   type: rSymbol.Dot,
                   poolAddress: selectedPool
                 }
-              }))
-              asInBlock && dispatch(bound(address, tx, asInBlock, amount, selectedPool, rSymbol.Dot, (r: string) => {
-                dispatch(setStakeHash(null));
-                if (r != "failure") {
-                  cb && cb();
+              }))  
+
+              //消息通知 Pending
+              dispatch(add_DOT_stake_Notice(notice_uuid,amountparam,noticeStatus.Pending,{
+                process:getState().globalModule.process,
+                processParameter:getState().rDOTModule.processParameter}))
+              asInBlock && dispatch(bound(address, tx, asInBlock, amount, selectedPool, rSymbol.Dot, (r: string,type:string) => {
+                if(r=="loading"){
+                  //消息通知 Pending
+                  dispatch(add_DOT_stake_Notice(notice_uuid,amountparam,noticeStatus.Pending,{
+                    process:getState().globalModule.process,
+                    processParameter:getState().rDOTModule.processParameter}))
+                }else{ 
+                  dispatch(setStakeHash(null));
                 }
+
+                if(r == "failure"){
+                  //消息通知   stake/Minting 失败
+                  dispatch(add_DOT_stake_Notice(notice_uuid,amountparam,noticeStatus.Error,
+                  {
+                    process:getState().globalModule.process,
+                    processParameter:getState().rDOTModule.processParameter})
+                  );
+                }
+
+                if(r=="successful"){
+                    //消息通知   成功
+                    dispatch(add_DOT_stake_Notice(notice_uuid,amountparam,noticeStatus.Confirmed,{
+                    process:getState().globalModule.process,
+                    processParameter:getState().rDOTModule.processParameter}));
+                    cb && cb(); 
+                } 
               }))
 
             }
@@ -266,7 +309,11 @@ export const transfer = (amountparam: string, cb?: Function): AppThunk => async 
           dispatch(setProcessSending({
             finalizing: processStatus.success,
           }));
-          gClearTimeOut();
+           //消息通知 Pending
+           dispatch(add_DOT_stake_Notice(notice_uuid,amountparam,noticeStatus.Pending,{
+            process:getState().globalModule.process,
+            processParameter:getState().rDOTModule.processParameter}))
+          // gClearTimeOut();
         }
       } else if (result.isError) {
         M.error(result.toHuman());
@@ -311,8 +358,7 @@ export const reSending = (cb?: Function): AppThunk => async (dispatch, getState)
   }
 }
 
-export const reStaking = (cb?: Function): AppThunk => async (dispatch, getState) => {
-  console.log("reStaking==asdfasdfasdf")
+export const reStaking = (cb?: Function): AppThunk => async (dispatch, getState) => { 
   const processParameter = getState().rDOTModule.processParameter
   if (processParameter) {
     const staking = processParameter.staking
@@ -334,13 +380,19 @@ export const reStaking = (cb?: Function): AppThunk => async (dispatch, getState)
 
 
 export const unbond = (amount: string, cb?: Function): AppThunk => async (dispatch, getState) => {
-  console.log(amount,"=======amount")
   const recipient = getState().rDOTModule.dotAccount.address;
   const validPools = getState().rDOTModule.validPools;
   const poolLimit = getState().rDOTModule.poolLimit;
   let selectedPool = getPool(NumberUtil.fisAmountToChain(amount), validPools, poolLimit);
-  dispatch(fisUnbond(amount, rSymbol.Dot, recipient, selectedPool, () => {
-    dispatch(reloadData());
+  dispatch(fisUnbond(amount, rSymbol.Dot, recipient, selectedPool, (r?:string) => {
+    dispatch(reloadData()); 
+    if(r != "Failed"){  
+      //消息通知   成功 
+      dispatch(add_DOT_unbond_Notice(stafi_uuid(),amount,noticeStatus.Confirmed));
+    }else{
+      //消息通知   成功 
+      dispatch(add_DOT_unbond_Notice(stafi_uuid(),amount,noticeStatus.Error));
+    }
   }))
 }
 
@@ -472,6 +524,20 @@ export const bondFees=():AppThunk=>async (dispatch, getState)=>{
 }
 
 
-
+const add_DOT_stake_Notice=(uuid:string,amount:string,status:string,subData?:any):AppThunk=>async (dispatch,getState)=>{
+  dispatch(add_DOT_Notice(uuid,noticeType.Staker,noticesubType.Stake,`Staked ${amount} DOT from your Wallet to StaFi Validator Pool Contract`,status,subData))
+}
+const add_DOT_unbond_Notice=(uuid:string,amount:string,status:string,subData?:any):AppThunk=>async (dispatch,getState)=>{
+  dispatch(add_DOT_Notice(uuid,noticeType.Staker,noticesubType.Unbond,`Unbond ${amount} FIS from Pool Contract`,status,subData))
+}
+const add_DOT_Withdraw_Notice=(uuid:string,amount:string,status:string,subData?:any):AppThunk=>async (dispatch,getState)=>{
+  dispatch(add_DOT_Notice(uuid,noticeType.Staker,noticesubType.Withdraw,`Withdraw ${amount} FIS from contracts to wallet`,status,subData))
+}
+const add_DOT_Swap_Notice=(uuid:string,amount:string,status:string,subData?:any):AppThunk=>async (dispatch,getState)=>{
+  dispatch(add_DOT_Notice(uuid,noticeType.Staker,noticesubType.Swap,`Swap ${amount} Native FIS to ERC20`,status,subData))
+}
+const add_DOT_Notice=(uuid:string,type:string,subType:string,content:string,status:string,subData?:any):AppThunk=>async (dispatch,getState)=>{
+  dispatch(add_Notice(uuid,Symbol.Dot,type,subType,content,status,subData))
+}
 
 export default rDOTClice.reducer;

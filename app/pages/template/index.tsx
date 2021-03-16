@@ -9,7 +9,7 @@ import LiquidingProcesSlider from '@components/slider/liquidingProcessSlider';
 import {Symbol} from '@keyring/defaults'
 import {fetchStafiStakerApr,connectPolkadotjs} from '@features/globalClice';
 import {continueProcess,getPools,bondFees} from '@features/rDOTClice'
-import {bondSwitch} from '@features/FISClice'
+import {bondSwitch} from '@features/FISClice'; 
 import './index.scss';
 
 export default function Index(props:any){
@@ -23,8 +23,8 @@ export default function Index(props:any){
         dispatch(continueProcess());
         dispatch(getPools());
         dispatch(bondFees());
-        dispatch(bondSwitch());
-    }
+        dispatch(bondSwitch()); 
+    } 
   },[]) 
   return <div>
     <Header route={props.route}  history={props.history}/>

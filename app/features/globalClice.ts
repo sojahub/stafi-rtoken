@@ -30,9 +30,7 @@ export const process={
     checkTx: ""        // 
   },
   minting:{
-    brocasting:processStatus.default,     // 0|1|2   0无状态  1成功    3失败
-    packing:processStatus.default,        // 0|1|2   0无状态  1成功    3失败
-    finalizing:processStatus.default,      // 0|1|2   0无状态  1成功    3失败
+    minting:processStatus.default,     // 0|1|2   0无状态  1成功    3失败 
     checkTx: ""        // 
   }
 }

@@ -20,6 +20,9 @@
     .ant-popover-inner{
       border-radius: 6px;
     }
+    .empty{
+      padding:11px 19px 6px 15px;
+    }
     .popover_item{
       padding:11px 19px 6px 15px;
       border-bottom: 1px solid #D8D8D8;
@@ -42,6 +45,14 @@
         color:#8E8E8E;
         a{
           color:#00F3AB;
+          cursor: default;
+        }
+        a.Error{
+          color:red;
+        }
+        a.Staker{
+          text-decoration:underline;
+          cursor: pointer;
         }
       }
 
