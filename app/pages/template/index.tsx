@@ -20,7 +20,11 @@ export default function Index(props:any){
     if(getLocalStorageItem(Keys.DotAccountKey) && getLocalStorageItem(Keys.FisAccountKey)){
         dispatch(connectPolkadotjs(Symbol.Dot)); 
         dispatch(connectPolkadotjs(Symbol.Fis));  
-        dispatch(getPools());
+        dispatch(getPools(()=>{
+          setTimeout(()=>{
+            dispatch(continueProcess());
+          },20)
+        }));
         dispatch(bondFees());
         dispatch(bondSwitch()); 
     } 

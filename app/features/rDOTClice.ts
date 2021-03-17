@@ -188,7 +188,7 @@ export const transfer = (amountparam: string, cb?: Function): AppThunk => async 
       if (asInBlock) {
         dispatch(setProcessParameter({
           sending: {
-            amount: amount,
+            amount: amountparam,
             txHash: tx,
             blockHash: asInBlock,
             address,
@@ -256,7 +256,7 @@ export const transfer = (amountparam: string, cb?: Function): AppThunk => async 
               dispatch(reloadData());
               dispatch(setProcessParameter({
                 staking: {
-                  amount: amount,
+                  amount: amountparam,
                   txHash: tx,
                   blockHash: asInBlock,
                   address,
@@ -354,7 +354,7 @@ export const reStaking = (cb?: Function): AppThunk => async (dispatch, getState)
     processParameter && dispatch(bound(staking.address,
       staking.txHash,
       staking.blockHash,
-      staking.amount,
+      NumberUtil.fisAmountToChain(staking.amount),
       staking.poolAddress,
       staking.type,
       (r: string) => {
@@ -425,7 +425,7 @@ export const getBlock = (blockHash: string, txHash: string, uuid?:string,cb?: Fu
           dispatch(setProcessSlider(true));
           dispatch(setProcessParameter({
             staking: {
-              amount: amount,
+              amount: NumberUtil.fisAmountToHuman(amount),
               txHash,
               blockHash,
               address,
@@ -438,19 +438,19 @@ export const getBlock = (blockHash: string, txHash: string, uuid?:string,cb?: Fu
 
             if(r=="loading"){
               //消息通知 Pending
-              uuid && dispatch(add_DOT_stake_Notice(uuid,amount,noticeStatus.Pending))
+              uuid && dispatch(add_DOT_stake_Notice(uuid,NumberUtil.fisAmountToHuman(amount).toString(),noticeStatus.Pending))
             }else{ 
               dispatch(setStakeHash(null));
             }
 
             if(r == "failure"){
               //消息通知   stake/Minting 失败
-              uuid && dispatch(add_DOT_stake_Notice(uuid,amount,noticeStatus.Error)
+              uuid && dispatch(add_DOT_stake_Notice(uuid,NumberUtil.fisAmountToHuman(amount).toString(),noticeStatus.Error)
               );
             }
             if(r=="successful"){
                 //消息通知   成功
-                uuid && dispatch(add_DOT_stake_Notice(uuid,amount,noticeStatus.Confirmed));
+                uuid && dispatch(add_DOT_stake_Notice(uuid,NumberUtil.fisAmountToHuman(amount).toString(),noticeStatus.Confirmed));
                 cb && cb(); 
             } 
           }));
@@ -468,7 +468,7 @@ export const getBlock = (blockHash: string, txHash: string, uuid?:string,cb?: Fu
 
 
 
-export const getPools = (): AppThunk => async (dispatch, getState) => {
+export const getPools = (cb?:Function): AppThunk => async (dispatch, getState) => {
 
  
   const stafiApi = await stafiServer.createStafiApi();
@@ -490,10 +490,11 @@ export const getPools = (): AppThunk => async (dispatch, getState) => {
           address: poolAddress,
           active: bonded || 0
         }));
+        cb && cb()
       }).catch((error: any) => { });
     })
   };
-  dispatch(continueProcess());
+ 
   dispatch(poolBalanceLimit());
 }
 
@@ -536,10 +537,11 @@ export const bondFees=():AppThunk=>async (dispatch, getState)=>{
 
 
 const add_DOT_stake_Notice=(uuid:string,amount:string,status:string,subData?:any):AppThunk=>async (dispatch,getState)=>{
- 
-  dispatch(add_DOT_Notice(uuid,noticeType.Staker,noticesubType.Stake,`Staked ${amount} DOT from your Wallet to StaFi Validator Pool Contract`,status,{
+  setTimeout(()=>{
+    dispatch(add_DOT_Notice(uuid,noticeType.Staker,noticesubType.Stake,`Staked ${amount} DOT from your Wallet to StaFi Validator Pool Contract`,status,{
     process:getState().globalModule.process,
     processParameter:getState().rDOTModule.processParameter}))
+  },20);
 }
 const add_DOT_unbond_Notice=(uuid:string,amount:string,status:string,subData?:any):AppThunk=>async (dispatch,getState)=>{
   dispatch(add_DOT_Notice(uuid,noticeType.Staker,noticesubType.Unbond,`Unbond ${amount} FIS from Pool Contract`,status,subData))
@@ -551,9 +553,9 @@ const add_DOT_Swap_Notice=(uuid:string,amount:string,status:string,subData?:any)
   dispatch(add_DOT_Notice(uuid,noticeType.Staker,noticesubType.Swap,`Swap ${amount} Native FIS to ERC20`,status,subData))
 }
 const add_DOT_Notice=(uuid:string,type:string,subType:string,content:string,status:string,subData?:any):AppThunk=>async (dispatch,getState)=>{
-  setTimeout(()=>{
+ 
     dispatch(add_Notice(uuid,Symbol.Dot,type,subType,content,status,subData))
-  },20);
+  
 }
 
 export default rDOTClice.reducer;
