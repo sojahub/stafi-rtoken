@@ -381,8 +381,7 @@ export const unbond = (amount: string, cb?: Function): AppThunk => async (dispat
     }else{
       //消息通知   成功 
       dispatch(add_DOT_unbond_Notice(stafi_uuid(),amount,noticeStatus.Error));
-    }
-    // cb && cb();
+    } 
   }))
 }
 

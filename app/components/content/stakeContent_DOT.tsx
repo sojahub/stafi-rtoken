@@ -29,7 +29,7 @@ export default function Index(props:Props){
 
       const haswarn=useMemo(()=>{
         return !bondSwitch && !(props.validPools && props.validPools.length>0)
-      },[props.validPools,bondSwitch])
+      },[props.validPools,bondSwitch]) 
     return <LeftContent className="stafi_stake_context">
         <label className="title">Stake DOT</label>
         {haswarn && <div className="warn">Unable to stake, system is waiting for matching validators</div>}
@@ -40,7 +40,7 @@ export default function Index(props:Props){
             <Input placeholder="DOT AMOUNT" value={props.amount} onChange={(e:any)=>{
                 if(parseFloat(e)>parseFloat(props.transferrableAmount)){
                     message.error("The input amount exceeds your transferrable balance.");
-                    props.onChange && props.onChange(undefined);
+                    props.onChange && props.onChange(null);
                 } else{
                     props.onChange && props.onChange(e);
                 }
