@@ -70,7 +70,7 @@ export default function Index(props:Props){
             })} 
         </div>
         <div className="network">
-           <div></div> {isdev()?"TestNet":"Mainnet"}
+           <div></div> {isdev()?"Testnet":"Mainnet"}
         </div>
 </div>
 }
