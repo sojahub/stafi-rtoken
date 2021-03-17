@@ -2,8 +2,9 @@ import { createSlice } from '@reduxjs/toolkit';
 import { AppThunk, RootState } from '../store';
 import { setLocalStorageItem, getLocalStorageItem, removeLocalStorageItem, Keys } from '@util/common';
 import {setProcessParameter} from './rDOTClice';
-import {initProcess} from './globalClice'
+import {initProcess,setProcessSlider} from './globalClice'
 import moment from 'moment'; 
+import { message,Modal } from 'antd';
 export enum noticeStatus{
   Confirmed="Confirmed",
   Pending="Pending",
@@ -105,8 +106,40 @@ export const add_Notice=(uuid:string,rSymbol:string,type:string,subType:string,c
 }
 
 
-export const setProcess=(item:any):AppThunk=>async (dispatch,getState)=>{
-  dispatch(initProcess(item.subData.process));
-  dispatch(setProcessParameter(item.subData.processParameter))
+export const setProcess=(item:any,list:any,cb?:Function):AppThunk=>async (dispatch,getState)=>{
+  if(list){
+    const o=list.filter((i:any)=>{
+      return i.status == noticeStatus.Pending;
+    }); 
+    if(o && o.length>0){
+      if(o.length==1 ){
+        Modal.confirm({
+          title: 'message',
+          content: 'There is a pending transation, please check it later after the pending tx finalizes.', 
+          className:'stafi_modal_confirm',
+          onOk:()=>{
+            dispatch(setProcessSlider(true))
+            dispatch(initProcess(o[0].subData.process));
+            dispatch(setProcessParameter(o[0].subData.processParameter));
+          }
+        });
+      // }else if(o.length==1 && o[0].uuid==item.uuid){
+      //   dispatch(setProcessSlider(true))
+      //   dispatch(initProcess(item.subData.process));
+      //   dispatch(setProcessParameter(item.subData.processParameter));
+      }else{
+        Modal.warning({
+          title: 'message',
+          content: 'Transactions are pending, please check it later.', 
+          className:'stafi_modal_warning'
+        });
+      }
+    }else{
+      dispatch(setProcessSlider(true))
+      dispatch(initProcess(item.subData.process));
+      dispatch(setProcessParameter(item.subData.processParameter));
+    }
+  }
+ 
 }
 export default noticeClice.reducer

@@ -26,3 +26,11 @@ input:-internal-autofill-selected  {
     -webkit-text-fill-color: #fff !important;
     transition: background-color 5000s ease-in-out 0s !important;
 }
+
+.stafi_modal_confirm,.stafi_modal_warning{
+    .ant-btn-primary{
+        background-color: #00F3AB;
+        border-color: #00F3AB;
+        color:#23292F
+    }
+}

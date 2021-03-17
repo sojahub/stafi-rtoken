@@ -25,9 +25,8 @@ export default function Index(props:Props){
     return <Item 
     key={index}
     data={item}
-    onClick={()=>{ 
-      dispatch(setProcessSlider(true));
-      dispatch(setProcess(item));
+    onClick={()=>{  
+      dispatch(setProcess(item,data.datas));
       const hasGo=location.pathname.includes("/rDOT")
       if(item.rSymbol==Symbol.Dot && !hasGo){
         //跳转到对应到类型页面

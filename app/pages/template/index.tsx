@@ -19,8 +19,7 @@ export default function Index(props:any){
     dispatch(fetchStafiStakerApr());
     if(getLocalStorageItem(Keys.DotAccountKey) && getLocalStorageItem(Keys.FisAccountKey)){
         dispatch(connectPolkadotjs(Symbol.Dot)); 
-        dispatch(connectPolkadotjs(Symbol.Fis)); 
-        dispatch(continueProcess());
+        dispatch(connectPolkadotjs(Symbol.Fis));  
         dispatch(getPools());
         dispatch(bondFees());
         dispatch(bondSwitch()); 

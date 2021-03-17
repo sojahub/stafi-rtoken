@@ -364,7 +364,7 @@ export const bound = (address: string, txhash: string, blockhash: string, amount
         dispatch(setProcessStaking({
           finalizing: processStatus.success
         }));
-        cb && cb("loading");
+        // cb && cb("loading");
         //finalizing 成功清除定时器
         // gClearTimeOut();
 
