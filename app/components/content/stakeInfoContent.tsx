@@ -1,6 +1,6 @@
 import React, { useState } from 'react'; 
 import LeftContent from './leftContent'  
-import rDOT_stafi_svg from '@images/rDOT_stafi.svg'
+import rDOT_stafi_svg from '@images/rDOT_stafi.png'
 import rDOT_DOT_svg from '@images/rDOT_DOT.svg'
 import Button from '../button/button'
 import NumberUtil from '@util/numberUtil';
@@ -17,7 +17,7 @@ export default function Index(props:Props){
     return <LeftContent className="stafi_stake_info_context">
       <div className="item">
           <div className="title">
-            <img src={rDOT_stafi_svg} /> rDOT
+            <img src={rDOT_stafi_svg} style={{width:"40px"}}/> rDOT
           </div>
           <div className="content">
             <div>{(props.tokenAmount=="--")? "--": NumberUtil.handleFisAmountToFixed(props.tokenAmount)}</div>

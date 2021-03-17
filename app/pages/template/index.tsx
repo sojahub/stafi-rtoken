@@ -29,16 +29,16 @@ export default function Index(props:any){
         dispatch(bondSwitch()); 
     } 
   },[]) 
-  return <div>
-    <Header route={props.route}  history={props.history}/>
-    <div className="stafi_layout">
-      <Sider route={props.route} history={props.history}/> 
+
+ 
+  console.log(props.route.routes,"====props.route.routes")
+  return  <div className="stafi_layout">
+    {/* <Sider route={props.route} history={props.history}/>  */}
       <LiquidingProcesSlider route={props.route}  history={props.history}/>
       <div className="stafi_container">
          <Content>
            {renderRoutes(props.route.routes)}
          </Content>
-      </div>
-    </div>
+      </div> 
   </div>
 }

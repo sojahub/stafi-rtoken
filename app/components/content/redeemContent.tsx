@@ -33,7 +33,7 @@ export default function Index(props:Props){
                 props.onAmountChange && props.onAmountChange(e);
             }}  icon={rDOT}/>
             <div className="balance">
-                You will get {(props.unbondCommission=="--")? "--": `${NumberUtil.handleFisAmountToFixed(props.unbondCommission)} %`} DOT
+                You will get {(props.unbondCommission=="--" || !!!props.amount)? "--": `${NumberUtil.handleFisAmountToFixed(props.unbondCommission)} %`} DOT
              </div>
          </div>
          <div className="btns">

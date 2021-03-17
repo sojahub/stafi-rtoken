@@ -5,6 +5,7 @@ import rDOT_svg from '@images/rDOT_black.svg'
 import rFIS_svg from '@images/rFIS_black.svg'
 import validator_svg from '@images/validator_2.svg'
 import './index.scss';
+import { useSelector } from 'react-redux';
 
 type Props={
   type:"rDOT"|"rETH"|"rFIS",
@@ -12,6 +13,11 @@ type Props={
   stafiStakerApr?:any
 }
 export default function Index(props:Props){
+  const {balance}=useSelector((state:any)=>{
+    return {
+      balance:state.rDOTModule.dotAccount?state.rDOTModule.dotAccount.balance:"--"
+    }
+  })
   return <div className="stafi_type_card"> 
       <div className="type_card_item" onClick={()=>{
         props.onClick && props.onClick("Staker");
@@ -35,7 +41,7 @@ export default function Index(props:Props){
                 {props.type} 
               </div>
             <label>
-              23528.34
+              {balance}
             </label>
           </div>
       </div>

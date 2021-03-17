@@ -46,10 +46,12 @@ const globalClice = createSlice({
   },
   reducers: {  
     setProcessSlider(state,{payload}){
-      if(payload==false && state.timeOutFunc){
-        clearTimeout(state.timeOutFunc);
+      // if(payload==false && state.timeOutFunc){
+      //   clearTimeout(state.timeOutFunc);
+      // }
+      if(state.processSlider!=payload){
+        state.processSlider=payload
       }
-      state.processSlider=payload
     },
     setAccounts(state,{payload}){
       state.accounts=payload;

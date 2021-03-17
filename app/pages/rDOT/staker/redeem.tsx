@@ -41,10 +41,10 @@ export default function Index(props:any){
     onAmountChange={(e:string)=>{
       setAmount(e)
     }}
-    onRdeemClick={()=>{
-      console.log('++++++onRdeemClick')
+    onRdeemClick={()=>{ 
      dispatch(unbond(amount,()=>{
       setAmount('');
+      props.history.push("/rDOT/staker/info")
      }))
     }}
   />

@@ -1,9 +1,38 @@
+.stafi_left_master_sider{ 
+    background: linear-gradient(to bottom,#2B3239,#292F38) ;
+   min-height: 700px;
+    position: relative;
+    .logo_panel{
+        display: flex;
+        align-items: center;
+        padding:20px;
+        font-size: 30px;
+        .header_logo{
+            width:76px;
+        }
+    }
+    .network{
+        position: absolute;
+        top: 690px; 
+        left:50px;
+        display: flex;
+        align-items: center;;
+       >div{ 
+        width:5px;
+        height:5px;
+        background-color: #00F3AB;
+        border-radius: 50%;
+        margin-right: 5px;
+       }
+    } 
+}
 .stafi_left_sider {
     padding-top:40px;
     width:176px;
     display: flex;
     flex-direction: column;
     align-items: center;
+    // background-color: #2B3239;
     .sider_item{
         padding:3px 9px;
         min-width: 110px;

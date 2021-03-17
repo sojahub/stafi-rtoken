@@ -39,9 +39,7 @@ const rDOTClice = createSlice({
     unbondCommission:"--",
 
     bondFees:"--",    //交易的手续费
-    estimateTxFees : 30000000000,
-
-   
+    estimateTxFees : 30000000000, 
   },
   reducers: {
     setDotAccounts(state, { payload }) {
@@ -154,7 +152,7 @@ const queryBalance = async (account: any, dispatch: any, getState: any) => {
 export const transfer = (amountparam: string, cb?: Function): AppThunk => async (dispatch, getState) => {
   const processParameter=getState().rDOTModule.processParameter;
   const notice_uuid=(processParameter && processParameter.uuid) || stafi_uuid();    //唯一标识 
-  dispatch(setProcessSlider(true));
+
   dispatch(setProcessSending({
     brocasting: processStatus.loading,
     packing: processStatus.default,
@@ -176,7 +174,9 @@ export const transfer = (amountparam: string, cb?: Function): AppThunk => async 
   } 
   
   const ex = dotApi.tx.balances.transferKeepAlive(selectedPool, amount.toString()); 
+  
   ex.signAndSend(address, { signer: injector.signer }, (result: any) => {
+    dispatch(setProcessSlider(true));
     const tx = ex.hash.toHex()
     try {
       let asInBlock = ""
@@ -377,10 +377,12 @@ export const unbond = (amount: string, cb?: Function): AppThunk => async (dispat
     if(r != "Failed"){  
       //消息通知   成功 
       dispatch(add_DOT_unbond_Notice(stafi_uuid(),amount,noticeStatus.Confirmed));
+      cb && cb(); 
     }else{
       //消息通知   成功 
       dispatch(add_DOT_unbond_Notice(stafi_uuid(),amount,noticeStatus.Error));
     }
+    // cb && cb();
   }))
 }
 

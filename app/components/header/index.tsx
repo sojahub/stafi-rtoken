@@ -1,9 +1,10 @@
 import React from 'react';
-import {useSelector} from 'react-redux';
-import logo from '@images/header_logo.png';
+import {useSelector,useDispatch} from 'react-redux';
+
 import notice from '@images/notice.svg';
 import StringUtil from '@util/stringUtil';
 import Popover from './popover';
+import {connectPolkadot} from '@features/globalClice'
 import './index.scss';
 
 type Props={
@@ -11,8 +12,9 @@ type Props={
     history:any
 }
 export default function Index(props:Props){
+    const dispatch =useDispatch()
     const account=useSelector((state:any)=>{  
-        if(props.route.type=="rDOT"){
+        if(location.pathname.includes("/rDOT")){
            
             if(state.rDOTModule.dotAccount && state.FISModule.fisAccount){
                 return {
@@ -30,8 +32,12 @@ export default function Index(props:Props){
         }
     })
     return <div className="stafi_header">
-        <img className="header_logo" src={logo} />
-        {account==null && <div className="header_tool">
+       <div></div>
+        {account==null && <div className="header_tool" onClick={()=>{
+            dispatch(connectPolkadot(()=>{
+                props.history.push("/rDOT/wallet")
+              })) 
+        }}>
             Connect to Polkadotjs
         </div>}
         {account && <div className="header_tools">
