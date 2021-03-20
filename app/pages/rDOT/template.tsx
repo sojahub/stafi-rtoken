@@ -1,8 +1,6 @@
 import React, { useEffect } from 'react'; 
-import {useDispatch,useSelector} from 'react-redux';
-import Header from '@components/header';
-import Sider from '@components/slider';
-import Content from '@components/content';
+import {useDispatch,useSelector} from 'react-redux'; 
+import Content from '@shared/components/content';
 import {renderRoutes}  from 'react-router-config';
 import {getLocalStorageItem,Keys} from '@util/common';
 import LiquidingProcesSlider from '@components/slider/liquidingProcessSlider'; 
@@ -10,8 +8,7 @@ import {Symbol} from '@keyring/defaults'
 import {fetchStafiStakerApr,connectPolkadotjs} from '@features/globalClice';
 import {continueProcess,getPools,bondFees} from '@features/rDOTClice'
 import {bondSwitch} from '@features/FISClice'; 
-import './index.scss';
-
+import '../template/index.scss'
 export default function Index(props:any){
   const dispatch = useDispatch();
   
@@ -29,9 +26,7 @@ export default function Index(props:any){
         dispatch(bondSwitch()); 
     } 
   },[]) 
-
  
-  console.log(props.route.routes,"====props.route.routes")
   return  <div className="stafi_layout">
     {/* <Sider route={props.route} history={props.history}/>  */}
       <LiquidingProcesSlider route={props.route}  history={props.history}/>

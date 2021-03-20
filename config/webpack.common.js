@@ -29,6 +29,7 @@ function webpackCommonConfigCreator(options){
                 "@util":resolve('../app/util'),
                 "@keyring":resolve('../app/keyring'),
                 "@config":resolve('../app/config'),
+                "@shared":resolve('../app/shared'),
             }
         },
         output:{

@@ -1,11 +1,10 @@
 import React from 'react'; 
 import LeftContent from './leftContent'  
-import Input from '../input/amountInput';
-import rDOT from '@images/selected_rDOT.svg'
-import rDOT_stafi_svg from '@images/rDOT_stafi.svg'
+import Input from '@shared/components/input/amountInput';
+import rDOT from '@images/selected_rDOT.svg' 
 import leftArrowSvg from '@images/left_arrow.svg'
 import NumberUtil from '@util/numberUtil'
-import Button from '../button/button'
+import Button from '@shared/components/button/button'
 type Props={
      onRdeemClick?:Function,
      amount?:string,
@@ -33,7 +32,7 @@ export default function Index(props:Props){
                 props.onAmountChange && props.onAmountChange(e);
             }}  icon={rDOT}/>
             <div className="balance">
-                You will get {(props.unbondCommission=="--" || !!!props.amount)? "--": `${NumberUtil.handleFisAmountToFixed(props.unbondCommission)} %`} DOT
+                You will get {(props.unbondCommission=="--" || !!!props.amount)? "--": `${NumberUtil.handleFisAmountToFixed(props.unbondCommission)}`} DOT
              </div>
          </div>
          <div className="btns">

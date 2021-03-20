@@ -1,5 +1,5 @@
 import React from 'react';
-import Button from '@components/button/connect_button';
+import Button from '@shared/components/button/connect_button';
 import rDOT_svg from '@images/rDOT.svg'
 import './index.scss';
 type Props={

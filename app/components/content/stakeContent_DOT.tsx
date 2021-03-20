@@ -1,9 +1,9 @@
 import React, { useMemo } from 'react';
 import {useSelector} from 'react-redux';
-import Input from '../input/amountInput';
+import Input from '@shared/components/input/amountInput';
 import LeftContent from './leftContent'
-import Button from '../button/button'
-import A from '../button/a'
+import Button from '@shared/components/button/button'
+import A from '@shared/components/button/a'
 import rDOT from '@images/selected_rDOT.svg';
 import add_svg from '@images/add.svg'
 

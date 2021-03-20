@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import LeftContent from './leftContent'  
 import rDOT_stafi_svg from '@images/rDOT_stafi.png'
 import rDOT_DOT_svg from '@images/rDOT_DOT.svg'
-import Button from '../button/button'
+import Button from '@shared/components/button/button'
 import NumberUtil from '@util/numberUtil';
 import Modal from '../modal/swapModal' 
 type Props={

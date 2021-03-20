@@ -1,0 +1,14 @@
+.rAsset_count_amount{
+  text-align: right;
+  margin-top: 20px;
+  padding-right: 77px;
+  >div:first-child{
+    color:#7C7C7C;
+    font-size: 16px;
+  }
+  >div:last-child{
+    margin-top:10px;
+    font-size: 20px;
+    font-weight: bold;
+  }
+}

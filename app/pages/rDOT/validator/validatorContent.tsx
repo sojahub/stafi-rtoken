@@ -1,5 +1,5 @@
 import React from 'react';
-import Button from '@components/button/button';
+import Button from '@shared/components/button/button';
 import LeftContent from '@components/content/leftContent';
 import './index.scss'; 
 import { message } from 'antd';

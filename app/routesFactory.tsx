@@ -4,7 +4,7 @@ import { Switch, BrowserRouter, Redirect } from 'react-router-dom';
 import authorizedRoute from '@components/route/authorizedRoute';
 import {Symbol} from '@keyring/defaults'
 
-import DOTHomeTemplate from './pages/template';
+import DOTHomeTemplate from './pages/rDOT/template';
 import HomeTemplate from './pages/template/homeTemplate'
 import RDOTHome from './pages/rDOT/home'
 import RDOTWallet from './pages/rDOT/selectWallet';
@@ -17,6 +17,10 @@ import RDOTStakerRedeem from './pages/rDOT/staker/redeem';
 import RDOTSeach from './pages/rDOT/search';
 import RDOTType from './pages/rDOT/selectType';
 
+import RAssetTemplate from './pages/rAsset/template';
+import RAssetNative from './pages/rAsset/home/native';
+import RAssetErc from './pages/rAsset/home/erc';
+import RAssetSwap from './pages/rAsset/swap';
   
 const routesFactory=(role?:any)=>{ 
   const routes=[
@@ -83,6 +87,24 @@ const routesFactory=(role?:any)=>{
         },{
           path: '*',
           component: () => <Redirect to="/rDOT/home"/>
+        }]
+      },{
+        id:"rAsset_template",
+        path:"/rAsset",
+        type:'rAsset',
+        component:RAssetTemplate,
+        routes:[{
+          id:"rAssect_native",
+          path:"/rAsset/native",
+          component:RAssetNative
+        },{
+          id:"rAssect_erc",
+          path:"/rAsset/erc",
+          component:RAssetErc
+        },{
+          id:"rAssect_swap",
+          path:"/rAsset/swap",
+          component:RAssetSwap
         }]
       },{
         path: '*',

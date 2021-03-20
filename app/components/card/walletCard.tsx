@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import Item from './walletCardItem';
 import leftArrowSvg from '@images/left_arrow.svg';
-import Button from '../button/button';
-import A from '../button/a'
+import Button from '@shared/components/button/button';
+import A from '@shared/components/button/a'
 import './index.scss';
 
 

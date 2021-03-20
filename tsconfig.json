@@ -19,6 +19,7 @@
         "@util/*": ["app/util/*"],
         "@keyring/*": ["app/keyring/*"],
         "@config/*": ["app/config/*"],
+        "@shared/*": ["app/shared/*"],
       } 
   },
   "include": [

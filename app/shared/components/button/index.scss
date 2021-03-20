@@ -7,6 +7,8 @@
     border-color:#BFBFBF ;
     img{
         margin-right: 25px;
+        height:36px;
+        width:36px;
     }
 } 
 
@@ -52,4 +54,15 @@
  
 .stafi_a.bold{
     font-weight: bold;
+}
+
+
+
+.stafi_ghost_button,.stafi_ghost_button:hover{
+    border-radius: 13.44px;
+    border-color: #00F3AB;
+    color: #00F3AB;
+    font-weight: bold;
+    font-size: 12px;
+    height: 28px;
 }

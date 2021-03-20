@@ -26,5 +26,21 @@
         }
     }
 }
-
+.type_input{
+    .ant-input-suffix{
+        div{
+            color:#fff;
+            font-size: 20px;
+            >img:first-child{
+                width:20px;
+                height:20px;
+                margin-right: 5px;
+            }
+            >img:last-child{
+                width:5px;
+                transform: rotate(-90deg);
+            }
+        }
+    }
+}
 

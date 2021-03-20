@@ -1,6 +1,6 @@
 import React from 'react';
 import {processStatus} from '@features/globalClice'
-import Button from '../button/button'
+import Button from '@shared/components/button/button'
 import success from '@images/success.png'
 import failure from '@images/failure.svg'
 import doubt from "@images/doubt.svg"

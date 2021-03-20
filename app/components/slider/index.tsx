@@ -8,6 +8,7 @@ import rDOT_svg from '@images/rDOT.svg';
 import selected_rDOT_svg from '@images/selected_rDOT.svg';
 import logo from '@images/logo2.png';
 import rAsset_svg from '@images/rAsset.svg';
+import selected_rAsset_svg from '@images/selected_rAssets.svg';
 import rKSM_svg from '@images/rKSM.svg';
 import {isdev} from '../../config/index'
 
@@ -16,10 +17,10 @@ import './index.scss'
 const siderData=[
     {
         icon:rAsset_svg,
-        selectedIcon:rAsset_svg,
+        selectedIcon:selected_rAsset_svg,
         text:"rAsset", 
         urlKeywords:'/rAsset',
-        url:""
+        url:"/rAsset/native"
     },
     {
         icon:rETH_svg,

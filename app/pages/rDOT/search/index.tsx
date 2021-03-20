@@ -1,9 +1,9 @@
 import React from 'react';
 import {Form} from 'antd';
 import {useDispatch} from 'react-redux';
-import Input from '@components/input/index';
-import Button from '@components/button/button';
-import Select,{Option} from '@components/select';
+import Input from '@shared/components/input/index';
+import Button from '@shared/components/button/button';
+import Select,{Option} from '@shared/components/select';
 import leftArrowSvg from '@images/left_arrow.svg';
 import {getBlock} from '@features/rDOTClice'
 import './index.scss';

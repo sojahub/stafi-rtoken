@@ -1,6 +1,5 @@
 import React from 'react';
-
-import '.'
+ 
 type Props={
   children:any,
   onClick?:Function,
