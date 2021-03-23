@@ -1,3 +1,29 @@
 .stafi_rasset_swap{
   padding:0px 106px;
+  .row{
+    margin-bottom: 38px;
+    .label{
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      font-size: 20px;
+      margin-bottom: 10px;
+      .balance{
+        color:#C4C4C4;
+        font-size: 12px;
+      }
+    }
+  }
+ .row.last{
+  margin-bottom: 26px;
+ }
+  .btns{
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+  }
+  .fee{
+    font-size: 12px;
+    color:#C4C4C4;
+  }
 }
