@@ -35,16 +35,15 @@ export default function Index(props:any){
         btnText="Confirm"
         history={props.history}
         showBackIcon={showBackIcon}
-        form={form}
+        form={props.type}
+        onCancel={()=>{
+            props.onClose && props.onClose()
+        }}
         onConfirm={()=>{
             if(account.address){
                 dispatch(setFisAccount(account)) 
-                if(form=="header"){
-                    props.history.goBack();
-                }else{ 
-                    props.history.push("/rDOT/type");
-                }
                 
+                props.onClose?props.onClose(): props.history.push("/rDOT/type"); 
             }else{
                 message.error("Please select the FIS wallet");
             }

@@ -13,7 +13,8 @@ type Props={
   btnText?:string,
   history?:any,
   showBackIcon?:boolean,
-  form?:any
+  form?:any,
+  onCancel?:Function
 }
 export default function Index(props:Props){ 
   return <div className="wallet_card">
@@ -27,8 +28,8 @@ export default function Index(props:Props){
         </div>
       </div>
       <div className="btn_panel">
-        {props.form=="header" && <A  onClick={()=>{
-               props.history.goBack();
+        {props.form=="header" && <A  onClick={()=>{ 
+               props.onCancel && props.onCancel();
          }}>Cancel</A>}
          <Button onClick={()=>{
            props.onConfirm && props.onConfirm();

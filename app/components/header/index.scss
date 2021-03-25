@@ -60,3 +60,15 @@
     }
     
 }
+
+
+.stafi_wallet_modal{
+    .ant-modal-content{ 
+        background-color: #2B3239;
+        color:#fff;
+        border-radius: 19px;
+        .ant-modal-body{
+            padding:0px;
+        }
+    }
+}

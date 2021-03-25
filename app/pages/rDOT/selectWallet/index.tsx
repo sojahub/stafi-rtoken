@@ -34,22 +34,21 @@ export default function Index(props:any){
     },[props.location.state])
     return <WalletCard
     title="Select a DOT wallet"
-    btnText={form=="header"?"Confirm":"Next"}
+    btnText={props.type=="header"?"Confirm":"Next"}
     history={props.history}
-    form={form}
+    form={props.type}
+    onCancel={()=>{
+        props.onClose && props.onClose()
+    }}
     onConfirm={()=>{
         if(account.address){
             dispatch(setDotAccount(account));
-            if(form=="header"){
-                props.history.goBack();
-            }else{
-                props.history.push({
-                    pathname:"/rDOT/fiswallet",
-                    state:{
-                        showBackIcon:true, 
-                    }
-                });
-            }
+            props.onClose?props.onClose(): props.history.push({
+                pathname:"/rDOT/fiswallet",
+                state:{
+                    showBackIcon:true, 
+                }
+            }); 
         }else{
             message.error("Please select the DOT wallet");
         }
