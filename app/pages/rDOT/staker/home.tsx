@@ -31,7 +31,7 @@ export default function Index(props:any){
 
   return  <Content
   amount={amount}
-  willAmount={ratioToAmount(amount,ratio)}
+  willAmount={ratio=='--'?"--":ratioToAmount(amount,ratio)}
   unit={"DOT"}
   transferrableAmount={transferrableAmount}
   apr={stafiStakerApr} 

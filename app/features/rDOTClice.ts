@@ -523,6 +523,7 @@ export const getUnbondCommission=():AppThunk=>async (dispatch, getState)=>{
   const stafiApi = await stafiServer.createStafiApi();
   const result=await stafiApi.query.rTokenSeries.unbondCommission();
   const unbondCommission = NumberUtil.fisFeeToHuman(result.toJSON());
+ 
   dispatch(setUnbondCommission(unbondCommission));
     // unbondCommissionShow用于在页面中显示，比如0.2%
   //const unbondCommissionShow = NumberUtil.fisFeeToFixed(this.unbondCommission) + '%';

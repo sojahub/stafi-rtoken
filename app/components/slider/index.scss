@@ -68,9 +68,13 @@
         text-align: right;
         width: fit-content;
         .sub_item{
+            font-size: 12px;
+            font-weight: initial;
             color:#fff;
         }
-        
+        .sub_item.sub_active{
+            color:#00F3AB;
+        }
     }
     .sider_item.active{
         color:#00F3AB;

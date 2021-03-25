@@ -8,19 +8,13 @@ type Props={
   data:any,
   history?:any
 }
-export default function Index(props:Props){
- // const [value,setValue]=useState();
-
-  const click=(e:string)=>{ 
-      if(e=="Staker"){
-        props.history.push("/rDOT/staker/index")
-      }else if(e=="Validator"){
-        props.history.push("/rDOT/validator")
-      }
+export default function Index(props:Props){ 
+  const click=(e:string)=>{   
+      props.history.push(e) 
   }
   return <div className="stafi_stake_sider"> 
           {props.data.map((item:any)=>{
-            return <Item text={item.text} selectValue={props.type} key={item.text} child={item.child}  onClick={click}/>
+            return <Item text={item.text} pathname={props.history.location.pathname} url={item.url} selectValue={props.type} key={item.text} child={item.child}  onClick={click}/>
           })}
   </div>
 }

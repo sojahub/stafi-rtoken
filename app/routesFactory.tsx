@@ -57,14 +57,17 @@ const routesFactory=(role?:any)=>{
             {
               id:"RDOT_staker_index",
               path:"/rDOT/staker/index",
+              type:"Staker",
               component:RDOTStakerIndex
             },{
               id:"RDOT_staker_index_info",
               path:"/rDOT/staker/info",
+              type:"-Status",
               component:RDOTStakerInfo
             },,{
               id:"RDOT_staker_index_redeem",
               path:"/rDOT/staker/redeem",
+              type:"Staker",
               component:RDOTStakerRedeem
             },{
               path: '*',

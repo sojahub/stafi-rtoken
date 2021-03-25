@@ -12,7 +12,7 @@ export default function Index(props:any){
 
   const [amount,setAmount]=useState<any>();
 
-  const {tokenAmount,unbondCommission,ratio} = useSelector((state:any)=>{
+  const {tokenAmount,unbondCommission,ratio,fisFee} = useSelector((state:any)=>{ 
     let unbondCommission=state.rDOTModule.unbondCommission;
     let ratio=state.FISModule.ratio;
     let tokenAmount=state.rDOTModule.tokenAmount; 
@@ -20,14 +20,14 @@ export default function Index(props:any){
       let returnValue = amount * (1 - unbondCommission);
       unbondCommission = NumberUtil.handleFisAmountToFixed(returnValue * ratio);;
     } 
+ 
     return { 
       ratio:ratio,
       tokenAmount:tokenAmount, 
-      unbondCommission:unbondCommission
+      unbondCommission:unbondCommission,
+      fisFee:state.rDOTModule.unbondCommission
     }
-  })
-  
-
+  }) 
   useEffect(()=>{
     dispatch(query_rBalances_account())
     dispatch(getUnbondCommission());
@@ -41,6 +41,7 @@ export default function Index(props:any){
     onAmountChange={(e:string)=>{
       setAmount(e)
     }}
+    fisFee={fisFee}
     onRdeemClick={()=>{ 
      dispatch(unbond(amount,()=>{
       setAmount('');

@@ -5,13 +5,15 @@ import rDOT from '@images/selected_rDOT.svg'
 import leftArrowSvg from '@images/left_arrow.svg'
 import NumberUtil from '@util/numberUtil'
 import Button from '@shared/components/button/button'
+import numberUtil from '@util/numberUtil';
 type Props={
      onRdeemClick?:Function,
      amount?:string,
      onAmountChange?:Function,
      tokenAmount?:any,
      unbondCommission?:any,
-     history?:any
+     history?:any,
+     fisFee?:any
 }
 export default function Index(props:Props){
     return <LeftContent className="stafi_stake_redeem_context"> 
@@ -38,7 +40,7 @@ export default function Index(props:Props){
          <div className="btns">
            <Button disabled={!props.amount} size="small" btnType="ellipse" onClick={()=>{
                props.onRdeemClick && props.onRdeemClick();
-           }}>Unbond</Button> Unbond will take 28 days
+           }}>Unbond</Button> Unbond will take 28 days and {(props.fisFee != "--") && numberUtil.fisFeeToFixed(props.fisFee)}% fee
          </div>
          <div className="subTitle">
          2. Withdraw unbonded DOT

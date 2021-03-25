@@ -1,16 +1,23 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 type Props={
   text:string,
   onClick?:Function,
   child?:{
-    text:string
+    text:string,
+    url:string
   }[],
-  selectValue?:string
+  url?:string,
+  selectValue?:string,
+  pathname?:string
 }
 export default function Index(props:Props){
 
   const [showChild,setShowChild]=useState(false);
+  useEffect(()=>{
+    
+    setShowChild(props.text==props.selectValue);
+  })
   const active=()=>{
     if(props.text==props.selectValue){
       return true
@@ -26,17 +33,16 @@ export default function Index(props:Props){
     return false
   }
   return <div className= {`sider_item ${active() && 'active'}`} onClick={()=>{
-    if(props.child){
-      setShowChild(!showChild);
-    }else{
-      props.onClick && props.onClick(props.text);
-    }
+    // if(props.child){
+    //   setShowChild(!showChild);
+    // }
+    props.onClick && props.onClick(props.url);
   }}>
     {props.text}
-    {(showChild && props.child) && props.child.map((item)=>{
-      return <div className={`sub_item ${props.selectValue==item.text && 'sub_active'}`} key={item.text} onClick={(e)=>{
+    {(showChild && props.child) && props.child.map((item:any)=>{ 
+      return <div className={`sub_item ${props.pathname==item.url && 'sub_active'}`} key={item.text} onClick={(e)=>{
         e.stopPropagation();
-        props.onClick && props.onClick(item.text);
+        props.onClick && props.onClick(item.url);
       }}>
           {item.text}
       </div>

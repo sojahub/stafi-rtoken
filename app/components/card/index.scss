@@ -152,7 +152,14 @@
         height:33px;
       }
       div{
-        color:#00F3AB;
+        color:#00F3AB; 
+        transform: rotate(-14deg);
+        margin-top: -5px;
+        z-index: 2;
+      }
+      label{ 
+        color:#C1C1C1;
+        font-size: 18px; 
       }
     }
   }
