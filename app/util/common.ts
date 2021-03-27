@@ -8,6 +8,7 @@ export enum Keys {
   DotProcessParameter = 'stafi_dot_processParameter', 
   DotStakeHash='stafi_dot_stakeHash', 
 
+  MetamaskAccountKey = 'stafi_Metamask_account', 
   StafiNoticeKey="stafi_notice",
 }
 

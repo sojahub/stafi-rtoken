@@ -28,5 +28,12 @@ export default {
       return 'https://rtoken-api.stafi.io';
     }  
   },
+  rFISTokenAddress: ()=>{
+    if(process.env.NODE_ENV=="production" &&  !isdev()){
+      return '0xc82eb6dea0c93edb8b697b89ad1b13d19469d635';
+    }else{
+      return '0xc372e985fda306cfe0e903657de808cf757f536f';
+    }  
+  }
 } 
  

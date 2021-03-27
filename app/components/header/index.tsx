@@ -27,6 +27,14 @@ export default function Index(props:Props){
                 }
             } 
         }
+        if(location.pathname.includes("/rAsset")){
+            if(state.rDOTModule.dotAccount && state.FISModule.fisAccount){
+                return {
+                    ethAccount:state.rETHModule.ethAccount
+                }
+            } 
+        }
+   
         return null
     })
     const {noticeData}=useSelector((state:any)=>{  
@@ -71,6 +79,11 @@ export default function Index(props:Props){
                 <div>{account.dotAccount.balance} DOT</div>
                 <div>{StringUtil.replacePkh(account.dotAccount.address,6,44)}</div>
             </div>} 
+
+            {account.ethAccount && <div  className="header_tool account">
+                <div>{account.ethAccount.balance} ETH</div>
+                <div>{StringUtil.replacePkh(account.ethAccount.address,4,38)}</div>
+            </div>}
             
         </div>}
     </div>
