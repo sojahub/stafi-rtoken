@@ -1,16 +1,15 @@
 import { createSlice } from '@reduxjs/toolkit';  
 import {isdev} from '@config/index'
 import { AppThunk, RootState } from '../store';
-import { setLocalStorageItem, getLocalStorageItem, removeLocalStorageItem, Keys } from '@util/common'
-import StringUtil from '@util/stringUtil';
+import { setLocalStorageItem, getLocalStorageItem, removeLocalStorageItem, Keys } from '@util/common';
 import NumberUtil from '@util/numberUtil';
 import Web3Utils from 'web3-utils';
 import EthServer from '@servers/eth/index'
-import Web3 from 'web3';
+// import Web3 from 'web3';
 import { message } from 'antd';
 
 
-const ethserver=new EthServer();
+// const ethserver=new EthServer();
 const rETHClice = createSlice({
   name: 'rETHModule',
   initialState: {  
@@ -127,6 +126,6 @@ export const monitoring_Method=():AppThunk=>(dispatch,getState)=> {
 // });
 
 export const getAssetBalance=():AppThunk=>()=>{
-  
+
 }
 export default rETHClice.reducer;

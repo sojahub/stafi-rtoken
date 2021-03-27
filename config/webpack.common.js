@@ -18,6 +18,8 @@ function webpackCommonConfigCreator(options){
             fallback: {
                 crypto: require.resolve('crypto-browserify'), 
                 buffer: require.resolve('buffer/'), 
+                http: false,
+                https:false
             },
             // 如果确认不需要node polyfill，设置resolve.alias设置为false
             alias: {
