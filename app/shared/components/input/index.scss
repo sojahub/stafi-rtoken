@@ -116,3 +116,26 @@
 .stafi_address_input::-webkit-input-placeholder,.stafi_input::-webkit-input-placeholder{
     color:#4F4F4F;
 }
+
+.stafi_editAddressINput{ 
+    .stafi_show_address{
+        height: 30px;
+        display: flex;
+        justify-content: space-between;
+        a{
+            font-style: oblique;
+        }
+        .ant-input{
+            background: transparent;
+            border: 0px;
+            border-bottom: 1px solid #BFBFBF;
+            color:#fff;
+            font-size: 12px;
+        }
+        .ant-input:focus, .ant-input-focused{
+            box-shadow: 0 0 0 0 transparent;
+        }
+    }
+
+
+}

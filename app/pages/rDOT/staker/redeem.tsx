@@ -5,17 +5,20 @@ import { rTokenRate } from '@features/FISClice';
 import {rSymbol} from '@keyring/defaults'
 import {unbond,getUnbondCommission,query_rBalances_account} from '@features/rDOTClice';
 import {useDispatch} from 'react-redux';
+import UnbondModal from '@components/modal/unbondModal'
 import NumberUtil from '@util/numberUtil'
 
 export default function Index(props:any){ 
   const dispatch=useDispatch();
-
+  const [recipient,setRecipient]=useState<string>();
   const [amount,setAmount]=useState<any>();
+  const [visible,setVisible]=useState(false);
 
-  const {tokenAmount,unbondCommission,ratio,fisFee} = useSelector((state:any)=>{ 
+  const {tokenAmount,unbondCommission,ratio,fisFee,address} = useSelector((state:any)=>{ 
     let unbondCommission=state.rDOTModule.unbondCommission;
     let ratio=state.FISModule.ratio;
     let tokenAmount=state.rDOTModule.tokenAmount; 
+    
     if (ratio && unbondCommission && amount) {
       let returnValue = amount * (1 - unbondCommission);
       unbondCommission = NumberUtil.handleFisAmountToFixed(returnValue * ratio);;
@@ -25,15 +28,19 @@ export default function Index(props:any){
       ratio:ratio,
       tokenAmount:tokenAmount, 
       unbondCommission:unbondCommission,
-      fisFee:state.rDOTModule.unbondCommission
+      fisFee:state.rDOTModule.unbondCommission,
+      address:state.rDOTModule.dotAccount.address
     }
   }) 
+  useEffect(()=>{
+    setRecipient(address)
+  },[address])
   useEffect(()=>{
     dispatch(query_rBalances_account())
     dispatch(getUnbondCommission());
     dispatch(rTokenRate(rSymbol.Dot));
   },[])
-  return  <Content 
+  return  <><Content 
     history={props.history}
     amount={amount}
     tokenAmount={tokenAmount}
@@ -42,11 +49,30 @@ export default function Index(props:any){
       setAmount(e)
     }}
     fisFee={fisFee}
+    address={recipient}
+    onInputChange={(e:string)=>{ 
+      setRecipient(e)
+    }}
     onRdeemClick={()=>{ 
-     dispatch(unbond(amount,()=>{
-      setAmount('');
-      props.history.push("/rDOT/staker/info")
-     }))
+      setVisible(true);
     }}
   />
+  <UnbondModal visible={visible} 
+    unbondAmount={amount}
+    commission={amount}
+    getAmount={amount}
+    onCancel={()=>{
+      setVisible(false)
+    }}
+    onOk={()=>{
+      dispatch(unbond(amount,recipient,()=>{
+        
+        setAmount('');
+       
+        props.history.push("/rDOT/staker/info");
+       }))
+       setVisible(false)
+    }}
+  />
+  </>
 }

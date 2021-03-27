@@ -20,7 +20,7 @@ import NumberUtil from '@util/numberUtil';
 import { bound, fisUnbond } from './FISClice';
 import {stafi_uuid} from '@util/common'
 import {addNoticeModal,noticesubType,noticeStatus,noticeType} from './noticeClice';
-import moment from 'moment';
+ 
 
 
 
@@ -40,6 +40,9 @@ const rDOTClice = createSlice({
 
     bondFees:"--",    //交易的手续费
     estimateTxFees : 30000000000, 
+
+    totalRDot:"--",
+    stakerApr:"--"
   },
   reducers: {
     setDotAccounts(state, { payload }) {
@@ -100,6 +103,13 @@ const rDOTClice = createSlice({
     },
     setBondFees(state,{payload}){
       state.bondFees=payload
+    },
+
+    setTotalRDot(state,{payload}){
+      state.totalRDot=payload
+    },
+    setStakerApr(state,{payload}){
+      state.stakerApr=payload;
     }
   },
 });
@@ -116,7 +126,8 @@ export const { setDotAccounts,
   setPoolLimit,
   setUnbondCommission,
   setBondFees,
- 
+  setTotalRDot,
+  setStakerApr
 } = rDOTClice.actions;
 
 
@@ -367,8 +378,8 @@ export const reStaking = (cb?: Function): AppThunk => async (dispatch, getState)
 }
 
 
-export const unbond = (amount: string, cb?: Function): AppThunk => async (dispatch, getState) => {
-  const recipient = getState().rDOTModule.dotAccount.address;
+export const unbond = (amount: string,recipient:string, cb?: Function): AppThunk => async (dispatch, getState) => {
+ // const recipient = getState().rDOTModule.dotAccount.address;
   const validPools = getState().rDOTModule.validPools;
   const poolLimit = getState().rDOTModule.poolLimit;
   let selectedPool = getPool(NumberUtil.fisAmountToChain(amount), validPools, poolLimit);
@@ -538,6 +549,39 @@ export const bondFees=():AppThunk=>async (dispatch, getState)=>{
 }
 
 
+export const totalIssuance=():AppThunk=>async (dispatch, getState)=>{
+  const stafiApi = await stafiServer.createStafiApi(); 
+  const  result =await stafiApi.query.rBalances.totalIssuance(rSymbol.Dot) 
+  let totalRDot:any = NumberUtil.fisAmountToHuman(result.toJSON());
+  totalRDot = NumberUtil.handleFisAmountToFixed(totalRDot); 
+  dispatch(setTotalRDot(totalRDot))
+}
+
+export const rTokenLedger=():AppThunk=>async (dispatch, getState)=>{
+  const stafiApi = await stafiServer.createStafiApi();
+  // const api=await  polkadotServer.createPolkadotApi()
+  const  eraResult = await stafiApi.query.rTokenLedger.chainEras(rSymbol.Dot);
+  let currentEra = eraResult.toJSON();
+  if (currentEra) {
+    let rateResult =await stafiApi.query.rTokenRate.eraRate(rSymbol.Dot, currentEra) 
+    const  currentRate = rateResult.toJSON(); 
+    const rateResult2 =await stafiApi.query.rTokenRate.eraRate(rSymbol.Dot, currentEra-1)
+    let lastRate = rateResult2.toJSON();
+    dispatch(handleStakerApr(currentRate,lastRate));
+  } else {
+    dispatch(handleStakerApr());
+  }  
+}
+ const handleStakerApr=(currentRate?:any,lastRate?:any):AppThunk=>async (dispatch, getState)=>{
+    if (currentRate && lastRate) {
+      const apr = (currentRate - lastRate)/lastRate * 365.25 * 100 + '%';
+      dispatch(setStakerApr(apr));
+    } else {
+      dispatch(setStakerApr('15.9%')); 
+    }
+  }
+
+ 
 const add_DOT_stake_Notice=(uuid:string,amount:string,status:string,subData?:any):AppThunk=>async (dispatch,getState)=>{
   setTimeout(()=>{
     dispatch(add_DOT_Notice(uuid,noticeType.Staker,noticesubType.Stake,`Staked ${amount} DOT from your Wallet to StaFi Validator Pool Contract`,status,{

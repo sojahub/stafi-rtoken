@@ -626,4 +626,5 @@ export const bondSwitch=():AppThunk=>async (dispatch, getState)=>{
   dispatch(setBondSwitch(result.toJSON()))
 }
 
+
 export default FISClice.reducer;

@@ -10,7 +10,9 @@ import { useSelector } from 'react-redux';
 type Props={
   type:"rDOT"|"rETH"|"rFIS",
   onClick:Function,
-  stafiStakerApr?:any
+  stafiStakerApr?:any,
+  total?:any,
+  apr?:any
 }
 export default function Index(props:Props){
   const {balance}=useSelector((state:any)=>{
@@ -32,7 +34,7 @@ export default function Index(props:Props){
           </div>
           <div className="apr_panel">
               <img src={apr_svg} /> 
-              <label>{props.stafiStakerApr}</label>
+              <label>{props.apr}</label>
           </div>
           <div className="r_panel">
             {props.type=="rDOT" && <img src={rDOT_svg} />}
@@ -41,7 +43,7 @@ export default function Index(props:Props){
                 {props.type} 
               </div>
             <label>
-              {balance}
+              {props.total}
             </label>
           </div>
       </div>

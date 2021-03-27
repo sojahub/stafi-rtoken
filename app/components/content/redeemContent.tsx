@@ -1,10 +1,11 @@
-import React from 'react'; 
+import React, { useState } from 'react'; 
 import LeftContent from './leftContent'  
 import Input from '@shared/components/input/amountInput';
 import rDOT from '@images/selected_rDOT.svg' 
 import leftArrowSvg from '@images/left_arrow.svg'
 import NumberUtil from '@util/numberUtil'
-import Button from '@shared/components/button/button'
+import Button from '@shared/components/button/button';
+import EditInput from '@shared/components/input/editAddresInput'
 import numberUtil from '@util/numberUtil';
 type Props={
      onRdeemClick?:Function,
@@ -13,9 +14,12 @@ type Props={
      tokenAmount?:any,
      unbondCommission?:any,
      history?:any,
-     fisFee?:any
+     fisFee?:any,
+     address?:string,
+     onInputChange?:Function
 }
 export default function Index(props:Props){
+    const [inputEdit,setInputEdit]=useState(false);
     return <LeftContent className="stafi_stake_redeem_context"> 
     <img className="back_icon" onClick={()=>{
       props.history.goBack();
@@ -26,28 +30,37 @@ export default function Index(props:Props){
          <div className="subTitle">
                <div className="label"> 1. Unbond DOT</div>
                 <div className="balance">
-                rDOT balance {(props.tokenAmount=="--")? "--": NumberUtil.handleFisAmountToFixed(props.tokenAmount)}
+                
              </div>
         </div>
-         <div className="input_panel"> 
+        <div className="input_panel"> 
             <Input placeholder="DOT AMOUNT" value={props.amount}  onChange={(e:string)=>{
                 props.onAmountChange && props.onAmountChange(e);
             }}  icon={rDOT}/>
             <div className="balance">
-                You will get {(props.unbondCommission=="--" || !!!props.amount)? "--": `${NumberUtil.handleFisAmountToFixed(props.unbondCommission)}`} DOT
-             </div>
-         </div>
-         <div className="btns">
+                {/* You will get {(props.unbondCommission=="--" || !!!props.amount)? "--": `${NumberUtil.handleFisAmountToFixed(props.unbondCommission)}`} DOT */}
+                rDOT balance {(props.tokenAmount=="--")? "--": NumberUtil.handleFisAmountToFixed(props.tokenAmount)}
+            </div>
+        </div>
+         {/* <div className="btns">
            <Button disabled={!props.amount} size="small" btnType="ellipse" onClick={()=>{
                props.onRdeemClick && props.onRdeemClick();
            }}>Unbond</Button> Unbond will take 28 days and {(props.fisFee != "--") && numberUtil.fisFeeToFixed(props.fisFee)}% fee
-         </div>
-         <div className="subTitle">
-         2. Withdraw unbonded DOT
-             </div>
-             <div className="unbonding">
-             <label>1.0323</label> Unbonding: 12.34 ( 23 days left)
-             </div>
-             <Button size="small" btnType="ellipse">Withdraw</Button>
+         </div> */}
+        <div className="subTitle">
+       
+        <div className="label"> 2. Receiving adress</div>
+        </div>
+        <EditInput value={props.address} onEdit={(e:boolean)=>{
+            setInputEdit(e)
+        }} onInputChange={(e:string)=>{
+            props.onInputChange && props.onInputChange(e);
+        }}/>
+             {/* <Button size="small" btnType="ellipse">Withdraw</Button> */}
+        <div className="unbond_btns">
+            <Button disabled={!props.amount || !props.address || inputEdit} btnType="ellipse" onClick={()=>{
+                props.onRdeemClick && props.onRdeemClick();
+            }}>Unbond</Button>
+        </div>
     </LeftContent>
 }

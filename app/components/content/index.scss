@@ -24,29 +24,44 @@
    
     }
     .money_panel{
-        margin-top:60px;
+        margin-top:40px; 
         .money_panel_item{
-            font-size: 16px;;
+            font-size: 16px;
+            position: relative;
+            width: fit-content;
             >div:last-child{
                 font-size: 30px;
                 font-weight: bold;
                 color:#00F3AB;
                 line-height: 30px;
             }
+            .money_panel_item_doubt{
+                position: absolute;
+                top:0px;
+                right:0px;
+                top: -15px;
+                right: -15px;
+            }
         }
-        >div:last-child{
-            margin-top:30px;
-        }
-        
-    }
-    .money_panel_row{
-        display: flex;
-        .add_icon{
-            width:54px;
+        // >div:last-child{
+        //     margin-top:30px;
+        // }
+        .money_panel_row{
             display: flex;
-            justify-content: center;
-            align-items: center;
+            .add_icon{
+                width:54px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
         }
+        >div{
+            margin-top:25px;
+        }
+    }
+ 
+    .doubt_overlay{
+        font-size: 10px;
     }
     .dot_input_panel{
         margin-top:28px;
@@ -69,7 +84,7 @@
         margin-top:10px;
     }
     .btns{
-        margin-top: 44px;
+        margin-top: 20px;
         display: flex;
         justify-content: flex-end;
         align-items: center;
@@ -181,5 +196,10 @@
             margin-right: 20px;
             
         };
+    }
+    .unbond_btns{
+        margin-top: 110px; 
+        display: flex;
+        justify-content: flex-end;
     }
 }

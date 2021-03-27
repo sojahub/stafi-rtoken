@@ -17,14 +17,15 @@ export default function Index(props:any){
     dispatch(balancesAll());
     dispatch(rTokenRate(1))
   },[])
-  const {transferrableAmount,ratio,stafiStakerApr,fisCompare,validPools}=useSelector((state:any)=>{ 
+  const {transferrableAmount,ratio,stafiStakerApr,fisCompare,validPools,totalRDot}=useSelector((state:any)=>{ 
     const fisCompare= state.FISModule.fisAccount.balance<NumberUtil.fisAmountToHuman(state.rDOTModule.bondFees)+NumberUtil.fisAmountToHuman(state.rDOTModule.estimateTxFees);
     return {
       transferrableAmount:state.rDOTModule.transferrableAmountShow,
       ratio:state.FISModule.ratio,
       stafiStakerApr:state.globalModule.stafiStakerApr,
       fisCompare:fisCompare,
-      validPools:state.rDOTModule.validPools
+      validPools:state.rDOTModule.validPools,
+      totalRDot:state.rDOTModule.totalRDot,
     }
   })
 
@@ -41,7 +42,8 @@ export default function Index(props:any){
   onRecovery={()=>{ 
      props.history.push("/rDOT/search")
   }}
-  validPools={validPools}
+  validPools={validPools} 
+  totalStakedToken={ NumberUtil.handleFisAmountToFixed(totalRDot*ratio)}
   onStakeClick={()=>{
     if(fisCompare){
       message.error("Insufficient FIS balance.");

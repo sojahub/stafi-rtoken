@@ -1,10 +1,12 @@
 import React, { useMemo } from 'react';
 import {useSelector} from 'react-redux';
+import {Tooltip} from 'antd'
 import Input from '@shared/components/input/amountInput';
 import LeftContent from './leftContent'
 import Button from '@shared/components/button/button'
 import A from '@shared/components/button/a'
 import rDOT from '@images/selected_rDOT.svg';
+import doubt from "@images/doubt.svg"
 import add_svg from '@images/add.svg'
 
 import './index.scss';
@@ -18,7 +20,9 @@ type Props={
     onChange?:Function,
     willAmount?:string | 0,
     apr?:string,
-    validPools?:any[]
+    validPools?:any[],
+    totalStakedToken?:any
+
 }
 export default function Index(props:Props){
     const {bondSwitch}=useSelector((state:any)=>{  
@@ -45,21 +49,23 @@ export default function Index(props:Props){
                     props.onChange && props.onChange(e);
                 }
                 
-            }} unit={"Max"} icon={rDOT}/>
+            }}  icon={rDOT}/>
+            {/* unit={"Max"} */}
             <div  className="pool">
-                234,234 DOT is staked via rDOT <A>stats</A>
+                {props.totalStakedToken} DOT is staked via rDOT 
+                {/* <A>stats</A> */}
             </div>
         </div>
        
         <div className="money_panel"> 
             <div className="money_panel_row">
-            <div className="money_panel_item">
-                <div>Estimated APR</div>
-                <div>
-                    {props.apr}
+                <div className="money_panel_item">
+                    <div>Estimated APR</div>
+                    <div>
+                        {props.apr}
+                    </div>
                 </div>
-            </div>
-            <div className="add_icon">
+            {/* <div className="add_icon">
                 <img src={add_svg} />
             </div>
             <div className="money_panel_item">
@@ -67,7 +73,7 @@ export default function Index(props:Props){
                 <div>
                     3%
                 </div>
-            </div>
+            </div> */}
             </div>
             <div className="money_panel_item">
                 <div>You will get rDOT</div>
@@ -75,11 +81,19 @@ export default function Index(props:Props){
                     {props.willAmount}
                 </div>
             </div>
+            <div className="money_panel_item">
+                <div>Relay Fee: 3 FIS</div> 
+                <div></div>
+
+                <div className="money_panel_item_doubt">
+                  
+                    <Tooltip overlayClassName="doubt_overlay" placement="topLeft" title={"Fee charged by the relay to pay for the fee of interact tx to designated chain"}>
+                        <img src={doubt} />
+                    </Tooltip>
+                </div>
+            </div>
         </div>
-        <div className="btns">
-         <A bold={true} onClick={()=>{
-            props.onRecovery && props.onRecovery()
-         }}>Recovery</A><Button disabled={!props.amount} onClick={()=>{
+        <div className="btns"> <Button disabled={!props.amount} onClick={()=>{
              props.onStakeClick && props.onStakeClick()
          }}>Stake</Button>
         </div>
