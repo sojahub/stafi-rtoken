@@ -6,6 +6,7 @@ import keyring from '@servers/index';
 import {Symbol} from '@keyring/defaults'; 
 import { createSubstrate as dotCreateSubstrate } from './rDOTClice';
 import { createSubstrate as fisCreateSubstrate } from './FISClice';
+import { createSubstrate as ksmCreateSubstrate } from './rKSMClice';
 import Rpc from '@util/rpc';
 
 export enum processStatus {
@@ -113,6 +114,9 @@ const clice=(symbol: string)=>{
           createSubstrate:fisCreateSubstrate
         };
       case Symbol.Ksm: 
+        return {
+          createSubstrate:ksmCreateSubstrate
+        };
       case Symbol.Dot:
         return {
           createSubstrate:dotCreateSubstrate
@@ -144,7 +148,11 @@ export const connectPolkadot=(cb?:Function):AppThunk=>async (dispatch, getState)
   await dispatch(connectPolkadotjs(Symbol.Fis));
   cb && cb()
 }
-
+export const connectPolkadot_ksm=(cb?:Function):AppThunk=>async (dispatch, getState)=>{
+  await dispatch(connectPolkadotjs(Symbol.Ksm));
+  await dispatch(connectPolkadotjs(Symbol.Fis));
+  cb && cb()
+}
 
 export const gSetTimeOut=(cb:Function,time:number):AppThunk=>(dispatch,getState)=>{
   const timeoutFunc=setTimeout(cb,time);

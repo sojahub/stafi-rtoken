@@ -30,80 +30,112 @@ export default class Index extends SubstrateKeyring{
       DepositNonce: 'u64',
       RateType: 'u64',
       AccountRData: {
-          free: 'u128'
+        free: 'u128'
       },
       RSymbol: {
-          _enum: [
-              'RFIS',
-              'RDOT',
-              'RKSM'
-          ]
+        _enum: [
+          'RFIS',
+          'RDOT',
+          'RKSM',
+          'RATOM'
+        ]
       },
       ProposalStatus: {
-          _enum: [
-            'Active',
-            'Passed',
-            'Expired',
-            'Executed'
-          ]
+        _enum: [
+          'Active',
+          'Passed',
+          'Expired',
+          'Executed'
+        ]
       },
       ProposalVotes: {
-          voted: 'Vec<AccountId>',
-          status: 'ProposalStatus',
-          expiry: 'BlockNumber'
+        voted: 'Vec<AccountId>',
+        status: 'ProposalStatus',
+        expiry: 'BlockNumber'
       },
       BondKey: {
-          symbol: 'RSymbol',
-          bond_id: 'H256'
+        symbol: 'RSymbol',
+        bond_id: 'H256'
       },
       BondRecord: {
-          bonder: 'AccountId',
-          symbol: 'RSymbol',
-          era: 'u32',
-          pubkey: 'Vec<u8>',
-          pool: 'Vec<u8>',
-          blockhash: 'Vec<u8>',
-          txhash: 'Vec<u8>',
-          amount: 'u128'
+        bonder: 'AccountId',
+        symbol: 'RSymbol',
+        pubkey: 'Vec<u8>',
+        pool: 'Vec<u8>',
+        blockhash: 'Vec<u8>',
+        txhash: 'Vec<u8>',
+        amount: 'u128'
       },
       BondReason: {
-          _enum: [
-              'Pass',
-              'BlockhashUnmatch',
-              'TxhashUnmatch',
-              'PubkeyUnmatch',
-              'PoolUnmatch',
-              'AmountUnmatch'
-          ]
+        _enum: [
+          'Pass',
+          'BlockhashUnmatch',
+          'TxhashUnmatch',
+          'PubkeyUnmatch',
+          'PoolUnmatch',
+          'AmountUnmatch'
+        ]
+      },
+      BondState: {
+        _enum: [
+          'Dealing',
+          'Fail',
+          'Success'
+        ]
+      },
+      SigVerifyResult: {
+        _enum: [
+          'InvalidPubkey',
+          'Fail',
+          'Pass'
+        ]
+      },
+      BondSnapshot: {
+        symbol: 'RSymbol',
+        era: 'u32',
+        pool: 'Vec<u8>',
+        bond: 'u128',
+        unbond: 'u128',
+        active: 'u128',
+        last_voter: 'AccountId'
       },
       LinkChunk: {
-          pool: 'Vec<u8>',
-          bond_value: 'u128',
-          unbond_value: 'u128'
+        bond: 'u128',
+        unbond: 'u128',
+        active: 'u128'
       },
-      BondUnlockChunk: {
-          value: 'u128',
-          era: 'u32'
+      OriginalTxType: {
+        _enum: [
+          'Transfer',
+          'Bond',
+          'Unbond',
+          'WithdrawUnbond',
+          'ClaimRewards'
+        ]
       },
-      WithdrawChunk: {
-          who: 'AccountId',
-          recipient: 'Vec<u8>',
-          value: 'u128',
-          pool: 'Vec<u8>'
+      Unbonding: {
+        who: 'AccountId',
+        symbol: 'RSymbol',
+        pool: 'Vec<u8>',
+        rvalue: 'u128',
+        value: 'u128',
+        current_era: 'u32',
+        unlock_era: 'u32',
+        recipient: 'AccountId'
       },
       RproposalStatus: {
-          _enum: [
-              'Initiated',
-              'Approved',
-              'Rejected',
-              'Expired'
-          ]
+        _enum: [
+          'Initiated',
+          'Approved',
+          'Rejected',
+          'Expired'
+        ]
       },
       RproposalVotes: {
-          votes_for: 'Vec<AccountId>',
-          votes_against: 'Vec<AccountId>',
-          status: 'RproposalStatus',
-          expiry: 'BlockNumber'
+        votes_for: 'Vec<AccountId>',
+        votes_against: 'Vec<AccountId>',
+        status: 'RproposalStatus',
+        expiry: 'BlockNumber'
       }
     };
     if (stafiApi) {

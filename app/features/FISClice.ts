@@ -495,23 +495,22 @@ export const getMinting = (type: number, txHash: string, blockHash: string, cb?:
   bondSuccessParamArr.push(txHash);
   const stafiApi = await stafi.createStafiApi();
   stafiApi.query.rTokenSeries.bondSuccess(bondSuccessParamArr).then((result: any) => {
-    let isSuccess = result.toJSON();
-    if (isSuccess) {
+    let bondState = result.toJSON();
+    if (bondState==2) {
       dispatch(setProcessMinting({
         brocasting: processStatus.success
       }));
       cb && cb("successful");
-    } else if (isSuccess === false) {
+    } else if (bondState === 1) {
     
       dispatch(setProcessMinting({
         brocasting: processStatus.failure
       }));
       cb && cb("failure");
     }
-    // isSuccess为null，代表结果还未知；isSuccess为false代表失败；isSuccess为true则代表minting成功
+     
   });
-}
-
+} 
 export const query_rBalances_account = (): AppThunk => async (dispatch, getState) => {
   const address = getState().FISModule.fisAccount.address; // 当前用户的FIS账号
   const stafiApi = await stafi.createStafiApi();

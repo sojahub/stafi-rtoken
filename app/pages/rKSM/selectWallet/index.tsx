@@ -2,53 +2,54 @@ import React,{useState,useEffect, useMemo} from 'react';
 import {useSelector,useDispatch} from 'react-redux'
 import WalletCard from '@components/card/walletCard'
 import Item from '@components/card/walletCardItem';
-import {setDotAccount} from '@features/rDOTClice'; 
+import {setKsmAccount} from '@features/rKSMClice'; 
+import {rSymbol} from '@keyring/defaults'
 import {message,Modal} from 'antd'
 import './index.scss';
 
 export default function Index(props:any){
     const dispatch=useDispatch(); 
-    const {dotAccounts,dotAccount} = useSelector((state:any)=>{ 
+    const {ksmAccounts,ksmAccount} = useSelector((state:any)=>{ 
         return {
-            dotAccounts:state.rDOTModule.dotAccounts,
-            dotAccount:state.rDOTModule.dotAccount || {}
+            ksmAccounts:state.rKSMModule.ksmAccounts,
+            ksmAccount:state.rKSMModule.ksmAccount || {}
         }
     })
     const [account,setAccount]=useState<any>();
 
     useEffect(()=>{
-        if(dotAccount && !dotAccount.address && dotAccounts.length>0){
+        if(ksmAccount && !ksmAccount.address && ksmAccounts.length>0){
         //    dispatch(setDotAccount(dotAccounts[0]));
-           setAccount(dotAccounts[0])
+           setAccount(ksmAccounts[0])
         }else{
-           setAccount(dotAccount)
+           setAccount(ksmAccount)
         }
-    },[dotAccounts]) 
+    },[ksmAccounts]) 
 
     return <WalletCard
-    title="Select a DOT wallet"
+    title="Select a KSM wallet"
     btnText={props.type=="header"?"Confirm":"Next"}
     history={props.history}
     form={props.type}
     onCancel={()=>{
         props.onClose && props.onClose()
-    }}
+    }} 
     onConfirm={()=>{
         if(account.address){
-            dispatch(setDotAccount(account));
+            dispatch(setKsmAccount(account));
             props.onClose?props.onClose(): props.history.push({
-                pathname:"/rDOT/fiswallet",
+                pathname:"/rKSM/fiswallet",
                 state:{
                     showBackIcon:true, 
                 }
             }); 
         }else{
-            message.error("Please select the DOT wallet");
+            message.error("Please select the KSM wallet");
         }
     }}>
 
-    {dotAccounts.map((item:any)=>{
-        return <Item data={item} type="DOT" key={item.address} selected={account ? (item.address==account.address) : false} onClick={()=>{
+    {ksmAccounts.map((item:any)=>{
+        return <Item data={item} type="KSM" key={item.address} selected={account ? (item.address==account.address) : false} onClick={()=>{
             setAccount(item)
         }}/>
     })}  

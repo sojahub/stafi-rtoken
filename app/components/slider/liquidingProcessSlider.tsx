@@ -6,6 +6,7 @@ import Liquiding_heard from '@images/liquiding_heard.svg';
 import close_svg from '@images/close.svg';
 import {setProcessSlider} from '@features/globalClice';
 import {reStaking,reSending} from '@features/rDOTClice'
+import {rSymbol} from '@keyring/defaults'
 
 import './liquidingProcessSlider.scss';
 type Props={
@@ -23,14 +24,14 @@ export default function Index(props:Props){
   }) 
 
   const reSendingClick=()=>{
-    if(props.route.type=="rDOT"){
+    if(props.route.type==rSymbol.Dot){
       dispatch(reSending((href:any)=>{
         href && props.history.push(href)
       }));
     }
   }
   const reStakingClick=()=>{
-    if(props.route.type=="rDOT"){
+    if(props.route.rSymbol==rSymbol.Dot){
       dispatch(reStaking((href:any)=>{
         href && props.history.push(href)
       }));

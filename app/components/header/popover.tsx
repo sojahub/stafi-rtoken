@@ -27,10 +27,16 @@ export default function Index(props:Props){
     data={item}
     onClick={()=>{  
       dispatch(setProcess(item,data.datas));
-      const hasGo=location.pathname.includes("/rDOT")
-      if(item.rSymbol==Symbol.Dot && !hasGo){
+      const hasGo_DOT=location.pathname.includes("/rDOT")
+      if(item.rSymbol==Symbol.Dot && !hasGo_DOT){
         //跳转到对应到类型页面
         props.history && props.history.push("/rDOT/home");
+      }
+
+      const hasGo_KSM=location.pathname.includes("/rKSM")
+      if(item.rSymbol==Symbol.Ksm && !hasGo_KSM){
+        //跳转到对应到类型页面
+        props.history && props.history.push("/rKsm/home");
       }
     }}/>
   })}

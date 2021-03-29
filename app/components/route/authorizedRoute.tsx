@@ -11,6 +11,8 @@ export const authorized = (allowed:any[], currentRole:any) => includes(allowed, 
  
 const account=(type:string)=>{
   switch(type){
+    case Symbol.Ksm:
+      return getLocalStorageItem(Keys.KsmAccountKey) && getLocalStorageItem(Keys.FisAccountKey);
     case Symbol.Dot:
       return getLocalStorageItem(Keys.DotAccountKey) && getLocalStorageItem(Keys.FisAccountKey);
     case Symbol.Fis:
