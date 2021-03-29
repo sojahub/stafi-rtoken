@@ -107,7 +107,7 @@ export default {
 
   // 返回字符串 保留6位小数 固定3位 包括0
   handleFisAmountToFixed(amount) {
-    return (Math.floor(amount * 1000000) / 1000000).toFixed(6);
+    return (Math.floor(amount * 1000000) / 1000000).toFixed(6) || "--";
   },
 
   // 返回字符串 保留6位小数 固定6位 包括0

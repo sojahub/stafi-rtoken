@@ -59,8 +59,8 @@ export default function Index(props:any){
   />
   <UnbondModal visible={visible} 
     unbondAmount={amount}
-    commission={amount}
-    getAmount={amount}
+    commission={unbondCommission}
+    getAmount={NumberUtil.handleFisAmountToFixed(amount*ratio)}
     onCancel={()=>{
       setVisible(false)
     }}

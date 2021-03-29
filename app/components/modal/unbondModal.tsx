@@ -20,7 +20,7 @@ export default function Index(props:Props){
                 closable={false}
                 footer={false}>
          <div className="title">
-            Unbond {props.unbondAmount} DOT
+            Unbond {props.unbondAmount} rDOT
          </div>
          <div className="content">
             <div className="row">—Commission:{props.commission} rDOT
@@ -33,14 +33,14 @@ export default function Index(props:Props){
             <div className="doubt"><Tooltip overlayClassName="modal_doubt_overlay" placement="topLeft" title={"Fee charged by the relay to pay for the fee of interact tx to designated chain"}>
                         <img src={doubt} />
                     </Tooltip></div></div>
-            <div className="row period">—Period:around 24 days
+            <div className="row period">—Period:around 29 days
             
             <div className="doubt"><Tooltip overlayClassName="modal_doubt_overlay" placement="topLeft" title={"unbond period is deteminted by designated chain."}>
                         <img src={doubt} />
                     </Tooltip></div></div>
 
             <div className="get_count">
-              You will get {props.getAmount} rDOT
+              You will get {props.getAmount} DOT
             </div>
 
             <div className="btns">
