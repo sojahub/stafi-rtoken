@@ -6,7 +6,8 @@ import LeftContent from './leftContent'
 import Button from '@shared/components/button/button'
 import A from '@shared/components/button/a'
 import rDOT from '@images/selected_rDOT.svg';
-import doubt from "@images/doubt.svg"
+import doubt from "@images/doubt.svg";
+import NumberUtil from '@util/numberUtil';
 import add_svg from '@images/add.svg'
 
 import './index.scss';
@@ -92,7 +93,7 @@ export default function Index(props:Props){
                 </div>
             </div>
             <div className="money_panel_item">
-                <div>Relay Fee: {props.bondFees} FIS</div> 
+                <div>Relay Fee: {NumberUtil.fisAmountToHuman(props.bondFees)} FIS</div> 
                 <div></div>
 
                 <div className="money_panel_item_doubt">

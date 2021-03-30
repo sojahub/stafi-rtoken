@@ -4,7 +4,7 @@ import {Redirect} from 'react-router'
 import HomeCard from '@components/card/homeCard'; 
 import rKSM_svg from '@images/rKSM.svg'  
 import {Symbol,rSymbol} from '@keyring/defaults'
-import {connectPolkadot,connectPolkadotjs} from '@features/globalClice'
+import {connectPolkadot_ksm} from '@features/globalClice'
 import './index.scss';
 
 export default function Inde(props:any){
@@ -25,7 +25,7 @@ export default function Inde(props:any){
       btnText="Connect to Polkadotjs extension"
       btnIcon={rKSM_svg} 
       onBtnClick={()=>{  
-        dispatch(connectPolkadot(()=>{
+        dispatch(connectPolkadot_ksm(()=>{
           props.history.push("/rKSM/wallet")
         })) 
       }}

@@ -494,7 +494,7 @@ export const getMinting = (type: number, txHash: string, blockHash: string, cb?:
   bondSuccessParamArr.push(blockHash);
   bondSuccessParamArr.push(txHash);
   const stafiApi = await stafi.createStafiApi();
-  stafiApi.query.rTokenSeries.bondSuccess(bondSuccessParamArr).then((result: any) => {
+  stafiApi.query.rTokenSeries.bondStates(bondSuccessParamArr).then((result: any) => {
     let bondState = result.toJSON();
     if (bondState==2) {
       dispatch(setProcessMinting({
@@ -511,6 +511,8 @@ export const getMinting = (type: number, txHash: string, blockHash: string, cb?:
      
   });
 } 
+
+ 
 export const query_rBalances_account = (): AppThunk => async (dispatch, getState) => {
   const address = getState().FISModule.fisAccount.address; // 当前用户的FIS账号
   const stafiApi = await stafi.createStafiApi();
