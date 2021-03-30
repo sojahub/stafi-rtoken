@@ -47,7 +47,7 @@ export default function Index(props:Props){
             <div className="tip">
                 Transferable {props.unit}:{props.transferrableAmount}
             </div>
-            <Input placeholder="DOT AMOUNT" value={props.amount} onChange={(e:any)=>{
+            <Input placeholder={props.type=="rDOT"?"DOT AMOUNT":"KSM AMOUNT"} value={props.amount} onChange={(e:any)=>{
                 if(parseFloat(e)>parseFloat(props.transferrableAmount)){
                     message.error("The input amount exceeds your transferrable balance.");
                     props.onChange && props.onChange(null);

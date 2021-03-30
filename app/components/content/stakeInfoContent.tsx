@@ -56,8 +56,8 @@ export default function Index(props:Props){
           </div>
           <div className="describe">
              
-            {props.type=="rDOT" && ` update every 29 hours`}
-            {props.type=="rKSM" && ` update every 29 hours `}
+            {props.type=="rDOT" && ` update every 24 hours`}
+            {props.type=="rKSM" && ` update every 6 hours `}
           </div>
       </div>
       <Modal visible={visibleModal} onCancel={()=>{

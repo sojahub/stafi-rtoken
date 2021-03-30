@@ -34,7 +34,7 @@ export default function Index(props:any){
   return  <Content
   amount={amount}
   willAmount={ratio=='--'?"--":ratioToAmount(amount,ratio)}
-  unit={"DOT"}
+  unit={"KSM"}
   transferrableAmount={transferrableAmount}
   apr={stafiStakerApr} 
   onChange={(value:any)=>{   

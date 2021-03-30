@@ -10,7 +10,7 @@ import './index.scss';
 export default function Inde(props:any){
   const dispatch = useDispatch();
   const hasAcount=useSelector((state:any)=>{
-    if(state.rKSMModule.ksmAccount && state.FISModule.fisAccount){
+    if(state.FISModule.fisAccount){
       return true
     }else{
       return false
