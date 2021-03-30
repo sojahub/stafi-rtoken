@@ -48,7 +48,7 @@ const siderData=[
         selectedIcon:rKSM_svg,
         text:"rKSM", 
         urlKeywords:'/rKSM',
-        url:""
+        url:"/rKSM/home"
     }
 ]
 type Props={

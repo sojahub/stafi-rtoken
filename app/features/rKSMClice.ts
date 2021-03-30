@@ -138,11 +138,11 @@ export const reloadData = (): AppThunk => async (dispatch, getState) => {
   dispatch(balancesAll())    //更新Transferable DOT/FIS
 
 }
-export const createSubstrate = (account: any): AppThunk => async (dispatch, getState) => {
+export const createSubstrate = (account: any): AppThunk => async (dispatch, getState) => { 
   queryBalance(account, dispatch, getState)
 }
 
-const queryBalance = async (account: any, dispatch: any, getState: any) => {
+const queryBalance = async (account: any, dispatch: any, getState: any) => { 
   dispatch(setKsmAccounts(account));
   let account2: any = { ...account }
 

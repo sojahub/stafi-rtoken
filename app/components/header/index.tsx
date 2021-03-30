@@ -92,7 +92,7 @@ export default function Index(props:Props){
                 setModalType("dot");
                 setVisible(true) 
             }} className="header_tool account">
-                <div>{account.ksmAccount.balance} DOT</div>
+                <div>{account.ksmAccount.balance} KSM</div>
                 <div>{StringUtil.replacePkh(account.ksmAccount.address,6,44)}</div>
             </div>} 
             {account.ethAccount && <div  className="header_tool account">

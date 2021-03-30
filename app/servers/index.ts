@@ -3,7 +3,7 @@ import PolkadotKeyring from './polkadot'
 import { KeyringStruct } from '@keyring/types';
 // import { TezosKeyring } from './TezosKeyring';
 import StafiKeyring from './stafi/index';
-// import { KusamaKeyring } from './KusamaKeyring';
+import KusamaKeyring from './ksm/index';
 // import { PolkadotKeyring } from './PolkadotKeyring';
 // import { CosmosKeyring } from './CosmosKeyring';
 // import { KavaKeyring } from './KavaKeyring';
@@ -18,7 +18,7 @@ export class Keyring {
       case Symbol.Fis:
         return new StafiKeyring();
       case Symbol.Ksm:
-       // return new KusamaKeyring();
+        return new KusamaKeyring();
       case Symbol.Dot:
         return new PolkadotKeyring();
       case Symbol.Atom:

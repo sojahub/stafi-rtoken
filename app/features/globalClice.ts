@@ -87,19 +87,19 @@ export const {
  } = globalClice.actions;
  
 export const connectPolkadotjs = (type:Symbol,cb?:Function): AppThunk=>async (dispatch, getState)=>{ 
-  const accounts:any =await polkadotServer.connectPolkadotjs()  
+  const accounts:any =await polkadotServer.connectPolkadotjs()   
   if(accounts){
    dispatch(setAccounts(accounts)); 
    const dotKeyringInstance=keyring.init(type);
-   const accountsList=accounts.map((element:any)=>{ 
-     const address= dotKeyringInstance.encodeAddress(dotKeyringInstance.decodeAddress(element.address));
+   const accountsList=accounts.map((element:any)=>{  
+     const address= dotKeyringInstance.encodeAddress(dotKeyringInstance.decodeAddress(element.address)); 
      return {  
        name: element.meta.name,
        address: address,
        balance: '--'
      }
-   })    
-  accountsList.forEach((account:any) => {   
+   })     
+  accountsList.forEach((account:any) => {    
     dispatch(clice(type).createSubstrate(account));
   });
   cb && cb();
@@ -117,6 +117,7 @@ const clice=(symbol: string)=>{
         return {
           createSubstrate:ksmCreateSubstrate
         };
+      
       case Symbol.Dot:
         return {
           createSubstrate:dotCreateSubstrate
