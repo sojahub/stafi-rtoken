@@ -21,7 +21,9 @@ type Props={
     willAmount?:string | 0,
     apr?:string,
     validPools?:any[],
-    totalStakedToken?:any
+    totalStakedToken?:any,
+    bondFees?:any
+    type:"rDOT"|"rETH"|"rFIS"|"rKSM",
 
 }
 export default function Index(props:Props){
@@ -33,9 +35,12 @@ export default function Index(props:Props){
 
       const haswarn=useMemo(()=>{
         return !bondSwitch && !(props.validPools && props.validPools.length>0)
-      },[props.validPools,bondSwitch]) 
+      },[props.validPools,bondSwitch])  
     return <LeftContent className="stafi_stake_context">
-        <label className="title">Stake DOT</label>
+        <label className="title"> 
+            {props.type=="rKSM" && `Stake KSM`}
+            {props.type=="rDOT" && `Stake DOT`}
+        </label>
         {haswarn && <div className="warn">Unable to stake, system is waiting for matching validators</div>}
         <div className={`input_panel dot_input_panel ${haswarn && 'showWarn'}`}>
             <div className="tip">
@@ -52,7 +57,9 @@ export default function Index(props:Props){
             }}  icon={rDOT}/>
             {/* unit={"Max"} */}
             <div  className="pool">
-                {props.totalStakedToken} DOT is staked via rDOT 
+                
+                {props.type=="rKSM" && `${props.totalStakedToken} KSM is staked via rKSM `}
+                {props.type=="rDOT" && `${props.totalStakedToken} DOT is staked via rDOT `}
                 {/* <A>stats</A> */}
             </div>
         </div>
@@ -76,13 +83,16 @@ export default function Index(props:Props){
             </div> */}
             </div>
             <div className="money_panel_item">
-                <div>You will get rDOT</div>
+                <div>
+                {props.type=="rKSM" && `You will get rKSM`}
+                {props.type=="rDOT" && `You will get rDOT`}
+                </div>
                 <div>
                     {props.willAmount}
                 </div>
             </div>
             <div className="money_panel_item">
-                <div>Relay Fee: 3 FIS</div> 
+                <div>Relay Fee: {props.bondFees} FIS</div> 
                 <div></div>
 
                 <div className="money_panel_item_doubt">

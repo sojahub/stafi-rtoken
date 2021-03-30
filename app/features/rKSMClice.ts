@@ -4,11 +4,11 @@ import PolkadotServer from '@servers/polkadot/index';
 import Stafi from '@servers/stafi/index';
 import { message as M, message } from 'antd';
 import keyring from '@servers/index';
-import { setLocalStorageItem, getLocalStorageItem, removeLocalStorageItem, Keys } from '@util/common';
+import { setLocalStorageItem, getLocalStorageItem, removeLocalStorageItem, Keys } from '@util/common'
+
 import {rSymbol,Symbol} from '@keyring/defaults'
 import {
-  processStatus, setProcessSlider, setProcessSending,
-  setProcessStaking, setProcessMinting, gSetTimeOut, gClearTimeOut, initProcess, process
+  processStatus, setProcessSlider, setProcessSending,initProcess,
 } from './globalClice';
 import {add_Notice} from './noticeClice'
 import {
@@ -23,18 +23,18 @@ import {addNoticeModal,noticesubType,noticeStatus,noticeType} from './noticeClic
 
 
 
-const rDOTClice = createSlice({
-  name: 'rDOTModule',
+const rKSMClice = createSlice({
+  name: 'rKSMModule',
   initialState: {
-    dotAccounts: [],
-    dotAccount: getLocalStorageItem(Keys.DotAccountKey),    //选中的账号 
+    ksmAccounts: [],
+    ksmAccount: getLocalStorageItem(Keys.KsmAccountKey),    //选中的账号 
     validPools: [],
     poolLimit: 0,
     transferrableAmountShow: "--",
     ratio: "--",
     tokenAmount: "--",
     processParameter: null,      //process参数
-    stakeHash: getLocalStorageItem(Keys.DotStakeHash),
+    stakeHash: getLocalStorageItem(Keys.KsmStakeHash),
     unbondCommission:"--",
 
     bondFees:"--",    //交易的手续费
@@ -44,20 +44,20 @@ const rDOTClice = createSlice({
     stakerApr:"--"
   },
   reducers: {
-    setDotAccounts(state, { payload }) {
-      const accounts = state.dotAccounts;
+    setKsmAccounts(state, { payload }) {
+      const accounts = state.ksmAccounts;
       const account = accounts.find((item: any) => {
         return item.address == payload.address;
       })
       if (account) {
         account.balance = payload.balance;
       } else {
-        state.dotAccounts.push(payload)
+        state.ksmAccounts.push(payload)
       }
     },
-    setDotAccount(state, { payload }) {
-      setLocalStorageItem(Keys.DotAccountKey, payload)
-      state.dotAccount = payload;
+    setKsmAccount(state, { payload }) {
+      setLocalStorageItem(Keys.KsmAccountKey, payload)
+      state.ksmAccount = payload;
     },
     setTransferrableAmountShow(state, { payload }) {
       state.transferrableAmountShow = payload;
@@ -70,20 +70,20 @@ const rDOTClice = createSlice({
     },
     setProcessParameter(state, { payload }) {
       if (payload == null) {
-        // removeLocalStorageItem(Keys.DotProcessParameter)
+        // removeLocalStorageItem(Keys.KsmProcessParameter)
         state.processParameter = payload
       } else {
         let param = { ...state.processParameter, ...payload }
-        // setLocalStorageItem(Keys.DotProcessParameter,param),
+        // setLocalStorageItem(Keys.KsmProcessParameter,param),
         state.processParameter = param;
       }
     },
     setStakeHash(state, { payload }) {
       if (payload == null) {
-        removeLocalStorageItem(Keys.DotStakeHash)
+        removeLocalStorageItem(Keys.KsmStakeHash)
         state.stakeHash = payload
       } else { 
-        setLocalStorageItem(Keys.DotStakeHash, payload),
+        setLocalStorageItem(Keys.KsmStakeHash, payload),
         state.stakeHash = payload;
       }
     },
@@ -114,8 +114,8 @@ const rDOTClice = createSlice({
 });
 const polkadotServer = new PolkadotServer();
 const stafiServer = new Stafi();
-export const { setDotAccounts,
-  setDotAccount,
+export const { setKsmAccounts,
+  setKsmAccount,
   setTransferrableAmountShow,
   setRatio,
   setTokenAmount,
@@ -127,13 +127,13 @@ export const { setDotAccounts,
   setBondFees,
   setTotalRDot,
   setStakerApr
-} = rDOTClice.actions;
+} = rKSMClice.actions;
 
 
 
 
 export const reloadData = (): AppThunk => async (dispatch, getState) => {
-  const account = getState().rDOTModule.dotAccount;
+  const account = getState().rKSMModule.ksmAccount;
   dispatch(createSubstrate(account));   //更新账户数据
   dispatch(balancesAll())    //更新Transferable DOT/FIS
 
@@ -143,7 +143,7 @@ export const createSubstrate = (account: any): AppThunk => async (dispatch, getS
 }
 
 const queryBalance = async (account: any, dispatch: any, getState: any) => {
-  dispatch(setDotAccounts(account));
+  dispatch(setKsmAccounts(account));
   let account2: any = { ...account }
 
   const api = await polkadotServer.createPolkadotApi();
@@ -152,15 +152,15 @@ const queryBalance = async (account: any, dispatch: any, getState: any) => {
     let fisFreeBalance = NumberUtil.fisAmountToHuman(result.data.free);
     account2.balance = NumberUtil.handleEthAmountRound(fisFreeBalance);
   }
-  const dotAccount = getState().rDOTModule.dotAccount;
-  if (dotAccount && dotAccount.address == account2.address) {
-    dispatch(setDotAccount(account2));
+  const ksmAccount = getState().rKSMModule.ksmAccount;
+  if (ksmAccount && ksmAccount.address == account2.address) {
+    dispatch(setKsmAccount(account2));
   }
-  dispatch(setDotAccounts(account2));
+  dispatch(setKsmAccounts(account2));
 }
 
 export const transfer = (amountparam: string, cb?: Function): AppThunk => async (dispatch, getState) => {
-  const processParameter=getState().rDOTModule.processParameter;
+  const processParameter=getState().rKSMModule.processParameter;
   const notice_uuid=(processParameter && processParameter.uuid) || stafi_uuid();    //唯一标识 
 
   dispatch(setProcessSending({
@@ -169,9 +169,9 @@ export const transfer = (amountparam: string, cb?: Function): AppThunk => async 
     finalizing: processStatus.default
   }));
   const amount = NumberUtil.fisAmountToChain(amountparam)
-  const validPools = getState().rDOTModule.validPools;
-  const poolLimit = getState().rDOTModule.poolLimit;
-  const address = getState().rDOTModule.dotAccount.address;
+  const validPools = getState().rKSMModule.validPools;
+  const poolLimit = getState().rKSMModule.poolLimit;
+  const address = getState().rKSMModule.ksmAccount.address;
   web3Enable(stafiServer.getWeb3EnalbeName());
   const injector = await web3FromSource(stafiServer.getPolkadotJsSource())
 
@@ -221,7 +221,7 @@ export const transfer = (amountparam: string, cb?: Function): AppThunk => async 
           checkTx: tx
         })); 
         //消息通知 Pending
-        dispatch(add_DOT_stake_Notice(notice_uuid,amountparam,noticeStatus.Pending));
+        dispatch(add_KSM_stake_Notice(notice_uuid,amountparam,noticeStatus.Pending));
 
         result.events
           .filter((e: any) => {
@@ -250,7 +250,7 @@ export const transfer = (amountparam: string, cb?: Function): AppThunk => async 
               })); 
               dispatch(setStakeHash(null));   //失败
               //消息通知 
-              dispatch(add_DOT_stake_Notice(notice_uuid,amountparam,noticeStatus.Error));
+              dispatch(add_KSM_stake_Notice(notice_uuid,amountparam,noticeStatus.Error));
             } else if (data.event.method === 'ExtrinsicSuccess') {
               M.success('Successfully');
               dispatch(setProcessSending({
@@ -270,32 +270,32 @@ export const transfer = (amountparam: string, cb?: Function): AppThunk => async 
                   txHash: tx,
                   blockHash: asInBlock,
                   address,
-                  type: rSymbol.Dot,
+                  type: rSymbol.Ksm,
                   poolAddress: selectedPool
                 }
               }))  
 
               //消息通知 Pending
-              dispatch(add_DOT_stake_Notice(notice_uuid,amountparam,noticeStatus.Pending,{
+              dispatch(add_KSM_stake_Notice(notice_uuid,amountparam,noticeStatus.Pending,{
                 process:getState().globalModule.process,
-                processParameter:getState().rDOTModule.processParameter}))
-              asInBlock && dispatch(bound(address, tx, asInBlock, amount, selectedPool, rSymbol.Dot, (r: string) => {
+                processParameter:getState().rKSMModule.processParameter}))
+              asInBlock && dispatch(bound(address, tx, asInBlock, amount, selectedPool, rSymbol.Ksm, (r: string) => {
                 if(r=="loading"){
                   //消息通知 Pending
-                  dispatch(add_DOT_stake_Notice(notice_uuid,amountparam,noticeStatus.Pending))
+                  dispatch(add_KSM_stake_Notice(notice_uuid,amountparam,noticeStatus.Pending))
                 }else{ 
                   dispatch(setStakeHash(null));
                 }
 
                 if(r == "failure"){
                   //消息通知   stake/Minting 失败
-                  dispatch(add_DOT_stake_Notice(notice_uuid,amountparam,noticeStatus.Error)
+                  dispatch(add_KSM_stake_Notice(notice_uuid,amountparam,noticeStatus.Error)
                   );
                 }
 
                 if(r=="successful"){
                     //消息通知   成功
-                    dispatch(add_DOT_stake_Notice(notice_uuid,amountparam,noticeStatus.Confirmed));
+                    dispatch(add_KSM_stake_Notice(notice_uuid,amountparam,noticeStatus.Confirmed));
                     cb && cb(); 
                 } 
               }))
@@ -308,9 +308,9 @@ export const transfer = (amountparam: string, cb?: Function): AppThunk => async 
             finalizing: processStatus.success,
           }));
           //  //消息通知 Pending
-          //  dispatch(add_DOT_stake_Notice(notice_uuid,amountparam,noticeStatus.Pending,{
+          //  dispatch(add_KSM_stake_Notice(notice_uuid,amountparam,noticeStatus.Pending,{
           //   process:getState().globalModule.process,
-          //   processParameter:getState().rDOTModule.processParameter}))
+          //   processParameter:getState().rKSMModule.processParameter}))
           // gClearTimeOut();
         }
       } else if (result.isError) {
@@ -324,7 +324,7 @@ export const transfer = (amountparam: string, cb?: Function): AppThunk => async 
 
 export const balancesAll = (): AppThunk => async (dispatch, getState) => {
   const api = await polkadotServer.createPolkadotApi();
-  const address = getState().rDOTModule.dotAccount.address;
+  const address = getState().rKSMModule.ksmAccount.address;
   const result = await api.derive.balances.all(address);
   if (result) {
     const transferrableAmount = NumberUtil.fisAmountToHuman(result.availableBalance);
@@ -337,7 +337,7 @@ export const balancesAll = (): AppThunk => async (dispatch, getState) => {
 export const query_rBalances_account = (): AppThunk => async (dispatch, getState) => {
   const address = getState().FISModule.fisAccount.address; // 当前用户的FIS账号
   const stafiApi = await stafiServer.createStafiApi();
-  const accountData = await stafiApi.query.rBalances.account(rSymbol.Dot, address);
+  const accountData = await stafiApi.query.rBalances.account(rSymbol.Ksm, address);
   let data = accountData.toJSON();
   if (data == null) {
     dispatch(setTokenAmount(NumberUtil.handleFisAmountToFixed(0)))
@@ -347,7 +347,7 @@ export const query_rBalances_account = (): AppThunk => async (dispatch, getState
 }
 
 export const reSending = (cb?: Function): AppThunk => async (dispatch, getState) => {
-  const processParameter = getState().rDOTModule.processParameter
+  const processParameter = getState().rKSMModule.processParameter
   if (processParameter) {
     const href = processParameter.href
     dispatch(transfer(processParameter.sending.amount, () => {
@@ -357,7 +357,7 @@ export const reSending = (cb?: Function): AppThunk => async (dispatch, getState)
 }
 
 export const reStaking = (cb?: Function): AppThunk => async (dispatch, getState) => { 
-  const processParameter = getState().rDOTModule.processParameter
+  const processParameter = getState().rKSMModule.processParameter
   if (processParameter) {
     const staking = processParameter.staking
     const href = processParameter.href
@@ -378,25 +378,25 @@ export const reStaking = (cb?: Function): AppThunk => async (dispatch, getState)
 
 
 export const unbond = (amount: string,recipient:string, cb?: Function): AppThunk => async (dispatch, getState) => {
- // const recipient = getState().rDOTModule.dotAccount.address;
-  const validPools = getState().rDOTModule.validPools;
-  const poolLimit = getState().rDOTModule.poolLimit;
+ // const recipient = getState().rKSMModule.ksmAccount.address;
+  const validPools = getState().rKSMModule.validPools;
+  const poolLimit = getState().rKSMModule.poolLimit;
   let selectedPool = getPool(NumberUtil.fisAmountToChain(amount), validPools, poolLimit);
-  dispatch(fisUnbond(amount, rSymbol.Dot, recipient, selectedPool, (r?:string) => {
+  dispatch(fisUnbond(amount, rSymbol.Ksm, recipient, selectedPool, (r?:string) => {
     dispatch(reloadData()); 
     if(r != "Failed"){  
       //消息通知   成功 
-      dispatch(add_DOT_unbond_Notice(stafi_uuid(),amount,noticeStatus.Confirmed));
+      dispatch(add_KSM_unbond_Notice(stafi_uuid(),amount,noticeStatus.Confirmed));
       cb && cb(); 
     }else{
       //消息通知   成功 
-      dispatch(add_DOT_unbond_Notice(stafi_uuid(),amount,noticeStatus.Error));
+      dispatch(add_KSM_unbond_Notice(stafi_uuid(),amount,noticeStatus.Error));
     } 
   }))
 }
 
 export const continueProcess = (): AppThunk => async (dispatch, getState) => {
-  const stakeHash = getState().rDOTModule.stakeHash;
+  const stakeHash = getState().rKSMModule.stakeHash;
   if (stakeHash && stakeHash.blockHash && stakeHash.txHash) { 
     dispatch(getBlock(stakeHash.blockHash, stakeHash.txHash,stakeHash.notice_uuid))
   }
@@ -408,9 +408,9 @@ export const getBlock = (blockHash: string, txHash: string, uuid?:string,cb?: Fu
   try {
     // const notice_uuid=uuid || stafi_uuid();    //唯一标识 
     const api = await polkadotServer.createPolkadotApi();
-    const address = getState().rDOTModule.dotAccount.address;
-    const validPools = getState().rDOTModule.validPools;
-    const poolLimit = getState().rDOTModule.poolLimit;
+    const address = getState().rKSMModule.ksmAccount.address;
+    const validPools = getState().rKSMModule.validPools;
+    const poolLimit = getState().rKSMModule.poolLimit;
     const result = await api.rpc.chain.getBlock(blockHash);
     let u = false;
     result.block.extrinsics.forEach((ex: any) => { 
@@ -440,28 +440,28 @@ export const getBlock = (blockHash: string, txHash: string, uuid?:string,cb?: Fu
               txHash,
               blockHash,
               address,
-              type: rSymbol.Dot,
+              type: rSymbol.Ksm,
               poolAddress: selectedPool
             }
           }))
-          dispatch(bound(address, txHash, blockHash, amount, selectedPool, rSymbol.Dot, (r:string) => {
+          dispatch(bound(address, txHash, blockHash, amount, selectedPool, rSymbol.Ksm, (r:string) => {
             // dispatch(setStakeHash(null));
 
             if(r=="loading"){
               //消息通知 Pending
-              uuid && dispatch(add_DOT_stake_Notice(uuid,NumberUtil.fisAmountToHuman(amount).toString(),noticeStatus.Pending))
+              uuid && dispatch(add_KSM_stake_Notice(uuid,NumberUtil.fisAmountToHuman(amount).toString(),noticeStatus.Pending))
             }else{ 
               dispatch(setStakeHash(null));
             }
 
             if(r == "failure"){
               //消息通知   stake/Minting 失败
-              uuid && dispatch(add_DOT_stake_Notice(uuid,NumberUtil.fisAmountToHuman(amount).toString(),noticeStatus.Error)
+              uuid && dispatch(add_KSM_stake_Notice(uuid,NumberUtil.fisAmountToHuman(amount).toString(),noticeStatus.Error)
               );
             }
             if(r=="successful"){
                 //消息通知   成功
-                uuid && dispatch(add_DOT_stake_Notice(uuid,NumberUtil.fisAmountToHuman(amount).toString(),noticeStatus.Confirmed));
+                uuid && dispatch(add_KSM_stake_Notice(uuid,NumberUtil.fisAmountToHuman(amount).toString(),noticeStatus.Confirmed));
                 cb && cb(); 
             } 
           }));
@@ -483,14 +483,14 @@ export const getPools = (cb?:Function): AppThunk => async (dispatch, getState) =
 
  
   const stafiApi = await stafiServer.createStafiApi();
-  const poolsData = await stafiApi.query.rTokenLedger.pools(rSymbol.Dot)
+  const poolsData = await stafiApi.query.rTokenLedger.pools(rSymbol.Ksm)
   let pools = poolsData.toJSON();
   dispatch(setValidPools(null));
   if (pools && pools.length > 0) {
     // let count = 0;
     pools.forEach((poolPubkey: any) => {
       let arr = [];
-      arr.push(rSymbol.Dot);
+      arr.push(rSymbol.Ksm);
       arr.push(poolPubkey);
       stafiApi.query.rTokenLedger.bondPipelines(arr).then((bondedData: any) => {
         let active = 0;
@@ -498,7 +498,7 @@ export const getPools = (cb?:Function): AppThunk => async (dispatch, getState) =
         if (bonded) {
           active = bonded.active;
         }
-        const keyringInstance = keyring.init('dot');
+        const keyringInstance = keyring.init('ksm');
         let poolAddress = keyringInstance.encodeAddress(poolPubkey);
         dispatch(setValidPools({
           address: poolAddress,
@@ -514,7 +514,7 @@ export const getPools = (cb?:Function): AppThunk => async (dispatch, getState) =
 
 export const poolBalanceLimit = (): AppThunk => async (dispatch, getState) => {
   const stafiApi = await stafiServer.createStafiApi();
-  stafiApi.query.rTokenSeries.poolBalanceLimit(rSymbol.Dot).then((result: any) => {
+  stafiApi.query.rTokenSeries.poolBalanceLimit(rSymbol.Ksm).then((result: any) => {
     dispatch(setPoolLimit(result.toJSON()));
   });
 }
@@ -544,7 +544,7 @@ export const getUnbondCommission=():AppThunk=>async (dispatch, getState)=>{
 
 export const bondFees=():AppThunk=>async (dispatch, getState)=>{
   const stafiApi = await stafiServer.createStafiApi();
-  const result = await stafiApi.query.rTokenSeries.bondFees(rSymbol.Dot)
+  const result = await stafiApi.query.rTokenSeries.bondFees(rSymbol.Ksm)
   //比如值为1500000000000，代表1.5个FIS
   // this.bondFees = result.toJSON(); 
   dispatch(setBondFees(result.toJSON()));
@@ -553,7 +553,7 @@ export const bondFees=():AppThunk=>async (dispatch, getState)=>{
 
 export const totalIssuance=():AppThunk=>async (dispatch, getState)=>{
   const stafiApi = await stafiServer.createStafiApi(); 
-  const  result =await stafiApi.query.rBalances.totalIssuance(rSymbol.Dot) 
+  const  result =await stafiApi.query.rBalances.totalIssuance(rSymbol.Ksm) 
   let totalRDot:any = NumberUtil.fisAmountToHuman(result.toJSON());
   totalRDot = NumberUtil.handleFisAmountToFixed(totalRDot); 
   dispatch(setTotalRDot(totalRDot))
@@ -562,12 +562,12 @@ export const totalIssuance=():AppThunk=>async (dispatch, getState)=>{
 export const rTokenLedger=():AppThunk=>async (dispatch, getState)=>{
   const stafiApi = await stafiServer.createStafiApi();
   // const api=await  polkadotServer.createPolkadotApi()
-  const  eraResult = await stafiApi.query.rTokenLedger.chainEras(rSymbol.Dot);
+  const  eraResult = await stafiApi.query.rTokenLedger.chainEras(rSymbol.Ksm);
   let currentEra = eraResult.toJSON();
   if (currentEra) {
-    let rateResult =await stafiApi.query.rTokenRate.eraRate(rSymbol.Dot, currentEra) 
+    let rateResult =await stafiApi.query.rTokenRate.eraRate(rSymbol.Ksm, currentEra) 
     const  currentRate = rateResult.toJSON(); 
-    const rateResult2 =await stafiApi.query.rTokenRate.eraRate(rSymbol.Dot, currentEra-1)
+    const rateResult2 =await stafiApi.query.rTokenRate.eraRate(rSymbol.Ksm, currentEra-1)
     let lastRate = rateResult2.toJSON();
     dispatch(handleStakerApr(currentRate,lastRate));
   } else {
@@ -584,28 +584,26 @@ export const rTokenLedger=():AppThunk=>async (dispatch, getState)=>{
   }
 
  
-
- 
-const add_DOT_stake_Notice=(uuid:string,amount:string,status:string,subData?:any):AppThunk=>async (dispatch,getState)=>{
+const add_KSM_stake_Notice=(uuid:string,amount:string,status:string,subData?:any):AppThunk=>async (dispatch,getState)=>{
   setTimeout(()=>{
-    dispatch(add_DOT_Notice(uuid,noticeType.Staker,noticesubType.Stake,`Staked ${amount} DOT from your Wallet to StaFi Validator Pool Contract`,status,{
+    dispatch(add_KSM_Notice(uuid,noticeType.Staker,noticesubType.Stake,`Staked ${amount} KSM from your Wallet to StaFi Validator Pool Contract`,status,{
     process:getState().globalModule.process,
-    processParameter:getState().rDOTModule.processParameter}))
+    processParameter:getState().rKSMModule.processParameter}))
   },20);
 }
-const add_DOT_unbond_Notice=(uuid:string,amount:string,status:string,subData?:any):AppThunk=>async (dispatch,getState)=>{
-  dispatch(add_DOT_Notice(uuid,noticeType.Staker,noticesubType.Unbond,`Unbond ${amount} FIS from Pool Contract`,status,subData))
+const add_KSM_unbond_Notice=(uuid:string,amount:string,status:string,subData?:any):AppThunk=>async (dispatch,getState)=>{
+  dispatch(add_KSM_Notice(uuid,noticeType.Staker,noticesubType.Unbond,`Unbond ${amount} FIS from Pool Contract`,status,subData))
 }
 const add_DOT_Withdraw_Notice=(uuid:string,amount:string,status:string,subData?:any):AppThunk=>async (dispatch,getState)=>{
-  dispatch(add_DOT_Notice(uuid,noticeType.Staker,noticesubType.Withdraw,`Withdraw ${amount} FIS from contracts to wallet`,status,subData))
+  dispatch(add_KSM_Notice(uuid,noticeType.Staker,noticesubType.Withdraw,`Withdraw ${amount} FIS from contracts to wallet`,status,subData))
 }
 const add_DOT_Swap_Notice=(uuid:string,amount:string,status:string,subData?:any):AppThunk=>async (dispatch,getState)=>{
-  dispatch(add_DOT_Notice(uuid,noticeType.Staker,noticesubType.Swap,`Swap ${amount} Native FIS to ERC20`,status,subData))
+  dispatch(add_KSM_Notice(uuid,noticeType.Staker,noticesubType.Swap,`Swap ${amount} Native FIS to ERC20`,status,subData))
 }
-const add_DOT_Notice=(uuid:string,type:string,subType:string,content:string,status:string,subData?:any):AppThunk=>async (dispatch,getState)=>{
+const add_KSM_Notice=(uuid:string,type:string,subType:string,content:string,status:string,subData?:any):AppThunk=>async (dispatch,getState)=>{
  
-    dispatch(add_Notice(uuid,Symbol.Dot,type,subType,content,status,subData))
+    dispatch(add_Notice(uuid,Symbol.Ksm,type,subType,content,status,subData))
   
 }
 
-export default rDOTClice.reducer;
+export default rKSMClice.reducer;

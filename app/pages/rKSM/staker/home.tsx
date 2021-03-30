@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'; 
 import {useDispatch,useSelector} from 'react-redux';
 import Content from '@components/content/stakeContent_DOT'; 
-import {transfer,balancesAll} from '@features/rDOTClice'; 
+import {transfer,balancesAll} from '@features/rKSMClice'; 
 import { rTokenRate } from '@features/FISClice';
 import {ratioToAmount} from '@util/common'
 import { message } from 'antd';
@@ -18,14 +18,14 @@ export default function Index(props:any){
     dispatch(rTokenRate(1))
   },[])
   const {transferrableAmount,ratio,stafiStakerApr,fisCompare,validPools,totalRDot,bondFees}=useSelector((state:any)=>{ 
-    const fisCompare= state.FISModule.fisAccount.balance<NumberUtil.fisAmountToHuman(state.rDOTModule.bondFees)+NumberUtil.fisAmountToHuman(state.rDOTModule.estimateTxFees);
+    const fisCompare= state.FISModule.fisAccount.balance<NumberUtil.fisAmountToHuman(state.rKSMModule.bondFees)+NumberUtil.fisAmountToHuman(state.rKSMModule.estimateTxFees);
     return {
-      transferrableAmount:state.rDOTModule.transferrableAmountShow,
+      transferrableAmount:state.rKSMModule.transferrableAmountShow,
       ratio:state.FISModule.ratio,
       stafiStakerApr:state.globalModule.stafiStakerApr,
       fisCompare:fisCompare,
-      validPools:state.rDOTModule.validPools,
-      totalRDot:state.rDOTModule.totalRDot,
+      validPools:state.rKSMModule.validPools,
+      totalRDot:state.rKSMModule.totalRDot,
       bondFees:state.rDOTModule.bondFees
     }
   })
@@ -40,11 +40,11 @@ export default function Index(props:any){
   onChange={(value:any)=>{   
       setAmount(value);   
   }}
-  bondFees={bondFees}
   onRecovery={()=>{ 
-     props.history.push("/rDOT/search")
+     props.history.push("/rKSM/search")
   }}
   validPools={validPools} 
+  bondFees={bondFees}
   totalStakedToken={ NumberUtil.handleFisAmountToFixed(totalRDot*ratio)}
   onStakeClick={()=>{
     if(fisCompare){
@@ -53,11 +53,11 @@ export default function Index(props:any){
     }
     if(amount){
       dispatch(transfer(amount,()=>{
-        props.history.push("/rDOT/staker/info")
+        props.history.push("/rKSM/staker/info")
       }));
     }else{
       message.error("Please enter the amount")
     } 
   }}
-  type="rDOT"></Content>
+  type="rKSM"></Content>
 }

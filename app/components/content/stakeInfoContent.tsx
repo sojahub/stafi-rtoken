@@ -10,14 +10,16 @@ type Props={
      ratio?:any,
      tokenAmount?:any
      ratioShow?:any,
-     onStakeClick?:any
+     onStakeClick?:any,
+     type:"rDOT"|"rETH"|"rFIS"|"rKSM",
 }
 export default function Index(props:Props){
   const [visibleModal,setVisibleModal]=useState(false);
     return <LeftContent className="stafi_stake_info_context">
       <div className="item">
           <div className="title">
-            <img src={rDOT_stafi_svg} style={{width:"40px"}}/> rDOT
+            <img src={rDOT_stafi_svg} style={{width:"40px"}}/>  
+            {props.type}
           </div>
           <div className="content">
             <div>{(props.tokenAmount=="--")? "--": NumberUtil.handleFisAmountToFixed(props.tokenAmount)}</div>
@@ -31,12 +33,16 @@ export default function Index(props:Props){
             </div>
           </div>
           <div className="describe">
-           Your current staked DOT  is {(props.tokenAmount !="--" && props.ratio != "--") ? NumberUtil.handleFisAmountToFixed(props.tokenAmount * props.ratio) : "--"}. Unbonding DOT is 9.9800000
+          {props.type=="rDOT" && ` Your current staked DOT  is ${(props.tokenAmount !="--" && props.ratio != "--") ? NumberUtil.handleFisAmountToFixed(props.tokenAmount * props.ratio) : "--"}. Unbonding DOT is 9.9800000`}
+            {props.type=="rKSM" && `Your current staked KSM  is ${(props.tokenAmount !="--" && props.ratio != "--") ? NumberUtil.handleFisAmountToFixed(props.tokenAmount * props.ratio) : "--"}. Unbonding DOT is 9.9800000`}
+           
           </div>
       </div>
       <div  className="item">
           <div className="title">
-            <img src={rDOT_DOT_svg} />rDOT / DOT
+            <img src={rDOT_DOT_svg} />
+            {props.type=="rDOT" && `rDOT / DOT`}
+            {props.type=="rKSM" && `rKSM / KSM`}
           </div>
           <div className="content">
             <div>
@@ -49,7 +55,9 @@ export default function Index(props:Props){
             </div>
           </div>
           <div className="describe">
-              update every 24 hours
+             
+            {props.type=="rDOT" && ` update every 29 hours`}
+            {props.type=="rKSM" && ` update every 29 hours `}
           </div>
       </div>
       <Modal visible={visibleModal} onCancel={()=>{

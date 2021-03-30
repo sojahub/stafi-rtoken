@@ -3,7 +3,7 @@ import {useSelector} from 'react-redux';
 import Content from '@components/content/redeemContent'; 
 import { rTokenRate } from '@features/FISClice';
 import {rSymbol} from '@keyring/defaults'
-import {unbond,getUnbondCommission,query_rBalances_account} from '@features/rDOTClice';
+import {unbond,getUnbondCommission,query_rBalances_account} from '@features/rKSMClice';
 import {useDispatch} from 'react-redux';
 import UnbondModal from '@components/modal/unbondModal'
 import NumberUtil from '@util/numberUtil'
@@ -15,9 +15,9 @@ export default function Index(props:any){
   const [visible,setVisible]=useState(false);
 
   const {tokenAmount,unbondCommission,ratio,fisFee,address,bondFees} = useSelector((state:any)=>{ 
-    let unbondCommission=state.rDOTModule.unbondCommission;
+    let unbondCommission=state.rKSMModule.unbondCommission;
     let ratio=state.FISModule.ratio;
-    let tokenAmount=state.rDOTModule.tokenAmount; 
+    let tokenAmount=state.rKSMModule.tokenAmount; 
     
     if (ratio && unbondCommission && amount) {
       let returnValue = amount * (1 - unbondCommission);
@@ -28,8 +28,8 @@ export default function Index(props:any){
       ratio:ratio,
       tokenAmount:tokenAmount, 
       unbondCommission:unbondCommission,
-      fisFee:state.rDOTModule.unbondCommission,
-      address:state.rDOTModule.dotAccount.address,
+      fisFee:state.rKSMModule.unbondCommission,
+      address:state.rKSMModule.ksmAccount.address,
       bondFees:state.rKSMModule.bondFees
     }
   }) 
@@ -39,7 +39,7 @@ export default function Index(props:any){
   useEffect(()=>{
     dispatch(query_rBalances_account())
     dispatch(getUnbondCommission());
-    dispatch(rTokenRate(rSymbol.Dot));
+    dispatch(rTokenRate(rSymbol.Ksm));
   },[])
   return  <><Content 
     history={props.history}
@@ -71,11 +71,11 @@ export default function Index(props:any){
         
         setAmount('');
        
-        props.history.push("/rDOT/staker/info");
+        props.history.push("/rKSM/staker/info");
        }))
        setVisible(false)
     }}
-    type="rDOT"
+    type="rKSM"
   />
   </>
 }

@@ -8,6 +8,10 @@ export enum Keys {
   DotProcessParameter = 'stafi_dot_processParameter', 
   DotStakeHash='stafi_dot_stakeHash', 
 
+  KsmAccountKey = 'stafi_ksm_account', 
+  KsmProcessParameter = 'stafi_ksm_processParameter', 
+  KsmStakeHash='stafi_ksm_stakeHash', 
+
   MetamaskAccountKey = 'stafi_Metamask_account', 
   StafiNoticeKey="stafi_notice",
 }

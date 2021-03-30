@@ -3,7 +3,7 @@ import {useDispatch,useSelector} from 'react-redux';
 import Content from '@shared/components/content';
 import {renderRoutes}  from 'react-router-config';
 import {getLocalStorageItem,Keys} from '@util/common';
-
+import LiquidingProcesSlider from '@components/slider/liquidingProcessSlider'; 
 import {Symbol} from '@keyring/defaults'
 import {fetchStafiStakerApr,connectPolkadotjs} from '@features/globalClice';
 import {continueProcess,getPools,bondFees} from '@features/rDOTClice'
@@ -14,8 +14,8 @@ export default function Index(props:any){
   
   useEffect(()=>{ 
     dispatch(fetchStafiStakerApr());
-    if(getLocalStorageItem(Keys.DotAccountKey) && getLocalStorageItem(Keys.FisAccountKey)){
-        dispatch(connectPolkadotjs(Symbol.Dot)); 
+    if(getLocalStorageItem(Keys.KsmAccountKey) && getLocalStorageItem(Keys.FisAccountKey)){
+        dispatch(connectPolkadotjs(Symbol.Ksm)); 
         dispatch(connectPolkadotjs(Symbol.Fis));  
         dispatch(getPools(()=>{
           setTimeout(()=>{
@@ -27,9 +27,8 @@ export default function Index(props:any){
     } 
   },[]) 
  
-  return  <div className="stafi_layout">
-    {/* <Sider route={props.route} history={props.history}/>  */}
-    
+  return  <div className="stafi_layout"> 
+      {/* <LiquidingProcesSlider route={props.route}  history={props.history}/> */}
       <div className="stafi_container">
          <Content>
            {renderRoutes(props.route.routes)}
