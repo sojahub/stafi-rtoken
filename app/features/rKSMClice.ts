@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { AppThunk, RootState } from '../store';
-import PolkadotServer from '@servers/polkadot/index';
+import PolkadotServer from '@servers/ksm/index';
 import Stafi from '@servers/stafi/index';
 import { message as M, message } from 'antd';
 import keyring from '@servers/index';

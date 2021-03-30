@@ -33,10 +33,10 @@ export default function Index(props:Props){
           bondSwitch:state.FISModule.bondSwitch
         }
       })
-
+ 
       const haswarn=useMemo(()=>{
-        return !bondSwitch && !(props.validPools && props.validPools.length>0)
-      },[props.validPools,bondSwitch])  
+        return !bondSwitch || !(props.validPools && props.validPools.length>0)
+      },[props.validPools,bondSwitch])   
     return <LeftContent className="stafi_stake_context">
         <label className="title"> 
             {props.type=="rKSM" && `Stake KSM`}
@@ -59,8 +59,8 @@ export default function Index(props:Props){
             {/* unit={"Max"} */}
             <div  className="pool">
                 
-                {props.type=="rKSM" && `${props.totalStakedToken} KSM is staked via rKSM `}
-                {props.type=="rDOT" && `${props.totalStakedToken} DOT is staked via rDOT `}
+                {props.type=="rKSM" && `${isNaN(props.totalStakedToken)?"--":props.totalStakedToken} KSM is staked via rKSM `}
+                {props.type=="rDOT" && `${isNaN(props.totalStakedToken)?"--":props.totalStakedToken} DOT is staked via rDOT `}
                 {/* <A>stats</A> */}
             </div>
         </div>
@@ -93,7 +93,7 @@ export default function Index(props:Props){
                 </div>
             </div>
             <div className="money_panel_item">
-                <div>Relay Fee: {NumberUtil.fisAmountToHuman(props.bondFees)} FIS</div> 
+                <div>Relay Fee: {NumberUtil.fisAmountToHuman(props.bondFees) || "--"} FIS</div> 
                 <div></div>
 
                 <div className="money_panel_item_doubt">
@@ -104,7 +104,7 @@ export default function Index(props:Props){
                 </div>
             </div>
         </div>
-        <div className="btns"> <Button disabled={!props.amount} onClick={()=>{
+        <div className="btns"> <Button disabled={(!props.amount || haswarn)} onClick={()=>{
              props.onStakeClick && props.onStakeClick()
          }}>Stake</Button>
         </div>

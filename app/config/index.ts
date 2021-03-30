@@ -21,6 +21,13 @@ export default {
       return 'wss://stafi-seiya.stafi.io'
     } 
   },
+  kusamaChain: ()=>{ 
+    if(process.env.NODE_ENV=="production" &&  !isdev()){
+      return 'wss://kusama-rpc.polkadot.io';
+    }else{
+      return 'wss://kusama-test-rpc.stafi.io'
+    }
+  },
   api: ()=>{
     if(process.env.NODE_ENV=="production" &&  !isdev()){
       return 'https://rtoken-api.stafi.io';

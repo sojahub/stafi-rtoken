@@ -6,7 +6,7 @@ import {getLocalStorageItem,Keys} from '@util/common';
 import LiquidingProcesSlider from '@components/slider/liquidingProcessSlider'; 
 import {Symbol} from '@keyring/defaults'
 import {fetchStafiStakerApr,connectPolkadotjs} from '@features/globalClice';
-import {continueProcess,getPools,bondFees} from '@features/rDOTClice'
+import {continueProcess,getPools,bondFees} from '@features/rKSMClice'
 import {bondSwitch} from '@features/FISClice'; 
 import '../template/index.scss'
 export default function Index(props:any){

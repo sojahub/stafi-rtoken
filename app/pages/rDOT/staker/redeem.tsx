@@ -57,7 +57,7 @@ export default function Index(props:any){
     onRdeemClick={()=>{ 
       setVisible(true);
     }}
-    type="rDOT"
+    type="rKSM"
   />
   <UnbondModal visible={visible} 
     unbondAmount={amount}

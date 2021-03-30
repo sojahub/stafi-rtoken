@@ -21,6 +21,14 @@ type Props={
 }
 export default function Index(props:Props){
     const [inputEdit,setInputEdit]=useState(false);
+
+    const placeholder=()=>{
+        if(props.type=="rDOT"){
+            return "DOT AMOUNT"
+        }else{
+            return "KSM AMOUNT"
+        }
+    }
     return <LeftContent className="stafi_stake_redeem_context"> 
     <img className="back_icon" onClick={()=>{
       props.history.goBack();
@@ -40,7 +48,7 @@ export default function Index(props:Props){
              </div>
         </div>
         <div className="input_panel"> 
-            <Input placeholder="DOT AMOUNT" value={props.amount}  onChange={(e:string)=>{
+            <Input placeholder={placeholder()} value={props.amount}  onChange={(e:string)=>{
                 props.onAmountChange && props.onAmountChange(e);
             }}  icon={rDOT}/>
             <div className="balance">

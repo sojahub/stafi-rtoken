@@ -11,7 +11,7 @@ export default function Index(props:Props){
     return <LeftContent className="stafi_rDOT_validator_context">
         <label className="title">Register as a OV on Polkadot</label>
         <div className="describe">
-        OV(Original Validator) is a block producer of Polkadot chain which can receive delegated DOT on chaiin and get incentive reward from joining consensus.
+        OV(Original Validator) is a block producer of Polkadot chain which can receive delegated DOT on chain and get incentive reward from joining consensus.
         </div>
         <div className="sub_title">
             Prerequisites

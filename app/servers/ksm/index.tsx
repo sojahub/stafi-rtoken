@@ -25,7 +25,7 @@ export default class ExtensionDapp extends SubstrateKeyring{
       return polkadotApi;
     }
  
-    const wsProvider = new WsProvider(config.polkadotChain());
+    const wsProvider = new WsProvider(config.kusamaChain());
     polkadotApi=  ApiPromise.create({
         provider: wsProvider,
         types
