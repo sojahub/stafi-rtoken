@@ -7,6 +7,7 @@ import Popover from './popover';
 import {connectPolkadot} from '@features/globalClice';
 import Page from '../../pages/rDOT/selectWallet/index';
 import Page_FIS from '../../pages/rDOT/selectWallet_rFIS/index'
+import Page_Ksm from '../../pages/rKSM/selectWallet/index'
 import './index.scss';
 
 type Props={
@@ -59,6 +60,9 @@ export default function Index(props:Props){
             {(modalType=="fis") && <Page_FIS location={{}} type="header"  onClose={()=>{
                 setVisible(false);
             }}/>}
+            {(modalType=="ksm") && <Page_Ksm location={{}} type="header"  onClose={()=>{
+                setVisible(false);
+            }}/>}
         </Modal>
        <div></div>
         {account==null && <div className="header_tool" onClick={()=>{
@@ -89,7 +93,7 @@ export default function Index(props:Props){
                 <div>{StringUtil.replacePkh(account.dotAccount.address,6,44)}</div>
             </div>} 
             {account.ksmAccount && <div onClick={()=>{
-                setModalType("dot");
+                setModalType("ksm");
                 setVisible(true) 
             }} className="header_tool account">
                 <div>{account.ksmAccount.balance} KSM</div>
