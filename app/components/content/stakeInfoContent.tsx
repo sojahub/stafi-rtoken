@@ -34,7 +34,7 @@ export default function Index(props:Props){
           </div>
           <div className="describe">
           {props.type=="rDOT" && ` Your current staked DOT  is ${(props.tokenAmount !="--" && props.ratio != "--") ? NumberUtil.handleFisAmountToFixed(props.tokenAmount * props.ratio) : "--"}. Unbonding DOT is 9.9800000`}
-            {props.type=="rKSM" && `Your current staked KSM  is ${(props.tokenAmount !="--" && props.ratio != "--") ? NumberUtil.handleFisAmountToFixed(props.tokenAmount * props.ratio) : "--"}. Unbonding DOT is 9.9800000`}
+            {props.type=="rKSM" && `Your current staked KSM  is ${(props.tokenAmount !="--" && props.ratio != "--") ? NumberUtil.handleFisAmountToFixed(props.tokenAmount * props.ratio) : "--"}. Unbonding KSM is 9.9800000`}
            
           </div>
       </div>

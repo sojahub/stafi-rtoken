@@ -16,7 +16,8 @@ type Props={
      history?:any,
      fisFee?:any,
      address?:string,
-     onInputChange?:Function
+     onInputChange?:Function,
+     type:"rDOT"|"rETH"|"rFIS"|"rKSM",
 }
 export default function Index(props:Props){
     const [inputEdit,setInputEdit]=useState(false);
@@ -25,10 +26,15 @@ export default function Index(props:Props){
       props.history.goBack();
     }} src={leftArrowSvg}/>
          <div className="title">
-            Redeem DOT
+           
+            {props.type=="rDOT" && " Redeem DOT"}
+            {props.type=="rKSM" && " Redeem KSM"}
          </div>
          <div className="subTitle">
-               <div className="label"> 1. Unbond DOT</div>
+               <div className="label"> 
+               {props.type=="rDOT" && "1. Unbond DOT"}
+               {props.type=="rKSM" && "1. Unbond KSM"}
+               </div>
                 <div className="balance">
                 
              </div>
@@ -39,7 +45,7 @@ export default function Index(props:Props){
             }}  icon={rDOT}/>
             <div className="balance">
                 {/* You will get {(props.unbondCommission=="--" || !!!props.amount)? "--": `${NumberUtil.handleFisAmountToFixed(props.unbondCommission)}`} DOT */}
-                rDOT balance {(props.tokenAmount=="--")? "--": NumberUtil.handleFisAmountToFixed(props.tokenAmount)}
+                {props.type} balance {(props.tokenAmount=="--")? "--": NumberUtil.handleFisAmountToFixed(props.tokenAmount)}
             </div>
         </div>
          {/* <div className="btns">
