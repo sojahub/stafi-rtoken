@@ -64,7 +64,7 @@ export default function Index(props:Props){
             Validator
           </div>
           <div className="sub_title">
-              Apply to be delegate
+              Apply to be delegated
           </div>
           <div className="apr_panel">
               <img src={rate_eleted_svg} />
