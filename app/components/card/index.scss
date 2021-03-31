@@ -32,6 +32,9 @@
   display: flex;
   flex-direction: column;
   position: relative;
+  .context{
+    flex:1;
+  }
   .back_icon{
     left: 26px;
     position: absolute;

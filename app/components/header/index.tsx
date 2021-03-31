@@ -4,10 +4,12 @@ import {Modal} from 'antd';
 import notice from '@images/notice.svg';
 import StringUtil from '@util/stringUtil';
 import Popover from './popover';
-import {connectPolkadot} from '@features/globalClice';
+import {connectPolkadot,connectPolkadot_ksm} from '@features/globalClice';
 import Page from '../../pages/rDOT/selectWallet/index';
 import Page_FIS from '../../pages/rDOT/selectWallet_rFIS/index'
-import Page_Ksm from '../../pages/rKSM/selectWallet/index'
+import Page_Ksm from '../../pages/rKSM/selectWallet/index';
+import {rSymbol} from '@keyring/defaults'
+import Tool from '@util/toolUtil'
 import './index.scss';
 
 type Props={
@@ -66,9 +68,16 @@ export default function Index(props:Props){
         </Modal>
        <div></div>
         {account==null && <div className="header_tool" onClick={()=>{
-            dispatch(connectPolkadot(()=>{
+            if(Tool.pageType()==rSymbol.Dot){
+                dispatch(connectPolkadot(()=>{
                 props.history.push("/rDOT/wallet")
               })) 
+            }
+            if(Tool.pageType()==rSymbol.Ksm){
+                dispatch(connectPolkadot_ksm(()=>{
+                props.history.push("/rKSM/wallet")
+              })) 
+            }
         }}>
             Connect to Polkadotjs
         </div>}

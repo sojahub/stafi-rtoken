@@ -21,7 +21,7 @@ export default function Index(props:Props){
     {props.showBackIcon && <img className="back_icon" onClick={()=>{
       props.history.goBack();
     }} src={leftArrowSvg}/>}
-      <div>
+      <div className="context">
         <label className="title">{props.title}</label> 
         <div className="wallet_card_content">
         {props.children} 
