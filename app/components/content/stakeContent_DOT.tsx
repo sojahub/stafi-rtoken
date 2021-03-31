@@ -96,7 +96,7 @@ export default function Index(props:Props){
                 </div>
             </div>
             <div className="money_panel_item">
-                <div>Relay Fee: {NumberUtil.fisAmountToHuman(props.bondFees) || "--"} FIS</div> 
+                <div className="relay_fee">Relay Fee: {NumberUtil.fisAmountToHuman(props.bondFees) || "--"} FIS</div> 
                 <div></div>
 
                 <div className="money_panel_item_doubt">

@@ -11,11 +11,14 @@ enum Symbol {
 }
 
 enum rSymbol {
+  Asset=-1,
   Fis = 0, 
   Dot = 1, 
   Ksm = 2,
   
 }
+
+
 
 const ACCOUNT_PREFIX = 'account:';
 const MAX_PASS_LEN = 32;

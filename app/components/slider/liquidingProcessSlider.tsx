@@ -5,7 +5,9 @@ import {useSelector} from 'react-redux'
 import Liquiding_heard from '@images/liquiding_heard.svg';
 import close_svg from '@images/close.svg';
 import {setProcessSlider} from '@features/globalClice';
-import {reStaking,reSending} from '@features/rDOTClice'
+import {reStaking,reSending} from '@features/rDOTClice'; 
+import {reStaking as ksmReStaking,reSending as ksmReSending } from '@features/rKSMClice'; 
+import util from '@util/toolUtil'
 import {rSymbol} from '@keyring/defaults'
 
 import './liquidingProcessSlider.scss';
@@ -24,15 +26,25 @@ export default function Index(props:Props){
   }) 
 
   const reSendingClick=()=>{
-    if(props.route.type==rSymbol.Dot){
+    if(util.pageType()==rSymbol.Dot){
       dispatch(reSending((href:any)=>{
         href && props.history.push(href)
       }));
     }
+    if(util.pageType()==rSymbol.Ksm){
+      dispatch(ksmReSending((href:any)=>{
+        href && props.history.push(href)
+      }));
+    }
   }
-  const reStakingClick=()=>{
-    if(props.route.rSymbol==rSymbol.Dot){
+  const reStakingClick=()=>{ 
+    if(util.pageType()==rSymbol.Dot){
       dispatch(reStaking((href:any)=>{
+        href && props.history.push(href)
+      }));
+    }
+    if(util.pageType()==rSymbol.Ksm){
+      dispatch(ksmReStaking((href:any)=>{
         href && props.history.push(href)
       }));
     }

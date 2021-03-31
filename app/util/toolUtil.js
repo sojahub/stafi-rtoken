@@ -1,4 +1,4 @@
-import { Symbol } from '../keyring/defaults'
+import { Symbol,rSymbol } from '../keyring/defaults'
 
 export default {
   getSymbolByTokenType(tokenType) {
@@ -28,7 +28,18 @@ export default {
         return Symbol.Xtz;
     }
   },
-
+  pageType(){
+    if(location.pathname.includes("/rDOT")){
+      return rSymbol.Dot
+    }
+    if(location.pathname.includes("/rKSM")){
+      return rSymbol.Ksm
+    }
+    if(location.pathname.includes("/rAsset")){
+      return rSymbol.Asset
+    }
+    return rSymbol.Asset;
+  },
   getTokenTypeBySymbol(symbol) {
     switch (symbol) {
       case Symbol.Xtz:
