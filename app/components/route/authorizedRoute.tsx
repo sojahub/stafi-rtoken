@@ -12,13 +12,27 @@ export const authorized = (allowed:any[], currentRole:any) => includes(allowed, 
 const account=(type:string)=>{
   switch(type){
     case Symbol.Ksm:
-      return getLocalStorageItem(Keys.KsmAccountKey) && getLocalStorageItem(Keys.FisAccountKey);
+      if(getLocalStorageItem(Keys.KsmAccountKey)==null && getLocalStorageItem(Keys.FisAccountKey)==null){
+        
+        return '/rKSM/home' 
+      }
+      if(getLocalStorageItem(Keys.KsmAccountKey)==null && getLocalStorageItem(Keys.FisAccountKey)){
+        return '/rKSM/wallet';
+      }
+      return true;
     case Symbol.Dot:
-      return getLocalStorageItem(Keys.DotAccountKey) && getLocalStorageItem(Keys.FisAccountKey);
+      if(getLocalStorageItem(Keys.DotAccountKey)==null && getLocalStorageItem(Keys.FisAccountKey)==null){
+        return '/rDOT/home' 
+      }
+      if(getLocalStorageItem(Keys.DotAccountKey)==null && getLocalStorageItem(Keys.FisAccountKey)){
+        return '/rDOT/wallet';
+      } 
+      return true;
+      // return getLocalStorageItem(Keys.DotAccountKey) && getLocalStorageItem(Keys.FisAccountKey);
     case Symbol.Fis:
       return getLocalStorageItem(Keys.FisAccountKey);
     default:
-        return null;
+        return "/rDOT/home";
 
   }
 }
@@ -27,7 +41,8 @@ const AuthorizeRoute = (currentRole: string,url:string) => {
     class WithAuthorization extends React.Component<any> { 
       static propTypes: any;
       render() { 
-        if(account(currentRole)){
+        const url=account(currentRole);
+        if(url===true){
           return <WrappedComponent {...this.props} />;
         }else{
           return <Redirect to={url}/>

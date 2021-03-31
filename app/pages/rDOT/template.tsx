@@ -14,6 +14,8 @@ export default function Index(props:any){
   
   useEffect(()=>{ 
     dispatch(fetchStafiStakerApr());
+    dispatch(bondFees());
+    dispatch(bondSwitch()); 
     if(getLocalStorageItem(Keys.DotAccountKey) && getLocalStorageItem(Keys.FisAccountKey)){
         dispatch(connectPolkadotjs(Symbol.Dot)); 
         dispatch(connectPolkadotjs(Symbol.Fis));  
@@ -22,8 +24,7 @@ export default function Index(props:any){
             dispatch(continueProcess());
           },20)
         }));
-        dispatch(bondFees());
-        dispatch(bondSwitch()); 
+        
     } 
   },[]) 
  

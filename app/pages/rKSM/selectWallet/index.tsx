@@ -3,7 +3,10 @@ import {useSelector,useDispatch} from 'react-redux'
 import WalletCard from '@components/card/walletCard'
 import Item from '@components/card/walletCardItem';
 import {setKsmAccount} from '@features/rKSMClice'; 
-import {rSymbol} from '@keyring/defaults'
+import {getLocalStorageItem,Keys} from '@util/common';
+import {connectPolkadotjs} from '@features/globalClice';  
+import {continueProcess,getPools} from '@features/rKSMClice'
+import {Symbol} from '@keyring/defaults'
 import {message,Modal} from 'antd'
 import './index.scss';
 
@@ -26,9 +29,22 @@ export default function Index(props:any){
         }
     },[ksmAccounts]) 
 
+
+    useEffect(()=>{
+        if(getLocalStorageItem(Keys.KsmAccountKey)==null && getLocalStorageItem(Keys.FisAccountKey)){
+            dispatch(connectPolkadotjs(Symbol.Ksm)); 
+            dispatch(connectPolkadotjs(Symbol.Fis)); 
+            dispatch(getPools(()=>{
+                setTimeout(()=>{
+                  dispatch(continueProcess());
+                },20)
+              }));
+        }
+    },[])
+
     return <WalletCard
     title="Select a KSM wallet"
-    btnText={props.type=="header"?"Confirm":"Next"}
+    btnText={(props.type=="header" || getLocalStorageItem(Keys.FisAccountKey))?"Confirm":"Next"}
     history={props.history}
     form={props.type}
     onCancel={()=>{
@@ -37,12 +53,16 @@ export default function Index(props:any){
     onConfirm={()=>{
         if(account.address){
             dispatch(setKsmAccount(account));
-            props.onClose?props.onClose(): props.history.push({
-                pathname:"/rKSM/fiswallet",
-                state:{
-                    showBackIcon:true, 
-                }
-            }); 
+            if(getLocalStorageItem(Keys.FisAccountKey)){
+                props.history.push("/rKSM/type");
+            }else{
+                props.onClose?props.onClose(): props.history.push({
+                    pathname:"/rKSM/fiswallet",
+                    state:{
+                        showBackIcon:true, 
+                    }
+                }); 
+            }
         }else{
             message.error("Please select the KSM wallet");
         }

@@ -14,16 +14,18 @@ export default function Index(props:any){
   
   useEffect(()=>{ 
     dispatch(fetchStafiStakerApr());
+  
+    dispatch(bondFees());
+    dispatch(bondSwitch()); 
     if(getLocalStorageItem(Keys.KsmAccountKey) && getLocalStorageItem(Keys.FisAccountKey)){
         dispatch(connectPolkadotjs(Symbol.Ksm)); 
-        dispatch(connectPolkadotjs(Symbol.Fis));  
+        dispatch(connectPolkadotjs(Symbol.Fis));   
+
         dispatch(getPools(()=>{
           setTimeout(()=>{
             dispatch(continueProcess());
           },20)
         }));
-        dispatch(bondFees());
-        dispatch(bondSwitch()); 
     } 
   },[]) 
  
