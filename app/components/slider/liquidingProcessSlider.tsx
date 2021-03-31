@@ -49,9 +49,9 @@ export default function Index(props:Props){
       <img className="logo" src={Liquiding_heard}/> Liquiding Process
     </div>
     <div className="body">
-        <Item index={1} title="Sending" data={process.sending} onClick={reSendingClick} showButton={true}/>
-        <Item index={2} title="Staking"  data={process.staking} onClick={reStakingClick} showButton={true}/>
-        <Item index={3} title="Minting" data={process.minting} showButton={false}/>
+        <Item index={1} title="Sending" tooltipText="Stake is sending to the contract and is recorded to wait for staking" data={process.sending} onClick={reSendingClick} showButton={true}/>
+        <Item index={2} title="Staking" tooltipText="Contract is interacting with original chain and stake on your behalf"  data={process.staking} onClick={reStakingClick} showButton={true}/>
+        <Item index={3} title="Minting" tooltipText="Staked proof gets validated, contract is issuing rToken to your address" data={process.minting} showButton={false}/>
     </div>
   </div>
 }

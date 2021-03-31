@@ -6,6 +6,7 @@ import LeftContent from './leftContent'
 import Button from '@shared/components/button/button'
 import A from '@shared/components/button/a'
 import rDOT from '@images/selected_rDOT.svg';
+import rKSM from '@images/selected_rKSM.svg'
 import doubt from "@images/doubt.svg";
 import NumberUtil from '@util/numberUtil';
 import add_svg from '@images/add.svg'
@@ -47,7 +48,7 @@ export default function Index(props:Props){
             <div className="tip">
                 Transferable {props.unit}:{props.transferrableAmount}
             </div>
-            <Input placeholder={props.type=="rDOT"?"DOT AMOUNT":"KSM AMOUNT"} value={props.amount} onChange={(e:any)=>{
+            <Input placeholder="AMOUNT" value={props.amount} onChange={(e:any)=>{
                 if(parseFloat(e)>parseFloat(props.transferrableAmount)){
                     message.error("The input amount exceeds your transferrable balance.");
                     props.onChange && props.onChange(null);
@@ -55,7 +56,9 @@ export default function Index(props:Props){
                     props.onChange && props.onChange(e);
                 }
                 
-            }}  icon={rDOT}/>
+            }}  icon={props.type=="rKSM"?rKSM:rDOT}/>
+
+{/* selected_rKSM */}
             {/* unit={"Max"} */}
             <div  className="pool">
                 

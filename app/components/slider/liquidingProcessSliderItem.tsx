@@ -6,6 +6,7 @@ import failure from '@images/failure.svg'
 import doubt from "@images/doubt.svg"
 import StringUtil from '@util/stringUtil';
 import {SyncOutlined} from '@ant-design/icons';
+import {Tooltip} from 'antd';
 import './liquidingProcessSliderItem.scss';
 
 type Props={
@@ -14,13 +15,14 @@ type Props={
   failure?:boolean,
   showButton?:boolean,
   data?:any,
-  onClick?:Function
+  onClick?:Function,
+  tooltipText?:string
 }
 export default function Index(props:Props){ 
   return <div className="liquidingProcesSliderItem">
     <div className="title">
       <div className="sequence">{props.index}</div> <label>{props.title}</label>
-      <img className="doubt" src={doubt}/>
+      <Tooltip placement="topLeft" title={props.tooltipText}> <img className="doubt" src={doubt}/></Tooltip>
     </div>
     <div className="item">
       <label>{props.index==3?'Minting...' :'Broadcasting...'} </label>

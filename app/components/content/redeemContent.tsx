@@ -1,7 +1,8 @@
 import React, { useState } from 'react'; 
 import LeftContent from './leftContent'  
 import Input from '@shared/components/input/amountInput';
-import rDOT from '@images/selected_rDOT.svg' 
+import rDOT from '@images/selected_rDOT.svg';
+import rKSM from '@images/selected_rKSM.svg' 
 import leftArrowSvg from '@images/left_arrow.svg'
 import NumberUtil from '@util/numberUtil'
 import Button from '@shared/components/button/button';
@@ -22,13 +23,13 @@ type Props={
 export default function Index(props:Props){
     const [inputEdit,setInputEdit]=useState(false);
 
-    const placeholder=()=>{
-        if(props.type=="rDOT"){
-            return "DOT AMOUNT"
-        }else{
-            return "KSM AMOUNT"
-        }
-    }
+    // const placeholder=()=>{
+    //     if(props.type=="rDOT"){
+    //         return "DOT AMOUNT"
+    //     }else{
+    //         return "KSM AMOUNT"
+    //     }
+    // }
     return <LeftContent className="stafi_stake_redeem_context"> 
     <img className="back_icon" onClick={()=>{
       props.history.goBack();
@@ -48,9 +49,9 @@ export default function Index(props:Props){
              </div>
         </div>
         <div className="input_panel"> 
-            <Input placeholder={placeholder()} value={props.amount}  onChange={(e:string)=>{
+            <Input placeholder={"AMOUNT"} value={props.amount}  onChange={(e:string)=>{
                 props.onAmountChange && props.onAmountChange(e);
-            }}  icon={rDOT}/>
+            }}  icon={props.type=="rKSM" ?rKSM:rDOT}/>
             <div className="balance">
                 {/* You will get {(props.unbondCommission=="--" || !!!props.amount)? "--": `${NumberUtil.handleFisAmountToFixed(props.unbondCommission)}`} DOT */}
                 {props.type} balance {(props.tokenAmount=="--")? "--": NumberUtil.handleFisAmountToFixed(props.tokenAmount)}

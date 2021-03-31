@@ -1,8 +1,8 @@
 import React from 'react';
 import apr_svg from '@images/apr.svg';
-
-import rDOT_svg from '@images/rDOT_black.svg'
-import rKSM_svg from '@images/rDOT_black.svg'
+import rate_eleted_svg from '@images/rate_eleted.svg';
+import rDOT_svg from '@images/rDOT_black2.svg'
+import rKSM_svg from '@images/rKSM_black2.svg'
 import rFIS_svg from '@images/rFIS_black.svg'
 import validator_svg from '@images/validator_2.svg'
 import './index.scss';
@@ -67,13 +67,13 @@ export default function Index(props:Props){
               Run a delegated node
           </div>
           <div className="apr_panel">
-              <img src={apr_svg} />
+              <img src={rate_eleted_svg} />
               <label>12.89%</label>
           </div>
           <div className="r_panel">
               <img src={validator_svg} />
               <div>
-                OVS
+              All OVs
               </div>
               <label>
                 231

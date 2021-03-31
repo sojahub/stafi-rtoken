@@ -10,6 +10,7 @@ import logo from '@images/logo2.png';
 import rAsset_svg from '@images/rAsset.svg';
 import selected_rAsset_svg from '@images/selected_rAssets.svg';
 import rKSM_svg from '@images/rKSM.svg';
+import selected_rKSM_svg from '@images/selected_rKSM.svg'
 import {isdev} from '../../config/index'
 
 import './index.scss'
@@ -45,7 +46,7 @@ const siderData=[
     },
     {
         icon:rKSM_svg,
-        selectedIcon:rKSM_svg,
+        selectedIcon:selected_rKSM_svg,
         text:"rKSM", 
         urlKeywords:'/rKSM',
         url:"/rKSM/home"
