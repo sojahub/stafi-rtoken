@@ -71,7 +71,7 @@ const routesFactory=(role?:any)=>{
           type:"Staker",
           path:"/rDOT/staker",
           rSymbol:rSymbol.Dot,
-          component:authorizedRoute(Symbol.Dot,"/rDOT/home")(RDOTStaker),
+          component:authorizedRoute(Symbol.Dot)(RDOTStaker),
           routes:[
             {
               id:"RDOT_staker_index",
@@ -101,17 +101,17 @@ const routesFactory=(role?:any)=>{
           type:"Validator",
           path:"/rDOT/validator",
           rSymbol:rSymbol.Dot,
-          component:authorizedRoute(Symbol.Dot,"/rDOT/home")(RDOTValidator)
+          component:authorizedRoute(Symbol.Dot)(RDOTValidator)
         },{
           id:"RDOT_search",
           path:"/rDOT/search",
           rSymbol:rSymbol.Dot,
-          component:authorizedRoute(Symbol.Dot,"/rDOT/home")(RDOTSeach)
+          component:authorizedRoute(Symbol.Dot)(RDOTSeach)
         },{
           id:"RDOT_type",
           path:"/rDOT/type",
           rSymbol:rSymbol.Dot,
-          component:authorizedRoute(Symbol.Dot,"/rDOT/home")(RDOTType)
+          component:authorizedRoute(Symbol.Dot)(RDOTType)
         },{
           path: '*',
           component: () => <Redirect to="/rDOT/home"/>
@@ -142,7 +142,7 @@ const routesFactory=(role?:any)=>{
           type:"Staker",
           path:"/rKSM/staker",
           rSymbol:rSymbol.Ksm,
-          component:authorizedRoute(Symbol.Ksm,"/rKSM/home")(RKSMStaker),
+          component:authorizedRoute(Symbol.Ksm)(RKSMStaker),
           routes:[
             {
               id:"RKSM_staker_index",
@@ -172,17 +172,17 @@ const routesFactory=(role?:any)=>{
           type:"Validator",
           path:"/rKSM/validator",
           rSymbol:rSymbol.Ksm,
-          component:authorizedRoute(Symbol.Ksm,"/rKSM/home")(RKSMValidator)
+          component:authorizedRoute(Symbol.Ksm)(RKSMValidator)
         },{
           id:"RKSM_search",
           path:"/rKSM/search",
           rSymbol:rSymbol.Ksm,
-          component:authorizedRoute(Symbol.Ksm,"/rKSM/home")(RKSMSeach)
+          component:authorizedRoute(Symbol.Ksm)(RKSMSeach)
         },{
           id:"RKSM_type",
           path:"/rKSM/type",
           rSymbol:rSymbol.Ksm,
-          component:authorizedRoute(Symbol.Ksm,"/rKSM/home")(RKSMType)
+          component:authorizedRoute(Symbol.Ksm)(RKSMType)
         },{
           path: '*',
           component: () => <Redirect to="/rKSM/home"/>

@@ -36,7 +36,7 @@ const account=(type:string)=>{
 
   }
 }
-const AuthorizeRoute = (currentRole: string,url:string) => {
+const AuthorizeRoute = (currentRole: string) => {
   return (WrappedComponent: any) => {
     class WithAuthorization extends React.Component<any> { 
       static propTypes: any;
