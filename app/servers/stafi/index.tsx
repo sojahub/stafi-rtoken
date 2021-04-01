@@ -115,13 +115,14 @@ export default class Index extends SubstrateKeyring{
       },
       Unbonding: {
         who: 'AccountId',
-        symbol: 'RSymbol',
-        pool: 'Vec<u8>',
-        rvalue: 'u128',
         value: 'u128',
-        current_era: 'u32',
+        recipient: 'Vec<u8>'
+      },
+      UserUnlockChunk: {
+        pool: 'Vec<u8>',
         unlock_era: 'u32',
-        recipient: 'AccountId'
+        value: 'u128',
+        recipient: 'Vec<u8>'
       },
       RproposalStatus: {
         _enum: [
