@@ -12,8 +12,8 @@ export default function Index(props:any){
  
   const dispatch=useDispatch();
   useEffect(()=>{
-    dispatch(connectMetamask());
-    dispatch(monitoring_Method());
+    // dispatch(connectMetamask());
+   
   },[])
   const {ethAccount}=useSelector((state:any)=>{ 
     return {
@@ -27,6 +27,7 @@ export default function Index(props:any){
      {ethAccount?<><DataList /> <CountAmount /></> : <div className="rAsset_content"> 
      <Button icon={metamask} onClick={()=>{
         dispatch(connectMetamask());
+        dispatch(monitoring_Method());
       }}>
           Connect to Metamask
       </Button>

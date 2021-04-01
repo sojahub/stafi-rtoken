@@ -2,7 +2,9 @@ import React,{useState,useEffect,useMemo} from 'react';
 import {useSelector,useDispatch} from 'react-redux'
 import WalletCard from '@components/card/walletCard'
 import Item from '@components/card/walletCardItem';
-import {setFisAccount} from '@features/FISClice';  
+import {setFisAccount} from '@features/FISClice'; 
+import {connectPolkadotjs} from '@features/globalClice';
+import {Symbol} from '@keyring/defaults' 
 import {message,Modal} from 'antd';
 import './index.scss';
 
@@ -10,18 +12,21 @@ export default function Index(props:any){
     const dispatch=useDispatch(); 
     const {fisAccounts,fisAccount} = useSelector((state:any)=>{ 
         return {
-            fisAccounts:state.FISModule.fisAccounts,
+            fisAccounts:state.FISModule.fisAccounts || [],
             fisAccount:state.FISModule.fisAccount || {}
         }
     })
     const [account,setAccount]=useState<any>();
     useEffect(()=>{
+        if(fisAccounts && fisAccounts.length==0){
+            dispatch(connectPolkadotjs(Symbol.Fis)); 
+        }
         if(fisAccount && !fisAccount.address && fisAccounts.length>0){ 
             setAccount(fisAccounts[0])
         }else{
             setAccount(fisAccount);
         }
-    },[fisAccounts]) 
+    },[fisAccounts])
 
     const {showBackIcon,form}=useMemo(()=>{
         props.location.state && props.location.state.showBackIcon

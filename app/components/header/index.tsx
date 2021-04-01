@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import {useSelector,useDispatch} from 'react-redux';
-import {Modal} from 'antd';
+import Modal from '@shared/components/modal/connectModal';
 import notice from '@images/notice.svg';
 import StringUtil from '@util/stringUtil';
 import Popover from './popover';
@@ -40,13 +40,22 @@ export default function Index(props:Props){
             } 
         }
         if(location.pathname.includes("/rAsset")){
-            if(state.rDOTModule.dotAccount && state.FISModule.fisAccount){
-                return {
-                    ethAccount:state.rETHModule.ethAccount
+            if(location.pathname.includes("/rAsset/native")){
+                if(state.FISModule.fisAccount){
+                    return { 
+                        fisAccount:state.FISModule.fisAccount,
+                    }
+                }
+            }
+            if(location.pathname.includes("/rAsset/erc")){
+                if(state.rETHModule.ethAccount){
+                    return { 
+                        ethAccount:state.rETHModule.ethAccount,
+                    }
                 }
             } 
         }
-   
+        
         return null
     })
     const {noticeData}=useSelector((state:any)=>{  
@@ -55,7 +64,7 @@ export default function Index(props:Props){
         }
     })
     return <div className="stafi_header">
-        <Modal footer={false} closeIcon={true} visible={visible} className="stafi_wallet_modal" width={638}>
+        <Modal visible={visible}>
             {(modalType=="dot") && <Page location={{}} type="header"  onClose={()=>{
                 setVisible(false);
             }}/>}
