@@ -4,14 +4,14 @@ import Modal from '@shared/components/modal/connectModal';
 import notice from '@images/notice.svg';
 import StringUtil from '@util/stringUtil';
 import Popover from './popover';
-import {connectPolkadot,connectPolkadot_ksm} from '@features/globalClice';
+import {connectPolkadot,connectPolkadot_ksm,connectPolkadotjs} from '@features/globalClice';
 import Page from '../../pages/rDOT/selectWallet/index';
 import Page_FIS from '../../pages/rDOT/selectWallet_rFIS/index'
 import Page_Ksm from '../../pages/rKSM/selectWallet/index';
-import {rSymbol} from '@keyring/defaults'
+import {rSymbol,Symbol} from '@keyring/defaults'
 import Tool from '@util/toolUtil'
 import './index.scss';
-
+  
 type Props={
     route:any,
     history:any
@@ -98,6 +98,7 @@ export default function Index(props:Props){
             </div> 
             {account.fisAccount && <div onClick={()=>{
                 setModalType("fis");
+                dispatch(connectPolkadotjs(Symbol.Fis));
                setVisible(true) 
             }} className="header_tool account fis">
                 <div>{account.fisAccount.balance} FIS</div>
@@ -105,6 +106,7 @@ export default function Index(props:Props){
             </div>}
             {account.dotAccount && <div onClick={()=>{
                 setModalType("dot");
+                dispatch(connectPolkadotjs(Symbol.Dot));
                 setVisible(true) 
             }} className="header_tool account">
                 <div>{account.dotAccount.balance} DOT</div>
@@ -112,6 +114,7 @@ export default function Index(props:Props){
             </div>} 
             {account.ksmAccount && <div onClick={()=>{
                 setModalType("ksm");
+                dispatch(connectPolkadotjs(Symbol.Ksm));
                 setVisible(true) 
             }} className="header_tool account">
                 <div>{account.ksmAccount.balance} KSM</div>

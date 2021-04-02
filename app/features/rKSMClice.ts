@@ -27,7 +27,7 @@ const rKSMClice = createSlice({
   name: 'rKSMModule',
   initialState: {
     ksmAccounts: [],
-    ksmAccount: getLocalStorageItem(Keys.KsmAccountKey),    //选中的账号 
+    ksmAccount:getLocalStorageItem(Keys.KsmAccountKey) && {...getLocalStorageItem(Keys.KsmAccountKey),balance:"--"},    //选中的账号 
     validPools: [],
     poolLimit: 0,
     transferrableAmountShow: "--",
@@ -47,16 +47,19 @@ const rKSMClice = createSlice({
     setKsmAccounts(state, { payload }) {
       const accounts = state.ksmAccounts;
       const account = accounts.find((item: any) => {
-        return item.address == payload.address;
+        return item.address == payload.address; 
       })
       if (account) {
         account.balance = payload.balance;
+        account.name = payload.name;
       } else {
         state.ksmAccounts.push(payload)
       }
     },
-    setKsmAccount(state, { payload }) {
-      setLocalStorageItem(Keys.KsmAccountKey, payload)
+    setKsmAccount(state, { payload }) { 
+      if(payload){
+        setLocalStorageItem(Keys.KsmAccountKey, { address: payload.address})
+      } 
       state.ksmAccount = payload;
     },
     setTransferrableAmountShow(state, { payload }) {

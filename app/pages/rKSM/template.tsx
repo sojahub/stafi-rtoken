@@ -5,7 +5,7 @@ import {renderRoutes}  from 'react-router-config';
 import {getLocalStorageItem,Keys} from '@util/common';
 import LiquidingProcesSlider from '@components/slider/liquidingProcessSlider'; 
 import {Symbol} from '@keyring/defaults'
-import {fetchStafiStakerApr,connectPolkadotjs} from '@features/globalClice';
+import {fetchStafiStakerApr,reloadData,} from '@features/globalClice';
 import {continueProcess,getPools,bondFees} from '@features/rKSMClice'
 import {bondSwitch} from '@features/FISClice'; 
 import '../template/index.scss'
@@ -18,8 +18,8 @@ export default function Index(props:any){
     dispatch(bondFees());
     dispatch(bondSwitch()); 
     if(getLocalStorageItem(Keys.KsmAccountKey) && getLocalStorageItem(Keys.FisAccountKey)){
-        dispatch(connectPolkadotjs(Symbol.Ksm)); 
-        dispatch(connectPolkadotjs(Symbol.Fis));   
+        dispatch(reloadData(Symbol.Ksm)); 
+        dispatch(reloadData(Symbol.Fis));   
 
         dispatch(getPools(()=>{
           setTimeout(()=>{

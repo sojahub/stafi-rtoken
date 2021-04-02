@@ -19,10 +19,10 @@ const rETHClice = createSlice({
      setEthAccount(state,{payload}){
        if(state.ethAccount && state.ethAccount.address==payload.address){ 
           state.ethAccount={...state.ethAccount,...payload} 
-          setLocalStorageItem(Keys.MetamaskAccountKey, {...state.ethAccount,...payload})
+          setLocalStorageItem(Keys.MetamaskAccountKey, {address:payload.address})
        }else{
           state.ethAccount=payload;
-          setLocalStorageItem(Keys.MetamaskAccountKey, payload)
+          setLocalStorageItem(Keys.MetamaskAccountKey, {address:payload.address})
        }
      }
   },

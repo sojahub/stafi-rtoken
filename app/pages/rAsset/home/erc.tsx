@@ -5,21 +5,23 @@ import Button from '@shared/components/button/connect_button';
 import Tag from './components/carTag/index'
 import DataList from './components/list'
 import Content from '@shared/components/content';
-import {connectMetamask,monitoring_Method} from '@features/rETHClice';
+import {connectMetamask,monitoring_Method,handleEthAccount} from '@features/rETHClice';
 import CountAmount from './components/countAmount'
 import './page.scss'
 export default function Index(props:any){ 
  
   const dispatch=useDispatch();
-  useEffect(()=>{
-    // dispatch(connectMetamask());
-   
-  },[])
+
   const {ethAccount}=useSelector((state:any)=>{ 
     return {
       ethAccount:state.rETHModule.ethAccount
     }
   })
+  useEffect(()=>{ 
+    if(ethAccount && ethAccount.address){
+      dispatch(handleEthAccount(ethAccount.address));
+    }
+  },[])
   return  <Content>
     <Tag type="erc" onClick={()=>{
       props.history.push("/rAsset/native")

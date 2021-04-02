@@ -4,9 +4,9 @@ import PolkadotServer from '@servers/polkadot/index';
 import {message} from 'antd';   
 import keyring from '@servers/index';
 import {Symbol} from '@keyring/defaults'; 
-import { createSubstrate as dotCreateSubstrate } from './rDOTClice';
-import { createSubstrate as fisCreateSubstrate } from './FISClice';
-import { createSubstrate as ksmCreateSubstrate } from './rKSMClice';
+import { createSubstrate as dotCreateSubstrate,reloadData as dotReloadData } from './rDOTClice';
+import { createSubstrate as fisCreateSubstrate,reloadData as fisReloadData } from './FISClice';
+import { createSubstrate as ksmCreateSubstrate,reloadData as ksmReloadData } from './rKSMClice';
 import Rpc from '@util/rpc';
 
 export enum processStatus {
@@ -105,29 +105,36 @@ export const connectPolkadotjs = (type:Symbol,cb?:Function): AppThunk=>async (di
   cb && cb();
  }
 }
-
+export const reloadData = (type:Symbol,cb?:Function): AppThunk=>async (dispatch, getState)=>{ 
+  dispatch(clice(type).reloadData()); 
+  cb && cb(); 
+}
 const clice=(symbol: string)=>{ 
     switch (symbol) {
       case Symbol.Xtz: 
       case Symbol.Fis:
         return {
-          createSubstrate:fisCreateSubstrate
+          createSubstrate:fisCreateSubstrate,
+          reloadData:fisReloadData
         };
       case Symbol.Ksm: 
         return {
-          createSubstrate:ksmCreateSubstrate
+          createSubstrate:ksmCreateSubstrate,
+          reloadData:ksmReloadData
         };
       
       case Symbol.Dot:
         return {
-          createSubstrate:dotCreateSubstrate
+          createSubstrate:dotCreateSubstrate,
+          reloadData:dotReloadData
         };
       case Symbol.Atom: 
       case Symbol.Kava: 
       case Symbol.One: 
       default: 
         return {
-          createSubstrate:fisCreateSubstrate
+          createSubstrate:fisCreateSubstrate,
+          reloadData:fisReloadData
         };
     } 
   
