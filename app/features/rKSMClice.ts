@@ -204,7 +204,7 @@ export const transfer = (amountparam: string, cb?: Function): AppThunk => async 
             address,
             uuid:notice_uuid
           },
-          href: cb ? "/rDOT/staker/info" : null
+          href: cb ? "/rKSM/staker/info" : null
         }))
         dispatch(setStakeHash({
           txHash: tx,

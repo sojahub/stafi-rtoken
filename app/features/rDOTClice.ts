@@ -361,6 +361,7 @@ export const reStaking = (cb?: Function): AppThunk => async (dispatch, getState)
   if (processParameter) {
     const staking = processParameter.staking
     const href = processParameter.href
+    console.log(staking.address,staking.txHash,staking.blockHash,NumberUtil.fisAmountToChain(staking.amount), staking.poolAddress,staking.type)
     processParameter && dispatch(bound(staking.address,
       staking.txHash,
       staking.blockHash,
