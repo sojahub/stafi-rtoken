@@ -289,14 +289,15 @@ export const bound = (address: string, txhash: string, blockhash: string, amount
       packing: processStatus.default,
       finalizing: processStatus.default
     }));
-    const signature = await stakingSignature(address, txhash);
-    const stafiApi = await stafi.createStafiApi();
+
+    let fisAddress = getState().FISModule.fisAccount.address;
     const keyringInstance = keyring.init(Symbol.Fis);
+    const signature = await stakingSignature(address, u8aToHex(keyringInstance.decodeAddress(fisAddress)));
+    const stafiApi = await stafi.createStafiApi();
     let pubkey = u8aToHex(keyringInstance.decodeAddress(address));
     let poolPubkey = u8aToHex(keyringInstance.decodeAddress(pooladdress));
     const injector = await web3FromSource(stafi.getPolkadotJsSource())
 
-    let fisAddress = getState().FISModule.fisAccount.address
     const bondResult = await stafiApi.tx.rTokenSeries.liquidityBond(pubkey,
       signature,
       poolPubkey,
