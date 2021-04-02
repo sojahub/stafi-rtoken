@@ -137,7 +137,9 @@ export const { setKsmAccounts,
 
 export const reloadData = (): AppThunk => async (dispatch, getState) => {
   const account = getState().rKSMModule.ksmAccount;
-  dispatch(createSubstrate(account));   //更新账户数据
+  if(account){
+    dispatch(createSubstrate(account));   //更新账户数据
+  }
   dispatch(balancesAll())    //更新Transferable DOT/FIS
 
 }
