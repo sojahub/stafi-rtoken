@@ -5,7 +5,7 @@ import {renderRoutes}  from 'react-router-config';
 import {getLocalStorageItem,Keys} from '@util/common';
 
 import {Symbol} from '@keyring/defaults'
-import {fetchStafiStakerApr,connectPolkadotjs} from '@features/globalClice';
+import {fetchStafiStakerApr,connectPolkadotjs,reloadData} from '@features/globalClice';
 import {continueProcess,getPools,bondFees} from '@features/rDOTClice'
 import {bondSwitch} from '@features/FISClice'; 
 import '../template/index.scss'
@@ -17,8 +17,8 @@ export default function Index(props:any){
     dispatch(bondFees());
     dispatch(bondSwitch()); 
     if(getLocalStorageItem(Keys.DotAccountKey) && getLocalStorageItem(Keys.FisAccountKey)){
-        dispatch(connectPolkadotjs(Symbol.Dot)); 
-        dispatch(connectPolkadotjs(Symbol.Fis));  
+        dispatch(reloadData(Symbol.Dot)); 
+        dispatch(reloadData(Symbol.Fis));  
         dispatch(getPools(()=>{
           setTimeout(()=>{
             dispatch(continueProcess());

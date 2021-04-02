@@ -4,7 +4,7 @@ import {Redirect} from 'react-router'
 import HomeCard from '@components/card/homeCard'; 
 import rDOT_svg from '@images/rDOT.svg'  
 import {Symbol} from '@keyring/defaults'
-import {connectPolkadot,connectPolkadotjs} from '@features/globalClice'
+import {connectPolkadot} from '@features/globalClice'
 import './index.scss';
 
 export default function Inde(props:any){

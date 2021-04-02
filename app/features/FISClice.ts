@@ -26,7 +26,7 @@ const FISClice = createSlice({
   name: 'FISModule',
   initialState: {
     fisAccounts: [],
-    fisAccount: getLocalStorageItem(Keys.FisAccountKey),     //选中的fis账号,
+    fisAccount: getLocalStorageItem(Keys.FisAccountKey)&&{...getLocalStorageItem(Keys.FisAccountKey),balance:"--"},     //选中的fis账号,
     validPools: [],
     poolLimit: 0,
     transferrableAmountShow: "--",
@@ -46,12 +46,15 @@ const FISClice = createSlice({
       })
       if (account) {
         account.balance = payload.balance;
+        account.name = payload.name;
       } else {
         state.fisAccounts.push(payload)
       }
     },
-    setFisAccount(state, { payload }) {
-      setLocalStorageItem(Keys.FisAccountKey, payload)
+    setFisAccount(state, { payload }) { 
+      if(payload){
+        setLocalStorageItem(Keys.FisAccountKey, { address: payload.address})
+      }
       state.fisAccount = payload;
     },
     setTransferrableAmountShow(state, { payload }) {
@@ -117,7 +120,9 @@ export const { setTokenAmount,
 
 export const reloadData = (): AppThunk => async (dispatch, getState) => {
   const account = getState().FISModule.fisAccount;
-  dispatch(createSubstrate(account));   //更新账户数据
+  if(account){
+    dispatch(createSubstrate(account));   //更新账户数据
+  }
   dispatch(balancesAll())    //更新Transferable DOT/FIS
 }
 export const createSubstrate = (account: any): AppThunk => async (dispatch, getState) => { 

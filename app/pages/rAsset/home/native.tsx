@@ -8,7 +8,7 @@ import rDOT_svg from '@images/rDOT.svg'
 import Content from '@shared/components/content';
 import Modal from '@shared/components/modal/connectModal';
 import Page_FIS from '../../rDOT/selectWallet_rFIS/index';
-import {connectPolkadotjs} from '@features/globalClice';
+import {connectPolkadotjs,reloadData} from '@features/globalClice';
 import {Symbol} from '@keyring/defaults'
 import './page.scss'
 export default function Index(props:any){ 
@@ -17,9 +17,11 @@ export default function Index(props:any){
     return {
       fisAccount:state.FISModule.fisAccount
     }
-  })
-
+  }) 
   const [visible,setVisible]=useState(false);
+  useEffect(()=>{
+    dispatch(reloadData(Symbol.Fis)); 
+  },[])
   return  <Content>
     <Tag type="native" onClick={()=>{
       props.history.push("/rAsset/erc")

@@ -27,7 +27,7 @@ const rDOTClice = createSlice({
   name: 'rDOTModule',
   initialState: {
     dotAccounts: [],
-    dotAccount: getLocalStorageItem(Keys.DotAccountKey),    //选中的账号 
+    dotAccount: getLocalStorageItem(Keys.DotAccountKey) && {...getLocalStorageItem(Keys.DotAccountKey),balance:"--"},    //选中的账号 
     validPools: [],
     poolLimit: 0,
     transferrableAmountShow: "--",
@@ -51,12 +51,15 @@ const rDOTClice = createSlice({
       })
       if (account) {
         account.balance = payload.balance;
+        account.name = payload.name;
       } else {
         state.dotAccounts.push(payload)
       }
     },
     setDotAccount(state, { payload }) {
-      setLocalStorageItem(Keys.DotAccountKey, payload)
+      if(payload){
+        setLocalStorageItem(Keys.DotAccountKey, { address: payload.address})
+      }
       state.dotAccount = payload;
     },
     setTransferrableAmountShow(state, { payload }) {
@@ -134,7 +137,9 @@ export const { setDotAccounts,
 
 export const reloadData = (): AppThunk => async (dispatch, getState) => {
   const account = getState().rDOTModule.dotAccount;
-  dispatch(createSubstrate(account));   //更新账户数据
+  if(account){
+    dispatch(createSubstrate(account));   //更新账户数据
+  }
   dispatch(balancesAll())    //更新Transferable DOT/FIS
 
 }

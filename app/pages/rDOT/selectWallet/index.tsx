@@ -30,8 +30,7 @@ export default function Index(props:any){
     },[dotAccounts]) 
     useEffect(()=>{
         if(getLocalStorageItem(Keys.DotAccountKey)==null && getLocalStorageItem(Keys.FisAccountKey)){
-            dispatch(connectPolkadotjs(Symbol.Dot)); 
-            dispatch(connectPolkadotjs(Symbol.Fis)); 
+            dispatch(connectPolkadotjs(Symbol.Dot));  
             dispatch(getPools(()=>{
                 setTimeout(()=>{
                   dispatch(continueProcess());
