@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react'; 
+import {message} from 'antd';
 import {useSelector} from 'react-redux';
 import Content from '@components/content/redeemContent'; 
 import { rTokenRate } from '@features/FISClice';
 import {rSymbol} from '@keyring/defaults'
-import {unbond,getUnbondCommission,query_rBalances_account} from '@features/rKSMClice';
+import {unbond,getUnbondCommission,query_rBalances_account,checkAddress,accountUnbonds} from '@features/rKSMClice';
 import {useDispatch} from 'react-redux';
 import UnbondModal from '@components/modal/unbondModal'
 import NumberUtil from '@util/numberUtil'
@@ -14,7 +15,7 @@ export default function Index(props:any){
   const [amount,setAmount]=useState<any>();
   const [visible,setVisible]=useState(false);
 
-  const {tokenAmount,unbondCommission,ratio,fisFee,address,bondFees} = useSelector((state:any)=>{ 
+  const {tokenAmount,unbondCommission,ratio,fisFee,address,bondFees,totalUnbonding} = useSelector((state:any)=>{ 
     let unbondCommission=state.rKSMModule.unbondCommission;
     let ratio=state.FISModule.ratio;
     let tokenAmount=state.rKSMModule.tokenAmount; 
@@ -30,7 +31,8 @@ export default function Index(props:any){
       unbondCommission:unbondCommission,
       fisFee:state.rKSMModule.unbondCommission,
       address:state.rKSMModule.ksmAccount.address,
-      bondFees:state.rKSMModule.bondFees
+      bondFees:state.rKSMModule.bondFees,
+      totalUnbonding:state.rKSMModule.totalUnbonding
     }
   }) 
   useEffect(()=>{
@@ -50,12 +52,16 @@ export default function Index(props:any){
       setAmount(e)
     }}
     fisFee={fisFee}
-    address={recipient}
+    address={recipient} 
     onInputChange={(e:string)=>{ 
       setRecipient(e)
     }}
     onRdeemClick={()=>{ 
-      setVisible(true);
+      if(checkAddress(recipient)){
+        setVisible(true);
+      }else{
+        message.error("Address input error");
+      } 
     }}
     type="rKSM"
   />

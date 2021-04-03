@@ -29,8 +29,7 @@ export default function Index(props:any){
       bondFees:state.rDOTModule.bondFees
     }
   })
-
-
+ 
   return  <Content
   amount={amount}
   willAmount={ratio=='--'?"--":ratioToAmount(amount,ratio)}

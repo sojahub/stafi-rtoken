@@ -61,7 +61,11 @@ const globalClice = createSlice({
       state.stafiStakerApr=payload;
     },
     initProcess(state,{payload}){
-      state.process=payload;
+      if(payload){
+        state.process={...process,...payload}; 
+      }else{ 
+        state.process=process;
+      }
     },
     setProcessSending(state,{payload}){ 
       state.process.sending={...state.process.sending,...payload} 

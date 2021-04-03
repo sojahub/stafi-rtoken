@@ -16,9 +16,10 @@ import {
   web3FromSource,
 } from '@polkadot/extension-dapp';
 import NumberUtil from '@util/numberUtil';
-import { bound, fisUnbond } from './FISClice';
+import { bound, fisUnbond,getTotalUnbonding } from './FISClice';
 import {stafi_uuid} from '@util/common'
 import {addNoticeModal,noticesubType,noticeStatus,noticeType} from './noticeClice';
+import { u8aToHex } from '@polkadot/util' 
  
 
 
@@ -41,7 +42,9 @@ const rDOTClice = createSlice({
     estimateTxFees : 30000000000, 
 
     totalRDot:"--",
-    stakerApr:"--"
+    stakerApr:"--",
+
+    totalUnbonding:null
   },
   reducers: {
     setDotAccounts(state, { payload }) {
@@ -112,6 +115,9 @@ const rDOTClice = createSlice({
     },
     setStakerApr(state,{payload}){
       state.stakerApr=payload;
+    },
+    setTotalUnbonding(state,{payload}){
+      state.totalUnbonding=payload;
     }
   },
 });
@@ -129,7 +135,8 @@ export const { setDotAccounts,
   setUnbondCommission,
   setBondFees,
   setTotalRDot,
-  setStakerApr
+  setStakerApr,
+  setTotalUnbonding
 } = rDOTClice.actions;
 
 
@@ -168,11 +175,7 @@ export const transfer = (amountparam: string, cb?: Function): AppThunk => async 
   const processParameter=getState().rDOTModule.processParameter;
   const notice_uuid=(processParameter && processParameter.uuid) || stafi_uuid();    //唯一标识 
 
-  dispatch(setProcessSending({
-    brocasting: processStatus.loading,
-    packing: processStatus.default,
-    finalizing: processStatus.default
-  }));
+  dispatch(initProcess(null));
   const amount = NumberUtil.fisAmountToChain(amountparam)
   const validPools = getState().rDOTModule.validPools;
   const poolLimit = getState().rDOTModule.poolLimit;
@@ -187,7 +190,11 @@ export const transfer = (amountparam: string, cb?: Function): AppThunk => async 
     message.error("There is no matching pool, please try again later.");
     return;
   } 
-  
+  dispatch(setProcessSending({
+    brocasting: processStatus.loading,
+    packing: processStatus.default,
+    finalizing: processStatus.default
+  }));
   const ex = dotApi.tx.balances.transferKeepAlive(selectedPool, amount.toString()); 
   
   ex.signAndSend(address, { signer: injector.signer }, (result: any) => {
@@ -384,11 +391,17 @@ export const reStaking = (cb?: Function): AppThunk => async (dispatch, getState)
 
 
 export const unbond = (amount: string,recipient:string, cb?: Function): AppThunk => async (dispatch, getState) => {
- // const recipient = getState().rDOTModule.dotAccount.address;
   const validPools = getState().rDOTModule.validPools;
   const poolLimit = getState().rDOTModule.poolLimit;
+  
   let selectedPool = getPool(NumberUtil.fisAmountToChain(amount), validPools, poolLimit);
-  dispatch(fisUnbond(amount, rSymbol.Dot, recipient, selectedPool, (r?:string) => {
+  if (selectedPool == null) {
+    message.error("There is no matching pool, please try again later.");
+    return;
+  } 
+  const keyringInstance = keyring.init(Symbol.Dot);
+  
+  dispatch(fisUnbond(amount, rSymbol.Dot, u8aToHex(keyringInstance.decodeAddress(recipient)), u8aToHex(keyringInstance.decodeAddress(selectedPool)), (r?:string) => {
     dispatch(reloadData()); 
     if(r != "Failed"){  
       //消息通知   成功 
@@ -504,7 +517,7 @@ export const getPools = (cb?:Function): AppThunk => async (dispatch, getState) =
         if (bonded) {
           active = bonded.active;
         }
-        const keyringInstance = keyring.init('dot');
+        const keyringInstance = keyring.init(Symbol.Dot);
         let poolAddress = keyringInstance.encodeAddress(poolPubkey);
         dispatch(setValidPools({
           address: poolAddress,
@@ -582,14 +595,24 @@ export const rTokenLedger=():AppThunk=>async (dispatch, getState)=>{
 }
  const handleStakerApr=(currentRate?:any,lastRate?:any):AppThunk=>async (dispatch, getState)=>{
     if (currentRate && lastRate) {
-      const apr = (currentRate - lastRate)/lastRate * 365.25 * 100 + '%';
+      const apr = NumberUtil.handleEthRoundToFixed((currentRate - lastRate)/lastRate * 365.25 * 100) + '%';
+      //numberUtil.handleEthRoundToFixed(
       dispatch(setStakerApr(apr));
     } else {
       dispatch(setStakerApr('15.9%')); 
     }
   }
 
- 
+  export const checkAddress = (address:string)=>{
+    const keyringInstance = keyring.init(Symbol.Dot);
+    return keyringInstance.checkAddress(address);
+  }
+
+  export const accountUnbonds=():AppThunk=>async (dispatch, getState)=>{
+      dispatch(getTotalUnbonding(rSymbol.Dot,(total:any)=>{ 
+        dispatch(setTotalUnbonding(total));
+      }))
+  }
 
  
 const add_DOT_stake_Notice=(uuid:string,amount:string,status:string,subData?:any):AppThunk=>async (dispatch,getState)=>{

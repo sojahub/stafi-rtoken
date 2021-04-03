@@ -6,8 +6,7 @@ import rKSM from '@images/selected_rKSM.svg'
 import leftArrowSvg from '@images/left_arrow.svg'
 import NumberUtil from '@util/numberUtil'
 import Button from '@shared/components/button/button';
-import EditInput from '@shared/components/input/editAddresInput'
-import numberUtil from '@util/numberUtil';
+import EditInput from '@shared/components/input/editAddresInput' 
 type Props={
      onRdeemClick?:Function,
      amount?:string,
@@ -18,7 +17,7 @@ type Props={
      fisFee?:any,
      address?:string,
      onInputChange?:Function,
-     type:"rDOT"|"rETH"|"rFIS"|"rKSM",
+     type:"rDOT"|"rETH"|"rFIS"|"rKSM"
 }
 export default function Index(props:Props){
     const [inputEdit,setInputEdit]=useState(false);

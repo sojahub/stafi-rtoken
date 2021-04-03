@@ -12,6 +12,7 @@ type Props={
      ratioShow?:any,
      onStakeClick?:any,
      type:"rDOT"|"rETH"|"rFIS"|"rKSM",
+     totalUnbonding?:any
 }
 export default function Index(props:Props){
   const [visibleModal,setVisibleModal]=useState(false);
@@ -33,9 +34,9 @@ export default function Index(props:Props){
             </div>
           </div>
           <div className="describe">
-          {props.type=="rDOT" && ` Your current staked DOT  is ${(props.tokenAmount !="--" && props.ratio != "--") ? NumberUtil.handleFisAmountToFixed(props.tokenAmount * props.ratio) : "--"}. Unbonding DOT is 9.9800000`}
-            {props.type=="rKSM" && `Your current staked KSM  is ${(props.tokenAmount !="--" && props.ratio != "--") ? NumberUtil.handleFisAmountToFixed(props.tokenAmount * props.ratio) : "--"}. Unbonding KSM is 9.9800000`}
-           
+          {props.type=="rDOT" && ` Your current staked DOT  is ${(props.tokenAmount !="--" && props.ratio != "--") ? NumberUtil.handleFisAmountToFixed(props.tokenAmount * props.ratio) : "--"}.`}
+            {props.type=="rKSM" && `Your current staked KSM  is ${(props.tokenAmount !="--" && props.ratio != "--") ? NumberUtil.handleFisAmountToFixed(props.tokenAmount * props.ratio) : "--"}.`}
+            {props.totalUnbonding && `Unbonding KSM is ${props.totalUnbonding}`}
           </div>
       </div>
       <div  className="item">

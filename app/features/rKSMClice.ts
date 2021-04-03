@@ -16,10 +16,10 @@ import {
   web3FromSource,
 } from '@polkadot/extension-dapp';
 import NumberUtil from '@util/numberUtil';
-import { bound, fisUnbond } from './FISClice';
+import { bound, fisUnbond ,getTotalUnbonding} from './FISClice';
 import {stafi_uuid} from '@util/common'
 import {addNoticeModal,noticesubType,noticeStatus,noticeType} from './noticeClice';
- 
+import { u8aToHex } from '@polkadot/util'
 
 
 
@@ -41,7 +41,10 @@ const rKSMClice = createSlice({
     estimateTxFees : 30000000000, 
 
     totalRDot:"--",
-    stakerApr:"--"
+    stakerApr:"--",
+
+
+    totalUnbonding:null
   },
   reducers: {
     setKsmAccounts(state, { payload }) {
@@ -112,6 +115,9 @@ const rKSMClice = createSlice({
     },
     setStakerApr(state,{payload}){
       state.stakerApr=payload;
+    },
+    setTotalUnbonding(state,{payload}){
+      state.totalUnbonding=payload;
     }
   },
 });
@@ -129,7 +135,8 @@ export const { setKsmAccounts,
   setUnbondCommission,
   setBondFees,
   setTotalRDot,
-  setStakerApr
+  setStakerApr,
+  setTotalUnbonding
 } = rKSMClice.actions;
 
 
@@ -168,11 +175,8 @@ export const transfer = (amountparam: string, cb?: Function): AppThunk => async 
   const processParameter=getState().rKSMModule.processParameter;
   const notice_uuid=(processParameter && processParameter.uuid) || stafi_uuid();    //唯一标识 
 
-  dispatch(setProcessSending({
-    brocasting: processStatus.loading,
-    packing: processStatus.default,
-    finalizing: processStatus.default
-  }));
+  dispatch(initProcess(null));
+ 
   const amount = NumberUtil.fisAmountToChain(amountparam)
   const validPools = getState().rKSMModule.validPools;
   const poolLimit = getState().rKSMModule.poolLimit;
@@ -187,7 +191,11 @@ export const transfer = (amountparam: string, cb?: Function): AppThunk => async 
     message.error("There is no matching pool, please try again later.");
     return;
   } 
-  
+  dispatch(setProcessSending({
+    brocasting: processStatus.loading,
+    packing: processStatus.default,
+    finalizing: processStatus.default
+  }));
   const ex = dotApi.tx.balances.transferKeepAlive(selectedPool, amount.toString()); 
   
   ex.signAndSend(address, { signer: injector.signer }, (result: any) => {
@@ -383,11 +391,17 @@ export const reStaking = (cb?: Function): AppThunk => async (dispatch, getState)
 
 
 export const unbond = (amount: string,recipient:string, cb?: Function): AppThunk => async (dispatch, getState) => {
- // const recipient = getState().rKSMModule.ksmAccount.address;
   const validPools = getState().rKSMModule.validPools;
   const poolLimit = getState().rKSMModule.poolLimit;
+  
   let selectedPool = getPool(NumberUtil.fisAmountToChain(amount), validPools, poolLimit);
-  dispatch(fisUnbond(amount, rSymbol.Ksm, recipient, selectedPool, (r?:string) => {
+  if (selectedPool == null) {
+    message.error("There is no matching pool, please try again later.");
+    return;
+  } 
+  const keyringInstance = keyring.init(Symbol.Ksm);
+  
+  dispatch(fisUnbond(amount, rSymbol.Ksm, u8aToHex(keyringInstance.decodeAddress(recipient)), u8aToHex(keyringInstance.decodeAddress(selectedPool)), (r?:string) => {
     dispatch(reloadData()); 
     if(r != "Failed"){  
       //消息通知   成功 
@@ -581,14 +595,21 @@ export const rTokenLedger=():AppThunk=>async (dispatch, getState)=>{
 }
  const handleStakerApr=(currentRate?:any,lastRate?:any):AppThunk=>async (dispatch, getState)=>{
     if (currentRate && lastRate) {
-      const apr = (currentRate - lastRate)/lastRate * 365.25 * 100 + '%';
+      const apr = NumberUtil.handleEthRoundToFixed((currentRate - lastRate)/lastRate * 365.25 * 100) + '%';
       dispatch(setStakerApr(apr));
     } else {
       dispatch(setStakerApr('15.9%')); 
     }
   }
-
- 
+  export const checkAddress = (address:string)=>{
+    const keyringInstance = keyring.init(Symbol.Ksm);
+    return keyringInstance.checkAddress(address);
+  }
+export const accountUnbonds=():AppThunk=>async (dispatch, getState)=>{
+  dispatch(getTotalUnbonding(rSymbol.Ksm,(total:any)=>{
+    dispatch(setTotalUnbonding(total));
+  }))
+}
 const add_KSM_stake_Notice=(uuid:string,amount:string,status:string,subData?:any):AppThunk=>async (dispatch,getState)=>{
   setTimeout(()=>{
     dispatch(add_KSM_Notice(uuid,noticeType.Staker,noticesubType.Stake,`Staked ${amount} KSM from your Wallet to StaFi Validator Pool Contract`,status,{

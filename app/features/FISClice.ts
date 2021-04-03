@@ -156,9 +156,11 @@ export const transfer = (amountparam: string, cb?: Function): AppThunk => async 
   const validPools = getState().FISModule.validPools;
   const poolLimit = getState().FISModule.poolLimit;
   const address = getState().FISModule.fisAccount.address;
-  const amount = NumberUtil.fisAmountToChain(amountparam)
+  const amount = NumberUtil.fisAmountToChain(amountparam);
   web3Enable(stafi.getWeb3EnalbeName());
   const injector = await web3FromSource(stafi.getPolkadotJsSource())
+  
+  
   const stafiApi = await stafi.createStafiApi();
 
   const selectedPool = getPool(amountparam, validPools, poolLimit);
@@ -276,6 +278,7 @@ export const transfer = (amountparam: string, cb?: Function): AppThunk => async 
 
 
 export const stakingSignature = async (address: any, txHash: string) => {
+  web3Enable(stafi.getWeb3EnalbeName());
   const injector = await web3FromSource(stafi.getPolkadotJsSource());
   const signRaw = injector?.signer?.signRaw;
   const { signature } = await signRaw({
@@ -287,7 +290,7 @@ export const stakingSignature = async (address: any, txHash: string) => {
 }
 
 export const bound = (address: string, txhash: string, blockhash: string, amount: number, pooladdress: string, type: number, cb?: Function): AppThunk => async (dispatch, getState) => {
- 
+  console.log(address,txhash,blockhash,amount,pooladdress,type,"===========as")
   try{
     dispatch(setProcessStaking({
       brocasting: processStatus.loading,
@@ -301,8 +304,10 @@ export const bound = (address: string, txhash: string, blockhash: string, amount
     const stafiApi = await stafi.createStafiApi();
     let pubkey = u8aToHex(keyringInstance.decodeAddress(address));
     let poolPubkey = u8aToHex(keyringInstance.decodeAddress(pooladdress));
-    const injector = await web3FromSource(stafi.getPolkadotJsSource())
-
+      
+    
+    web3Enable(stafi.getWeb3EnalbeName());
+    const injector = await web3FromSource(stafi.getPolkadotJsSource());
     const bondResult = await stafiApi.tx.rTokenSeries.liquidityBond(pubkey,
       signature,
       poolPubkey,
@@ -441,14 +446,12 @@ export const continueProcess=():AppThunk=>async (dispatch,getState)=>{
   }
 }
 export const getBlock = (blockHash: string, txHash: string, cb?: Function): AppThunk => async (dispatch, getState) => {
-
   try {
     const api = await stafi.createStafiApi();
     const address = getState().FISModule.fisAccount.address;
     const validPools = getState().FISModule.validPools;
     const poolLimit = getState().FISModule.poolLimit;
-    const result = await api.rpc.chain.getBlock(blockHash);
-
+    const result = await api.rpc.chain.getBlock(blockHash); 
     let u = false;
     result.block.extrinsics.forEach((ex: any) => {
       if (ex.hash.toHex() == txHash) {
@@ -476,7 +479,7 @@ export const getBlock = (blockHash: string, txHash: string, cb?: Function): AppT
               type: rSymbol.Fis,
               poolAddress: selectedPool
             }
-          }))
+          })) 
           bound(address, txHash, blockHash, amount, selectedPool, 0);
         }
       }
@@ -492,31 +495,45 @@ export const getBlock = (blockHash: string, txHash: string, cb?: Function): AppT
 
 
 export const getMinting = (type: number, txHash: string, blockHash: string, cb?: Function): AppThunk => async (dispatch, getState) => {
+
   dispatch(setProcessMinting({
     brocasting: processStatus.loading
   }));
-  let bondSuccessParamArr = [];
+  let bondSuccessParamArr:any[] = [];
   bondSuccessParamArr.push(type);
   bondSuccessParamArr.push(blockHash);
   bondSuccessParamArr.push(txHash);
-  const stafiApi = await stafi.createStafiApi();
-  stafiApi.query.rTokenSeries.bondStates(bondSuccessParamArr).then((result: any) => {
-    let bondState = result.toJSON();
-    if (bondState==2) {
-      dispatch(setProcessMinting({
-        brocasting: processStatus.success
-      }));
-      cb && cb("successful");
-    } else if (bondState === 1) {
-    
-      dispatch(setProcessMinting({
-        brocasting: processStatus.failure
-      }));
-      cb && cb("failure");
-    }
-     
-  });
+  let statusObj={
+    num:0
+  }
+  dispatch(rTokenSeries_bondStates(bondSuccessParamArr,statusObj,cb));
 } 
+
+const rTokenSeries_bondStates=(bondSuccessParamArr:any,statusObj:any,cb?:Function): AppThunk => async (dispatch, getState)=>{
+  statusObj.num=statusObj.num+1; 
+  const stafiApi = await stafi.createStafiApi();
+  const result= await stafiApi.query.rTokenSeries.bondStates(bondSuccessParamArr) 
+  let bondState = result.toJSON();  
+  if (bondState=="Success") {
+    dispatch(setProcessMinting({
+      brocasting: processStatus.success
+    }));
+    cb && cb("successful");
+  } else if (bondState == "Fail") { 
+    dispatch(setProcessMinting({
+      brocasting: processStatus.failure
+    }));
+    cb && cb("failure");
+  } else if(statusObj.num<=40){ 
+    setTimeout(()=>{ 
+      dispatch(rTokenSeries_bondStates(bondSuccessParamArr,statusObj,cb))
+    }, 15000); 
+  }else{
+    dispatch(setProcessMinting({
+      brocasting: processStatus.failure
+    }));
+  } 
+}
 
  
 export const query_rBalances_account = (): AppThunk => async (dispatch, getState) => {
@@ -634,4 +651,28 @@ export const bondSwitch=():AppThunk=>async (dispatch, getState)=>{
 }
 
 
+export const getTotalUnbonding=(rSymbol:any,cb?:Function):AppThunk=>async (dispatch, getState)=>{
+  let fisAddress = getState().FISModule.fisAccount.address;
+  let rSymbol = 1;
+  let totalUnbonding:any = 0;
+  const stafiApi = await stafi.createStafiApi();
+  const  eraResult = await stafiApi.query.rTokenLedger.chainEras(rSymbol);
+  let currentEra = eraResult.toJSON(); 
+  if (currentEra) {
+    const result = await stafiApi.query.rTokenSeries.accountUnbonds(fisAddress, rSymbol) 
+    let accountUnbonds = result.toJSON(); 
+    if (accountUnbonds && accountUnbonds.length > 0) {
+      accountUnbonds.forEach((accountUnbond:any) => {
+        if (accountUnbond.unlock_era > currentEra) {
+            totalUnbonding = totalUnbonding + accountUnbond.value;
+        }
+      });
+
+      totalUnbonding = NumberUtil.handleFisAmountToFixed(NumberUtil.fisAmountToHuman(totalUnbonding));
+      cb && cb(totalUnbonding)
+    } 
+  }else{
+    cb && cb(0)
+  }
+}
 export default FISClice.reducer;

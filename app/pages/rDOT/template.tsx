@@ -6,7 +6,7 @@ import {getLocalStorageItem,Keys} from '@util/common';
 
 import {Symbol} from '@keyring/defaults'
 import {fetchStafiStakerApr,connectPolkadotjs,reloadData} from '@features/globalClice';
-import {continueProcess,getPools,bondFees} from '@features/rDOTClice'
+import {continueProcess,getPools,bondFees,totalIssuance} from '@features/rDOTClice'
 import {bondSwitch} from '@features/FISClice'; 
 import '../template/index.scss'
 export default function Index(props:any){
@@ -24,7 +24,7 @@ export default function Index(props:any){
             dispatch(continueProcess());
           },20)
         }));
-        
+        dispatch(totalIssuance());
     } 
   },[]) 
  

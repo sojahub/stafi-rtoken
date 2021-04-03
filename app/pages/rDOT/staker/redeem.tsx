@@ -3,10 +3,11 @@ import {useSelector} from 'react-redux';
 import Content from '@components/content/redeemContent'; 
 import { rTokenRate } from '@features/FISClice';
 import {rSymbol} from '@keyring/defaults'
-import {unbond,getUnbondCommission,query_rBalances_account} from '@features/rDOTClice';
+import {unbond,getUnbondCommission,query_rBalances_account,checkAddress,accountUnbonds} from '@features/rDOTClice';
 import {useDispatch} from 'react-redux';
 import UnbondModal from '@components/modal/unbondModal'
 import NumberUtil from '@util/numberUtil'
+import { message } from 'antd';
 
 export default function Index(props:any){ 
   const dispatch=useDispatch();
@@ -30,7 +31,7 @@ export default function Index(props:any){
       unbondCommission:unbondCommission,
       fisFee:state.rDOTModule.unbondCommission,
       address:state.rDOTModule.dotAccount.address,
-      bondFees:state.rKSMModule.bondFees
+      bondFees:state.rDOTModule.bondFees
     }
   }) 
   useEffect(()=>{
@@ -40,12 +41,13 @@ export default function Index(props:any){
     dispatch(query_rBalances_account())
     dispatch(getUnbondCommission());
     dispatch(rTokenRate(rSymbol.Dot));
+    
   },[])
   return  <><Content 
     history={props.history}
     amount={amount}
     tokenAmount={tokenAmount}
-    unbondCommission={unbondCommission}
+    unbondCommission={unbondCommission} 
     onAmountChange={(e:string)=>{
       setAmount(e)
     }}
@@ -55,9 +57,13 @@ export default function Index(props:any){
       setRecipient(e)
     }}
     onRdeemClick={()=>{ 
-      setVisible(true);
+      if(checkAddress(recipient)){
+        setVisible(true);
+      }else{
+        message.error("Address input error");
+      } 
     }}
-    type="rKSM"
+    type="rDOT"
   />
   <UnbondModal visible={visible} 
     unbondAmount={amount}
