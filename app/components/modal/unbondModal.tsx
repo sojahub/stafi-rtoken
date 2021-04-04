@@ -23,11 +23,11 @@ export default function Index(props:Props){
                 closable={false}
                 footer={false}>
          <div className="title">
-         Unbond ${props.unbondAmount} {props.type}
+         Unbond {props.unbondAmount} {props.type}
             
          </div>
          <div className="content">
-            <div className="row">—Commission:{props.commission} {props.type}
+            <div className="row">—Commission: {props.commission} {props.type}
             <div className="doubt"><Tooltip overlayClassName="modal_doubt_overlay" placement="topLeft" title={"Fee charged by the StaFi to reserve as Protocol Treasury"}>
                         <img src={doubt} />
                     </Tooltip></div>
@@ -38,8 +38,8 @@ export default function Index(props:Props){
                         <img src={doubt} />
                     </Tooltip></div></div>
             <div className="row period">
-              {props.type=="rDOT" && `—Period:around 24 days`}
-              {props.type=="rKSM" && `—Period:around 6 days`}
+              {props.type=="rDOT" && `—Period: around 24 days`}
+              {props.type=="rKSM" && `—Period: around 6 days`}
             <div className="doubt"><Tooltip overlayClassName="modal_doubt_overlay" placement="topLeft" title={"unbond period is deteminted by designated chain."}>
                         <img src={doubt} />
                     </Tooltip></div></div>

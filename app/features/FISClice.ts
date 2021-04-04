@@ -1,8 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { Button, message as M, message } from 'antd';
-import { Route } from 'react-router-dom'
 import { AppThunk, RootState } from '../store';
-import stafi from '@util/SubstrateApi';
+import Stafi from '@servers/stafi/index';
 import {
   processStatus, setProcessSlider, setProcessSending, setProcessStaking,
   setProcessMinting, gSetTimeOut, gClearTimeOut,
@@ -26,13 +25,13 @@ const FISClice = createSlice({
   name: 'FISModule',
   initialState: {
     fisAccounts: [],
-    fisAccount: getLocalStorageItem(Keys.FisAccountKey)&&{...getLocalStorageItem(Keys.FisAccountKey),balance:"--"},     //选中的fis账号,
+    fisAccount: getLocalStorageItem(Keys.FisAccountKey)&&{...getLocalStorageItem(Keys.FisAccountKey),balance:"--"},
     validPools: [],
     poolLimit: 0,
     transferrableAmountShow: "--",
     processParameter: null,
     stakeHash: getLocalStorageItem(Keys.FisStakeHash),
-    ratio: "--",   //汇率
+    ratio: "--",
     ratioShow: "--",
     tokenAmount: "--",
 
@@ -105,6 +104,8 @@ const FISClice = createSlice({
   },
 });
 
+const stafiServer = new Stafi();
+
 export const { setTokenAmount,
   setFisAccounts,
   setFisAccount,
@@ -121,9 +122,10 @@ export const { setTokenAmount,
 export const reloadData = (): AppThunk => async (dispatch, getState) => {
   const account = getState().FISModule.fisAccount;
   if(account){
-    dispatch(createSubstrate(account));   //更新账户数据
+    dispatch(createSubstrate(account));
   }
-  dispatch(balancesAll())    //更新Transferable DOT/FIS
+  // Update Transferable DOT/FIS
+  dispatch(balancesAll())
 }
 export const createSubstrate = (account: any): AppThunk => async (dispatch, getState) => { 
   queryBalance(account, dispatch, getState)
@@ -132,7 +134,7 @@ export const createSubstrate = (account: any): AppThunk => async (dispatch, getS
 const queryBalance = async (account: any, dispatch: any, getState: any) => {
   dispatch(setFisAccounts(account));
   let account2: any = { ...account }
-  const api = await stafi.createStafiApi();
+  const api = await stafiServer.createStafiApi();
   const result = await api.query.system.account(account2.address);
   if (result) {
     let fisFreeBalance = NumberUtil.fisAmountToHuman(result.data.free);
@@ -157,11 +159,11 @@ export const transfer = (amountparam: string, cb?: Function): AppThunk => async 
   const poolLimit = getState().FISModule.poolLimit;
   const address = getState().FISModule.fisAccount.address;
   const amount = NumberUtil.fisAmountToChain(amountparam);
-  web3Enable(stafi.getWeb3EnalbeName());
-  const injector = await web3FromSource(stafi.getPolkadotJsSource())
+  web3Enable(stafiServer.getWeb3EnalbeName());
+  const injector = await web3FromSource(stafiServer.getPolkadotJsSource())
   
   
-  const stafiApi = await stafi.createStafiApi();
+  const stafiApi = await stafiServer.createStafiApi();
 
   const selectedPool = getPool(amountparam, validPools, poolLimit);
   if (selectedPool == null) {
@@ -179,7 +181,7 @@ export const transfer = (amountparam: string, cb?: Function): AppThunk => async 
       try {
         asInBlock = "" + result.status.asInBlock;
       } catch (e) {
-        //忽略异常
+        // do nothing
       }
       if (asInBlock) {
         dispatch(setProcessParameter({
@@ -249,7 +251,7 @@ export const transfer = (amountparam: string, cb?: Function): AppThunk => async 
                   cb && cb();
                 }
               }))
-              //十分钟后   finalizing失败处理 
+              // Wait ten minutes 
               dispatch(gSetTimeOut(() => {
                 dispatch(setProcessSending({
                   finalizing: processStatus.failure,
@@ -264,7 +266,7 @@ export const transfer = (amountparam: string, cb?: Function): AppThunk => async 
         dispatch(setProcessSending({
           finalizing: processStatus.success
         }));
-        //finalizing 成功清除定时器
+        // clear
         gClearTimeOut();
 
       }
@@ -278,8 +280,8 @@ export const transfer = (amountparam: string, cb?: Function): AppThunk => async 
 
 
 export const stakingSignature = async (address: any, txHash: string) => {
-  web3Enable(stafi.getWeb3EnalbeName());
-  const injector = await web3FromSource(stafi.getPolkadotJsSource());
+  web3Enable(stafiServer.getWeb3EnalbeName());
+  const injector = await web3FromSource(stafiServer.getPolkadotJsSource());
   const signRaw = injector?.signer?.signRaw;
   const { signature } = await signRaw({
     address: address,
@@ -301,13 +303,13 @@ export const bound = (address: string, txhash: string, blockhash: string, amount
     let fisAddress = getState().FISModule.fisAccount.address;
     const keyringInstance = keyring.init(Symbol.Fis);
     const signature = await stakingSignature(address, u8aToHex(keyringInstance.decodeAddress(fisAddress)));
-    const stafiApi = await stafi.createStafiApi();
+    const stafiApi = await stafiServer.createStafiApi();
     let pubkey = u8aToHex(keyringInstance.decodeAddress(address));
     let poolPubkey = u8aToHex(keyringInstance.decodeAddress(pooladdress));
       
     
-    web3Enable(stafi.getWeb3EnalbeName());
-    const injector = await web3FromSource(stafi.getPolkadotJsSource());
+    web3Enable(stafiServer.getWeb3EnalbeName());
+    const injector = await web3FromSource(stafiServer.getPolkadotJsSource());
     const bondResult = await stafiApi.tx.rTokenSeries.liquidityBond(pubkey,
       signature,
       poolPubkey,
@@ -362,7 +364,6 @@ export const bound = (address: string, txhash: string, blockhash: string, amount
                   })); 
                   cb && cb("loading");
                   dispatch(getMinting(type, txhash, blockhash, cb));
-                  //十分钟后   finalizing失败处理 
                   // dispatch(gSetTimeOut(() => {
                   //   dispatch(setProcessStaking({
                   //     finalizing: processStatus.failure,
@@ -379,7 +380,6 @@ export const bound = (address: string, txhash: string, blockhash: string, amount
               finalizing: processStatus.success
             }));
             // cb && cb("loading");
-            //finalizing 成功清除定时器
             // gClearTimeOut();
 
           }
@@ -405,7 +405,7 @@ export const bound = (address: string, txhash: string, blockhash: string, amount
 }
 
 export const balancesAll = (): AppThunk => async (dispatch, getState) => {
-  const api = await stafi.createStafiApi();
+  const api = await stafiServer.createStafiApi();
   const address = getState().FISModule.fisAccount.address;
   const result = await api.derive.balances.all(address);
   if (result) {
@@ -417,8 +417,8 @@ export const balancesAll = (): AppThunk => async (dispatch, getState) => {
 
 
 export const rTokenRate = (type: number): AppThunk => async (dispatch, getState) => {
-  const api = await stafi.createStafiApi();
-  const result = await api.query.rTokenRate.rate(type);   //1代表DOT    0代表FIS
+  const api = await stafiServer.createStafiApi();
+  const result = await api.query.rTokenRate.rate(type);
   let ratio = NumberUtil.fisAmountToHuman(result.toJSON());
   if (!ratio) {
     ratio = 1;
@@ -447,7 +447,7 @@ export const continueProcess=():AppThunk=>async (dispatch,getState)=>{
 }
 export const getBlock = (blockHash: string, txHash: string, cb?: Function): AppThunk => async (dispatch, getState) => {
   try {
-    const api = await stafi.createStafiApi();
+    const api = await stafiServer.createStafiApi();
     const address = getState().FISModule.fisAccount.address;
     const validPools = getState().FISModule.validPools;
     const poolLimit = getState().FISModule.poolLimit;
@@ -511,7 +511,7 @@ export const getMinting = (type: number, txHash: string, blockHash: string, cb?:
 
 const rTokenSeries_bondStates=(bondSuccessParamArr:any,statusObj:any,cb?:Function): AppThunk => async (dispatch, getState)=>{
   statusObj.num=statusObj.num+1; 
-  const stafiApi = await stafi.createStafiApi();
+  const stafiApi = await stafiServer.createStafiApi();
   const result= await stafiApi.query.rTokenSeries.bondStates(bondSuccessParamArr) 
   let bondState = result.toJSON();  
   if (bondState=="Success") {
@@ -537,8 +537,8 @@ const rTokenSeries_bondStates=(bondSuccessParamArr:any,statusObj:any,cb?:Functio
 
  
 export const query_rBalances_account = (): AppThunk => async (dispatch, getState) => {
-  const address = getState().FISModule.fisAccount.address; // 当前用户的FIS账号
-  const stafiApi = await stafi.createStafiApi();
+  const address = getState().FISModule.fisAccount.address;
+  const stafiApi = await stafiServer.createStafiApi();
   const accountData = await stafiApi.query.rBalances.account(rSymbol.Fis, address);
   let data = accountData.toJSON();
   if (data == null) {
@@ -562,9 +562,9 @@ export const fisUnbond = (amount: string, rSymbol: number, recipient: string, se
   
   try { 
     const address = getState().FISModule.fisAccount.address; 
-    const stafiApi = await stafi.createStafiApi();
-    web3Enable(stafi.getWeb3EnalbeName());
-    const injector = await web3FromSource(stafi.getPolkadotJsSource())
+    const stafiApi = await stafiServer.createStafiApi();
+    web3Enable(stafiServer.getWeb3EnalbeName());
+    const injector = await web3FromSource(stafiServer.getPolkadotJsSource())
 
     const api = stafiApi.tx.rTokenSeries.liquidityUnbond(rSymbol, selectedPool, NumberUtil.fisAmountToChain(amount).toString(), recipient);
 
@@ -596,7 +596,7 @@ export const fisUnbond = (amount: string, rSymbol: number, recipient: string, se
 
 export const getPools = (): AppThunk => async (dispatch, getState) => {
  
-  const stafiApi = await stafi.createStafiApi();
+  const stafiApi = await stafiServer.createStafiApi();
   const poolsData = await stafiApi.query.rTokenLedger.pools(rSymbol.Fis)
   let pools = poolsData.toJSON();
   dispatch(setValidPools(null));
@@ -623,7 +623,7 @@ export const getPools = (): AppThunk => async (dispatch, getState) => {
 
 export const poolBalanceLimit = (): AppThunk => async (dispatch, getState) => {
  
-  const stafiApi = await stafi.createStafiApi();
+  const stafiApi = await stafiServer.createStafiApi();
   stafiApi.query.rTokenSeries.poolBalanceLimit(rSymbol.Fis).then((result: any) => {
     dispatch(setPoolLimit(result.toJSON()));
   });
@@ -645,7 +645,7 @@ export const getPool = (tokenAmount: any, validPools: any, poolLimit: any) => {
 
 
 export const bondSwitch=():AppThunk=>async (dispatch, getState)=>{
-  const stafiApi = await stafi.createStafiApi();
+  const stafiApi = await stafiServer.createStafiApi();
   const result=await stafiApi.query.rTokenSeries.bondSwitch(); 
   dispatch(setBondSwitch(result.toJSON()))
 }
@@ -653,9 +653,8 @@ export const bondSwitch=():AppThunk=>async (dispatch, getState)=>{
 
 export const getTotalUnbonding=(rSymbol:any,cb?:Function):AppThunk=>async (dispatch, getState)=>{
   let fisAddress = getState().FISModule.fisAccount.address;
-  let rSymbol = 1;
   let totalUnbonding:any = 0;
-  const stafiApi = await stafi.createStafiApi();
+  const stafiApi = await stafiServer.createStafiApi();
   const  eraResult = await stafiApi.query.rTokenLedger.chainEras(rSymbol);
   let currentEra = eraResult.toJSON(); 
   if (currentEra) {

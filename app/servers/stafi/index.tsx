@@ -148,15 +148,10 @@ export default class Index extends SubstrateKeyring{
   }
 
   createSubstrateApi(provider:string, types:any) {
-  const wsProvider = new WsProvider(provider);
+    const wsProvider = new WsProvider(provider);
     return ApiPromise.create({
         provider: wsProvider,
         types
     });
   }
-  async transfer(poolAddress:string,amount:string){
-    //const 
-    const polkadotApi=await this.createStafiApi();
-    polkadotApi.tx.balances.transfer(poolAddress, amount.toString()); 
-  } 
 }
