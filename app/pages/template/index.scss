@@ -13,6 +13,9 @@
         display: flex;
         justify-content: center;
         // padding-right: 90px; 
+        .ant-spin-nested-loading > div > .ant-spin .ant-spin-text{
+            text-shadow:initial;
+        }
     }
 }
 >.stafi_layout{

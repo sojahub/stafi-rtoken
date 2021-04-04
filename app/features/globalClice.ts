@@ -44,6 +44,8 @@ const globalClice = createSlice({
     stafiStakerApr:'',
     process:process,  
     timeOutFunc:null,
+
+    loading:false,
   },
   reducers: {  
     setProcessSlider(state,{payload}){
@@ -78,6 +80,9 @@ const globalClice = createSlice({
     }, 
     setTimeOutFunc(state,{payload}){
       state.timeOutFunc=payload;
+    },
+    setLoading(state,{payload}){
+      state.loading=payload;
     }
   },
 });
@@ -87,7 +92,8 @@ export const {
   setProcessStaking,
   setProcessMinting,
   setTimeOutFunc,
-  initProcess
+  initProcess,
+  setLoading
  } = globalClice.actions;
  
 export const connectPolkadotjs = (type:Symbol,cb?:Function): AppThunk=>async (dispatch, getState)=>{ 

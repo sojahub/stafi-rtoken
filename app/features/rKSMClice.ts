@@ -396,27 +396,33 @@ export const reStaking = (cb?: Function): AppThunk => async (dispatch, getState)
 
 
 export const unbond = (amount: string,recipient:string, cb?: Function): AppThunk => async (dispatch, getState) => {
-  const validPools = getState().rKSMModule.validPools;
-  const poolLimit = getState().rKSMModule.poolLimit;
-  
-  let selectedPool = getPool(NumberUtil.fisAmountToChain(amount), validPools, poolLimit);
-  if (selectedPool == null) {
-    message.error("There is no matching pool, please try again later.");
-    return;
-  } 
-  const keyringInstance = keyring.init(Symbol.Ksm);
-  
-  dispatch(fisUnbond(amount, rSymbol.Ksm, u8aToHex(keyringInstance.decodeAddress(recipient)), u8aToHex(keyringInstance.decodeAddress(selectedPool)), (r?:string) => {
-    dispatch(reloadData()); 
-    if(r != "Failed"){  
-      //消息通知   成功 
-      dispatch(add_KSM_unbond_Notice(stafi_uuid(),amount,noticeStatus.Confirmed));
-      cb && cb(); 
-    }else{
-      //消息通知   成功 
-      dispatch(add_KSM_unbond_Notice(stafi_uuid(),amount,noticeStatus.Error));
+  try{
+    const validPools = getState().rKSMModule.validPools;
+    const poolLimit = getState().rKSMModule.poolLimit;
+    
+    let selectedPool = getPool(NumberUtil.fisAmountToChain(amount), validPools, poolLimit);
+    if (selectedPool == null) {
+      message.error("There is no matching pool, please try again later.");
+      cb && cb();
+      return;
     } 
-  }))
+    const keyringInstance = keyring.init(Symbol.Ksm);
+    
+    dispatch(fisUnbond(amount, rSymbol.Ksm, u8aToHex(keyringInstance.decodeAddress(recipient)), u8aToHex(keyringInstance.decodeAddress(selectedPool)),"Unbond successfully, you can withdraw your unbonded KSM 6 days later.", (r?:string) => {
+      dispatch(reloadData()); 
+      if(r != "Failed"){  
+        //消息通知   成功 
+        dispatch(add_KSM_unbond_Notice(stafi_uuid(),amount,noticeStatus.Confirmed));
+      }else{
+        //消息通知   成功 
+        dispatch(add_KSM_unbond_Notice(stafi_uuid(),amount,noticeStatus.Error));
+      } 
+      cb && cb(); 
+    }))
+  }catch(e){
+    cb && cb();
+  }
+ 
 }
 
 export const continueProcess = (): AppThunk => async (dispatch, getState) => {

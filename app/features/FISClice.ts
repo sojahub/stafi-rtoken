@@ -553,42 +553,49 @@ export const unbond=(amount:string,cb?:Function):AppThunk=>async (dispatch,getSt
   const validPools=getState().FISModule.validPools;
   const poolLimit = getState().FISModule.poolLimit;
   let selectedPool =getPool(amount,validPools,poolLimit);
-  fisUnbond(amount,rSymbol.Fis,recipient,selectedPool,()=>{
+  fisUnbond(amount,rSymbol.Fis,recipient,selectedPool,"Unbond successfully, you can withdraw your unbonded FIS 29 days later.",()=>{
     dispatch(reloadData());
   }) 
 }
 
-export const fisUnbond = (amount: string, rSymbol: number, recipient: string, selectedPool: string, cb?: Function): AppThunk => async (dispatch, getState) => {
+export const fisUnbond = (amount: string, rSymbol: number, recipient: string, selectedPool: string,topstr:string, cb?: Function): AppThunk => async (dispatch, getState) => {
   
   try { 
     const address = getState().FISModule.fisAccount.address; 
     const stafiApi = await stafiServer.createStafiApi();
     web3Enable(stafiServer.getWeb3EnalbeName());
+    
     const injector = await web3FromSource(stafiServer.getPolkadotJsSource())
-
+  
+  
     const api = stafiApi.tx.rTokenSeries.liquidityUnbond(rSymbol, selectedPool, NumberUtil.fisAmountToChain(amount).toString(), recipient);
 
-    api.signAndSend(address, { signer: injector.signer }, (result: any) => {
-
-      if (result.status.isInBlock) {
-        result.events
-          .filter((e: any) => {
-            return e.event.section == "system"
-          }).forEach((data: any) => {
-            if (data.event.method === 'ExtrinsicSuccess') {
-              // dispatch(reloadData());
-              cb && cb("Success");
-              message.success("Unbond successfully, you can withdraw your unbonded DOT 29 days later.")
-            } else if (data.event.method === 'ExtrinsicFailed') {
-              // dispatch(reloadData());
-              cb && cb("Failed");
-              message.error("Unbond failure")
-            }
-          })
-      }
-    });
+      api.signAndSend(address, { signer: injector.signer }, (result: any) => {
+        try{ 
+          if (result.status.isInBlock) {
+            result.events
+              .filter((e: any) => {
+                return e.event.section == "system"
+              }).forEach((data: any) => {
+                if (data.event.method === 'ExtrinsicSuccess') {
+                  // dispatch(reloadData());
+                  cb && cb("Success");
+                  message.success(topstr)
+                } else if (data.event.method === 'ExtrinsicFailed') {
+                  // dispatch(reloadData());
+                  cb && cb("Failed");
+                  message.error("Unbond failure")
+                }
+              })
+          }
+        }catch(e){ 
+          cb && cb("Failed");
+        }
+      });
+  
   } catch (e: any) {
-    message.error("Unbond failure")
+    message.error("Unbond failure"); 
+    cb && cb("Failed");
   }
 }
 

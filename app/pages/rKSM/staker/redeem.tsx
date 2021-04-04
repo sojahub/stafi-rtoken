@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'; 
-import {message} from 'antd';
+import {message,Spin} from 'antd';
 import {useSelector} from 'react-redux';
 import Content from '@components/content/redeemContent'; 
 import { rTokenRate } from '@features/FISClice';
@@ -8,6 +8,7 @@ import {unbond,getUnbondCommission,query_rBalances_account,checkAddress,unbondFe
 import {useDispatch} from 'react-redux';
 import UnbondModal from '@components/modal/unbondModal'
 import NumberUtil from '@util/numberUtil'
+import {setLoading} from '@features/globalClice'
 
 export default function Index(props:any){ 
   const dispatch=useDispatch();
@@ -44,8 +45,11 @@ export default function Index(props:any){
     dispatch(getUnbondCommission());
     dispatch(rTokenRate(rSymbol.Ksm));
     dispatch(unbondFees())
+    return ()=>{
+      dispatch(setLoading(false))
+    }
   },[])
-  return  <><Content 
+  return   <><Content 
     history={props.history}
     amount={amount}
     tokenAmount={tokenAmount} 
@@ -75,13 +79,12 @@ export default function Index(props:any){
       setVisible(false)
     }}
     onOk={()=>{
-      dispatch(unbond(amount,recipient,()=>{
-        
-        setAmount('');
-       
-        props.history.push("/rKSM/staker/info");
-       }))
-       setVisible(false)
+      dispatch(setLoading(true));
+      setVisible(false)
+      setAmount('');
+      dispatch(unbond(amount,recipient,()=>{ 
+        dispatch(setLoading(false));
+      })) 
     }}
     type="rKSM"
   />

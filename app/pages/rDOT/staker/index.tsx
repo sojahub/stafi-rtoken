@@ -1,4 +1,4 @@
-import React from 'react';
+import React from 'react'; 
 import Card from '@components/card/stakeCard';
 import Slider from '@components/slider/stakeSlider';
 import Content from '@components/content/stakeContent_DOT';

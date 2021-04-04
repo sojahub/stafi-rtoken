@@ -4,10 +4,11 @@ import Content from '@components/content/redeemContent';
 import { rTokenRate } from '@features/FISClice';
 import {rSymbol} from '@keyring/defaults'
 import {unbond,getUnbondCommission,query_rBalances_account,checkAddress,unbondFees} from '@features/rDOTClice';
+import {setLoading} from '@features/globalClice'
 import {useDispatch} from 'react-redux';
 import UnbondModal from '@components/modal/unbondModal'
 import NumberUtil from '@util/numberUtil'
-import { message } from 'antd';
+import { message,Spin } from 'antd';
 
 export default function Index(props:any){ 
   const dispatch=useDispatch();
@@ -45,6 +46,10 @@ export default function Index(props:any){
     dispatch(getUnbondCommission());
     dispatch(rTokenRate(rSymbol.Dot));
     dispatch(unbondFees());
+
+    return ()=>{
+      dispatch(setLoading(false));
+    }
   },[])
   return  <><Content 
     history={props.history}
@@ -76,13 +81,12 @@ export default function Index(props:any){
       setVisible(false)
     }}
     onOk={()=>{
-      dispatch(unbond(amount,recipient,()=>{
-        
-        setAmount('');
-       
-        props.history.push("/rDOT/staker/info");
-       }))
-       setVisible(false)
+      setAmount('');
+      dispatch(setLoading(true));
+      setVisible(false)
+      dispatch(unbond(amount,recipient,()=>{ 
+        dispatch(setLoading(false));
+      })) 
     }}
     type="rDOT"
   />
