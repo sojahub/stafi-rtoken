@@ -613,7 +613,7 @@ export const rTokenLedger=():AppThunk=>async (dispatch, getState)=>{
       const apr = NumberUtil.handleEthRoundToFixed((currentRate - lastRate)/lastRate * 365.25 * 100) + '%';
       dispatch(setStakerApr(apr));
     } else {
-      dispatch(setStakerApr('15.9%')); 
+      dispatch(setStakerApr('16.0%')); 
     }
   }
   export const checkAddress = (address:string)=>{
