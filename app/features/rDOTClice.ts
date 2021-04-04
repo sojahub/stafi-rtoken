@@ -38,13 +38,13 @@ const rDOTClice = createSlice({
     stakeHash: getLocalStorageItem(Keys.DotStakeHash),
     unbondCommission:"--",
 
-    bondFees:"--",    //交易的手续费
+    bondFees:"--",    //交易的手续费,
+    unBondFees:"--",    //unbond 交易的手续费
     estimateTxFees : 30000000000, 
 
     totalRDot:"--",
     stakerApr:"--",
-
-    totalUnbonding:null
+    totalUnbonding:null,
   },
   reducers: {
     setDotAccounts(state, { payload }) {
@@ -118,6 +118,9 @@ const rDOTClice = createSlice({
     },
     setTotalUnbonding(state,{payload}){
       state.totalUnbonding=payload;
+    },
+    setUnBondFees(state,{payload}){
+      state.unBondFees=payload
     }
   },
 });
@@ -136,7 +139,8 @@ export const { setDotAccounts,
   setBondFees,
   setTotalRDot,
   setStakerApr,
-  setTotalUnbonding
+  setTotalUnbonding,
+  setUnBondFees
 } = rDOTClice.actions;
 
 
@@ -565,10 +569,14 @@ export const bondFees=():AppThunk=>async (dispatch, getState)=>{
   const stafiApi = await stafiServer.createStafiApi();
   const result = await stafiApi.query.rTokenSeries.bondFees(rSymbol.Dot)
   //比如值为1500000000000，代表1.5个FIS
-  // this.bondFees = result.toJSON(); 
+  // this.bondFees = result.toJSON();  
   dispatch(setBondFees(result.toJSON()));
 }
-
+export const unbondFees=():AppThunk=>async (dispatch, getState)=>{
+  const stafiApi = await stafiServer.createStafiApi();
+  const result = await stafiApi.query.rTokenSeries.unbondFees(rSymbol.Dot) 
+  dispatch(setUnBondFees(result.toJSON()));
+}
 
 export const totalIssuance=():AppThunk=>async (dispatch, getState)=>{
   const stafiApi = await stafiServer.createStafiApi(); 

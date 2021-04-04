@@ -38,6 +38,7 @@ const rKSMClice = createSlice({
     unbondCommission:"--",
 
     bondFees:"--",    //交易的手续费
+    unBondFees:"--",
     estimateTxFees : 30000000000, 
 
     totalRDot:"--",
@@ -118,6 +119,9 @@ const rKSMClice = createSlice({
     },
     setTotalUnbonding(state,{payload}){
       state.totalUnbonding=payload;
+    },
+    setUnBondFees(state,{payload}){
+      state.unBondFees=payload
     }
   },
 });
@@ -136,7 +140,8 @@ export const { setKsmAccounts,
   setBondFees,
   setTotalRDot,
   setStakerApr,
-  setTotalUnbonding
+  setTotalUnbonding,
+  setUnBondFees
 } = rKSMClice.actions;
 
 
@@ -569,7 +574,11 @@ export const bondFees=():AppThunk=>async (dispatch, getState)=>{
   dispatch(setBondFees(result.toJSON()));
 }
 
-
+export const unbondFees=():AppThunk=>async (dispatch, getState)=>{
+  const stafiApi = await stafiServer.createStafiApi();
+  const result = await stafiApi.query.rTokenSeries.unbondFees(rSymbol.Dot) 
+  dispatch(setUnBondFees(result.toJSON()));
+}
 export const totalIssuance=():AppThunk=>async (dispatch, getState)=>{
   const stafiApi = await stafiServer.createStafiApi(); 
   const  result =await stafiApi.query.rBalances.totalIssuance(rSymbol.Ksm) 

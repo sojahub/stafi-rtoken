@@ -3,7 +3,7 @@ import {useSelector} from 'react-redux';
 import Content from '@components/content/redeemContent'; 
 import { rTokenRate } from '@features/FISClice';
 import {rSymbol} from '@keyring/defaults'
-import {unbond,getUnbondCommission,query_rBalances_account,checkAddress,accountUnbonds} from '@features/rDOTClice';
+import {unbond,getUnbondCommission,query_rBalances_account,checkAddress,unbondFees} from '@features/rDOTClice';
 import {useDispatch} from 'react-redux';
 import UnbondModal from '@components/modal/unbondModal'
 import NumberUtil from '@util/numberUtil'
@@ -15,7 +15,7 @@ export default function Index(props:any){
   const [amount,setAmount]=useState<any>();
   const [visible,setVisible]=useState(false);
 
-  const {tokenAmount,unbondCommission,ratio,fisFee,address,bondFees,willAmount} = useSelector((state:any)=>{ 
+  const {tokenAmount,unbondCommission,ratio,fisFee,address,unBondFees,willAmount} = useSelector((state:any)=>{ 
     let willAmount:any=0;
     let unbondCommission:any=0;
     let ratio=state.FISModule.ratio;
@@ -33,7 +33,7 @@ export default function Index(props:any){
       unbondCommission:unbondCommission,
       fisFee:state.rDOTModule.unbondCommission,
       address:state.rDOTModule.dotAccount.address,
-      bondFees:state.rDOTModule.bondFees,
+      unBondFees:state.rDOTModule.unBondFees,
       willAmount:willAmount
     }
   }) 
@@ -44,7 +44,7 @@ export default function Index(props:any){
     dispatch(query_rBalances_account())
     dispatch(getUnbondCommission());
     dispatch(rTokenRate(rSymbol.Dot));
-    
+    dispatch(unbondFees());
   },[])
   return  <><Content 
     history={props.history}
@@ -71,7 +71,7 @@ export default function Index(props:any){
     unbondAmount={amount}
     commission={unbondCommission}
     getAmount={willAmount}
-    bondFees={bondFees}
+    bondFees={unBondFees}
     onCancel={()=>{
       setVisible(false)
     }}
