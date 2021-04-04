@@ -578,11 +578,11 @@ export const fisUnbond = (amount: string, rSymbol: number, recipient: string, se
                 return e.event.section == "system"
               }).forEach((data: any) => {
                 if (data.event.method === 'ExtrinsicSuccess') {
-                  // dispatch(reloadData());
+                  dispatch(reloadData());
                   cb && cb("Success");
                   message.success(topstr)
                 } else if (data.event.method === 'ExtrinsicFailed') {
-                  // dispatch(reloadData());
+                  dispatch(reloadData());
                   cb && cb("Failed");
                   message.error("Unbond failure")
                 }

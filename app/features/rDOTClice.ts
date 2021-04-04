@@ -407,7 +407,7 @@ export const unbond = (amount: string,recipient:string, cb?: Function): AppThunk
     } 
     const keyringInstance = keyring.init(Symbol.Dot);
     
-    dispatch(fisUnbond(amount, rSymbol.Dot, u8aToHex(keyringInstance.decodeAddress(recipient)), u8aToHex(keyringInstance.decodeAddress(selectedPool)),"Unbond successfully, you can withdraw your unbonded DOT 24 days later.", (r?:string) => {
+    dispatch(fisUnbond(amount, rSymbol.Dot, u8aToHex(keyringInstance.decodeAddress(recipient)), u8aToHex(keyringInstance.decodeAddress(selectedPool)),"Unbond successfully, you can withdraw your unbonded DOT 29 days later.", (r?:string) => {
       dispatch(reloadData()); 
       if(r != "Failed"){  
         //消息通知   成功 

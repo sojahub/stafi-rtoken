@@ -408,7 +408,7 @@ export const unbond = (amount: string,recipient:string, cb?: Function): AppThunk
     } 
     const keyringInstance = keyring.init(Symbol.Ksm);
     
-    dispatch(fisUnbond(amount, rSymbol.Ksm, u8aToHex(keyringInstance.decodeAddress(recipient)), u8aToHex(keyringInstance.decodeAddress(selectedPool)),"Unbond successfully, you can withdraw your unbonded KSM 6 days later.", (r?:string) => {
+    dispatch(fisUnbond(amount, rSymbol.Ksm, u8aToHex(keyringInstance.decodeAddress(recipient)), u8aToHex(keyringInstance.decodeAddress(selectedPool)),"Unbond successfully, you can withdraw your unbonded KSM 8 days later.", (r?:string) => {
       dispatch(reloadData()); 
       if(r != "Failed"){  
         //消息通知   成功 

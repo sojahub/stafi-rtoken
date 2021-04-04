@@ -22,8 +22,10 @@ export default function Index(props:Props){
           />
           <A onClick={()=>{ 
             if(props.value){
-              setShowEdit(false);
-              props.onEdit && props.onEdit(false);
+              if(props.onEdit(false)){
+                setShowEdit(false);
+              }
+              // props.onEdit && props.onEdit(false);
             }else{
               message.error("pieas fill in your withdraw address")
             }

@@ -16,6 +16,7 @@ type Props={
      fisFee?:any,
      address?:string,
      onInputChange?:Function,
+     onInputConfirm?:Function,
      type:"rDOT"|"rETH"|"rFIS"|"rKSM"
 }
 export default function Index(props:Props){
@@ -64,7 +65,11 @@ export default function Index(props:Props){
         <div className="label"> 2. Receiving adress</div>
         </div>
         <EditInput value={props.address} onEdit={(e:boolean)=>{
-            setInputEdit(e)
+            const r=props.onInputConfirm(e);
+            if(r){
+              setInputEdit(e)
+            }
+            return r;
         }} onInputChange={(e:string)=>{
             props.onInputChange && props.onInputChange(e);
         }}/>

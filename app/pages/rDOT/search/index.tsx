@@ -21,7 +21,7 @@ export default function Index(props:any){
       Stake Record
     </div>
     <div className="sub_title">
-      If you did not find your stake record in Notification，you can resubmmit to proceed
+      If you did not find your stake record in Notification，you can resubmit to proceed
     </div>
     <Form
       layout="vertical"

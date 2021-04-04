@@ -58,6 +58,15 @@ export default function Index(props:any){
     }}
     fisFee={fisFee}
     address={recipient} 
+    onInputConfirm={(e:boolean)=>{
+      if(!e){
+        if(!checkAddress(recipient)){ 
+          message.error("address input error");
+          return false;
+        } 
+      }
+      return true;
+    }}
     onInputChange={(e:string)=>{ 
       setRecipient(e)
     }}
@@ -65,7 +74,7 @@ export default function Index(props:any){
       if(checkAddress(recipient)){
         setVisible(true);
       }else{
-        message.error("Address input error");
+        message.error("address input error");
       } 
     }}
     type="rKSM"
