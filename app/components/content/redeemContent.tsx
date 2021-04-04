@@ -11,8 +11,7 @@ type Props={
      onRdeemClick?:Function,
      amount?:string,
      onAmountChange?:Function,
-     tokenAmount?:any,
-     unbondCommission?:any,
+     tokenAmount?:any, 
      history?:any,
      fisFee?:any,
      address?:string,
@@ -51,8 +50,7 @@ export default function Index(props:Props){
             <Input placeholder={"AMOUNT"} value={props.amount}  onChange={(e:string)=>{
                 props.onAmountChange && props.onAmountChange(e);
             }}  icon={props.type=="rKSM" ?rKSM:rDOT}/>
-            <div className="balance">
-                {/* You will get {(props.unbondCommission=="--" || !!!props.amount)? "--": `${NumberUtil.handleFisAmountToFixed(props.unbondCommission)}`} DOT */}
+            <div className="balance"> 
                 {props.type} balance {(props.tokenAmount=="--")? "--": NumberUtil.handleFisAmountToFixed(props.tokenAmount)}
             </div>
         </div>

@@ -15,14 +15,16 @@ export default function Index(props:any){
   const [amount,setAmount]=useState<any>();
   const [visible,setVisible]=useState(false);
 
-  const {tokenAmount,unbondCommission,ratio,fisFee,address,bondFees} = useSelector((state:any)=>{ 
-    let unbondCommission=state.rDOTModule.unbondCommission;
+  const {tokenAmount,unbondCommission,ratio,fisFee,address,bondFees,willAmount} = useSelector((state:any)=>{ 
+    let willAmount:any=0;
+    let unbondCommission:any=0;
     let ratio=state.FISModule.ratio;
     let tokenAmount=state.rDOTModule.tokenAmount; 
     
-    if (ratio && unbondCommission && amount) {
-      let returnValue = amount * (1 - unbondCommission);
-      unbondCommission = NumberUtil.handleFisAmountToFixed(returnValue * ratio);;
+    if (ratio && state.rDOTModule.unbondCommission && amount) {
+      let returnValue = amount * (1 - state.rDOTModule.unbondCommission);
+      unbondCommission = amount*state.rDOTModule.unbondCommission;
+      willAmount = NumberUtil.handleFisAmountToFixed(returnValue * ratio);;
     } 
  
     return { 
@@ -31,7 +33,8 @@ export default function Index(props:any){
       unbondCommission:unbondCommission,
       fisFee:state.rDOTModule.unbondCommission,
       address:state.rDOTModule.dotAccount.address,
-      bondFees:state.rDOTModule.bondFees
+      bondFees:state.rDOTModule.bondFees,
+      willAmount:willAmount
     }
   }) 
   useEffect(()=>{
@@ -46,8 +49,7 @@ export default function Index(props:any){
   return  <><Content 
     history={props.history}
     amount={amount}
-    tokenAmount={tokenAmount}
-    unbondCommission={unbondCommission} 
+    tokenAmount={tokenAmount} 
     onAmountChange={(e:string)=>{
       setAmount(e)
     }}
@@ -68,7 +70,7 @@ export default function Index(props:any){
   <UnbondModal visible={visible} 
     unbondAmount={amount}
     commission={unbondCommission}
-    getAmount={NumberUtil.handleFisAmountToFixed(amount*ratio)}
+    getAmount={willAmount}
     bondFees={bondFees}
     onCancel={()=>{
       setVisible(false)

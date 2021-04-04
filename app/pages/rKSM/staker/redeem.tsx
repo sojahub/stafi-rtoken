@@ -15,24 +15,25 @@ export default function Index(props:any){
   const [amount,setAmount]=useState<any>();
   const [visible,setVisible]=useState(false);
 
-  const {tokenAmount,unbondCommission,ratio,fisFee,address,bondFees,totalUnbonding} = useSelector((state:any)=>{ 
-    let unbondCommission=state.rKSMModule.unbondCommission;
+  const {tokenAmount,unbondCommission,ratio,fisFee,address,bondFees,willAmount} = useSelector((state:any)=>{ 
+    let unbondCommission:any=0;
+    let willAmount:any=0;
     let ratio=state.FISModule.ratio;
     let tokenAmount=state.rKSMModule.tokenAmount; 
-    
-    if (ratio && unbondCommission && amount) {
-      let returnValue = amount * (1 - unbondCommission);
-      unbondCommission = NumberUtil.handleFisAmountToFixed(returnValue * ratio);;
+     
+    if (ratio && state.rKSMModule.unbondCommission && amount) {
+      let returnValue = amount * (1 - state.rKSMModule.unbondCommission);
+      unbondCommission = amount*state.rKSMModule.unbondCommission;
+      willAmount = NumberUtil.handleFisAmountToFixed(returnValue * ratio);;
     } 
- 
     return { 
       ratio:ratio,
       tokenAmount:tokenAmount, 
       unbondCommission:unbondCommission,
       fisFee:state.rKSMModule.unbondCommission,
       address:state.rKSMModule.ksmAccount.address,
-      bondFees:state.rKSMModule.bondFees,
-      totalUnbonding:state.rKSMModule.totalUnbonding
+      bondFees:state.rKSMModule.bondFees, 
+      willAmount:willAmount
     }
   }) 
   useEffect(()=>{
@@ -46,8 +47,7 @@ export default function Index(props:any){
   return  <><Content 
     history={props.history}
     amount={amount}
-    tokenAmount={tokenAmount}
-    unbondCommission={unbondCommission}
+    tokenAmount={tokenAmount} 
     onAmountChange={(e:string)=>{
       setAmount(e)
     }}
@@ -68,7 +68,7 @@ export default function Index(props:any){
   <UnbondModal visible={visible} 
     unbondAmount={amount}
     commission={unbondCommission}
-    getAmount={NumberUtil.handleFisAmountToFixed(amount*ratio)}
+    getAmount={willAmount}
     bondFees={bondFees}
     onCancel={()=>{
       setVisible(false)
