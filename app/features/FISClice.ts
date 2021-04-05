@@ -5,7 +5,7 @@ import Stafi from '@servers/stafi/index';
 import {
   processStatus, setProcessSlider, setProcessSending, setProcessStaking,
   setProcessMinting, gSetTimeOut, gClearTimeOut,
-  initProcess, process
+  initProcess, process,setLoading
 } from './globalClice';
 import {
   web3Enable,
@@ -386,6 +386,7 @@ export const bound = (address: string, txhash: string, blockhash: string, amount
           M.error(e.message)
         }
       }).catch ((e:any)=>{ 
+        dispatch(setLoading(false));
         if(e=="Error: Cancelled"){
           message.error("Cancelled");
           dispatch(setProcessStaking({
@@ -401,6 +402,7 @@ export const bound = (address: string, txhash: string, blockhash: string, amount
       console.error("signAndSend error:",e)
     }
   }catch(e){ 
+    dispatch(setLoading(false));
     if(e=="Error: Cancelled"){
       message.error("Cancelled");
       dispatch(setProcessStaking({
@@ -601,11 +603,12 @@ export const fisUnbond = (amount: string, rSymbol: number, recipient: string, se
           cb && cb("Failed");
         }
       }).catch ((e:any)=>{ 
+        dispatch(setLoading(false));
         if(e=="Error: Cancelled"){
           message.error("Cancelled"); 
           cb && cb("Failed");
         }else{
-          console.error(e)
+          console.error(e);
         }
       })
   

@@ -8,7 +8,7 @@ import { setLocalStorageItem, getLocalStorageItem, removeLocalStorageItem, Keys 
 
 import {rSymbol,Symbol} from '@keyring/defaults'
 import {
-  processStatus, setProcessSlider, setProcessSending,initProcess,
+  processStatus, setProcessSlider, setProcessSending,initProcess,setLoading
 } from './globalClice';
 import {add_Notice} from './noticeClice'
 import {
@@ -338,6 +338,7 @@ export const transfer = (amountparam: string, cb?: Function): AppThunk => async 
       M.error(e.message)
     }
   }).catch ((e:any)=>{ 
+    dispatch(setLoading(false));
     if(e=="Error: Cancelled"){
       message.error("Cancelled");  
     }else{
