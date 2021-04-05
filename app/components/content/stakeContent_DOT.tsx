@@ -46,7 +46,7 @@ export default function Index(props:Props){
         {haswarn && <div className="warn">Unable to stake, system is waiting for matching validators</div>}
         <div className={`input_panel dot_input_panel ${haswarn && 'showWarn'}`}>
             <div className="tip">
-                Transferable {props.unit}:{props.transferrableAmount}
+                Transferable {props.unit}: {props.transferrableAmount}
             </div>
             <Input placeholder="AMOUNT" value={props.amount} onChange={(e:any)=>{
                 if(parseFloat(e)>parseFloat(props.transferrableAmount)){
