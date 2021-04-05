@@ -199,7 +199,7 @@ export const transfer = (amountparam: string, cb?: Function): AppThunk => async 
     packing: processStatus.default,
     finalizing: processStatus.default
   }));
-  const ex = dotApi.tx.balances.transferKeepAlive(selectedPool, amount.toString()); 
+  const ex =await dotApi.tx.balances.transferKeepAlive(selectedPool, amount.toString()); 
   
   ex.signAndSend(address, { signer: injector.signer }, (result: any) => {
     dispatch(setProcessSlider(true));
@@ -335,6 +335,12 @@ export const transfer = (amountparam: string, cb?: Function): AppThunk => async 
     } catch (e: any) {
       M.error(e.message)
     }
+  }).catch ((e:any)=>{ 
+    if(e=="Error: Cancelled"){
+      message.error("Cancelled");  
+    }else{
+      console.error(e)
+    } 
   });
 }
 
@@ -375,9 +381,8 @@ export const reSending = (cb?: Function): AppThunk => async (dispatch, getState)
 export const reStaking = (cb?: Function): AppThunk => async (dispatch, getState) => { 
   const processParameter = getState().rDOTModule.processParameter
   if (processParameter) {
-    const staking = processParameter.staking
-    const href = processParameter.href
-    console.log(staking.address,staking.txHash,staking.blockHash,NumberUtil.fisAmountToChain(staking.amount), staking.poolAddress,staking.type)
+    const staking = processParameter.staking;
+    const href = processParameter.href;
     processParameter && dispatch(bound(staking.address,
       staking.txHash,
       staking.blockHash,

@@ -201,7 +201,7 @@ export const transfer = (amountparam: string, cb?: Function): AppThunk => async 
     packing: processStatus.default,
     finalizing: processStatus.default
   }));
-  const ex = dotApi.tx.balances.transferKeepAlive(selectedPool, amount.toString()); 
+  const ex =await dotApi.tx.balances.transferKeepAlive(selectedPool, amount.toString()); 
   
   ex.signAndSend(address, { signer: injector.signer }, (result: any) => {
     dispatch(setProcessSlider(true));
@@ -337,6 +337,12 @@ export const transfer = (amountparam: string, cb?: Function): AppThunk => async 
     } catch (e: any) {
       M.error(e.message)
     }
+  }).catch ((e:any)=>{ 
+    if(e=="Error: Cancelled"){
+      message.error("Cancelled");  
+    }else{
+      console.error(e)
+    } 
   });
 }
 

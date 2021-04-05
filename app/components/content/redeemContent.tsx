@@ -1,4 +1,5 @@
 import React, { useState } from 'react'; 
+import {message} from 'antd'
 import LeftContent from './leftContent'  
 import Input from '@shared/components/input/amountInput';
 import rDOT from '@images/selected_rDOT.svg';
@@ -22,13 +23,7 @@ type Props={
 export default function Index(props:Props){
     const [inputEdit,setInputEdit]=useState(false);
 
-    // const placeholder=()=>{
-    //     if(props.type=="rDOT"){
-    //         return "DOT AMOUNT"
-    //     }else{
-    //         return "KSM AMOUNT"
-    //     }
-    // }
+  
     return <LeftContent className="stafi_stake_redeem_context"> 
     <img className="back_icon" onClick={()=>{
       props.history.goBack();
@@ -49,7 +44,12 @@ export default function Index(props:Props){
         </div>
         <div className="input_panel"> 
             <Input placeholder={"AMOUNT"} value={props.amount}  onChange={(e:string)=>{
-                props.onAmountChange && props.onAmountChange(e);
+                if(e>props.tokenAmount){
+                    message.error("The input amount exceeds your transferrable balance.");
+                    props.onAmountChange && props.onAmountChange("")
+                }else{
+                    props.onAmountChange && props.onAmountChange(e)
+                }
             }}  icon={props.type=="rKSM" ?rKSM:rDOT}/>
             <div className="balance"> 
                 {props.type} balance {(props.tokenAmount=="--")? "--": NumberUtil.handleFisAmountToFixed(props.tokenAmount)}
@@ -75,7 +75,7 @@ export default function Index(props:Props){
         }}/>
              {/* <Button size="small" btnType="ellipse">Withdraw</Button> */}
         <div className="unbond_btns">
-            <Button disabled={!props.amount || !props.address || inputEdit} btnType="ellipse" onClick={()=>{
+            <Button disabled={!props.amount || props.amount=="0"  || !props.address || inputEdit} btnType="ellipse" onClick={()=>{
                 props.onRdeemClick && props.onRdeemClick();
             }}>Unbond</Button>
         </div>

@@ -275,7 +275,7 @@ export const transfer = (amountparam: string, cb?: Function): AppThunk => async 
     } catch (e: any) {
       M.error(e.message)
     }
-  });
+  }) 
 }
 
 
@@ -292,7 +292,6 @@ export const stakingSignature = async (address: any, txHash: string) => {
 }
 
 export const bound = (address: string, txhash: string, blockhash: string, amount: number, pooladdress: string, type: number, cb?: Function): AppThunk => async (dispatch, getState) => {
-  console.log(address,txhash,blockhash,amount,pooladdress,type,"===========as")
   try{
     dispatch(setProcessStaking({
       brocasting: processStatus.loading,
@@ -386,6 +385,16 @@ export const bound = (address: string, txhash: string, blockhash: string, amount
         } catch (e: any) {
           M.error(e.message)
         }
+      }).catch ((e:any)=>{ 
+        if(e=="Error: Cancelled"){
+          message.error("Cancelled");
+          dispatch(setProcessStaking({
+            brocasting: processStatus.failure
+          }));
+          cb && cb("failure");
+        }else{
+          console.error(e)
+        } 
       })
       
     }catch(e){
@@ -568,7 +577,7 @@ export const fisUnbond = (amount: string, rSymbol: number, recipient: string, se
     const injector = await web3FromSource(stafiServer.getPolkadotJsSource())
   
   
-    const api = stafiApi.tx.rTokenSeries.liquidityUnbond(rSymbol, selectedPool, NumberUtil.fisAmountToChain(amount).toString(), recipient);
+    const api =await stafiApi.tx.rTokenSeries.liquidityUnbond(rSymbol, selectedPool, NumberUtil.fisAmountToChain(amount).toString(), recipient);
 
       api.signAndSend(address, { signer: injector.signer }, (result: any) => {
         try{ 
@@ -591,7 +600,14 @@ export const fisUnbond = (amount: string, rSymbol: number, recipient: string, se
         }catch(e){ 
           cb && cb("Failed");
         }
-      });
+      }).catch ((e:any)=>{ 
+        if(e=="Error: Cancelled"){
+          message.error("Cancelled"); 
+          cb && cb("Failed");
+        }else{
+          console.error(e)
+        }
+      })
   
   } catch (e: any) {
     message.error("Unbond failure"); 

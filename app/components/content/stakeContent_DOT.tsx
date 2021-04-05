@@ -106,8 +106,8 @@ export default function Index(props:Props){
                     </Tooltip>
                 </div>
             </div>
-        </div>
-        <div className="btns"> <Button disabled={(!props.amount || haswarn)} onClick={()=>{
+        </div> 
+        <div className="btns"> <Button disabled={(!props.amount || props.amount==0 || haswarn)} onClick={()=>{
              props.onStakeClick && props.onStakeClick()
          }}>Stake</Button>
         </div>
