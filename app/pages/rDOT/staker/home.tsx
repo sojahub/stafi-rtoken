@@ -5,8 +5,8 @@ import {transfer,balancesAll} from '@features/rDOTClice';
 import { rTokenRate } from '@features/FISClice';
 import {ratioToAmount} from '@util/common'
 import { message } from 'antd';
-import NumberUtil from '@util/numberUtil'
-import { parseNumber } from '@util/utils';
+import NumberUtil from '@util/numberUtil';
+import { setProcessSlider } from '@features/globalClice';
 
 export default function Index(props:any){
 
@@ -52,6 +52,7 @@ export default function Index(props:any){
     }
     if(amount){
       dispatch(transfer(amount,()=>{
+        dispatch(setProcessSlider(false));
         props.history.push("/rDOT/staker/info")
       }));
     }else{

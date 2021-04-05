@@ -6,7 +6,7 @@ import { rTokenRate } from '@features/FISClice';
 import {ratioToAmount} from '@util/common'
 import { message } from 'antd';
 import NumberUtil from '@util/numberUtil'
-import { parseNumber } from '@util/utils';
+import { setProcessSlider } from '@features/globalClice';
 
 export default function Index(props:any){
 
@@ -53,6 +53,7 @@ export default function Index(props:any){
     }
     if(amount){
       dispatch(transfer(amount,()=>{
+        dispatch(setProcessSlider(false));
         props.history.push("/rKSM/staker/info")
       }));
     }else{

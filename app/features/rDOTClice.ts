@@ -286,7 +286,7 @@ export const transfer = (amountparam: string, cb?: Function): AppThunk => async 
                 }
               }))  
 
-              //消息通知 Pending
+              // Pending
               dispatch(add_DOT_stake_Notice(notice_uuid,amountparam,noticeStatus.Pending,{
                 process:getState().globalModule.process,
                 processParameter:getState().rDOTModule.processParameter}))
