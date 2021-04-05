@@ -27,17 +27,17 @@ const rKSMClice = createSlice({
   name: 'rKSMModule',
   initialState: {
     ksmAccounts: [],
-    ksmAccount:getLocalStorageItem(Keys.KsmAccountKey) && {...getLocalStorageItem(Keys.KsmAccountKey),balance:"--"},    //选中的账号 
+    ksmAccount:getLocalStorageItem(Keys.KsmAccountKey) && {...getLocalStorageItem(Keys.KsmAccountKey),balance:"--"},
     validPools: [],
     poolLimit: 0,
     transferrableAmountShow: "--",
     ratio: "--",
     tokenAmount: "--",
-    processParameter: null,      //process参数
+    processParameter: null,
     stakeHash: getLocalStorageItem(Keys.KsmStakeHash),
     unbondCommission:"--",
 
-    bondFees:"--",    //交易的手续费
+    bondFees:"--",
     unBondFees:"--",
     estimateTxFees : 30000000000, 
 
@@ -150,9 +150,9 @@ export const { setKsmAccounts,
 export const reloadData = (): AppThunk => async (dispatch, getState) => {
   const account = getState().rKSMModule.ksmAccount;
   if(account){
-    dispatch(createSubstrate(account));   //更新账户数据
+    dispatch(createSubstrate(account));
   }
-  dispatch(balancesAll())    //更新Transferable DOT/FIS
+  dispatch(balancesAll())
 
 }
 export const createSubstrate = (account: any): AppThunk => async (dispatch, getState) => { 
@@ -178,7 +178,7 @@ const queryBalance = async (account: any, dispatch: any, getState: any) => {
 
 export const transfer = (amountparam: string, cb?: Function): AppThunk => async (dispatch, getState) => {
   const processParameter=getState().rKSMModule.processParameter;
-  const notice_uuid=(processParameter && processParameter.uuid) || stafi_uuid();    //唯一标识 
+  const notice_uuid=(processParameter && processParameter.uuid) || stafi_uuid(); 
 
   dispatch(initProcess(null));
  
@@ -211,7 +211,7 @@ export const transfer = (amountparam: string, cb?: Function): AppThunk => async 
       try {
         asInBlock = "" + result.status.asInBlock;
       } catch (e) {
-        //忽略异常
+        // do nothing
       }
       if (asInBlock) {
         dispatch(setProcessParameter({
@@ -238,7 +238,6 @@ export const transfer = (amountparam: string, cb?: Function): AppThunk => async 
           packing: processStatus.loading,
           checkTx: tx
         })); 
-        //消息通知 Pending
         dispatch(add_KSM_stake_Notice(notice_uuid,amountparam,noticeStatus.Pending));
 
         result.events
@@ -266,16 +265,13 @@ export const transfer = (amountparam: string, cb?: Function): AppThunk => async 
                 packing: processStatus.failure,
                 checkTx: tx
               })); 
-              dispatch(setStakeHash(null));   //失败
-              //消息通知 
+              dispatch(setStakeHash(null));
               dispatch(add_KSM_stake_Notice(notice_uuid,amountparam,noticeStatus.Error));
             } else if (data.event.method === 'ExtrinsicSuccess') {
-              M.success('Successfully');
               dispatch(setProcessSending({
                 packing: processStatus.success,
                 finalizing: processStatus.loading,
               })); 
-              //十分钟后   finalizing失败处理 
               // dispatch(gSetTimeOut(() => {
               //   dispatch(setProcessSending({
               //     finalizing: processStatus.failure,
@@ -293,26 +289,22 @@ export const transfer = (amountparam: string, cb?: Function): AppThunk => async 
                 }
               }))  
 
-              //消息通知 Pending
               dispatch(add_KSM_stake_Notice(notice_uuid,amountparam,noticeStatus.Pending,{
                 process:getState().globalModule.process,
                 processParameter:getState().rKSMModule.processParameter}))
               asInBlock && dispatch(bound(address, tx, asInBlock, amount, selectedPool, rSymbol.Ksm, (r: string) => {
                 if(r=="loading"){
-                  //消息通知 Pending
                   dispatch(add_KSM_stake_Notice(notice_uuid,amountparam,noticeStatus.Pending))
                 }else{ 
                   dispatch(setStakeHash(null));
                 }
 
                 if(r == "failure"){
-                  //消息通知   stake/Minting 失败
                   dispatch(add_KSM_stake_Notice(notice_uuid,amountparam,noticeStatus.Error)
                   );
                 }
 
                 if(r=="successful"){
-                    //消息通知   成功
                     dispatch(add_KSM_stake_Notice(notice_uuid,amountparam,noticeStatus.Confirmed));
                     cb && cb(); 
                 } 
@@ -320,21 +312,15 @@ export const transfer = (amountparam: string, cb?: Function): AppThunk => async 
 
             }
           })
-
-        if (result.status.isFinalized) {
-          dispatch(setProcessSending({
-            finalizing: processStatus.success,
-          }));
-          //  //消息通知 Pending
-          //  dispatch(add_KSM_stake_Notice(notice_uuid,amountparam,noticeStatus.Pending,{
-          //   process:getState().globalModule.process,
-          //   processParameter:getState().rKSMModule.processParameter}))
-          // gClearTimeOut();
-        }
+        
+      } else if (result.status.isFinalized) {
+        dispatch(setProcessSending({
+          finalizing: processStatus.success,
+        }));
       } else if (result.isError) {
         M.error(result.toHuman());
       }
-    } catch (e: any) {
+    } catch (e) {
       M.error(e.message)
     }
   }).catch ((e:any)=>{ 
@@ -360,7 +346,7 @@ export const balancesAll = (): AppThunk => async (dispatch, getState) => {
 
 
 export const query_rBalances_account = (): AppThunk => async (dispatch, getState) => {
-  const address = getState().FISModule.fisAccount.address; // 当前用户的FIS账号
+  const address = getState().FISModule.fisAccount.address;
   const stafiApi = await stafiServer.createStafiApi();
   const accountData = await stafiApi.query.rBalances.account(rSymbol.Ksm, address);
   let data = accountData.toJSON();
@@ -418,10 +404,8 @@ export const unbond = (amount: string,recipient:string, cb?: Function): AppThunk
     dispatch(fisUnbond(amount, rSymbol.Ksm, u8aToHex(keyringInstance.decodeAddress(recipient)), u8aToHex(keyringInstance.decodeAddress(selectedPool)),"Unbond successfully, you can withdraw your unbonded KSM 8 days later.", (r?:string) => {
       dispatch(reloadData()); 
       if(r != "Failed"){  
-        //消息通知   成功 
         dispatch(add_KSM_unbond_Notice(stafi_uuid(),amount,noticeStatus.Confirmed));
       }else{
-        //消息通知   成功 
         dispatch(add_KSM_unbond_Notice(stafi_uuid(),amount,noticeStatus.Error));
       } 
       cb && cb(); 
@@ -443,7 +427,6 @@ export const continueProcess = (): AppThunk => async (dispatch, getState) => {
 
 export const getBlock = (blockHash: string, txHash: string, uuid?:string,cb?: Function): AppThunk => async (dispatch, getState) => {
   try {
-    // const notice_uuid=uuid || stafi_uuid();    //唯一标识 
     const api = await polkadotServer.createPolkadotApi();
     const address = getState().rKSMModule.ksmAccount.address;
     const validPools = getState().rKSMModule.validPools;
@@ -485,19 +468,16 @@ export const getBlock = (blockHash: string, txHash: string, uuid?:string,cb?: Fu
             // dispatch(setStakeHash(null));
 
             if(r=="loading"){
-              //消息通知 Pending
               uuid && dispatch(add_KSM_stake_Notice(uuid,NumberUtil.fisAmountToHuman(amount).toString(),noticeStatus.Pending))
             }else{ 
               dispatch(setStakeHash(null));
             }
 
             if(r == "failure"){
-              //消息通知   stake/Minting 失败
               uuid && dispatch(add_KSM_stake_Notice(uuid,NumberUtil.fisAmountToHuman(amount).toString(),noticeStatus.Error)
               );
             }
             if(r=="successful"){
-                //消息通知   成功
                 uuid && dispatch(add_KSM_stake_Notice(uuid,NumberUtil.fisAmountToHuman(amount).toString(),noticeStatus.Confirmed));
                 cb && cb(); 
             } 
@@ -509,7 +489,7 @@ export const getBlock = (blockHash: string, txHash: string, uuid?:string,cb?: Fu
     if (!u) {
       message.error("No results were found");
     }
-  } catch (e: any) {
+  } catch (e) {
     message.error(e.message)
   }
 }
@@ -575,14 +555,12 @@ export const getUnbondCommission=():AppThunk=>async (dispatch, getState)=>{
   const unbondCommission = NumberUtil.fisFeeToHuman(result.toJSON());
  
   dispatch(setUnbondCommission(unbondCommission));
-    // unbondCommissionShow用于在页面中显示，比如0.2%
   //const unbondCommissionShow = NumberUtil.fisFeeToFixed(this.unbondCommission) + '%';
 }
 
 export const bondFees=():AppThunk=>async (dispatch, getState)=>{
   const stafiApi = await stafiServer.createStafiApi();
   const result = await stafiApi.query.rTokenSeries.bondFees(rSymbol.Ksm)
-  //比如值为1500000000000，代表1.5个FIS
   // this.bondFees = result.toJSON(); 
   dispatch(setBondFees(result.toJSON()));
 }

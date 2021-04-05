@@ -486,7 +486,7 @@ export const getBlock = (blockHash: string, txHash: string, uuid?:string,cb?: Fu
     if (!u) {
       message.error("No results were found");
     }
-  } catch (e: any) {
+  } catch (e) {
     message.error(e.message)
   }
 }
