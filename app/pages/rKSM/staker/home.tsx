@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react'; 
 import {useDispatch,useSelector} from 'react-redux';
 import Content from '@components/content/stakeContent_DOT'; 
-import {transfer,balancesAll} from '@features/rKSMClice'; 
+import {transfer,balancesAll,rTokenLedger} from '@features/rKSMClice'; 
 import { rTokenRate } from '@features/FISClice';
 import {ratioToAmount} from '@util/common'
 import { message } from 'antd';
-import NumberUtil from '@util/numberUtil'
+import NumberUtil from '@util/numberUtil';
 import { setProcessSlider } from '@features/globalClice';
+import { rSymbol } from '@keyring/defaults';
 
 export default function Index(props:any){
 
@@ -15,14 +16,15 @@ export default function Index(props:any){
   const [amount,setAmount]=useState(); 
   useEffect(()=>{
     dispatch(balancesAll());
-    dispatch(rTokenRate(1))
+    dispatch(rTokenRate(rSymbol.Ksm));
+    dispatch(rTokenLedger())
   },[])
   const {transferrableAmount,ratio,stafiStakerApr,fisCompare,validPools,totalRDot,bondFees}=useSelector((state:any)=>{ 
     const fisCompare= state.FISModule.fisAccount.balance < NumberUtil.fisAmountToHuman(state.rKSMModule.bondFees) + NumberUtil.fisAmountToHuman(state.rKSMModule.estimateTxFees);
     return {
       transferrableAmount:state.rKSMModule.transferrableAmountShow,
       ratio:state.FISModule.ratio,
-      stafiStakerApr:state.globalModule.stafiStakerApr,
+      stafiStakerApr:state.rKSMModule.stakerApr,
       fisCompare:fisCompare,
       validPools:state.rKSMModule.validPools,
       totalRDot:state.rKSMModule.totalRDot,
