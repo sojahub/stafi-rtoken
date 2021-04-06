@@ -18,20 +18,21 @@ export enum processStatus {
 //0|1|2|4   0无状态  1成功    3失败 4加载
 const polkadotServer=new PolkadotServer();
 export const process={ 
+  rSymbol:"",   //类型
   sending:{
-    brocasting:processStatus.default,     // 0|1|2   0无状态  1成功    3失败
-    packing:processStatus.default,        // 0|1|2   0无状态  1成功    3失败
-    finalizing:processStatus.default,     // 0|1|2   0无状态  1成功    3失败
+    brocasting:processStatus.default,     // 0|1|2|3
+    packing:processStatus.default,        // 0|1|2|3
+    finalizing:processStatus.default,     // 0|1|2|3
     checkTx: ""        // 
   },
   staking:{
-    brocasting:processStatus.default,     // 0|1|2   0无状态  1成功    3失败
-    packing:processStatus.default,        // 0|1|2   0无状态  1成功    3失败
-    finalizing:processStatus.default,      // 0|1|2   0无状态  1成功    3失败
+    brocasting:processStatus.default,     // 0|1|2|3
+    packing:processStatus.default,        // 0|1|2|3
+    finalizing:processStatus.default,      // 0|1|2|3
     checkTx: ""        // 
   },
   minting:{
-    minting:processStatus.default,     // 0|1|2   0无状态  1成功    3失败 
+    minting:processStatus.default,     // 0|1|2|3
     checkTx: ""        // 
   }
 }
@@ -68,6 +69,9 @@ const globalClice = createSlice({
       }else{ 
         state.process=process;
       }
+    }, 
+    setProcessType(state,{payload}){
+      state.process.rSymbol=payload;
     },
     setProcessSending(state,{payload}){ 
       state.process.sending={...state.process.sending,...payload} 
@@ -91,6 +95,7 @@ export const {
   setProcessSending,
   setProcessStaking,
   setProcessMinting,
+  setProcessType,
   setTimeOutFunc,
   initProcess,
   setLoading

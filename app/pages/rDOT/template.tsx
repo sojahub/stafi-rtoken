@@ -12,20 +12,28 @@ import {bondSwitch} from '@features/FISClice';
 import '../template/index.scss'
 export default function Index(props:any){
   const dispatch = useDispatch();
-  
+
+  const {fisAccount,dotAccount}=useSelector((state:any)=>{
+    return {
+      fisAccount:state.FISModule.fisAccount,
+      dotAccount:state.rDOTModule.dotAccount
+    }
+  })
+  useEffect(()=>{
+    dispatch(totalIssuance());
+    dispatch(getPools(()=>{
+      setTimeout(()=>{
+        dispatch(continueProcess());
+      },20)
+    }));
+  },[fisAccount,dotAccount]);
   useEffect(()=>{ 
     dispatch(fetchStafiStakerApr());
     dispatch(bondFees());
     dispatch(bondSwitch()); 
     if(getLocalStorageItem(Keys.DotAccountKey) && getLocalStorageItem(Keys.FisAccountKey)){
-        dispatch(reloadData(Symbol.Dot)); 
-        dispatch(reloadData(Symbol.Fis));  
-        dispatch(getPools(()=>{
-          setTimeout(()=>{
-            dispatch(continueProcess());
-          },20)
-        }));
-        dispatch(totalIssuance());
+      dispatch(reloadData(Symbol.Dot)); 
+      dispatch(reloadData(Symbol.Fis)); 
     } 
   },[]) 
 

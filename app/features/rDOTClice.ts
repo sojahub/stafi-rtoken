@@ -8,7 +8,7 @@ import { setLocalStorageItem, getLocalStorageItem, removeLocalStorageItem, Keys 
 import {rSymbol,Symbol} from '@keyring/defaults'
 import {
   processStatus, setProcessSlider, setProcessSending,
-  setProcessStaking, setProcessMinting, gSetTimeOut, gClearTimeOut, initProcess, process,setLoading
+   initProcess,setLoading,setProcessType
 } from './globalClice';
 import {add_Notice} from './noticeClice'
 import {
@@ -16,7 +16,7 @@ import {
   web3FromSource,
 } from '@polkadot/extension-dapp';
 import NumberUtil from '@util/numberUtil';
-import { bound, fisUnbond,getTotalUnbonding } from './FISClice';
+import { bound, fisUnbond,getTotalUnbonding,rTokenSeries_bondStates } from './FISClice';
 import {stafi_uuid} from '@util/common'
 import {addNoticeModal,noticesubType,noticeStatus,noticeType} from './noticeClice';
 import { u8aToHex } from '@polkadot/util' 
@@ -198,6 +198,7 @@ export const transfer = (amountparam: string, cb?: Function): AppThunk => async 
     packing: processStatus.default,
     finalizing: processStatus.default
   }));
+  dispatch(setProcessType(rSymbol.Dot));
   const ex =await dotApi.tx.balances.transferKeepAlive(selectedPool, amount.toString()); 
   
   ex.signAndSend(address, { signer: injector.signer }, (result: any) => {
@@ -400,7 +401,7 @@ export const unbond = (amount: string,recipient:string, cb?: Function): AppThunk
     } 
     const keyringInstance = keyring.init(Symbol.Dot);
     
-    dispatch(fisUnbond(amount, rSymbol.Dot, u8aToHex(keyringInstance.decodeAddress(recipient)), u8aToHex(keyringInstance.decodeAddress(selectedPool)),"Unbond successfully, you can withdraw your unbonded DOT 29 days later.", (r?:string) => {
+    dispatch(fisUnbond(amount, rSymbol.Dot, u8aToHex(keyringInstance.decodeAddress(recipient)), u8aToHex(keyringInstance.decodeAddress(selectedPool)),"Unbond succeeded, unbonding period is around 29 days", (r?:string) => {
       dispatch(reloadData()); 
       if(r != "Failed"){  
         dispatch(add_DOT_unbond_Notice(stafi_uuid(),amount,noticeStatus.Confirmed));
@@ -416,8 +417,22 @@ export const unbond = (amount: string,recipient:string, cb?: Function): AppThunk
 
 export const continueProcess = (): AppThunk => async (dispatch, getState) => {
   const stakeHash = getState().rDOTModule.stakeHash;
+
   if (stakeHash && stakeHash.blockHash && stakeHash.txHash) { 
-    dispatch(getBlock(stakeHash.blockHash, stakeHash.txHash,stakeHash.notice_uuid))
+    let bondSuccessParamArr:any[] = [];
+    bondSuccessParamArr.push(rSymbol.Dot);
+    bondSuccessParamArr.push(stakeHash.blockHash);
+    bondSuccessParamArr.push(stakeHash.txHash);
+    let statusObj={
+      num:0
+    }
+    dispatch(rTokenSeries_bondStates(bondSuccessParamArr,statusObj,(e:string)=>{
+      if(e=="successful"){
+        dispatch(setStakeHash(null));
+      }else{
+        dispatch(getBlock(stakeHash.blockHash, stakeHash.txHash,stakeHash.notice_uuid))
+      }
+    }));
   }
 }
 

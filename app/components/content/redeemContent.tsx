@@ -62,7 +62,7 @@ export default function Index(props:Props){
          </div> */}
         <div className="subTitle">
        
-        <div className="label"> 2. Receiving adress</div>
+        <div className="label"> 2. Receiving address</div>
         </div>
         <EditInput value={props.address} onEdit={(e:boolean)=>{
             const r=props.onInputConfirm(e);

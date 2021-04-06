@@ -5,7 +5,7 @@ import Stafi from '@servers/stafi/index';
 import {
   processStatus, setProcessSlider, setProcessSending, setProcessStaking,
   setProcessMinting, gSetTimeOut, gClearTimeOut,
-  initProcess, process,setLoading
+  initProcess, process,setLoading,setProcessType
 } from './globalClice';
 import {
   web3Enable,
@@ -321,6 +321,7 @@ export const bound = (address: string, txhash: string, blockhash: string, amount
       packing: processStatus.default,
       finalizing: processStatus.default
     }));
+    dispatch(setProcessType(type));
     try{ 
       bondResult.signAndSend(fisAddress, { signer: injector.signer }, (result: any) => {
         const tx = bondResult.hash.toHex()
@@ -522,16 +523,20 @@ export const getMinting = (type: number, txHash: string, blockHash: string, cb?:
   dispatch(rTokenSeries_bondStates(bondSuccessParamArr,statusObj,cb));
 } 
 
-const rTokenSeries_bondStates=(bondSuccessParamArr:any,statusObj:any,cb?:Function): AppThunk => async (dispatch, getState)=>{
+export const rTokenSeries_bondStates=(bondSuccessParamArr:any,statusObj:any,cb?:Function): AppThunk => async (dispatch, getState)=>{
   statusObj.num=statusObj.num+1; 
   const stafiApi = await stafiServer.createStafiApi();
   const result= await stafiApi.query.rTokenSeries.bondStates(bondSuccessParamArr) 
   let bondState = result.toJSON();  
+  console.log(bondState,"=====")
   if (bondState=="Success") {
     dispatch(setProcessMinting({
       brocasting: processStatus.success
     }));
-    cb && cb("successful");
+    message.success("minting succeeded",3,()=>{
+      console.log(2,"=====")
+      cb && cb("successful");
+    }); 
   } else if (bondState == "Fail") { 
     dispatch(setProcessMinting({
       brocasting: processStatus.failure

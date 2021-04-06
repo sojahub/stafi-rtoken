@@ -52,15 +52,19 @@ export default function Index(props:any){
     onConfirm={()=>{
         if(account.address){
             dispatch(setKsmAccount(account));
-            if(getLocalStorageItem(Keys.FisAccountKey)){
-                props.history.push("/rKSM/type");
-            }else{
-                props.onClose?props.onClose(): props.history.push({
-                    pathname:"/rKSM/fiswallet",
-                    state:{
-                        showBackIcon:true, 
-                    }
-                }); 
+            if(props.onClose){
+                props.onClose();
+            }else{ 
+                if(getLocalStorageItem(Keys.FisAccountKey)){
+                    props.history.push("/rKSM/type");
+                }else{
+                    props.history.push({
+                        pathname:"/rKSM/fiswallet",
+                        state:{
+                            showBackIcon:true, 
+                        }
+                    }); 
+                }
             }
         }else{
             message.error("Please select the KSM wallet");

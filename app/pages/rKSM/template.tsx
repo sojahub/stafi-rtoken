@@ -13,21 +13,28 @@ import '../template/index.scss'
 export default function Index(props:any){
   const dispatch = useDispatch();
   
+  const {fisAccount,ksmAccount}=useSelector((state:any)=>{
+    return {
+      fisAccount:state.FISModule.fisAccount,
+      ksmAccount:state.rKSMModule.ksmAccount
+    }
+  })
+
+  useEffect(()=>{
+    dispatch(totalIssuance());
+    dispatch(getPools(()=>{ 
+      setTimeout(()=>{
+        dispatch(continueProcess());
+      },20)
+    }));
+  },[fisAccount,ksmAccount])
   useEffect(()=>{ 
-    dispatch(fetchStafiStakerApr());
-  
+    dispatch(fetchStafiStakerApr()); 
     dispatch(bondFees());
     dispatch(bondSwitch()); 
     if(getLocalStorageItem(Keys.KsmAccountKey) && getLocalStorageItem(Keys.FisAccountKey)){
         dispatch(reloadData(Symbol.Ksm)); 
-        dispatch(reloadData(Symbol.Fis));   
-
-        dispatch(getPools(()=>{
-          setTimeout(()=>{
-            dispatch(continueProcess());
-          },20)
-        }));
-        dispatch(totalIssuance());
+        dispatch(reloadData(Symbol.Fis)); 
     } 
   },[]) 
   const {loading} =useSelector((state:any)=>{

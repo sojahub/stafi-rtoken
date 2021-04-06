@@ -49,16 +49,20 @@ export default function Index(props:any){
     onConfirm={()=>{
         if(account.address){
             dispatch(setDotAccount(account));
-            if(getLocalStorageItem(Keys.FisAccountKey)){
-                props.history.push("/rDOT/type");
-            }else{
-                props.onClose?props.onClose(): props.history.push({
-                    pathname:"/rDOT/fiswallet",
-                    state:{
-                        showBackIcon:true, 
-                    }
-                }); 
-            }
+            if(props.onClose){
+                props.onClose();
+            }else{ 
+                if(getLocalStorageItem(Keys.FisAccountKey)){
+                    props.history.push("/rDOT/type");
+                }else{
+                    props.history.push({
+                        pathname:"/rDOT/fiswallet",
+                        state:{
+                            showBackIcon:true, 
+                        }
+                    }); 
+                }
+            } 
         }else{
             message.error("Please select the DOT wallet");
         }

@@ -7,6 +7,7 @@ import doubt from "@images/doubt.svg"
 import StringUtil from '@util/stringUtil';
 import {SyncOutlined} from '@ant-design/icons';
 import {Tooltip} from 'antd';
+import {rSymbol} from '@keyring/defaults'
 import './liquidingProcessSliderItem.scss';
 
 type Props={
@@ -16,7 +17,8 @@ type Props={
   showButton?:boolean,
   data?:any,
   onClick?:Function,
-  tooltipText?:string
+  tooltipText?:string,
+  rSymbol?:any
 }
 export default function Index(props:Props){ 
   return <div className="liquidingProcesSliderItem">
@@ -44,7 +46,12 @@ export default function Index(props:Props){
       {(props.data && props.data.finalizing==processStatus.loading) && <SyncOutlined type="spin" spin={true}/>}
     </div>}
     {(props.data && props.data.checkTx) && <div className="item">
-      <label>Check Tx <label className="address">{StringUtil.replacePkh(props.data.checkTx,6,60)}</label></label> 
+      <label>Check Tx 
+        {(props.index==1 && props.rSymbol==rSymbol.Dot) && <a target="_blank" href={`https://polkadot.subscan.io/extrinsic/${props.data.checkTx}`} className="address">{StringUtil.replacePkh(props.data.checkTx,6,60)}</a>}
+        {(props.index==1 && props.rSymbol==rSymbol.Ksm) && <a target="_blank" href={`https://kusama.subscan.io/extrinsic/${props.data.checkTx}`} className="address">{StringUtil.replacePkh(props.data.checkTx,6,60)}</a>}
+        {props.index==2 && <a target="_blank" href={`https://stafi.subscan.io/extrinsic/${props.data.checkTx}`} className="address">{StringUtil.replacePkh(props.data.checkTx,6,60)}</a>}
+        {/* ”https://kusama.subscan.io/extrinsic/" + txHash */}
+        </label> 
     </div>}
 
     {(props.data && (props.data.brocasting==processStatus.failure || props.data.packing==processStatus.failure)) && <div className="item failure">
