@@ -577,13 +577,12 @@ export const totalIssuance=():AppThunk=>async (dispatch, getState)=>{
 
 export const rTokenLedger=():AppThunk=>async (dispatch, getState)=>{
   const stafiApi = await stafiServer.createStafiApi();
-  // const api=await  polkadotServer.createPolkadotApi()
-  const  eraResult = await stafiApi.query.rTokenLedger.chainEras(rSymbol.Dot);
+  const eraResult = await stafiApi.query.rTokenLedger.chainEras(rSymbol.Dot);
   let currentEra = eraResult.toJSON();
   if (currentEra) {
-    let rateResult =await stafiApi.query.rTokenRate.eraRate(rSymbol.Dot, currentEra) 
-    const  currentRate = rateResult.toJSON(); 
-    const rateResult2 =await stafiApi.query.rTokenRate.eraRate(rSymbol.Dot, currentEra-1)
+    let rateResult = await stafiApi.query.rTokenRate.eraRate(rSymbol.Dot, currentEra - 1) 
+    const currentRate = rateResult.toJSON(); 
+    const rateResult2 = await stafiApi.query.rTokenRate.eraRate(rSymbol.Dot, currentEra - 2)
     let lastRate = rateResult2.toJSON();
     dispatch(handleStakerApr(currentRate,lastRate));
   } else {
@@ -593,7 +592,6 @@ export const rTokenLedger=():AppThunk=>async (dispatch, getState)=>{
  const handleStakerApr=(currentRate?:any,lastRate?:any):AppThunk=>async (dispatch, getState)=>{
     if (currentRate && lastRate) {
       const apr = NumberUtil.handleEthRoundToFixed((currentRate - lastRate)/lastRate * 365.25 * 100) + '%';
-      //numberUtil.handleEthRoundToFixed(
       dispatch(setStakerApr(apr));
     } else {
       dispatch(setStakerApr('15.9%')); 
