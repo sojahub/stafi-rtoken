@@ -153,7 +153,7 @@ export const reloadData = (): AppThunk => async (dispatch, getState) => {
     dispatch(createSubstrate(account));
   }
   dispatch(balancesAll())
-
+  dispatch(query_rBalances_account());
 }
 export const createSubstrate = (account: any): AppThunk => async (dispatch, getState) => { 
   queryBalance(account, dispatch, getState)
