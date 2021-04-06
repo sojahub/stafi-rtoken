@@ -293,11 +293,7 @@ export const stakingSignature = async (address: any, txHash: string) => {
 
 export const bound = (address: string, txhash: string, blockhash: string, amount: number, pooladdress: string, type: number, cb?: Function): AppThunk => async (dispatch, getState) => {
   try{
-    dispatch(setProcessStaking({
-      brocasting: processStatus.loading,
-      packing: processStatus.default,
-      finalizing: processStatus.default
-    }));
+   
 
     let fisAddress = getState().FISModule.fisAccount.address;
     const keyringInstance = keyring.init(Symbol.Fis);
@@ -316,18 +312,24 @@ export const bound = (address: string, txhash: string, blockhash: string, amount
       txhash,
       amount.toString(),
       type);
-    const tx = bondResult.hash.toHex().toString();
+    // const tx = bondResult.hash.toHex().toString();
+    // dispatch(setProcessStaking({
+    //   checkTx: tx
+    // }));
     dispatch(setProcessStaking({
-      checkTx: tx
+      brocasting: processStatus.loading,
+      packing: processStatus.default,
+      finalizing: processStatus.default
     }));
-   
     try{ 
       bondResult.signAndSend(fisAddress, { signer: injector.signer }, (result: any) => {
+        const tx = bondResult.hash.toHex()
         try {
           if (result.status.isInBlock) {
             dispatch(setProcessStaking({
               brocasting: processStatus.success,
               packing: processStatus.loading,
+              checkTx: tx
             }));
 
             result.events
