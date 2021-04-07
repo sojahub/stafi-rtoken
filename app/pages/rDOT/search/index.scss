@@ -28,6 +28,18 @@
       label{
         color:#fff;
       }
+      >label{
+        width:100%;
+        display: block;
+      }
+      .item_title{
+        display: flex;
+        justify-content: space-between;
+        a{
+          color:#fff;
+          text-decoration: underline; 
+        }
+      }
     }
     .stafi_input{
       border-radius: 7px;
@@ -46,6 +58,5 @@
     display: flex;
     justify-content: flex-end;
     margin-top:40px;
-  }
-
+  } 
 }

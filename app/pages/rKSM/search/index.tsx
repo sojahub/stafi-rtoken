@@ -33,10 +33,10 @@ export default function Index(props:any){
             <Option value="1">KSM</Option> 
           </Select>
         </Form.Item> 
-        <Form.Item label="TxHash" name="txHash">
+        <Form.Item label={<div className="item_title"><label>TxHash</label><a>How to get TxHash</a></div>} name="txHash">
           <Input placeholder="" />
         </Form.Item> 
-        <Form.Item label="BlockHash" name="blockHash">
+        <Form.Item label={<div className="item_title"><label>BlockHash</label><a>How to get BlockHash</a></div>} name="blockHash">
           <Input placeholder="" />
         </Form.Item> 
         <div className="btns">
