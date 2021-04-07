@@ -630,7 +630,7 @@ const add_DOT_stake_Notice=(uuid:string,amount:string,status:string,subData?:any
     dispatch(add_DOT_Notice(uuid,noticeType.Staker,noticesubType.Stake,`Staked ${amount} DOT from your Wallet to StaFi Validator Pool Contract`,status,{
     process:getState().globalModule.process,
     processParameter:getState().rDOTModule.processParameter}))
-  },20);
+  },10);
 }
 const add_DOT_unbond_Notice=(uuid:string,amount:string,status:string,subData?:any):AppThunk=>async (dispatch,getState)=>{
   dispatch(add_DOT_Notice(uuid,noticeType.Staker,noticesubType.Unbond,`Unbond ${amount} FIS from Pool Contract`,status,subData))

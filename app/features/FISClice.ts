@@ -529,7 +529,7 @@ export const rTokenSeries_bondStates=(bondSuccessParamArr:any,statusObj:any,cb?:
   statusObj.num=statusObj.num+1; 
   const stafiApi = await stafiServer.createStafiApi();
   const result= await stafiApi.query.rTokenSeries.bondStates(bondSuccessParamArr) 
-  let bondState = result.toJSON();   
+  let bondState = result.toJSON();    
   if (bondState=="Success") {
     dispatch(setProcessMinting({
       brocasting: processStatus.success

@@ -2,7 +2,8 @@ import { createSlice } from '@reduxjs/toolkit';
 import { AppThunk, RootState } from '../store';
 import { setLocalStorageItem, getLocalStorageItem, removeLocalStorageItem, Keys } from '@util/common';
 import {setProcessParameter} from './rDOTClice';
-import {initProcess,setProcessSlider} from './globalClice'
+import {initProcess,setProcessSlider,setProcessSending,setProcessStaking,processStatus} from './globalClice';
+import {rTokenSeries_bondStates,getMinting} from './FISClice';
 import moment from 'moment'; 
 import { message,Modal } from 'antd';
 export enum noticeStatus{
@@ -100,11 +101,11 @@ export const add_Notice=(uuid:string,rSymbol:string,type:string,subType:string,c
     dateTime:moment().format(formatStr),
     status:status,
     rSymbol:rSymbol,
-    subData:subData,
-    
+    subData:subData, 
   }))
 }
 
+ 
 
 export const setProcess=(item:any,list:any,cb?:Function):AppThunk=>async (dispatch,getState)=>{
   if(list){
@@ -121,9 +122,11 @@ export const setProcess=(item:any,list:any,cb?:Function):AppThunk=>async (dispat
             dispatch(setProcessSlider(true))
             dispatch(initProcess(o[0].subData.process));
             dispatch(setProcessParameter(o[0].subData.processParameter));
+            dispatch(re_Minting(item))
           }
         }); 
       }else{
+        dispatch(re_Minting(item));
         Modal.warning({
           title: 'message',
           content: 'Transactions are pending, please check it later.', 
@@ -138,22 +141,31 @@ export const setProcess=(item:any,list:any,cb?:Function):AppThunk=>async (dispat
   }
 }
 
-// const minting=():AppThunk=>(dispatch)=>{
-//   let bondSuccessParamArr:any[] = [];
-//   bondSuccessParamArr.push(rSymbol.Dot);
-//   bondSuccessParamArr.push(stakeHash.blockHash);
-//   bondSuccessParamArr.push(stakeHash.txHash);
-//   let statusObj={
-//     num:0
-//   }
-//   dispatch(rTokenSeries_bondStates(bondSuccessParamArr,statusObj,(e:string)=>{
-//     if(e=="successful"){
-//       dispatch(setStakeHash(null));
-//     }else{
-//       dispatch(getBlock(stakeHash.blockHash, stakeHash.txHash,stakeHash.notice_uuid))
-//     }
-//   }));
-// }
+const re_Minting=(item:any,):AppThunk=>(dispatch,getState)=>{
+  dispatch(setProcessSending({
+    brocasting: processStatus.success,
+    packing: processStatus.success,
+    finalizing:  processStatus.success,
+  }));
+  dispatch(setProcessStaking({
+    brocasting: processStatus.success,
+    packing: processStatus.success,
+    finalizing:  processStatus.success,
+  }));
+  dispatch(getMinting(item.subData.processParameter.staking.type,item.subData.processParameter.staking.txHash,item.subData.processParameter.staking.blockHash,(e:string)=>{
+    if(e=="successful"){ 
+     dispatch(add_Notice(item.uuid,item.rSymbol,item.type,item.subType,item.content,noticeStatus.Confirmed,{
+      process:getState().globalModule.process,
+      processParameter:item.subData.processParameter
+     }))
+    }else{
+      dispatch(add_Notice(item.uuid,item.rSymbol,item.type,item.subType,item.content,noticeStatus.Error,{
+        process:getState().globalModule.process,
+        processParameter:item.subData.processParameter
+      }));
+    }
+  }));
+}
 
-
+ 
 export default noticeClice.reducer
