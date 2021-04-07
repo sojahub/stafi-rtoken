@@ -24,8 +24,7 @@ export default function Index(props:Props){
       process:state.globalModule.process
     }
   }) 
-
-  console.log(process,"====process")
+ 
   const reSendingClick=()=>{
     if(util.pageType()==rSymbol.Dot){
       dispatch(reSending((href:any)=>{

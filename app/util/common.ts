@@ -54,3 +54,7 @@ export const ratioToAmount=(amount:number,ratio:number)=>{
 export const stafi_uuid=()=>{
   return Date.now().toString(36)
 }
+
+export function timeout(ms:number) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}

@@ -416,8 +416,7 @@ export const unbond = (amount: string,recipient:string, cb?: Function): AppThunk
 }
 
 export const continueProcess = (): AppThunk => async (dispatch, getState) => {
-  const stakeHash = getState().rDOTModule.stakeHash;
-
+  const stakeHash = getState().rDOTModule.stakeHash; 
   if (stakeHash && stakeHash.blockHash && stakeHash.txHash) { 
     let bondSuccessParamArr:any[] = [];
     bondSuccessParamArr.push(rSymbol.Dot);

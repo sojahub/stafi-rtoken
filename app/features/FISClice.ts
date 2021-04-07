@@ -2,6 +2,7 @@ import { createSlice } from '@reduxjs/toolkit';
 import { Button, message as M, message } from 'antd';
 import { AppThunk, RootState } from '../store';
 import Stafi from '@servers/stafi/index';
+import {timeout} from '@util/common'
 import {
   processStatus, setProcessSlider, setProcessSending, setProcessStaking,
   setProcessMinting, gSetTimeOut, gClearTimeOut,
@@ -280,6 +281,8 @@ export const transfer = (amountparam: string, cb?: Function): AppThunk => async 
 
 
 export const stakingSignature = async (address: any, txHash: string) => {
+  message.info("Sending succeeded,proceeding signature.");
+  await timeout(2000);
   web3Enable(stafiServer.getWeb3EnalbeName());
   const injector = await web3FromSource(stafiServer.getPolkadotJsSource());
   const signRaw = injector?.signer?.signRaw;
@@ -304,6 +307,9 @@ export const bound = (address: string, txhash: string, blockhash: string, amount
       
     
     web3Enable(stafiServer.getWeb3EnalbeName());
+
+    message.info("Signature succeeded,proceeding staking.");
+    await timeout(2000);
     const injector = await web3FromSource(stafiServer.getPolkadotJsSource());
     const bondResult = await stafiApi.tx.rTokenSeries.liquidityBond(pubkey,
       signature,
@@ -311,11 +317,7 @@ export const bound = (address: string, txhash: string, blockhash: string, amount
       blockhash,
       txhash,
       amount.toString(),
-      type);
-    // const tx = bondResult.hash.toHex().toString();
-    // dispatch(setProcessStaking({
-    //   checkTx: tx
-    // }));
+      type); 
     dispatch(setProcessStaking({
       brocasting: processStatus.loading,
       packing: processStatus.default,
@@ -527,14 +529,12 @@ export const rTokenSeries_bondStates=(bondSuccessParamArr:any,statusObj:any,cb?:
   statusObj.num=statusObj.num+1; 
   const stafiApi = await stafiServer.createStafiApi();
   const result= await stafiApi.query.rTokenSeries.bondStates(bondSuccessParamArr) 
-  let bondState = result.toJSON();  
-  console.log(bondState,"=====")
+  let bondState = result.toJSON();   
   if (bondState=="Success") {
     dispatch(setProcessMinting({
       brocasting: processStatus.success
     }));
-    message.success("minting succeeded",3,()=>{
-      console.log(2,"=====")
+    message.success("minting succeeded",3,()=>{ 
       cb && cb("successful");
     }); 
   } else if (bondState == "Fail") { 
@@ -542,7 +542,7 @@ export const rTokenSeries_bondStates=(bondSuccessParamArr:any,statusObj:any,cb?:
       brocasting: processStatus.failure
     }));
     cb && cb("failure");
-  } else if(statusObj.num<=40){ 
+  } else if(statusObj.num<=40){  
     setTimeout(()=>{ 
       dispatch(rTokenSeries_bondStates(bondSuccessParamArr,statusObj,cb))
     }, 15000); 

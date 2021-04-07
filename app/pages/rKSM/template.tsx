@@ -22,11 +22,7 @@ export default function Index(props:any){
 
   useEffect(()=>{
     dispatch(totalIssuance());
-    dispatch(getPools(()=>{ 
-      setTimeout(()=>{
-        dispatch(continueProcess());
-      },20)
-    }));
+    
   },[fisAccount,ksmAccount])
   useEffect(()=>{ 
     dispatch(fetchStafiStakerApr()); 
@@ -36,6 +32,11 @@ export default function Index(props:any){
         dispatch(reloadData(Symbol.Ksm)); 
         dispatch(reloadData(Symbol.Fis)); 
     } 
+    dispatch(getPools(()=>{ 
+      setTimeout(()=>{
+        dispatch(continueProcess());
+      },20)
+    }));
   },[]) 
   const {loading} =useSelector((state:any)=>{
     return {

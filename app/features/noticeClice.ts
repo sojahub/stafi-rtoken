@@ -122,11 +122,7 @@ export const setProcess=(item:any,list:any,cb?:Function):AppThunk=>async (dispat
             dispatch(initProcess(o[0].subData.process));
             dispatch(setProcessParameter(o[0].subData.processParameter));
           }
-        });
-      // }else if(o.length==1 && o[0].uuid==item.uuid){
-      //   dispatch(setProcessSlider(true))
-      //   dispatch(initProcess(item.subData.process));
-      //   dispatch(setProcessParameter(item.subData.processParameter));
+        }); 
       }else{
         Modal.warning({
           title: 'message',
@@ -140,6 +136,24 @@ export const setProcess=(item:any,list:any,cb?:Function):AppThunk=>async (dispat
       dispatch(setProcessParameter(item.subData.processParameter));
     }
   }
- 
 }
+
+// const minting=():AppThunk=>(dispatch)=>{
+//   let bondSuccessParamArr:any[] = [];
+//   bondSuccessParamArr.push(rSymbol.Dot);
+//   bondSuccessParamArr.push(stakeHash.blockHash);
+//   bondSuccessParamArr.push(stakeHash.txHash);
+//   let statusObj={
+//     num:0
+//   }
+//   dispatch(rTokenSeries_bondStates(bondSuccessParamArr,statusObj,(e:string)=>{
+//     if(e=="successful"){
+//       dispatch(setStakeHash(null));
+//     }else{
+//       dispatch(getBlock(stakeHash.blockHash, stakeHash.txHash,stakeHash.notice_uuid))
+//     }
+//   }));
+// }
+
+
 export default noticeClice.reducer

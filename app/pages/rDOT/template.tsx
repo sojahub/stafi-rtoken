@@ -21,11 +21,7 @@ export default function Index(props:any){
   })
   useEffect(()=>{
     dispatch(totalIssuance());
-    dispatch(getPools(()=>{
-      setTimeout(()=>{
-        dispatch(continueProcess());
-      },20)
-    }));
+    
   },[fisAccount,dotAccount]);
   useEffect(()=>{ 
     dispatch(fetchStafiStakerApr());
@@ -35,6 +31,11 @@ export default function Index(props:any){
       dispatch(reloadData(Symbol.Dot)); 
       dispatch(reloadData(Symbol.Fis)); 
     } 
+    dispatch(getPools(()=>{
+      setTimeout(()=>{
+        dispatch(continueProcess());
+      },20)
+    }));
   },[]) 
 
   const {loading} =useSelector((state:any)=>{
