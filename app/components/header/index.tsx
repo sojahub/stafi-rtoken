@@ -5,6 +5,8 @@ import notice from '@images/notice.svg';
 import StringUtil from '@util/stringUtil';
 import Popover from './popover';
 import {connectPolkadot,connectPolkadot_ksm,connectPolkadotjs} from '@features/globalClice';
+import {reloadData as dotReloadData,query_rBalances_account as dotquery_rBalances_account} from '@features/rDOTClice';
+import {reloadData as ksmReloadData,query_rBalances_account as ksmquery_rBalances_account} from '@features/rKSMClice';
 import Page from '../../pages/rDOT/selectWallet/index';
 import Page_FIS from '../../pages/rDOT/selectWallet_rFIS/index'
 import Page_Ksm from '../../pages/rKSM/selectWallet/index';
@@ -67,12 +69,16 @@ export default function Index(props:Props){
         <Modal visible={visible}>
             {(modalType=="dot") && <Page location={{}} type="header"  onClose={()=>{
                 setVisible(false);
+                dispatch(dotReloadData());
             }}/>}
             {(modalType=="fis") && <Page_FIS location={{}} type="header"  onClose={()=>{
-                setVisible(false);
+                setVisible(false); 
+                dispatch(dotquery_rBalances_account());  
+                dispatch(ksmquery_rBalances_account()); 
             }}/>}
             {(modalType=="ksm") && <Page_Ksm location={{}} type="header"  onClose={()=>{
                 setVisible(false);
+                dispatch(ksmReloadData());
             }}/>}
         </Modal>
        <div></div>
