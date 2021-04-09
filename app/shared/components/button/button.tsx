@@ -4,7 +4,7 @@ import {Button} from 'antd';
 import './index.scss';
 
 type Props={
-  btnType?:"ellipse"| "square",  //ellipse 椭圆  square 方形
+  btnType?:"ellipse"| "square",  //ellipse   square 
   children:any,
   disabled?:boolean,
   onClick?:Function,

@@ -18,16 +18,15 @@ function webpackCommonConfigCreator(options){
             fallback: {
                 crypto: require.resolve('crypto-browserify'), 
                 buffer: require.resolve('buffer/'), 
-                http: false,
-                https:false, 
                 stream: require.resolve('stream-browserify'),
-            },
-            // 如果确认不需要node polyfill，设置resolve.alias设置为false
+                http: false,
+                https:false
+            }, 
             alias: {
+                stream: "stream-browserify",
                 crypto: false,   
-                stream: 'stream-browserify',
-                '@components': resolve('../app/components'),// 这样配置后 @ 可以指向 src 目录
-                '@images': resolve('../app/assets/images'),// 这样配置后 @ 可以指向 src 目录
+                '@components': resolve('../app/components'), 
+                '@images': resolve('../app/assets/images'), 
                 "@features": resolve('../app/features'),
                 "@servers": resolve('../app/servers'),
                 "@util":resolve('../app/util'),
@@ -50,7 +49,7 @@ function webpackCommonConfigCreator(options){
                     options:{
                         babelrc:true,
                         sourceType: 'unambiguous',
-                        compact: false, // 这个建议配，能提升性能
+                        compact: false,  
                         presets:['@babel/preset-react','@babel/preset-env'],
                         cacheDirectory:true,
                         plugins: [
@@ -66,24 +65,23 @@ function webpackCommonConfigCreator(options){
                 }
             },
             {
-                test: /\.css$/,   // 正则表达式，表示.css后缀的文件
-                use: ['style-loader','css-loader']   // 针对css文件使用的loader，注意有先后顺序，数组项越靠后越先执行
+                test: /\.css$/,    
+                use: ['style-loader','css-loader']   
             },
-            // 处理sass
+            // sass
             {
                 test: /\.s[ac]ss$/i,
                 use: [
                 MiniCssExtractPlugin.loader, 
                 "css-loader",
-                "postcss-loader", // 因为这里处理的是css文件，所以要放在sass-loader的上面
-                "sass-loader" // 将 Sass 编译成 CSS，默认使用 Node Sass
+                "postcss-loader",  
+                "sass-loader" 
                 ]
-            }, // 处理less
+            }, // less
             {
               test: /\.less$/,
               use: [MiniCssExtractPlugin.loader, "css-loader", "less-loader"]
-            },// file-laoder加载图片
-           
+            },// file-laoder 
             {
                 test: /\.(jpg|png|jpeg|gif|svg)$/,
                 use: ['file-loader']
@@ -123,9 +121,9 @@ function webpackCommonConfigCreator(options){
                 API_ENV:JSON.stringify(options.mode)
             }),
             new webpack.ProvidePlugin({
-                Buffer: ["buffer", "Buffer"], 
+                Buffer: ["buffer", "Buffer"],
                 process:'process',
-                stream:'stream'
+                stream: 'stream'
               }), 
             new TsconfigPathsPlugin({ 
                 configFile: "tsconfig.json" 

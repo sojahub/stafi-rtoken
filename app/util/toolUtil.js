@@ -82,7 +82,7 @@ export default {
     }
   },
 
-  //获取10位时间戳对应的时间
+  
   formatDateTime(timeStamp) {
     let date = new Date();
     date.setTime(timeStamp * 1000);

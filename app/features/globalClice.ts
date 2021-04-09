@@ -15,10 +15,10 @@ export enum processStatus {
   failure = 2,
   loading=3
 }
-//0|1|2|4   0无状态  1成功    3失败 4加载
+//0|1|2|4  
 const polkadotServer=new PolkadotServer();
 export const process={ 
-  rSymbol:"",   //类型
+  rSymbol:"",   
   sending:{
     brocasting:processStatus.default,     // 0|1|2|3
     packing:processStatus.default,        // 0|1|2|3

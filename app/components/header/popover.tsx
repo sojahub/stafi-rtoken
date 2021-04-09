@@ -28,14 +28,12 @@ export default function Index(props:Props){
     onClick={()=>{  
       dispatch(setProcess(item,data.datas));
       const hasGo_DOT=location.pathname.includes("/rDOT")
-      if(item.rSymbol==Symbol.Dot && !hasGo_DOT){
-        //跳转到对应到类型页面
+      if(item.rSymbol==Symbol.Dot && !hasGo_DOT){ 
         props.history && props.history.push("/rDOT/home");
       }
 
       const hasGo_KSM=location.pathname.includes("/rKSM")
-      if(item.rSymbol==Symbol.Ksm && !hasGo_KSM){
-        //跳转到对应到类型页面
+      if(item.rSymbol==Symbol.Ksm && !hasGo_KSM){ 
         props.history && props.history.push("/rKsm/home");
       }
     }}/>

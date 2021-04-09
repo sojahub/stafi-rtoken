@@ -15,11 +15,11 @@ export default function Index(props:Props){
     return <Input 
     className="amount_input" 
     onChange={(e)=>{   
-        let value = e.target.value.replace(/[^\d\.]/g,""); //清除"数字"和"."以外的字符 
-        value = value.replace(/^\./g,""); //验证第一个字符是数字而不是字符          
-        value = value.replace(/\.{2,}/g,"."); //只保留第一个.清除多余的       
+        let value = e.target.value.replace(/[^\d\.]/g,""); 
+        value = value.replace(/^\./g,"");         
+        value = value.replace(/\.{2,}/g,".");     
         value = value.replace(".","$#$").replace(/\./g,"").replace("$#$",".");
-        value = value.replace(/^(\-)*(\d+)\.(\d\d\d\d\d\d).*$/,'$1$2.$3'); //只能输入两个小数 
+        value = value.replace(/^(\-)*(\d+)\.(\d\d\d\d\d\d).*$/,'$1$2.$3'); 
         props.onChange && props.onChange(value);
     }}
     value={props.value}

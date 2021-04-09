@@ -280,7 +280,7 @@ export const transfer = (amountparam: string, cb?: Function): AppThunk => async 
 
 
 export const stakingSignature = async (address: any, txHash: string) => {
-  message.info("Sending succeeded,proceeding signature.");
+  message.info("Sending succeeded, proceeding signature.");
   await timeout(5000);
   web3Enable(stafiServer.getWeb3EnalbeName());
   const injector = await web3FromSource(stafiServer.getPolkadotJsSource());
@@ -307,7 +307,7 @@ export const bound = (address: string, txhash: string, blockhash: string, amount
     
     web3Enable(stafiServer.getWeb3EnalbeName());
 
-    message.info("Signature succeeded,proceeding staking.");
+    message.info("Signature succeeded, proceeding staking.");
     await timeout(5000);
     const injector = await web3FromSource(stafiServer.getPolkadotJsSource());
     const bondResult = await stafiApi.tx.rTokenSeries.liquidityBond(pubkey,
@@ -364,7 +364,7 @@ export const bound = (address: string, txhash: string, blockhash: string, amount
                     packing: processStatus.success,
                     finalizing: processStatus.loading,
                   })); 
-                  cb && cb("loading");
+                  // cb && cb("loading");
                   dispatch(getMinting(type, txhash, blockhash, cb));
                   // dispatch(gSetTimeOut(() => {
                   //   dispatch(setProcessStaking({

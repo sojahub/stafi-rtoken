@@ -360,7 +360,7 @@ export const query_rBalances_account = (): AppThunk => async (dispatch, getState
 export const reSending = (cb?: Function): AppThunk => async (dispatch, getState) => {
   const processParameter = getState().rKSMModule.processParameter
   if (processParameter) {
-    const href = processParameter.href
+    const href = processParameter.href;
     dispatch(transfer(processParameter.sending.amount, () => {
       (cb && href) && cb(href)
     }));
@@ -378,9 +378,9 @@ export const reStaking = (cb?: Function): AppThunk => async (dispatch, getState)
       NumberUtil.fisAmountToChain(staking.amount),
       staking.poolAddress,
       staking.type,
-      (r: string) => {
-        if (r != "failure") {
-          (staking.href && cb) && cb(href);
+      (r: string) => { 
+        if (r != "failure") { 
+          (href && cb) && cb(href);
         }
       }
     ));

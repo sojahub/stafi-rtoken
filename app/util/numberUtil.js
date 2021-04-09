@@ -1,5 +1,5 @@
 export default {
-  // 浮点数相加
+  // Add floating point numbers
   floatAdd: function(arg1, arg2) {
     var r1, r2, m;
     try {
@@ -16,7 +16,7 @@ export default {
     return (Math.round(arg1 * m) + Math.round(arg2 * m)) / m;
   },
 
-  // 浮点数减法运算
+  // Subtraction of floating point numbers
   floatSub: function(arg1, arg2) {
     var r1, r2, m, n;
     try {
@@ -30,12 +30,12 @@ export default {
       r2 = 0;
     }
     m = Math.pow(10, Math.max(r1, r2));
-    //动态控制精度长度
+    
     n = r1 >= r2 ? r1 : r2;
     return ((Math.round(arg1 * m) - Math.round(arg2 * m)) / m).toFixed(n);
   },
 
-  // 浮点数乘法运算
+ 
   floatMul: function(arg1, arg2) {
     var m = 0,
       s1 = arg1.toString(),
@@ -52,7 +52,7 @@ export default {
     );
   },
 
-  // 浮点数除法运算
+  // Division of floating point numbers
   floatDiv: function(arg1, arg2) {
     var t1 = 0,
       t2 = 0,
@@ -70,47 +70,47 @@ export default {
     return (r1 / r2) * pow(10, t2 - t1);
   },
 
-  // 向下取整 保留6位小数 注意 小数点最后为0的会舍弃
+  // Round down to 6 decimal places. Note that the last decimal point of 0 will be discarded
   handleEthAmountRound(amount) {
     return Math.floor(amount * 1000000) / 1000000;
   },
 
-  // 保留6位小数 并舍去其他位数
+  // Keep 6 decimal places and round off others
   handleEthAmountFloor(amount) {
     return parseInt(amount * 1000000) / 1000000;
   },
 
-  // 返回字符串 保留6位小数 固定6位 包括0
+  // Keep 6 decimal places and round off other digits to return string. Keep 6 decimal places and fix 6 decimal places including 0
   handleEthAmountRateToFixed(amount) {
     return this.handleEthAmountRound(amount).toFixed(6);
   },
 
-  // 返回字符串 保留6位小数 固定4位 包括0
+  // The return string contains 6 decimal places and 4 decimal places, including 0
   handleEthAmountToFixed(amount) {
     return (Math.floor(amount * 1000000) / 1000000).toFixed(6);
   },
 
-  // 返回字符串 保留6位小数 固定2位 包括0
+  // The return string contains 6 decimal places and 2 decimal places, including 0
   handleEthRoundToFixed(amount) {
     return (Math.floor(amount * 100) / 100).toFixed(2);
   },
 
-  // 返回字符串 保留6位小数 固定6位 包括0
+  // Returns a string containing 6 decimal places, including 0
   handleEthGweiToFixed(amount) {
     return this.handleEthAmountRound(amount).toFixed(6);
   },
 
-  // 保留3位小数 并舍去其他位数
+  // Keep 3 decimal places and round off others
   handleErc20AmountFloor(amount) {
     return parseInt(amount * 1000) / 1000;
   },
 
-  // 返回字符串 保留6位小数 固定3位 包括0
+  // The return string contains 6 decimal places and 3 decimal places, including 0
   handleFisAmountToFixed(amount) { 
     return (Math.floor(amount * 1000000) / 1000000).toFixed(6) || "--";
   },
 
-  // 返回字符串 保留6位小数 固定6位 包括0
+  // Returns a string containing 6 decimal places, including 0
   handleFisAmountRateToFixed(amount) {
     return this.handleEthAmountRound(amount).toFixed(6);
   },
@@ -127,7 +127,7 @@ export default {
     return fee / 1000000000;
   },
 
-  // 收取的手续费 2位小数点
+  // 2 decimal places of service charge
   fisFeeToFixed(fee) {
     return this.handleEthAmountRound(fee * 100).toFixed(2);
   }

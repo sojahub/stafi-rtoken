@@ -380,7 +380,7 @@ export const reStaking = (cb?: Function): AppThunk => async (dispatch, getState)
       staking.type,
       (r: string) => {
         if (r != "failure") {
-          (staking.href && cb) && cb(href);
+          (href && cb) && cb(href);
         }
       }
     ));

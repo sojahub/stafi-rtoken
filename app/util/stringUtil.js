@@ -1,5 +1,5 @@
 export default {
-  //地址字符串替换为...
+  //Replace the address string with
   replacePkh: function(pkh, start, end) {
     if (!pkh) {
       return pkh;
