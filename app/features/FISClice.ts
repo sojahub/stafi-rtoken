@@ -317,14 +317,19 @@ export const bound = (address: string, txhash: string, blockhash: string, amount
       txhash,
       amount.toString(),
       type); 
-    dispatch(setProcessStaking({
-      brocasting: processStatus.loading,
-      packing: processStatus.default,
-      finalizing: processStatus.default
-    }));
-    dispatch(setProcessType(type));
+   
     try{ 
+      let index=0;
       bondResult.signAndSend(fisAddress, { signer: injector.signer }, (result: any) => {
+        if(index==0){
+          dispatch(setProcessStaking({
+            brocasting: processStatus.loading,
+            packing: processStatus.default,
+            finalizing: processStatus.default
+          }));
+          dispatch(setProcessType(type));
+          index=index+1;
+        }
         const tx = bondResult.hash.toHex()
         try {
           if (result.status.isInBlock) {

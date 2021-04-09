@@ -151,6 +151,7 @@ export const reloadData = (): AppThunk => async (dispatch, getState) => {
   }
   dispatch(balancesAll())
   dispatch(query_rBalances_account());
+  dispatch(totalIssuance());
 
 }
 export const createSubstrate = (account: any): AppThunk => async (dispatch, getState) => {
@@ -193,16 +194,22 @@ export const transfer = (amountparam: string, cb?: Function): AppThunk => async 
     message.error("There is no matching pool, please try again later.");
     return;
   } 
-  dispatch(setProcessSending({
-    brocasting: processStatus.loading,
-    packing: processStatus.default,
-    finalizing: processStatus.default
-  }));
-  dispatch(setProcessType(rSymbol.Dot));
+  
   const ex =await dotApi.tx.balances.transferKeepAlive(selectedPool, amount.toString()); 
   
+  let index=0;
   ex.signAndSend(address, { signer: injector.signer }, (result: any) => {
-    dispatch(setProcessSlider(true));
+    if(index==0){
+      dispatch(setProcessSlider(true));
+      dispatch(setProcessSending({
+        brocasting: processStatus.loading,
+        packing: processStatus.default,
+        finalizing: processStatus.default
+      }));
+      dispatch(setProcessType(rSymbol.Dot));
+      index=index+1;
+    }
+   
     const tx = ex.hash.toHex()
     try {
       let asInBlock = ""
@@ -305,6 +312,7 @@ export const transfer = (amountparam: string, cb?: Function): AppThunk => async 
                 }
 
                 if(r=="successful"){
+                    dispatch(reloadData());
                     dispatch(add_DOT_stake_Notice(notice_uuid,amountparam,noticeStatus.Confirmed));
                     cb && cb(); 
                 } 
