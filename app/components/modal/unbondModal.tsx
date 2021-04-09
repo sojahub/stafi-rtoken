@@ -23,11 +23,11 @@ export default function Index(props:Props){
                 closable={false}
                 footer={false}>
          <div className="title">
-         Unbond {props.unbondAmount} {props.type}
+         Unbond {NumberUtil.handleFisAmountToFixed(props.unbondAmount)} {props.type}
             
          </div>
          <div className="content">
-            <div className="row">—Commission: {props.commission} {props.type}
+            <div className="row">—Commission: {NumberUtil.handleFisAmountToFixed(props.commission)} {props.type}
             <div className="doubt"><Tooltip overlayClassName="modal_doubt_overlay" placement="topLeft" title={"Fee charged by the StaFi to reserve as Protocol Treasury"}>
                         <img src={doubt} />
                     </Tooltip></div>

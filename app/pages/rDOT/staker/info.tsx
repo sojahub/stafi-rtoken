@@ -23,7 +23,7 @@ export default function Index(props:any){
       ratioShow:state.FISModule.ratioShow,
       totalUnbonding:state.rDOTModule.totalUnbonding
     }
-  })
+  }) 
   return  <Content 
   ratio={ratio}
   ratioShow={ratioShow}

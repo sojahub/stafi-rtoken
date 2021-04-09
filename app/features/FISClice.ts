@@ -229,8 +229,7 @@ export const transfer = (amountparam: string, cb?: Function): AppThunk => async 
                 packing: processStatus.failure,
               }));
               dispatch(reloadData());
-            } else if (data.event.method === 'ExtrinsicSuccess') {
-              M.success('Successfully');
+            } else if (data.event.method === 'ExtrinsicSuccess') { 
               dispatch(setProcessSending({
                 packing: processStatus.success,
                 finalizing: processStatus.loading,
@@ -282,7 +281,7 @@ export const transfer = (amountparam: string, cb?: Function): AppThunk => async 
 
 export const stakingSignature = async (address: any, txHash: string) => {
   message.info("Sending succeeded,proceeding signature.");
-  await timeout(2000);
+  await timeout(5000);
   web3Enable(stafiServer.getWeb3EnalbeName());
   const injector = await web3FromSource(stafiServer.getPolkadotJsSource());
   const signRaw = injector?.signer?.signRaw;
@@ -309,7 +308,7 @@ export const bound = (address: string, txhash: string, blockhash: string, amount
     web3Enable(stafiServer.getWeb3EnalbeName());
 
     message.info("Signature succeeded,proceeding staking.");
-    await timeout(2000);
+    await timeout(5000);
     const injector = await web3FromSource(stafiServer.getPolkadotJsSource());
     const bondResult = await stafiApi.tx.rTokenSeries.liquidityBond(pubkey,
       signature,
@@ -360,8 +359,7 @@ export const bound = (address: string, txhash: string, blockhash: string, amount
                   }));
                   cb && cb("failure");
                   dispatch(reloadData());
-                } else if (data.event.method === 'ExtrinsicSuccess') {
-                  M.success('Successfully');
+                } else if (data.event.method === 'ExtrinsicSuccess') { 
                   dispatch(setProcessStaking({
                     packing: processStatus.success,
                     finalizing: processStatus.loading,

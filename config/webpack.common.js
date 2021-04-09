@@ -19,11 +19,13 @@ function webpackCommonConfigCreator(options){
                 crypto: require.resolve('crypto-browserify'), 
                 buffer: require.resolve('buffer/'), 
                 http: false,
-                https:false
+                https:false, 
+                stream: require.resolve('stream-browserify'),
             },
             // 如果确认不需要node polyfill，设置resolve.alias设置为false
             alias: {
                 crypto: false,   
+                stream: 'stream-browserify',
                 '@components': resolve('../app/components'),// 这样配置后 @ 可以指向 src 目录
                 '@images': resolve('../app/assets/images'),// 这样配置后 @ 可以指向 src 目录
                 "@features": resolve('../app/features'),
@@ -81,6 +83,7 @@ function webpackCommonConfigCreator(options){
               test: /\.less$/,
               use: [MiniCssExtractPlugin.loader, "css-loader", "less-loader"]
             },// file-laoder加载图片
+           
             {
                 test: /\.(jpg|png|jpeg|gif|svg)$/,
                 use: ['file-loader']
@@ -120,8 +123,9 @@ function webpackCommonConfigCreator(options){
                 API_ENV:JSON.stringify(options.mode)
             }),
             new webpack.ProvidePlugin({
-                Buffer: ["buffer", "Buffer"],
-                process:'process'
+                Buffer: ["buffer", "Buffer"], 
+                process:'process',
+                stream:'stream'
               }), 
             new TsconfigPathsPlugin({ 
                 configFile: "tsconfig.json" 

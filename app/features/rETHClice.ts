@@ -4,11 +4,11 @@ import { AppThunk, RootState } from '../store';
 import { setLocalStorageItem, getLocalStorageItem, removeLocalStorageItem, Keys } from '@util/common';
 import NumberUtil from '@util/numberUtil';
 import Web3Utils from 'web3-utils';
-import EthServer from '@servers/eth/index'
-// import Web3 from 'web3';
+import ethServer from '@servers/eth/index'
+import web3 from 'web3';
 import { message } from 'antd';
 
-
+ 
 // const ethserver=new EthServer();
 const rETHClice = createSlice({
   name: 'rETHModule',
@@ -125,7 +125,8 @@ export const monitoring_Method=():AppThunk=>(dispatch,getState)=> {
 // 	let rFISBalance = web3.utils.fromWei(balance, 'ether');
 // });
 
-export const getAssetBalance=():AppThunk=>()=>{
+export const getAssetBalance=():AppThunk=>()=>{ 
+  // let web=new web3(ethereum)
 
 }
 export default rETHClice.reducer;

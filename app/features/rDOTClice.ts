@@ -349,7 +349,7 @@ export const query_rBalances_account = (): AppThunk => async (dispatch, getState
   const address = getState().FISModule.fisAccount.address;
   const stafiApi = await stafiServer.createStafiApi();
   const accountData = await stafiApi.query.rBalances.account(rSymbol.Dot, address);
-  let data = accountData.toJSON();
+  let data = accountData.toJSON(); 
   if (data == null) {
     dispatch(setTokenAmount(NumberUtil.handleFisAmountToFixed(0)))
   } else {
@@ -633,7 +633,7 @@ const add_DOT_stake_Notice=(uuid:string,amount:string,status:string,subData?:any
   },10);
 }
 const add_DOT_unbond_Notice=(uuid:string,amount:string,status:string,subData?:any):AppThunk=>async (dispatch,getState)=>{
-  dispatch(add_DOT_Notice(uuid,noticeType.Staker,noticesubType.Unbond,`Unbond ${amount} FIS from Pool Contract`,status,subData))
+  dispatch(add_DOT_Notice(uuid,noticeType.Staker,noticesubType.Unbond,`Unbond ${amount} DOT from Pool Contract`,status,subData))
 }
 const add_DOT_Withdraw_Notice=(uuid:string,amount:string,status:string,subData?:any):AppThunk=>async (dispatch,getState)=>{
   dispatch(add_DOT_Notice(uuid,noticeType.Staker,noticesubType.Withdraw,`Withdraw ${amount} FIS from contracts to wallet`,status,subData))

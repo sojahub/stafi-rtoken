@@ -630,7 +630,7 @@ const add_KSM_stake_Notice=(uuid:string,amount:string,status:string,subData?:any
   },20);
 }
 const add_KSM_unbond_Notice=(uuid:string,amount:string,status:string,subData?:any):AppThunk=>async (dispatch,getState)=>{
-  dispatch(add_KSM_Notice(uuid,noticeType.Staker,noticesubType.Unbond,`Unbond ${amount} FIS from Pool Contract`,status,subData))
+  dispatch(add_KSM_Notice(uuid,noticeType.Staker,noticesubType.Unbond,`Unbond ${amount} KSM from Pool Contract`,status,subData))
 }
 const add_DOT_Withdraw_Notice=(uuid:string,amount:string,status:string,subData?:any):AppThunk=>async (dispatch,getState)=>{
   dispatch(add_KSM_Notice(uuid,noticeType.Staker,noticesubType.Withdraw,`Withdraw ${amount} FIS from contracts to wallet`,status,subData))
