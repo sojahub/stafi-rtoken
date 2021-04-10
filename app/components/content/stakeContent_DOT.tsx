@@ -101,7 +101,7 @@ export default function Index(props:Props){
 
                 <div className="money_panel_item_doubt">
                   
-                    <Tooltip overlayClassName="doubt_overlay" placement="topLeft" title={"Fee charged by the relay to pay for the fee of interact tx to designated chain"}>
+                    <Tooltip overlayClassName="doubt_overlay" placement="topLeft" title={"Fee charged by the relayers to pay for the cross-chain contract interaction service fee between StaFi chain and designated chain."}>
                         <img src={doubt} />
                     </Tooltip>
                 </div>

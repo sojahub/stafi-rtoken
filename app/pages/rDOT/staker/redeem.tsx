@@ -93,7 +93,7 @@ export default function Index(props:any){
       setAmount('');
       dispatch(setLoading(true));
       setVisible(false)
-      dispatch(unbond(amount,recipient,()=>{ 
+      dispatch(unbond(amount,recipient,willAmount,()=>{ 
         dispatch(setLoading(false));
       })) 
     }}

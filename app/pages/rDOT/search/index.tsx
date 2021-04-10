@@ -18,10 +18,11 @@ export default function Index(props:any){
       props.history.goBack();
     }} src={leftArrowSvg}/>
     <div className="title">
-      Stake Record
+    Staking Record
     </div>
     <div className="sub_title">
-      If you did not find your stake record in Notification，you can resubmit to proceed
+    Under special occasions like sudden shutdown of your computer after sending your PoS tokens, you may not receive your rToken tokens because of being not able to sign the staking authorization.
+    <br/>You could submit your token sending TX information to proceed. 
     </div>
     <Form
       layout="vertical"

@@ -19,8 +19,7 @@ export default function Index(props:Props){
         value = value.replace(/^\./g,"");         
         value = value.replace(/\.{2,}/g,".");     
         value = value.replace(".","$#$").replace(/\./g,"").replace("$#$",".");
-        value = value.replace(/^(\-)*(\d+)\.(\d\d\d\d\d\d).*$/,'$1$2.$3'); 
-        value= value.replace(/\b(0+)/gi,"")
+        value = value.replace(/^(\-)*(\d+)\.(\d\d\d\d\d\d).*$/,'$1$2.$3');  
         props.onChange && props.onChange(value);
     }}
     value={props.value}

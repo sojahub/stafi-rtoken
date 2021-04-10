@@ -5,7 +5,7 @@ import Button from '@shared/components/button/connect_button';
 import Tag from './components/carTag/index'
 import DataList from './components/list'
 import Content from '@shared/components/content';
-import {connectMetamask,monitoring_Method,handleEthAccount} from '@features/rETHClice';
+import {connectMetamask,monitoring_Method,handleEthAccount,getAssetBalance} from '@features/rETHClice';
 import CountAmount from './components/countAmount'
 import './page.scss'
 export default function Index(props:any){ 
@@ -21,6 +21,7 @@ export default function Index(props:any){
     if(ethAccount && ethAccount.address){
       dispatch(handleEthAccount(ethAccount.address));
     }
+    dispatch(getAssetBalance());
   },[])
   return  <Content>
     <Tag type="erc" onClick={()=>{

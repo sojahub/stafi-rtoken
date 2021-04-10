@@ -34,7 +34,7 @@ export default function Index(props:Props){
               </div>
           </div>
           <div className="context">
-          Uniswap only support ERC20 token, would you like to swap token?
+          Uniswap only supports ERC20 tokens, before you trade rDOT token on Uniswap, please use our rBridge to swap ERC-20 rDOT first.
           </div>
         </div>
       </Modal>

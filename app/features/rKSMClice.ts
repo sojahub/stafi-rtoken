@@ -395,7 +395,7 @@ export const reStaking = (cb?: Function): AppThunk => async (dispatch, getState)
 }
 
 
-export const unbond = (amount: string,recipient:string, cb?: Function): AppThunk => async (dispatch, getState) => {
+export const unbond = (amount: string,recipient:string,willAmount:any, cb?: Function): AppThunk => async (dispatch, getState) => {
   try{
     const validPools = getState().rKSMModule.validPools;
     const poolLimit = getState().rKSMModule.poolLimit;
@@ -411,9 +411,9 @@ export const unbond = (amount: string,recipient:string, cb?: Function): AppThunk
     dispatch(fisUnbond(amount, rSymbol.Ksm, u8aToHex(keyringInstance.decodeAddress(recipient)), u8aToHex(keyringInstance.decodeAddress(selectedPool)),"Unbond succeeded, unbonding period is around 8 days", (r?:string) => {
       dispatch(reloadData()); 
       if(r != "Failed"){  
-        dispatch(add_KSM_unbond_Notice(stafi_uuid(),amount,noticeStatus.Confirmed));
+        dispatch(add_KSM_unbond_Notice(stafi_uuid(),willAmount,noticeStatus.Confirmed));
       }else{
-        dispatch(add_KSM_unbond_Notice(stafi_uuid(),amount,noticeStatus.Error));
+        dispatch(add_KSM_unbond_Notice(stafi_uuid(),willAmount,noticeStatus.Error));
       } 
       cb && cb(); 
     }))

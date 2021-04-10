@@ -91,7 +91,7 @@ export default function Index(props:any){
       dispatch(setLoading(true));
       setVisible(false)
       setAmount('');
-      dispatch(unbond(amount,recipient,()=>{ 
+      dispatch(unbond(amount,recipient,willAmount,()=>{ 
         dispatch(setLoading(false));
       })) 
     }}

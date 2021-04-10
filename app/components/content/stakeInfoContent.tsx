@@ -1,6 +1,7 @@
 import React, { useState } from 'react'; 
 import LeftContent from './leftContent'  
-import rDOT_stafi_svg from '@images/rDOT_stafi.png'
+import rDOT_stafi_svg from '@images/rDOT_stafi.png';
+import rKSM_stafi_svg from '@images/rKSM_stafi.png'
 import rDOT_DOT_svg from '@images/rDOT_DOT.svg'
 import Button from '@shared/components/button/button'
 import NumberUtil from '@util/numberUtil';
@@ -19,7 +20,8 @@ export default function Index(props:Props){
     return <LeftContent className="stafi_stake_info_context">
       <div className="item">
           <div className="title">
-            <img src={rDOT_stafi_svg} style={{width:"40px"}}/>  
+            {props.type=="rDOT" && <img src={rDOT_stafi_svg} style={{width:"40px"}}/>  }
+            {props.type=="rKSM" && <img src={rKSM_stafi_svg} style={{width:"40px"}}/>  }
             {props.type}
           </div>
           <div className="content">
@@ -34,8 +36,8 @@ export default function Index(props:Props){
             </div>
           </div>
           <div className="describe">
-            {props.type=="rDOT" && ` Your current staked DOT  is ${(props.tokenAmount !="--" && props.ratio != "--") ? NumberUtil.handleFisAmountToFixed(props.tokenAmount * props.ratio) : "--"}.`}
-            {props.type=="rKSM" && `Your current staked KSM  is ${(props.tokenAmount !="--" && props.ratio != "--") ? NumberUtil.handleFisAmountToFixed(props.tokenAmount * props.ratio) : "--"}.`}
+            {props.type=="rDOT" && ` Your current staked DOT  is ${(props.tokenAmount !="--" && props.ratio != "--") ? NumberUtil.handleFisAmountToFixed(props.tokenAmount * props.ratio) : "--"}`}
+            {props.type=="rKSM" && `Your current staked KSM  is ${(props.tokenAmount !="--" && props.ratio != "--") ? NumberUtil.handleFisAmountToFixed(props.tokenAmount * props.ratio) : "--"}`}
             {props.type == "rDOT" && props.totalUnbonding > 0 && ` Unbonding DOT is ${props.totalUnbonding}`}
             {props.type=="rKSM" && props.totalUnbonding > 0 && ` Unbonding KSM is ${props.totalUnbonding}`}
           </div>

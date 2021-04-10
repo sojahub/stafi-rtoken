@@ -4,8 +4,7 @@ import { AppThunk, RootState } from '../store';
 import { setLocalStorageItem, getLocalStorageItem, removeLocalStorageItem, Keys } from '@util/common';
 import NumberUtil from '@util/numberUtil';
 import Web3Utils from 'web3-utils';
-import ethServer from '@servers/eth/index'
-import web3 from 'web3';
+import ethServer from '@servers/eth/index';
 import { message } from 'antd';
 
  
@@ -125,8 +124,25 @@ export const monitoring_Method=():AppThunk=>(dispatch,getState)=> {
 // 	let rFISBalance = web3.utils.fromWei(balance, 'ether');
 // });
 
-export const getAssetBalance=():AppThunk=>()=>{ 
-  // let web=new web3(ethereum)
-
+export const getAssetBalance=():AppThunk=>(dispatch,getState)=>{ 
+  console.log(getState().rETHModule.ethAccount,"=====")
+  if(getState().rETHModule.ethAccount){
+    let web3=ethServer.getWeb3();
+    const address=getState().rETHModule.ethAccount.address;
+    console.log(address,"======addressaddressaddress")
+    let rFISContract = new web3.eth.Contract(ethServer.getRFISTokenAbi(), ethServer.getRFISTokenAddress(), {
+      from: address
+    });
+    try{
+      rFISContract.methods.balanceOf(address).call().then((balance:any) => {
+        let rFISBalance = web3.utils.fromWei(balance, 'ether');
+        console.log(rFISBalance,"====rFISBalancerFISBalancerFISBalancerFISBalancerFISBalance")
+      }).catch((e:any)=>{
+        console.error(e)
+      });
+    }catch(e:any){
+      console.error(e)
+    }
+  }
 }
 export default rETHClice.reducer;
