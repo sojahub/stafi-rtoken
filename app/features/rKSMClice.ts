@@ -397,10 +397,8 @@ export const reStaking = (cb?: Function): AppThunk => async (dispatch, getState)
 
 export const unbond = (amount: string,recipient:string,willAmount:any, cb?: Function): AppThunk => async (dispatch, getState) => {
   try{
-    const validPools = getState().rKSMModule.validPools;
-    const poolLimit = getState().rKSMModule.poolLimit;
-    
-    let selectedPool = getPool(NumberUtil.fisAmountToChain(amount), validPools, poolLimit);
+    const validPools = getState().rKSMModule.validPools; 
+    let selectedPool = getPoolForUnbond(amount, validPools);
     if (selectedPool == null) {
       message.error("There is no matching pool, please try again later.");
       cb && cb();
@@ -567,7 +565,19 @@ export const getPool = (tokenAmount: any, validPools: any, poolLimit: any) => {
     return null;
   }
 }
-
+export const getPoolForUnbond = (tokenAmount: any, validPools: any) => {
+  const amount = NumberUtil.fisAmountToChain(tokenAmount.toString());
+  const data = validPools.find((item: any) => {
+    if (Number(item.active) >= amount) {
+      return true;
+    }
+  });
+  if (data) {
+    return data.address
+  } else {
+    return null;
+  }
+}
 
 export const getUnbondCommission=():AppThunk=>async (dispatch, getState)=>{
   const stafiApi = await stafiServer.createStafiApi();
