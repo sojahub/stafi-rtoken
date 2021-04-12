@@ -660,9 +660,7 @@ const add_DOT_Swap_Notice=(uuid:string,amount:string,status:string,subData?:any)
   dispatch(add_DOT_Notice(uuid,noticeType.Staker,noticesubType.Swap,`Swap ${amount} Native FIS to ERC20`,status,subData))
 }
 const add_DOT_Notice=(uuid:string,type:string,subType:string,content:string,status:string,subData?:any):AppThunk=>async (dispatch,getState)=>{
- 
     dispatch(add_Notice(uuid,Symbol.Dot,type,subType,content,status,subData))
-  
 }
 
 export default rDOTClice.reducer;
