@@ -64,7 +64,7 @@ export default function Index(props:Props){
             {props.type=="rKSM" && ` update every 6 hours `}
           </div>
       </div>
-      <Modal visible={visibleModal} onCancel={()=>{
+      <Modal type={props.type} visible={visibleModal} onCancel={()=>{
         setVisibleModal(false)
       }}/>
     </LeftContent>

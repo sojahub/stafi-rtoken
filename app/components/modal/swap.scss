@@ -1,10 +1,10 @@
 .stafi_swap_modal{
-  width:280px !important;
+  width:309px !important;
   .ant-modal-content{
     border-radius: 2.5px;
     
     .ant-modal-body{
-      padding: 10px 16px 23px 16px;
+      padding: 10px 16px 5px 16px;
       .title{
         width:100%;
         text-align: center;
@@ -16,7 +16,7 @@
         }
       }
       .context{
-        margin-top:16px;
+        // margin-top:16px;
         font-size: 15px;
         color:#22243d;
       }

@@ -1,4 +1,4 @@
-.stafi_search_container{
+.stafi_search_dot_container{
   padding:34px 106px;
   position: relative;
   .back_icon{
@@ -19,9 +19,14 @@
   .sub_title{
     font-size: 14px;
     margin-bottom: 35px;
-    width: 410px;
+    width: 460px;
     text-align: left;
     margin: 0px;
+    line-height: 18px;
+    flex-direction: column;
+    >div{
+      margin:20px 0px 25px 0px;
+    }
   }
 
   .ant-form-item{

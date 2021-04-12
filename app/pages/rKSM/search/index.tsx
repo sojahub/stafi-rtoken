@@ -22,7 +22,7 @@ export default function Index(props:any){
     </div>
     <div className="sub_title">
     Under special occasions like sudden shutdown of your computer after sending your PoS tokens, you may not receive your rToken tokens because of being not able to sign the staking authorization.
-    <br/>You could submit your token sending TX information to proceed. 
+    <div>You could submit your token sending TX information to proceed. </div>
     </div>
     <Form
       layout="vertical"

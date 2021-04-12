@@ -8,6 +8,7 @@ type Props={
   visible:boolean,
   onOk?:Function,
   onCancel?:Function,
+  type:"rDOT"|"rETH"|"rFIS"|"rKSM",
 }
 export default function Index(props:Props){
   return <Modal visible={props.visible} 
@@ -34,7 +35,7 @@ export default function Index(props:Props){
               </div>
           </div>
           <div className="context">
-          Uniswap only supports ERC20 tokens, before you trade rDOT token on Uniswap, please use our rBridge to swap ERC-20 rDOT first.
+          Uniswap only supports ERC20 tokens, before you trade {props.type} token on Uniswap, please use our rBridge to swap ERC-20 {props.type} first.
           </div>
         </div>
       </Modal>
