@@ -151,8 +151,7 @@ const re_Minting=(item:any,):AppThunk=>(dispatch,getState)=>{
     brocasting: processStatus.success,
     packing: processStatus.success,
     finalizing:  processStatus.success,
-  }));
-  console.log(item,"========sdfsdf")
+  })); 
   const staking=item.subData.processParameter.staking;
   dispatch(getMinting(staking.type,staking.txHash,staking.blockHash,(e:string)=>{
     if(e=="successful"){ 
