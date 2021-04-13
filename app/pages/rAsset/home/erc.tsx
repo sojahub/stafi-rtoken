@@ -6,8 +6,17 @@ import Tag from './components/carTag/index'
 import DataList from './components/list'
 import Content from '@shared/components/content';
 import {connectMetamask,monitoring_Method,handleEthAccount,getAssetBalance} from '@features/rETHClice';
-import CountAmount from './components/countAmount'
+import CountAmount from './components/countAmount'; 
+import rFIS_svg from '@images/rFIS.svg';
+import rKSM_svg from '@images/rKSM.svg';
 import './page.scss'
+
+let dataList=[{
+  rSymbol:"rFIS",
+  icon:rFIS_svg,
+  fullName:"StaFi",
+  
+}]
 export default function Index(props:any){ 
  
   const dispatch=useDispatch();

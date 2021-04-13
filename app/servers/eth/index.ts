@@ -25,7 +25,7 @@ export const getWeb3=()=>{
   return web3Instance;
 }
 export const getRFISTokenAddress=()=> {
-  return config.rFISTokenAddress;
+  return config.rFISTokenAddress();
 }
 
 export const getRFISTokenAbi=()=> {

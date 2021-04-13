@@ -122,11 +122,11 @@ export const setProcess=(item:any,list:any,cb?:Function):AppThunk=>async (dispat
             dispatch(setProcessSlider(true))
             dispatch(initProcess(o[0].subData.process));
             dispatch(setProcessParameter(o[0].subData.processParameter));
-            dispatch(re_Minting(item))
+            dispatch(re_Minting(o[0]))
           }
         }); 
       }else{
-        dispatch(re_Minting(item));
+        dispatch(re_Minting(o[0]));
         Modal.warning({
           title: 'message',
           content: 'Transactions are pending, please check it later.', 
@@ -152,7 +152,9 @@ const re_Minting=(item:any,):AppThunk=>(dispatch,getState)=>{
     packing: processStatus.success,
     finalizing:  processStatus.success,
   }));
-  dispatch(getMinting(item.subData.processParameter.staking.type,item.subData.processParameter.staking.txHash,item.subData.processParameter.staking.blockHash,(e:string)=>{
+  console.log(item,"========sdfsdf")
+  const staking=item.subData.processParameter.staking;
+  dispatch(getMinting(staking.type,staking.txHash,staking.blockHash,(e:string)=>{
     if(e=="successful"){ 
      dispatch(add_Notice(item.uuid,item.rSymbol,item.type,item.subType,item.content,noticeStatus.Confirmed,{
       process:getState().globalModule.process,
