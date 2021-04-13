@@ -519,19 +519,18 @@ export const getMinting = (type: number, txHash: string, blockHash: string, cb?:
     brocasting: processStatus.loading
   }));
   let bondSuccessParamArr:any[] = [];
-  bondSuccessParamArr.push(type);
   bondSuccessParamArr.push(blockHash);
   bondSuccessParamArr.push(txHash);
   let statusObj={
     num:0
   }
-  dispatch(rTokenSeries_bondStates(bondSuccessParamArr,statusObj,cb));
+  dispatch(rTokenSeries_bondStates(type, bondSuccessParamArr,statusObj,cb));
 } 
 
-export const rTokenSeries_bondStates=(bondSuccessParamArr:any,statusObj:any,cb?:Function): AppThunk => async (dispatch, getState)=>{
+export const rTokenSeries_bondStates=(type: number, bondSuccessParamArr:any,statusObj:any,cb?:Function): AppThunk => async (dispatch, getState)=>{
   statusObj.num=statusObj.num+1; 
   const stafiApi = await stafiServer.createStafiApi();
-  const result= await stafiApi.query.rTokenSeries.bondStates(bondSuccessParamArr) 
+  const result= await stafiApi.query.rTokenSeries.bondStates(type, bondSuccessParamArr) 
   let bondState = result.toJSON();    
   if (bondState=="Success") {
     dispatch(setProcessMinting({
@@ -547,7 +546,7 @@ export const rTokenSeries_bondStates=(bondSuccessParamArr:any,statusObj:any,cb?:
     cb && cb("failure");
   } else if(statusObj.num<=40){  
     setTimeout(()=>{ 
-      dispatch(rTokenSeries_bondStates(bondSuccessParamArr,statusObj,cb))
+      dispatch(rTokenSeries_bondStates(type, bondSuccessParamArr,statusObj,cb))
     }, 15000); 
   }else{
     dispatch(setProcessMinting({
@@ -626,35 +625,6 @@ export const fisUnbond = (amount: string, rSymbol: number, recipient: string, se
     message.error("Unbond failure"); 
     cb && cb("Failed");
   }
-}
-
-
-
-export const getPools = (): AppThunk => async (dispatch, getState) => {
- 
-  const stafiApi = await stafiServer.createStafiApi();
-  const poolsData = await stafiApi.query.rTokenLedger.pools(rSymbol.Fis)
-  let pools = poolsData.toJSON();
-  dispatch(setValidPools(null));
-  if (pools && pools.length > 0) { 
-    pools.forEach((poolPubkey: any) => {
-      let arr = [];
-      arr.push(rSymbol.Fis);
-      arr.push(poolPubkey);
-      stafiApi.query.rTokenLedger.poolWillBonded(arr).then((bondedData: any) => {
-        // count++;
-        let bonded = bondedData.toJSON();
-        const keyringInstance = keyring.init('fis');
-        let poolAddress = keyringInstance.encodeAddress(poolPubkey);
-        dispatch(setValidPools({
-          address: poolAddress,
-          active: bonded || 0
-        }));
-      }).catch((error: any) => { });
-    })
-  };
-
-  dispatch(poolBalanceLimit());
 }
 
 export const poolBalanceLimit = (): AppThunk => async (dispatch, getState) => {

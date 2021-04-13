@@ -425,13 +425,12 @@ export const continueProcess = (): AppThunk => async (dispatch, getState) => {
   const stakeHash = getState().rKSMModule.stakeHash;
   if (stakeHash && stakeHash.blockHash && stakeHash.txHash) { 
     let bondSuccessParamArr:any[] = [];
-    bondSuccessParamArr.push(rSymbol.Ksm);
     bondSuccessParamArr.push(stakeHash.blockHash);
     bondSuccessParamArr.push(stakeHash.txHash);
     let statusObj={
       num:0
     }
-    dispatch(rTokenSeries_bondStates(bondSuccessParamArr,statusObj,(e:string)=>{
+    dispatch(rTokenSeries_bondStates(rSymbol.Ksm, bondSuccessParamArr,statusObj,(e:string)=>{
       if(e=="successful"){
         dispatch(setStakeHash(null));
       }else{
@@ -518,16 +517,12 @@ export const getPools = (cb?:Function): AppThunk => async (dispatch, getState) =
 
  
   const stafiApi = await stafiServer.createStafiApi();
-  const poolsData = await stafiApi.query.rTokenLedger.pools(rSymbol.Ksm)
+  const poolsData = await stafiApi.query.rTokenLedger.bondedPools(rSymbol.Ksm)
   let pools = poolsData.toJSON();
   dispatch(setValidPools(null));
   if (pools && pools.length > 0) {
-    // let count = 0;
     pools.forEach((poolPubkey: any) => {
-      let arr = [];
-      arr.push(rSymbol.Ksm);
-      arr.push(poolPubkey);
-      stafiApi.query.rTokenLedger.bondPipelines(arr).then((bondedData: any) => {
+      stafiApi.query.rTokenLedger.bondPipelines(rSymbol.Ksm, poolPubkey).then((bondedData: any) => {
         let active = 0;
         let bonded = bondedData.toJSON();
         if (bonded) {
