@@ -376,6 +376,7 @@ export const reSending = (cb?: Function): AppThunk => async (dispatch, getState)
 
 export const reStaking = (cb?: Function): AppThunk => async (dispatch, getState) => { 
   const processParameter = getState().rKSMModule.processParameter
+  console.log(processParameter,"====processParameter")
   if (processParameter) {
     const staking = processParameter.staking
     const href = processParameter.href
@@ -386,9 +387,26 @@ export const reStaking = (cb?: Function): AppThunk => async (dispatch, getState)
       staking.poolAddress,
       staking.type,
       (r: string) => { 
-        if (r != "failure") { 
-          (href && cb) && cb(href);
+        // if (r != "failure") { 
+        //   (href && cb) && cb(href);
+        // }
+
+        if(r=="loading"){
+          dispatch(add_KSM_stake_Notice(processParameter.sending.uuid,staking.amount,noticeStatus.Pending))
+        }else{ 
+          dispatch(setStakeHash(null));
         }
+
+        if(r == "failure"){
+          dispatch(add_KSM_stake_Notice(processParameter.sending.uuid,staking.amount,noticeStatus.Error)
+          );
+        }
+
+        if(r=="successful"){
+            dispatch(add_KSM_stake_Notice(processParameter.sending.uuid,staking.amount,noticeStatus.Confirmed));
+            (href && cb) && cb(href); 
+            dispatch(reloadData());
+        } 
       }
     ));
   }

@@ -2,8 +2,10 @@ import { createSlice } from '@reduxjs/toolkit';
 import { AppThunk, RootState } from '../store';
 import { setLocalStorageItem, getLocalStorageItem, removeLocalStorageItem, Keys } from '@util/common';
 import {setProcessParameter} from './rDOTClice';
+import {setProcessParameter as krmSetProcessParameter} from './rKSMClice';
 import {initProcess,setProcessSlider,setProcessSending,setProcessStaking,processStatus} from './globalClice';
 import {rTokenSeries_bondStates,getMinting} from './FISClice';
+import {rSymbol} from '@keyring/defaults'
 import moment from 'moment'; 
 import { message,Modal } from 'antd';
 export enum noticeStatus{
@@ -133,10 +135,14 @@ export const setProcess=(item:any,list:any,cb?:Function):AppThunk=>async (dispat
           className:'stafi_modal_warning'
         });
       }
-    }else{
+    }else{ 
       dispatch(setProcessSlider(true))
-      dispatch(initProcess(item.subData.process));
-      dispatch(setProcessParameter(item.subData.processParameter));
+      dispatch(initProcess(item.subData.process)); 
+      if(item.subData.process.rSymbol==rSymbol.Ksm){
+        dispatch(krmSetProcessParameter(item.subData.processParameter));
+      }else{
+        dispatch(setProcessParameter(item.subData.processParameter));
+      }
     }
   }
 }

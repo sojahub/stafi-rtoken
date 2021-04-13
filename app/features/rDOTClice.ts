@@ -386,10 +386,23 @@ export const reStaking = (cb?: Function): AppThunk => async (dispatch, getState)
       NumberUtil.fisAmountToChain(staking.amount),
       staking.poolAddress,
       staking.type,
-      (r: string) => {
-        if (r != "failure") {
-          (href && cb) && cb(href);
+      (r: string) => { 
+        if(r=="loading"){
+          dispatch(add_DOT_stake_Notice(processParameter.sending.uuid,staking.amount,noticeStatus.Pending))
+        }else{ 
+          dispatch(setStakeHash(null));
         }
+
+        if(r == "failure"){
+          dispatch(add_DOT_stake_Notice(processParameter.sending.uuid,staking.amount,noticeStatus.Error)
+          );
+        }
+
+        if(r=="successful"){
+            dispatch(add_DOT_stake_Notice(processParameter.sending.uuid,staking.amount,noticeStatus.Confirmed));
+            (href && cb) && cb(href); 
+            dispatch(reloadData());
+        } 
       }
     ));
   }
