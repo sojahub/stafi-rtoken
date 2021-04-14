@@ -1,17 +1,27 @@
 import React from 'react';
-import {Form} from 'antd';
+import {Form,message} from 'antd';
 import {useDispatch} from 'react-redux';
 import Input from '@shared/components/input/index';
 import Button from '@shared/components/button/button';
 import Select,{Option} from '@shared/components/select';
 import leftArrowSvg from '@images/left_arrow.svg';
-import {getBlock} from '@features/rKSMClice'
+import {getBlock,onProceed} from '@features/rKSMClice'
 import './index.scss';
 export default function Index(props:any){
   const [form] = Form.useForm();
   const dispatch = useDispatch();
   const onFinish = (values: any) => { 
-    dispatch(getBlock(values.blockHash,values.txHash)) 
+    if(!values.txHash){
+      message.error("Please enter txhash");
+      return;
+    }
+    if(!values.blockHash){
+      message.error("Please enter blockHash");
+      return;
+    }
+    dispatch(onProceed(values.blockHash,values.txHash,()=>{
+      props.history.push("/rKSM/staker/info");
+    })) 
   };
   return <div className="stafi_search_container">
     <img className="back_icon" onClick={()=>{

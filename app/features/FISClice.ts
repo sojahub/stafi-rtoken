@@ -544,7 +544,10 @@ export const rTokenSeries_bondStates=(type: number, bondSuccessParamArr:any,stat
       brocasting: processStatus.failure
     }));
     cb && cb("failure");
-  } else if(statusObj.num<=40){  
+  } else if(bondState == null){
+    cb && cb('stakingFailure');
+  }else if(statusObj.num<=40){  
+    cb && cb("padding");
     setTimeout(()=>{ 
       dispatch(rTokenSeries_bondStates(type, bondSuccessParamArr,statusObj,cb))
     }, 15000); 
@@ -552,6 +555,7 @@ export const rTokenSeries_bondStates=(type: number, bondSuccessParamArr:any,stat
     dispatch(setProcessMinting({
       brocasting: processStatus.failure
     }));
+    cb && cb("failure");
   } 
 }
 

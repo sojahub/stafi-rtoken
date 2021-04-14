@@ -18,7 +18,7 @@ import {
 import NumberUtil from '@util/numberUtil';
 import { bound, fisUnbond ,getTotalUnbonding,rTokenSeries_bondStates} from './FISClice';
 import {stafi_uuid} from '@util/common'
-import {addNoticeModal,noticesubType,noticeStatus,noticeType} from './noticeClice';
+import {findUuid,noticesubType,noticeStatus,noticeType} from './noticeClice';
 import { u8aToHex } from '@polkadot/util'
 
 
@@ -458,7 +458,49 @@ export const continueProcess = (): AppThunk => async (dispatch, getState) => {
   }
 }
 
-
+export const onProceed=(blockHash: string, txHash: string,cb?:Function):AppThunk => async (dispatch,getstate)=>{
+  const noticeData=findUuid(getstate().noticeModule.noticeData || [],txHash,blockHash)
+  
+  let bondSuccessParamArr:any[] = [];
+  bondSuccessParamArr.push(blockHash);
+  bondSuccessParamArr.push(txHash);
+  let statusObj={
+    num:0
+  } 
+  dispatch(rTokenSeries_bondStates(rSymbol.Ksm, bondSuccessParamArr,statusObj,(e:string)=>{
+    if(e=="successful"){ 
+      dispatch(setStakeHash(null));
+      message.success("Transaction has been proceeded",3,()=>{
+        cb && cb("successful");
+      })
+      noticeData && dispatch(add_KSM_stake_Notice(noticeData.uuid,noticeData.amount,noticeStatus.Confirmed));
+    }else if(e=="failure" || e=="stakingFailure"){ 
+      dispatch(getBlock(blockHash, txHash,noticeData.uuid,()=>{
+        cb && cb("successful");
+      }))
+    }else{ 
+      if(getstate().globalModule.processSlider==false){
+        dispatch(initProcess({
+          sending: {
+            packing: processStatus.success,
+            brocasting: processStatus.success,
+            finalizing: processStatus.success,
+            checkTx:txHash
+          },
+          staking: {
+            packing: processStatus.success,
+            brocasting: processStatus.success,
+            finalizing: processStatus.success,
+          },
+          minting:{
+            minting:processStatus.loading
+          }
+        }))
+        dispatch(setProcessSlider(true));
+      }
+    }
+  }));
+}
 
 export const getBlock = (blockHash: string, txHash: string, uuid?:string,cb?: Function): AppThunk => async (dispatch, getState) => {
   try {
@@ -486,6 +528,15 @@ export const getBlock = (blockHash: string, txHash: string, uuid?:string,cb?: Fu
               packing: processStatus.success,
               brocasting: processStatus.success,
               finalizing: processStatus.success,
+              checkTx:txHash
+            },
+            staking: {
+              packing: processStatus.default,
+              brocasting: processStatus.default,
+              finalizing: processStatus.default,
+            },
+            minting:{
+              minting:processStatus.default
             }
           }))
           dispatch(setProcessSlider(true));
@@ -659,6 +710,7 @@ const add_KSM_stake_Notice=(uuid:string,amount:string,status:string,subData?:any
     processParameter:getState().rKSMModule.processParameter}))
   },20);
 }
+ 
 const add_KSM_unbond_Notice=(uuid:string,amount:string,status:string,subData?:any):AppThunk=>async (dispatch,getState)=>{
   dispatch(add_KSM_Notice(uuid,noticeType.Staker,noticesubType.Unbond,`Unbond ${amount} KSM from Pool Contract`,status,subData))
 }

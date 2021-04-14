@@ -174,5 +174,24 @@ const re_Minting=(item:any,):AppThunk=>(dispatch,getState)=>{
   }));
 }
 
+
+export const findUuid=(datas:any,txHash:string,blockHash:string)=>{ 
+  if(datas){
+    const data = datas.datas.find((item:any)=>{
+      if(item && item.subData && item.subData.processParameter && item.subData.processParameter.sending.txHash==txHash && item.subData.processParameter.sending.blockHash==blockHash){
+        return true;
+      }else{
+        return false;
+      }
+    })
+    if(data && data.status!=noticeStatus.Confirmed){
+      return {
+        uuid:data.uuid,
+        amount:data.subData.processParameter.sending.amount
+      }
+    } 
+  }
+  return null;
+}
  
 export default noticeClice.reducer

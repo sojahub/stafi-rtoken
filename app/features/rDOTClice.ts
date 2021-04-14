@@ -10,7 +10,7 @@ import {
   processStatus, setProcessSlider, setProcessSending,
    initProcess,setLoading,setProcessType
 } from './globalClice';
-import {add_Notice} from './noticeClice'
+import {add_Notice,findUuid} from './noticeClice';
 import {
   web3Enable,
   web3FromSource,
@@ -453,7 +453,49 @@ export const continueProcess = (): AppThunk => async (dispatch, getState) => {
   }
 }
 
-
+export const onProceed=(blockHash: string, txHash: string,cb?:Function):AppThunk => async (dispatch,getstate)=>{
+  const noticeData=findUuid(getstate().noticeModule.noticeData || [],txHash,blockHash)
+  
+  let bondSuccessParamArr:any[] = [];
+  bondSuccessParamArr.push(blockHash);
+  bondSuccessParamArr.push(txHash);
+  let statusObj={
+    num:0
+  } 
+  dispatch(rTokenSeries_bondStates(rSymbol.Dot, bondSuccessParamArr,statusObj,(e:string)=>{
+    if(e=="successful"){ 
+      dispatch(setStakeHash(null));
+      message.success("Transaction has been proceeded",3,()=>{
+        cb && cb("successful");
+      })
+      noticeData && dispatch(add_DOT_stake_Notice(noticeData.uuid,noticeData.amount,noticeStatus.Confirmed));
+    }else if(e=="failure" || e=="stakingFailure"){ 
+      dispatch(getBlock(blockHash, txHash,noticeData.uuid,()=>{
+        cb && cb("successful");
+      }))
+    }else{ 
+      if(getstate().globalModule.processSlider==false){
+        dispatch(initProcess({
+          sending: {
+            packing: processStatus.success,
+            brocasting: processStatus.success,
+            finalizing: processStatus.success,
+            checkTx:txHash
+          },
+          staking: {
+            packing: processStatus.success,
+            brocasting: processStatus.success,
+            finalizing: processStatus.success,
+          },
+          minting:{
+            minting:processStatus.loading
+          }
+        }))
+        dispatch(setProcessSlider(true));
+      }
+    }
+  }));
+}
 
 export const getBlock = (blockHash: string, txHash: string, uuid?:string,cb?: Function): AppThunk => async (dispatch, getState) => {
   try {
