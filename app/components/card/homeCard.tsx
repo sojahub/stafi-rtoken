@@ -8,7 +8,7 @@ type Props={
   btnText:string,
   btnIcon?:any,
   onBtnClick?:Function,
-  onIntroClick?:Function
+  onIntroUrl?:string
 }
 export default function Index(props:Props){ 
     return <div className="stafi_home_card">
@@ -23,8 +23,6 @@ export default function Index(props:Props){
             }}>
             {props.btnText}
             </Button>
-            <a className="stafi_a" onClick={()=>{
-              props.onIntroClick && props.onIntroClick();
-            }}>Get Intro</a>
+            {props.onIntroUrl && <a className="stafi_a" href={props.onIntroUrl} target="_blank">Get Intro</a>}
     </div>
 }

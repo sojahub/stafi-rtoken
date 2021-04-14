@@ -29,8 +29,6 @@ export default function Inde(props:any){
           props.history.push("/rKSM/wallet")
         })) 
       }}
-      onIntroClick={()=>{
-
-      }}
+      onIntroUrl=""
   />
 }

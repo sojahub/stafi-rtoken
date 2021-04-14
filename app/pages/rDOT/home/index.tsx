@@ -29,8 +29,6 @@ export default function Inde(props:any){
         //   props.history.push("/rDOT/wallet")
         // })) 
       }}
-      onIntroClick={()=>{
-
-      }}
+      onIntroUrl="https://docs.stafi.io/rproduct/rdot-solution"
   />
 }
