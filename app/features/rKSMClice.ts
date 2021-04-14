@@ -4,6 +4,7 @@ import PolkadotServer from '@servers/ksm/index';
 import Stafi from '@servers/stafi/index';
 import { message as M, message } from 'antd';
 import keyring from '@servers/index';
+import moment from 'moment';
 import { setLocalStorageItem, getLocalStorageItem, removeLocalStorageItem, Keys } from '@util/common'
 
 import {rSymbol,Symbol} from '@keyring/defaults'
@@ -450,10 +451,12 @@ export const continueProcess = (): AppThunk => async (dispatch, getState) => {
     }
     dispatch(rTokenSeries_bondStates(rSymbol.Ksm, bondSuccessParamArr,statusObj,(e:string)=>{
       if(e=="successful"){
-        dispatch(setStakeHash(null));
+        message.success("minting succeeded",3,()=>{ 
+          dispatch(setStakeHash(null));
+        }); 
       }else{
         dispatch(getBlock(stakeHash.blockHash, stakeHash.txHash,stakeHash.notice_uuid))
-      }
+      } 
     }));
   }
 }
@@ -712,7 +715,8 @@ const add_KSM_stake_Notice=(uuid:string,amount:string,status:string,subData?:any
 }
  
 const add_KSM_unbond_Notice=(uuid:string,amount:string,status:string,subData?:any):AppThunk=>async (dispatch,getState)=>{
-  dispatch(add_KSM_Notice(uuid,noticeType.Staker,noticesubType.Unbond,`Unbond ${amount} KSM from Pool Contract`,status,subData))
+  
+  dispatch(add_KSM_Notice(uuid,noticeType.Staker,noticesubType.Unbond,`Unbond ${amount} KSM from Pool Contract, it will be completed around ${moment().add(8, 'days').format("MM.DD")}`,status,subData))
 }
 const add_DOT_Withdraw_Notice=(uuid:string,amount:string,status:string,subData?:any):AppThunk=>async (dispatch,getState)=>{
   dispatch(add_KSM_Notice(uuid,noticeType.Staker,noticesubType.Withdraw,`Withdraw ${amount} FIS from contracts to wallet`,status,subData))

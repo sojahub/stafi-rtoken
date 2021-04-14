@@ -16,26 +16,26 @@ import {isdev} from '../../config/index'
 import './index.scss'
 
 const siderData=[
-    {
-        icon:rAsset_svg,
-        selectedIcon:selected_rAsset_svg,
-        text:"rAsset", 
-        urlKeywords:'/rAsset',
-        url:"/rAsset/native"
-    },
+    // {
+    //     icon:rAsset_svg,
+    //     selectedIcon:selected_rAsset_svg,
+    //     text:"rAsset", 
+    //     urlKeywords:'/rAsset',
+    //     url:"/rAsset/native"
+    // },
     {
         icon:rETH_svg,
         selectedIcon:selected_rETH_svg,
         text:"rETH", 
         urlKeywords:'/rETH',
-        url:""
+        url:"https://rtoken.stafi.io/reth"
     },
     {
         icon:rFIS_svg,
         selectedIcon:selected_rFIS_svg,
         text:"rFIS", 
         urlKeywords:'/rFIS',
-        url:""
+        url:"https://rtoken.stafi.io/rfis"
     },
     {
         icon:rDOT_svg,
@@ -67,7 +67,11 @@ export default function Index(props:Props){
                 return <Item key={item.text} icon={item.icon} 
                 selectedIcon={item.selectedIcon} text={item.text} 
                 selected={location.pathname.includes(item.urlKeywords)} onClick={()=>{
-                    props.history.push(item.url)
+                    if(item.url.includes("https:")){
+                        location.href=item.url;
+                    }else{
+                        props.history.push(item.url)
+                    }
                 }}/>
             })} 
         </div>

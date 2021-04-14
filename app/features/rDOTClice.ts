@@ -20,6 +20,7 @@ import { bound, fisUnbond,getTotalUnbonding,rTokenSeries_bondStates } from './FI
 import {stafi_uuid} from '@util/common'
 import {addNoticeModal,noticesubType,noticeStatus,noticeType} from './noticeClice';
 import { u8aToHex } from '@polkadot/util' 
+import moment from 'moment'
  
 
 
@@ -445,10 +446,12 @@ export const continueProcess = (): AppThunk => async (dispatch, getState) => {
     }
     dispatch(rTokenSeries_bondStates(rSymbol.Dot, bondSuccessParamArr,statusObj,(e:string)=>{
       if(e=="successful"){
-        dispatch(setStakeHash(null));
+        message.success("minting succeeded",3,()=>{ 
+          dispatch(setStakeHash(null));
+        });  
       }else{
         dispatch(getBlock(stakeHash.blockHash, stakeHash.txHash,stakeHash.notice_uuid))
-      }
+      } 
     }));
   }
 }
@@ -701,7 +704,7 @@ const add_DOT_stake_Notice=(uuid:string,amount:string,status:string,subData?:any
   },10);
 }
 const add_DOT_unbond_Notice=(uuid:string,amount:string,status:string,subData?:any):AppThunk=>async (dispatch,getState)=>{
-  dispatch(add_DOT_Notice(uuid,noticeType.Staker,noticesubType.Unbond,`Unbond ${amount} DOT from Pool Contract`,status,subData))
+  dispatch(add_DOT_Notice(uuid,noticeType.Staker,noticesubType.Unbond,`Unbond ${amount} DOT from Pool Contract, it will be completed around ${moment().add(29, 'days').format("MM.DD")}`,status,subData))
 }
 const add_DOT_Withdraw_Notice=(uuid:string,amount:string,status:string,subData?:any):AppThunk=>async (dispatch,getState)=>{
   dispatch(add_DOT_Notice(uuid,noticeType.Staker,noticesubType.Withdraw,`Withdraw ${amount} FIS from contracts to wallet`,status,subData))

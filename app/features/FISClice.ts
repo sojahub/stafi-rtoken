@@ -524,7 +524,15 @@ export const getMinting = (type: number, txHash: string, blockHash: string, cb?:
   let statusObj={
     num:0
   }
-  dispatch(rTokenSeries_bondStates(type, bondSuccessParamArr,statusObj,cb));
+  dispatch(rTokenSeries_bondStates(type, bondSuccessParamArr,statusObj,(e:any)=>{
+    if(e=="successful"){
+      message.success("minting succeeded",3,()=>{ 
+        cb && cb(e);
+      }); 
+    }else{
+      cb && cb(e);
+    }
+  }));
 } 
 
 export const rTokenSeries_bondStates=(type: number, bondSuccessParamArr:any,statusObj:any,cb?:Function): AppThunk => async (dispatch, getState)=>{
@@ -536,9 +544,8 @@ export const rTokenSeries_bondStates=(type: number, bondSuccessParamArr:any,stat
     dispatch(setProcessMinting({
       brocasting: processStatus.success
     }));
-    message.success("minting succeeded",3,()=>{ 
-      cb && cb("successful");
-    }); 
+    
+    cb && cb("successful");
   } else if (bondState == "Fail") { 
     dispatch(setProcessMinting({
       brocasting: processStatus.failure

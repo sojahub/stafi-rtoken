@@ -22,12 +22,12 @@ export default function Inde(props:any){
   return <HomeCard 
       title={<><label>Liquify</label> Your Staking DOT</>}
       subTitle={"Staking via StaFi Staking Contract and get rDOT in return"}
-      btnText="Connect to Polkadotjs extension"
+      btnText="coming soon"
       btnIcon={rDOT_svg}
       onBtnClick={()=>{  
-        dispatch(connectPolkadot(()=>{
-          props.history.push("/rDOT/wallet")
-        })) 
+        // dispatch(connectPolkadot(()=>{
+        //   props.history.push("/rDOT/wallet")
+        // })) 
       }}
       onIntroClick={()=>{
 
