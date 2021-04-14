@@ -93,13 +93,14 @@ const noticeClice = createSlice({
 export const {addNoticeModal,readNotice}=noticeClice.actions
 
 
-export const add_Notice=(uuid:string,rSymbol:string,type:string,subType:string,content:string,status:string,subData?:any):AppThunk=>async (dispatch,getState)=>{
+export const add_Notice=(uuid:string,rSymbol:string,type:string,subType:string,amount:string,status:string,subData?:any):AppThunk=>async (dispatch,getState)=>{
   dispatch(addNoticeModal({
     uuid:uuid,   //信息唯一标识
     title:subType,   
     type:type,
     subType:subType,
-    content:content,
+    // content:content,
+    amount:amount,
     dateTime:moment().format(formatStr),
     status:status,
     rSymbol:rSymbol,
@@ -194,4 +195,17 @@ export const findUuid=(datas:any,txHash:string,blockHash:string)=>{
   return null;
 }
  
+
+export const notice_text=(item:any)=>{
+  if(item.subType==noticesubType.Stake){
+    return `Staked ${item.amount} ${item.rSymbol.toUpperCase()} from your Wallet to StaFi Validator Pool Contract`
+  }else if(item.subType==noticesubType.Unbond){
+    return `Unbond ${item.amount} ${item.rSymbol.toUpperCase()} from Pool Contract, it will be completed around ${moment(item.dateTime).add(8, 'days').format("MM.DD")}`
+  }else if(item.subType==noticesubType.Withdraw){
+    return `Withdraw ${item.amount} ${item.rSymbol.toUpperCase()} from contracts to wallet`
+  }else if(item.subType==noticesubType.Swap){
+    return `Swap ${item.amount} Native ${item.rSymbol.toUpperCase()} to ERC20`
+  }
+  return "";
+}
 export default noticeClice.reducer

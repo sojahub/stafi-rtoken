@@ -698,22 +698,23 @@ export const rTokenLedger=():AppThunk=>async (dispatch, getState)=>{
  
 const add_DOT_stake_Notice=(uuid:string,amount:string,status:string,subData?:any):AppThunk=>async (dispatch,getState)=>{
   setTimeout(()=>{
-    dispatch(add_DOT_Notice(uuid,noticeType.Staker,noticesubType.Stake,`Staked ${amount} DOT from your Wallet to StaFi Validator Pool Contract`,status,{
+    dispatch(add_DOT_Notice(uuid,noticeType.Staker,noticesubType.Stake,amount,status,{
     process:getState().globalModule.process,
     processParameter:getState().rDOTModule.processParameter}))
   },10);
 }
 const add_DOT_unbond_Notice=(uuid:string,amount:string,status:string,subData?:any):AppThunk=>async (dispatch,getState)=>{
-  dispatch(add_DOT_Notice(uuid,noticeType.Staker,noticesubType.Unbond,`Unbond ${amount} DOT from Pool Contract, it will be completed around ${moment().add(29, 'days').format("MM.DD")}`,status,subData))
+  dispatch(add_DOT_Notice(uuid,noticeType.Staker,noticesubType.Unbond,amount,status,subData))
 }
 const add_DOT_Withdraw_Notice=(uuid:string,amount:string,status:string,subData?:any):AppThunk=>async (dispatch,getState)=>{
-  dispatch(add_DOT_Notice(uuid,noticeType.Staker,noticesubType.Withdraw,`Withdraw ${amount} FIS from contracts to wallet`,status,subData))
+  dispatch(add_DOT_Notice(uuid,noticeType.Staker,noticesubType.Withdraw,amount,status,subData))
 }
 const add_DOT_Swap_Notice=(uuid:string,amount:string,status:string,subData?:any):AppThunk=>async (dispatch,getState)=>{
-  dispatch(add_DOT_Notice(uuid,noticeType.Staker,noticesubType.Swap,`Swap ${amount} Native FIS to ERC20`,status,subData))
+  dispatch(add_DOT_Notice(uuid,noticeType.Staker,noticesubType.Swap,amount,status,subData))
 }
 const add_DOT_Notice=(uuid:string,type:string,subType:string,content:string,status:string,subData?:any):AppThunk=>async (dispatch,getState)=>{
     dispatch(add_Notice(uuid,Symbol.Dot,type,subType,content,status,subData))
 }
+
 
 export default rDOTClice.reducer;

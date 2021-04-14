@@ -1,7 +1,6 @@
 import React from 'react';
 import {Empty} from 'antd'; 
-import { noticesubType } from '@features/noticeClice'
-
+import { noticesubType,notice_text } from '@features/noticeClice'; 
 type Props={ 
   data?:any,
   onClick?:Function,
@@ -18,7 +17,8 @@ export default function Index(props:Props){
    {props.data.title}
   </div>
   <div className="context">
-  {props.data.content}
+  {/* {props.data.content} */}
+  {notice_text(props.data)}
   </div>
   <div className="footer">
     <div>
