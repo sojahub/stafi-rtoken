@@ -16,9 +16,9 @@ export default function Inde(props:any){
       return false
     }
   })
-  if(hasAcount){
-    return <Redirect to="/rDOT/type" />
-  }
+  // if(hasAcount){
+  //   return <Redirect to="/rDOT/type" />
+  // }
   return <HomeCard 
       title={<><label>Liquify</label> Your Staking DOT</>}
       subTitle={"Staking via StaFi Staking Contract and get rDOT in return"}

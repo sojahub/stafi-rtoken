@@ -211,7 +211,7 @@ const routesFactory=(role?:any)=>{
       }]
     },{
       path: '*',
-      component: () => <Redirect to="/rDOT/home"/>
+      component: () => <Redirect to="/rKSM/home"/>
     }
     
   ]
