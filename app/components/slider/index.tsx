@@ -65,13 +65,11 @@ export default function Index(props:Props){
         <div className="stafi_left_sider">
             {siderData.map((item,i)=>{
                 return <Item key={item.text} icon={item.icon} 
-                selectedIcon={item.selectedIcon} text={item.text} 
+                selectedIcon={item.selectedIcon} 
+                text={item.text} 
+                url={item.url}
                 selected={location.pathname.includes(item.urlKeywords)} onClick={()=>{
-                    if(item.url.includes("https:")){
-                        location.href=item.url;
-                    }else{
-                        props.history.push(item.url)
-                    }
+                   props.history.push(item.url) 
                 }}/>
             })} 
         </div>
