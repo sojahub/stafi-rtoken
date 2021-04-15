@@ -40,7 +40,6 @@ const rDOTClice = createSlice({
     unbondCommission:"--",
     bondFees:"--",
     unBondFees:"--",
-    estimateTxFees : 30000000000, 
     totalRDot:"--",
     stakerApr:"--",
     totalUnbonding:null,

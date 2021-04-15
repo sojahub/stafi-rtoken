@@ -20,7 +20,7 @@ export default function Index(props:any){
     dispatch(rTokenLedger())
   },[])
   const {transferrableAmount,ratio,stafiStakerApr,fisCompare,validPools,totalRDot,bondFees}=useSelector((state:any)=>{ 
-    const fisCompare= state.FISModule.fisAccount.balance < (NumberUtil.fisAmountToHuman(state.rDOTModule.bondFees) + NumberUtil.fisAmountToHuman(state.rDOTModule.estimateTxFees));
+    const fisCompare = NumberUtil.fisAmountToChain(state.FISModule.fisAccount.balance) < (state.rDOTModule.bondFees + state.FISModule.estimateBondTxFees);
     return {
       transferrableAmount:state.rDOTModule.transferrableAmountShow,
       ratio:state.FISModule.ratio,
@@ -48,13 +48,9 @@ export default function Index(props:any){
   validPools={validPools} 
   totalStakedToken={ NumberUtil.handleFisAmountToFixed((totalRDot*ratio)) || "--"}
   onStakeClick={()=>{
-    if(fisCompare){
-      message.error("Insufficient FIS balance.");
-      return;
-    }
-   
-    if(amount){ 
-      if(amount <= (NumberUtil.fisAmountToHuman(bondFees)+0.01)){
+    
+    if (amount) {
+      if(fisCompare){
         message.error("No enough FIS to pay for the fee");
         return;
       }

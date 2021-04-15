@@ -37,11 +37,8 @@ const rKSMClice = createSlice({
     processParameter: null,
     stakeHash: getLocalStorageItem(Keys.KsmStakeHash),
     unbondCommission:"--",
-
     bondFees:"--",
     unBondFees:"--",
-    estimateTxFees : 30000000000, 
-
     totalRDot:"--",
     stakerApr:"--",
 

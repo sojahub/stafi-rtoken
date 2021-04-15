@@ -89,7 +89,7 @@ export default function Index(props:any){
       setVisible(false)
     }}
     onOk={()=>{
-      if(amount <= (NumberUtil.fisAmountToHuman(unBondFees)+0.01)){
+      if(NumberUtil.fisAmountToChain(amount) <= (unBondFees + 10000000000)){
         message.error("No enough FIS to pay for the fee");
         return;
       }

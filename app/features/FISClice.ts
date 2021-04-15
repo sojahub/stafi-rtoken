@@ -35,8 +35,9 @@ const FISClice = createSlice({
     ratio: "--",
     ratioShow: "--",
     tokenAmount: "--",
-
-    bondSwitch:true
+    estimateBondTxFees: 10000000000,
+    estimateUnBondTxFees: 10000000000,
+    bondSwitch: true
   },
   reducers: {
     setFisAccounts(state, { payload }) {
