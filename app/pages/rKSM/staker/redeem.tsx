@@ -72,6 +72,10 @@ export default function Index(props:any){
     }}
     onRdeemClick={()=>{ 
       if(checkAddress(recipient)){
+        if(amount <= (NumberUtil.fisAmountToHuman(unBondFees)+0.01)){
+          message.error("No enough FIS to pay for the fee");
+          return;
+        }
         setVisible(true);
       }else{
         message.error("address input error");

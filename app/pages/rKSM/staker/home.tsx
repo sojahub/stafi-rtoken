@@ -13,7 +13,7 @@ export default function Index(props:any){
 
  const dispatch=useDispatch();
  
-  const [amount,setAmount]=useState(); 
+  const [amount,setAmount]=useState<any>(); 
   useEffect(()=>{
     dispatch(balancesAll());
     dispatch(rTokenRate(rSymbol.Ksm));
@@ -53,7 +53,11 @@ export default function Index(props:any){
       message.error("Insufficient FIS balance.");
       return;
     }
-    if(amount){
+    if(amount){ 
+      if(amount <= (NumberUtil.fisAmountToHuman(bondFees)+0.01)){
+        message.error("No enough FIS to pay for the fee");
+        return;
+      }
       dispatch(transfer(amount,()=>{
         dispatch(setProcessSlider(false));
         props.history.push("/rKSM/staker/info")
