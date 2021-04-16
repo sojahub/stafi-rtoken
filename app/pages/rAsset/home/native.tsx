@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react'; 
 import {useDispatch,useSelector} from 'react-redux'; 
 import Button from '@shared/components/button/connect_button';
-import DataList from './components/list'
+import DataList from './components/list';
+import DataItem from './components/list/item'
 import Tag from './components/carTag/index';
 import CountAmount from './components/countAmount'
 import rDOT_svg from '@images/rDOT.svg'
@@ -9,25 +10,61 @@ import Content from '@shared/components/content';
 import Modal from '@shared/components/modal/connectModal';
 import Page_FIS from '../../rDOT/selectWallet_rFIS/index';
 import {connectPolkadotjs,reloadData} from '@features/globalClice';
-import {Symbol} from '@keyring/defaults'
+import {rTokenRate as ksm_rTokenRate,query_rBalances_account,getWillAmount,getUnbondCommission} from '@features/rKSMClice';
+import {rTokenRate as fis_rTokenRate,query_rBalances_account as fis_query_rBalances_account,getUnbondCommission as fis_getUnbondCommission,getWillAmount as fis_getWillAmount} from '@features/FISClice';
+import {Symbol,rSymbol} from '@keyring/defaults';
+import NumberUtil from '@util/numberUtil'
+import rFIS_svg from '@images/rFIS.svg';
+import rKSM_svg from '@images/rKSM.svg';
+
 import './page.scss'
 export default function Index(props:any){ 
   const dispatch=useDispatch();
-  const {fisAccount}=useSelector((state:any)=>{ 
+  const {fisAccount,tokenAmount,ksmWillAmount,fis_tokenAmount,fisWillAmount}=useSelector((state:any)=>{ 
+    
     return {
-      fisAccount:state.FISModule.fisAccount
+      fisAccount:state.FISModule.fisAccount,
+      tokenAmount:state.rKSMModule.tokenAmount,
+      ksmWillAmount:getWillAmount(state,state.rKSMModule.tokenAmount),
+      fis_tokenAmount:state.FISModule.tokenAmount,
+      fisWillAmount:fis_getWillAmount(state,state.FISModule.tokenAmount)
     }
   }) 
   const [visible,setVisible]=useState(false);
   useEffect(()=>{
-    dispatch(reloadData(Symbol.Fis)); 
+    dispatch(reloadData(Symbol.Fis));  
   },[])
+  useEffect(()=>{
+    dispatch(query_rBalances_account());
+    dispatch(fis_query_rBalances_account());
+    dispatch(ksm_rTokenRate());
+    dispatch(fis_rTokenRate() );
+    dispatch(getUnbondCommission());
+    dispatch(fis_getUnbondCommission());
+  },[fisAccount])
   return  <Content>
     <Tag type="native" onClick={()=>{
       props.history.push("/rAsset/erc")
     }}/>
  
-    {fisAccount?<><DataList /><CountAmount /> </>:<div className="rAsset_content">
+    {fisAccount?<><DataList >
+        <DataItem 
+          rSymbol="rFIS"
+          icon={rFIS_svg}
+          fullName="StaFi" 
+          balance={fis_tokenAmount=="--" ?"--":NumberUtil.handleFisAmountToFixed(fis_tokenAmount)}
+          willGetBalance={fisWillAmount}
+          unit="FIS"
+        />
+        <DataItem 
+          rSymbol="rKSM"
+          icon={rKSM_svg}
+          fullName="Kusama"
+          balance={tokenAmount=="--" ?"--":NumberUtil.handleFisAmountToFixed(tokenAmount)}
+          willGetBalance={ksmWillAmount}
+          unit="KSM"
+        />
+      </DataList><CountAmount /> </>:<div className="rAsset_content">
       <Button icon={rDOT_svg} onClick={()=>{
            dispatch(connectPolkadotjs(Symbol.Fis)); 
           setVisible(true)

@@ -5,7 +5,8 @@ import Stafi from '@servers/stafi/index';
 import { message as M, message } from 'antd';
 import keyring from '@servers/index';
 import moment from 'moment';
-import { setLocalStorageItem, getLocalStorageItem, removeLocalStorageItem, Keys } from '@util/common'
+import { setLocalStorageItem, getLocalStorageItem, removeLocalStorageItem, Keys } from '@util/common';
+import ethServer from '@servers/eth/index'
 
 import {rSymbol,Symbol} from '@keyring/defaults'
 import {
@@ -33,6 +34,7 @@ const rKSMClice = createSlice({
     poolLimit: 0,
     transferrableAmountShow: "--",
     ratio: "--",
+    ratioShow: "--",
     tokenAmount: "--",
     processParameter: null,
     stakeHash: getLocalStorageItem(Keys.KsmStakeHash),
@@ -42,7 +44,8 @@ const rKSMClice = createSlice({
     totalRDot:"--",
     stakerApr:"--",
 
-
+    
+    ercBalance:"--",
     totalUnbonding:null
   },
   reducers: {
@@ -69,6 +72,9 @@ const rKSMClice = createSlice({
     },
     setRatio(state, { payload }) {
       state.ratio = payload;
+    },
+    setRatioShow(state,{payload}){
+      state.ratioShow=payload
     },
     setTokenAmount(state, { payload }) {
       state.tokenAmount = payload
@@ -120,6 +126,9 @@ const rKSMClice = createSlice({
     },
     setUnBondFees(state,{payload}){
       state.unBondFees=payload
+    },
+    setErcBalance(state,{payload}){
+      state.ercBalance=payload
     }
   },
 });
@@ -139,7 +148,9 @@ export const { setKsmAccounts,
   setTotalRDot,
   setStakerApr,
   setTotalUnbonding,
-  setUnBondFees
+  setUnBondFees,
+  setRatioShow,
+  setErcBalance
 } = rKSMClice.actions;
 
 
@@ -351,14 +362,16 @@ export const balancesAll = (): AppThunk => async (dispatch, getState) => {
 
 
 export const query_rBalances_account = (): AppThunk => async (dispatch, getState) => {
-  const address = getState().FISModule.fisAccount.address;
-  const stafiApi = await stafiServer.createStafiApi();
-  const accountData = await stafiApi.query.rBalances.account(rSymbol.Ksm, address);
-  let data = accountData.toJSON();
-  if (data == null) {
-    dispatch(setTokenAmount(NumberUtil.handleFisAmountToFixed(0)))
-  } else {
-    dispatch(setTokenAmount(NumberUtil.fisAmountToHuman(data.free)))
+  if(getState().FISModule.fisAccount && getState().FISModule.fisAccount.address){
+    const address = getState().FISModule.fisAccount.address;
+    const stafiApi = await stafiServer.createStafiApi();
+    const accountData = await stafiApi.query.rBalances.account(rSymbol.Ksm, address);
+    let data = accountData.toJSON();
+    if (data == null) {
+      dispatch(setTokenAmount(NumberUtil.handleFisAmountToFixed(0)))
+    } else {
+      dispatch(setTokenAmount(NumberUtil.fisAmountToHuman(data.free)))
+    }
   }
 }
 
@@ -373,8 +386,7 @@ export const reSending = (cb?: Function): AppThunk => async (dispatch, getState)
 }
 
 export const reStaking = (cb?: Function): AppThunk => async (dispatch, getState) => { 
-  const processParameter = getState().rKSMModule.processParameter
-  console.log(processParameter,"====processParameter")
+  const processParameter = getState().rKSMModule.processParameter 
   if (processParameter) {
     const staking = processParameter.staking
     const href = processParameter.href
@@ -647,7 +659,6 @@ export const getUnbondCommission=():AppThunk=>async (dispatch, getState)=>{
   const stafiApi = await stafiServer.createStafiApi();
   const result=await stafiApi.query.rTokenSeries.unbondCommission();
   const unbondCommission = NumberUtil.fisFeeToHuman(result.toJSON());
- 
   dispatch(setUnbondCommission(unbondCommission));
   //const unbondCommissionShow = NumberUtil.fisFeeToFixed(this.unbondCommission) + '%';
 }
@@ -710,7 +721,45 @@ const add_KSM_stake_Notice=(uuid:string,amount:string,status:string,subData?:any
     processParameter:getState().rKSMModule.processParameter}))
   },20);
 }
- 
+
+
+export const getWillAmount=(state:any,amounts:any)=>{ 
+  let willAmount:any=0;
+  let ratio=state.rKSMModule.ratio; 
+  let unbondCommission = state.rKSMModule.unbondCommission;
+  if(amounts=="--" || ratio=="--" || unbondCommission=="--"){
+    return "--"
+  }
+  const amount:any = NumberUtil.handleFisAmountToFixed(amounts);
+  if (ratio && amount) {
+    let returnValue = amount * (1 - unbondCommission); 
+    willAmount = NumberUtil.handleFisAmountToFixed(returnValue * ratio);;
+  } 
+  return willAmount;
+}
+export const rTokenRate = (): AppThunk => async (dispatch, getState) => {
+  const api = await stafiServer.createStafiApi();
+  const result = await api.query.rTokenRate.rate(rSymbol.Ksm);
+  let ratio = NumberUtil.fisAmountToHuman(result.toJSON());
+  if (!ratio) {
+    ratio = 1;
+  }
+  dispatch(setRatio(ratio))
+  let count = 0;
+  let totalCount = 10;
+  let ratioAmount = 0;
+  let piece = ratio / totalCount;
+
+  let interval = setInterval(() => {
+    count++;
+    ratioAmount += piece;
+    if (count == totalCount) {
+      ratioAmount = ratio;
+      window.clearInterval(interval);
+    }
+    dispatch(setRatioShow(NumberUtil.handleFisAmountRateToFixed(ratioAmount)))
+  }, 100);
+}
 const add_KSM_unbond_Notice=(uuid:string,amount:string,status:string,subData?:any):AppThunk=>async (dispatch,getState)=>{
   
   dispatch(add_KSM_Notice(uuid,noticeType.Staker,noticesubType.Unbond,amount,status,subData))
@@ -727,4 +776,26 @@ const add_KSM_Notice=(uuid:string,type:string,subType:string,content:string,stat
   
 }
 
+
+export const getAssetBalance=():AppThunk=>(dispatch,getState)=>{  
+  if(getState().rETHModule.ethAccount){
+    let web3=ethServer.getWeb3();
+    const address=getState().rETHModule.ethAccount.address; 
+    let rFISContract = new web3.eth.Contract(polkadotServer.getRKSMTokenAbi(), polkadotServer.getRKSMTokenAddress(), {
+      from: address
+    }); 
+    try{
+      rFISContract.methods.balanceOf(address).call().then((balance:any) => {
+
+        let rFISBalance = web3.utils.fromWei(balance, 'ether'); 
+        console.log(rFISBalance,"======rFISBalance")
+        dispatch(setErcBalance(rFISBalance))
+      }).catch((e:any)=>{
+        console.error(e)
+      });
+    }catch(e:any){
+      console.error(e)
+    }
+  }
+}
 export default rKSMClice.reducer;

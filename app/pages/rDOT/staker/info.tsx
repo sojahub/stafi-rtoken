@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'; 
 import {useSelector,useDispatch} from 'react-redux'; 
-import { rTokenRate } from '@features/FISClice';
+import { rTokenRate } from '@features/rDOTClice';
 import {query_rBalances_account,accountUnbonds} from '@features/rDOTClice'
 import {rSymbol} from '@keyring/defaults'
 import Content from '@components/content/stakeInfoContent'; 
@@ -11,16 +11,16 @@ export default function Index(props:any){
   const dispatch=useDispatch();
   useEffect(()=>{ 
     dispatch(query_rBalances_account())
-    dispatch(rTokenRate(rSymbol.Dot));
+    dispatch(rTokenRate());
     dispatch(accountUnbonds())
   },[])
  
 
   const {ratio,tokenAmount,ratioShow,totalUnbonding} = useSelector((state:any)=>{
     return {
-      ratio:state.FISModule.ratio,
+      ratio:state.rDOTModule.ratio,
       tokenAmount:state.rDOTModule.tokenAmount,
-      ratioShow:state.FISModule.ratioShow,
+      ratioShow:state.rDOTModule.ratioShow,
       totalUnbonding:state.rDOTModule.totalUnbonding
     }
   }) 

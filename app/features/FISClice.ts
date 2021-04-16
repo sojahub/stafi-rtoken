@@ -2,6 +2,7 @@ import { createSlice } from '@reduxjs/toolkit';
 import { Button, message as M, message } from 'antd';
 import { AppThunk, RootState } from '../store';
 import Stafi from '@servers/stafi/index';
+import ethServer from '@servers/eth/index'
 import {timeout} from '@util/common'
 import {
   processStatus, setProcessSlider, setProcessSending, setProcessStaking,
@@ -37,7 +38,9 @@ const FISClice = createSlice({
     tokenAmount: "--",
     estimateBondTxFees: 10000000000,
     estimateUnBondTxFees: 10000000000,
-    bondSwitch: true
+    bondSwitch: true,
+    unbondCommission:"--",
+    ercBalance:"--"
   },
   reducers: {
     setFisAccounts(state, { payload }) {
@@ -102,6 +105,12 @@ const FISClice = createSlice({
     },
     setBondSwitch(state,{payload}){
       state.bondSwitch=payload
+    },
+    setUnbondCommission(state,{payload}){
+      state.unbondCommission=payload;
+    },
+    setErcBalance(state,{payload}){
+      state.ercBalance=payload;
     }
   },
 });
@@ -118,7 +127,9 @@ export const { setTokenAmount,
   setPoolLimit,
   setProcessParameter,
   setStakeHash,
-  setBondSwitch } = FISClice.actions;
+  setBondSwitch,
+  setUnbondCommission,
+  setErcBalance } = FISClice.actions;
 
 
 export const reloadData = (): AppThunk => async (dispatch, getState) => {
@@ -127,6 +138,7 @@ export const reloadData = (): AppThunk => async (dispatch, getState) => {
     dispatch(createSubstrate(account));
   }
   // Update Transferable DOT/FIS
+  dispatch(query_rBalances_account());
   dispatch(balancesAll())
 }
 export const createSubstrate = (account: any): AppThunk => async (dispatch, getState) => { 
@@ -436,9 +448,9 @@ export const balancesAll = (): AppThunk => async (dispatch, getState) => {
 }
 
 
-export const rTokenRate = (type: number): AppThunk => async (dispatch, getState) => {
+export const rTokenRate = (): AppThunk => async (dispatch, getState) => {
   const api = await stafiServer.createStafiApi();
-  const result = await api.query.rTokenRate.rate(type);
+  const result = await api.query.rTokenRate.rate(rSymbol.Fis);
   let ratio = NumberUtil.fisAmountToHuman(result.toJSON());
   if (!ratio) {
     ratio = 1;
@@ -667,7 +679,14 @@ export const bondSwitch=():AppThunk=>async (dispatch, getState)=>{
   const result=await stafiApi.query.rTokenSeries.bondSwitch(); 
   dispatch(setBondSwitch(result.toJSON()))
 }
-
+export const getUnbondCommission=():AppThunk=>async (dispatch, getState)=>{
+  const stafiApi = await stafiServer.createStafiApi();
+  const result=await stafiApi.query.rTokenSeries.unbondCommission();
+  const unbondCommission = NumberUtil.fisFeeToHuman(result.toJSON());
+ 
+  dispatch(setUnbondCommission(unbondCommission));
+  //const unbondCommissionShow = NumberUtil.fisFeeToFixed(this.unbondCommission) + '%';
+}
 
 export const getTotalUnbonding=(rSymbol:any,cb?:Function):AppThunk=>async (dispatch, getState)=>{
   let fisAddress = getState().FISModule.fisAccount.address;
@@ -693,3 +712,42 @@ export const getTotalUnbonding=(rSymbol:any,cb?:Function):AppThunk=>async (dispa
   }
 }
 export default FISClice.reducer;
+
+
+
+export const getWillAmount=(state:any,amounts:any)=>{ 
+  let willAmount:any=0;
+  let ratio=state.FISModule.ratio; 
+  let unbondCommission = state.FISModule.unbondCommission;
+  if(amounts=="--" || ratio=="--" || unbondCommission=="--"){
+    return "--"
+  }
+  const amount:any = NumberUtil.handleFisAmountToFixed(amounts);
+  if (ratio && amount) {
+    let returnValue = amount * (1 - unbondCommission); 
+    willAmount = NumberUtil.handleFisAmountToFixed(returnValue * ratio);;
+  } 
+  return willAmount;
+}
+
+
+
+export const getAssetBalance=():AppThunk=>(dispatch,getState)=>{  
+  if(getState().rETHModule.ethAccount){
+    let web3=ethServer.getWeb3();
+    const address=getState().rETHModule.ethAccount.address; 
+    let rFISContract = new web3.eth.Contract(stafiServer.getRFISTokenAbi(), stafiServer.getRFISTokenAddress(), {
+      from: address
+    }); 
+    try{
+      rFISContract.methods.balanceOf(address).call().then((balance:any) => {
+        let rFISBalance = web3.utils.fromWei(balance, 'ether');  
+        dispatch(setErcBalance(rFISBalance))
+      }).catch((e:any)=>{
+        console.error(e)
+      });
+    }catch(e:any){
+      console.error(e)
+    }
+  }
+}

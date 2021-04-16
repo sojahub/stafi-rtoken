@@ -34,6 +34,7 @@ const rDOTClice = createSlice({
     poolLimit: 0,
     transferrableAmountShow: "--",
     ratio: "--",
+    ratioShow:"--",
     tokenAmount: "--",
     processParameter: null,
     stakeHash: getLocalStorageItem(Keys.DotStakeHash),
@@ -68,6 +69,9 @@ const rDOTClice = createSlice({
     },
     setRatio(state, { payload }) {
       state.ratio = payload;
+    },
+    setRatioShow(state,{payload}){
+      state.ratioShow = payload;
     },
     setTokenAmount(state, { payload }) {
       state.tokenAmount = payload
@@ -138,7 +142,8 @@ export const { setDotAccounts,
   setTotalRDot,
   setStakerApr,
   setTotalUnbonding,
-  setUnBondFees
+  setUnBondFees,
+  setRatioShow
 } = rDOTClice.actions;
 
 
@@ -693,8 +698,43 @@ export const rTokenLedger=():AppThunk=>async (dispatch, getState)=>{
         dispatch(setTotalUnbonding(total));
       }))
   }
-
- 
+  export const rTokenRate = (): AppThunk => async (dispatch, getState) => {
+    const api = await stafiServer.createStafiApi();
+    const result = await api.query.rTokenRate.rate(rSymbol.Dot);
+    let ratio = NumberUtil.fisAmountToHuman(result.toJSON());
+    if (!ratio) {
+      ratio = 1;
+    }
+    dispatch(setRatio(ratio))
+    let count = 0;
+    let totalCount = 10;
+    let ratioAmount = 0;
+    let piece = ratio / totalCount;
+  
+    let interval = setInterval(() => {
+      count++;
+      ratioAmount += piece;
+      if (count == totalCount) {
+        ratioAmount = ratio;
+        window.clearInterval(interval);
+      }
+      dispatch(setRatioShow(NumberUtil.handleFisAmountRateToFixed(ratioAmount)))
+    }, 100);
+  }
+  export const getWillAmount=(state:any,amounts:any)=>{ 
+    let willAmount:any=0;
+    let ratio=state.rDOTModule.ratio; 
+    let unbondCommission = state.rDOTModule.unbondCommission;
+    if(amounts=="--" || ratio=="--" || unbondCommission=="--"){
+      return "--"
+    }
+    const amount:any = NumberUtil.handleFisAmountToFixed(amounts);
+    if (ratio && amount) {
+      let returnValue = amount * (1 - unbondCommission); 
+      willAmount = NumberUtil.handleFisAmountToFixed(returnValue * ratio);;
+    } 
+    return willAmount;
+  }
 const add_DOT_stake_Notice=(uuid:string,amount:string,status:string,subData?:any):AppThunk=>async (dispatch,getState)=>{
   setTimeout(()=>{
     dispatch(add_DOT_Notice(uuid,noticeType.Staker,noticesubType.Stake,amount,status,{

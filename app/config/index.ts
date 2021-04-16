@@ -41,6 +41,13 @@ export default {
     }else{
       return '0xc372e985fda306cfe0e903657de808cf757f536f';
     }  
+  },
+  rKSMTokenAddress:()=>{
+    if(process.env.NODE_ENV=="production" &&  !isdev()){
+      return '0xd1d458c1c3579033a65db4ca2f06c12573aa5e27';
+    }else{
+      return '0xd1d458c1c3579033a65db4ca2f06c12573aa5e27';
+    }  
   }
 } 
  

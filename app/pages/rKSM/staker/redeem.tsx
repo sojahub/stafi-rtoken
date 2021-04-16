@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from 'react'; 
 import {message,Spin} from 'antd';
 import {useSelector} from 'react-redux';
-import Content from '@components/content/redeemContent'; 
-import { rTokenRate } from '@features/FISClice';
+import Content from '@components/content/redeemContent';  
 import {rSymbol} from '@keyring/defaults'
-import {unbond,getUnbondCommission,query_rBalances_account,checkAddress,unbondFees} from '@features/rKSMClice';
+import {rTokenRate,unbond,getUnbondCommission,query_rBalances_account,checkAddress,unbondFees} from '@features/rKSMClice';
 import {useDispatch} from 'react-redux';
 import UnbondModal from '@components/modal/unbondModal'
 import NumberUtil from '@util/numberUtil'
@@ -19,7 +18,7 @@ export default function Index(props:any){
   const {tokenAmount,unbondCommission,ratio,fisFee,address,unBondFees,willAmount,estimateUnBondTxFees} = useSelector((state:any)=>{ 
     let unbondCommission:any=0;
     let willAmount:any=0;
-    let ratio=state.FISModule.ratio;
+    let ratio=state.rKSMModule.ratio;
     let tokenAmount=state.rKSMModule.tokenAmount; 
      
     if (ratio && state.rKSMModule.unbondCommission && amount) {
@@ -44,7 +43,7 @@ export default function Index(props:any){
   useEffect(()=>{
     dispatch(query_rBalances_account())
     dispatch(getUnbondCommission());
-    dispatch(rTokenRate(rSymbol.Ksm));
+    dispatch(rTokenRate());
     dispatch(unbondFees())
     return ()=>{
       dispatch(setLoading(false))

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import {useDispatch,useSelector} from 'react-redux';
 import Content from '@components/content/stakeContent_DOT'; 
 import {transfer,balancesAll,rTokenLedger} from '@features/rKSMClice'; 
-import { rTokenRate } from '@features/FISClice';
+import { rTokenRate } from '@features/rKSMClice';
 import {ratioToAmount} from '@util/common'
 import { message } from 'antd';
 import NumberUtil from '@util/numberUtil';
@@ -16,14 +16,14 @@ export default function Index(props:any){
   const [amount,setAmount]=useState<any>(); 
   useEffect(()=>{
     dispatch(balancesAll());
-    dispatch(rTokenRate(rSymbol.Ksm));
+    dispatch(rTokenRate());
     dispatch(rTokenLedger())
   },[])
   const {transferrableAmount,ratio,stafiStakerApr,fisCompare,validPools,totalRDot,bondFees}=useSelector((state:any)=>{ 
     const fisCompare = NumberUtil.fisAmountToChain(state.FISModule.fisAccount.balance) < state.rKSMModule.bondFees + state.FISModule.estimateBondTxFees;
     return {
       transferrableAmount:state.rKSMModule.transferrableAmountShow,
-      ratio:state.FISModule.ratio,
+      ratio:state.rKSM.ratio,
       stafiStakerApr:state.rKSMModule.stakerApr,
       fisCompare:fisCompare,
       validPools:state.rKSMModule.validPools,

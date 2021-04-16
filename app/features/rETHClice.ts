@@ -12,7 +12,8 @@ import { message } from 'antd';
 const rETHClice = createSlice({
   name: 'rETHModule',
   initialState: {  
-    ethAccount:getLocalStorageItem(Keys.MetamaskAccountKey)
+    ethAccount:getLocalStorageItem(Keys.MetamaskAccountKey),
+    erc20Balance:"--"
   },
   reducers: {  
      setEthAccount(state,{payload}){
@@ -23,11 +24,14 @@ const rETHClice = createSlice({
           state.ethAccount=payload;
           setLocalStorageItem(Keys.MetamaskAccountKey, {address:payload.address})
        }
+     },
+     setErc20Balance(state,{payload}){
+       state.erc20Balance=payload
      }
   },
 });
 
-export const {setEthAccount}=rETHClice.actions
+export const {setEthAccount,setErc20Balance}=rETHClice.actions
 
 declare const window: any;
 declare const ethereum: any;
@@ -128,15 +132,14 @@ export const getAssetBalance=():AppThunk=>(dispatch,getState)=>{
   console.log(getState().rETHModule.ethAccount,"=====")
   if(getState().rETHModule.ethAccount){
     let web3=ethServer.getWeb3();
-    const address=getState().rETHModule.ethAccount.address;
-    console.log(address,"======addressaddressaddress")
+    const address=getState().rETHModule.ethAccount.address; 
     let rFISContract = new web3.eth.Contract(ethServer.getRFISTokenAbi(), ethServer.getRFISTokenAddress(), {
       from: address
     });
     try{
       rFISContract.methods.balanceOf(address).call().then((balance:any) => {
-        let rFISBalance = web3.utils.fromWei(balance, 'ether');
-        console.log(rFISBalance,"====rFISBalancerFISBalancerFISBalancerFISBalancerFISBalance")
+        let rFISBalance = web3.utils.fromWei(balance, 'ether'); 
+        dispatch(setErc20Balance(rFISBalance))
       }).catch((e:any)=>{
         console.error(e)
       });
