@@ -40,6 +40,14 @@ export default class Index extends SubstrateKeyring{
           'RATOM'
         ]
       },
+      AccountXData: {
+        free: 'u128'
+      },
+      XSymbol: {
+        _enum: [
+          'WRA',
+        ]
+      },
       ProposalStatus: {
         _enum: [
           'Active',
