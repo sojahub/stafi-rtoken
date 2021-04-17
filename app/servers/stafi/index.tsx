@@ -40,6 +40,14 @@ export default class Index extends SubstrateKeyring{
           'RATOM'
         ]
       },
+      AccountXData: {
+        free: 'u128'
+      },
+      XSymbol: {
+        _enum: [
+          'WRA',
+        ]
+      },
       ProposalStatus: {
         _enum: [
           'Active',
@@ -52,10 +60,6 @@ export default class Index extends SubstrateKeyring{
         voted: 'Vec<AccountId>',
         status: 'ProposalStatus',
         expiry: 'BlockNumber'
-      },
-      BondKey: {
-        symbol: 'RSymbol',
-        bond_id: 'H256'
       },
       BondRecord: {
         bonder: 'AccountId',

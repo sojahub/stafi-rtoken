@@ -15,7 +15,9 @@ export default function Index(props:Props){
   className="stafi_swap_modal"
   closable={false}
   footer={<div>
-    <a>
+    <a onClick={()=>{
+        props.onOk && props.onOk();
+    }}>
       Swap
     </a>
     <a>

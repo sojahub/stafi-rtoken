@@ -1,4 +1,5 @@
 import React, { useState } from 'react'; 
+import {message} from 'antd';
 import LeftContent from './leftContent'  
 import rDOT_stafi_svg from '@images/rDOT_stafi.png';
 import rKSM_stafi_svg from '@images/rKSM_stafi.png'
@@ -66,6 +67,8 @@ export default function Index(props:Props){
       </div>
       <Modal type={props.type} visible={visibleModal} onCancel={()=>{
         setVisibleModal(false)
+      }} onOk={()=>{
+        message.info("Swap will be available soon");
       }}/>
     </LeftContent>
 }
