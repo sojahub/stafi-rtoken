@@ -27,5 +27,17 @@
   .tag_active{
     background: #343c44;
     color:#00F3AB;
+    position: relative;
+  }
+  .tag_active::after{ 
+    content: "";
+    display: block;
+    position: absolute;
+    height: 1px;
+    width: 100px;
+    bottom: 0px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #00F3AB;
   }
 }
