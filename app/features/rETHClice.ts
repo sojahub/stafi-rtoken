@@ -4,16 +4,18 @@ import { AppThunk, RootState } from '../store';
 import { setLocalStorageItem, getLocalStorageItem, removeLocalStorageItem, Keys } from '@util/common';
 import NumberUtil from '@util/numberUtil';
 import Web3Utils from 'web3-utils';
-import ethServer from '@servers/eth/index';
+import EthServer from '@servers/eth/index';
+import CommonClice from './commonClice';
 import { message } from 'antd';
 
  
-// const ethserver=new EthServer();
+const commonClice=new CommonClice();
+const ethServer=new EthServer();
 const rETHClice = createSlice({
   name: 'rETHModule',
   initialState: {  
     ethAccount:getLocalStorageItem(Keys.MetamaskAccountKey),
-    erc20Balance:"--"
+    ercBalance:"--"
   },
   reducers: {  
      setEthAccount(state,{payload}){
@@ -25,13 +27,13 @@ const rETHClice = createSlice({
           setLocalStorageItem(Keys.MetamaskAccountKey, {address:payload.address})
        }
      },
-     setErc20Balance(state,{payload}){
-       state.erc20Balance=payload
+     setErcBalance(state,{payload}){
+       state.ercBalance=payload
      }
   },
 });
 
-export const {setEthAccount,setErc20Balance}=rETHClice.actions
+export const {setEthAccount,setErcBalance}=rETHClice.actions
 
 declare const window: any;
 declare const ethereum: any;
@@ -54,7 +56,7 @@ export const connectMetamask=():AppThunk=>async (dispatch,getState)=> {
       ethereum.request({ method: 'eth_requestAccounts' }).then((accounts:any) => { 
         dispatch(handleEthAccount(accounts[0]))
       }).catch((error:any) => {
-        // 页面变成需要连接的状态 
+     
         dispatch(setEthAccount(null))
         if (error.code === 4001) {
           message.error('Please connect to MetaMask.') 
@@ -70,7 +72,7 @@ export const connectMetamask=():AppThunk=>async (dispatch,getState)=> {
 
 
 export const handleEthAccount=(address:string):AppThunk=>(dispatch,getState)=>{
-    // 把当前账号保存至localstorage中
+ 
    
   dispatch(setEthAccount({address:address,balance:'--'}))
   ethereum.request({ method: 'eth_getBalance', params: [address, 'latest'] }).then((result:any) => {
@@ -93,7 +95,7 @@ export const monitoring_Method=():AppThunk=>(dispatch,getState)=> {
       if (accounts.length>0) { 
         dispatch(handleEthAccount(accounts[0]))
       } else {
-        // 切换账号后，更新页面账号相关数据
+   
         dispatch(handleEthAccount(null))
       }
     }); 
@@ -102,50 +104,26 @@ export const monitoring_Method=():AppThunk=>(dispatch,getState)=> {
       if (isdev()) {
         if (ethereum.chainId != '0x3') {
           message.warning('Please connect to Ropsten Test Network!'); 
-          // 页面变成需要连接的状态 
+       
           dispatch(setEthAccount(null));
         }
       } else if (ethereum.chainId != '0x1') {
         message.warning('Please connect to Ethereum Main Network!');
-        // 页面变成需要连接的状态
+        
         dispatch(setEthAccount(null));
       }
     }); 
   }
 }
 
-
  
-// （4）查询rFIS余额
-// let web3 = getWeb3();
 
-// let rFISContract = new web3.eth.Contract(getRFISTokenAbi(), getRFISTokenAddress(), {
-//     // 当前eth账号
-// 	from: this.currentAddress
-// });
-
-// rFISContract.methods.balanceOf(this.currentAddress).call().then(balance => {
-// 	let rFISBalance = web3.utils.fromWei(balance, 'ether');
-// });
-
-export const getAssetBalance=():AppThunk=>(dispatch,getState)=>{ 
-  console.log(getState().rETHModule.ethAccount,"=====")
-  if(getState().rETHModule.ethAccount){
-    let web3=ethServer.getWeb3();
-    const address=getState().rETHModule.ethAccount.address; 
-    let rFISContract = new web3.eth.Contract(ethServer.getRFISTokenAbi(), ethServer.getRFISTokenAddress(), {
-      from: address
-    });
-    try{
-      rFISContract.methods.balanceOf(address).call().then((balance:any) => {
-        let rFISBalance = web3.utils.fromWei(balance, 'ether'); 
-        dispatch(setErc20Balance(rFISBalance))
-      }).catch((e:any)=>{
-        console.error(e)
-      });
-    }catch(e:any){
-      console.error(e)
-    }
+export const getAssetBalance=():AppThunk=>(dispatch,getState)=>{  
+  if(getState().rETHModule.ethAccount){ 
+    const address=getState().rETHModule.ethAccount.address;  
+    commonClice.getAssetBalance(address,ethServer.getRETHTokenAbi(), ethServer.getRETHTokenAddress(),(v:any)=>{
+      dispatch(setErcBalance(v))
+    })
   }
 }
 export default rETHClice.reducer;

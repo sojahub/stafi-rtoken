@@ -7,7 +7,7 @@ import DataList from './components/list'
 import Content from '@shared/components/content';
 import {connectMetamask,monitoring_Method,handleEthAccount,getAssetBalance} from '@features/rETHClice';
 import {getAssetBalance as ksm_getAssetBalance} from '@features/rKSMClice';
-import {getAssetBalance as fis_getAssetBalance} from '@features/FISClice'
+import {getAssetBalance as fis_getAssetBalance,getFISAssetBalance} from '@features/FISClice'
 import CountAmount from './components/countAmount'; 
 import DataItem from './components/list/item';
 import NumberUtil from '@util/numberUtil';
@@ -21,21 +21,26 @@ export default function Index(props:any){
  
   const dispatch=useDispatch();
 
-  const {ethAccount,ksm_ercBalance,fis_ercBalance}=useSelector((state:any)=>{ 
+  const {ethAccount,ksm_ercBalance,fis_ercBalance,eth_ercBalance,fis_ercFISBalance}=useSelector((state:any)=>{ 
     return {
       ethAccount:state.rETHModule.ethAccount,
       ksm_ercBalance:state.rKSMModule.ercBalance,
-      fis_ercBalance:state.FISModule.ercBalance
+      fis_ercBalance:state.FISModule.ercBalance,
+      fis_ercFISBalance:state.FISModule.ercFISBalance,
+      eth_ercBalance:state.rETHModule.ercBalance
     }
   })
   useEffect(()=>{ 
     if(ethAccount && ethAccount.address){
       dispatch(handleEthAccount(ethAccount.address));
+
+      dispatch(getAssetBalance());
+      dispatch(ksm_getAssetBalance());
+      dispatch(fis_getAssetBalance());
+      dispatch(getFISAssetBalance());
     }
-    dispatch(getAssetBalance());
-    dispatch(ksm_getAssetBalance());
-    dispatch(fis_getAssetBalance());
-  },[])
+
+  },[ethAccount && ethAccount.address])
   return  <Content>
     <Tag type="erc" onClick={()=>{
       props.history.push("/rAsset/native")
@@ -45,9 +50,17 @@ export default function Index(props:any){
           rSymbol="rETH"
           icon={rETH_svg}
           fullName="Ethereum" 
-          balance={0}
+          balance={eth_ercBalance=="--" ?"--":NumberUtil.handleFisAmountToFixed(eth_ercBalance)}
           willGetBalance={0}
           unit="ETH"
+        />
+         <DataItem 
+          rSymbol="FIS"
+          icon={rFIS_svg}
+          fullName="StaFi" 
+          balance={fis_ercFISBalance=="--" ?"--":NumberUtil.handleFisAmountToFixed(fis_ercFISBalance)}
+          willGetBalance={0}
+          unit="FIS"
         />
         <DataItem 
           rSymbol="rFIS"

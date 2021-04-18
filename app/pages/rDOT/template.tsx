@@ -7,7 +7,7 @@ import {getLocalStorageItem,Keys} from '@util/common';
 
 import {Symbol} from '@keyring/defaults'
 import {fetchStafiStakerApr,reloadData} from '@features/globalClice';
-import {continueProcess,getPools,bondFees,totalIssuance} from '@features/rDOTClice'
+import {continueProcess,getPools,bondFees,getTotalIssuance} from '@features/rDOTClice'
 import {bondSwitch} from '@features/FISClice'; 
 import '../template/index.scss'
 export default function Index(props:any){
@@ -20,7 +20,7 @@ export default function Index(props:any){
     }
   })
   useEffect(()=>{
-    dispatch(totalIssuance());
+    dispatch(getTotalIssuance());
     
   },[fisAccount,dotAccount]);
   useEffect(()=>{ 

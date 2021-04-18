@@ -2,7 +2,6 @@ import { createSlice } from '@reduxjs/toolkit';
 import { Button, message as M, message } from 'antd';
 import { AppThunk, RootState } from '../store';
 import Stafi from '@servers/stafi/index';
-import ethServer from '@servers/eth/index'
 import {timeout} from '@util/common'
 import {
   processStatus, setProcessSlider, setProcessSending, setProcessStaking,
@@ -18,6 +17,7 @@ import { stringToHex, u8aToHex } from '@polkadot/util'
 import NumberUtil from '@util/numberUtil';
 import keyring from '@servers/index';
 import { Symbol,rSymbol } from '@keyring/defaults';
+import CommonClice from './commonClice'
 
 import { setLocalStorageItem, getLocalStorageItem, Keys, removeLocalStorageItem } from '@util/common'
 
@@ -40,7 +40,8 @@ const FISClice = createSlice({
     estimateUnBondTxFees: 10000000000,
     bondSwitch: true,
     unbondCommission:"--",
-    ercBalance:"--"
+    ercBalance:"--",
+    ercFISBalance:"--"
   },
   reducers: {
     setFisAccounts(state, { payload }) {
@@ -111,12 +112,15 @@ const FISClice = createSlice({
     },
     setErcBalance(state,{payload}){
       state.ercBalance=payload;
+    },
+    setErcFISBalance(state,{payload}){
+      state.ercFISBalance=payload;
     }
   },
 });
 
 const stafiServer = new Stafi();
-
+const commonClice=new CommonClice();
 export const { setTokenAmount,
   setFisAccounts,
   setFisAccount,
@@ -129,7 +133,8 @@ export const { setTokenAmount,
   setStakeHash,
   setBondSwitch,
   setUnbondCommission,
-  setErcBalance } = FISClice.actions;
+  setErcBalance,
+  setErcFISBalance } = FISClice.actions;
 
 
 export const reloadData = (): AppThunk => async (dispatch, getState) => {
@@ -179,9 +184,8 @@ export const transfer = (amountparam: string, cb?: Function): AppThunk => async 
   
   const stafiApi = await stafiServer.createStafiApi();
 
-  const selectedPool = getPool(amountparam, validPools, poolLimit);
-  if (selectedPool == null) {
-    message.error("There is no matching pool, please try again later.");
+  const selectedPool =commonClice.getPool(amountparam, validPools, poolLimit);
+  if (selectedPool == null) { 
     return;
   }
   const ex = stafiApi.tx.balances.transferKeepAlive(selectedPool, amount);
@@ -455,21 +459,7 @@ export const rTokenRate = (): AppThunk => async (dispatch, getState) => {
   if (!ratio) {
     ratio = 1;
   }
-  dispatch(setRatio(ratio))
-  let count = 0;
-  let totalCount = 10;
-  let ratioAmount = 0;
-  let piece = ratio / totalCount;
-
-  let interval = setInterval(() => {
-    count++;
-    ratioAmount += piece;
-    if (count == totalCount) {
-      ratioAmount = ratio;
-      window.clearInterval(interval);
-    }
-    dispatch(setRatioShow(NumberUtil.handleFisAmountRateToFixed(ratioAmount)))
-  }, 100);
+  dispatch(setRatio(ratio)) 
 }
 export const continueProcess=():AppThunk=>async (dispatch,getState)=>{ 
   const stakeHash=getState().FISModule.stakeHash;
@@ -492,8 +482,10 @@ export const getBlock = (blockHash: string, txHash: string, cb?: Function): AppT
         if (section == 'balances' && (method == 'transfer' || method == 'transferKeepAlive')) {
           u = true;
           let amount = args[1].toJSON();
-          let selectedPool = getPool(amount, validPools, poolLimit);
-
+          let selectedPool =commonClice.getPool(amount, validPools, poolLimit);
+          if (selectedPool==null){
+            return;
+          }
           dispatch(initProcess({
             sending: {
               packing: processStatus.success,
@@ -581,22 +573,24 @@ export const rTokenSeries_bondStates=(type: number, bondSuccessParamArr:any,stat
 
  
 export const query_rBalances_account = (): AppThunk => async (dispatch, getState) => {
-  const address = getState().FISModule.fisAccount.address;
-  const stafiApi = await stafiServer.createStafiApi();
-  const accountData = await stafiApi.query.rBalances.account(rSymbol.Fis, address);
-  let data = accountData.toJSON();
-  if (data == null) {
-    dispatch(setTokenAmount(NumberUtil.handleFisAmountToFixed(0)))
-  } else {
-    dispatch(setTokenAmount(NumberUtil.fisAmountToHuman(data.free)))
-  }
+  commonClice.query_rBalances_account(getState().FISModule.fisAccount,rSymbol.Fis,(data:any)=>{
+    if (data == null) {
+      dispatch(setTokenAmount(NumberUtil.handleFisAmountToFixed(0)))
+    } else {
+      dispatch(setTokenAmount(NumberUtil.fisAmountToHuman(data.free)))
+    }
+  })
 }
 
 export const unbond=(amount:string,cb?:Function):AppThunk=>async (dispatch,getState)=>{
   const recipient=getState().FISModule.fisAccount.address;
   const validPools=getState().FISModule.validPools;
   const poolLimit = getState().FISModule.poolLimit;
-  let selectedPool =getPool(amount,validPools,poolLimit);
+  let selectedPool =commonClice.getPoolForUnbond(amount,validPools);
+  if (selectedPool == null) { 
+    cb && cb();
+    return;
+  } 
   fisUnbond(amount,rSymbol.Fis,recipient,selectedPool,"Unbond successfully, you can withdraw your unbonded FIS 29 days later.",()=>{
     dispatch(reloadData());
   }) 
@@ -651,26 +645,7 @@ export const fisUnbond = (amount: string, rSymbol: number, recipient: string, se
   }
 }
 
-export const poolBalanceLimit = (): AppThunk => async (dispatch, getState) => {
- 
-  const stafiApi = await stafiServer.createStafiApi();
-  stafiApi.query.rTokenSeries.poolBalanceLimit(rSymbol.Fis).then((result: any) => {
-    dispatch(setPoolLimit(result.toJSON()));
-  });
-}
-export const getPool = (tokenAmount: any, validPools: any, poolLimit: any) => {
-  const amount = NumberUtil.fisAmountToChain(tokenAmount.toString());
-  const data = validPools.find((item: any) => {
-    if (poolLimit == 0 || Number(item.active) + amount <= poolLimit) {
-      return true;
-    }
-  });
-  if (data) {
-    return data.address
-  } else {
-    return null;
-  }
-}
+
 
 
 
@@ -688,66 +663,29 @@ export const getUnbondCommission=():AppThunk=>async (dispatch, getState)=>{
   //const unbondCommissionShow = NumberUtil.fisFeeToFixed(this.unbondCommission) + '%';
 }
 
-export const getTotalUnbonding=(rSymbol:any,cb?:Function):AppThunk=>async (dispatch, getState)=>{
-  let fisAddress = getState().FISModule.fisAccount.address;
-  let totalUnbonding:any = 0;
-  const stafiApi = await stafiServer.createStafiApi();
-  const  eraResult = await stafiApi.query.rTokenLedger.chainEras(rSymbol);
-  let currentEra = eraResult.toJSON(); 
-  if (currentEra) {
-    const result = await stafiApi.query.rTokenSeries.accountUnbonds(fisAddress, rSymbol) 
-    let accountUnbonds = result.toJSON(); 
-    if (accountUnbonds && accountUnbonds.length > 0) {
-      accountUnbonds.forEach((accountUnbond:any) => {
-        if (accountUnbond.unlock_era > currentEra) {
-            totalUnbonding = totalUnbonding + accountUnbond.value;
-        }
-      });
-
-      totalUnbonding = NumberUtil.handleFisAmountToFixed(NumberUtil.fisAmountToHuman(totalUnbonding));
-      cb && cb(totalUnbonding)
-    } 
-  }else{
-    cb && cb(0)
-  }
-}
+ 
 export default FISClice.reducer;
 
 
 
-export const getWillAmount=(state:any,amounts:any)=>{ 
-  let willAmount:any=0;
-  let ratio=state.FISModule.ratio; 
-  let unbondCommission = state.FISModule.unbondCommission;
-  if(amounts=="--" || ratio=="--" || unbondCommission=="--"){
-    return "--"
-  }
-  const amount:any = NumberUtil.handleFisAmountToFixed(amounts);
-  if (ratio && amount) {
-    let returnValue = amount * (1 - unbondCommission); 
-    willAmount = NumberUtil.handleFisAmountToFixed(returnValue * ratio);;
-  } 
-  return willAmount;
-}
+ 
 
 
 
 export const getAssetBalance=():AppThunk=>(dispatch,getState)=>{  
-  if(getState().rETHModule.ethAccount){
-    let web3=ethServer.getWeb3();
-    const address=getState().rETHModule.ethAccount.address; 
-    let rFISContract = new web3.eth.Contract(stafiServer.getRFISTokenAbi(), stafiServer.getRFISTokenAddress(), {
-      from: address
-    }); 
-    try{
-      rFISContract.methods.balanceOf(address).call().then((balance:any) => {
-        let rFISBalance = web3.utils.fromWei(balance, 'ether');  
-        dispatch(setErcBalance(rFISBalance))
-      }).catch((e:any)=>{
-        console.error(e)
-      });
-    }catch(e:any){
-      console.error(e)
-    }
+  if(getState().rETHModule.ethAccount){ 
+    const address=getState().rETHModule.ethAccount.address;  
+    commonClice.getAssetBalance(address,stafiServer.getRFISTokenAbi(), stafiServer.getRFISTokenAddress(),(v:any)=>{
+      dispatch(setErcBalance(v))
+    })
+  }
+}
+
+export const getFISAssetBalance=():AppThunk=>(dispatch,getState)=>{  
+  if(getState().rETHModule.ethAccount){ 
+    const address=getState().rETHModule.ethAccount.address;  
+    commonClice.getAssetBalance(address,stafiServer.getFISTokenAbi(), stafiServer.getFISTokenAddress(),(v:any)=>{
+      dispatch(setErcFISBalance(v))
+    })
   }
 }

@@ -23,7 +23,7 @@ export default function Index(props:Props){
           {props.balance}
         </div>
         <div>
-          Redeemable:{props.willGetBalance} {props.unit}
+         {props.rSymbol=="FIS"?"": `Redeemable:${props.willGetBalance} ${props.unit}`}
         </div>
     </div>
     <div className="col_btns">

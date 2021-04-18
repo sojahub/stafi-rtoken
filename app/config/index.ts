@@ -35,11 +35,25 @@ export default {
       return 'https://rtoken-api.stafi.io';
     }  
   },
+  rETHTokenAddress: ()=>{ 
+    if(process.env.NODE_ENV=="production" &&  !isdev()){
+      return '0x9559aaa82d9649c7a7b220e7c461d2e74c9a3593';
+    }else{
+      return '0x680ab46340aa2189515b49fd35ac8a5bd66e78de';
+    }  
+  },
   rFISTokenAddress: ()=>{
     if(process.env.NODE_ENV=="production" &&  !isdev()){
       return '0xc82eb6dea0c93edb8b697b89ad1b13d19469d635';
     }else{
       return '0xc372e985fda306cfe0e903657de808cf757f536f';
+    }  
+  },
+  FISTokenAddress: ()=>{
+    if(process.env.NODE_ENV=="production" &&  !isdev()){
+      return '0xef3a930e1ffffacd2fc13434ac81bd278b0ecc8d';
+    }else{
+      return '0x64591e3f2dbf46cdfb398a0d9ba81f41b7cbd449';
     }  
   },
   rKSMTokenAddress:()=>{

@@ -19,7 +19,7 @@ export default function Index(props:any){
     dispatch(rTokenRate());
     dispatch(rTokenLedger())
   },[])
-  const {transferrableAmount,ratio,stafiStakerApr,fisCompare,validPools,totalRDot,bondFees}=useSelector((state:any)=>{ 
+  const {transferrableAmount,ratio,stafiStakerApr,fisCompare,validPools,totalIssuance,bondFees}=useSelector((state:any)=>{ 
     const fisCompare = NumberUtil.fisAmountToChain(state.FISModule.fisAccount.balance) < (state.rDOTModule.bondFees + state.FISModule.estimateBondTxFees);
     return {
       transferrableAmount:state.rDOTModule.transferrableAmountShow,
@@ -27,7 +27,7 @@ export default function Index(props:any){
       stafiStakerApr:state.rDOTModule.stakerApr,
       fisCompare:fisCompare,
       validPools:state.rDOTModule.validPools,
-      totalRDot:state.rDOTModule.totalRDot,
+      totalIssuance:state.rDOTModule.totalIssuance,
       bondFees:state.rDOTModule.bondFees
     }
   })
@@ -46,7 +46,7 @@ export default function Index(props:any){
      props.history.push("/rDOT/search")
   }}
   validPools={validPools} 
-  totalStakedToken={ NumberUtil.handleFisAmountToFixed((totalRDot*ratio)) || "--"}
+  totalStakedToken={ NumberUtil.handleFisAmountToFixed((totalIssuance*ratio)) || "--"}
   onStakeClick={()=>{
     
     if (amount) {

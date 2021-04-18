@@ -7,8 +7,10 @@ import {rTokenRate,unbond,getUnbondCommission,query_rBalances_account,checkAddre
 import {useDispatch} from 'react-redux';
 import UnbondModal from '@components/modal/unbondModal'
 import NumberUtil from '@util/numberUtil'
-import {setLoading} from '@features/globalClice'
+import {setLoading} from '@features/globalClice';
+import CommonClice from '@features/commonClice'
 
+const commonClice=new CommonClice();
 export default function Index(props:any){ 
   const dispatch=useDispatch();
   const [recipient,setRecipient]=useState<string>();
@@ -16,15 +18,12 @@ export default function Index(props:any){
   const [visible,setVisible]=useState(false);
 
   const {tokenAmount,unbondCommission,ratio,fisFee,address,unBondFees,willAmount,estimateUnBondTxFees} = useSelector((state:any)=>{ 
-    let unbondCommission:any=0;
-    let willAmount:any=0;
+    let unbondCommission:any=0; 
     let ratio=state.rKSMModule.ratio;
     let tokenAmount=state.rKSMModule.tokenAmount; 
      
-    if (ratio && state.rKSMModule.unbondCommission && amount) {
-      let returnValue = amount * (1 - state.rKSMModule.unbondCommission);
-      unbondCommission = amount*state.rKSMModule.unbondCommission;
-      willAmount = NumberUtil.handleFisAmountToFixed(returnValue * ratio);;
+    if (state.rKSMModule.unbondCommission && amount) { 
+      unbondCommission = amount*state.rKSMModule.unbondCommission; 
     } 
     return { 
       ratio:ratio,
@@ -33,7 +32,7 @@ export default function Index(props:any){
       fisFee:state.rKSMModule.unbondCommission,
       address:state.rKSMModule.ksmAccount.address,
       unBondFees:state.rKSMModule.unBondFees, 
-      willAmount: willAmount,
+      willAmount: commonClice.getWillAmount(ratio,unbondCommission,amount),
       estimateUnBondTxFees: state.FISModule.estimateUnBondTxFees
     }
   }) 

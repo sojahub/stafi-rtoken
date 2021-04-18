@@ -6,8 +6,7 @@ import { rTokenRate } from '@features/rKSMClice';
 import {ratioToAmount} from '@util/common'
 import { message } from 'antd';
 import NumberUtil from '@util/numberUtil';
-import { setProcessSlider } from '@features/globalClice';
-import { rSymbol } from '@keyring/defaults';
+import { setProcessSlider } from '@features/globalClice'; 
 
 export default function Index(props:any){
 
@@ -19,15 +18,15 @@ export default function Index(props:any){
     dispatch(rTokenRate());
     dispatch(rTokenLedger())
   },[])
-  const {transferrableAmount,ratio,stafiStakerApr,fisCompare,validPools,totalRDot,bondFees}=useSelector((state:any)=>{ 
+  const {transferrableAmount,ratio,stafiStakerApr,fisCompare,validPools,totalIssuance,bondFees}=useSelector((state:any)=>{ 
     const fisCompare = NumberUtil.fisAmountToChain(state.FISModule.fisAccount.balance) < state.rKSMModule.bondFees + state.FISModule.estimateBondTxFees;
     return {
       transferrableAmount:state.rKSMModule.transferrableAmountShow,
-      ratio:state.rKSM.ratio,
+      ratio:state.rKSMModule.ratio,
       stafiStakerApr:state.rKSMModule.stakerApr,
       fisCompare:fisCompare,
       validPools:state.rKSMModule.validPools,
-      totalRDot:state.rKSMModule.totalRDot,
+      totalIssuance:state.rKSMModule.totalIssuance,
       bondFees:state.rKSMModule.bondFees
     }
   })
@@ -47,7 +46,7 @@ export default function Index(props:any){
   }}
   validPools={validPools} 
   bondFees={bondFees}
-  totalStakedToken={NumberUtil.handleFisAmountToFixed(totalRDot*ratio)}
+  totalStakedToken={NumberUtil.handleFisAmountToFixed(totalIssuance*ratio)}
   onStakeClick={()=>{
     if (amount) { 
       if(fisCompare){
