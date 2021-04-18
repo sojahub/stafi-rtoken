@@ -11,7 +11,12 @@ const vendors = [
   'redux',
   '@ant-design/icons',
   'lodash',
-  'moment'
+  'moment',
+  '@polkadot/api',
+  '@polkadot/extension-dapp',
+  '@polkadot/keyring',
+  'web3',
+  'web3-utils'
 ];
 
 module.exports = {
@@ -23,7 +28,26 @@ module.exports = {
     entry: {
         "lib": vendors,
     },
+    resolve:{ 
+        fallback: {
+            crypto: require.resolve('crypto-browserify'), 
+            buffer: require.resolve('buffer/'), 
+            stream: require.resolve('stream-browserify'),
+            http: false,
+            https:false
+        },
+         
+        alias: {
+           stream: "stream-browserify",
+            crypto: false,    
+        }
+    },
     plugins: [
+        new webpack.ProvidePlugin({
+            Buffer: ["buffer", "Buffer"],
+            process:'process',
+            stream: 'stream'
+          }), 
         new webpack.DllPlugin({
             path:path.resolve(__dirname,"../dll/manifest.json"),
             name: '[name]',
