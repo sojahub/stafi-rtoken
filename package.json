@@ -13,7 +13,7 @@
   "registory": "https://github.com/stafiprotocol/stafi-rtoken",
   "dependencies": {
     "@ant-design/icons": "^4.5.0",
-    "@polkadot/api": "^3.10.2",
+    "@polkadot/api": "^4.5.1",
     "@polkadot/extension-dapp": "^0.36.1",
     "@polkadot/keyring": "^5.4.4",
     "@reduxjs/toolkit": "^1.5.0",
