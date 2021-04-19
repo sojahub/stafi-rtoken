@@ -110,6 +110,11 @@ export default {
     return (Math.floor(amount * 1000000) / 1000000).toFixed(6) || "--";
   },
 
+  // The return string contains 6 decimal places and 3 decimal places, including 0
+  handleFisRoundToFixed(amount) { 
+    return (Math.round(amount * 100000000) / 100000000).toFixed(6) || "--";
+  },
+
   // Returns a string containing 6 decimal places, including 0
   handleFisAmountRateToFixed(amount) {
     return this.handleEthAmountRound(amount).toFixed(6);

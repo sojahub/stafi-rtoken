@@ -16,7 +16,7 @@ export default function Index(props:any){
   const [amount,setAmount]=useState<any>();
   const [visible,setVisible]=useState(false);
 
-  const {tokenAmount,unbondCommission,ratio,fisFee,address,unBondFees,willAmount,estimateUnBondTxFees} = useSelector((state:any)=>{ 
+  const {tokenAmount,unbondCommission,ratio,fisFee,address,unBondFees,willAmount,estimateUnBondTxFees,fisBalance} = useSelector((state:any)=>{ 
     let willAmount:any=0;
     let unbondCommission:any=0;
     let ratio=state.FISModule.ratio;
@@ -36,7 +36,8 @@ export default function Index(props:any){
       address:state.rDOTModule.dotAccount.address,
       unBondFees:state.rDOTModule.unBondFees,
       willAmount: willAmount,
-      estimateUnBondTxFees: state.FISModule.estimateUnBondTxFees
+      estimateUnBondTxFees: state.FISModule.estimateUnBondTxFees,
+      fisBalance: state.FISModule.fisAccount.balance
     }
   }) 
   useEffect(()=>{
@@ -91,7 +92,7 @@ export default function Index(props:any){
       setVisible(false)
     }}
     onOk={()=>{
-      if(NumberUtil.fisAmountToChain(amount) <= (unBondFees + estimateUnBondTxFees)){
+      if(NumberUtil.fisAmountToChain(fisBalance) <= (unBondFees + estimateUnBondTxFees)){
         message.error("No enough FIS to pay for the fee");
         return;
       }

@@ -76,7 +76,7 @@ export default function Index(props:Props){
               All OVs
               </div>
               <label>
-                231
+                16
               </label>
           </div>
       </div>
