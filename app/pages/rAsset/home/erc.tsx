@@ -11,9 +11,10 @@ import {getAssetBalance as fis_getAssetBalance,getFISAssetBalance} from '@featur
 import CountAmount from './components/countAmount'; 
 import DataItem from './components/list/item';
 import NumberUtil from '@util/numberUtil';
-import rFIS_svg from '@images/rFIS.svg';
-import rETH_svg from '@images/rETH.svg';
-import rKSM_svg from '@images/rKSM.svg';
+import rasset_fis_svg from '@images/rFIS.svg';
+import rasset_rfis_svg from '@images/rasset_rfis.svg'; 
+import rasset_reth_svg from '@images/rasset_reth.svg'; 
+import rasset_rksm_svg from '@images/rasset_rksm.svg'; 
 import './page.scss'
 
  
@@ -48,7 +49,7 @@ export default function Index(props:any){
      {ethAccount?<><DataList >
       <DataItem 
           rSymbol="rETH"
-          icon={rETH_svg}
+          icon={rasset_reth_svg}
           fullName="Ethereum" 
           balance={eth_ercBalance=="--" ?"--":NumberUtil.handleFisAmountToFixed(eth_ercBalance)}
           willGetBalance={0}
@@ -65,7 +66,7 @@ export default function Index(props:any){
         />
          <DataItem 
           rSymbol="FIS"
-          icon={rFIS_svg}
+          icon={rasset_fis_svg}
           fullName="StaFi" 
           balance={fis_ercFISBalance=="--" ?"--":NumberUtil.handleFisAmountToFixed(fis_ercFISBalance)}
           willGetBalance={0}
@@ -82,7 +83,7 @@ export default function Index(props:any){
         />
         <DataItem 
           rSymbol="rFIS"
-          icon={rFIS_svg}
+          icon={rasset_rfis_svg}
           fullName="StaFi" 
           balance={fis_ercBalance=="--" ?"--":NumberUtil.handleFisAmountToFixed(fis_ercBalance)}
           willGetBalance={0}
@@ -99,7 +100,7 @@ export default function Index(props:any){
         />
         <DataItem 
           rSymbol="rKSM"
-          icon={rKSM_svg}
+          icon={rasset_rksm_svg}
           fullName="Kusama"
           balance={ksm_ercBalance=="--" ?"--":NumberUtil.handleFisAmountToFixed(ksm_ercBalance)}
           willGetBalance={0}

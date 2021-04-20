@@ -15,8 +15,9 @@ import {rTokenRate as fis_rTokenRate,query_rBalances_account as fis_query_rBalan
 import CommonClice from '@features/commonClice'
 import {Symbol,rSymbol} from '@keyring/defaults';
 import NumberUtil from '@util/numberUtil'
-import rFIS_svg from '@images/rFIS.svg';
-import rKSM_svg from '@images/rKSM.svg';
+import rasset_fis_svg from '@images/rFIS.svg';
+import rasset_rfis_svg from '@images/rasset_rfis.svg';  
+import rasset_rksm_svg from '@images/rasset_rksm.svg'; 
 
 import './page.scss'
 
@@ -57,7 +58,7 @@ export default function Index(props:any){
     {fisAccount?<><DataList >
       <DataItem 
           rSymbol="FIS"
-          icon={rFIS_svg}
+          icon={rasset_fis_svg}
           fullName="StaFi" 
           balance={fisAccount?fisAccount.balance:"--"}
           willGetBalance={fisWillAmount}
@@ -74,7 +75,7 @@ export default function Index(props:any){
         />
         <DataItem 
           rSymbol="rFIS"
-          icon={rFIS_svg}
+          icon={rasset_rfis_svg}
           fullName="StaFi" 
           balance={fis_tokenAmount=="--" ?"--":NumberUtil.handleFisAmountToFixed(fis_tokenAmount)}
           willGetBalance={fisWillAmount}
@@ -91,7 +92,7 @@ export default function Index(props:any){
         />
         <DataItem 
           rSymbol="rKSM"
-          icon={rKSM_svg}
+          icon={rasset_rksm_svg}
           fullName="Kusama"
           balance={tokenAmount=="--" ?"--":NumberUtil.handleFisAmountToFixed(tokenAmount)}
           willGetBalance={ksmWillAmount}
