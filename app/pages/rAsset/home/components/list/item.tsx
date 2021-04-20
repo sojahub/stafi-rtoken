@@ -12,6 +12,7 @@ type Props={
   balance:any
   willGetBalance:any,
   unit:string,
+  onSwapClick?:Function
 }
 export default function Index(props:Props){
   return <div className="list_item">
@@ -27,7 +28,9 @@ export default function Index(props:Props){
         </div>
     </div>
     <div className="col_btns">
-        <GhostButton>
+        <GhostButton onClick={()=>{
+          props.onSwapClick && props.onSwapClick();
+        }}>
             Swap
         </GhostButton>
     </div>

@@ -53,6 +53,15 @@ export default function Index(props:any){
           balance={eth_ercBalance=="--" ?"--":NumberUtil.handleFisAmountToFixed(eth_ercBalance)}
           willGetBalance={0}
           unit="ETH"
+          onSwapClick={()=>{
+            props.history.push({
+              pathname:"/rAsset/swap",
+              state:{
+                type:"erc20",
+                rSymbol:"rETH"
+              }
+            })
+          }}
         />
          <DataItem 
           rSymbol="FIS"
@@ -61,6 +70,15 @@ export default function Index(props:any){
           balance={fis_ercFISBalance=="--" ?"--":NumberUtil.handleFisAmountToFixed(fis_ercFISBalance)}
           willGetBalance={0}
           unit="FIS"
+          onSwapClick={()=>{
+            props.history.push({
+              pathname:"/rAsset/swap",
+              state:{
+                type:"erc20",
+                rSymbol:"FIS"
+              }
+            })
+          }}
         />
         <DataItem 
           rSymbol="rFIS"
@@ -69,6 +87,15 @@ export default function Index(props:any){
           balance={fis_ercBalance=="--" ?"--":NumberUtil.handleFisAmountToFixed(fis_ercBalance)}
           willGetBalance={0}
           unit="FIS"
+          onSwapClick={()=>{
+            props.history.push({
+              pathname:"/rAsset/swap",
+              state:{
+                type:"erc20",
+                rSymbol:"rFIS"
+              }
+            })
+          }}
         />
         <DataItem 
           rSymbol="rKSM"
@@ -77,6 +104,15 @@ export default function Index(props:any){
           balance={ksm_ercBalance=="--" ?"--":NumberUtil.handleFisAmountToFixed(ksm_ercBalance)}
           willGetBalance={0}
           unit="KSM"
+          onSwapClick={()=>{
+            props.history.push({
+              pathname:"/rAsset/swap",
+              state:{
+                type:"erc20",
+                rSymbol:"rKSM"
+              }
+            })
+          }}
         />
        </DataList> <CountAmount /></> : <div className="rAsset_content"> 
      <Button icon={metamask} onClick={()=>{

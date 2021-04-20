@@ -34,12 +34,24 @@ const datas=[{
   type:Symbol.Dot
 }]
 export default function Index(props:any){ 
- 
+ console.log(props,"========,")
   const [fromAoumt,setFormAmount]=useState();
   const [fromType,setFormType]=useState(datas[0]);
-  const [toAoumt,setToAmount]=useState();
-  const [toType,setToType]=useState(datas[0]);
+  const [toAoumt,setToAmount]=useState(); 
   const [address,setAddress]=useState();
+
+
+  const [tokenType,setTokenType]=useState();
+  const [operationType,setOperationType]=useState<undefined | 'erc20' |'native'>();
+  // state: {type: "native", rSymbol: "rFIS"}
+  useEffect(()=>{ 
+    if(props.location.state){
+      setTokenType(props.location.state.rSymbol);
+      setOperationType(props.location.state.type);
+    }
+  },[props.location.state])
+
+  // console.log(tokenType,operationType,"====operationType");
   return  <Content className="stafi_rasset_swap">
       <Back />
       <Title label="rBridge Swap"/>
@@ -50,11 +62,16 @@ export default function Index(props:any){
               <label className="balance">rFIS balance 233.424</label>
           </div>
           <div>
-            <TypeInput placeholder="0.0" value={fromAoumt} onChange={(value:any)=>{
+            <TypeInput 
+            placeholder="0.0" 
+            value={fromAoumt} 
+            onChange={(value:any)=>{
               setFormAmount(value)
             }} 
             selectDataSource={datas} 
-            type={fromType}
+            token={fromType} 
+            token_icon={operationType=="erc20" ? selected_rETH : fromType.selectedIcon}
+            token_title={fromType.title}
             onSelectChange={(e:any)=>{ 
               setFormType(e);
             }}/> 
@@ -66,14 +83,17 @@ export default function Index(props:any){
               <label>To</label> 
           </div>
           <div>
-            <TypeInput placeholder="0.0" value={toAoumt} onChange={(value:any)=>{
+            <TypeInput disabled={true}  
+            placeholder="0.0" 
+            value={toAoumt} 
+            onChange={(value:any)=>{
               setFormAmount(value)
             }} 
             selectDataSource={datas} 
-            type={toType}
-            onSelectChange={(e:any)=>{ 
-              setToType(e);
-            }}/> 
+            token={fromType}
+            token_icon={operationType=="native" ? selected_rETH :fromType.selectedIcon}
+            token_title={fromType.title}
+            /> 
           </div>
         </div>
 

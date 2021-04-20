@@ -44,15 +44,18 @@
             color:#fff;
             font-size: 20px;
             cursor: pointer;
-            >img:first-child{
+            .icon:first-child{
                 width:20px;
                 height:20px;
                 margin-right: 5px;
             }
-            >img:last-child{
+            .icon_last:last-child{
                 width:5px;
                 transform: rotate(-90deg);
             }
+        }
+        .disabled{
+            cursor:no-drop;
         }
     }
 }

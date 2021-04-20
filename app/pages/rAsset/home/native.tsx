@@ -62,6 +62,15 @@ export default function Index(props:any){
           balance={fisAccount?fisAccount.balance:"--"}
           willGetBalance={fisWillAmount}
           unit="FIS"
+          onSwapClick={()=>{
+            props.history.push({
+              pathname:"/rAsset/swap",
+              state:{
+                type:"native",
+                rSymbol:"rFIS"
+              }
+            })
+          }}
         />
         <DataItem 
           rSymbol="rFIS"
@@ -70,6 +79,15 @@ export default function Index(props:any){
           balance={fis_tokenAmount=="--" ?"--":NumberUtil.handleFisAmountToFixed(fis_tokenAmount)}
           willGetBalance={fisWillAmount}
           unit="FIS"
+          onSwapClick={()=>{
+            props.history.push({
+              pathname:"/rAsset/swap",
+              state:{
+                type:"native",
+                rSymbol:"rFIS"
+              }
+            })
+          }}
         />
         <DataItem 
           rSymbol="rKSM"
@@ -78,6 +96,15 @@ export default function Index(props:any){
           balance={tokenAmount=="--" ?"--":NumberUtil.handleFisAmountToFixed(tokenAmount)}
           willGetBalance={ksmWillAmount}
           unit="KSM"
+          onSwapClick={()=>{
+            props.history.push({
+              pathname:"/rAsset/swap",
+              state:{
+                type:"native",
+                rSymbol:"rFIS"
+              }
+            })
+          }}
         />
         
       </DataList><CountAmount /> </>:<div className="rAsset_content">

@@ -13,31 +13,40 @@ type Props={
     onChange?:Function,
     onSelectChange?:Function,
     selectDataSource?:any[],
-    type?:any
+    token?:any,
+    token_icon:any,
+    token_title:string,
+    disabled?:boolean, 
 }
 export default function Index(props:Props){
 
     const [showSelect,setShowSelect]=useState(false)
     return <Input 
+    disabled={props.disabled}
     className="amount_input type_input" 
     onChange={(e)=>{  
-        let value:any = e.target.value.replace(/[^\d\.]/g,'')
+      let value = e.target.value.replace(/[^\d\.]/g,""); 
+      value = value.replace(/^\./g,"");         
+      value = value.replace(/\.{2,}/g,".");     
+      value = value.replace(".","$#$").replace(/\./g,"").replace("$#$",".");
+      value = value.replace(/^(\-)*(\d+)\.(\d\d\d\d\d\d).*$/,'$1$2.$3');  
+      props.onChange && props.onChange(value);
         props.onChange && props.onChange(value);
     }}
     value={props.value}
     placeholder={props.placeholder} 
-    suffix={<Popover visible={showSelect} placement="bottomRight" overlayClassName="stafi_type_input_select" title={<SelectTitle onClose={()=>{
+    suffix={props.disabled?<div className="disabled"><img className="icon" src={props.token_icon} />{props.token_title} </div>:(<Popover  visible={showSelect} placement="bottomRight" overlayClassName="stafi_type_input_select" title={<SelectTitle onClose={()=>{
       setShowSelect(false)
     }}/>} content={<Select 
       selectDataSource={props.selectDataSource}
-      fromType={props.type}
+      // fromType={props.type}
       onSelectChange={(e:any)=>{ 
         props.onSelectChange && props.onSelectChange(e);
         setShowSelect(false)
-      }}/>} trigger="click">
-      {props.type?<div onClick={()=>{
+      }}/>}>
+      {props.token?<div onClick={()=>{
       setShowSelect(true);
-    }}><img src={props.type.selectedIcon} />{props.type.title} <img src={leftArrowSvg} /></div>:<div></div>}</Popover>}/>
+    }}><img className="icon" src={props.token_icon} />{props.token_title} <img className="icon_last" src={leftArrowSvg} /></div>:<div></div>}</Popover>)}/>
 }
 
 type SelectTitleProps={
@@ -54,10 +63,9 @@ function SelectTitle(props:SelectTitleProps){
 
 type SelectProps={
   onSelectChange?:Function,
-  fromType:any,
   selectDataSource?:any[]
 }
-function Select(props:SelectProps){
+function Select(props:SelectProps){ 
   return <div className="content">
 
       {props.selectDataSource && props.selectDataSource.map(item=>{
