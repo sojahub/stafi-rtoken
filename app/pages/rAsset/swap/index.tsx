@@ -13,7 +13,7 @@ import rFIS_svg from '@images/rFIS.svg';
 import selected_rFIS from '@images/selected_rFIS.svg'; 
 import rDOT from '@images/rDOT.svg';
 import selected_rDOT from '@images/selected_rDOT.svg'; 
-import { message } from 'antd';
+import Understood from '@components/modal/understood'
 const datas=[{
   icon:rETH_svg,
   selectedIcon:selected_rETH,
@@ -33,14 +33,14 @@ const datas=[{
   amount:"23.289",
   type:Symbol.Dot
 }]
-export default function Index(props:any){ 
- console.log(props,"========,")
+export default function Index(props:any){  
   const [fromAoumt,setFormAmount]=useState();
   const [fromType,setFormType]=useState(datas[0]);
   const [toAoumt,setToAmount]=useState(); 
   const [address,setAddress]=useState();
 
 
+  const [visible,setVisible]=useState(false);
   const [tokenType,setTokenType]=useState();
   const [operationType,setOperationType]=useState<undefined | 'erc20' |'native'>();
   // state: {type: "native", rSymbol: "rFIS"}
@@ -53,7 +53,9 @@ export default function Index(props:any){
 
   // console.log(tokenType,operationType,"====operationType");
   return  <Content className="stafi_rasset_swap">
-      <Back />
+      <Back onClick={()=>{
+          props.history &&  props.history.goBack(); 
+      }}/>
       <Title label="rBridge Swap"/>
       <div>
         <div className="row">
@@ -109,9 +111,14 @@ export default function Index(props:any){
         </div>
         <div className="btns">
         <Button  onClick={()=>{
-            
+            setVisible(true);
          }}>Swap</Button>
         </div>
       </div>
+      <Understood visible={visible}  onCancel={()=>{
+         setVisible(false);
+      }} onOk={()=>{
+        setVisible(false);
+      }}/>
   </Content>
 }
