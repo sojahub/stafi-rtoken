@@ -17,6 +17,7 @@ type Props={
     token_icon:any,
     token_title:string,
     disabled?:boolean, 
+    selectTitle?:string
 }
 export default function Index(props:Props){
 
@@ -35,11 +36,12 @@ export default function Index(props:Props){
     }}
     value={props.value}
     placeholder={props.placeholder} 
-    suffix={props.disabled?<div className="disabled"><img className="icon" src={props.token_icon} />{props.token_title} </div>:(<Popover  visible={showSelect} placement="bottomRight" overlayClassName="stafi_type_input_select" title={<SelectTitle onClose={()=>{
+    suffix={props.disabled?<div className="disabled"><img className="icon" src={props.token_icon} />{props.token_title} </div>:(<Popover  visible={showSelect} placement="bottomRight" overlayClassName="stafi_type_input_select" title={<SelectTitle title={props.selectTitle} onClose={()=>{
       setShowSelect(false)
     }}/>} content={<Select 
       selectDataSource={props.selectDataSource}
       // fromType={props.type}
+      selectedData={props.token}
       onSelectChange={(e:any)=>{ 
         props.onSelectChange && props.onSelectChange(e);
         setShowSelect(false)
@@ -50,11 +52,12 @@ export default function Index(props:Props){
 }
 
 type SelectTitleProps={
-  onClose?:Function
+  onClose?:Function,
+  title?:string
 }
 function SelectTitle(props:SelectTitleProps){
   return  <div className='title'>
-  <label>Select a token</label>
+  <label>{props.title?props.title:"Select a token"}</label>
   <img src={black_close} onClick={()=>{
     props.onClose && props.onClose()
   }}/>
@@ -63,13 +66,14 @@ function SelectTitle(props:SelectTitleProps){
 
 type SelectProps={
   onSelectChange?:Function,
-  selectDataSource?:any[]
+  selectDataSource?:any[],
+  selectedData?:any
 }
 function Select(props:SelectProps){ 
   return <div className="content">
 
       {props.selectDataSource && props.selectDataSource.map(item=>{
-        return <div className="item"  onClick={()=>{
+        return <div className={`item ${props.selectedData.title==item.title?"active":""}`}  onClick={()=>{
                   props.onSelectChange && props.onSelectChange(item)
                 }}>
                 <div className="title">

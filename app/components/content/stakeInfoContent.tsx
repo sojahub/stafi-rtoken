@@ -14,7 +14,8 @@ type Props={
      ratioShow?:any,
      onStakeClick?:any,
      type:"rDOT"|"rETH"|"rFIS"|"rKSM",
-     totalUnbonding?:any
+     totalUnbonding?:any,
+     onSwapClick?:Function
 }
 export default function Index(props:Props){
   const [visibleModal,setVisibleModal]=useState(false);
@@ -68,7 +69,8 @@ export default function Index(props:Props){
       <Modal type={props.type} visible={visibleModal} onCancel={()=>{
         setVisibleModal(false)
       }} onOk={()=>{
-        message.info("Swap will be available soon");
+        // message.info("Swap will be available soon");
+        props.onSwapClick && props.onSwapClick();
       }}/>
     </LeftContent>
 }

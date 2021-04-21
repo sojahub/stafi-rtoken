@@ -1,56 +1,130 @@
 import React, { useEffect, useState } from 'react'; 
+import {message} from 'antd';
 import Content from '@shared/components/content';
 import Title from '@shared/components/cardTitle';
 import Back from '@shared/components/backIcon';
 import Input from '@shared/components/input/addressInput';
-import TypeInput from '@shared/components/input/typeInput';
-import {rSymbol,Symbol} from '@keyring/defaults';
+import TypeInput from '@shared/components/input/typeInput'; 
 import Button from '@shared/components/button/button'
-import './index.scss'
-import rETH_svg from '@images/rETH.svg';
-import selected_rETH from '@images/selected_rETH.svg'; 
-import rFIS_svg from '@images/rFIS.svg';
-import selected_rFIS from '@images/selected_rFIS.svg'; 
-import rDOT from '@images/rDOT.svg';
-import selected_rDOT from '@images/selected_rDOT.svg'; 
-import Understood from '@components/modal/understood'
+import './index.scss' 
+import selected_rETH from '@images/selected_rETH.svg';  
+import selected_rFIS from '@images/selected_rFIS.svg';  
+import rasset_fis_svg from '@images/rFIS.svg';
+import rasset_rfis_svg from '@images/rasset_rfis.svg';  
+import rasset_rksm_svg from '@images/rasset_rksm.svg'; 
+import Understood from '@components/modal/understood';
+import {bridgeCommon_ChainFees,getBridgeEstimateEthFee,nativeToErc20Swap,erc20ToNativeSwap}from '@features/bridgeClice';
+import {rTokenRate as ksm_rTokenRate,query_rBalances_account,getUnbondCommission} from '@features/rKSMClice';
+import {rTokenRate as fis_rTokenRate,query_rBalances_account as fis_query_rBalances_account,getUnbondCommission as fis_getUnbondCommission} from '@features/FISClice'; 
+import {getAssetBalance as ksm_getAssetBalance} from '@features/rKSMClice';
+import {getAssetBalance as fis_getAssetBalance,getFISAssetBalance,checkAddress} from '@features/FISClice';
+import {checkEthAddress} from '@features/rETHClice'
+import { useSelector,useDispatch } from 'react-redux';
+import NumberUtil from '@util/numberUtil';
 const datas=[{
-  icon:rETH_svg,
-  selectedIcon:selected_rETH,
-  title:"Atom",
-  amount:"23.289",
-  type:Symbol.Atom
+  icon:rasset_fis_svg, 
+  title:"FIS",
+  amount:"--",
+  type:'fis'
 },{
-  icon:rFIS_svg,
-  selectedIcon:selected_rFIS,
+  icon:rasset_rfis_svg, 
   title:"rFIS",
-  amount:"23.289",
-  type:Symbol.Fis
+  amount:"--",
+  type:'rfis'
 },{
-  icon:rDOT,
-  selectedIcon:selected_rDOT,
-  title:"rDOT",
-  amount:"23.289",
-  type:Symbol.Dot
+  icon:rasset_rksm_svg, 
+  title:"rKSM",
+  amount:"--",
+  type:'rksm'
 }]
 export default function Index(props:any){  
+  const dispatch =useDispatch();
   const [fromAoumt,setFormAmount]=useState();
+  const [selectDataSource,setSelectDataSource]=useState(datas);
   const [fromType,setFormType]=useState(datas[0]);
   const [toAoumt,setToAmount]=useState(); 
-  const [address,setAddress]=useState();
-
+  const [address,setAddress]=useState(); 
 
   const [visible,setVisible]=useState(false);
   const [tokenType,setTokenType]=useState();
   const [operationType,setOperationType]=useState<undefined | 'erc20' |'native'>();
   // state: {type: "native", rSymbol: "rFIS"}
-  useEffect(()=>{ 
+  useEffect(()=>{  
     if(props.location.state){
-      setTokenType(props.location.state.rSymbol);
-      setOperationType(props.location.state.type);
+      console.log(props.location.state.rSymbol,selectDataSource,"===selectDataSource")
+     // setTokenType(props.location.state.rSymbol); 
+      if(selectDataSource.length>0){
+        setFormType(selectDataSource.find(item=>item.title==props.location.state.rSymbol));
+      }
+    }else{
+      setFormType(selectDataSource[0]);
     }
-  },[props.location.state])
+    setOperationType(props.match.params.type);
+  },[props.location.state,selectDataSource])
 
+
+  useEffect(()=>{
+      dispatch(bridgeCommon_ChainFees());
+      dispatch(getBridgeEstimateEthFee());
+  },[])
+
+ 
+  const {fisAccount,ethAccount,erc20EstimateFee,estimateEthFee,rksm_balance,rfis_balance,fis_balance}=useSelector((state:any)=>{
+
+    if(operationType=="erc20"){
+      return { 
+        rksm_balance:NumberUtil.handleFisAmountToFixed(state.rKSMModule.ercBalance),
+        rfis_balance:NumberUtil.handleFisAmountToFixed(state.FISModule.ercBalance),
+        fis_balance:NumberUtil.handleFisAmountToFixed(state.FISModule.ercFISBalance),
+
+        erc20EstimateFee:state.bridgeModule.erc20EstimateFee,
+        estimateEthFee:state.bridgeModule.estimateEthFee,
+        fisAccount:state.FISModule.fisAccount,
+        ethAccount:state.rETHModule.ethAccount,
+      }
+    }else{ 
+      return {
+       
+        rksm_balance:NumberUtil.handleFisAmountToFixed(state.rKSMModule.tokenAmount), 
+        rfis_balance:NumberUtil.handleFisAmountToFixed(state.FISModule.tokenAmount),
+        fis_balance:state.FISModule.fisAccount ? state.FISModule.fisAccount.balance:"--",
+
+        erc20EstimateFee:state.bridgeModule.erc20EstimateFee,
+        estimateEthFee:state.bridgeModule.estimateEthFee,
+        fisAccount:state.FISModule.fisAccount,
+        ethAccount:state.rETHModule.ethAccount,
+      }
+    }
+  })
+
+
+  useEffect(()=>{
+    if(fisAccount && operationType=="native"){
+      dispatch(query_rBalances_account());
+      dispatch(fis_query_rBalances_account());
+      dispatch(ksm_rTokenRate());
+      dispatch(fis_rTokenRate() );
+      dispatch(getUnbondCommission());
+      dispatch(fis_getUnbondCommission());
+    }
+  },[fisAccount,operationType])
+  useEffect(()=>{ 
+    if(operationType=="erc20" && ethAccount && ethAccount.address){
+      // dispatch(handleEthAccount(ethAccount.address));
+
+      // dispatch(getAssetBalance());
+      dispatch(ksm_getAssetBalance());
+      dispatch(fis_getAssetBalance());
+      dispatch(getFISAssetBalance());
+    }
+
+  },[(ethAccount && ethAccount.address),operationType])
+  useEffect(()=>{
+    selectDataSource[0].amount=fis_balance
+    selectDataSource[1].amount=rfis_balance
+    selectDataSource[2].amount=rksm_balance
+    setSelectDataSource([...selectDataSource]);
+  },[rksm_balance,rfis_balance,fis_balance])
   // console.log(tokenType,operationType,"====operationType");
   return  <Content className="stafi_rasset_swap">
       <Back onClick={()=>{
@@ -61,7 +135,7 @@ export default function Index(props:any){
         <div className="row">
           <div className="label">
               <label>From</label>
-              <label className="balance">rFIS balance 233.424</label>
+              <label className="balance">{fromType.title} balance {fromType.amount}</label>
           </div>
           <div>
             <TypeInput 
@@ -70,10 +144,11 @@ export default function Index(props:any){
             onChange={(value:any)=>{
               setFormAmount(value)
             }} 
-            selectDataSource={datas} 
+            selectDataSource={selectDataSource} 
             token={fromType} 
-            token_icon={operationType=="erc20" ? selected_rETH : fromType.selectedIcon}
+            token_icon={operationType=="erc20" ? selected_rETH : selected_rFIS}
             token_title={fromType.title}
+            selectTitle={operationType=="native"?"Select a native rToken":"Select an erc20 rToken"}
             onSelectChange={(e:any)=>{ 
               setFormType(e);
             }}/> 
@@ -87,35 +162,72 @@ export default function Index(props:any){
           <div>
             <TypeInput disabled={true}  
             placeholder="0.0" 
-            value={toAoumt} 
+            value={fromAoumt} 
             onChange={(value:any)=>{
               setFormAmount(value)
             }} 
             selectDataSource={datas} 
             token={fromType}
-            token_icon={operationType=="native" ? selected_rETH :fromType.selectedIcon}
+            token_icon={operationType=="native" ? selected_rETH :selected_rFIS}
             token_title={fromType.title}
+            
             /> 
           </div>
         </div>
 
-        <div className="row last"> 
+        <div className={`row last ${(address && operationType=="erc20") && "show_tip"}`}> 
           <div>
-            <Input placeholder="To Ethereum Address" value={address} onChange={(e:any)=>{
+            <Input placeholder={operationType=="erc20"?"To Stafi Address":"To Ethereum Address"} value={address} onChange={(e:any)=>{
               setAddress(e.target.value)
             }}/> 
           </div>
+          {(address && operationType=="erc20") && <div className="tip">
+          Click on this <a href={`https://stafi.subscan.io/account/${address}`} target="_blank">link</a> to check your swap status.
+          </div>}
         </div>
-        <div className="fee">
-            Estimate Fee: 12.23 FIS
+        <div className="fee"> 
+            {operationType=="erc20" && `Estimate Fee: ${estimateEthFee} ETH`}
+            {operationType=="native" && `Estimate Fee: ${erc20EstimateFee} FIS`}
         </div>
         <div className="btns">
-        <Button  onClick={()=>{
-            setVisible(true);
+        <Button disabled={!(fromAoumt && address)}  onClick={()=>{ 
+          if (operationType=="erc20" ) {
+            if(ethAccount.balance <= estimateEthFee){
+              message.error(`No enough ${fromType.title} to pay for the fee`) 
+              return;
+            }
+            if(!checkAddress(address)){
+              message.error('Input address error') 
+              return;
+            }
+          }
+          if (operationType=="native") {
+            if(fromType.amount <= erc20EstimateFee){
+              message.error(`No enough ${fromType.title} to pay for the fee`);
+              return;
+            }
+            if(!checkEthAddress(address)){
+              message.error('Input address error') 
+              return;
+            }
+          } 
+
+          if(operationType=="native"){
+            dispatch(nativeToErc20Swap(fromType.title,fromAoumt,address,()=>{
+              setVisible(true);
+            }))
+          }else{
+            dispatch(erc20ToNativeSwap(fromType.title,fromType.type,fromAoumt,address,()=>{
+              setVisible(true);
+            }))
+          } 
          }}>Swap</Button>
         </div>
       </div>
-      <Understood visible={visible}  onCancel={()=>{
+      <Understood 
+      visible={visible}  
+      context={operationType=="native"?`Tx is broadcasting, please check your ${fromType.title} balance on your metamask later. It may take 2~10 minutes`:`Tx is broadcasting, please check your ${fromType.title} balance later. It may take 2~10 minutes`}
+      onCancel={()=>{
          setVisible(false);
       }} onOk={()=>{
         setVisible(false);

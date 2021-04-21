@@ -46,7 +46,9 @@ const rKSMClice = createSlice({
 
     
     ercBalance:"--",
-    totalUnbonding:null
+    totalUnbonding:null,
+
+    erc20Allowance:"--"
   },
   reducers: {
     setKsmAccounts(state, { payload }) {
@@ -129,6 +131,9 @@ const rKSMClice = createSlice({
     },
     setErcBalance(state,{payload}){
       state.ercBalance=payload
+    },
+    setErc20Allowance(state,{payload}){
+      state.erc20Allowance=payload;
     }
   },
 });
@@ -150,7 +155,8 @@ export const { setKsmAccounts,
   setTotalUnbonding,
   setUnBondFees,
   setRatioShow,
-  setErcBalance
+  setErcBalance,
+  setErc20Allowance
 } = rKSMClice.actions;
 
 
@@ -690,6 +696,15 @@ export const getAssetBalance=():AppThunk=>(dispatch,getState)=>{
     const address=getState().rETHModule.ethAccount.address;  
     commonClice.getAssetBalance(address,polkadotServer.getRKSMTokenAbi(), polkadotServer.getRKSMTokenAddress(),(v:any)=>{
       dispatch(setErcBalance(v))
+    })
+  }
+}
+
+export const getErc20Allowance=():AppThunk=>(dispatch,getState)=>{
+  if(getState().rETHModule.ethAccount){ 
+    const address=getState().rETHModule.ethAccount.address;  
+    commonClice.getErc20Allowance(address,polkadotServer.getRKSMTokenAbi(), polkadotServer.getRKSMTokenAddress(),(v:any)=>{
+      dispatch(setErc20Allowance(v))
     })
   }
 }

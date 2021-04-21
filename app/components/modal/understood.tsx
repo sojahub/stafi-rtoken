@@ -6,6 +6,7 @@ import './swap.scss';
 
 type Props={
   visible:boolean,
+  context:string,
   onOk?:Function,
   onCancel?:Function, 
 }
@@ -33,7 +34,7 @@ export default function Index(props:Props){
               </div>
           </div>
           <div className="context">
-                Tx is broadcasting, please check your FIS balance on Metamask later. It may take 2~10 minuts.
+                {props.context}
           </div>
         </div>
       </Modal>

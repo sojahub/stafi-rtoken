@@ -41,7 +41,9 @@ const FISClice = createSlice({
     bondSwitch: true,
     unbondCommission:"--",
     ercBalance:"--",
-    ercFISBalance:"--"
+    ercFISBalance:"--",
+    erc20Allowance:"--",
+    rFISErc20Allowance:"--"
   },
   reducers: {
     setFisAccounts(state, { payload }) {
@@ -115,6 +117,12 @@ const FISClice = createSlice({
     },
     setErcFISBalance(state,{payload}){
       state.ercFISBalance=payload;
+    },
+    setErc20Allowance(state,{payload}){
+      state.erc20Allowance=payload
+    },
+    setRFISErc20Allowance(state,{payload}){
+      state.rFISErc20Allowance=payload;
     }
   },
 });
@@ -134,7 +142,9 @@ export const { setTokenAmount,
   setBondSwitch,
   setUnbondCommission,
   setErcBalance,
-  setErcFISBalance } = FISClice.actions;
+  setErcFISBalance,
+  setErc20Allowance,
+  setRFISErc20Allowance } = FISClice.actions;
 
 
 export const reloadData = (): AppThunk => async (dispatch, getState) => {
@@ -689,3 +699,26 @@ export const getFISAssetBalance=():AppThunk=>(dispatch,getState)=>{
     })
   }
 }
+
+export const getFISErc20Allowance=():AppThunk=>(dispatch,getState)=>{
+  if(getState().rETHModule.ethAccount){ 
+    const address=getState().rETHModule.ethAccount.address;  
+    commonClice.getErc20Allowance(address,stafiServer.getFISTokenAbi(), stafiServer.getFISTokenAddress(),(v:any)=>{
+      dispatch(setErc20Allowance(v))
+    })
+  }
+}
+export const getRFISErc20Allowance=():AppThunk=>(dispatch,getState)=>{
+  if(getState().rETHModule.ethAccount){ 
+    const address=getState().rETHModule.ethAccount.address;  
+    commonClice.getErc20Allowance(address,stafiServer.getRFISTokenAbi(), stafiServer.getRFISTokenAddress(),(v:any)=>{
+      dispatch(setRFISErc20Allowance(v))
+    })
+  }
+}
+
+export const checkAddress=(stafiAddress:string)=>{
+  const keyringInstance = keyring.init('fis');
+  return keyringInstance.checkAddress(stafiAddress);
+}
+

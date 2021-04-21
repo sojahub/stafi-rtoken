@@ -56,7 +56,7 @@ export default function Index(props:any){
           unit="ETH"
           onSwapClick={()=>{
             props.history.push({
-              pathname:"/rAsset/swap",
+              pathname:"/rAsset/swap/native/erc20",
               state:{
                 type:"erc20",
                 rSymbol:"rETH"
@@ -73,7 +73,7 @@ export default function Index(props:any){
           unit="FIS"
           onSwapClick={()=>{
             props.history.push({
-              pathname:"/rAsset/swap",
+              pathname:"/rAsset/swap/erc20",
               state:{
                 type:"erc20",
                 rSymbol:"FIS"
@@ -90,7 +90,7 @@ export default function Index(props:any){
           unit="FIS"
           onSwapClick={()=>{
             props.history.push({
-              pathname:"/rAsset/swap",
+              pathname:"/rAsset/swap/erc20",
               state:{
                 type:"erc20",
                 rSymbol:"rFIS"
@@ -107,7 +107,7 @@ export default function Index(props:any){
           unit="KSM"
           onSwapClick={()=>{
             props.history.push({
-              pathname:"/rAsset/swap",
+              pathname:"/rAsset/swap/erc20",
               state:{
                 type:"erc20",
                 rSymbol:"rKSM"

@@ -58,6 +58,9 @@
             cursor:no-drop;
         }
     }
+    .ant-input[disabled]{
+        color:#fff;
+    }
 }
 .stafi_type_input_select{
     .ant-popover-arrow{
@@ -80,7 +83,7 @@
         }
     }
     .ant-popover-inner-content{
-        padding: 0px 7px 14px 7px;
+        padding: 0px 0px 14px 0px;
         height: 290px;
         overflow: auto;
         .item{
@@ -113,6 +116,9 @@
                 font-size: 16px;
                 font-weight: bold;;
             }
+        }
+        .item.active{
+            background-color:#F0F0F0 ;
         }
     }
 }

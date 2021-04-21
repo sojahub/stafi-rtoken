@@ -12,7 +12,7 @@ import Page_FIS from '../../rDOT/selectWallet_rFIS/index';
 import {connectPolkadotjs,reloadData} from '@features/globalClice';
 import {rTokenRate as ksm_rTokenRate,query_rBalances_account,getUnbondCommission} from '@features/rKSMClice';
 import {rTokenRate as fis_rTokenRate,query_rBalances_account as fis_query_rBalances_account,getUnbondCommission as fis_getUnbondCommission} from '@features/FISClice';
-import CommonClice from '@features/commonClice'
+import CommonClice from '@features/commonClice';
 import {Symbol,rSymbol} from '@keyring/defaults';
 import NumberUtil from '@util/numberUtil'
 import rasset_fis_svg from '@images/rFIS.svg';
@@ -65,10 +65,9 @@ export default function Index(props:any){
           unit="FIS"
           onSwapClick={()=>{
             props.history.push({
-              pathname:"/rAsset/swap",
-              state:{
-                type:"native",
-                rSymbol:"rFIS"
+              pathname:"/rAsset/swap/native",
+              state:{ 
+                rSymbol:"FIS"
               }
             })
           }}
@@ -82,10 +81,9 @@ export default function Index(props:any){
           unit="FIS"
           onSwapClick={()=>{
             props.history.push({
-              pathname:"/rAsset/swap",
-              state:{
-                type:"native",
-                rSymbol:"rFIS"
+              pathname:"/rAsset/swap/native",
+              state:{ 
+                rSymbol:"rFIS", 
               }
             })
           }}
@@ -99,10 +97,9 @@ export default function Index(props:any){
           unit="KSM"
           onSwapClick={()=>{
             props.history.push({
-              pathname:"/rAsset/swap",
-              state:{
-                type:"native",
-                rSymbol:"rFIS"
+              pathname:"/rAsset/swap/native",
+              state:{ 
+                rSymbol:"rKSM"
               }
             })
           }}

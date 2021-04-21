@@ -663,5 +663,5 @@ const add_DOT_Notice=(uuid:string,type:string,subType:string,content:string,stat
     dispatch(add_Notice(uuid,Symbol.Dot,type,subType,content,status,subData))
 }
 
-
+ 
 export default rDOTClice.reducer;

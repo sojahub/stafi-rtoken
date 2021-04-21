@@ -62,6 +62,20 @@ export default {
     }else{
       return '0xd1d458c1c3579033a65db4ca2f06c12573aa5e27';
     }  
+  },
+  erc20HandlerAddress:()=>{
+    if(process.env.NODE_ENV=="production" &&  !isdev()){
+      return '0x91c48208a9a171eb26e6f2bd48f41b958e19ebab';
+    }else{
+      return '0xeab816f88fe0ebae4971e33f3a21e34ff695791b';
+    }  
+  },
+  bridgeAddress:()=>{
+    if(process.env.NODE_ENV=="production" &&  !isdev()){
+      return '0x13ef51f0525df6045267baed411f535d86586bc1';
+    }else{
+      return '0x57e7c280a3828bf9a5356d7c926fcd555cf0bdc8';
+    } 
   }
 } 
  

@@ -98,5 +98,19 @@ export default {
     minute = minute < 10 ? '0' + minute : minute;
     second = second < 10 ? '0' + second : second;
     return y + '.' + m + '.' + d + ' ' + h + ':' + minute + ':' + second;
+  },
+  getRSymbolNameByRSymbol(rSymbol) {
+    switch (rSymbol) {
+      case RSymbol.RFIS:
+        return 'rFIS';
+      case RSymbol.RDOT:
+        return 'rDOT';
+      case RSymbol.RKSM:
+        return 'rKSM';
+      case RSymbol.RATOM:
+        return 'rATOM';
+      default:
+        return 'rFIS';
+    }
   }
 };
