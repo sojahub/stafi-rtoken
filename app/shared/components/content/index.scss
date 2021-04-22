@@ -5,3 +5,13 @@
   border-radius: 19px;
   position: relative;
 }
+
+.stafi_content::after{
+  content: "Notice: rToken app does not support Ledger. DO NOT connect APP using Ledger, otherwise your assets will be lost.";
+  position: absolute;
+  bottom: -57px;
+  width: 740px;
+  min-width: fit-content;
+  left: -29px;
+  color: #C4C4C4;
+}
