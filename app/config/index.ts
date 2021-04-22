@@ -35,6 +35,13 @@ export default {
       return 'https://rtoken-api.stafi.io';
     }  
   },
+  rBridgeApp: ()=>{ 
+    if(process.env.NODE_ENV=="production" &&  !isdev()){
+      return 'https://rtoken.stafi.io/rbridge';
+    }else{
+      return 'https://test-rtoken.stafi.io/rbridge';
+    }
+  },
   rFISTokenAddress: ()=>{
     if(process.env.NODE_ENV=="production" &&  !isdev()){
       return '0xc82eb6dea0c93edb8b697b89ad1b13d19469d635';

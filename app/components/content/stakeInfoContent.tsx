@@ -7,6 +7,8 @@ import rDOT_DOT_svg from '@images/rDOT_DOT.svg'
 import Button from '@shared/components/button/button'
 import NumberUtil from '@util/numberUtil';
 import Modal from '../modal/swapModal' 
+import config from '@config/index';
+
 type Props={
      onRdeemClick?:Function,
      ratio?:any,
@@ -69,7 +71,7 @@ export default function Index(props:Props){
         setVisibleModal(false)
       }} onOk={(clickType: any) => {
         if (clickType == 1) {
-          message.info("Swap will be available soon");
+          window.open(config.rBridgeApp());
         } else {
           message.info("Uniswap Pool hasn't been established yet, stay tuned");
         }
