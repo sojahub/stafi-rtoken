@@ -63,6 +63,7 @@ export default function Index(props:any){
           balance={fisAccount?fisAccount.balance:"--"}
           willGetBalance={fisWillAmount}
           unit="FIS"
+          operationType="native"
           onSwapClick={()=>{
             props.history.push({
               pathname:"/rAsset/swap/native",
@@ -79,6 +80,7 @@ export default function Index(props:any){
           balance={fis_tokenAmount=="--" ?"--":NumberUtil.handleFisAmountToFixed(fis_tokenAmount)}
           willGetBalance={fisWillAmount}
           unit="FIS"
+          operationType="native"
           onSwapClick={()=>{
             props.history.push({
               pathname:"/rAsset/swap/native",
@@ -95,6 +97,7 @@ export default function Index(props:any){
           balance={tokenAmount=="--" ?"--":NumberUtil.handleFisAmountToFixed(tokenAmount)}
           willGetBalance={ksmWillAmount}
           unit="KSM"
+          operationType="native"
           onSwapClick={()=>{
             props.history.push({
               pathname:"/rAsset/swap/native",

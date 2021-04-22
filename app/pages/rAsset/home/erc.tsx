@@ -54,6 +54,8 @@ export default function Index(props:any){
           balance={eth_ercBalance=="--" ?"--":NumberUtil.handleFisAmountToFixed(eth_ercBalance)}
           willGetBalance={0}
           unit="ETH"
+          operationType="erc20"
+          trade={`https://app.uniswap.org/#/swap?inputCurrency=0x9559aaa82d9649c7a7b220e7c461d2e74c9a3593&outputCurrency=ETH`}
           onSwapClick={()=>{
             props.history.push({
               pathname:"/rAsset/swap/native/erc20",
@@ -71,6 +73,8 @@ export default function Index(props:any){
           balance={fis_ercFISBalance=="--" ?"--":NumberUtil.handleFisAmountToFixed(fis_ercFISBalance)}
           willGetBalance={0}
           unit="FIS"
+          trade={`https://app.uniswap.org/#/swap?inputCurrency=ETH&outputCurrency=0xef3a930e1ffffacd2fc13434ac81bd278b0ecc8d`}
+          operationType="erc20"
           onSwapClick={()=>{
             props.history.push({
               pathname:"/rAsset/swap/erc20",
@@ -88,6 +92,8 @@ export default function Index(props:any){
           balance={fis_ercBalance=="--" ?"--":NumberUtil.handleFisAmountToFixed(fis_ercBalance)}
           willGetBalance={0}
           unit="FIS"
+          trade={`https://app.uniswap.org/#/swap?inputCurrency=ETH&outputCurrency=0xc82eb6dea0c93edb8b697b89ad1b13d19469d635`}
+          operationType="erc20"
           onSwapClick={()=>{
             props.history.push({
               pathname:"/rAsset/swap/erc20",
@@ -105,6 +111,7 @@ export default function Index(props:any){
           balance={ksm_ercBalance=="--" ?"--":NumberUtil.handleFisAmountToFixed(ksm_ercBalance)}
           willGetBalance={0}
           unit="KSM"
+          operationType="erc20"
           onSwapClick={()=>{
             props.history.push({
               pathname:"/rAsset/swap/erc20",
