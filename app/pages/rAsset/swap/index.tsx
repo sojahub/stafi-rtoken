@@ -236,12 +236,16 @@ export default function Index(props:any){
       onCancel={()=>{
          setVisible(false);
       }} onOk={()=>{
-         if(fromType.title=="FIS" || fromType.title=="rFIS"){
-           dispatch(fisReloadData());
-         }
-         if(fromType.title=="rKSM"){
-           dispatch(ksmReloadData())
-         }
+        if(operationType=="native"){
+          if(fromType.title=="FIS" || fromType.title=="rFIS"){
+            dispatch(fisReloadData());
+          }
+          if(fromType.title=="rKSM"){
+            dispatch(ksmReloadData());
+          }
+        }else{
+          dispatch(getAssetBalanceAll()); 
+        }
          setVisible(false);
       }}/>
   </Content>
