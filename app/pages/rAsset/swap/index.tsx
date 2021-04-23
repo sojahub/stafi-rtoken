@@ -73,9 +73,9 @@ export default function Index(props:any){
 
     if(operationType=="erc20"){
       return { 
-        rksm_balance:NumberUtil.handleFisAmountToFixed(state.rKSMModule.ercBalance),
-        rfis_balance:NumberUtil.handleFisAmountToFixed(state.FISModule.ercBalance),
-        fis_balance:NumberUtil.handleFisAmountToFixed(state.FISModule.ercFISBalance),
+        rksm_balance:NumberUtil.handleFisAmountToFixed(state.ETHModule.ercRKSMBalance),
+        rfis_balance:NumberUtil.handleFisAmountToFixed(state.ETHModule.ercRFISBalance),
+        fis_balance:NumberUtil.handleFisAmountToFixed(state.ETHModule.ercFISBalance),
 
         erc20EstimateFee:state.bridgeModule.erc20EstimateFee,
         estimateEthFee:state.bridgeModule.estimateEthFee,

@@ -47,7 +47,7 @@ export default function Index(props:any){
           rSymbol="FIS"
           icon={rasset_fis_svg}
           fullName="StaFi" 
-          balance={rfis_ercBalance=="--" ?"--":NumberUtil.handleFisAmountToFixed(rfis_ercBalance)}
+          balance={fis_ercBalance=="--" ?"--":NumberUtil.handleFisAmountToFixed(fis_ercBalance)}
           willGetBalance={0}
           unit="FIS"
           trade={`https://app.uniswap.org/#/swap?inputCurrency=ETH&outputCurrency=0xef3a930e1ffffacd2fc13434ac81bd278b0ecc8d`}
@@ -67,7 +67,7 @@ export default function Index(props:any){
           rSymbol="rFIS"
           icon={rasset_rfis_svg}
           fullName="StaFi" 
-          balance={fis_ercBalance=="--" ?"--":NumberUtil.handleFisAmountToFixed(fis_ercBalance)}
+          balance={rfis_ercBalance=="--" ?"--":NumberUtil.handleFisAmountToFixed(rfis_ercBalance)}
           willGetBalance={0}
           unit="FIS"
           trade={`https://app.uniswap.org/#/swap?inputCurrency=ETH&outputCurrency=0xc82eb6dea0c93edb8b697b89ad1b13d19469d635`}

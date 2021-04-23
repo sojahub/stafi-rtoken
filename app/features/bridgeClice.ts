@@ -72,18 +72,18 @@ export const nativeToErc20Swap=(tokenType:string,amount:any,ethAddress:string,cb
         const ETH_CHAIN_ID = 2;
         dispatch(setLoading(true));
         web3Enable(stafiServer.getWeb3EnalbeName());
-        const injector:any=web3FromSource(stafiServer.getPolkadotJsSource())
+        const injector:any=await web3FromSource(stafiServer.getPolkadotJsSource())
         const api=await stafiServer.createStafiApi();
         let currentAccount = getState().FISModule.fisAccount.address;
         let tx:any = '';
         let symbolName:string = '';
         if (tokenType == 'FIS'){
             symbolName="FIS";
-            tx = api.tx.bridgeSwap.transferNative(amount.toString(), ethAddress, ETH_CHAIN_ID);
+            tx =api.tx.bridgeSwap.transferNative(amount.toString(), ethAddress, ETH_CHAIN_ID);
             // toolUtil
         }else {
             symbolName = tokenType;
-            tx = api.tx.bridgeSwap.transferRtoken(tokenType, amount.toString(), ethAddress, ETH_CHAIN_ID);
+            tx =api.tx.bridgeSwap.transferRtoken(tokenType, amount.toString(), ethAddress, ETH_CHAIN_ID);
         } 
         if (!tx) {
             dispatch(setLoading(false));
@@ -114,9 +114,11 @@ export const nativeToErc20Swap=(tokenType:string,amount:any,ethAddress:string,cb
                                 }
                                 dispatch(setLoading(false));
                                 message.error(message);
+                                console.error(error.message)
                             } catch (error) {
                                 dispatch(setLoading(false));
                                 message.error(error.message); 
+                                console.error(error.message)
                             }
                         }
                     } else if (method === 'ExtrinsicSuccess') {
@@ -126,15 +128,18 @@ export const nativeToErc20Swap=(tokenType:string,amount:any,ethAddress:string,cb
                 });
             } else if (result.isError) {
                 dispatch(setLoading(false));
-                message.error(result.toHuman()) 
+                message.error(result.toHuman());
+                console.error(result.toHuman())
             } 
         }).catch((error:any) => {
             dispatch(setLoading(false));
-            message.error(error.message)  
+            message.error(error.message);
+            console.error(error.message)
         });
     } catch (error) {
         dispatch(setLoading(false));
-        message.error(error.message)  
+        message.error(error.message);
+        console.error(error.message)
     }
 
 }

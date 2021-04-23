@@ -26,7 +26,7 @@ const ETHClice = createSlice({
         state.ercETHBalance=payload;
     },
     setErcFISBalance(state,{payload}){
-        state.ercETHBalance=payload;
+        state.ercFISBalance=payload;
     },
     setErcRFISBalance(state,{payload}){
         state.ercRFISBalance=payload;
