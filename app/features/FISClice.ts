@@ -2,7 +2,7 @@ import { createSlice } from '@reduxjs/toolkit';
 import { Button, message as M, message } from 'antd';
 import { AppThunk, RootState } from '../store';
 import Stafi from '@servers/stafi/index';
-import {timeout} from '@util/common'
+import {timeout} from '@util/common';
 import {
   processStatus, setProcessSlider, setProcessSending, setProcessStaking,
   setProcessMinting, gSetTimeOut, gClearTimeOut,
@@ -43,7 +43,8 @@ const FISClice = createSlice({
     ercBalance:"--",
     ercFISBalance:"--",
     erc20Allowance:"--",
-    rFISErc20Allowance:"--"
+    rFISErc20Allowance:"--",
+    totalIssuance:"--",
   },
   reducers: {
     setFisAccounts(state, { payload }) {
@@ -123,6 +124,9 @@ const FISClice = createSlice({
     },
     setRFISErc20Allowance(state,{payload}){
       state.rFISErc20Allowance=payload;
+    },
+    setTotalIssuance(state,{payload}){
+      state.totalIssuance=payload;
     }
   },
 });
@@ -144,7 +148,8 @@ export const { setTokenAmount,
   setErcBalance,
   setErcFISBalance,
   setErc20Allowance,
-  setRFISErc20Allowance } = FISClice.actions;
+  setRFISErc20Allowance,
+  setTotalIssuance } = FISClice.actions;
 
 
 export const reloadData = (): AppThunk => async (dispatch, getState) => {
@@ -154,7 +159,8 @@ export const reloadData = (): AppThunk => async (dispatch, getState) => {
   }
   // Update Transferable DOT/FIS
   dispatch(query_rBalances_account());
-  dispatch(balancesAll())
+  dispatch(balancesAll());
+  dispatch(getTotalIssuance());
 }
 export const createSubstrate = (account: any): AppThunk => async (dispatch, getState) => { 
   queryBalance(account, dispatch, getState)
@@ -716,7 +722,11 @@ export const getRFISErc20Allowance=():AppThunk=>(dispatch,getState)=>{
     })
   }
 }
-
+ 
+export const getTotalIssuance=():AppThunk=>async (dispatch, getState)=>{
+  const result=await commonClice.getTotalIssuance(rSymbol.Fis);
+  dispatch(setTotalIssuance(result))
+}
 export const checkAddress=(stafiAddress:string)=>{
   const keyringInstance = keyring.init('fis');
   return keyringInstance.checkAddress(stafiAddress);

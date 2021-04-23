@@ -48,25 +48,6 @@ export default function Index(props:any){
     }}/>
      {ethAccount?<><DataList >
       <DataItem 
-          rSymbol="rETH"
-          icon={rasset_reth_svg}
-          fullName="Ethereum" 
-          balance={eth_ercBalance=="--" ?"--":NumberUtil.handleFisAmountToFixed(eth_ercBalance)}
-          willGetBalance={0}
-          unit="ETH"
-          operationType="erc20"
-          trade={`https://app.uniswap.org/#/swap?inputCurrency=0x9559aaa82d9649c7a7b220e7c461d2e74c9a3593&outputCurrency=ETH`}
-          onSwapClick={()=>{
-            props.history.push({
-              pathname:"/rAsset/swap/native/erc20",
-              state:{
-                type:"erc20",
-                rSymbol:"rETH"
-              }
-            })
-          }}
-        />
-         <DataItem 
           rSymbol="FIS"
           icon={rasset_fis_svg}
           fullName="StaFi" 
@@ -85,7 +66,8 @@ export default function Index(props:any){
             })
           }}
         />
-        <DataItem 
+
+<DataItem 
           rSymbol="rFIS"
           icon={rasset_rfis_svg}
           fullName="StaFi" 
@@ -104,6 +86,27 @@ export default function Index(props:any){
             })
           }}
         />
+      <DataItem 
+          rSymbol="rETH"
+          icon={rasset_reth_svg}
+          fullName="Ethereum" 
+          balance={eth_ercBalance=="--" ?"--":NumberUtil.handleFisAmountToFixed(eth_ercBalance)}
+          willGetBalance={0}
+          unit="ETH"
+          operationType="erc20"
+          trade={`https://app.uniswap.org/#/swap?inputCurrency=0x9559aaa82d9649c7a7b220e7c461d2e74c9a3593&outputCurrency=ETH`}
+          onSwapClick={()=>{
+            props.history.push({
+              pathname:"/rAsset/swap/native/erc20",
+              state:{
+                type:"erc20",
+                rSymbol:"rETH"
+              }
+            })
+          }}
+        />
+         
+        
         <DataItem 
           rSymbol="rKSM"
           icon={rasset_rksm_svg}

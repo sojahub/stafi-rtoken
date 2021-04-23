@@ -620,7 +620,7 @@ export const unbondFees=():AppThunk=>async (dispatch, getState)=>{
   dispatch(setUnBondFees(result));
 }
 export const getTotalIssuance=():AppThunk=>async (dispatch, getState)=>{
-  const result=await commonClice.getTotalIssuance(rSymbol.Dot);
+  const result=await commonClice.getTotalIssuance(rSymbol.Ksm);
   dispatch(setTotalIssuance(result))
 }
 

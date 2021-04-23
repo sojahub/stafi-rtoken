@@ -16,10 +16,11 @@ import Understood from '@components/modal/understood';
 import {bridgeCommon_ChainFees,getBridgeEstimateEthFee,nativeToErc20Swap,erc20ToNativeSwap}from '@features/bridgeClice';
 import {rTokenRate as ksm_rTokenRate,query_rBalances_account,getUnbondCommission} from '@features/rKSMClice';
 import {rTokenRate as fis_rTokenRate,query_rBalances_account as fis_query_rBalances_account,getUnbondCommission as fis_getUnbondCommission} from '@features/FISClice'; 
-import {getAssetBalance as ksm_getAssetBalance} from '@features/rKSMClice';
-import {getAssetBalance as fis_getAssetBalance,getFISAssetBalance,checkAddress} from '@features/FISClice';
+import {getAssetBalance as ksm_getAssetBalance,reloadData as ksmReloadData} from '@features/rKSMClice';
+import {getAssetBalance as fis_getAssetBalance,getFISAssetBalance,checkAddress,reloadData as fisReloadData} from '@features/FISClice';
 import {checkEthAddress} from '@features/rETHClice'
 import { useSelector,useDispatch } from 'react-redux';
+import {setLoading} from '@features/globalClice'
 import NumberUtil from '@util/numberUtil';
 const datas=[{
   icon:rasset_fis_svg, 
@@ -135,7 +136,7 @@ export default function Index(props:any){
         <div className="row">
           <div className="label">
               <label>From</label>
-              <label className="balance">{fromType.title} balance {fromType.amount}</label>
+              <label className="balance">{fromType.title} balance: {fromType.amount}</label>
           </div>
           <div>
             <TypeInput 
@@ -213,6 +214,7 @@ export default function Index(props:any){
           } 
 
           if(operationType=="native"){
+         
             dispatch(nativeToErc20Swap(fromType.title,fromAoumt,address,()=>{
               setVisible(true);
             }))
@@ -230,7 +232,13 @@ export default function Index(props:any){
       onCancel={()=>{
          setVisible(false);
       }} onOk={()=>{
-        setVisible(false);
+         if(fromType.title=="FIS" || fromType.title=="rFIS"){
+           dispatch(fisReloadData());
+         }
+         if(fromType.title=="rKSM"){
+           dispatch(ksmReloadData())
+         }
+         setVisible(false);
       }}/>
   </Content>
 }

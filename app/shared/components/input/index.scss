@@ -44,14 +44,17 @@
             color:#fff;
             font-size: 20px;
             cursor: pointer;
-            .icon:first-child{
+            display: flex;
+            align-items: center;
+            .icon{
                 width:20px;
                 height:20px;
                 margin-right: 5px;
             }
-            .icon_last:last-child{
+            .icon_last{
                 width:5px;
                 transform: rotate(-90deg);
+                margin-left:8px;
             }
         }
         .disabled{

@@ -48,7 +48,7 @@ export default function Index(props:any){
     {/* <Sider route={props.route} history={props.history}/>  */}
     
       <div className="stafi_container">
-        <Spin spinning={loading}size="large" tip="loading">
+        <Spin spinning={loading} size="large" tip="loading">
           <Content>
             {renderRoutes(props.route.routes)}
           </Content> 

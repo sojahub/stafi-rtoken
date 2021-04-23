@@ -27,7 +27,7 @@ export default function Index(props:Props){
           {props.balance}
         </div>
         <div>
-         {props.rSymbol=="FIS"?"": `Redeemable:${props.willGetBalance} ${props.unit}`}
+         {props.rSymbol=="FIS"?"": `Redeemable: ${props.willGetBalance} ${props.unit}`}
         </div>
     </div>
     <div className="col_btns">
@@ -40,11 +40,11 @@ export default function Index(props:Props){
         }}>
             Trade
         </GhostButton>}
-        <GhostButton onClick={()=>{
+        {!(props.operationType=="erc20" && props.rSymbol=="rETH") && <GhostButton onClick={()=>{
           props.onSwapClick && props.onSwapClick();
         }}>
             Swap
-        </GhostButton>
+        </GhostButton>}
     </div>
   </div>  
 }
