@@ -60,7 +60,7 @@ export default function Index(props:any){
           rSymbol="FIS"
           icon={rasset_fis_svg}
           fullName="StaFi" 
-          balance={fisAccount?fisAccount.balance:"--"}
+          balance={(fisAccount && fisAccount.balance!="--")?NumberUtil.handleFisAmountToFixed(fisAccount.balance):"--"}
           willGetBalance={fisWillAmount}
           unit="FIS"
           operationType="native"
