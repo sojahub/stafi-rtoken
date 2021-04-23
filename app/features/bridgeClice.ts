@@ -66,8 +66,9 @@ export const getBridgeEstimateEthFee=():AppThunk=>async (dispatch,getState)=>{
     dispatch(setEstimateEthFee(bridgeServer.getBridgeEstimateEthFee())) 
 }
  
-export const nativeToErc20Swap=(tokenType:string,amount:any,ethAddress:string,cb?:Function):AppThunk=>async (dispatch,getState)=>{
+export const nativeToErc20Swap=(tokenType:string,tokenAmount:any,ethAddress:string,cb?:Function):AppThunk=>async (dispatch,getState)=>{
     try {
+        const amount = NumberUtil.fisAmountToChain(tokenAmount.toString());
         const STAFI_CHAIN_ID = 1;
         const ETH_CHAIN_ID = 2;
         dispatch(setLoading(true));
@@ -149,9 +150,8 @@ export const erc20ToNativeSwap=(tokenType:string,symbol:string,tokenAmount:any,s
   let web3 = ethServer.getWeb3();
   const STAFI_CHAIN_ID = 1;
   const ETH_CHAIN_ID = 2;
-  const tokenAmount_fis = NumberUtil.fisAmountToChain(tokenAmount.toString());
-  let tokenContract:any = '';
-  let symbolName = tokenType;
+  
+  let tokenContract:any = ''; 
   let allowance:any = 0;
   const ethAddress=getState().rETHModule.ethAccount.address
   if (tokenType == 'FIS') { 
@@ -175,7 +175,7 @@ export const erc20ToNativeSwap=(tokenType:string,symbol:string,tokenAmount:any,s
     return;
   }
 
-  const amount = web3.utils.toWei(tokenAmount_fis.toString());
+  const amount = web3.utils.toWei(tokenAmount.toString());
   try { 
     if (allowance < amount) { 
         const approveResult = await tokenContract.methods.approve(bridgeServer.getBridgeErc20HandlerAddress(), web3.utils.toWei('10000000')).send();
