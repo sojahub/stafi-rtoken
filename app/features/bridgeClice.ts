@@ -149,6 +149,7 @@ export const erc20ToNativeSwap=(tokenType:string,symbol:string,tokenAmount:any,s
   let web3 = ethServer.getWeb3();
   const STAFI_CHAIN_ID = 1;
   const ETH_CHAIN_ID = 2;
+  const tokenAmount_fis = NumberUtil.fisAmountToChain(tokenAmount.toString());
   let tokenContract:any = '';
   let symbolName = tokenType;
   let allowance:any = 0;
@@ -174,7 +175,7 @@ export const erc20ToNativeSwap=(tokenType:string,symbol:string,tokenAmount:any,s
     return;
   }
 
-  const amount = web3.utils.toWei(tokenAmount.toString());
+  const amount = web3.utils.toWei(tokenAmount_fis.toString());
   try { 
     if (allowance < amount) { 
         const approveResult = await tokenContract.methods.approve(bridgeServer.getBridgeErc20HandlerAddress(), web3.utils.toWei('10000000')).send();
