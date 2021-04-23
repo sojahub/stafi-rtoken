@@ -5,9 +5,8 @@ import Button from '@shared/components/button/connect_button';
 import Tag from './components/carTag/index'
 import DataList from './components/list'
 import Content from '@shared/components/content';
-import {connectMetamask,monitoring_Method,handleEthAccount,getAssetBalance} from '@features/rETHClice';
-import {getAssetBalance as ksm_getAssetBalance} from '@features/rKSMClice';
-import {getAssetBalance as fis_getAssetBalance,getFISAssetBalance} from '@features/FISClice'
+import {connectMetamask,monitoring_Method,handleEthAccount} from '@features/rETHClice';
+import {getAssetBalanceAll} from '@features/ETHClice';
 import CountAmount from './components/countAmount'; 
 import DataItem from './components/list/item';
 import NumberUtil from '@util/numberUtil';
@@ -22,23 +21,20 @@ export default function Index(props:any){
  
   const dispatch=useDispatch();
 
-  const {ethAccount,ksm_ercBalance,fis_ercBalance,eth_ercBalance,fis_ercFISBalance}=useSelector((state:any)=>{ 
+  const {ethAccount,ksm_ercBalance,fis_ercBalance,eth_ercBalance,rfis_ercBalance}=useSelector((state:any)=>{ 
     return {
       ethAccount:state.rETHModule.ethAccount,
-      ksm_ercBalance:state.rKSMModule.ercBalance,
-      fis_ercBalance:state.FISModule.ercBalance,
-      fis_ercFISBalance:state.FISModule.ercFISBalance,
-      eth_ercBalance:state.rETHModule.ercBalance
+      ksm_ercBalance:state.ETHModule.ercRKSMBalance,
+      fis_ercBalance:state.ETHModule.ercFISBalance,
+      rfis_ercBalance:state.ETHModule.ercRFISBalance,
+      eth_ercBalance:state.ETHModule.ercETHBalance
     }
   })
   useEffect(()=>{ 
     if(ethAccount && ethAccount.address){
       dispatch(handleEthAccount(ethAccount.address));
 
-      dispatch(getAssetBalance());
-      dispatch(ksm_getAssetBalance());
-      dispatch(fis_getAssetBalance());
-      dispatch(getFISAssetBalance());
+      dispatch(getAssetBalanceAll()); 
     }
 
   },[ethAccount && ethAccount.address])
@@ -51,7 +47,7 @@ export default function Index(props:any){
           rSymbol="FIS"
           icon={rasset_fis_svg}
           fullName="StaFi" 
-          balance={fis_ercFISBalance=="--" ?"--":NumberUtil.handleFisAmountToFixed(fis_ercFISBalance)}
+          balance={rfis_ercBalance=="--" ?"--":NumberUtil.handleFisAmountToFixed(rfis_ercBalance)}
           willGetBalance={0}
           unit="FIS"
           trade={`https://app.uniswap.org/#/swap?inputCurrency=ETH&outputCurrency=0xef3a930e1ffffacd2fc13434ac81bd278b0ecc8d`}

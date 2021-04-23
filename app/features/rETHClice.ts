@@ -4,12 +4,10 @@ import { AppThunk, RootState } from '../store';
 import { setLocalStorageItem, getLocalStorageItem, removeLocalStorageItem, Keys } from '@util/common';
 import NumberUtil from '@util/numberUtil';
 import Web3Utils from 'web3-utils';
-import EthServer from '@servers/eth/index';
-import CommonClice from './commonClice';
+import EthServer from '@servers/eth/index'; 
 import { message } from 'antd';
-import { keccakAsHex } from '@polkadot/util-crypto';
- 
-const commonClice=new CommonClice();
+import { keccakAsHex } from '@polkadot/util-crypto'; 
+
 const ethServer=new EthServer();
 const rETHClice = createSlice({
   name: 'rETHModule',
@@ -117,15 +115,7 @@ export const monitoring_Method=():AppThunk=>(dispatch,getState)=> {
 }
 
  
-
-export const getAssetBalance=():AppThunk=>(dispatch,getState)=>{  
-  if(getState().rETHModule.ethAccount){ 
-    const address=getState().rETHModule.ethAccount.address;  
-    commonClice.getAssetBalance(address,ethServer.getRETHTokenAbi(), ethServer.getRETHTokenAddress(),(v:any)=>{
-      dispatch(setErcBalance(v))
-    })
-  }
-}
+ 
 
 export const checkAddressChecksum=(address:string)=> {
   // Check each case

@@ -14,10 +14,9 @@ import rasset_rfis_svg from '@images/rasset_rfis.svg';
 import rasset_rksm_svg from '@images/rasset_rksm.svg'; 
 import Understood from '@components/modal/understood';
 import {bridgeCommon_ChainFees,getBridgeEstimateEthFee,nativeToErc20Swap,erc20ToNativeSwap}from '@features/bridgeClice';
-import {rTokenRate as ksm_rTokenRate,query_rBalances_account,getUnbondCommission} from '@features/rKSMClice';
-import {rTokenRate as fis_rTokenRate,query_rBalances_account as fis_query_rBalances_account,getUnbondCommission as fis_getUnbondCommission} from '@features/FISClice'; 
-import {getAssetBalance as ksm_getAssetBalance,reloadData as ksmReloadData} from '@features/rKSMClice';
-import {getAssetBalance as fis_getAssetBalance,getFISAssetBalance,checkAddress,reloadData as fisReloadData} from '@features/FISClice';
+import {rTokenRate as ksm_rTokenRate,query_rBalances_account,getUnbondCommission,checkAddress as ksm_checkAddress,reloadData as ksmReloadData} from '@features/rKSMClice';
+import {rTokenRate as fis_rTokenRate,query_rBalances_account as fis_query_rBalances_account,getUnbondCommission as fis_getUnbondCommission,reloadData as fisReloadData,checkAddress as fis_checkAddress} from '@features/FISClice'; 
+import {getAssetBalanceAll,getErc20Allowances} from '@features/ETHClice'
 import {checkEthAddress} from '@features/rETHClice'
 import { useSelector,useDispatch } from 'react-redux';
 import {setLoading} from '@features/globalClice'
@@ -112,11 +111,8 @@ export default function Index(props:any){
   useEffect(()=>{ 
     if(operationType=="erc20" && ethAccount && ethAccount.address){
       // dispatch(handleEthAccount(ethAccount.address));
-
-      // dispatch(getAssetBalance());
-      dispatch(ksm_getAssetBalance());
-      dispatch(fis_getAssetBalance());
-      dispatch(getFISAssetBalance());
+      dispatch(getErc20Allowances());
+      dispatch(getAssetBalanceAll()); 
     }
 
   },[(ethAccount && ethAccount.address),operationType])
@@ -126,7 +122,15 @@ export default function Index(props:any){
     selectDataSource[2].amount=rksm_balance
     setSelectDataSource([...selectDataSource]);
   },[rksm_balance,rfis_balance,fis_balance])
-  // console.log(tokenType,operationType,"====operationType");
+  
+
+  const checkAddress=(address:string)=>{
+    if(fromType.title=="FIS" || fromType.title=="rFIS" ){
+      return fis_checkAddress(address);
+    }else{
+      return ksm_checkAddress(address);
+    }
+  }
   return  <Content className="stafi_rasset_swap">
       <Back onClick={()=>{
           props.history &&  props.history.goBack(); 

@@ -73,7 +73,7 @@ export const nativeToErc20Swap=(tokenType:string,amount:any,ethAddress:string,cb
         dispatch(setLoading(true));
         web3Enable(stafiServer.getWeb3EnalbeName());
         const injector:any=web3FromSource(stafiServer.getPolkadotJsSource())
-        const api=stafiServer.createStafiApi();
+        const api=await stafiServer.createStafiApi();
         let currentAccount = getState().FISModule.fisAccount.address;
         let tx:any = '';
         let symbolName:string = '';
@@ -152,17 +152,17 @@ export const erc20ToNativeSwap=(tokenType:string,symbol:string,tokenAmount:any,s
     tokenContract = new web3.eth.Contract(stafiServer.getFISTokenAbi(), stafiServer.getFISTokenAddress(), {
       from: ethAddress
     });
-    allowance = getState().FISModule.erc20Allowance
+    allowance = getState().ETHModule.FISErc20Allowance
   } else if (tokenType == 'rFIS') { 
     tokenContract = new web3.eth.Contract(stafiServer.getRFISTokenAbi(), stafiServer.getRFISTokenAddress(), {
       from: ethAddress
     });
-    allowance = getState().FISModule.rFISErc20Allowance
+    allowance = getState().ETHModule.RFISErc20Allowance
   } else if (tokenType == 'rKSM') { 
     tokenContract = new web3.eth.Contract(ksmServer.getRKSMTokenAbi(), ksmServer.getRKSMTokenAddress(), {
       from: ethAddress
     });
-    allowance = getState().rKSMModule.erc20Allowance
+    allowance = getState().ETHModule.RKSMErc20Allowance
   }
   if (!tokenContract) {
     dispatch(setLoading(false));

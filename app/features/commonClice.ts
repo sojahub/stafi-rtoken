@@ -10,37 +10,7 @@ import { countBy } from 'lodash';
 const ethServer=new EthServer();
 const stafiServer=new StafiServer();
 const bridgeServer=new BridgeServer();
-export default class CommonClice{
-    getAssetBalance=(ethAddress:string,getRKSMTokenAbi:string,getRKSMTokenAddress:string,cb?:Function)=>{
-        let web3=ethServer.getWeb3(); 
-        let contract = new web3.eth.Contract(getRKSMTokenAbi, getRKSMTokenAddress, {
-          from: ethAddress
-        }); 
-        try{
-          contract.methods.balanceOf(ethAddress).call().then((balance:any) => {
-    
-            let rbalance = web3.utils.fromWei(balance, 'ether');   
-            cb && cb(rbalance);
-          }).catch((e:any)=>{
-            console.error(e)
-          });
-        }catch(e:any){
-          console.error(e)
-        }
-    }
-    async getErc20Allowance(ethAddress:string,getRKSMTokenAbi:string,getRKSMTokenAddress:string,cb?:Function){
-      let web3=ethServer.getWeb3(); 
-      let contract = new web3.eth.Contract(getRKSMTokenAbi, getRKSMTokenAddress, {
-        from: ethAddress
-      }); 
-      try{
-        const allowance = await contract.methods.allowance(ethAddress, bridgeServer.getBridgeErc20HandlerAddress()).call();
-         // this.erc20RFisAllowance = allowance; 
-         cb && cb(allowance);
-      }catch(e:any){
-        console.error(e) 
-      }
-    }
+export default class CommonClice{ 
     getWillAmount(ratio:any,unbondCommission:any,amounts:any){ 
         let willAmount:any=0;
         // let ratio=state.FISModule.ratio; 
