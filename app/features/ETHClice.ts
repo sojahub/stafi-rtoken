@@ -80,6 +80,7 @@ export const getFISAssetBalance=():AppThunk=>(dispatch,getState)=>{
     if(getState().rETHModule.ethAccount){ 
       const address=getState().rETHModule.ethAccount.address;  
       getAssetBalance(address,fisServer.getFISTokenAbi(), fisServer.getFISTokenAddress(),(v:any)=>{
+        console.log(v,"=========asdfasfafs");
         dispatch(setErcFISBalance(v))
       })
     }

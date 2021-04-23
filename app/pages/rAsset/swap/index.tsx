@@ -121,6 +121,14 @@ export default function Index(props:any){
     selectDataSource[1].amount=rfis_balance
     selectDataSource[2].amount=rksm_balance
     setSelectDataSource([...selectDataSource]);
+    if(fromType.title="FIS"){
+      fromType.amount=fis_balance;
+    }else  if(fromType.title="rFIS"){
+      fromType.amount=rfis_balance;
+    }else if(fromType.title="rKSM"){
+      fromType.amount=rksm_balance;
+    }
+    setFormType({...fromType});
   },[rksm_balance,rfis_balance,fis_balance])
   
 
