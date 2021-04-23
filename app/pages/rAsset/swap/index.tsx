@@ -16,7 +16,7 @@ import Understood from '@components/modal/understood';
 import {bridgeCommon_ChainFees,getBridgeEstimateEthFee,nativeToErc20Swap,erc20ToNativeSwap}from '@features/bridgeClice';
 import {rTokenRate as ksm_rTokenRate,query_rBalances_account,getUnbondCommission,checkAddress as ksm_checkAddress,reloadData as ksmReloadData} from '@features/rKSMClice';
 import {rTokenRate as fis_rTokenRate,query_rBalances_account as fis_query_rBalances_account,getUnbondCommission as fis_getUnbondCommission,reloadData as fisReloadData,checkAddress as fis_checkAddress} from '@features/FISClice'; 
-import {getAssetBalanceAll,getErc20Allowances} from '@features/ETHClice'
+import {getAssetBalanceAll,getErc20Allowances,clickSwapToErc20Link,clickSwapToNativeLink} from '@features/ETHClice'
 import {checkEthAddress} from '@features/rETHClice'
 import { useSelector,useDispatch } from 'react-redux';
 import {setLoading} from '@features/globalClice'
@@ -50,9 +50,7 @@ export default function Index(props:any){
   const [operationType,setOperationType]=useState<undefined | 'erc20' |'native'>();
   // state: {type: "native", rSymbol: "rFIS"}
   useEffect(()=>{  
-    if(props.location.state){
-      console.log(props.location.state.rSymbol,selectDataSource,"===selectDataSource")
-     // setTokenType(props.location.state.rSymbol); 
+    if(props.location.state){ 
       if(selectDataSource.length>0){
         setFormType(selectDataSource.find(item=>item.title==props.location.state.rSymbol));
       }
@@ -188,14 +186,17 @@ export default function Index(props:any){
           </div>
         </div>
 
-        <div className={`row last ${(address && operationType=="erc20") && "show_tip"}`}> 
+        <div className={`row last ${(address) && "show_tip"}`}> 
           <div>
             <Input placeholder={operationType=="erc20"?"To Stafi Address":"To Ethereum Address"} value={address} onChange={(e:any)=>{
               setAddress(e.target.value)
             }}/> 
           </div>
           {(address && operationType=="erc20") && <div className="tip">
-          Click on this <a href={`https://stafi.subscan.io/account/${address}`} target="_blank">link</a> to check your swap status.
+            Click on this <a href={clickSwapToNativeLink(address)} target="_blank">link</a> to check your swap status.
+          </div>}
+          {(address && operationType=="native") && <div className="tip">
+            Click on this <a href={clickSwapToErc20Link(fromType.title,address)} target="_blank">link</a> to check your swap status.
           </div>}
         </div>
         <div className="fee"> 

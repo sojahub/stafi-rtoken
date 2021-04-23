@@ -80,7 +80,6 @@ export const getFISAssetBalance=():AppThunk=>(dispatch,getState)=>{
     if(getState().rETHModule.ethAccount){ 
       const address=getState().rETHModule.ethAccount.address;  
       getAssetBalance(address,fisServer.getFISTokenAbi(), fisServer.getFISTokenAddress(),(v:any)=>{
-        console.log(v,"=========asdfasfafs");
         dispatch(setErcFISBalance(v))
       })
     }
@@ -157,4 +156,22 @@ const getErc20Allowance=async (ethAddress:string,getTokenAbi:string,getTokenAddr
       console.error(e) 
     }
   }
+
+
+
+
+ export const clickSwapToErc20Link=(selectedToken:string,ethAddress:string) =>{
+  let tokenAddress = '';
+  if (selectedToken == 'FIS') {
+    tokenAddress = fisServer.getFISTokenAddress();
+  } else if (selectedToken == 'rFIS') {
+    tokenAddress = fisServer.getRFISTokenAddress();
+  } else if (selectedToken == 'rksm') {
+    tokenAddress = ksmServer.getRKSMTokenAddress();
+  }
+  return 'https://etherscan.io/token/' + tokenAddress + '?a=' + ethAddress;
+}
+export const clickSwapToNativeLink=(stafiAddress:string) =>{
+  return 'https://stafi.subscan.io/account/' +stafiAddress; 
+}
 export default ETHClice.reducer;

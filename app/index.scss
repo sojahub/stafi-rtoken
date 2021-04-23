@@ -31,6 +31,11 @@ input:-internal-autofill-selected  {
     background: #fff;
     border-color: #00F3AB;
 }
+.ant-input:focus, .ant-input-focused,
+.ant-input-affix-wrapper:focus, .ant-input-affix-wrapper-focused,
+.ant-input-affix-wrapper:not(.ant-input-affix-wrapper-disabled):hover{
+    border-color:#B3B3B5;
+}
 .stafi_modal_confirm,.stafi_modal_warning{
     .ant-btn-primary{
         background-color: #00F3AB;
