@@ -357,8 +357,7 @@ export const balancesAll = (): AppThunk => async (dispatch, getState) => {
 }
 
 
-export const query_rBalances_account = (): AppThunk => async (dispatch, getState) => {
-   
+export const query_rBalances_account = (): AppThunk => async (dispatch, getState) => { 
   commonClice.query_rBalances_account(getState().FISModule.fisAccount,rSymbol.Ksm,(data:any)=>{
     if (data == null) {
       dispatch(setTokenAmount(NumberUtil.handleFisAmountToFixed(0)))
@@ -419,7 +418,7 @@ export const reStaking = (cb?: Function): AppThunk => async (dispatch, getState)
 export const unbond = (amount: string,recipient:string,willAmount:any, cb?: Function): AppThunk => async (dispatch, getState) => {
   try{
     const validPools = getState().rKSMModule.validPools; 
-    let selectedPool =commonClice.getPoolForUnbond(amount, validPools);
+    let selectedPool =commonClice.getPoolForUnbond(amount, validPools,rSymbol.Ksm);
     if (selectedPool == null) { 
       cb && cb();
       return;
@@ -629,13 +628,14 @@ export const rTokenLedger=():AppThunk=>async (dispatch, getState)=>{
     dispatch(handleStakerApr());
   }  
 }
- const handleStakerApr=(currentRate?:any,lastRate?:any):AppThunk=>async (dispatch, getState)=>{
-   if (currentRate && lastRate) {
-      const apr = NumberUtil.handleEthRoundToFixed((currentRate - lastRate)/lastRate * 4 * 365.25 * 100) + '%';
-      dispatch(setStakerApr(apr));
-    } else {
-      dispatch(setStakerApr('16.0%')); 
-    }
+const handleStakerApr = (currentRate?: any, lastRate?: any): AppThunk => async (dispatch, getState) => {
+    dispatch(setStakerApr('16.0%')); 
+  //  if (currentRate && lastRate) {
+  //     const apr = NumberUtil.handleEthRoundToFixed((currentRate - lastRate)/lastRate * 4 * 365.25 * 100) + '%';
+  //     dispatch(setStakerApr(apr));
+  //   } else {
+  //     dispatch(setStakerApr('16.0%')); 
+  //   }
   }
   export const checkAddress = (address:string)=>{
     const keyringInstance = keyring.init(Symbol.Ksm);

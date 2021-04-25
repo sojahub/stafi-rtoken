@@ -583,7 +583,7 @@ export const unbond=(amount:string,cb?:Function):AppThunk=>async (dispatch,getSt
   const recipient=getState().FISModule.fisAccount.address;
   const validPools=getState().FISModule.validPools;
   const poolLimit = getState().FISModule.poolLimit;
-  let selectedPool =commonClice.getPoolForUnbond(amount,validPools);
+  let selectedPool =commonClice.getPoolForUnbond(amount,validPools,rSymbol.Fis);
   if (selectedPool == null) { 
     cb && cb();
     return;

@@ -1,9 +1,5 @@
 import React from 'react';
-import GhostButton from '@shared/components/button/ghostButton'
-import rETH_svg from '@images/rETH.svg'; 
-import rFIS_svg from '@images/rFIS.svg'; 
-import rDOT_svg from '@images/rDOT.svg'; 
-import rKSM_svg from '@images/rKSM.svg';
+import GhostButton from '@shared/components/button/ghostButton' 
 import { message } from 'antd';
 
 type Props={

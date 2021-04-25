@@ -21,15 +21,15 @@ const account=(type:string)=>{
       }
       return true;
     case Symbol.Dot:
-      if(getLocalStorageItem(Keys.DotAccountKey)==null){
-        return '/rDOT/home' 
-      }
-      // if(getLocalStorageItem(Keys.DotAccountKey)==null && getLocalStorageItem(Keys.FisAccountKey)==null){
+      // if(getLocalStorageItem(Keys.DotAccountKey)==null){
       //   return '/rDOT/home' 
       // }
-      // if(getLocalStorageItem(Keys.DotAccountKey)==null && getLocalStorageItem(Keys.FisAccountKey)){
-      //   return '/rDOT/wallet';
-      // } 
+      if(getLocalStorageItem(Keys.DotAccountKey)==null && getLocalStorageItem(Keys.FisAccountKey)==null){
+        return '/rDOT/home' 
+      }
+      if(getLocalStorageItem(Keys.DotAccountKey)==null && getLocalStorageItem(Keys.FisAccountKey)){
+        return '/rDOT/wallet';
+      } 
       return true;
       // return getLocalStorageItem(Keys.DotAccountKey) && getLocalStorageItem(Keys.FisAccountKey);
     case Symbol.Fis:

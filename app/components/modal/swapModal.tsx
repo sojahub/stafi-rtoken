@@ -7,7 +7,7 @@ import './swap.scss';
 type Props={
   visible:boolean,
   onOk?:Function,
-  onCancel?:Function,
+  onCancel?: Function,
   type:"rDOT"|"rETH"|"rFIS"|"rKSM",
 }
 export default function Index(props:Props){
@@ -16,11 +16,13 @@ export default function Index(props:Props){
   closable={false}
   footer={<div>
     <a onClick={()=>{
-        props.onOk && props.onOk();
+        props.onOk && props.onOk(1);
     }}>
       Swap
     </a>
-    <a>
+    <a onClick={()=>{
+        props.onOk && props.onOk(2);
+    }}>
       Uniswap
     </a>
   </div>}

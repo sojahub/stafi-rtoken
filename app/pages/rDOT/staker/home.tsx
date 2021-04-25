@@ -19,8 +19,10 @@ export default function Index(props:any){
     dispatch(rTokenRate());
     dispatch(rTokenLedger())
   },[])
+ 
   const {transferrableAmount,ratio,stafiStakerApr,fisCompare,validPools,totalIssuance,bondFees}=useSelector((state:any)=>{ 
-    const fisCompare = NumberUtil.fisAmountToChain(state.FISModule.fisAccount.balance) < (state.rDOTModule.bondFees + state.FISModule.estimateBondTxFees);
+    const fisCompare = NumberUtil.tokenAmountToChain(state.FISModule.fisAccount.balance,rSymbol.Dot) < (state.rDOTModule.bondFees + state.FISModule.estimateBondTxFees);
+ 
     return {
       transferrableAmount:state.rDOTModule.transferrableAmountShow,
       ratio:state.rDOTModule.ratio,
@@ -41,7 +43,7 @@ export default function Index(props:any){
   onChange={(value:any)=>{   
       setAmount(value);   
   }}
-  bondFees={bondFees}
+  bondFees={NumberUtil.tokenAmountToHuman(bondFees,rSymbol.Dot) || "--"}
   onRecovery={()=>{ 
      props.history.push("/rDOT/search")
   }}

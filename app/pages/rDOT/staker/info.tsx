@@ -33,15 +33,17 @@ export default function Index(props:any){
     let ratioAmount = 0;
     let piece = ratio / totalCount;
   
-    let interval = setInterval(() => {
-      count++;
-      ratioAmount += piece;
-      if (count == totalCount) {
-        ratioAmount = ratio;
-        window.clearInterval(interval);
-      }
-      dispatch(setRatioShow(NumberUtil.handleFisAmountRateToFixed(ratioAmount)))
-    }, 100);
+    if(ratio!="--"){
+      let interval = setInterval(() => {
+        count++;
+        ratioAmount += piece;
+        if (count == totalCount) {
+          ratioAmount = ratio;
+          window.clearInterval(interval);
+        }
+        dispatch(setRatioShow(NumberUtil.handleFisAmountRateToFixed(ratioAmount)))
+      }, 100);
+    }
   },[ratio])
   return  <Content 
   ratio={ratio}
@@ -53,6 +55,14 @@ export default function Index(props:any){
   }}
   onRdeemClick={()=>{
     props.history.push("/rDOT/staker/redeem")
+  }}
+  onSwapClick={()=>{
+    props.history.push({
+      pathname:"/rAsset/swap/native",
+      state:{ 
+        rSymbol:"rDOT", 
+      }
+    })
   }}
   type="rDOT"></Content>
 }

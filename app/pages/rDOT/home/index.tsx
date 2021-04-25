@@ -16,18 +16,18 @@ export default function Inde(props:any){
       return false
     }
   })
-  // if(hasAcount){
-  //   return <Redirect to="/rDOT/type" />
-  // }
+  if(hasAcount){
+    return <Redirect to="/rDOT/type" />
+  }
   return <HomeCard 
       title={<><label>Liquify</label> Your Staking DOT</>}
       subTitle={"Staking via StaFi Staking Contract and get rDOT in return"}
-      btnText="coming soon"
+      btnText="Connect to Polkajs extension"
       btnIcon={rDOT_svg}
       onBtnClick={()=>{  
-        // dispatch(connectPolkadot(()=>{
-        //   props.history.push("/rDOT/wallet")
-        // })) 
+        dispatch(connectPolkadot(()=>{
+          props.history.push("/rDOT/wallet")
+        })) 
       }}
       onIntroUrl="https://docs.stafi.io/rproduct/rdot-solution"
   />

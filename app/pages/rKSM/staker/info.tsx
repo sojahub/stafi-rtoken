@@ -33,16 +33,17 @@ export default function Index(props:any){
     let totalCount = 10;
     let ratioAmount = 0;
     let piece = ratio / totalCount;
-  
-    let interval = setInterval(() => {
-      count++;
-      ratioAmount += piece;
-      if (count == totalCount) {
-        ratioAmount = ratio;
-        window.clearInterval(interval);
-      }
-      dispatch(setRatioShow(NumberUtil.handleFisAmountRateToFixed(ratioAmount)))
-    }, 100);
+    if(ratio!="--"){
+      let interval = setInterval(() => {
+        count++;
+        ratioAmount += piece;
+        if (count == totalCount) {
+          ratioAmount = ratio;
+          window.clearInterval(interval);
+        }
+        dispatch(setRatioShow(NumberUtil.handleFisAmountRateToFixed(ratioAmount)))
+      }, 100);
+    }
   },[ratio])
   return  <Content 
   ratio={ratio}

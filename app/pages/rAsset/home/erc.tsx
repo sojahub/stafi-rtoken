@@ -21,13 +21,14 @@ export default function Index(props:any){
  
   const dispatch=useDispatch();
 
-  const {ethAccount,ksm_ercBalance,fis_ercBalance,eth_ercBalance,rfis_ercBalance}=useSelector((state:any)=>{ 
+  const {ethAccount,ksm_ercBalance,fis_ercBalance,eth_ercBalance,rfis_ercBalance,dot_ercBalance}=useSelector((state:any)=>{ 
     return {
       ethAccount:state.rETHModule.ethAccount,
       ksm_ercBalance:state.ETHModule.ercRKSMBalance,
       fis_ercBalance:state.ETHModule.ercFISBalance,
       rfis_ercBalance:state.ETHModule.ercRFISBalance,
-      eth_ercBalance:state.ETHModule.ercETHBalance
+      eth_ercBalance:state.ETHModule.ercETHBalance,
+      dot_ercBalance:state.ETHModule.ercRDOTBalance
     }
   })
   useEffect(()=>{ 
@@ -75,8 +76,7 @@ export default function Index(props:any){
           onSwapClick={()=>{
             props.history.push({
               pathname:"/rAsset/swap/erc20",
-              state:{
-                type:"erc20",
+              state:{ 
                 rSymbol:"rFIS"
               }
             })
@@ -94,14 +94,29 @@ export default function Index(props:any){
           onSwapClick={()=>{
             props.history.push({
               pathname:"/rAsset/swap/native/erc20",
-              state:{
-                type:"erc20",
+              state:{ 
                 rSymbol:"rETH"
               }
             })
           }}
         />
-         
+        <DataItem 
+          rSymbol="rDOT"
+          icon={rasset_rksm_svg}
+          fullName="Kusama"
+          balance={dot_ercBalance=="--" ?"--":NumberUtil.handleFisAmountToFixed(dot_ercBalance)}
+          willGetBalance={0}
+          unit="DOT"
+          operationType="erc20"
+          onSwapClick={()=>{
+            props.history.push({
+              pathname:"/rAsset/swap/erc20",
+              state:{ 
+                rSymbol:"rDOT"
+              }
+            })
+          }}
+        />
         
         <DataItem 
           rSymbol="rKSM"
@@ -114,8 +129,7 @@ export default function Index(props:any){
           onSwapClick={()=>{
             props.history.push({
               pathname:"/rAsset/swap/erc20",
-              state:{
-                type:"erc20",
+              state:{ 
                 rSymbol:"rKSM"
               }
             })

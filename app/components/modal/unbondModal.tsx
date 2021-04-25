@@ -32,7 +32,7 @@ export default function Index(props:Props){
                         <img src={doubt} />
                     </Tooltip></div>
             </div>
-            <div className="row">—Relay Fee: {NumberUtil.fisAmountToHuman(props.bondFees) || "--"} FIS
+            <div className="row">—Relay Fee: {props.bondFees} FIS
             
             <div className="doubt"><Tooltip overlayClassName="modal_doubt_overlay" placement="topLeft" title={"Fee charged by the relayers to pay for the cross-chain contract interaction service fee between StaFi chain and designated chain."}>
                         <img src={doubt} />

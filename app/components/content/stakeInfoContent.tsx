@@ -7,6 +7,8 @@ import rDOT_DOT_svg from '@images/rDOT_DOT.svg'
 import Button from '@shared/components/button/button'
 import NumberUtil from '@util/numberUtil';
 import Modal from '../modal/swapModal' 
+import config from '@config/index';
+
 type Props={
      onRdeemClick?:Function,
      ratio?:any,
@@ -18,7 +20,7 @@ type Props={
      onSwapClick?:Function
 }
 export default function Index(props:Props){
-  const [visibleModal,setVisibleModal]=useState(false);
+  const [visibleModal, setVisibleModal] = useState(false);
     return <LeftContent className="stafi_stake_info_context">
       <div className="item">
           <div className="title">
@@ -38,10 +40,10 @@ export default function Index(props:Props){
             </div>
           </div>
           <div className="describe">
-            {props.type=="rDOT" && ` Your current staked DOT  is ${(props.tokenAmount !="--" && props.ratio != "--") ? NumberUtil.handleFisAmountToFixed(props.tokenAmount * props.ratio) : "--"}`}
-            {props.type=="rKSM" && `Your current staked KSM  is ${(props.tokenAmount !="--" && props.ratio != "--") ? NumberUtil.handleFisAmountToFixed(props.tokenAmount * props.ratio) : "--"}`}
-            {props.type == "rDOT" && props.totalUnbonding > 0 && ` Unbonding DOT is ${props.totalUnbonding}`}
-            {props.type=="rKSM" && props.totalUnbonding > 0 && ` Unbonding KSM is ${props.totalUnbonding}`}
+            {props.type=="rDOT" && ` Your current staked DOT  is ${(props.tokenAmount !="--" && props.ratio != "--") ? NumberUtil.handleFisRoundToFixed(props.tokenAmount * props.ratio) : "--"}`}
+            {props.type=="rKSM" && `Your current staked KSM  is ${(props.tokenAmount !="--" && props.ratio != "--") ? NumberUtil.handleFisRoundToFixed(props.tokenAmount * props.ratio) : "--"}`}
+            {props.type == "rDOT" && props.totalUnbonding > 0 && `. Unbonding DOT is ${props.totalUnbonding}`}
+            {props.type=="rKSM" && props.totalUnbonding > 0 && `. Unbonding KSM is ${props.totalUnbonding}`}
           </div>
       </div>
       <div  className="item">
@@ -66,11 +68,12 @@ export default function Index(props:Props){
             {props.type=="rKSM" && ` update every 6 hours `}
           </div>
       </div>
-      <Modal type={props.type} visible={visibleModal} onCancel={()=>{
-        setVisibleModal(false)
+      <Modal type={props.type} visible={visibleModal} onCancel={() => {
+        setVisibleModal(false) 
       }} onOk={()=>{
         // message.info("Swap will be available soon");
         props.onSwapClick && props.onSwapClick();
       }}/>
+ 
     </LeftContent>
 }

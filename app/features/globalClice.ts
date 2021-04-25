@@ -103,7 +103,6 @@ export const {
  
 export const connectPolkadotjs = (type:Symbol,cb?:Function): AppThunk=>async (dispatch, getState)=>{ 
   const accounts:any =await polkadotServer.connectPolkadotjs()   
-  console.log(accounts,"=======asdf")
   if(accounts){
    dispatch(setAccounts(accounts)); 
    const dotKeyringInstance=keyring.init(type);

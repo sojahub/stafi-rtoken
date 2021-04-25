@@ -35,12 +35,20 @@ export default {
       return 'https://rtoken-api.stafi.io';
     }  
   },
+ 
   rETHTokenAddress: ()=>{ 
     if(process.env.NODE_ENV=="production" &&  !isdev()){
       return '0x9559aaa82d9649c7a7b220e7c461d2e74c9a3593';
     }else{
       return '0x680ab46340aa2189515b49fd35ac8a5bd66e78de';
     }  
+  },
+  rBridgeApp: ()=>{ 
+    if(process.env.NODE_ENV=="production" &&  !isdev()){
+      return 'https://rtoken.stafi.io/rbridge';
+    }else{
+      return 'https://test-rtoken.stafi.io/rbridge';
+    } 
   },
   rFISTokenAddress: ()=>{
     if(process.env.NODE_ENV=="production" &&  !isdev()){

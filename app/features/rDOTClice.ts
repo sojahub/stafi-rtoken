@@ -171,7 +171,7 @@ const queryBalance = async (account: any, dispatch: any, getState: any) => {
   const api = await polkadotServer.createPolkadotApi();
   const result = await api.query.system.account(account2.address);
   if (result) {
-    let fisFreeBalance = NumberUtil.fisAmountToHuman(result.data.free);
+    let fisFreeBalance = NumberUtil.tokenAmountToHuman(result.data.free,rSymbol.Dot);
     account2.balance = NumberUtil.handleEthAmountRound(fisFreeBalance);
   }
   const dotAccount = getState().rDOTModule.dotAccount;
@@ -186,7 +186,7 @@ export const transfer = (amountparam: string, cb?: Function): AppThunk => async 
   const notice_uuid=(processParameter && processParameter.uuid) || stafi_uuid(); 
 
   dispatch(initProcess(null));
-  const amount = NumberUtil.fisAmountToChain(amountparam)
+  const amount = NumberUtil.tokenAmountToChain(amountparam,rSymbol.Dot)
   const validPools = getState().rDOTModule.validPools;
   const poolLimit = getState().rDOTModule.poolLimit;
   const address = getState().rDOTModule.dotAccount.address;
@@ -351,7 +351,7 @@ export const balancesAll = (): AppThunk => async (dispatch, getState) => {
   const address = getState().rDOTModule.dotAccount.address;
   const result = await api.derive.balances.all(address);
   if (result) {
-    const transferrableAmount = NumberUtil.fisAmountToHuman(result.availableBalance);
+    const transferrableAmount = NumberUtil.tokenAmountToHuman(result.availableBalance,rSymbol.Dot);
     const transferrableAmountShow = NumberUtil.handleFisAmountToFixed(transferrableAmount);
     dispatch(setTransferrableAmountShow(transferrableAmountShow));
   }
@@ -363,9 +363,9 @@ export const query_rBalances_account = (): AppThunk => async (dispatch, getState
     if (data == null) {
       dispatch(setTokenAmount(NumberUtil.handleFisAmountToFixed(0)))
     } else {
-      dispatch(setTokenAmount(NumberUtil.fisAmountToHuman(data.free)))
+      dispatch(setTokenAmount(NumberUtil.tokenAmountToHuman(data.free,rSymbol.Dot)))
     }
-  })
+  }) 
 }
 
 export const reSending = (cb?: Function): AppThunk => async (dispatch, getState) => {
@@ -386,7 +386,7 @@ export const reStaking = (cb?: Function): AppThunk => async (dispatch, getState)
     processParameter && dispatch(bound(staking.address,
       staking.txHash,
       staking.blockHash,
-      NumberUtil.fisAmountToChain(staking.amount),
+      NumberUtil.tokenAmountToChain(staking.amount,rSymbol.Dot),
       staking.poolAddress,
       staking.type,
       (r: string) => { 
@@ -415,7 +415,7 @@ export const reStaking = (cb?: Function): AppThunk => async (dispatch, getState)
 export const unbond = (amount: string,recipient:string,willAmount:any, cb?: Function): AppThunk => async (dispatch, getState) => {
   try{
     const validPools = getState().rDOTModule.validPools; 
-    let selectedPool=commonClice.getPoolForUnbond(amount, validPools);
+    let selectedPool=commonClice.getPoolForUnbond(amount, validPools,rSymbol.Dot);
     if (selectedPool == null) { 
       cb && cb();
       return;
@@ -532,7 +532,7 @@ export const getBlock = (blockHash: string, txHash: string, uuid?:string,cb?: Fu
           dispatch(setProcessSlider(true));
           dispatch(setProcessParameter({
             staking: {
-              amount: NumberUtil.fisAmountToHuman(amount),
+              amount: NumberUtil.tokenAmountToHuman(amount,rSymbol.Dot),
               txHash,
               blockHash,
               address,
@@ -544,17 +544,17 @@ export const getBlock = (blockHash: string, txHash: string, uuid?:string,cb?: Fu
             // dispatch(setStakeHash(null));
 
             if(r=="loading"){
-              uuid && dispatch(add_DOT_stake_Notice(uuid,NumberUtil.fisAmountToHuman(amount).toString(),noticeStatus.Pending))
+              uuid && dispatch(add_DOT_stake_Notice(uuid,NumberUtil.tokenAmountToHuman(amount,rSymbol.Dot).toString(),noticeStatus.Pending))
             }else{ 
               dispatch(setStakeHash(null));
             }
 
             if(r == "failure"){
-              uuid && dispatch(add_DOT_stake_Notice(uuid,NumberUtil.fisAmountToHuman(amount).toString(),noticeStatus.Error)
+              uuid && dispatch(add_DOT_stake_Notice(uuid,NumberUtil.tokenAmountToHuman(amount,rSymbol.Dot).toString(),noticeStatus.Error)
               );
             }
             if(r=="successful"){
-                uuid && dispatch(add_DOT_stake_Notice(uuid,NumberUtil.fisAmountToHuman(amount).toString(),noticeStatus.Confirmed));
+                uuid && dispatch(add_DOT_stake_Notice(uuid,NumberUtil.tokenAmountToHuman(amount,rSymbol.Dot).toString(),noticeStatus.Confirmed));
                 cb && cb(); 
             } 
           }));
@@ -581,8 +581,6 @@ export const getPools = (cb?:Function): AppThunk => async (dispatch, getState) =
   const data=await commonClice.poolBalanceLimit(rSymbol.Dot);
   dispatch(setPoolLimit(data));
 }
-
-
  
 export const getUnbondCommission=():AppThunk=>async (dispatch, getState)=>{ 
   const unbondCommission =await commonClice.getUnbondCommission(); 
@@ -598,10 +596,11 @@ export const unbondFees=():AppThunk=>async (dispatch, getState)=>{
   const result=await commonClice.unbondFees(rSymbol.Dot)
   dispatch(setUnBondFees(result));
 }
-
+ 
 export const getTotalIssuance=():AppThunk=>async (dispatch, getState)=>{ 
   const result=await commonClice.getTotalIssuance(rSymbol.Dot);
   dispatch(setTotalIssuance(result))
+ 
 }
 
 export const rTokenLedger=():AppThunk=>async (dispatch, getState)=>{

@@ -7,6 +7,7 @@ import {ratioToAmount} from '@util/common'
 import { message } from 'antd';
 import NumberUtil from '@util/numberUtil';
 import { setProcessSlider } from '@features/globalClice'; 
+import { rSymbol } from '@keyring/defaults';
 
 export default function Index(props:any){
 
@@ -44,9 +45,9 @@ export default function Index(props:any){
   onRecovery={()=>{ 
      props.history.push("/rKSM/search")
   }}
-  validPools={validPools} 
-  bondFees={bondFees}
-  totalStakedToken={NumberUtil.handleFisAmountToFixed(totalIssuance*ratio)}
+  validPools={validPools}  
+  bondFees={NumberUtil.tokenAmountToHuman(bondFees,rSymbol.Dot) || "--"}
+  totalStakedToken={NumberUtil.handleFisAmountToFixed(totalIssuance*ratio)} 
   onStakeClick={()=>{
     if (amount) { 
       if(fisCompare){

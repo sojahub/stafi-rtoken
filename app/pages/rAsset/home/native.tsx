@@ -11,6 +11,7 @@ import Modal from '@shared/components/modal/connectModal';
 import Page_FIS from '../../rDOT/selectWallet_rFIS/index';
 import {connectPolkadotjs,reloadData} from '@features/globalClice';
 import {rTokenRate as ksm_rTokenRate,query_rBalances_account,getUnbondCommission} from '@features/rKSMClice';
+import {rTokenRate as dot_rTokenRate,query_rBalances_account as dot_query_rBalances_account,getUnbondCommission as dot_getUnbondCommission} from '@features/rDOTClice';
 import {rTokenRate as fis_rTokenRate,query_rBalances_account as fis_query_rBalances_account,getUnbondCommission as fis_getUnbondCommission} from '@features/FISClice';
 import CommonClice from '@features/commonClice';
 import {Symbol,rSymbol} from '@keyring/defaults';
@@ -24,14 +25,16 @@ import './page.scss'
 const commonClice=new CommonClice();
 export default function Index(props:any){ 
   const dispatch=useDispatch();
-  const {fisAccount,tokenAmount,ksmWillAmount,fis_tokenAmount,fisWillAmount}=useSelector((state:any)=>{ 
+  const {fisAccount,tokenAmount,ksmWillAmount,fis_tokenAmount,fisWillAmount,dot_tokenAmount,dotWillAmount}=useSelector((state:any)=>{ 
     
     return {
       fisAccount:state.FISModule.fisAccount,
       tokenAmount:state.rKSMModule.tokenAmount,
       ksmWillAmount:commonClice.getWillAmount(state.rKSMModule.ratio,state.rKSMModule.unbondCommission,state.rKSMModule.tokenAmount),
       fis_tokenAmount:state.FISModule.tokenAmount,
-      fisWillAmount:commonClice.getWillAmount(state.FISModule.ratio,state.FISModule.unbondCommission,state.FISModule.tokenAmount)
+      fisWillAmount:commonClice.getWillAmount(state.FISModule.ratio,state.FISModule.unbondCommission,state.FISModule.tokenAmount),
+      dot_tokenAmount:state.rDOTModule.tokenAmount,
+      dotWillAmount:commonClice.getWillAmount(state.rDOTModule.ratio,state.rDOTModule.unbondCommission,state.rDOTModule.tokenAmount)
     }
   }) 
   const [visible,setVisible]=useState(false);
@@ -44,10 +47,13 @@ export default function Index(props:any){
     if(fisAccount){
       dispatch(query_rBalances_account());
       dispatch(fis_query_rBalances_account());
+      dispatch(dot_query_rBalances_account());
       dispatch(ksm_rTokenRate());
       dispatch(fis_rTokenRate() );
+      dispatch(dot_rTokenRate() );
       dispatch(getUnbondCommission());
       dispatch(fis_getUnbondCommission());
+      dispatch(dot_getUnbondCommission());
     }
   },[fisAccount])
   return  <Content>
@@ -86,6 +92,23 @@ export default function Index(props:any){
               pathname:"/rAsset/swap/native",
               state:{ 
                 rSymbol:"rFIS", 
+              }
+            })
+          }}
+        />
+             <DataItem 
+          rSymbol="rDOT"
+          icon={rasset_rksm_svg}
+          fullName="Kusama"
+          balance={dot_tokenAmount=="--" ?"--":NumberUtil.handleFisAmountToFixed(dot_tokenAmount)}
+          willGetBalance={dotWillAmount}
+          unit="DOT"
+          operationType="native"
+          onSwapClick={()=>{
+            props.history.push({
+              pathname:"/rAsset/swap/native",
+              state:{ 
+                rSymbol:"rDOT"
               }
             })
           }}

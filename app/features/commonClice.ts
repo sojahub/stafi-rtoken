@@ -4,12 +4,9 @@ import NumberUtil from '@util/numberUtil';
 import {rSymbol,Symbol} from '@keyring/defaults'
 import StafiServer from '@servers/stafi';
 import keyring from '@servers/index';
-import BridgeServer from '@servers/bridge'
-import { countBy } from 'lodash';
- 
-const ethServer=new EthServer();
-const stafiServer=new StafiServer();
-const bridgeServer=new BridgeServer();
+import BridgeServer from '@servers/bridge';
+  
+const stafiServer=new StafiServer(); 
 export default class CommonClice{ 
     getWillAmount(ratio:any,unbondCommission:any,amounts:any){ 
         let willAmount:any=0;
@@ -66,7 +63,7 @@ export default class CommonClice{
     async rTokenRate(type:rSymbol){
       const api = await stafiServer.createStafiApi();
       const result = await api.query.rTokenRate.rate(type);
-      let ratio = NumberUtil.fisAmountToHuman(result.toJSON());
+      let ratio = NumberUtil.tokenAmountToHuman(result.toJSON(),type);
       if (!ratio) {
         ratio = 1;
       }
@@ -75,7 +72,7 @@ export default class CommonClice{
     async getTotalIssuance(type:rSymbol){
       const stafiApi = await stafiServer.createStafiApi(); 
       const  result =await stafiApi.query.rBalances.totalIssuance(type) 
-      let totalIssuance:any = NumberUtil.fisAmountToHuman(result.toJSON());
+      let totalIssuance:any = NumberUtil.tokenAmountToHuman(result.toJSON(),type);
       totalIssuance = NumberUtil.handleFisAmountToFixed(totalIssuance); 
       return totalIssuance
     }
@@ -105,7 +102,7 @@ export default class CommonClice{
             }
           });
     
-          totalUnbonding = NumberUtil.handleFisAmountToFixed(NumberUtil.fisAmountToHuman(totalUnbonding));
+          totalUnbonding = NumberUtil.handleFisAmountToFixed(NumberUtil.tokenAmountToHuman(totalUnbonding,rSymbol));
           cb && cb(totalUnbonding)
         } 
       }else{
@@ -131,8 +128,8 @@ export default class CommonClice{
         return null;
       }
     }
-    getPoolForUnbond (tokenAmount: any, validPools: any) {
-      const amount = NumberUtil.fisAmountToChain(tokenAmount.toString());
+    getPoolForUnbond (tokenAmount: any, validPools: any,type:rSymbol) {
+      const amount = NumberUtil.tokenAmountToChain(tokenAmount.toString(),type);
       const data = validPools.find((item: any) => {
         if (Number(item.active) >= amount) {
           return true;

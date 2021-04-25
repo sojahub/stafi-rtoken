@@ -13,6 +13,7 @@ import add_svg from '@images/add.svg'
 
 import './index.scss';
 import { message } from 'antd';
+import { rSymbol } from '@keyring/defaults';
 type Props={
     onRecovery:Function,
     onStakeClick:Function,
@@ -96,7 +97,7 @@ export default function Index(props:Props){
                 </div>
             </div>
             <div className="money_panel_item">
-                <div className="relay_fee">Relay Fee: {NumberUtil.fisAmountToHuman(props.bondFees) || "--"} FIS</div> 
+                <div className="relay_fee">Relay Fee: {props.bondFees} FIS</div> 
                 <div></div>
 
                 <div className="money_panel_item_doubt">
