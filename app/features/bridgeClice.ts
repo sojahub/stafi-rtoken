@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';  
 import BridgeServer from '@servers/bridge';
 import Stafi from '@servers/stafi/index'
-import { AppThunk, RootState } from '../store';
+import { AppThunk } from '../store';
 import NumberUtil from '@util/numberUtil';
 import StafiServer from '@servers/stafi';
 import EthServer from '@servers/eth'; 
@@ -57,7 +57,7 @@ export const bridgeCommon_ChainFees=():AppThunk=>async (dispatch,getState)=>{
             let estimateFee = NumberUtil.fisAmountToHuman(result.toJSON()); 
             dispatch(setErc20EstimateFee(NumberUtil.handleFisAmountToFixed(estimateFee)))
         }
-    }catch(e:any){
+    }catch(e){
             
     }   
 }
@@ -66,29 +66,26 @@ export const getBridgeEstimateEthFee=():AppThunk=>async (dispatch,getState)=>{
     dispatch(setEstimateEthFee(bridgeServer.getBridgeEstimateEthFee())) 
 }
  
-export const nativeToErc20Swap=(tokenType:string,tokenAmount:any,ethAddress:string,cb?:Function):AppThunk=>async (dispatch,getState)=>{
+export const nativeToErc20Swap=(tokenType:string, tokenAmount:any, ethAddress:string, cb?:Function):AppThunk=>async (dispatch,getState)=>{
     try {
-        const amount = NumberUtil.rTokenRateToHuman(tokenAmount.toString());
         dispatch(setLoading(true));
         web3Enable(stafiServer.getWeb3EnalbeName());
         const injector:any=await web3FromSource(stafiServer.getPolkadotJsSource())
         const api=await stafiServer.createStafiApi();
         let currentAccount = getState().FISModule.fisAccount.address;
         let tx:any = '';
-        let symbolName:string = '';
-        if (tokenType == 'FIS'){
-            symbolName="FIS";
-            tx =await api.tx.bridgeSwap.transferNative(amount.toString(), ethAddress, ETH_CHAIN_ID);
-        }else {
-            symbolName = tokenType;
-            tx =await api.tx.bridgeSwap.transferRtoken(tokenType, amount.toString(), ethAddress, ETH_CHAIN_ID);
+        if (tokenType == 'fis') {
+            const amount = NumberUtil.tokenAmountToChain(tokenAmount.toString());
+            tx = await api.tx.bridgeSwap.transferNative(amount.toString(), ethAddress, ETH_CHAIN_ID);
+        } else {
+            let rsymbol = bridgeServer.getRsymbolByTokenType(tokenType);
+            const amount = NumberUtil.tokenAmountToChain(tokenAmount.toString(), rsymbol);
+            tx = await api.tx.bridgeSwap.transferRtoken(rsymbol, amount.toString(), ethAddress, ETH_CHAIN_ID);
         } 
         if (!tx) {
             dispatch(setLoading(false));
             return;
         } 
-        
-            
         
         tx.signAndSend(currentAccount, { signer: injector.signer }, (result:any) => {
         
@@ -104,14 +101,20 @@ export const nativeToErc20Swap=(tokenType:string,tokenAmount:any,ethAddress:stri
                                 const mod = dispatchError.asModule;
                                 const error = data.registry.findMetaError(new Uint8Array([mod.index.toNumber(), mod.error.toNumber()]));
                                 let message_str = 'Something is wrong, please make sure you have enough FIS balance';
-                                if (tokenType == 'rFIS') {
+                                if (tokenType == 'rfis') {
                                     message_str = 'Something is wrong, please make sure you have enough FIS and rFIS balance';
+                                } else if (tokenType == 'rdot') {
+                                    message_str = 'Something is wrong, please make sure you have enough FIS and rDOT balance';
+                                } else if (tokenType == 'rksm') {
+                                    message_str = 'Something is wrong, please make sure you have enough FIS and rKSM balance';
+                                } else if (tokenType == 'ratom') {
+                                    message_str = 'Something is wrong, please make sure you have enough FIS and rATOM balance';
                                 }
                                 if (error.name == 'ServicePaused') {
                                     message_str = 'Service is paused, please try again later!'; 
                                 }
                                 dispatch(setLoading(false));
-                                message.error(message); 
+                                message.error(message_str); 
                             } catch (error) {
                                 dispatch(setLoading(false));
                                 message.error(error.message);  
@@ -137,31 +140,29 @@ export const nativeToErc20Swap=(tokenType:string,tokenAmount:any,ethAddress:stri
 
 }
 
-export const erc20ToNativeSwap=(tokenType:string,symbol:string,tokenAmount:any,stafiAddress:string,cb?:Function):AppThunk=>async (dispatch,getState)=>{
+export const erc20ToNativeSwap=(tokenType:string, tokenAmount:any, stafiAddress:string, cb?:Function):AppThunk=>async (dispatch,getState)=>{
   dispatch(setLoading(true));
   let web3 = ethServer.getWeb3();
-  const STAFI_CHAIN_ID = 1;
-  const ETH_CHAIN_ID = 2;
   
   let tokenContract:any = ''; 
   let allowance:any = 0;
   const ethAddress=getState().rETHModule.ethAccount.address
-  if (tokenType == 'FIS') { 
+  if (tokenType == 'fis') { 
     tokenContract = new web3.eth.Contract(stafiServer.getFISTokenAbi(), stafiServer.getFISTokenAddress(), {
       from: ethAddress
     });
     allowance = getState().ETHModule.FISErc20Allowance
-  } else if (tokenType == 'rFIS') { 
+  } else if (tokenType == 'rfis') { 
     tokenContract = new web3.eth.Contract(stafiServer.getRFISTokenAbi(), stafiServer.getRFISTokenAddress(), {
       from: ethAddress
     });
     allowance = getState().ETHModule.RFISErc20Allowance
-  } else if (tokenType == 'rKSM') { 
+  } else if (tokenType == 'rksm') { 
     tokenContract = new web3.eth.Contract(ksmServer.getRKSMTokenAbi(), ksmServer.getRKSMTokenAddress(), {
       from: ethAddress
     });
     allowance = getState().ETHModule.RKSMErc20Allowance
-  } else if (tokenType == 'rDOT') { 
+  } else if (tokenType == 'rdot') { 
     tokenContract = new web3.eth.Contract(dotServer.getRDOTTokenAbi(), dotServer.getRDOTTokenAddress(), {
       from: ethAddress
     });
@@ -189,7 +190,7 @@ export const erc20ToNativeSwap=(tokenType:string,symbol:string,tokenAmount:any,s
 
             let data = amountHex + lenHex.slice(2) + rAddressHex.slice(2);
             
-            const result=await  bridgeContract.methods.deposit(STAFI_CHAIN_ID, bridgeServer.getResourceId(symbol), data).send({value: sendAmount})
+            const result=await  bridgeContract.methods.deposit(STAFI_CHAIN_ID, bridgeServer.getResourceId(tokenType), data).send({value: sendAmount})
 
 
             if (result && result.status) {
@@ -213,7 +214,7 @@ export const erc20ToNativeSwap=(tokenType:string,symbol:string,tokenAmount:any,s
 
         let data = amountHex + lenHex.slice(2) + rAddressHex.slice(2);
         
-        const result=await bridgeContract.methods.deposit(STAFI_CHAIN_ID, bridgeServer.getResourceId(symbol), data).send({value: sendAmount}) 
+        const result=await bridgeContract.methods.deposit(STAFI_CHAIN_ID, bridgeServer.getResourceId(tokenType), data).send({value: sendAmount}) 
 
             if (result && result.status) {
                 cb && cb(); 

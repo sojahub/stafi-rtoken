@@ -15,18 +15,17 @@ import rasset_rksm_svg from '@images/rasset_rksm.svg';
 import rasset_rdot_svg from '@images/rasset_rdot.svg'; 
 import Understood from '@components/modal/understood';
 import {bridgeCommon_ChainFees,getBridgeEstimateEthFee,nativeToErc20Swap,erc20ToNativeSwap}from '@features/bridgeClice';
-import {rTokenRate as ksm_rTokenRate,query_rBalances_account,getUnbondCommission,checkAddress as ksm_checkAddress,reloadData as ksmReloadData} from '@features/rKSMClice';
+import {rTokenRate as ksm_rTokenRate,query_rBalances_account,getUnbondCommission,reloadData as ksmReloadData} from '@features/rKSMClice';
 import {rTokenRate as fis_rTokenRate,query_rBalances_account as fis_query_rBalances_account,getUnbondCommission as fis_getUnbondCommission,reloadData as fisReloadData,checkAddress as fis_checkAddress} from '@features/FISClice'; 
 import {getAssetBalanceAll,getErc20Allowances,clickSwapToErc20Link,clickSwapToNativeLink} from '@features/ETHClice'
 import {checkEthAddress} from '@features/rETHClice'
-import {checkAddress as dot_checkAddress,
+import {
   reloadData as dotReloadData,
   rTokenRate as dot_rTokenRate,
   getUnbondCommission as dot_getUnbondCommission,
   query_rBalances_account as dot_query_rBalances_account
 } from '@features/rDOTClice'
 import { useSelector,useDispatch } from 'react-redux';
-import {setLoading} from '@features/globalClice'
 import NumberUtil from '@util/numberUtil';
 const datas=[{
   icon:rasset_fis_svg, 
@@ -151,13 +150,7 @@ export default function Index(props:any){
   
 
   const checkAddress=(address:string)=>{
-    if(fromType.title=="FIS" || fromType.title=="rFIS" ){
-      return fis_checkAddress(address);
-    }else if(fromType.title=="rKSM"){
-      return ksm_checkAddress(address);
-    }else if(fromType.title=="rDOT"){
-      return dot_checkAddress(address);
-    }
+    return fis_checkAddress(address);
   }
   return  <Content className="stafi_rasset_swap">
       <Back onClick={()=>{
@@ -250,11 +243,11 @@ export default function Index(props:any){
 
           if(operationType=="native"){
          
-            dispatch(nativeToErc20Swap(fromType.title,fromAoumt,address,()=>{
+            dispatch(nativeToErc20Swap(fromType.type,fromAoumt,address,()=>{
               setVisible(true);
             }))
           }else{
-            dispatch(erc20ToNativeSwap(fromType.title,fromType.type,fromAoumt,address,()=>{
+            dispatch(erc20ToNativeSwap(fromType.type,fromAoumt,address,()=>{
               setVisible(true);
             }))
           } 
@@ -264,8 +257,21 @@ export default function Index(props:any){
       <Understood 
       visible={visible}  
       context={operationType=="native"?`Tx is broadcasting, please check your ${fromType.title} balance on your metamask later. It may take 2~10 minutes`:`Tx is broadcasting, please check your ${fromType.title} balance later. It may take 2~10 minutes`}
-      onCancel={()=>{
-         setVisible(false);
+      onCancel={() => {
+        if(operationType=="native"){
+          if(fromType.title=="FIS" || fromType.title=="rFIS"){
+            dispatch(fisReloadData());
+          }
+          if(fromType.title=="rKSM"){
+            dispatch(ksmReloadData());
+          }
+          if(fromType.title=="rDOT"){
+            dispatch(dotReloadData());
+          }
+        }else{
+          dispatch(getAssetBalanceAll()); 
+        }
+        setVisible(false);
       }} onOk={()=>{
         if(operationType=="native"){
           if(fromType.title=="FIS" || fromType.title=="rFIS"){
