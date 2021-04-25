@@ -68,7 +68,7 @@ export const getBridgeEstimateEthFee=():AppThunk=>async (dispatch,getState)=>{
  
 export const nativeToErc20Swap=(tokenType:string,tokenAmount:any,ethAddress:string,cb?:Function):AppThunk=>async (dispatch,getState)=>{
     try {
-        const amount = NumberUtil.fisAmountToChain(tokenAmount.toString());
+        const amount = NumberUtil.rTokenRateToHuman(tokenAmount.toString());
         dispatch(setLoading(true));
         web3Enable(stafiServer.getWeb3EnalbeName());
         const injector:any=await web3FromSource(stafiServer.getPolkadotJsSource())
@@ -78,11 +78,10 @@ export const nativeToErc20Swap=(tokenType:string,tokenAmount:any,ethAddress:stri
         let symbolName:string = '';
         if (tokenType == 'FIS'){
             symbolName="FIS";
-            tx =api.tx.bridgeSwap.transferNative(amount.toString(), ethAddress, ETH_CHAIN_ID);
-            // toolUtil
+            tx =await api.tx.bridgeSwap.transferNative(amount.toString(), ethAddress, ETH_CHAIN_ID);
         }else {
             symbolName = tokenType;
-            tx =api.tx.bridgeSwap.transferRtoken(tokenType, amount.toString(), ethAddress, ETH_CHAIN_ID);
+            tx =await api.tx.bridgeSwap.transferRtoken(tokenType, amount.toString(), ethAddress, ETH_CHAIN_ID);
         } 
         if (!tx) {
             dispatch(setLoading(false));
@@ -125,18 +124,15 @@ export const nativeToErc20Swap=(tokenType:string,tokenAmount:any,ethAddress:stri
                 });
             } else if (result.isError) {
                 dispatch(setLoading(false));
-                message.error(result.toHuman());
-                console.error(result.toHuman())
+                message.error(result.toHuman()); 
             } 
         }).catch((error:any) => {
             dispatch(setLoading(false));
-            message.error(error.message);
-            console.error(error.message)
+            message.error(error.message); 
         });
     } catch (error) {
         dispatch(setLoading(false));
-        message.error(error.message);
-        console.error(error.message)
+        message.error(error.message); 
     }
 
 }
