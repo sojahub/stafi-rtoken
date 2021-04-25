@@ -7,6 +7,10 @@ import DataList from './components/list'
 import Content from '@shared/components/content';
 import {connectMetamask,monitoring_Method,handleEthAccount} from '@features/rETHClice';
 import {getAssetBalanceAll} from '@features/ETHClice';
+import {rTokenRate as ksm_rTokenRate,getUnbondCommission as ksm_getUnbondCommission} from '@features/rKSMClice';
+import {rTokenRate as dot_rTokenRate,getUnbondCommission as dot_getUnbondCommission} from '@features/rDOTClice'
+import {rTokenRate as fis_rTokenRate,getUnbondCommission as fis_getUnbondCommission} from '@features/FISClice'
+import CommonClice from '@features/commonClice';
 import CountAmount from './components/countAmount'; 
 import DataItem from './components/list/item';
 import NumberUtil from '@util/numberUtil';
@@ -17,19 +21,23 @@ import rasset_rksm_svg from '@images/rasset_rksm.svg';
 import rasset_rdot_svg from '@images/rasset_rdot.svg'; 
 import './page.scss'
 
- 
+const commonClice=new CommonClice();
 export default function Index(props:any){ 
  
   const dispatch=useDispatch();
 
-  const {ethAccount,ksm_ercBalance,fis_ercBalance,eth_ercBalance,rfis_ercBalance,dot_ercBalance}=useSelector((state:any)=>{ 
+  const {ethAccount,ksm_ercBalance,fis_ercBalance,eth_ercBalance,rfis_ercBalance,dot_ercBalance,
+    ksmWillAmount,fisWillAmount,dotWillAmount}=useSelector((state:any)=>{ 
     return {
       ethAccount:state.rETHModule.ethAccount,
       ksm_ercBalance:state.ETHModule.ercRKSMBalance,
       fis_ercBalance:state.ETHModule.ercFISBalance,
       rfis_ercBalance:state.ETHModule.ercRFISBalance,
       eth_ercBalance:state.ETHModule.ercETHBalance,
-      dot_ercBalance:state.ETHModule.ercRDOTBalance
+      dot_ercBalance:state.ETHModule.ercRDOTBalance,
+      ksmWillAmount:commonClice.getWillAmount(state.rKSMModule.ratio,state.rKSMModule.unbondCommission,state.ETHModule.ercRKSMBalance),
+      fisWillAmount:commonClice.getWillAmount(state.FISModule.ratio,state.FISModule.unbondCommission,state.ETHModule.ercRFISBalance),
+      dotWillAmount:commonClice.getWillAmount(state.rDOTModule.ratio,state.rDOTModule.unbondCommission,state.ETHModule.ercRFISBalance)
     }
   })
   useEffect(()=>{ 
@@ -37,6 +45,13 @@ export default function Index(props:any){
       dispatch(handleEthAccount(ethAccount.address));
 
       dispatch(getAssetBalanceAll()); 
+
+      dispatch(ksm_rTokenRate());
+      dispatch(fis_rTokenRate() );
+      dispatch(dot_rTokenRate() );
+      dispatch(ksm_getUnbondCommission());
+      dispatch(fis_getUnbondCommission());
+      dispatch(dot_getUnbondCommission());
     }
 
   },[ethAccount && ethAccount.address])
@@ -70,7 +85,7 @@ export default function Index(props:any){
           icon={rasset_rfis_svg}
           fullName="StaFi" 
           balance={rfis_ercBalance=="--" ?"--":NumberUtil.handleFisAmountToFixed(rfis_ercBalance)}
-          willGetBalance={0}
+          willGetBalance={fisWillAmount}
           unit="FIS"
           trade={`https://app.uniswap.org/#/swap?inputCurrency=ETH&outputCurrency=0xc82eb6dea0c93edb8b697b89ad1b13d19469d635`}
           operationType="erc20"
@@ -88,7 +103,7 @@ export default function Index(props:any){
           icon={rasset_reth_svg}
           fullName="Ethereum" 
           balance={eth_ercBalance=="--" ?"--":NumberUtil.handleFisAmountToFixed(eth_ercBalance)}
-          willGetBalance={0}
+          willGetBalance={"0.000000"}
           unit="ETH"
           operationType="erc20"
           trade={`https://app.uniswap.org/#/swap?inputCurrency=0x9559aaa82d9649c7a7b220e7c461d2e74c9a3593&outputCurrency=ETH`}
@@ -106,7 +121,7 @@ export default function Index(props:any){
           icon={rasset_rdot_svg}
           fullName="Polkadot"
           balance={dot_ercBalance=="--" ?"--":NumberUtil.handleFisAmountToFixed(dot_ercBalance)}
-          willGetBalance={0}
+          willGetBalance={dotWillAmount}
           unit="DOT"
           operationType="erc20"
           onSwapClick={()=>{
@@ -124,7 +139,7 @@ export default function Index(props:any){
           icon={rasset_rksm_svg}
           fullName="Kusama"
           balance={ksm_ercBalance=="--" ?"--":NumberUtil.handleFisAmountToFixed(ksm_ercBalance)}
-          willGetBalance={0}
+          willGetBalance={ksmWillAmount}
           unit="KSM"
           operationType="erc20"
           onSwapClick={()=>{
