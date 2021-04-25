@@ -87,12 +87,12 @@ export default function Index(props:any){
     unbondAmount={amount}
     commission={unbondCommission}
     getAmount={willAmount}
-    bondFees={unBondFees}
+    bondFees={NumberUtil.tokenAmountToHuman(unBondFees,rSymbol.Dot) || "--"}
     onCancel={()=>{
       setVisible(false)
     }}
     onOk={()=>{
-      if(NumberUtil.fisAmountToChain(fisBalance) <= (unBondFees + estimateUnBondTxFees)){
+      if(NumberUtil.tokenAmountToChain(fisBalance,rSymbol.Dot) <= (unBondFees + estimateUnBondTxFees)){
         message.error("No enough FIS to pay for the fee");
         return;
       }

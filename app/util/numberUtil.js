@@ -1,3 +1,4 @@
+import {rSymbol} from '@keyring/defaults'
 export default {
   // Add floating point numbers
   floatAdd: function(arg1, arg2) {
@@ -127,7 +128,30 @@ export default {
   fisAmountToChain(amount) {
     return Math.round(Number(amount) * 1000000000000);
   },
-
+ tokenAmountToHuman(amount,symbol){
+   switch(symbol){
+     case rSymbol.Dot:
+      return amount / 10000000000;
+     case rSymbol.Fis:
+        return amount / 1000000000000;
+     case rSymbol.Ksm:
+        return amount / 1000000000000;
+     default:
+        return amount / 1000000000000;
+   } 
+ },
+ tokenAmountToChain(amount,symbol) {
+  switch(symbol){
+    case rSymbol.Dot:
+      return Math.round(Number(amount) * 10000000000);
+    case rSymbol.Fis:
+      return Math.round(Number(amount) * 1000000000000);
+    case rSymbol.Ksm:
+      return Math.round(Number(amount) * 1000000000000);
+    default:
+      return Math.round(Number(amount) * 1000000000000);
+  }  
+},
   fisFeeToHuman(fee) {
     return fee / 1000000000;
   },

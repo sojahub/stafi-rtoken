@@ -16,13 +16,13 @@ import {isdev} from '../../config/index'
 import './index.scss'
 
 const siderData=[
-    // {
-    //     icon:rAsset_svg,
-    //     selectedIcon:selected_rAsset_svg,
-    //     text:"rAsset", 
-    //     urlKeywords:'/rAsset',
-    //     url:"/rAsset/native"
-    // },
+    {
+        icon:rAsset_svg,
+        selectedIcon:selected_rAsset_svg,
+        text:"rAsset", 
+        urlKeywords:'/rAsset',
+        url:"/rAsset/native"
+    },
     {
         icon:rETH_svg,
         selectedIcon:selected_rETH_svg,
