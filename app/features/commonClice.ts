@@ -63,7 +63,7 @@ export default class CommonClice{
     async rTokenRate(type:rSymbol){
       const api = await stafiServer.createStafiApi();
       const result = await api.query.rTokenRate.rate(type);
-      let ratio = NumberUtil.tokenAmountToHuman(result.toJSON(),type);
+      let ratio = NumberUtil.rTokenRateToHuman(result.toJSON());
       if (!ratio) {
         ratio = 1;
       }
