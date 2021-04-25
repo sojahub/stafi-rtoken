@@ -21,7 +21,7 @@ export default function Index(props:any){
   },[])
  
   const {transferrableAmount,ratio,stafiStakerApr,fisCompare,validPools,totalIssuance,bondFees}=useSelector((state:any)=>{ 
-    const fisCompare = NumberUtil.tokenAmountToChain(state.FISModule.fisAccount.balance,rSymbol.Dot) < (state.rDOTModule.bondFees + state.FISModule.estimateBondTxFees);
+    const fisCompare = NumberUtil.fisAmountToChain(state.FISModule.fisAccount.balance) < (state.rDOTModule.bondFees + state.FISModule.estimateBondTxFees);
  
     return {
       transferrableAmount:state.rDOTModule.transferrableAmountShow,
