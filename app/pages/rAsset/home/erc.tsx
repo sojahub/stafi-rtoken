@@ -14,6 +14,7 @@ import rasset_fis_svg from '@images/rFIS.svg';
 import rasset_rfis_svg from '@images/rasset_rfis.svg'; 
 import rasset_reth_svg from '@images/rasset_reth.svg'; 
 import rasset_rksm_svg from '@images/rasset_rksm.svg'; 
+import rasset_rdot_svg from '@images/rasset_rdot.svg'; 
 import './page.scss'
 
  
@@ -102,8 +103,8 @@ export default function Index(props:any){
         />
         <DataItem 
           rSymbol="rDOT"
-          icon={rasset_rksm_svg}
-          fullName="Kusama"
+          icon={rasset_rdot_svg}
+          fullName="Polkadot"
           balance={dot_ercBalance=="--" ?"--":NumberUtil.handleFisAmountToFixed(dot_ercBalance)}
           willGetBalance={0}
           unit="DOT"

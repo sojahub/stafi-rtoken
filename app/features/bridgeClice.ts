@@ -6,7 +6,7 @@ import NumberUtil from '@util/numberUtil';
 import StafiServer from '@servers/stafi';
 import EthServer from '@servers/eth'; 
 import KsmServer from '@servers/ksm'
-import toolUtil from '@util/toolUtil'
+import DotServer from '@servers/polkadot'
 import keyring from '@servers/index';
 import CommonClice from './commonClice'
 import {  u8aToHex } from '@polkadot/util';
@@ -15,13 +15,15 @@ import { message } from 'antd';
 import {
     web3Enable,
     web3FromSource,
-  } from '@polkadot/extension-dapp';
-import { countBy } from 'lodash';
+  } from '@polkadot/extension-dapp'; 
 
+const STAFI_CHAIN_ID = 1;
+const ETH_CHAIN_ID = 2;
 const bridgeServer=new BridgeServer(); 
 const stafiServer = new StafiServer();
 const ethServer=new EthServer();
 const ksmServer=new KsmServer();
+const dotServer=new DotServer();
 const bridgeClice = createSlice({
   name: 'bridgeModule',
   initialState: {  
@@ -47,9 +49,7 @@ export const {
 
 //Native to ERC20
 export const bridgeCommon_ChainFees=():AppThunk=>async (dispatch,getState)=>{
-    try{ 
-        const STAFI_CHAIN_ID = 1;
-        const ETH_CHAIN_ID = 2;
+    try{  
         const stafiServer = new Stafi();
         const api =await  stafiServer.createStafiApi() 
         const result = await  api.query.bridgeCommon.chainFees(ETH_CHAIN_ID);
@@ -69,8 +69,6 @@ export const getBridgeEstimateEthFee=():AppThunk=>async (dispatch,getState)=>{
 export const nativeToErc20Swap=(tokenType:string,tokenAmount:any,ethAddress:string,cb?:Function):AppThunk=>async (dispatch,getState)=>{
     try {
         const amount = NumberUtil.fisAmountToChain(tokenAmount.toString());
-        const STAFI_CHAIN_ID = 1;
-        const ETH_CHAIN_ID = 2;
         dispatch(setLoading(true));
         web3Enable(stafiServer.getWeb3EnalbeName());
         const injector:any=await web3FromSource(stafiServer.getPolkadotJsSource())
@@ -114,12 +112,10 @@ export const nativeToErc20Swap=(tokenType:string,tokenAmount:any,ethAddress:stri
                                     message_str = 'Service is paused, please try again later!'; 
                                 }
                                 dispatch(setLoading(false));
-                                message.error(message);
-                                console.error(error.message)
+                                message.error(message); 
                             } catch (error) {
                                 dispatch(setLoading(false));
-                                message.error(error.message); 
-                                console.error(error.message)
+                                message.error(error.message);  
                             }
                         }
                     } else if (method === 'ExtrinsicSuccess') {
@@ -169,6 +165,11 @@ export const erc20ToNativeSwap=(tokenType:string,symbol:string,tokenAmount:any,s
       from: ethAddress
     });
     allowance = getState().ETHModule.RKSMErc20Allowance
+  } else if (tokenType == 'rDOT') { 
+    tokenContract = new web3.eth.Contract(dotServer.getRDOTTokenAbi(), dotServer.getRDOTTokenAddress(), {
+      from: ethAddress
+    });
+    allowance = getState().ETHModule.RDOTErc20Allowance
   }
   if (!tokenContract) {
     dispatch(setLoading(false));

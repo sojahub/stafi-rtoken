@@ -12,6 +12,7 @@ import selected_rFIS from '@images/selected_rFIS.svg';
 import rasset_fis_svg from '@images/rFIS.svg';
 import rasset_rfis_svg from '@images/rasset_rfis.svg';  
 import rasset_rksm_svg from '@images/rasset_rksm.svg'; 
+import rasset_rdot_svg from '@images/rasset_rdot.svg'; 
 import Understood from '@components/modal/understood';
 import {bridgeCommon_ChainFees,getBridgeEstimateEthFee,nativeToErc20Swap,erc20ToNativeSwap}from '@features/bridgeClice';
 import {rTokenRate as ksm_rTokenRate,query_rBalances_account,getUnbondCommission,checkAddress as ksm_checkAddress,reloadData as ksmReloadData} from '@features/rKSMClice';
@@ -38,7 +39,7 @@ const datas=[{
   amount:"--",
   type:'rfis'
 },{
-  icon:rasset_rksm_svg, 
+  icon:rasset_rdot_svg, 
   title:"rDOT",
   amount:"--",
   type:'rdot'
