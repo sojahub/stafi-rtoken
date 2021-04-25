@@ -18,7 +18,7 @@ export default class CommonClice{
         const amount:any = NumberUtil.handleFisAmountToFixed(amounts);
         if (ratio && amount) {
             let returnValue = amount * (1 - unbondCommission); 
-            willAmount = NumberUtil.handleFisAmountToFixed(returnValue * ratio);;
+            willAmount = NumberUtil.handleFisAmountToFixed(returnValue * ratio);
         } 
         return willAmount;
     }

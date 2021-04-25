@@ -449,14 +449,9 @@ export const balancesAll = (): AppThunk => async (dispatch, getState) => {
 }
 
 
-export const rTokenRate = (): AppThunk => async (dispatch, getState) => {
-  const api = await stafiServer.createStafiApi();
-  const result = await api.query.rTokenRate.rate(rSymbol.Fis);
-  let ratio = NumberUtil.fisAmountToHuman(result.toJSON());
-  if (!ratio) {
-    ratio = 1;
-  }
-  dispatch(setRatio(ratio)) 
+export const rTokenRate = (): AppThunk => async (dispatch, getState) => { 
+  const ratio=await commonClice.rTokenRate(rSymbol.Fis);
+  dispatch(setRatio(ratio))
 }
 export const continueProcess=():AppThunk=>async (dispatch,getState)=>{ 
   const stakeHash=getState().FISModule.stakeHash;
