@@ -5,17 +5,21 @@ export default class Index{
         return config.erc20HandlerAddress();
     }
     getResourceId(symbol:string){
-        if (symbol == 'fis') {
-            return '0x000000000000000000000000000000a9e0095b8965c01e6a09c97938f3860901';
-          } else if (symbol == 'rfis') {
-            if (isdev()) {
-              return '0x000000000000000000000000000000b9e0095b8965c01e6a09c97938f3860901';
-            } else {
-              return '0x000000000000000000000000000000df7e6fee39d3ace035c108833854667701';
-            }
-          } else if (symbol == 'rksm') {
-            return '0x00000000000000000000000000000004130f9412e9ecd9d97cf280361d2cbd01';
-          }
+      if (symbol == 'fis') {
+        return '0x000000000000000000000000000000a9e0095b8965c01e6a09c97938f3860901';
+      } else if (symbol == 'rfis') {
+        if (isdev()) {
+          return '0x000000000000000000000000000000b9e0095b8965c01e6a09c97938f3860901';
+        } else {
+          return '0x000000000000000000000000000000df7e6fee39d3ace035c108833854667701';
+        }
+      } else if (symbol == 'rksm') {
+        return '0x00000000000000000000000000000004130f9412e9ecd9d97cf280361d2cbd01';
+      } else if (symbol == 'rdot') {
+        return '0x000000000000000000000000000000bada4d69537ffd62dbcde10ddda21b2001';
+      } else if (symbol == 'ratom') {
+        return '0x0000000000000000000000000000006e15faef60f5e197166fe64110456a8601';
+      }
     }
     getBridgeEstimateEthFee(){
         if (isdev()) {

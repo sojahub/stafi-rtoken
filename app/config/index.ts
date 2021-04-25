@@ -58,9 +58,23 @@ export default {
   },
   rKSMTokenAddress:()=>{
     if(process.env.NODE_ENV=="production" &&  !isdev()){
-      return '0xd1d458c1c3579033a65db4ca2f06c12573aa5e27';
+      return '0x3c3842c4d3037ae121d69ea1e7a0b61413be806c';
     }else{
       return '0xd1d458c1c3579033a65db4ca2f06c12573aa5e27';
+    }  
+  },
+  rDOTTokenAddress:()=>{
+    if(process.env.NODE_ENV=="production" &&  !isdev()){
+      return '0x505f5a4ff10985fe9f93f2ae3501da5fe665f08a';
+    }else{
+      return '0x6aef17cea6e6841f1957f9fde6538ac391d55636';
+    }  
+  },
+  rATOMTokenAddress:()=>{
+    if(process.env.NODE_ENV=="production" &&  !isdev()){
+      return '0xd01cb3d113a864763dd3977fe1e725860013b0ed';
+    }else{
+      return '0xd363ed9ee73c8b6bd048ae188000be454f7b7925';
     }  
   },
   erc20HandlerAddress:()=>{
