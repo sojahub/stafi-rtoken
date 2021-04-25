@@ -43,7 +43,7 @@ export default function Index(props:any){
   onChange={(value:any)=>{   
       setAmount(value);   
   }}
-  bondFees={NumberUtil.tokenAmountToHuman(bondFees,rSymbol.Dot) || "--"}
+  bondFees={NumberUtil.fisAmountToHuman(bondFees) || "--"}
   onRecovery={()=>{ 
      props.history.push("/rDOT/search")
   }}

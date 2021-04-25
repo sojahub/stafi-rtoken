@@ -84,7 +84,7 @@ export default function Index(props:any){
     unbondAmount={amount}
     commission={unbondCommission}
     getAmount={willAmount}
-    bondFees={NumberUtil.tokenAmountToHuman(unBondFees,rSymbol.Ksm) || "--"}
+    bondFees={NumberUtil.fisAmountToHuman(unBondFees) || "--"}
     onCancel={()=>{
       setVisible(false)
     }}

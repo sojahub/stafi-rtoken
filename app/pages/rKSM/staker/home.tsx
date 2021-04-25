@@ -46,7 +46,7 @@ export default function Index(props:any){
      props.history.push("/rKSM/search")
   }}
   validPools={validPools}  
-  bondFees={NumberUtil.tokenAmountToHuman(bondFees,rSymbol.Dot) || "--"}
+  bondFees={NumberUtil.fisAmountToHuman(bondFees) || "--"}
   totalStakedToken={NumberUtil.handleFisAmountToFixed(totalIssuance*ratio)} 
   onStakeClick={()=>{
     if (amount) { 

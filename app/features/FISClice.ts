@@ -603,7 +603,7 @@ export const fisUnbond = (amount: string, rSymbol: number, recipient: string, se
     const injector = await web3FromSource(stafiServer.getPolkadotJsSource())
   
   
-    const api =await stafiApi.tx.rTokenSeries.liquidityUnbond(rSymbol, selectedPool, NumberUtil.fisAmountToChain(amount).toString(), recipient);
+    const api =await stafiApi.tx.rTokenSeries.liquidityUnbond(rSymbol, selectedPool, NumberUtil.tokenAmountToChain(amount, rSymbol).toString(), recipient);
 
       api.signAndSend(address, { signer: injector.signer }, (result: any) => {
         try{ 
