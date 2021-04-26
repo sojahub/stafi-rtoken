@@ -79,6 +79,7 @@ export default function Index(props:any){
   },[ethAccount && ethAccount.address])
   useEffect(()=>{
     dispatch(getRtokenPriceList());
+    dispatch(monitoring_Method());
   },[])
   return  <Content>
     <Tag type="erc" onClick={()=>{

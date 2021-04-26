@@ -6,7 +6,8 @@ import NumberUtil from '@util/numberUtil';
 import Web3Utils from 'web3-utils';
 import EthServer from '@servers/eth/index'; 
 import { message } from 'antd';
-import { keccakAsHex } from '@polkadot/util-crypto'; 
+import { keccakAsHex } from '@polkadot/util-crypto';  
+import {getAssetBalanceAll} from './ETHClice'
 
 const ethServer=new EthServer();
 const rETHClice = createSlice({
@@ -17,13 +18,18 @@ const rETHClice = createSlice({
   },
   reducers: {  
      setEthAccount(state,{payload}){
-       if(state.ethAccount && state.ethAccount.address==payload.address){ 
-          state.ethAccount={...state.ethAccount,...payload} 
-          setLocalStorageItem(Keys.MetamaskAccountKey, {address:payload.address})
+       if(payload==null){
+        state.ethAccount=payload;
+        removeLocalStorageItem(Keys.MetamaskAccountKey);
        }else{
-          state.ethAccount=payload;
-          setLocalStorageItem(Keys.MetamaskAccountKey, {address:payload.address})
-       }
+        if(state.ethAccount && state.ethAccount.address==payload.address){ 
+            state.ethAccount={...state.ethAccount,...payload} 
+            setLocalStorageItem(Keys.MetamaskAccountKey, {address:payload.address})
+        }else{
+            state.ethAccount=payload;
+            setLocalStorageItem(Keys.MetamaskAccountKey, {address:payload.address})
+        }
+        }
      },
      setErcBalance(state,{payload}){
        state.ercBalance=payload
@@ -53,6 +59,7 @@ export const connectMetamask=():AppThunk=>async (dispatch,getState)=> {
 
       ethereum.request({ method: 'eth_requestAccounts' }).then((accounts:any) => { 
         dispatch(handleEthAccount(accounts[0]))
+        
       }).catch((error:any) => {
      
         dispatch(setEthAccount(null))
@@ -91,7 +98,10 @@ export const monitoring_Method=():AppThunk=>(dispatch,getState)=> {
     ethereum.on('accountsChanged', (accounts:any) => {
       // this.ethAccount = accounts[0];
       if (accounts.length>0) { 
-        dispatch(handleEthAccount(accounts[0]))
+        dispatch(handleEthAccount(accounts[0]));
+        setTimeout(()=>{
+          dispatch(getAssetBalanceAll); 
+        },20)
       } else {
    
         dispatch(handleEthAccount(null))
