@@ -246,11 +246,11 @@ export default function Index(props:any){
 
           if(operationType=="native"){
          
-            dispatch(nativeToErc20Swap(fromType.type,fromAoumt,address,()=>{
+            dispatch(nativeToErc20Swap(fromType.title,fromType.type,fromAoumt,address,()=>{
               setVisible(true);
             }))
           }else{
-            dispatch(erc20ToNativeSwap(fromType.type,fromAoumt,address,()=>{
+            dispatch(erc20ToNativeSwap(fromType.title,fromType.type,fromAoumt,address,()=>{
               setVisible(true);
             }))
           } 

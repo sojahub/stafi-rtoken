@@ -678,6 +678,5 @@ const add_DOT_Swap_Notice=(uuid:string,amount:string,status:string,subData?:any)
 const add_KSM_Notice=(uuid:string,type:string,subType:string,content:string,status:string,subData?:any):AppThunk=>async (dispatch,getState)=>{
  
     dispatch(add_Notice(uuid,Symbol.Ksm,type,subType,content,status,subData))
-  
 } 
 export default rKSMClice.reducer;

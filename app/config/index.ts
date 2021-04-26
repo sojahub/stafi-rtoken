@@ -35,7 +35,7 @@ export default {
       return 'https://rtoken-api.stafi.io';
     }  
   },
- 
+  stafiApi:"https://drop.stafi.io",
   rETHTokenAddress: ()=>{ 
     if(process.env.NODE_ENV=="production" &&  !isdev()){
       return '0x9559aaa82d9649c7a7b220e7c461d2e74c9a3593';

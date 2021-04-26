@@ -53,7 +53,11 @@ export default {
       postData
     );
   },
-
+  fetchStakingPoolinfo: function () {
+    return this.post(
+      config.stafiApi + '/stafi/v1/webapi/reth/poolinfo'
+    );
+  },
   post: function (api, postData) {
     postData = postData ? postData : {};
     postData.timestamp = new Date().getTime();
