@@ -203,7 +203,7 @@ export default function Index(props:any){
 
         <div className={`row last ${(address) && "show_tip"}`}> 
           <div>
-            <Input placeholder={operationType=="erc20"?"To Stafi Address":"To Ethereum Address"} value={address} onChange={(e:any)=>{
+            <Input placeholder={operationType=="erc20"?"To StaFi Address":"To Ethereum Address"} value={address} onChange={(e:any)=>{
               setAddress(e.target.value)
             }}/> 
           </div>
