@@ -17,7 +17,8 @@ type Props={
      onStakeClick?:any,
      type:"rDOT"|"rETH"|"rFIS"|"rKSM",
      totalUnbonding?:any,
-     onSwapClick?:Function
+     onSwapClick?:Function,
+     onUniswapClick?:Function
 }
 export default function Index(props:Props){
   const [visibleModal, setVisibleModal] = useState(false);
@@ -73,6 +74,9 @@ export default function Index(props:Props){
       }} onOk={()=>{
         // message.info("Swap will be available soon");
         props.onSwapClick && props.onSwapClick();
+      }}
+      onUniswapClick={()=>{
+        props.onUniswapClick && props.onUniswapClick();
       }}/>
  
     </LeftContent>

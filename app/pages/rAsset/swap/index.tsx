@@ -13,6 +13,7 @@ import rasset_fis_svg from '@images/rFIS.svg';
 import rasset_rfis_svg from '@images/rasset_rfis.svg';  
 import rasset_rksm_svg from '@images/rasset_rksm.svg'; 
 import rasset_rdot_svg from '@images/rasset_rdot.svg'; 
+import down_arrow_svg from "@images/down_arrow.svg"
 import Understood from '@components/modal/understood';
 import {bridgeCommon_ChainFees,getBridgeEstimateEthFee,nativeToErc20Swap,erc20ToNativeSwap}from '@features/bridgeClice';
 import {rTokenRate as ksm_rTokenRate,query_rBalances_account,getUnbondCommission,reloadData as ksmReloadData} from '@features/rKSMClice';
@@ -158,7 +159,7 @@ export default function Index(props:any){
       }}/>
       <Title label="rBridge Swap"/>
       <div>
-        <div className="row">
+        <div className="row fromrow">
           <div className="label">
               <label>From</label>
               <label className="balance">{fromType.title} balance: {fromType.amount}</label>
@@ -180,7 +181,9 @@ export default function Index(props:any){
             }}/> 
           </div>
         </div>
-       
+        <div className="down_arrow">
+          <img src={down_arrow_svg} />
+        </div>
         <div className="row">
           <div className="label">
               <label>To</label> 
@@ -256,8 +259,8 @@ export default function Index(props:any){
       </div>
       <Understood 
       visible={visible}  
-      context={operationType=="native"?`Tx is broadcasting, please check your ${fromType.title} balance on your metamask later. It may take 2~10 minutes`:`Tx is broadcasting, please check your ${fromType.title} balance later. It may take 2~10 minutes`}
-      onCancel={() => {
+      context={operationType=="native"?`Tx is broadcasting, please check your ${fromType.title} balance on your Metamask later. It may take 2~10 minutes`:`Tx is broadcasting, please check your ${fromType.title} balance later. It may take 2~10 minutes`}
+        onOk={()=>{
         if(operationType=="native"){
           if(fromType.title=="FIS" || fromType.title=="rFIS"){
             dispatch(fisReloadData());
@@ -271,21 +274,8 @@ export default function Index(props:any){
         }else{
           dispatch(getAssetBalanceAll()); 
         }
-        setVisible(false);
-      }} onOk={()=>{
-        if(operationType=="native"){
-          if(fromType.title=="FIS" || fromType.title=="rFIS"){
-            dispatch(fisReloadData());
-          }
-          if(fromType.title=="rKSM"){
-            dispatch(ksmReloadData());
-          }
-          if(fromType.title=="rDOT"){
-            dispatch(dotReloadData());
-          }
-        }else{
-          dispatch(getAssetBalanceAll()); 
-        }
+        setFormAmount(undefined);
+        setAddress(undefined);
          setVisible(false);
       }}/>
   </Content>

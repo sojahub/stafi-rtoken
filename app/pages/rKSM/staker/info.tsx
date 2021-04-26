@@ -56,6 +56,9 @@ export default function Index(props:any){
   onRdeemClick={()=>{
     props.history.push("/rKSM/staker/redeem")
   }}
+  onUniswapClick={()=>{
+    window.open("")
+  }}
   onSwapClick={()=>{
     props.history.push({
       pathname:"/rAsset/swap/native",

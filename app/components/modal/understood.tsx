@@ -7,8 +7,7 @@ import './swap.scss';
 type Props={
   visible:boolean,
   context:string,
-  onOk?:Function,
-  onCancel?:Function, 
+  onOk?:Function
 }
 export default function Index(props:Props){
   return <Modal visible={props.visible} 
@@ -24,7 +23,7 @@ export default function Index(props:Props){
   onOk={()=>{
     props.onOk && props.onOk();
   }} onCancel={()=>{
-    props.onCancel && props.onCancel();
+    props.onOk && props.onOk();
   }}>
         <div>
           <div className="title">

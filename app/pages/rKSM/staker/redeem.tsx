@@ -88,7 +88,7 @@ export default function Index(props:any){
     onCancel={()=>{
       setVisible(false)
     }}
-      onOk={() => {
+    onOk={() => {
       if(NumberUtil.fisAmountToChain(fisBalance) <= (unBondFees + estimateUnBondTxFees)){
         message.error("No enough FIS to pay for the fee");
         return;

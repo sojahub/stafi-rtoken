@@ -10,7 +10,7 @@
     height:51px;
     padding-left: 25px;
     border-color:#B3B3B5;
-    font-size: 22px;
+    font-size: 16px;
     font-weight: bold;
 }
 
@@ -69,6 +69,9 @@
     .ant-popover-arrow{
         display: none;
     }
+    .ant-popover-content{
+        transform: translateX(10px);
+    }
     .ant-popover-inner{
         width:423px;
         .ant-popover-title{
@@ -120,7 +123,7 @@
                 font-weight: bold;;
             }
         }
-        .item.active{
+        .item.active,.item:hover{
             background-color:#F0F0F0 ;
         }
     }
