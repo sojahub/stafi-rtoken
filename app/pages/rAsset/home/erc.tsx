@@ -19,7 +19,7 @@ import rasset_rfis_svg from '@images/rasset_rfis.svg';
 import rasset_reth_svg from '@images/rasset_reth.svg'; 
 import rasset_rksm_svg from '@images/rasset_rksm.svg'; 
 import rasset_rdot_svg from '@images/rasset_rdot.svg'; 
-import {getStakingPoolinfo} from '@features/bridgeClice'
+import {getRtokenPriceList} from '@features/bridgeClice'
 import './page.scss'
 
 const commonClice=new CommonClice();
@@ -75,7 +75,7 @@ export default function Index(props:any){
 
   },[ethAccount && ethAccount.address])
   useEffect(()=>{
-    dispatch(getStakingPoolinfo());
+    dispatch(getRtokenPriceList());
   },[])
   return  <Content>
     <Tag type="erc" onClick={()=>{

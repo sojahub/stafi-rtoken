@@ -20,7 +20,7 @@ import rasset_fis_svg from '@images/rFIS.svg';
 import rasset_rfis_svg from '@images/rasset_rfis.svg';  
 import rasset_rksm_svg from '@images/rasset_rksm.svg'; 
 import rasset_rdot_svg from '@images/rasset_rdot.svg'; 
-import {getStakingPoolinfo} from '@features/bridgeClice'
+import {getRtokenPriceList} from '@features/bridgeClice'
 
 import './page.scss'
 
@@ -60,7 +60,7 @@ export default function Index(props:any){
   const [visible,setVisible]=useState(false);
   useEffect(()=>{
     if(fisAccount){
-      dispatch(getStakingPoolinfo());
+      dispatch(getRtokenPriceList());
       dispatch(reloadData(Symbol.Fis)); 
     } 
   },[])

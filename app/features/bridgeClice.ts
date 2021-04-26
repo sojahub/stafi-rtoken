@@ -250,7 +250,7 @@ const add_Swap_Notice=(token:string,amount:string,status:string,subData:any):App
 
 
 
-export const getStakingPoolinfo=():AppThunk=>async (dispatch,getState)=>{
+export const getRtokenPriceList=():AppThunk=>async (dispatch,getState)=>{
     const result=await rpc.fetchRtokenPriceList(); 
     if(result && result.status=="80000"){
         dispatch(setPriceList(result.data));
