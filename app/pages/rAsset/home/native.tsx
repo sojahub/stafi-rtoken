@@ -42,8 +42,11 @@ export default function Index(props:any){
   });
 
   const totalPrice=useMemo(()=>{
-    let count=0;
+    let count:any="--";
     unitPriceList.forEach((item:any) => {
+      if(count=="--"){
+        count=0;
+      }
       if(item.symbol=="rFIS" && fis_tokenAmount && fis_tokenAmount!="--"){
         count=count+(item.price*fis_tokenAmount);
       }else if(item.symbol=="FIS" && fisAccount && fisAccount.balance){
@@ -55,7 +58,7 @@ export default function Index(props:any){
       }
     });
     return count
-  },[tokenAmount,fisAccount,fis_tokenAmount,dot_tokenAmount]);
+  },[unitPriceList,tokenAmount,fisAccount,fis_tokenAmount,dot_tokenAmount]);
 
   const [visible,setVisible]=useState(false);
   useEffect(()=>{

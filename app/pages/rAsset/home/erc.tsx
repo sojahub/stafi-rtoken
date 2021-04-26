@@ -43,8 +43,11 @@ export default function Index(props:any){
     }
   })
   const totalPrice=useMemo(()=>{
-    let count=0;
+    let count:any="--";
     unitPriceList.forEach((item:any) => {
+      if(count=="--"){
+        count=0;
+      }
       if(item.symbol=="rFIS" && rfis_ercBalance && rfis_ercBalance!="--"){
         count=count+(item.price*rfis_ercBalance);
       }else if(item.symbol=="FIS" && fis_ercBalance && fis_ercBalance!="--"){
@@ -58,7 +61,7 @@ export default function Index(props:any){
       }
     });
     return count
-  },[ksm_ercBalance,fis_ercBalance,rfis_ercBalance,eth_ercBalance,dot_ercBalance]);
+  },[unitPriceList,ksm_ercBalance,fis_ercBalance,rfis_ercBalance,eth_ercBalance,dot_ercBalance]);
   useEffect(()=>{ 
     if(ethAccount && ethAccount.address){
       dispatch(handleEthAccount(ethAccount.address));

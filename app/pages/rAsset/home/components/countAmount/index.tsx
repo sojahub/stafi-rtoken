@@ -11,7 +11,7 @@ export default function Index(props:Props){
       Total Value ($)
     </div>
     <div>
-      {NumberUtil.handleEthRoundToFixed(props.totalValue)}
+      {(props.totalValue && props.totalValue!="--")?NumberUtil.handleEthRoundToFixed(props.totalValue):"--"}
     </div>
   </div>
 }
