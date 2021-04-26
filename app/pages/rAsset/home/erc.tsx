@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'; 
+import React, { useEffect, useState,useMemo } from 'react'; 
 import {useDispatch,useSelector} from 'react-redux'; 
 import metamask from '@images/metamask.png'
 import Button from '@shared/components/button/connect_button';
@@ -19,6 +19,7 @@ import rasset_rfis_svg from '@images/rasset_rfis.svg';
 import rasset_reth_svg from '@images/rasset_reth.svg'; 
 import rasset_rksm_svg from '@images/rasset_rksm.svg'; 
 import rasset_rdot_svg from '@images/rasset_rdot.svg'; 
+import {getStakingPoolinfo} from '@features/bridgeClice'
 import './page.scss'
 
 const commonClice=new CommonClice();
@@ -27,8 +28,9 @@ export default function Index(props:any){
   const dispatch=useDispatch();
 
   const {ethAccount,ksm_ercBalance,fis_ercBalance,eth_ercBalance,rfis_ercBalance,dot_ercBalance,
-    ksmWillAmount,fisWillAmount,dotWillAmount}=useSelector((state:any)=>{ 
+    ksmWillAmount,fisWillAmount,dotWillAmount,unitPriceList}=useSelector((state:any)=>{ 
     return {
+      unitPriceList:state.bridgeModule.priceList,
       ethAccount:state.rETHModule.ethAccount,
       ksm_ercBalance:state.ETHModule.ercRKSMBalance,
       fis_ercBalance:state.ETHModule.ercFISBalance,
@@ -40,6 +42,23 @@ export default function Index(props:any){
       dotWillAmount:commonClice.getWillAmount(state.rDOTModule.ratio,state.rDOTModule.unbondCommission,state.ETHModule.ercRDOTBalance)
     }
   })
+  const totalPrice=useMemo(()=>{
+    let count=0;
+    unitPriceList.forEach((item:any) => {
+      if(item.symbol=="rFIS" && rfis_ercBalance && rfis_ercBalance!="--"){
+        count=count+(item.price*rfis_ercBalance);
+      }else if(item.symbol=="FIS" && fis_ercBalance && fis_ercBalance!="--"){
+        count=count+(item.price*fis_ercBalance);
+      }else if(item.symbol=="rKSM" && ksm_ercBalance && ksm_ercBalance!="--"){
+        count=count+(item.price*ksm_ercBalance);
+      }else if(item.symbol=="rDOT" && dot_ercBalance && dot_ercBalance!="--"){
+        count=count+(item.price*dot_ercBalance);
+      }else if(item.symbol=="rETH" && eth_ercBalance && eth_ercBalance!="--"){
+        count=count+(item.price*eth_ercBalance);
+      }
+    });
+    return count
+  },[ksm_ercBalance,fis_ercBalance,rfis_ercBalance,eth_ercBalance,dot_ercBalance]);
   useEffect(()=>{ 
     if(ethAccount && ethAccount.address){
       dispatch(handleEthAccount(ethAccount.address));
@@ -55,6 +74,9 @@ export default function Index(props:any){
     }
 
   },[ethAccount && ethAccount.address])
+  useEffect(()=>{
+    dispatch(getStakingPoolinfo());
+  },[])
   return  <Content>
     <Tag type="erc" onClick={()=>{
       props.history.push("/rAsset/native")
@@ -80,7 +102,7 @@ export default function Index(props:any){
           }}
         />
 
-<DataItem 
+        <DataItem 
           rSymbol="rFIS"
           icon={rasset_rfis_svg}
           fullName="StaFi" 
@@ -151,7 +173,7 @@ export default function Index(props:any){
             })
           }}
         />
-       </DataList> <CountAmount /></> : <div className="rAsset_content"> 
+       </DataList> <CountAmount totalValue={totalPrice} /></> : <div className="rAsset_content"> 
      <Button icon={metamask} onClick={()=>{
         dispatch(connectMetamask());
         dispatch(monitoring_Method());

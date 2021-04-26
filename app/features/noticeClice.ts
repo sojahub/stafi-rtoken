@@ -12,6 +12,7 @@ export enum noticeStatus{
   Confirmed="Confirmed",
   Pending="Pending",
   Error="Error",
+  Empty="",
 }
 export enum noticeType{
   Staker='Staker',

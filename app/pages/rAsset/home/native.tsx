@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'; 
+import React, { useEffect, useState,useMemo } from 'react'; 
 import {useDispatch,useSelector} from 'react-redux'; 
 import Button from '@shared/components/button/connect_button';
 import DataList from './components/list';
@@ -20,27 +20,47 @@ import rasset_fis_svg from '@images/rFIS.svg';
 import rasset_rfis_svg from '@images/rasset_rfis.svg';  
 import rasset_rksm_svg from '@images/rasset_rksm.svg'; 
 import rasset_rdot_svg from '@images/rasset_rdot.svg'; 
+import {getStakingPoolinfo} from '@features/bridgeClice'
 
 import './page.scss'
 
 const commonClice=new CommonClice();
 export default function Index(props:any){ 
   const dispatch=useDispatch();
-  const {fisAccount,tokenAmount,ksmWillAmount,fis_tokenAmount,fisWillAmount,dot_tokenAmount,dotWillAmount}=useSelector((state:any)=>{ 
-    
+  const {fisAccount,tokenAmount,ksmWillAmount,fis_tokenAmount,fisWillAmount,dot_tokenAmount,dotWillAmount,unitPriceList}=useSelector((state:any)=>{ 
+ 
     return {
-      fisAccount:state.FISModule.fisAccount,
+      unitPriceList:state.bridgeModule.priceList,
+      fisAccount:state.FISModule.fisAccount, 
       tokenAmount:state.rKSMModule.tokenAmount,
       ksmWillAmount:commonClice.getWillAmount(state.rKSMModule.ratio,state.rKSMModule.unbondCommission,state.rKSMModule.tokenAmount),
       fis_tokenAmount:state.FISModule.tokenAmount,
       fisWillAmount:commonClice.getWillAmount(state.FISModule.ratio,state.FISModule.unbondCommission,state.FISModule.tokenAmount),
       dot_tokenAmount:state.rDOTModule.tokenAmount,
-      dotWillAmount:commonClice.getWillAmount(state.rDOTModule.ratio,state.rDOTModule.unbondCommission,state.rDOTModule.tokenAmount)
+      dotWillAmount:commonClice.getWillAmount(state.rDOTModule.ratio,state.rDOTModule.unbondCommission,state.rDOTModule.tokenAmount),
     }
-  }) 
+  });
+
+  const totalPrice=useMemo(()=>{
+    let count=0;
+    unitPriceList.forEach((item:any) => {
+      if(item.symbol=="rFIS" && fis_tokenAmount && fis_tokenAmount!="--"){
+        count=count+(item.price*fis_tokenAmount);
+      }else if(item.symbol=="FIS" && fisAccount && fisAccount.balance){
+        count=count+(item.price*fisAccount.balance);
+      }else if(item.symbol=="rKSM" && tokenAmount && tokenAmount!="--"){
+        count=count+(item.price*tokenAmount);
+      }else if(item.symbol=="rDOT" && tokenAmount && tokenAmount!="--"){
+        count=count+(item.price*dot_tokenAmount);
+      }
+    });
+    return count
+  },[tokenAmount,fisAccount,fis_tokenAmount,dot_tokenAmount]);
+
   const [visible,setVisible]=useState(false);
   useEffect(()=>{
     if(fisAccount){
+      dispatch(getStakingPoolinfo());
       dispatch(reloadData(Symbol.Fis)); 
     } 
   },[])
@@ -132,7 +152,7 @@ export default function Index(props:any){
           }}
         />
         
-      </DataList><CountAmount /> </>:<div className="rAsset_content">
+      </DataList><CountAmount totalValue={totalPrice} /> </>:<div className="rAsset_content">
       <Button icon={rDOT_svg} onClick={()=>{
            dispatch(connectPolkadotjs(Symbol.Fis)); 
           setVisible(true)

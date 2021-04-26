@@ -8,7 +8,7 @@ import EthServer from '@servers/eth';
 import KsmServer from '@servers/ksm'
 import DotServer from '@servers/polkadot'
 import keyring from '@servers/index';
-import CommonClice from './commonClice'
+import rpc from '@util/rpc'
 import {  u8aToHex } from '@polkadot/util';
 import {setLoading} from './globalClice'
 import { message } from 'antd';
@@ -30,7 +30,8 @@ const bridgeClice = createSlice({
   name: 'bridgeModule',
   initialState: {  
     erc20EstimateFee:"--",
-    estimateEthFee:"--"
+    estimateEthFee:"--",
+    priceList:[]
   },
   reducers: {  
     setErc20EstimateFee(state,{payload}){
@@ -38,6 +39,9 @@ const bridgeClice = createSlice({
     },
     setEstimateEthFee(state,{payload}){
         state.estimateEthFee=payload;
+    },
+    setPriceList(state,{payload}){
+        state.priceList=payload;
     }
   },
 });
@@ -45,7 +49,8 @@ const bridgeClice = createSlice({
  
 export const {
     setErc20EstimateFee,
-    setEstimateEthFee
+    setEstimateEthFee,
+    setPriceList
 }=bridgeClice.actions
 
 
@@ -117,34 +122,33 @@ export const nativeToErc20Swap=(tokenStr:string,tokenType:string, tokenAmount:an
                                 }
                                 dispatch(setLoading(false));
                                 message.error(message_str); 
-                                dispatch(add_Swap_Notice(tokenStr,tokenAmount,noticeStatus.Error,{swapType:"native"}))
+                                
                             } catch (error) {
                                 dispatch(setLoading(false));
                                 message.error(error.message);  
-                                dispatch(add_Swap_Notice(tokenStr,tokenAmount,noticeStatus.Error,{swapType:"native"}))
+                                
                             }
                         }
                     } else if (method === 'ExtrinsicSuccess') {
-                        dispatch(setLoading(false));
-                        console.log("=======asdfasdfasdfa")
-                        dispatch(add_Swap_Notice(tokenStr,tokenAmount,noticeStatus.Confirmed,{swapType:"native"}))
+                        dispatch(setLoading(false)); 
+                        dispatch(add_Swap_Notice(tokenStr,tokenAmount,noticeStatus.Empty,{swapType:"native"}))
                         cb && cb() 
                     }
                 });
             } else if (result.isError) {
                 dispatch(setLoading(false));
                 message.error(result.toHuman()); 
-                dispatch(add_Swap_Notice(tokenStr,tokenAmount,noticeStatus.Error,{swapType:"native"}));
+                 
             } 
         }).catch((error:any) => {
             dispatch(setLoading(false));
             message.error(error.message); 
-            dispatch(add_Swap_Notice(tokenStr,tokenAmount,noticeStatus.Error,{swapType:"native"}))
+            
         });
     } catch (error) {
         dispatch(setLoading(false));
         message.error(error.message); 
-        dispatch(add_Swap_Notice(tokenStr,tokenAmount,noticeStatus.Error,{swapType:"native"}))
+        
     }
 
 }
@@ -203,15 +207,15 @@ export const erc20ToNativeSwap=(tokenStr:string,tokenType:string, tokenAmount:an
 
 
             if (result && result.status) {
-                dispatch(add_Swap_Notice(tokenStr,tokenAmount,noticeStatus.Confirmed,{swapType:"erc20"}))
+                dispatch(add_Swap_Notice(tokenStr,tokenAmount,noticeStatus.Empty,{swapType:"erc20"}))
                 cb && cb(); 
             } else {
                 message.error('Error! Please try again'); 
-                dispatch(add_Swap_Notice(tokenStr,tokenAmount,noticeStatus.Error,{swapType:"erc20"}))
+                 
             } 
         } else {
             message.error('Error! Please try again'); 
-            dispatch(add_Swap_Notice(tokenStr,tokenAmount,noticeStatus.Error,{swapType:"erc20"}))
+            
         }   
     } else {
         let bridgeContract = new web3.eth.Contract(bridgeServer.getBridgeAbi(), bridgeServer.getBridgeAddress(), {
@@ -229,23 +233,28 @@ export const erc20ToNativeSwap=(tokenStr:string,tokenType:string, tokenAmount:an
         const result=await bridgeContract.methods.deposit(STAFI_CHAIN_ID, bridgeServer.getResourceId(tokenType), data).send({value: sendAmount}) 
 
             if (result && result.status) {
-                dispatch(add_Swap_Notice(tokenStr,tokenAmount,noticeStatus.Confirmed,{swapType:"erc20"}))
+                dispatch(add_Swap_Notice(tokenStr,tokenAmount,noticeStatus.Empty,{swapType:"erc20"}))
                 cb && cb();  
             } else {
-                message.error('Error! Please try again') 
-                dispatch(add_Swap_Notice(tokenStr,tokenAmount,noticeStatus.Error,{swapType:"erc20"}))
+                message.error('Error! Please try again')  
             } 
     }
     } catch (error) {
-        message.error(error.message)  
-        dispatch(add_Swap_Notice(tokenStr,tokenAmount,noticeStatus.Error,{swapType:"erc20"}))
+        message.error(error.message)   
     }
     dispatch(setLoading(false));
 }
 const add_Swap_Notice=(token:string,amount:string,status:string,subData:any):AppThunk=>async (dispatch,getState)=>{
- // dispatch(add_KSM_Notice(uuid,noticeType.Staker,noticesubType.Swap,amount,status,subData))
-    console.log("======asdf")
     dispatch(add_Notice(stafi_uuid(),token,noticeType.Staker,noticesubType.Swap,amount,status,subData))
-  } 
+} 
+
+
+
+export const getStakingPoolinfo=():AppThunk=>async (dispatch,getState)=>{
+    const result=await rpc.fetchStakingPoolinfo(); 
+    if(result && result.status=="80000"){
+        dispatch(setPriceList(result.data));
+    }
+}
 
 export default bridgeClice.reducer;

@@ -273,6 +273,7 @@ export default function Index(props:any){
           }
         }else{
           dispatch(getAssetBalanceAll()); 
+          dispatch(getErc20Allowances());
         }
         setFormAmount(undefined);
         setAddress(undefined);

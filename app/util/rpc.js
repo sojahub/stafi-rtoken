@@ -55,7 +55,8 @@ export default {
   },
   fetchStakingPoolinfo: function () {
     return this.post(
-      config.stafiApi + '/stafi/v1/webapi/reth/poolinfo'
+      config.stafiApi + '/stafi/v1/webapi/rtoken/pricelist',
+      {}
     );
   },
   post: function (api, postData) {
