@@ -22,13 +22,13 @@ export default function Inde(props:any){
   return <HomeCard 
       title={<><label>Liquify</label> Your Staking DOT</>}
       subTitle={"Staking via StaFi Staking Contract and get rDOT in return"}
-      btnText="Connect to Polkajs extension"
+      btnText="Connect to Polkadotjs extension"
       btnIcon={rDOT_svg}
       onBtnClick={()=>{  
         dispatch(connectPolkadot(()=>{
           props.history.push("/rDOT/wallet")
         })) 
       }}
-      onIntroUrl="https://docs.stafi.io/rproduct/rdot-solution"
+      // onIntroUrl="https://docs.stafi.io/rproduct/rdot-solution"
   />
 }

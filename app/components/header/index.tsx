@@ -83,7 +83,7 @@ export default function Index(props:Props){
             }}/>}
         </Modal>
        <div></div>
-        {account==null && Tool.pageType()==rSymbol.Ksm && <div className="header_tool" onClick={()=>{
+        {account==null && (Tool.pageType()==rSymbol.Ksm || Tool.pageType()==rSymbol.Dot) && <div className="header_tool" onClick={()=>{
             if(Tool.pageType()==rSymbol.Dot){
                 dispatch(connectPolkadot(()=>{
                 props.history.push("/rDOT/wallet")
