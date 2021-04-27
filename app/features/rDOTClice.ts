@@ -351,12 +351,9 @@ export const balancesAll = (): AppThunk => async (dispatch, getState) => {
   const address = getState().rDOTModule.dotAccount.address;
   const result = await api.derive.balances.all(address);
   if (result) {
-    const transferrableAmount = NumberUtil.tokenAmountToHuman(result.availableBalance,rSymbol.Dot);
-    let transferrableAmountShow:any = NumberUtil.handleFisAmountToFixed(transferrableAmount);
-    transferrableAmountShow=parseFloat(transferrableAmountShow)-1.02
-    if(transferrableAmountShow<0){
-      transferrableAmountShow=0;
-    }
+    const transferrableAmount = NumberUtil.tokenAmountToHuman(result.availableBalance, rSymbol.Dot);
+    let stakableAmount = Number(transferrableAmount) - 1.02;
+    let transferrableAmountShow:any = NumberUtil.handleFisAmountToFixed(stakableAmount <= 0 ? 0 : stakableAmount);
      
     dispatch(setTransferrableAmountShow(transferrableAmountShow));
   }
