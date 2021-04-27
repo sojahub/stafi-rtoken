@@ -50,13 +50,6 @@ const siderData=[
         text:"rKSM", 
         urlKeywords:'/rKSM',
         url:"/rKSM/home"
-    },
-    {
-        icon:rAsset_svg,
-        selectedIcon:selected_rAsset_svg,
-        text:"rBridge", 
-        urlKeywords:'/rBridge',
-        url:"https://rtoken.stafi.io/rbridge"
     }
 ]
 type Props={
