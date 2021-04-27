@@ -616,13 +616,14 @@ export const rTokenLedger=():AppThunk=>async (dispatch, getState)=>{
     dispatch(handleStakerApr());
   }  
 }
- const handleStakerApr=(currentRate?:any,lastRate?:any):AppThunk=>async (dispatch, getState)=>{
-    if (currentRate && lastRate) {
-      const apr = NumberUtil.handleEthRoundToFixed((currentRate - lastRate)/lastRate * 365.25 * 100) + '%';
-      dispatch(setStakerApr(apr));
-    } else {
-      dispatch(setStakerApr('15.9%')); 
-    }
+const handleStakerApr = (currentRate?: any, lastRate?: any): AppThunk => async (dispatch, getState) => {
+    dispatch(setStakerApr('14.9%')); 
+    // if (currentRate && lastRate) {
+    //   const apr = NumberUtil.handleEthRoundToFixed((currentRate - lastRate)/lastRate * 365.25 * 100) + '%';
+    //   dispatch(setStakerApr(apr));
+    // } else {
+    //   dispatch(setStakerApr('14.9%')); 
+    // }
   }
 
   export const checkAddress = (address:string)=>{
