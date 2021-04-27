@@ -6,8 +6,7 @@ import { rTokenRate } from '@features/rDOTClice';
 import {ratioToAmount} from '@util/common'
 import { message } from 'antd';
 import NumberUtil from '@util/numberUtil';
-import { setProcessSlider } from '@features/globalClice';
-import { rSymbol } from '@keyring/defaults';
+import { setProcessSlider } from '@features/globalClice'; 
 
 export default function Index(props:any){
 

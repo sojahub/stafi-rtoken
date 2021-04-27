@@ -6,6 +6,7 @@ import Button from '@shared/components/button/button';
 import Select,{Option} from '@shared/components/select';
 import leftArrowSvg from '@images/left_arrow.svg';
 import {onProceed} from '@features/rDOTClice'
+import config from '@config/index'
 import './index.scss';
 export default function Index(props:any){
   const [form] = Form.useForm();
@@ -44,10 +45,10 @@ export default function Index(props:any){
             <Option value="1">DOT</Option> 
           </Select>
         </Form.Item> 
-        <Form.Item label={<div className="item_title"><label>TxHash</label><a>How to get TxHash</a></div>} name="txHash">
+        <Form.Item label={<div className="item_title"><label>TxHash</label><a href={config.txHashAndBlockhashURl.dotURL} target="_blank">How to get TxHash</a></div>} name="txHash">
           <Input placeholder="" />
         </Form.Item> 
-        <Form.Item label={<div className="item_title"><label>BlockHash</label><a>How to get BlockHash</a></div>} name="blockHash">
+        <Form.Item label={<div className="item_title"><label>BlockHash</label><a href={config.txHashAndBlockhashURl.dotURL} target="_blank">How to get BlockHash</a></div>} name="blockHash">
           <Input placeholder="" />
         </Form.Item> 
         <div className="btns">

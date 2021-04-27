@@ -98,6 +98,10 @@ export default {
     }else{
       return '0x57e7c280a3828bf9a5356d7c926fcd555cf0bdc8';
     } 
+  },
+  txHashAndBlockhashURl:{
+    dotURL:"https://docs.stafi.io/rproduct/rdot-solution/rdot-staker-guide/recovery-function#2-the-way-to-get-txhash-and-blockhash",
+    ksmURL:"https://docs.stafi.io/rproduct/rksm-solution/staker-guide/recovery-function#2-the-way-to-get-txhash-and-blockhash"
   }
 } 
  

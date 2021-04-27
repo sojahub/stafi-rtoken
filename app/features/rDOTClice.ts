@@ -352,7 +352,12 @@ export const balancesAll = (): AppThunk => async (dispatch, getState) => {
   const result = await api.derive.balances.all(address);
   if (result) {
     const transferrableAmount = NumberUtil.tokenAmountToHuman(result.availableBalance,rSymbol.Dot);
-    const transferrableAmountShow = NumberUtil.handleFisAmountToFixed(transferrableAmount);
+    let transferrableAmountShow:any = NumberUtil.handleFisAmountToFixed(transferrableAmount);
+    transferrableAmountShow=parseFloat(transferrableAmountShow)-1.02
+    if(transferrableAmountShow<0){
+      transferrableAmountShow=0;
+    }
+     
     dispatch(setTransferrableAmountShow(transferrableAmountShow));
   }
 }
