@@ -7,7 +7,10 @@ import FISReducer from './FISClice';
 import noticeReducer from './noticeClice'; 
 import {connectRouter} from 'connected-react-router'; 
 import rAssetReducer from './rAssetClice'
-import rETHReducer from './rETHClice'
+import rETHReducer from './rETHClice';
+import bridgeReducer from './bridgeClice';
+import ETHReducer from './ETHClice'
+
 export default function createRootReducer(history?: History) {
   return combineReducers({ 
     globalModule:globalReducer,
@@ -17,6 +20,8 @@ export default function createRootReducer(history?: History) {
     noticeModule:noticeReducer,
     router:connectRouter(history),
     rAssetModule:rAssetReducer,
-    rETHModule:rETHReducer
+    rETHModule:rETHReducer,
+    bridgeModule:bridgeReducer,
+    ETHModule:ETHReducer
   });
 }

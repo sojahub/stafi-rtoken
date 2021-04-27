@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import {useDispatch,useSelector} from 'react-redux';
 import Content from '@components/content/stakeContent_DOT'; 
 import {transfer,balancesAll,rTokenLedger} from '@features/rDOTClice'; 
-import { rTokenRate } from '@features/FISClice';
+import { rTokenRate } from '@features/rDOTClice';
 import {ratioToAmount} from '@util/common'
 import { message } from 'antd';
 import NumberUtil from '@util/numberUtil';
@@ -16,18 +16,19 @@ export default function Index(props:any){
   const [amount,setAmount]=useState<any>(); 
   useEffect(()=>{
     dispatch(balancesAll());
-    dispatch(rTokenRate(rSymbol.Dot));
+    dispatch(rTokenRate());
     dispatch(rTokenLedger())
   },[])
-  const {transferrableAmount,ratio,stafiStakerApr,fisCompare,validPools,totalRDot,bondFees}=useSelector((state:any)=>{ 
-    const fisCompare = NumberUtil.tokenAmountToChain(state.FISModule.fisAccount.balance,rSymbol.Dot) < (state.rDOTModule.bondFees + state.FISModule.estimateBondTxFees);
+ 
+  const {transferrableAmount,ratio,stafiStakerApr,fisCompare,validPools,totalIssuance,bondFees}=useSelector((state:any)=>{ 
+    const fisCompare = NumberUtil.fisAmountToChain(state.FISModule.fisAccount.balance) < (state.rDOTModule.bondFees + state.FISModule.estimateBondTxFees);
     return {
       transferrableAmount:state.rDOTModule.transferrableAmountShow,
-      ratio:state.FISModule.ratio,
+      ratio:state.rDOTModule.ratio,
       stafiStakerApr:state.rDOTModule.stakerApr,
       fisCompare:fisCompare,
       validPools:state.rDOTModule.validPools,
-      totalRDot:state.rDOTModule.totalRDot,
+      totalIssuance:state.rDOTModule.totalIssuance,
       bondFees:state.rDOTModule.bondFees
     }
   })
@@ -41,12 +42,12 @@ export default function Index(props:any){
   onChange={(value:any)=>{   
       setAmount(value);   
   }}
-  bondFees={NumberUtil.tokenAmountToHuman(bondFees,rSymbol.Dot) || "--"}
+  bondFees={NumberUtil.fisAmountToHuman(bondFees) || "--"}
   onRecovery={()=>{ 
      props.history.push("/rDOT/search")
   }}
   validPools={validPools} 
-  totalStakedToken={ NumberUtil.handleFisAmountToFixed((totalRDot*ratio)) || "--"}
+  totalStakedToken={ NumberUtil.handleFisAmountToFixed((totalIssuance*ratio)) || "--"}
   onStakeClick={()=>{
     
     if (amount) {

@@ -16,7 +16,9 @@ type Props={
      ratioShow?:any,
      onStakeClick?:any,
      type:"rDOT"|"rETH"|"rFIS"|"rKSM",
-     totalUnbonding?:any
+     totalUnbonding?:any,
+     onSwapClick?:Function,
+     onUniswapClick?:Function
 }
 export default function Index(props:Props){
   const [visibleModal, setVisibleModal] = useState(false);
@@ -63,18 +65,19 @@ export default function Index(props:Props){
           </div>
           <div className="describe">
              
-            {props.type=="rDOT" && ` update every 24 hours`}
-            {props.type=="rKSM" && ` update every 6 hours `}
+            {props.type=="rDOT" && ` Updated every 24 hours`}
+            {props.type=="rKSM" && ` Updated every 6 hours `}
           </div>
       </div>
       <Modal type={props.type} visible={visibleModal} onCancel={() => {
-        setVisibleModal(false)
-      }} onOk={(clickType: any) => {
-        if (clickType == 1) {
-          window.open(config.rBridgeApp());
-        } else {
-          message.info("Uniswap Pool hasn't been established yet, stay tuned");
-        }
-      }} />
+        setVisibleModal(false) 
+      }} onOk={()=>{
+        // message.info("Swap will be available soon");
+        props.onSwapClick && props.onSwapClick();
+      }}
+      onUniswapClick={()=>{
+        props.onUniswapClick && props.onUniswapClick();
+      }}/>
+ 
     </LeftContent>
 }

@@ -3,9 +3,9 @@ import { AppThunk, RootState } from '../store';
 import PolkadotServer from '@servers/ksm/index';
 import Stafi from '@servers/stafi/index';
 import { message as M, message } from 'antd';
-import keyring from '@servers/index';
-import moment from 'moment';
-import { setLocalStorageItem, getLocalStorageItem, removeLocalStorageItem, Keys } from '@util/common'
+import keyring from '@servers/index'; 
+import { setLocalStorageItem, getLocalStorageItem, removeLocalStorageItem, Keys } from '@util/common';
+import CommonClice from './commonClice'
 
 import {rSymbol,Symbol} from '@keyring/defaults'
 import {
@@ -17,11 +17,12 @@ import {
   web3FromSource,
 } from '@polkadot/extension-dapp';
 import NumberUtil from '@util/numberUtil';
-import { bound, fisUnbond ,getTotalUnbonding,rTokenSeries_bondStates} from './FISClice';
+import { bound, fisUnbond ,rTokenSeries_bondStates} from './FISClice';
 import {stafi_uuid} from '@util/common'
 import {findUuid,noticesubType,noticeStatus,noticeType} from './noticeClice';
 import { u8aToHex } from '@polkadot/util'
 
+const commonClice=new CommonClice();
 
 
 const rKSMClice = createSlice({
@@ -33,17 +34,20 @@ const rKSMClice = createSlice({
     poolLimit: 0,
     transferrableAmountShow: "--",
     ratio: "--",
+    ratioShow: "--",
     tokenAmount: "--",
     processParameter: null,
     stakeHash: getLocalStorageItem(Keys.KsmStakeHash),
     unbondCommission:"--",
     bondFees:"--",
     unBondFees:"--",
-    totalRDot:"--",
+    totalIssuance:"--",
     stakerApr:"--",
 
-
-    totalUnbonding:null
+    
+    ercBalance:"--",
+    totalUnbonding:null,
+ 
   },
   reducers: {
     setKsmAccounts(state, { payload }) {
@@ -69,6 +73,9 @@ const rKSMClice = createSlice({
     },
     setRatio(state, { payload }) {
       state.ratio = payload;
+    },
+    setRatioShow(state,{payload}){
+      state.ratioShow=payload
     },
     setTokenAmount(state, { payload }) {
       state.tokenAmount = payload
@@ -109,8 +116,8 @@ const rKSMClice = createSlice({
       state.bondFees=payload
     },
 
-    setTotalRDot(state,{payload}){
-      state.totalRDot=payload
+    setTotalIssuance(state,{payload}){
+      state.totalIssuance=payload
     },
     setStakerApr(state,{payload}){
       state.stakerApr=payload;
@@ -136,10 +143,11 @@ export const { setKsmAccounts,
   setPoolLimit,
   setUnbondCommission,
   setBondFees,
-  setTotalRDot,
+  setTotalIssuance,
   setStakerApr,
   setTotalUnbonding,
-  setUnBondFees
+  setUnBondFees,
+  setRatioShow
 } = rKSMClice.actions;
 
 
@@ -152,7 +160,7 @@ export const reloadData = (): AppThunk => async (dispatch, getState) => {
   }
   dispatch(balancesAll())
   dispatch(query_rBalances_account());
-  dispatch(totalIssuance());
+  dispatch(getTotalIssuance());
 }
 export const createSubstrate = (account: any): AppThunk => async (dispatch, getState) => { 
   queryBalance(account, dispatch, getState)
@@ -189,9 +197,8 @@ export const transfer = (amountparam: string, cb?: Function): AppThunk => async 
 
   const dotApi = await polkadotServer.createPolkadotApi();
 
-  const selectedPool = getPool(amount, validPools, poolLimit);
-  if (selectedPool == null) {
-    message.error("There is no matching pool, please try again later.");
+  const selectedPool =commonClice.getPool(amount, validPools, poolLimit);
+  if (selectedPool == null) { 
     return;
   } 
  
@@ -350,16 +357,14 @@ export const balancesAll = (): AppThunk => async (dispatch, getState) => {
 }
 
 
-export const query_rBalances_account = (): AppThunk => async (dispatch, getState) => {
-  const address = getState().FISModule.fisAccount.address;
-  const stafiApi = await stafiServer.createStafiApi();
-  const accountData = await stafiApi.query.rBalances.account(rSymbol.Ksm, address);
-  let data = accountData.toJSON();
-  if (data == null) {
-    dispatch(setTokenAmount(NumberUtil.handleFisAmountToFixed(0)))
-  } else {
-    dispatch(setTokenAmount(NumberUtil.fisAmountToHuman(data.free)))
-  }
+export const query_rBalances_account = (): AppThunk => async (dispatch, getState) => { 
+  commonClice.query_rBalances_account(getState().FISModule.fisAccount,rSymbol.Ksm,(data:any)=>{
+    if (data == null) {
+      dispatch(setTokenAmount(NumberUtil.handleFisAmountToFixed(0)))
+    } else {
+      dispatch(setTokenAmount(NumberUtil.fisAmountToHuman(data.free)))
+    }
+  })
 }
 
 export const reSending = (cb?: Function): AppThunk => async (dispatch, getState) => {
@@ -373,8 +378,7 @@ export const reSending = (cb?: Function): AppThunk => async (dispatch, getState)
 }
 
 export const reStaking = (cb?: Function): AppThunk => async (dispatch, getState) => { 
-  const processParameter = getState().rKSMModule.processParameter
-  console.log(processParameter,"====processParameter")
+  const processParameter = getState().rKSMModule.processParameter 
   if (processParameter) {
     const staking = processParameter.staking
     const href = processParameter.href
@@ -414,9 +418,8 @@ export const reStaking = (cb?: Function): AppThunk => async (dispatch, getState)
 export const unbond = (amount: string,recipient:string,willAmount:any, cb?: Function): AppThunk => async (dispatch, getState) => {
   try{
     const validPools = getState().rKSMModule.validPools; 
-    let selectedPool = getPoolForUnbond(amount, validPools);
-    if (selectedPool == null) {
-      message.error("There is no matching pool, please try again later.");
+    let selectedPool =commonClice.getPoolForUnbond(amount, validPools,rSymbol.Ksm);
+    if (selectedPool == null) { 
       cb && cb();
       return;
     } 
@@ -518,7 +521,7 @@ export const getBlock = (blockHash: string, txHash: string, uuid?:string,cb?: Fu
           let amount = args[1].toJSON();
 
 
-          let selectedPool = getPool(amount, validPools, poolLimit);
+          let selectedPool =commonClice.getPool(amount, validPools, poolLimit);
           if (selectedPool == null) {
             // message.error("There is no matching pool, please try again later.");
             return;
@@ -581,95 +584,34 @@ export const getBlock = (blockHash: string, txHash: string, uuid?:string,cb?: Fu
 }
 
 
-
 export const getPools = (cb?:Function): AppThunk => async (dispatch, getState) => {
-
+  dispatch(setValidPools(null)); 
+  commonClice.getPools(rSymbol.Ksm,Symbol.Ksm,(data:any)=>{
+    dispatch(setValidPools(data));
+    cb && cb()
+  }) 
+  const data = await commonClice.poolBalanceLimit(rSymbol.Ksm);
+  dispatch(setPoolLimit(data)); 
+}
  
-  const stafiApi = await stafiServer.createStafiApi();
-  const poolsData = await stafiApi.query.rTokenLedger.bondedPools(rSymbol.Ksm)
-  let pools = poolsData.toJSON();
-  dispatch(setValidPools(null));
-  if (pools && pools.length > 0) {
-    pools.forEach((poolPubkey: any) => {
-      stafiApi.query.rTokenLedger.bondPipelines(rSymbol.Ksm, poolPubkey).then((bondedData: any) => {
-        let active = 0;
-        let bonded = bondedData.toJSON();
-        if (bonded) {
-          active = bonded.active;
-        }
-        const keyringInstance = keyring.init('ksm');
-        let poolAddress = keyringInstance.encodeAddress(poolPubkey);
-        dispatch(setValidPools({
-          address: poolAddress,
-          active: active
-        }));
-        cb && cb()
-      }).catch((error: any) => { });
-    })
-  };
  
-  dispatch(poolBalanceLimit());
-}
-
-export const poolBalanceLimit = (): AppThunk => async (dispatch, getState) => {
-  const stafiApi = await stafiServer.createStafiApi();
-  stafiApi.query.rTokenSeries.poolBalanceLimit(rSymbol.Ksm).then((result: any) => {
-    dispatch(setPoolLimit(result.toJSON()));
-  });
-}
-export const getPool = (tokenAmount: any, validPools: any, poolLimit: any) => {
-  const data = validPools.find((item: any) => {
-    if (poolLimit == 0 || Number(item.active) + tokenAmount <= poolLimit) {
-      return true;
-    }
-  });
-  if (data) {
-    return data.address
-  } else {
-    return null;
-  }
-}
-export const getPoolForUnbond = (tokenAmount: any, validPools: any) => {
-  const amount = NumberUtil.fisAmountToChain(tokenAmount.toString());
-  const data = validPools.find((item: any) => {
-    if (Number(item.active) >= amount) {
-      return true;
-    }
-  });
-  if (data) {
-    return data.address
-  } else {
-    return null;
-  }
-}
-
 export const getUnbondCommission=():AppThunk=>async (dispatch, getState)=>{
-  const stafiApi = await stafiServer.createStafiApi();
-  const result=await stafiApi.query.rTokenSeries.unbondCommission();
-  const unbondCommission = NumberUtil.fisFeeToHuman(result.toJSON());
- 
-  dispatch(setUnbondCommission(unbondCommission));
-  //const unbondCommissionShow = NumberUtil.fisFeeToFixed(this.unbondCommission) + '%';
+  const unbondCommission =await commonClice.getUnbondCommission(); 
+  dispatch(setUnbondCommission(unbondCommission)); 
 }
 
 export const bondFees=():AppThunk=>async (dispatch, getState)=>{
-  const stafiApi = await stafiServer.createStafiApi();
-  const result = await stafiApi.query.rTokenSeries.bondFees(rSymbol.Ksm)
-  // this.bondFees = result.toJSON(); 
-  dispatch(setBondFees(result.toJSON()));
+  const result =await commonClice.bondFees(rSymbol.Ksm)
+  dispatch(setBondFees(result));
 }
 
 export const unbondFees=():AppThunk=>async (dispatch, getState)=>{
-  const stafiApi = await stafiServer.createStafiApi();
-  const result = await stafiApi.query.rTokenSeries.unbondFees(rSymbol.Dot) 
-  dispatch(setUnBondFees(result.toJSON()));
+  const result=await commonClice.unbondFees(rSymbol.Ksm)
+  dispatch(setUnBondFees(result));
 }
-export const totalIssuance=():AppThunk=>async (dispatch, getState)=>{
-  const stafiApi = await stafiServer.createStafiApi(); 
-  const  result =await stafiApi.query.rBalances.totalIssuance(rSymbol.Ksm) 
-  let totalRDot:any = NumberUtil.fisAmountToHuman(result.toJSON());
-  totalRDot = NumberUtil.handleFisAmountToFixed(totalRDot); 
-  dispatch(setTotalRDot(totalRDot))
+export const getTotalIssuance=():AppThunk=>async (dispatch, getState)=>{
+  const result=await commonClice.getTotalIssuance(rSymbol.Ksm);
+  dispatch(setTotalIssuance(result))
 }
 
 export const rTokenLedger=():AppThunk=>async (dispatch, getState)=>{
@@ -700,9 +642,14 @@ const handleStakerApr = (currentRate?: any, lastRate?: any): AppThunk => async (
     return keyringInstance.checkAddress(address);
   }
 export const accountUnbonds=():AppThunk=>async (dispatch, getState)=>{
-  dispatch(getTotalUnbonding(rSymbol.Ksm,(total:any)=>{
+  // dispatch(getTotalUnbonding(rSymbol.Ksm,(total:any)=>{
+  //   dispatch(setTotalUnbonding(total));
+  // }))
+
+  let fisAddress = getState().FISModule.fisAccount.address;
+  commonClice.getTotalUnbonding(fisAddress,rSymbol.Ksm,(total:any)=>{ 
     dispatch(setTotalUnbonding(total));
-  }))
+  })
 }
 const add_KSM_stake_Notice=(uuid:string,amount:string,status:string,subData?:any):AppThunk=>async (dispatch,getState)=>{
   setTimeout(()=>{
@@ -711,7 +658,13 @@ const add_KSM_stake_Notice=(uuid:string,amount:string,status:string,subData?:any
     processParameter:getState().rKSMModule.processParameter}))
   },20);
 }
+
+
  
+export const rTokenRate = (): AppThunk => async (dispatch, getState) => {
+  const ratio=await commonClice.rTokenRate(rSymbol.Ksm);
+  dispatch(setRatio(ratio))
+}
 const add_KSM_unbond_Notice=(uuid:string,amount:string,status:string,subData?:any):AppThunk=>async (dispatch,getState)=>{
   
   dispatch(add_KSM_Notice(uuid,noticeType.Staker,noticesubType.Unbond,amount,status,subData))
@@ -725,7 +678,5 @@ const add_DOT_Swap_Notice=(uuid:string,amount:string,status:string,subData?:any)
 const add_KSM_Notice=(uuid:string,type:string,subType:string,content:string,status:string,subData?:any):AppThunk=>async (dispatch,getState)=>{
  
     dispatch(add_Notice(uuid,Symbol.Ksm,type,subType,content,status,subData))
-  
-}
-
+} 
 export default rKSMClice.reducer;

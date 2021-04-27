@@ -42,14 +42,15 @@ export default function Index(props:Props){
             } 
         }
         if(location.pathname.includes("/rAsset")){
-            if(location.pathname.includes("/rAsset/native")){
+            
+            if(location.pathname.includes("/rAsset/native") || location.pathname.includes("/rAsset/swap/native")){
                 if(state.FISModule.fisAccount){
                     return { 
                         fisAccount:state.FISModule.fisAccount,
                     }
                 }
             }
-            if(location.pathname.includes("/rAsset/erc")){
+            if(location.pathname.includes("/rAsset/erc") ||location.pathname.includes("/rAsset/swap/erc20") ){
                 if(state.rETHModule.ethAccount){
                     return { 
                         ethAccount:state.rETHModule.ethAccount,

@@ -15,7 +15,7 @@ enum rSymbol {
   Fis = 0, 
   Dot = 1, 
   Ksm = 2,
-  
+  Atom = 3
 }
 
 

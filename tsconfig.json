@@ -20,7 +20,8 @@
         "@keyring/*": ["app/keyring/*"],
         "@config/*": ["app/config/*"],
         "@shared/*": ["app/shared/*"],
-      } 
+      },
+      "allowSyntheticDefaultImports": true,
   },
   "include": [
       "./app/**/*",

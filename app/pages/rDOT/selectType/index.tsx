@@ -2,21 +2,21 @@ import React, { useEffect } from 'react';
 import {Redirect} from 'react-router'
 import {useDispatch, useSelector} from 'react-redux';
 import TypeCard from '@components/card/typeCard';
-import {totalIssuance,rTokenLedger} from '@features/rDOTClice'
+import {getTotalIssuance,rTokenLedger} from '@features/rDOTClice'
 
 export default function Index(props:any){
 
   const dispatch=useDispatch();
-  const {stafiStakerApr,totalRDot,stakerApr,tokenAmount}=useSelector((state:any)=>{
+  const {stafiStakerApr,totalIssuance,stakerApr,tokenAmount}=useSelector((state:any)=>{
     return { 
       stafiStakerApr:state.globalModule.stafiStakerApr,
-      totalRDot:state.rDOTModule.totalRDot,
+      totalIssuance:state.rDOTModule.totalIssuance,
       stakerApr:state.rDOTModule.stakerApr,
       tokenAmount:state.rDOTModule.tokenAmount
     }
   })
   useEffect(()=>{
-    dispatch(totalIssuance());
+    dispatch(getTotalIssuance());
     dispatch(rTokenLedger())
   },[])
 
@@ -26,7 +26,7 @@ export default function Index(props:any){
   return <TypeCard 
       type="rDOT" 
       stafiStakerApr={stafiStakerApr}
-      total={totalRDot}
+      total={totalIssuance}
       apr={stakerApr}
       onClick={(e:string)=>{
         if(e=="Staker"){

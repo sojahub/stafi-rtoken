@@ -8,11 +8,20 @@ const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
 const CopyPlugin = require("copy-webpack-plugin");
 
 const resolve = dir => path.resolve(__dirname, dir); 
+
+// console.log("manifest.json=>",require('../dll/manifest.json'))
+ 
+
+// console.log("Building...")
+
 function webpackCommonConfigCreator(options){
     return {
         mode:options.mode,
-        devtool:'cheap-module-source-map',
-        entry:'./app/index.tsx',
+        optimization:options.optimization,
+        devtool:options.devtool,//'cheap-module-source-map',
+        entry:{
+          main:'./app/index.tsx'
+        },
         resolve:{
             extensions: ['.ts', '.tsx', '.js', '.json'],
             fallback: {
@@ -21,9 +30,10 @@ function webpackCommonConfigCreator(options){
                 stream: require.resolve('stream-browserify'),
                 http: false,
                 https:false
-            }, 
+            },
+             
             alias: {
-                stream: "stream-browserify",
+               stream: "stream-browserify",
                 crypto: false,   
                 '@components': resolve('../app/components'), 
                 '@images': resolve('../app/assets/images'), 
@@ -33,15 +43,22 @@ function webpackCommonConfigCreator(options){
                 "@keyring":resolve('../app/keyring'),
                 "@config":resolve('../app/config'),
                 "@shared":resolve('../app/shared'),
-            }
+            },
+            plugins:[
+                new TsconfigPathsPlugin({ 
+                    configFile: "tsconfig.json" 
+                })
+            ]
         },
         output:{
-            filename:"js/[chunkhash].bundle.js",
+            filename:"js/[name].[chunkhash].bundle.js",
             path:path.resolve(__dirname,"../build"),
+            assetModuleFilename: 'assets/[hash][ext][query]',
             publicPath:"/"
         }, 
         module:{
-            rules:[{
+            rules:[
+              {
                 test: /\.jsx?$/,
                 exclude: /node_modules/,
                 use:{
@@ -66,26 +83,47 @@ function webpackCommonConfigCreator(options){
             },
             {
                 test: /\.css$/,    
-                use: ['style-loader','css-loader']   
+                use: [MiniCssExtractPlugin.loader,'css-loader']   
             },
-            // sass
+             
             {
-                test: /\.s[ac]ss$/i,
+                test: /\.(s[ac])ss$/i,
                 use: [
                 MiniCssExtractPlugin.loader, 
-                "css-loader",
-                "postcss-loader",  
-                "sass-loader" 
+                'css-loader',
+                'postcss-loader',
+                "sass-loader"  
                 ]
-            }, // less
+            },  
             {
               test: /\.less$/,
-              use: [MiniCssExtractPlugin.loader, "css-loader", "less-loader"]
-            },// file-laoder 
+              use: [
+                MiniCssExtractPlugin.loader, 
+                'css-loader',
+              "less-loader",'postcss-loader'
+            ]
+            }, 
             {
-                test: /\.(jpg|png|jpeg|gif|svg)$/,
-                use: ['file-loader']
-            },{
+                test:/\.(png|jpg|gif|jpeg)$/,
+                type: 'asset',
+                parser: {
+                  dataUrlCondition: {
+                    maxSize: 4 * 1024 // 4kb
+                  }
+                }
+              },
+              {
+                test: /\.(svg|eot|woff|woff2|ttf)/,
+                type: 'asset',
+                generator: {
+                  filename: 'fonts/[hash][ext][query]'
+                },
+                parser: {
+                  dataUrlCondition: {
+                    maxSize: 4 * 1024 // 4kb
+                  }
+                }
+              },{
                 test: /\.ts(x?)$/,
                 exclude: /node_modules/,
                 use: [
@@ -94,23 +132,31 @@ function webpackCommonConfigCreator(options){
                   },
                 ],
               },
-              {enforce: 'pre', test: /\.js$/, loader: 'source-map-loader'},],
+              {
+                test: /\.js$/,
+                use: ["source-map-loader"],
+                enforce: "pre"
+              }
+            ],
               
     
         },
         plugins:[
-             
-            
+            new webpack.IgnorePlugin({
+                resourceRegExp: /^\.\/locale$/,
+                contextRegExp: /moment$/
+              }),
             new CleanWebpackPlugin(),
             new CopyPlugin({
                 patterns: [
-                    { from: path.join(__dirname,'../public/favicon.ico'),
-                        to: './' }
+                    { from: path.join(__dirname,'../public/favicon.ico'),to: './' },
+                    { from: path.join(__dirname,'../dll'), to: "./dll" },
                 ],
             }),
             new HtmlWebPackPlugin({
                 template:'public/index.html',
-                filename:'index.html'
+                filename:'index.html',
+                dll: `/dll/lib.js`
             }),
             new MiniCssExtractPlugin({
                 filename: "css/[name].[contenthash:4].css",
@@ -125,9 +171,10 @@ function webpackCommonConfigCreator(options){
                 process:'process',
                 stream: 'stream'
               }), 
-            new TsconfigPathsPlugin({ 
-                configFile: "tsconfig.json" 
-            })
+              new webpack.DllReferencePlugin({
+                context: path.join(__dirname, '..'),
+                manifest: require('../dll/manifest.json'),
+              }),
         ]
     }
 }

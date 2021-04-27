@@ -14,8 +14,23 @@
       }
     }
   }
+  .row.fromrow{
+    margin-bottom: 20px;
+  }
+  .down_arrow{
+    display: flex;
+    justify-content: center;
+  }
  .row.last{
-  margin-bottom: 26px;
+  margin-bottom: 32px;
+ }
+ .row.show_tip{
+  margin-bottom: 10px;
+  .tip{
+    a{
+      color:#00F3AB;
+    }
+  }
  }
   .btns{
     width: 100%;

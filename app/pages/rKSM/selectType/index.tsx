@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import {Redirect} from 'react-router'
 import {useDispatch, useSelector} from 'react-redux';
 import TypeCard from '@components/card/typeCard';
-import {totalIssuance,rTokenLedger} from '@features/rKSMClice'
+import {getTotalIssuance,rTokenLedger} from '@features/rKSMClice'
 
 export default function Index(props:any){
 
@@ -16,7 +16,7 @@ export default function Index(props:any){
     }
   })
   useEffect(()=>{
-    dispatch(totalIssuance());
+    dispatch(getTotalIssuance());
     dispatch(rTokenLedger())
   },[])
 

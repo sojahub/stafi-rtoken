@@ -4,30 +4,40 @@ import { AppThunk, RootState } from '../store';
 import { setLocalStorageItem, getLocalStorageItem, removeLocalStorageItem, Keys } from '@util/common';
 import NumberUtil from '@util/numberUtil';
 import Web3Utils from 'web3-utils';
-import ethServer from '@servers/eth/index';
+import EthServer from '@servers/eth/index'; 
 import { message } from 'antd';
+import { keccakAsHex } from '@polkadot/util-crypto';  
+import {getAssetBalanceAll} from './ETHClice'
 
- 
-// const ethserver=new EthServer();
+const ethServer=new EthServer();
 const rETHClice = createSlice({
   name: 'rETHModule',
   initialState: {  
-    ethAccount:getLocalStorageItem(Keys.MetamaskAccountKey)
+    ethAccount:getLocalStorageItem(Keys.MetamaskAccountKey),
+    ercBalance:"--"
   },
   reducers: {  
      setEthAccount(state,{payload}){
-       if(state.ethAccount && state.ethAccount.address==payload.address){ 
-          state.ethAccount={...state.ethAccount,...payload} 
-          setLocalStorageItem(Keys.MetamaskAccountKey, {address:payload.address})
+       if(payload==null){
+        state.ethAccount=payload;
+        removeLocalStorageItem(Keys.MetamaskAccountKey);
        }else{
-          state.ethAccount=payload;
-          setLocalStorageItem(Keys.MetamaskAccountKey, {address:payload.address})
-       }
+        if(state.ethAccount && state.ethAccount.address==payload.address){ 
+            state.ethAccount={...state.ethAccount,...payload} 
+            setLocalStorageItem(Keys.MetamaskAccountKey, {address:payload.address})
+        }else{
+            state.ethAccount=payload;
+            setLocalStorageItem(Keys.MetamaskAccountKey, {address:payload.address})
+        }
+        }
+     },
+     setErcBalance(state,{payload}){
+       state.ercBalance=payload
      }
   },
 });
 
-export const {setEthAccount}=rETHClice.actions
+export const {setEthAccount,setErcBalance}=rETHClice.actions
 
 declare const window: any;
 declare const ethereum: any;
@@ -49,8 +59,9 @@ export const connectMetamask=():AppThunk=>async (dispatch,getState)=> {
 
       ethereum.request({ method: 'eth_requestAccounts' }).then((accounts:any) => { 
         dispatch(handleEthAccount(accounts[0]))
+        
       }).catch((error:any) => {
-        // 页面变成需要连接的状态 
+     
         dispatch(setEthAccount(null))
         if (error.code === 4001) {
           message.error('Please connect to MetaMask.') 
@@ -66,7 +77,7 @@ export const connectMetamask=():AppThunk=>async (dispatch,getState)=> {
 
 
 export const handleEthAccount=(address:string):AppThunk=>(dispatch,getState)=>{
-    // 把当前账号保存至localstorage中
+ 
    
   dispatch(setEthAccount({address:address,balance:'--'}))
   ethereum.request({ method: 'eth_getBalance', params: [address, 'latest'] }).then((result:any) => {
@@ -87,9 +98,12 @@ export const monitoring_Method=():AppThunk=>(dispatch,getState)=> {
     ethereum.on('accountsChanged', (accounts:any) => {
       // this.ethAccount = accounts[0];
       if (accounts.length>0) { 
-        dispatch(handleEthAccount(accounts[0]))
+        dispatch(handleEthAccount(accounts[0]));
+        setTimeout(()=>{
+          dispatch(getAssetBalanceAll); 
+        },20)
       } else {
-        // 切换账号后，更新页面账号相关数据
+   
         dispatch(handleEthAccount(null))
       }
     }); 
@@ -98,51 +112,48 @@ export const monitoring_Method=():AppThunk=>(dispatch,getState)=> {
       if (isdev()) {
         if (ethereum.chainId != '0x3') {
           message.warning('Please connect to Ropsten Test Network!'); 
-          // 页面变成需要连接的状态 
+       
           dispatch(setEthAccount(null));
         }
       } else if (ethereum.chainId != '0x1') {
         message.warning('Please connect to Ethereum Main Network!');
-        // 页面变成需要连接的状态
+        
         dispatch(setEthAccount(null));
       }
     }); 
   }
 }
 
-
  
-// （4）查询rFIS余额
-// let web3 = getWeb3();
+ 
 
-// let rFISContract = new web3.eth.Contract(getRFISTokenAbi(), getRFISTokenAddress(), {
-//     // 当前eth账号
-// 	from: this.currentAddress
-// });
+export const checkAddressChecksum=(address:string)=> {
+  // Check each case
+  address = address.replace(/^0x/i, '');
+  var addressHash = keccakAsHex(address.toLowerCase()).substr(2);
 
-// rFISContract.methods.balanceOf(this.currentAddress).call().then(balance => {
-// 	let rFISBalance = web3.utils.fromWei(balance, 'ether');
-// });
+  for (var i = 0; i < 40; i++) {
+      // the nth letter should be uppercase if the nth digit of casemap is 1
+    if ((parseInt(addressHash[i], 16) > 7 && address[i].toUpperCase() !== address[i])
+      || (parseInt(addressHash[i], 16) <= 7 && address[i].toLowerCase() !== address[i])) {
+          return false;
+      }
+  }
+  return true;
+}
 
-export const getAssetBalance=():AppThunk=>(dispatch,getState)=>{ 
-  console.log(getState().rETHModule.ethAccount,"=====")
-  if(getState().rETHModule.ethAccount){
-    let web3=ethServer.getWeb3();
-    const address=getState().rETHModule.ethAccount.address;
-    console.log(address,"======addressaddressaddress")
-    let rFISContract = new web3.eth.Contract(ethServer.getRFISTokenAbi(), ethServer.getRFISTokenAddress(), {
-      from: address
-    });
-    try{
-      rFISContract.methods.balanceOf(address).call().then((balance:any) => {
-        let rFISBalance = web3.utils.fromWei(balance, 'ether');
-        console.log(rFISBalance,"====rFISBalancerFISBalancerFISBalancerFISBalancerFISBalance")
-      }).catch((e:any)=>{
-        console.error(e)
-      });
-    }catch(e:any){
-      console.error(e)
-    }
+export const  checkEthAddress=(address:string)=> {
+  // check if it has the basic requirements of an address
+  if (!/^(0x)?[0-9a-f]{40}$/i.test(address)) {
+    return false;
+    // If it's ALL lowercase or ALL upppercase
+  } else if (/^(0x|0X)?[0-9a-f]{40}$/.test(address) || /^(0x|0X)?[0-9A-F]{40}$/.test(address)) {
+    return true;
+    // Otherwise check each case
+  } else {
+    return checkAddressChecksum(address);
   }
 }
+
+
 export default rETHClice.reducer;

@@ -159,7 +159,10 @@ export default {
   // 2 decimal places of service charge
   fisFeeToFixed(fee) {
     return this.handleEthAmountRound(fee * 100).toFixed(2);
-  }
+  },
+  rTokenRateToHuman(amount) {
+    return amount / 1000000000000;
+  },  
 }; 
 
  

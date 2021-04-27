@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from 'react'; 
 import {useSelector} from 'react-redux';
-import Content from '@components/content/redeemContent'; 
-import { rTokenRate } from '@features/FISClice';
+import Content from '@components/content/redeemContent';  
 import {rSymbol} from '@keyring/defaults'
-import {unbond,getUnbondCommission,query_rBalances_account,checkAddress,unbondFees} from '@features/rDOTClice';
+import {rTokenRate,unbond,getUnbondCommission,query_rBalances_account,checkAddress,unbondFees} from '@features/rDOTClice';
 import {setLoading} from '@features/globalClice'
 import {useDispatch} from 'react-redux';
 import UnbondModal from '@components/modal/unbondModal'
@@ -19,7 +18,7 @@ export default function Index(props:any){
   const {tokenAmount,unbondCommission,ratio,fisFee,address,unBondFees,willAmount,estimateUnBondTxFees,fisBalance} = useSelector((state:any)=>{ 
     let willAmount:any=0;
     let unbondCommission:any=0;
-    let ratio=state.FISModule.ratio;
+    let ratio=state.rDOTModule.ratio;
     let tokenAmount=state.rDOTModule.tokenAmount; 
     
     if (ratio && state.rDOTModule.unbondCommission && amount) {
@@ -46,7 +45,7 @@ export default function Index(props:any){
   useEffect(()=>{
     dispatch(query_rBalances_account())
     dispatch(getUnbondCommission());
-    dispatch(rTokenRate(rSymbol.Dot));
+    dispatch(rTokenRate());
     dispatch(unbondFees());
 
     return ()=>{
@@ -87,12 +86,12 @@ export default function Index(props:any){
     unbondAmount={amount}
     commission={unbondCommission}
     getAmount={willAmount}
-    bondFees={NumberUtil.tokenAmountToHuman(unBondFees,rSymbol.Dot) || "--"}
+    bondFees={NumberUtil.fisAmountToHuman(unBondFees) || "--"}
     onCancel={()=>{
       setVisible(false)
     }}
     onOk={()=>{
-      if(NumberUtil.tokenAmountToChain(fisBalance,rSymbol.Dot) <= (unBondFees + estimateUnBondTxFees)){
+      if(NumberUtil.fisAmountToChain(fisBalance) <= (unBondFees + estimateUnBondTxFees)){
         message.error("No enough FIS to pay for the fee");
         return;
       }

@@ -202,7 +202,7 @@ const routesFactory=(role?:any)=>{
           component:RAssetErc
         },{
           id:"rAssect_swap",
-          path:"/rAsset/swap",
+          path:"/rAsset/swap/:type",
           component:RAssetSwap
         }]
       },{

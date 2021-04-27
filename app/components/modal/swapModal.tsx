@@ -1,5 +1,5 @@
 import React from 'react';
-import {Modal} from 'antd';
+import {Modal,message} from 'antd';
 import Uniswap_svg from '@images/uniswap.png';
 
 import './swap.scss';
@@ -8,6 +8,7 @@ type Props={
   visible:boolean,
   onOk?:Function,
   onCancel?: Function,
+  onUniswapClick?:Function,
   type:"rDOT"|"rETH"|"rFIS"|"rKSM",
 }
 export default function Index(props:Props){
@@ -20,8 +21,10 @@ export default function Index(props:Props){
     }}>
       Swap
     </a>
-    <a onClick={()=>{
-        props.onOk && props.onOk(2);
+
+    <a onClick={()=>{ 
+       message.info("Uniswap Pool hasn't been established yet, stay tuned");
+        // props.onUniswapClick && props.onUniswapClick();
     }}>
       Uniswap
     </a>

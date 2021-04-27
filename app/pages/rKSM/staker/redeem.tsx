@@ -1,31 +1,29 @@
 import React, { useEffect, useState } from 'react'; 
 import {message,Spin} from 'antd';
 import {useSelector} from 'react-redux';
-import Content from '@components/content/redeemContent'; 
-import { rTokenRate } from '@features/FISClice';
+import Content from '@components/content/redeemContent';  
 import {rSymbol} from '@keyring/defaults'
-import {unbond,getUnbondCommission,query_rBalances_account,checkAddress,unbondFees} from '@features/rKSMClice';
+import {rTokenRate,unbond,getUnbondCommission,query_rBalances_account,checkAddress,unbondFees} from '@features/rKSMClice';
 import {useDispatch} from 'react-redux';
 import UnbondModal from '@components/modal/unbondModal'
 import NumberUtil from '@util/numberUtil'
-import {setLoading} from '@features/globalClice'
+import {setLoading} from '@features/globalClice';
+import CommonClice from '@features/commonClice'
 
+const commonClice=new CommonClice();
 export default function Index(props:any){ 
   const dispatch=useDispatch();
   const [recipient,setRecipient]=useState<string>();
   const [amount,setAmount]=useState<any>();
   const [visible,setVisible]=useState(false);
-
-  const {tokenAmount,unbondCommission,ratio,fisFee,address,unBondFees,willAmount,estimateUnBondTxFees, fisBalance} = useSelector((state:any)=>{ 
-    let unbondCommission:any=0;
-    let willAmount:any=0;
-    let ratio=state.FISModule.ratio;
+ 
+  const {tokenAmount,unbondCommission,ratio,fisFee,address,unBondFees,willAmount,estimateUnBondTxFees,fisBalance} = useSelector((state:any)=>{ 
+    let unbondCommission:any=0; 
+    let ratio=state.rKSMModule.ratio; 
     let tokenAmount=state.rKSMModule.tokenAmount; 
      
-    if (ratio && state.rKSMModule.unbondCommission && amount) {
-      let returnValue = amount * (1 - state.rKSMModule.unbondCommission);
-      unbondCommission = amount*state.rKSMModule.unbondCommission;
-      willAmount = NumberUtil.handleFisAmountToFixed(returnValue * ratio);;
+    if (state.rKSMModule.unbondCommission && amount) { 
+      unbondCommission = amount*state.rKSMModule.unbondCommission; 
     } 
     return { 
       ratio:ratio,
@@ -33,10 +31,10 @@ export default function Index(props:any){
       unbondCommission:unbondCommission,
       fisFee:state.rKSMModule.unbondCommission,
       address:state.rKSMModule.ksmAccount.address,
-      unBondFees:state.rKSMModule.unBondFees, 
-      willAmount: willAmount,
+      unBondFees:state.rKSMModule.unBondFees,  
+      willAmount: commonClice.getWillAmount(ratio,unbondCommission,amount),
       estimateUnBondTxFees: state.FISModule.estimateUnBondTxFees,
-      fisBalance: state.FISModule.fisAccount.balance
+      fisBalance: state.FISModule.fisAccount.balance 
     }
   }) 
   useEffect(()=>{
@@ -45,7 +43,7 @@ export default function Index(props:any){
   useEffect(()=>{
     dispatch(query_rBalances_account())
     dispatch(getUnbondCommission());
-    dispatch(rTokenRate(rSymbol.Ksm));
+    dispatch(rTokenRate());
     dispatch(unbondFees())
     return ()=>{
       dispatch(setLoading(false))
@@ -86,11 +84,11 @@ export default function Index(props:any){
     unbondAmount={amount}
     commission={unbondCommission}
     getAmount={willAmount}
-    bondFees={NumberUtil.tokenAmountToHuman(unBondFees,rSymbol.Ksm) || "--"}
+    bondFees={NumberUtil.fisAmountToHuman(unBondFees) || "--"}
     onCancel={()=>{
       setVisible(false)
     }}
-      onOk={() => {
+    onOk={() => {
       if(NumberUtil.fisAmountToChain(fisBalance) <= (unBondFees + estimateUnBondTxFees)){
         message.error("No enough FIS to pay for the fee");
         return;

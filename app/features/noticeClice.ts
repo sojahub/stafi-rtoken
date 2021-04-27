@@ -12,6 +12,7 @@ export enum noticeStatus{
   Confirmed="Confirmed",
   Pending="Pending",
   Error="Error",
+  Empty="",
 }
 export enum noticeType{
   Staker='Staker',
@@ -204,7 +205,11 @@ export const notice_text=(item:any)=>{
   }else if(item.subType==noticesubType.Withdraw){
     return `Withdraw ${item.amount} ${item.rSymbol.toUpperCase()} from contracts to wallet`
   }else if(item.subType==noticesubType.Swap){
-    return `Swap ${item.amount} Native ${item.rSymbol.toUpperCase()} to ERC20`
+    if(item.subData.swapType == "native"){
+      return `Swap ${item.amount} Native ${item.rSymbol} to ERC20, it may take 2~10 minutes to arrive`
+    }else{
+      return `Swap ${item.amount}  ERC20 ${item.rSymbol} to Native, it may take 2~10 minutes to arrive`
+    } 
   }
   return "";
 }

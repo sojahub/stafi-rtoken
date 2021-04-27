@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react'; 
 import {useSelector,useDispatch} from 'react-redux'; 
-import { rTokenRate } from '@features/FISClice';
-import {query_rBalances_account,accountUnbonds} from '@features/rDOTClice'
+import { rTokenRate } from '@features/rDOTClice';
+import {query_rBalances_account,accountUnbonds,setRatioShow} from '@features/rDOTClice'
 import {rSymbol} from '@keyring/defaults'
 import Content from '@components/content/stakeInfoContent'; 
+import NumberUtil from '@util/numberUtil';
 
 
 export default function Index(props:any){ 
@@ -11,19 +12,39 @@ export default function Index(props:any){
   const dispatch=useDispatch();
   useEffect(()=>{ 
     dispatch(query_rBalances_account())
-    dispatch(rTokenRate(rSymbol.Dot));
+    dispatch(rTokenRate());
     dispatch(accountUnbonds())
   },[])
  
 
   const {ratio,tokenAmount,ratioShow,totalUnbonding} = useSelector((state:any)=>{
     return {
-      ratio:state.FISModule.ratio,
+      ratio:state.rDOTModule.ratio,
       tokenAmount:state.rDOTModule.tokenAmount,
-      ratioShow:state.FISModule.ratioShow,
+      ratioShow:state.rDOTModule.ratioShow,
       totalUnbonding:state.rDOTModule.totalUnbonding
     }
   }) 
+
+  useEffect(()=>{
+    
+    let count = 0;
+    let totalCount = 10;
+    let ratioAmount = 0;
+    let piece = ratio / totalCount;
+  
+    if(ratio!="--"){
+      let interval = setInterval(() => {
+        count++;
+        ratioAmount += piece;
+        if (count == totalCount) {
+          ratioAmount = ratio;
+          window.clearInterval(interval);
+        }
+        dispatch(setRatioShow(NumberUtil.handleFisAmountRateToFixed(ratioAmount)))
+      }, 100);
+    }
+  },[ratio])
   return  <Content 
   ratio={ratio}
   ratioShow={ratioShow}
@@ -34,6 +55,17 @@ export default function Index(props:any){
   }}
   onRdeemClick={()=>{
     props.history.push("/rDOT/staker/redeem")
+  }}
+  onUniswapClick={()=>{
+    // 
+  }}
+  onSwapClick={()=>{
+    props.history.push({
+      pathname:"/rAsset/swap/native",
+      state:{ 
+        rSymbol:"rDOT", 
+      }
+    })
   }}
   type="rDOT"></Content>
 }
