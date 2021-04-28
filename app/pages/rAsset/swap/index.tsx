@@ -223,9 +223,9 @@ export default function Index(props:any){
         </div>
         <div className="btns">
         <Button disabled={!(fromAoumt && address)}  onClick={()=>{ 
-          if (operationType=="erc20" ) {
-            if(ethAccount.balance <= estimateEthFee){
-              message.error(`No enough ${fromType.title} to pay for the fee`) 
+          if (operationType == "erc20") {
+            if(Number(ethAccount.balance) <= Number(estimateEthFee)){
+              message.error(`No enough ETH to pay for the fee`) 
               return;
             }
             if(!checkAddress(address)){
@@ -233,9 +233,9 @@ export default function Index(props:any){
               return;
             }
           }
-          if (operationType=="native") {
-            if(fromType.amount <= erc20EstimateFee){
-              message.error(`No enough ${fromType.title} to pay for the fee`);
+          if (operationType == "native") {
+            if(Number(fis_balance) <= Number(erc20EstimateFee)){
+              message.error(`No enough FIS to pay for the fee`);
               return;
             }
             if(!checkEthAddress(address)){
