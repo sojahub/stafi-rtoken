@@ -177,7 +177,7 @@ const re_Minting=(item:any,):AppThunk=>(dispatch,getState)=>{
 }
 
 
-export const findUuid=(datas:any,txHash:string,blockHash:string)=>{ 
+export const findUuid=(datas:any,txHash:string,blockHash:string)=>{  
   if(datas){
     const data = datas.datas.find((item:any)=>{
       if(item && item.subData && item.subData.processParameter && item.subData.processParameter.sending.txHash==txHash && item.subData.processParameter.sending.blockHash==blockHash){

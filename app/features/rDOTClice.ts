@@ -463,7 +463,8 @@ export const continueProcess = (): AppThunk => async (dispatch, getState) => {
 }
 
 export const onProceed=(blockHash: string, txHash: string,cb?:Function):AppThunk => async (dispatch,getstate)=>{
-  const noticeData=findUuid(getstate().noticeModule.noticeData || [],txHash,blockHash)
+  
+  const noticeData=findUuid(getstate().noticeModule.noticeData,txHash,blockHash)
   
   let bondSuccessParamArr:any[] = [];
   bondSuccessParamArr.push(blockHash);
@@ -479,7 +480,7 @@ export const onProceed=(blockHash: string, txHash: string,cb?:Function):AppThunk
       })
       noticeData && dispatch(add_DOT_stake_Notice(noticeData.uuid,noticeData.amount,noticeStatus.Confirmed));
     }else if(e=="failure" || e=="stakingFailure"){ 
-      dispatch(getBlock(blockHash, txHash,noticeData.uuid,()=>{
+      dispatch(getBlock(blockHash, txHash,(noticeData?noticeData.uuid:null),()=>{
         cb && cb("successful");
       }))
     }else{ 
