@@ -204,14 +204,17 @@ const routesFactory=(role?:any)=>{
           id:"rAssect_swap",
           path:"/rAsset/swap/:type",
           component:RAssetSwap
+        },{
+          path: '*',
+          component: () => <Redirect to="/rAsset/native"/>
         }]
       },{
         path: '*',
-        component: () => <Redirect to="/rKSM/home"/>
+        component: () => <Redirect to="/rDOT/home"/>
       }]
     },{
       path: '*',
-      component: () => <Redirect to="/rKSM/home"/>
+      component: () => <Redirect to="/rDOT/home"/>
     }
     
   ]
