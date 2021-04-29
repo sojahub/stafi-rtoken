@@ -144,6 +144,8 @@ export default {
   switch(symbol){
     case rSymbol.Dot:
       return Math.round(Number(amount) * 10000000000);
+    case rSymbol.Atom:
+      return Math.round(Number(amount) * 1000000);
     case rSymbol.Fis:
       return Math.round(Number(amount) * 1000000000000);
     case rSymbol.Ksm:
