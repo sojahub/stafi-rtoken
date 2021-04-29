@@ -6,7 +6,8 @@ import LeftContent from './leftContent'
 import Button from '@shared/components/button/button'
 import A from '@shared/components/button/a'
 import rDOT from '@images/selected_rDOT.svg';
-import rKSM from '@images/selected_rKSM.svg'
+import rKSM from '@images/selected_rKSM.svg';
+import rATOM from '@images/selected_rATOM.svg'
 import doubt from "@images/doubt.svg";
 import NumberUtil from '@util/numberUtil';
 import add_svg from '@images/add.svg'
@@ -26,7 +27,7 @@ type Props={
     validPools?:any[],
     totalStakedToken?:any,
     bondFees?:any
-    type:"rDOT"|"rETH"|"rFIS"|"rKSM",
+    type:"rDOT"|"rETH"|"rFIS"|"rKSM"|"rATOM",
 
 }
 export default function Index(props:Props){
@@ -36,6 +37,15 @@ export default function Index(props:Props){
         }
       })
  
+      const getIcon=()=>{
+          if( props.type=="rKSM"){
+              return rKSM;
+          }else if( props.type=="rDOT"){
+              return rDOT;
+          }else if(props.type="rATOM"){
+              return rATOM;
+          }
+      }
       const haswarn=useMemo(()=>{
         return !bondSwitch || !(props.validPools && props.validPools.length>0)
       },[props.validPools,bondSwitch])   
@@ -43,6 +53,7 @@ export default function Index(props:Props){
         <label className="title"> 
             {props.type=="rKSM" && `Stake KSM`}
             {props.type=="rDOT" && `Stake DOT`}
+            {props.type=="rATOM" && `Stake ATOM`}
         </label>
         {haswarn && <div className="warn">Unable to stake, system is waiting for matching validators</div>}
         <div className={`input_panel dot_input_panel ${haswarn && 'showWarn'}`}>
@@ -57,7 +68,7 @@ export default function Index(props:Props){
                     props.onChange && props.onChange(e);
                 }
                 
-            }}  icon={props.type=="rKSM"?rKSM:rDOT}/>
+            }}  icon={getIcon()}/>
 
 {/* selected_rKSM */}
             {/* unit={"Max"} */}
@@ -65,6 +76,7 @@ export default function Index(props:Props){
                 
                 {props.type=="rKSM" && `${isNaN(props.totalStakedToken)?"--":props.totalStakedToken} KSM is staked via rKSM `}
                 {props.type=="rDOT" && `${isNaN(props.totalStakedToken)?"--":props.totalStakedToken} DOT is staked via rDOT `}
+                {props.type=="rATOM" && `${isNaN(props.totalStakedToken)?"--":props.totalStakedToken} ATOM is staked via rATOM `}
                 {/* <A>stats</A> */}
             </div>
         </div>
@@ -88,9 +100,8 @@ export default function Index(props:Props){
             </div> */}
             </div>
             <div className="money_panel_item">
-                <div>
-                {props.type=="rKSM" && `You will get rKSM`}
-                {props.type=="rDOT" && `You will get rDOT`}
+                <div> 
+                   You will get {props.type}
                 </div>
                 <div>
                     {props.willAmount}

@@ -7,6 +7,7 @@ import close_svg from '@images/close.svg';
 import {setProcessSlider} from '@features/globalClice';
 import {reStaking,reSending} from '@features/rDOTClice'; 
 import {reStaking as ksmReStaking,reSending as ksmReSending } from '@features/rKSMClice'; 
+import {reStaking as atomReStaking,reSending as atomReSending } from '@features/rATOMClice'; 
 import util from '@util/toolUtil'
 import {rSymbol} from '@keyring/defaults'
 
@@ -36,6 +37,11 @@ export default function Index(props:Props){
         href && props.history.push(href)
       }));
     }
+    if(util.pageType()==rSymbol.Atom){
+      dispatch(atomReSending((href:any)=>{
+        href && props.history.push(href)
+      }));
+    }
   }
   const reStakingClick=()=>{ 
     if(util.pageType()==rSymbol.Dot){
@@ -45,6 +51,11 @@ export default function Index(props:Props){
     }
     if(util.pageType()==rSymbol.Ksm){
       dispatch(ksmReStaking((href:any)=>{
+        href && props.history.push(href)
+      }));
+    }
+    if(util.pageType()==rSymbol.Atom){
+      dispatch(atomReStaking((href:any)=>{
         href && props.history.push(href)
       }));
     }

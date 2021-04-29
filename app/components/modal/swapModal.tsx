@@ -9,7 +9,7 @@ type Props={
   onOk?:Function,
   onCancel?: Function,
   onUniswapClick?:Function,
-  type:"rDOT"|"rETH"|"rFIS"|"rKSM",
+  type:"rDOT"|"rETH"|"rFIS"|"rKSM"|"rATOM",
 }
 export default function Index(props:Props){
   return <Modal visible={props.visible} 

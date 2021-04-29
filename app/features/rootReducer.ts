@@ -9,7 +9,8 @@ import {connectRouter} from 'connected-react-router';
 import rAssetReducer from './rAssetClice'
 import rETHReducer from './rETHClice';
 import bridgeReducer from './bridgeClice';
-import ETHReducer from './ETHClice'
+import ETHReducer from './ETHClice';
+import rATOMReducer from './rATOMClice';
 
 export default function createRootReducer(history?: History) {
   return combineReducers({ 
@@ -22,6 +23,7 @@ export default function createRootReducer(history?: History) {
     rAssetModule:rAssetReducer,
     rETHModule:rETHReducer,
     bridgeModule:bridgeReducer,
-    ETHModule:ETHReducer
+    ETHModule:ETHReducer,
+    rATOMModule:rATOMReducer,
   });
 }

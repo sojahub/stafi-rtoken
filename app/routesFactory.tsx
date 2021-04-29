@@ -30,6 +30,19 @@ import RKSMStakerRedeem from './pages/rKSM/staker/redeem';
 import RKSMSeach from './pages/rKSM/search';
 import RKSMType from './pages/rKSM/selectType';
 
+
+import RATOMHomeTemplate from './pages/rATOM/template';
+import RATOMHome from './pages/rATOM/home'
+import RATOMWallet from './pages/rATOM/selectWallet';
+import RATOMWalletFIS from './pages/rATOM/selectWallet_rFIS';
+import RATOMStaker from './pages/rATOM/staker';
+import RATOMValidator from './pages/rATOM/validator';
+import RATOMStakerIndex from './pages/rATOM/staker/home';
+import RATOMStakerInfo from './pages/rATOM/staker/info';
+import RATOMStakerRedeem from './pages/rATOM/staker/redeem';
+import RATOMSeach from './pages/rATOM/search';
+import RATOMType from './pages/rATOM/selectType';
+
 import RAssetTemplate from './pages/rAsset/template';
 import RAssetNative from './pages/rAsset/home/native';
 import RAssetErc from './pages/rAsset/home/erc';
@@ -186,6 +199,77 @@ const routesFactory=(role?:any)=>{
         },{
           path: '*',
           component: () => <Redirect to="/rKSM/home"/>
+        }]
+      },{
+        id:"RATOM_index",
+        path:"/rATOM",
+        type:"rATOM",
+        rSymbol:rSymbol.Atom,
+        component: RATOMHomeTemplate,
+        routes:[{
+          id:"RATOM_home",
+          path:"/rATOM/home",
+          rSymbol:rSymbol.Atom,
+          component:RATOMHome
+        },{
+          id:"RATOM_wallet",
+          path:"/rATOM/wallet",
+          rSymbol:rSymbol.Atom,
+          component:RATOMWallet
+        },{
+          id:"RATOM_wallet",
+          path:"/rATOM/fiswallet",
+          rSymbol:rSymbol.Atom,
+          component:RATOMWalletFIS
+        },{
+          id:"RATOM_staker",
+          type:"Staker",
+          path:"/rATOM/staker",
+          rSymbol:rSymbol.Atom,
+          component:authorizedRoute(Symbol.Atom)(RATOMStaker),
+          routes:[
+            {
+              id:"RATOM_staker_index",
+              path:"/rATOM/staker/index",
+              type:"Staker",
+              rSymbol:rSymbol.Atom,
+              component:RATOMStakerIndex
+            },{
+              id:"RATOM_staker_index_info",
+              path:"/rATOM/staker/info",
+              type:"-Status",
+              rSymbol:rSymbol.Atom,
+              component:RATOMStakerInfo
+            },,{
+              id:"RATOM_staker_index_redeem",
+              path:"/rATOM/staker/redeem",
+              type:"Staker",
+              rSymbol:rSymbol.Atom,
+              component:RATOMStakerRedeem
+            },{
+              path: '*',
+              component: () => <Redirect to="/rATOM/staker/index"/>
+            }
+          ]
+        },{
+          id:"RATOM_validator",
+          type:"Validator",
+          path:"/rATOM/validator",
+          rSymbol:rSymbol.Atom,
+          component:authorizedRoute(Symbol.Atom)(RATOMValidator)
+        },{
+          id:"RATOM_search",
+          path:"/rATOM/search",
+          rSymbol:rSymbol.Atom,
+          component:authorizedRoute(Symbol.Atom)(RATOMSeach)
+        },{
+          id:"RATOm_type",
+          path:"/rATOM/type",
+          rSymbol:rSymbol.Atom,
+          component:authorizedRoute(Symbol.Atom)(RATOMType)
+        },{
+          path: '*',
+          component: () => <Redirect to="/rATOM/home"/>
         }]
       },{
         id:"rAsset_template",

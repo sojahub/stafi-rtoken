@@ -4,12 +4,13 @@ import rate_eleted_svg from '@images/rate_eleted.svg';
 import rDOT_svg from '@images/rDOT_black2.svg'
 import rKSM_svg from '@images/rKSM_black2.svg'
 import rFIS_svg from '@images/rFIS_black.svg'
+import rATOM_svg from '@images/selected_rATOM.svg'
 import validator_svg from '@images/validator_2.svg'
 import './index.scss';
 import { useSelector } from 'react-redux';
 
 type Props={
-  type:"rDOT"|"rETH"|"rFIS"|"rKSM",
+  type:"rDOT"|"rETH"|"rFIS"|"rKSM"|"rATOM",
   onClick:Function,
   stafiStakerApr?:any,
   total?:any,
@@ -27,6 +28,11 @@ export default function Index(props:Props){
         balance:state.rKSMModule.ksmAccount?state.rKSMModule.ksmAccount.balance:"--"
       }
     }
+    if(props.type=="rATOM"){
+      return {
+        balance:state.rATOMModule.ksmAccount?state.rATOMModule.atomAccount.balance:"--"
+      }
+    }
   })
   return <div className="stafi_type_card"> 
       <div className="type_card_item" onClick={()=>{
@@ -38,6 +44,7 @@ export default function Index(props:Props){
           <div className="sub_title">
             {props.type=="rDOT" && "Delegate your DOT, get rDOT"}
             {props.type=="rKSM" && "Delegate your KSM, get rKSM"}
+            {props.type=="rATOM" && "Delegate your KSM, get rATOM"}
             {props.type=="rETH" && "Delegate your ETH"}
             {props.type=="rFIS" && "Delegate your FIS, get rFIS"}
           </div>
@@ -49,6 +56,7 @@ export default function Index(props:Props){
             {props.type=="rDOT" && <img src={rDOT_svg} />}
             {props.type=="rKSM" && <img src={rKSM_svg} />}
             {props.type=="rFIS" && <img src={rFIS_svg} />}
+            {props.type=="rATOM" && <img src={rATOM_svg} />}
             <div>
                 {props.type} 
               </div>

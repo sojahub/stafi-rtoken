@@ -3,7 +3,8 @@ import {message} from 'antd'
 import LeftContent from './leftContent'  
 import Input from '@shared/components/input/amountInput';
 import rDOT from '@images/selected_rDOT.svg';
-import rKSM from '@images/selected_rKSM.svg' 
+import rKSM from '@images/selected_rKSM.svg';
+import rATOM from '@images/selected_rATOM.svg';
 import leftArrowSvg from '@images/left_arrow.svg'
 import NumberUtil from '@util/numberUtil'
 import Button from '@shared/components/button/button';
@@ -18,11 +19,20 @@ type Props={
      address?:string,
      onInputChange?:Function,
      onInputConfirm?:Function,
-     type:"rDOT"|"rETH"|"rFIS"|"rKSM"
+     type:"rDOT"|"rETH"|"rFIS"|"rKSM"|"rATOM"
 }
 export default function Index(props:Props){
     const [inputEdit,setInputEdit]=useState(false);
 
+    const getIcon=()=>{
+        if(props.type=="rDOT"){
+            return rDOT
+        }else if(props.type=="rKSM"){
+            return rKSM
+        }else if(props.type=="rATOM"){
+            return rATOM
+        }
+    }
   
     return <LeftContent className="stafi_stake_redeem_context"> 
     <img className="back_icon" onClick={()=>{
@@ -32,11 +42,13 @@ export default function Index(props:Props){
            
             {props.type=="rDOT" && " Redeem DOT"}
             {props.type=="rKSM" && " Redeem KSM"}
+            {props.type=="rATOM" && " Redeem ATOM"}
          </div>
          <div className="subTitle">
                <div className="label"> 
                {props.type=="rDOT" && "1. Unbond DOT"}
                {props.type=="rKSM" && "1. Unbond KSM"}
+               {props.type=="rATOM" && "1. Unbond ATOM"}
                </div>
                 <div className="balance">
                 
@@ -50,7 +62,7 @@ export default function Index(props:Props){
                 }else{
                     props.onAmountChange && props.onAmountChange(e)
                 }
-            }}  icon={props.type=="rKSM" ?rKSM:rDOT}/>
+            }}  icon={getIcon()}/>
             <div className="balance"> 
                 {props.type} balance {(props.tokenAmount=="--")? "--": NumberUtil.handleFisAmountToFixed(props.tokenAmount)}
             </div>

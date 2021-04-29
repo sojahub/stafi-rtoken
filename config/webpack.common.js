@@ -29,11 +29,13 @@ function webpackCommonConfigCreator(options){
                 buffer: require.resolve('buffer/'), 
                 stream: require.resolve('stream-browserify'),
                 http: false,
-                https:false
+                https:false,
+                path:false
             },
              
             alias: {
                stream: "stream-browserify",
+               path:false,
                 crypto: false,   
                 '@components': resolve('../app/components'), 
                 '@images': resolve('../app/assets/images'), 
@@ -169,7 +171,8 @@ function webpackCommonConfigCreator(options){
             new webpack.ProvidePlugin({
                 Buffer: ["buffer", "Buffer"],
                 process:'process',
-                stream: 'stream'
+                stream: 'stream',
+                path:'path'
               }), 
               new webpack.DllReferencePlugin({
                 context: path.join(__dirname, '..'),

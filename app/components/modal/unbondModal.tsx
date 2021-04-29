@@ -15,7 +15,7 @@ type Props={
   onOk?:Function,
   onCancel?:Function,
   bondFees?:any,
-  type:"rDOT"|"rETH"|"rFIS"|"rKSM",
+  type:"rDOT"|"rETH"|"rFIS"|"rKSM"|"rATOM",
 }
 export default function Index(props:Props){
   return <Modal visible={props.visible} 
@@ -40,6 +40,7 @@ export default function Index(props:Props){
             <div className="row period">
               {props.type=="rDOT" && `—Period: around 29 days`}
               {props.type=="rKSM" && `—Period: around 8 days`}
+              {props.type=="rATOM" && `—Period: around 8 days`}
             <div className="doubt"><Tooltip overlayClassName="modal_doubt_overlay" placement="topLeft" title={"unbond period is deteminted by designated chain."}>
                         <img src={doubt} />
                     </Tooltip></div></div>
@@ -47,6 +48,7 @@ export default function Index(props:Props){
             <div className="get_count"> 
               {props.type=="rDOT" && `You will get ${props.getAmount} DOT`}
               {props.type=="rKSM" && `You will get ${props.getAmount} KSM`}
+              {props.type=="rATOM" && `You will get ${props.getAmount} ATOM`}
             </div>
 
             <div className="btns">

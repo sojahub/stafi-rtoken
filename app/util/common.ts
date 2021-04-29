@@ -12,6 +12,10 @@ export enum Keys {
   KsmProcessParameter = 'stafi_ksm_processParameter', 
   KsmStakeHash='stafi_ksm_stakeHash', 
 
+  AtomAccountKey = 'stafi_atom_account', 
+  AtomProcessParameter = 'stafi_atom_processParameter', 
+  AtomStakeHash='stafi_atom_stakeHash', 
+
   MetamaskAccountKey = 'stafi_Metamask_account', 
   StafiNoticeKey="stafi_notice",
 }

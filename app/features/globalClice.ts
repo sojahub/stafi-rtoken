@@ -7,6 +7,7 @@ import {Symbol} from '@keyring/defaults';
 import { createSubstrate as dotCreateSubstrate,reloadData as dotReloadData } from './rDOTClice';
 import { createSubstrate as fisCreateSubstrate,reloadData as fisReloadData } from './FISClice';
 import { createSubstrate as ksmCreateSubstrate,reloadData as ksmReloadData } from './rKSMClice';
+import { createSubstrate as atomCreateSubstrate,reloadData as atomReloadData } from './rATOMClice';
 import Rpc from '@util/rpc';
 
 export enum processStatus {
@@ -144,6 +145,10 @@ const clice=(symbol: string)=>{
           reloadData:dotReloadData
         };
       case Symbol.Atom: 
+        return {
+          createSubstrate:atomCreateSubstrate,
+          reloadData:atomReloadData
+        };
       case Symbol.Kava: 
       case Symbol.One: 
       default: 
@@ -176,7 +181,11 @@ export const connectPolkadot_ksm=(cb?:Function):AppThunk=>async (dispatch, getSt
   await dispatch(connectPolkadotjs(Symbol.Fis));
   cb && cb()
 }
-
+export const connectPolkadot_atom=(cb?:Function):AppThunk=>async (dispatch, getState)=>{
+  await dispatch(connectPolkadotjs(Symbol.Atom));
+  await dispatch(connectPolkadotjs(Symbol.Fis));
+  cb && cb()
+}
 export const gSetTimeOut=(cb:Function,time:number):AppThunk=>(dispatch,getState)=>{
   const timeoutFunc=setTimeout(cb,time);
   dispatch(setTimeOutFunc(timeoutFunc)); 

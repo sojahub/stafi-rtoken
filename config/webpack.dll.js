@@ -16,7 +16,8 @@ const vendors = [
   '@polkadot/extension-dapp',
   '@polkadot/keyring',
   'web3',
-  'web3-utils'
+  'web3-utils',
+  '@cosmjs/stargate'
 ];
 
 module.exports = {
@@ -34,19 +35,22 @@ module.exports = {
             buffer: require.resolve('buffer/'), 
             stream: require.resolve('stream-browserify'),
             http: false,
-            https:false
+            https:false,
+            path:false
         },
          
         alias: {
            stream: "stream-browserify",
             crypto: false,    
+            hath:false
         }
     },
     plugins: [
         new webpack.ProvidePlugin({
             Buffer: ["buffer", "Buffer"],
             process:'process',
-            stream: 'stream'
+            stream: 'stream',
+            path:'path'
           }), 
         new webpack.DllPlugin({
             path:path.resolve(__dirname,"../dll/manifest.json"),

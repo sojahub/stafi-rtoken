@@ -20,6 +20,15 @@ const account=(type:string)=>{
         return '/rKSM/wallet';
       }
       return true;
+    case Symbol.Atom:
+      if(getLocalStorageItem(Keys.AtomAccountKey)==null && getLocalStorageItem(Keys.FisAccountKey)==null){
+        
+        return '/rATOM/home' 
+      }
+      if(getLocalStorageItem(Keys.AtomAccountKey)==null && getLocalStorageItem(Keys.FisAccountKey)){
+        return '/rATOM/wallet';
+      }
+      return true;
     case Symbol.Dot:
       // if(getLocalStorageItem(Keys.DotAccountKey)==null){
       //   return '/rDOT/home' 

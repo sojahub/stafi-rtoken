@@ -11,6 +11,8 @@ import rAsset_svg from '@images/rAsset.svg';
 import selected_rAsset_svg from '@images/selected_rAssets.svg';
 import rKSM_svg from '@images/rKSM.svg';
 import selected_rKSM_svg from '@images/selected_rKSM.svg'
+import rATOM_svg from '@images/rATOM.svg';
+import selected_rATOM_svg from '@images/selected_rATOM.svg'
 import {isdev} from '../../config/index'
 
 import './index.scss'
@@ -50,6 +52,13 @@ const siderData=[
         text:"rKSM", 
         urlKeywords:'/rKSM',
         url:"/rKSM/home"
+    },
+    {
+        icon:rATOM_svg,
+        selectedIcon:selected_rATOM_svg,
+        text:"rATOM", 
+        urlKeywords:'/rATOM',
+        url:"/rATOM/home"
     }
 ]
 type Props={
