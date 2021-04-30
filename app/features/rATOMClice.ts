@@ -20,10 +20,16 @@ import NumberUtil from '@util/numberUtil';
 import { bound, fisUnbond ,rTokenSeries_bondStates} from './FISClice';
 import {stafi_uuid} from '@util/common'
 import {findUuid,noticesubType,noticeStatus,noticeType} from './noticeClice';
-import { u8aToHex } from '@polkadot/util'
-
+import { u8aToHex } from '@polkadot/util';
+import config,{isdev} from '@config/index';
+import { SigningStargateClient, coins } from '@cosmjs/stargate'; 
+import {
+    makeAuthInfoBytes,
+    makeSignDoc,
+    makeSignBytes
+} from "@cosmjs/proto-signing";
 const commonClice=new CommonClice();
-
+declare const window: any;
 
 const rATOMClice = createSlice({
   name: 'rATOMModule',
@@ -156,7 +162,7 @@ export const reloadData = (): AppThunk => async (dispatch, getState) => {
   if(account){
     dispatch(createSubstrate(account));
   }
-  dispatch(balancesAll())
+  // dispatch(balancesAll())
   dispatch(query_rBalances_account());
   dispatch(getTotalIssuance());
 }
@@ -164,21 +170,33 @@ export const createSubstrate = (account: any): AppThunk => async (dispatch, getS
   queryBalance(account, dispatch, getState)
 }
 
-const queryBalance = async (account: any, dispatch: any, getState: any) => { 
+const queryBalance = async (account: any, dispatch: any, getState: any) => {  
   dispatch(setAtomAccounts(account));
   let account2: any = { ...account }
-
-  const api = await polkadotServer.createPolkadotApi();
-  const result = await api.query.system.account(account2.address);
-  if (result) {
-    let fisFreeBalance = NumberUtil.fisAmountToHuman(result.data.free);
-    account2.balance = NumberUtil.handleEthAmountRound(fisFreeBalance);
-  }
-  const atomAccount = getState().rATOMModule.atomAccount;
-  if (atomAccount && atomAccount.address == account2.address) {
-    dispatch(setAtomAccount(account2));
-  }
-  dispatch(setAtomAccounts(account2));
+  const chainId = config.rAtomChainId();
+  const cosmosChainRpc = config.rAtomCosmosChainRpc();
+  const offlineSigner = window.getOfflineSigner(chainId);
+  const client = await SigningStargateClient.connectWithSigner(cosmosChainRpc, offlineSigner);
+   let balances = await client.getAllBalances(account2.address);
+ 
+  if(balances.length>0){
+    if(isdev()){
+      const balanace=balances.find(item=>{
+        return item.denom=="umuon";
+      });
+      account2.balance=balanace?balanace.amount:0;
+    }else{
+      const balanace=balances.find(item=>{
+        return item.denom=="uatom";
+      });
+      account2.balance=balanace?balanace.amount:0;
+    }
+  }else{
+    account2.balance=0;
+  } 
+  dispatch(setTransferrableAmountShow(account2.balance));
+  dispatch(setAtomAccount(account2)); 
+  dispatch(setAtomAccounts(account2));  
 }
 
 export const transfer = (amountparam: string, cb?: Function): AppThunk => async (dispatch, getState) => {
@@ -343,16 +361,16 @@ export const transfer = (amountparam: string, cb?: Function): AppThunk => async 
   });
 }
 
-export const balancesAll = (): AppThunk => async (dispatch, getState) => {
-  const api = await polkadotServer.createPolkadotApi();
-  const address = getState().rATOMModule.atomAccount.address;
-  const result = await api.derive.balances.all(address);
-  if (result) {
-    const transferrableAmount = NumberUtil.fisAmountToHuman(result.availableBalance);
-    const transferrableAmountShow = NumberUtil.handleFisAmountToFixed(transferrableAmount);
-    dispatch(setTransferrableAmountShow(transferrableAmountShow));
-  }
-}
+// export const balancesAll = (): AppThunk => async (dispatch, getState) => {
+//   const api = await polkadotServer.createPolkadotApi();
+//   const address = getState().rATOMModule.atomAccount.address;
+//   const result = await api.derive.balances.all(address);
+//   if (result) {
+//     const transferrableAmount = NumberUtil.fisAmountToHuman(result.availableBalance);
+//     const transferrableAmountShow = NumberUtil.handleFisAmountToFixed(transferrableAmount);
+//     dispatch(setTransferrableAmountShow(transferrableAmountShow));
+//   }
+// }
 
 
 export const query_rBalances_account = (): AppThunk => async (dispatch, getState) => { 

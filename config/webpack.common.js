@@ -36,7 +36,7 @@ function webpackCommonConfigCreator(options){
             alias: {
                stream: "stream-browserify",
                path:false,
-                crypto: false,   
+                crypto: 'crypto-browserify',   
                 '@components': resolve('../app/components'), 
                 '@images': resolve('../app/assets/images'), 
                 "@features": resolve('../app/features'),
@@ -172,6 +172,7 @@ function webpackCommonConfigCreator(options){
                 Buffer: ["buffer", "Buffer"],
                 process:'process',
                 stream: 'stream',
+                // crypto:'crypto',
                 path:'path'
               }), 
               new webpack.DllReferencePlugin({

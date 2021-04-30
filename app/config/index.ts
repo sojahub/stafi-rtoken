@@ -102,6 +102,20 @@ export default {
   txHashAndBlockhashURl:{
     dotURL:"https://docs.stafi.io/rproduct/rdot-solution/rdot-staker-guide/recovery-function#2-the-way-to-get-txhash-and-blockhash",
     ksmURL:"https://docs.stafi.io/rproduct/rksm-solution/staker-guide/recovery-function#2-the-way-to-get-txhash-and-blockhash"
+  },
+  rAtomChainId:()=>{
+    if(process.env.NODE_ENV=="production" &&  !isdev()){
+      return "stargate-final";
+    }else{
+      return "stargate-final";
+    } 
+  },
+  rAtomCosmosChainRpc:()=>{
+    if(process.env.NODE_ENV=="production" &&  !isdev()){
+      return  "https://testcosmosrpc.wetez.io";
+    }else{
+      return  "https://testcosmosrpc.wetez.io";
+    } 
   }
 } 
  

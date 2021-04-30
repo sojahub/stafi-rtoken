@@ -1,11 +1,11 @@
-import React, { useEffect } from 'react'; 
+import React, { useEffect,useLayoutEffect } from 'react'; 
 import { Spin} from 'antd'
 import {useDispatch,useSelector} from 'react-redux'; 
 import Content from '@shared/components/content';
 import {renderRoutes}  from 'react-router-config';
 import {getLocalStorageItem,Keys} from '@util/common'; 
 import {Symbol} from '@keyring/defaults'
-import {fetchStafiStakerApr,reloadData,} from '@features/globalClice';
+import {fetchStafiStakerApr,reloadData,connectAtomjs} from '@features/globalClice';
 import {continueProcess,getPools,bondFees,getTotalIssuance} from '@features/rATOMClice'
 import {bondSwitch} from '@features/FISClice'; 
 import '../template/index.scss'
@@ -28,8 +28,10 @@ export default function Index(props:any){
     dispatch(bondFees());
     dispatch(bondSwitch()); 
     if(getLocalStorageItem(Keys.AtomAccountKey) && getLocalStorageItem(Keys.FisAccountKey)){
+      setTimeout(()=>{
         dispatch(reloadData(Symbol.Atom)); 
-        dispatch(reloadData(Symbol.Fis)); 
+      },1000)
+      dispatch(reloadData(Symbol.Fis)); 
     } 
     dispatch(getPools(()=>{ 
       setTimeout(()=>{

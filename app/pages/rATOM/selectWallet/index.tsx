@@ -13,6 +13,7 @@ import './index.scss';
 export default function Index(props:any){
     const dispatch=useDispatch(); 
     const {atomAccounts,atomAccount} = useSelector((state:any)=>{ 
+        console.log(state,"====state")
         return {
             atomAccounts:state.rATOMModule.atomAccounts,
             atomAccount:state.rATOMModule.atomAccount || {}

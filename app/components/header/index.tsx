@@ -41,6 +41,15 @@ export default function Index(props:Props){
                 }
             } 
         }
+        if(location.pathname.includes("/rATOM")){ 
+            if(state.rATOMModule.atomAccount && state.FISModule.fisAccount){
+                return {
+                    atomAccount:state.rATOMModule.atomAccount,
+                    fisAccount:state.FISModule.fisAccount,
+                    noticeData:state.noticeModule.noticeData,
+                }
+            } 
+        }
         if(location.pathname.includes("/rAsset")){
             
             if(location.pathname.includes("/rAsset/native") || location.pathname.includes("/rAsset/swap/native")){
@@ -126,6 +135,10 @@ export default function Index(props:Props){
             }} className="header_tool account">
                 <div>{account.ksmAccount.balance} KSM</div>
                 <div>{StringUtil.replacePkh(account.ksmAccount.address,6,44)}</div>
+            </div>} 
+            {account.atomAccount && <div   className="header_tool account">
+                <div>{account.atomAccount.balance} ATOM</div>
+                <div>{StringUtil.replacePkh(account.atomAccount.address,6,38)}</div>
             </div>} 
             {account.ethAccount && <div  className="header_tool account">
                 <div>{account.ethAccount.balance} ETH</div>

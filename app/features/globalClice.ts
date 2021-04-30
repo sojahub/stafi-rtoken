@@ -1,9 +1,10 @@
 import { createSlice } from '@reduxjs/toolkit'; 
 import { AppThunk, RootState } from '../store'; 
 import PolkadotServer from '@servers/polkadot/index';
+import AtomServer from '@servers/atom/index'
 import {message} from 'antd';   
 import keyring from '@servers/index';
-import {Symbol} from '@keyring/defaults'; 
+import {rSymbol, Symbol} from '@keyring/defaults'; 
 import { createSubstrate as dotCreateSubstrate,reloadData as dotReloadData } from './rDOTClice';
 import { createSubstrate as fisCreateSubstrate,reloadData as fisReloadData } from './FISClice';
 import { createSubstrate as ksmCreateSubstrate,reloadData as ksmReloadData } from './rKSMClice';
@@ -18,6 +19,8 @@ export enum processStatus {
 }
 //0|1|2|4  
 const polkadotServer=new PolkadotServer();
+
+const atomServer=new AtomServer();
 export const process={ 
   rSymbol:"",   
   sending:{
@@ -105,7 +108,7 @@ export const {
 export const connectPolkadotjs = (type:Symbol,cb?:Function): AppThunk=>async (dispatch, getState)=>{ 
   const accounts:any =await polkadotServer.connectPolkadotjs()   
   if(accounts){
-   dispatch(setAccounts(accounts)); 
+  //  dispatch(setAccounts(accounts)); 
    const dotKeyringInstance=keyring.init(type);
    const accountsList=accounts.map((element:any)=>{  
      const address= dotKeyringInstance.encodeAddress(dotKeyringInstance.decodeAddress(element.address)); 
@@ -120,6 +123,27 @@ export const connectPolkadotjs = (type:Symbol,cb?:Function): AppThunk=>async (di
   });
   cb && cb();
  }
+}
+
+export const connectAtomjs=(cb?:Function):AppThunk=>async (dispatch, getState)=>{ 
+  await atomServer.connectAtomjs();
+  const accounts=await atomServer.getAccounts(); 
+  const dotKeyringInstance=keyring.init(Symbol.Atom);
+  // const accountsList=accounts.map((element:any)=>{  
+    const address= dotKeyringInstance.encodeAddress(dotKeyringInstance.decodeAddress(accounts.bech32Address)); 
+    console.log(accounts,address,"+++")
+    const account= {  
+      name: accounts.name,
+      address: address,
+      balance: '--'
+    }
+  // })  
+  // console.log(accounts,"=======accountsList")
+  // accountsList.forEach((account:any) => {    
+    dispatch(clice(Symbol.Atom).createSubstrate(account));
+  // });
+  console.log(accounts,"=========accounts")
+  cb && cb();
 }
 export const reloadData = (type:Symbol,cb?:Function): AppThunk=>async (dispatch, getState)=>{ 
   dispatch(clice(type).reloadData()); 
@@ -182,7 +206,7 @@ export const connectPolkadot_ksm=(cb?:Function):AppThunk=>async (dispatch, getSt
   cb && cb()
 }
 export const connectPolkadot_atom=(cb?:Function):AppThunk=>async (dispatch, getState)=>{
-  await dispatch(connectPolkadotjs(Symbol.Atom));
+  // await dispatch(connectAtomjs());
   await dispatch(connectPolkadotjs(Symbol.Fis));
   cb && cb()
 }

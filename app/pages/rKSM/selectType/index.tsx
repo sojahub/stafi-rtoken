@@ -7,10 +7,10 @@ import {getTotalIssuance,rTokenLedger} from '@features/rKSMClice'
 export default function Index(props:any){
 
   const dispatch=useDispatch();
-  const {stafiStakerApr,totalRDot,stakerApr,tokenAmount}=useSelector((state:any)=>{
+  const {stafiStakerApr,totalIssuance,stakerApr,tokenAmount}=useSelector((state:any)=>{
     return { 
       stafiStakerApr:state.globalModule.stafiStakerApr,
-      totalRDot:state.rKSMModule.totalRDot,
+      totalIssuance:state.rKSMModule.totalIssuance,
       stakerApr:state.rKSMModule.stakerApr,
       tokenAmount:state.rKSMModule.tokenAmount,
     }
@@ -26,7 +26,7 @@ export default function Index(props:any){
   return <TypeCard 
       type="rKSM" 
       stafiStakerApr={stafiStakerApr}
-      total={totalRDot}
+      total={totalIssuance}
       apr={stakerApr}
       onClick={(e:string)=>{
         if(e=="Staker"){

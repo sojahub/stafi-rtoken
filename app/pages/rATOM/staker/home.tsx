@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'; 
 import {useDispatch,useSelector} from 'react-redux';
 import Content from '@components/content/stakeContent_DOT'; 
-import {transfer,balancesAll,rTokenLedger} from '@features/rATOMClice'; 
+import {transfer,rTokenLedger} from '@features/rATOMClice'; 
 import { rTokenRate } from '@features/rATOMClice';
 import {ratioToAmount} from '@util/common'
 import { message } from 'antd';
@@ -14,8 +14,7 @@ export default function Index(props:any){
  const dispatch=useDispatch();
  
   const [amount,setAmount]=useState<any>(); 
-  useEffect(()=>{
-    dispatch(balancesAll());
+  useEffect(()=>{ 
     dispatch(rTokenRate());
     dispatch(rTokenLedger())
   },[])

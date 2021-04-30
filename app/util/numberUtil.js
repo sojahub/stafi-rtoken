@@ -132,6 +132,8 @@ export default {
    switch(symbol){
      case rSymbol.Dot:
       return amount / 10000000000;
+    case rSymbol.Atom:
+      return amount / 1000000;
      case rSymbol.Fis:
         return amount / 1000000000000;
      case rSymbol.Ksm:

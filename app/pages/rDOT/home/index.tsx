@@ -5,6 +5,7 @@ import HomeCard from '@components/card/homeCard';
 import rDOT_svg from '@images/rDOT.svg'  
 import {Symbol} from '@keyring/defaults'
 import {connectPolkadot} from '@features/globalClice'; 
+import Button from '@shared/components/button/connect_button';
 import './index.scss';
  
 export default function Inde(props:any){
@@ -22,13 +23,15 @@ export default function Inde(props:any){
   return <HomeCard 
       title={<><label>Liquify</label> Your Staking DOT</>}
       subTitle={"Staking via StaFi Staking Contract and get rDOT in return"}
-      btnText="Connect to Polkadotjs extension"
-      btnIcon={rDOT_svg}
-      onBtnClick={()=>{  
-        dispatch(connectPolkadot(()=>{
-          props.history.push("/rDOT/wallet")
-        })) 
-      }}
+  
       // onIntroUrl="https://docs.stafi.io/rproduct/rdot-solution"
-  />
+  >
+     <Button icon={rDOT_svg} onClick={()=>{   
+              dispatch(connectPolkadot(()=>{
+                props.history.push("/rDOT/wallet")
+              })) 
+            }}>
+              Connect to Polkadotjs extension
+            </Button>
+  </HomeCard>
 }
