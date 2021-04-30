@@ -1,6 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { AppThunk, RootState } from '../store';
-import PolkadotServer from '@servers/atom/index';
+import AtomServer from '@servers/atom/index';
+import PolkadotServer from '@servers/polkadot';
 import Stafi from '@servers/stafi/index';
 import { message as M, message } from 'antd';
 import keyring from '@servers/index'; 
@@ -134,6 +135,7 @@ const rATOMClice = createSlice({
     }
   },
 });
+const atomServer = new AtomServer();
 const polkadotServer = new PolkadotServer();
 const stafiServer = new Stafi();
 export const { setAtomAccounts,
@@ -172,25 +174,15 @@ export const createSubstrate = (account: any): AppThunk => async (dispatch, getS
 
 const queryBalance = async (account: any, dispatch: any, getState: any) => {  
   dispatch(setAtomAccounts(account));
-  let account2: any = { ...account }
-  const chainId = config.rAtomChainId();
-  const cosmosChainRpc = config.rAtomCosmosChainRpc();
-  const offlineSigner = window.getOfflineSigner(chainId);
-  const client = await SigningStargateClient.connectWithSigner(cosmosChainRpc, offlineSigner);
+  let account2: any = { ...account } 
+  const client = await atomServer.createApi();
    let balances = await client.getAllBalances(account2.address);
  
-  if(balances.length>0){
-    if(isdev()){
+  if(balances.length>0){ 
       const balanace=balances.find(item=>{
-        return item.denom=="umuon";
+        return item.denom==config.rAtomDenom();
       });
-      account2.balance=balanace?balanace.amount:0;
-    }else{
-      const balanace=balances.find(item=>{
-        return item.denom=="uatom";
-      });
-      account2.balance=balanace?balanace.amount:0;
-    }
+      account2.balance=balanace?balanace.amount:0; 
   }else{
     account2.balance=0;
   } 

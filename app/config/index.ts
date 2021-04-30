@@ -116,6 +116,13 @@ export default {
     }else{
       return  "https://testcosmosrpc.wetez.io";
     } 
+  },
+  rAtomDenom:()=>{
+    if(process.env.NODE_ENV=="production" &&  !isdev()){
+      return  "uatom";
+    }else{
+      return  "umuon";
+    } 
   }
 } 
  

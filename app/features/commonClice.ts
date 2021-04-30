@@ -4,6 +4,7 @@ import NumberUtil from '@util/numberUtil';
 import {rSymbol,Symbol} from '@keyring/defaults'
 import StafiServer from '@servers/stafi';
 import keyring from '@servers/index';
+import { hexToU8a } from '@polkadot/util';
 import BridgeServer from '@servers/bridge';
   
 const stafiServer=new StafiServer(); 
@@ -46,6 +47,9 @@ export default class CommonClice{
             }
             const keyringInstance = keyring.init(symbol);
             let poolAddress = keyringInstance.encodeAddress(poolPubkey);
+            if(symbol==Symbol.Atom){
+              keyringInstance.encodeAddress(hexToU8a(poolPubkey));
+            }
             // dispatch(setValidPools());
             cb && cb({
               address: poolAddress,

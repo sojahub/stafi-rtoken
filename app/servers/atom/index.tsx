@@ -118,16 +118,9 @@ export default class ExtensionDapp extends CosmosKeyring{
   async getAccounts(){ 
     return await window.keplr.getKey(config.rAtomChainId()); 
   }
-  createPolkadotApi() {
-    if (polkadotApi) {
-      return polkadotApi;
-    }
- 
-    const wsProvider = new WsProvider(config.kusamaChain());
-    polkadotApi =  ApiPromise.create({
-        provider: wsProvider
-    });
-    return polkadotApi;
+  createApi() {
+    const offlineSigner = window.getOfflineSigner(config.rAtomChainId());
+    return SigningStargateClient.connectWithSigner(config.rAtomCosmosChainRpc(), offlineSigner);
   }
   getTokenAddress() {
     return config.rATOMTokenAddress();
