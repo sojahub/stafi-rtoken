@@ -68,9 +68,7 @@ export class CosmosKeyring extends Base implements KeyringStruct {
     }
   }
 
-  public encodeAddress(publicKey: any): string {
-    const pubKeyHash = this.hash160(publicKey);
-
+  public encodeAddress(pubKeyHash: any): string {
     const words = bech32.toWords(pubKeyHash);
     return bech32.encode(this._acc_addr_prefix, words);
   }
@@ -98,7 +96,7 @@ export class CosmosKeyring extends Base implements KeyringStruct {
     const node = bip32.fromSeed(seed);
     const child = node.derivePath(this._derivation_path);
 
-    const address = this.encodeAddress(child.publicKey);
+    const address = this.encodeAddress(this.hash160(child.publicKey));
 
     return {
       secretKey: '',
