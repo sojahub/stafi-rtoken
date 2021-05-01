@@ -48,7 +48,7 @@ export default class CommonClice{
             const keyringInstance = keyring.init(symbol);
             let poolAddress = keyringInstance.encodeAddress(poolPubkey);
             if(symbol==Symbol.Atom){
-              keyringInstance.encodeAddress(hexToU8a(poolPubkey));
+              poolAddress = keyringInstance.encodeAddress(hexToU8a(poolPubkey));
             }
             // dispatch(setValidPools());
             cb && cb({
