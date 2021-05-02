@@ -578,12 +578,12 @@ export const rTokenLedger=():AppThunk=>async (dispatch, getState)=>{
   }  
 }
 const handleStakerApr = (currentRate?: any, lastRate?: any): AppThunk => async (dispatch, getState) => {
-    dispatch(setStakerApr('16.0%')); 
+    dispatch(setStakerApr('9.8%')); 
   //  if (currentRate && lastRate) {
-  //     const apr = NumberUtil.handleEthRoundToFixed((currentRate - lastRate)/lastRate * 4 * 365.25 * 100) + '%';
+  //     const apr = NumberUtil.handleEthRoundToFixed((currentRate - lastRate)/lastRate * 365.25 * 100) + '%';
   //     dispatch(setStakerApr(apr));
   //   } else {
-  //     dispatch(setStakerApr('16.0%')); 
+  //     dispatch(setStakerApr('9.8%')); 
   //   }
   }
   export const checkAddress = (address:string)=>{
