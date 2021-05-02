@@ -314,15 +314,21 @@ export const bound = (address: string, txhash: string, blockhash: string, amount
 
     let fisAddress = getState().FISModule.fisAccount.address;
     const keyringInstance = keyring.init(Symbol.Fis);
-    let signature = await stakingSignature(address, u8aToHex(keyringInstance.decodeAddress(fisAddress)));
+    let signature ="";
     const stafiApi = await stafiServer.createStafiApi();
-    let pubkey = u8aToHex(keyringInstance.decodeAddress(address));
+    let pubkey ="";
 
     let poolPubkey =  pooladdress;
+    console.log(getState().rATOMModule,"======    console.log(getState().rATOMModule)")
     if(type==rSymbol.Atom){ 
       signature=config.rAtomAignature; 
+  
       pubkey=getState().rATOMModule.atomAccount.pubkey;
+    }else{
+      signature = await stakingSignature(address, u8aToHex(keyringInstance.decodeAddress(fisAddress)));
+      pubkey = u8aToHex(keyringInstance.decodeAddress(address));
     }
+    console.log({poolPubkey,pubkey:pubkey,signature,fisAddress,address})
 
     
     

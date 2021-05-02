@@ -193,183 +193,111 @@ const queryBalance = async (account: any, dispatch: any, getState: any) => {
 }
 
 export const transfer = (amountparam: string, cb?: Function): AppThunk => async (dispatch, getState) => {
+  const processParameter=getState().rATOMModule.processParameter;
+  const notice_uuid=(processParameter && processParameter.uuid) || stafi_uuid(); 
 
+  dispatch(initProcess(null));
  
   const amount = NumberUtil.tokenAmountToChain(amountparam,rSymbol.Atom);
   
   const demon = config.rAtomDenom(); 
   const memo = getState().FISModule.fisAccount.address;
-  const currentAddress= getState().rATOMModule.atomAccount.address;
+  const address= getState().rATOMModule.atomAccount.address;
   const validPools = getState().rATOMModule.validPools;
   const poolLimit = getState().rATOMModule.poolLimit;
+  
   const client =await atomServer.createApi(); 
   const selectedPool =commonClice.getPool(amount, validPools, poolLimit);
   if (selectedPool == null) { 
     return;
   } 
    
-  const sendTokens= await client.sendTokens(currentAddress, selectedPool.address, coins(amount, demon), memo);
-
-  console.log(sendTokens,"======sendTokenssendTokens");
-  // const processParameter=getState().rATOMModule.processParameter;
-  // const notice_uuid=(processParameter && processParameter.uuid) || stafi_uuid(); 
-
-  // dispatch(initProcess(null));
-  // const amount = NumberUtil.fisAmountToChain(amountparam)
-  // const validPools = getState().rATOMModule.validPools;
-  // const poolLimit = getState().rATOMModule.poolLimit;
-  // const address = getState().rATOMModule.atomAccount.address;
-  // web3Enable(stafiServer.getWeb3EnalbeName());
-  // const injector = await web3FromSource(stafiServer.getPolkadotJsSource())
-
-  // const dotApi = await polkadotServer.createPolkadotApi();
-
-  // const selectedPool =commonClice.getPool(amount, validPools, poolLimit);
-  // if (selectedPool == null) { 
-  //   return;
-  // } 
- 
-  // const ex =await dotApi.tx.balances.transferKeepAlive(selectedPool, amount.toString()); 
-  // let index=0;
-  // ex.signAndSend(address, { signer: injector.signer }, (result: any) => {
+  try {
+    dispatch(setProcessSending({
+      brocasting: processStatus.loading,
+      packing: processStatus.default,
+      finalizing: processStatus.default
+    }));
+    dispatch(setProcessType(rSymbol.Atom));
+    dispatch(setProcessSlider(true));
+    const sendTokens:any= await client.sendTokens(address, selectedPool.address, coins(amount, demon), memo);
+    if(sendTokens.code==0){
+      const block = await client.getBlock(sendTokens.height);
+      dispatch(setProcessSending({
+        brocasting: processStatus.success,
+        packing: processStatus.success,
+        checkTx: sendTokens.transactionHash
+      }));
    
-  //   if(index==0){
-  //     dispatch(setProcessSending({
-  //       brocasting: processStatus.loading,
-  //       packing: processStatus.default,
-  //       finalizing: processStatus.default
-  //     }));
-  //     dispatch(setProcessType(rSymbol.Atom));
-  //     dispatch(setProcessSlider(true));
-  //     index=index+1;
-  //   }
-  //   const tx = ex.hash.toHex()
-  //   try {
-  //     let asInBlock = ""
-  //     try {
-  //       asInBlock = "" + result.status.asInBlock;
-  //     } catch (e) {
-  //       // do nothing
-  //     }
-  //     if (asInBlock) {
-  //       dispatch(setProcessParameter({
-  //         sending: {
-  //           amount: amountparam,
-  //           txHash: tx,
-  //           blockHash: asInBlock,
-  //           address,
-  //           uuid:notice_uuid
-  //         },
-  //         href: cb ? "/rATOM/staker/info" : null
-  //       }))
-  //       dispatch(setStakeHash({
-  //         txHash: tx,
-  //         blockHash: asInBlock,
-  //         notice_uuid:notice_uuid
-  //       }))
-  //     }
+      dispatch(reloadData());
+      // dispatch(add_ATOM_stake_Notice(notice_uuid,amountparam,noticeStatus.Pending));
+      dispatch(setProcessParameter({
+        sending: {
+          amount: amountparam,
+          txHash: sendTokens.transactionHash,
+          blockHash: block.id,
+          address,
+          uuid:notice_uuid
+        },
+        staking: {
+          amount: amountparam,
+          txHash: sendTokens.transactionHash,
+          blockHash: block.id,
+          address,
+          type: rSymbol.Atom,
+          poolAddress: selectedPool.poolPubkey
+        },
+        href: cb ? "/rATOM/staker/info" : null
+      }))  
 
+      dispatch(add_ATOM_stake_Notice(notice_uuid,amountparam,noticeStatus.Pending,{
+        process:getState().globalModule.process,
+        processParameter:getState().rATOMModule.processParameter}))
+      block.id && dispatch(bound(address, sendTokens.transactionHash, block.id, amount, selectedPool.poolPubkey, rSymbol.Atom, (r: string) => {
+        if(r=="loading"){
+          dispatch(add_ATOM_stake_Notice(notice_uuid,amountparam,noticeStatus.Pending))
+        }else{ 
+          dispatch(setStakeHash(null));
+        }
 
-  //     if (result.status.isInBlock) {
-  //       dispatch(setProcessSending({
-  //         brocasting: processStatus.success,
-  //         packing: processStatus.loading,
-  //         checkTx: tx
-  //       })); 
-  //       dispatch(add_ATOM_stake_Notice(notice_uuid,amountparam,noticeStatus.Pending));
+        if(r == "failure"){
+          dispatch(add_ATOM_stake_Notice(notice_uuid,amountparam,noticeStatus.Error)
+          );
+        }
 
-  //       result.events
-  //         .filter((e: any) => {
-  //           return e.event.section == "system"
-  //         }).forEach((data: any) => {
-  //           if (data.event.method === 'ExtrinsicFailed') {
-  //             const [dispatchError] = data.event.data;
-  //             if (dispatchError.isModule) {
-  //               try {
-  //                 const mod = dispatchError.asModule;
-  //                 const error = data.registry.findMetaError(new Uint8Array([mod.index.toNumber(), mod.error.toNumber()]));
-
-  //                 let message: string = 'Something is wrong, please try again later!';
-  //                 if (error.name == '') {
-  //                   message = '';
-  //                 }
-  //                 message && M.info(message);
-  //               } catch (error) {
-  //                 M.error(error.message);
-  //               }
-  //             }
-  //             dispatch(reloadData());
-  //             dispatch(setProcessSending({
-  //               packing: processStatus.failure,
-  //               checkTx: tx
-  //             })); 
-  //             dispatch(setStakeHash(null));
-  //             dispatch(add_ATOM_stake_Notice(notice_uuid,amountparam,noticeStatus.Error));
-  //           } else if (data.event.method === 'ExtrinsicSuccess') {
-  //             dispatch(setProcessSending({
-  //               packing: processStatus.success,
-  //               finalizing: processStatus.loading,
-  //             })); 
-  //             // dispatch(gSetTimeOut(() => {
-  //             //   dispatch(setProcessSending({
-  //             //     finalizing: processStatus.failure,
-  //             //   }));
-  //             // }, 10 * 60 * 1000));
-  //             dispatch(reloadData());
-  //             dispatch(setProcessParameter({
-  //               staking: {
-  //                 amount: amountparam,
-  //                 txHash: tx,
-  //                 blockHash: asInBlock,
-  //                 address,
-  //                 type: rSymbol.Atom,
-  //                 poolAddress: selectedPool
-  //               }
-  //             }))  
-
-  //             dispatch(add_ATOM_stake_Notice(notice_uuid,amountparam,noticeStatus.Pending,{
-  //               process:getState().globalModule.process,
-  //               processParameter:getState().rATOMModule.processParameter}))
-  //             asInBlock && dispatch(bound(address, tx, asInBlock, amount, selectedPool, rSymbol.Atom, (r: string) => {
-  //               if(r=="loading"){
-  //                 dispatch(add_ATOM_stake_Notice(notice_uuid,amountparam,noticeStatus.Pending))
-  //               }else{ 
-  //                 dispatch(setStakeHash(null));
-  //               }
-
-  //               if(r == "failure"){
-  //                 dispatch(add_ATOM_stake_Notice(notice_uuid,amountparam,noticeStatus.Error)
-  //                 );
-  //               }
-
-  //               if(r=="successful"){
-  //                   dispatch(add_ATOM_stake_Notice(notice_uuid,amountparam,noticeStatus.Confirmed));
-  //                   cb && cb(); 
-  //                   dispatch(reloadData());
-  //               } 
-  //             }))
-
-  //           }
-  //         })
-        
-  //     } else if (result.status.isFinalized) {
-  //       dispatch(setProcessSending({
-  //         finalizing: processStatus.success,
-  //       }));
-  //     } else if (result.isError) {
-  //       M.error(result.toHuman());
-  //     }
-  //   } catch (e) {
-  //     M.error(e.message)
-  //   }
-  // }).catch ((e:any)=>{ 
-  //   dispatch(setLoading(false));
-  //   if(e=="Error: Cancelled"){
-  //     message.error("Cancelled");  
-  //   }else{
-  //     console.error(e)
-  //   } 
-  // });
+        if(r=="successful"){
+            dispatch(add_ATOM_stake_Notice(notice_uuid,amountparam,noticeStatus.Confirmed));
+            cb && cb(); 
+            dispatch(reloadData());
+        } 
+      }))
+    }else{
+      dispatch(setProcessSending({
+        brocasting: processStatus.success,
+        packing: processStatus.failure
+      }));
+      dispatch(setProcessParameter({
+        sending: {
+          amount: amountparam,
+          address,
+          uuid:notice_uuid
+        }, 
+        href: cb ? "/rATOM/staker/info" : null
+      }))
+      dispatch(reloadData());
+      dispatch(add_ATOM_stake_Notice(notice_uuid,amountparam,noticeStatus.Error,{
+        process:getState().globalModule.process,
+        processParameter:getState().rATOMModule.processParameter}));
+ 
+    }
+    console.log(sendTokens)
+    
+  } catch (error) { 
+    dispatch(setProcessSending({
+      brocasting: processStatus.failure,
+      packing: processStatus.default
+    }));
+  } 
 }
 
  

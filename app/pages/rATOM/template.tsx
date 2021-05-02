@@ -29,7 +29,8 @@ export default function Index(props:any){
     dispatch(bondSwitch()); 
     if(getLocalStorageItem(Keys.AtomAccountKey) && getLocalStorageItem(Keys.FisAccountKey)){
       setTimeout(()=>{
-        dispatch(reloadData(Symbol.Atom)); 
+        dispatch(connectAtomjs());
+        dispatch(reloadData(Symbol.Atom));  
       },1000)
       dispatch(reloadData(Symbol.Fis)); 
     } 
