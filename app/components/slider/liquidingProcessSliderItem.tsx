@@ -7,7 +7,8 @@ import doubt from "@images/doubt.svg"
 import StringUtil from '@util/stringUtil';
 import {SyncOutlined} from '@ant-design/icons';
 import {Tooltip} from 'antd';
-import {rSymbol} from '@keyring/defaults'
+import {rSymbol} from '@keyring/defaults';
+import config from '@config/index'
 import './liquidingProcessSliderItem.scss';
 
 type Props={
@@ -39,7 +40,7 @@ export default function Index(props:Props){
       {(props.data && props.data.packing==processStatus.failure) && <img src={failure}/>}
       {(props.data && props.data.packing==processStatus.loading) && <SyncOutlined type="spin" spin={true}/>}
     </div>}
-    {props.index!=3 && <div className="item">
+    {(props.index!=3 && props.rSymbol!==rSymbol.Atom) && <div className="item">
       <label>Finalizing...</label>
       {(props.data && props.data.finalizing==processStatus.success) && <img src={success}/>}
       {(props.data && props.data.finalizing==processStatus.failure) && <img src={failure}/>}
@@ -47,8 +48,7 @@ export default function Index(props:Props){
     </div>}
     {(props.data && props.data.checkTx) && <div className="item">
       <label>Check Tx 
-        {(props.index==1 && props.rSymbol==rSymbol.Dot) && <a target="_blank" href={`https://polkadot.subscan.io/extrinsic/${props.data.checkTx}`} className="address">{StringUtil.replacePkh(props.data.checkTx,6,60)}</a>}
-        {(props.index==1 && props.rSymbol==rSymbol.Ksm) && <a target="_blank" href={`https://kusama.subscan.io/extrinsic/${props.data.checkTx}`} className="address">{StringUtil.replacePkh(props.data.checkTx,6,60)}</a>}
+        {props.index==1 && <a target="_blank" href={config.txHashUrl(props.rSymbol,props.data.checkTx)} className="address">{StringUtil.replacePkh(props.data.checkTx,6,60)}</a>} 
         {props.index==2 && <a target="_blank" href={`https://stafi.subscan.io/extrinsic/${props.data.checkTx}`} className="address">{StringUtil.replacePkh(props.data.checkTx,6,60)}</a>}
         {/* ”https://kusama.subscan.io/extrinsic/" + txHash */}
         </label> 

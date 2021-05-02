@@ -28,8 +28,8 @@ export default function Index(props:any){
     dispatch(bondFees());
     dispatch(bondSwitch()); 
     if(getLocalStorageItem(Keys.AtomAccountKey) && getLocalStorageItem(Keys.FisAccountKey)){
-      setTimeout(()=>{
-        dispatch(connectAtomjs());
+      // dispatch(connectAtomjs());
+      setTimeout(()=>{ 
         dispatch(reloadData(Symbol.Atom));  
       },1000)
       dispatch(reloadData(Symbol.Fis)); 

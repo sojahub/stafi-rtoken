@@ -71,7 +71,7 @@ const rATOMClice = createSlice({
     },
     setAtomAccount(state, { payload }) { 
       if(payload){
-        setLocalStorageItem(Keys.AtomAccountKey, { address: payload.address})
+        setLocalStorageItem(Keys.AtomAccountKey, { address: payload.address,pubkey:payload.pubkey})
       }  
       state.atomAccount = payload;
     },
@@ -210,9 +210,9 @@ export const transfer = (amountparam: string, cb?: Function): AppThunk => async 
   const selectedPool =commonClice.getPool(amount, validPools, poolLimit);
   if (selectedPool == null) { 
     return;
-  } 
-   
+  }  
   try {
+    
     dispatch(setProcessSending({
       brocasting: processStatus.loading,
       packing: processStatus.default,
@@ -222,11 +222,14 @@ export const transfer = (amountparam: string, cb?: Function): AppThunk => async 
     dispatch(setProcessSlider(true));
     const sendTokens:any= await client.sendTokens(address, selectedPool.address, coins(amount, demon), memo);
     if(sendTokens.code==0){
+   
       const block = await client.getBlock(sendTokens.height);
+      const txHash=sendTokens.transactionHash;
+      const blockHash=block.id
       dispatch(setProcessSending({
         brocasting: processStatus.success,
         packing: processStatus.success,
-        checkTx: sendTokens.transactionHash
+        checkTx: txHash
       }));
    
       dispatch(reloadData());
@@ -234,15 +237,15 @@ export const transfer = (amountparam: string, cb?: Function): AppThunk => async 
       dispatch(setProcessParameter({
         sending: {
           amount: amountparam,
-          txHash: sendTokens.transactionHash,
-          blockHash: block.id,
+          txHash: txHash,
+          blockHash: blockHash,
           address,
           uuid:notice_uuid
         },
         staking: {
           amount: amountparam,
-          txHash: sendTokens.transactionHash,
-          blockHash: block.id,
+          txHash: txHash,
+          blockHash: blockHash,
           address,
           type: rSymbol.Atom,
           poolAddress: selectedPool.poolPubkey
@@ -253,7 +256,7 @@ export const transfer = (amountparam: string, cb?: Function): AppThunk => async 
       dispatch(add_ATOM_stake_Notice(notice_uuid,amountparam,noticeStatus.Pending,{
         process:getState().globalModule.process,
         processParameter:getState().rATOMModule.processParameter}))
-      block.id && dispatch(bound(address, sendTokens.transactionHash, block.id, amount, selectedPool.poolPubkey, rSymbol.Atom, (r: string) => {
+        blockHash && dispatch(bound(address, "0x"+txHash, "0x"+blockHash, amount, selectedPool.poolPubkey, rSymbol.Atom, (r: string) => {
         if(r=="loading"){
           dispatch(add_ATOM_stake_Notice(notice_uuid,amountparam,noticeStatus.Pending))
         }else{ 

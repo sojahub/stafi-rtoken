@@ -1,4 +1,5 @@
 
+import {rSymbol} from '@keyring/defaults'
 export const isdev=()=>{
   let host = window.location.host;
   var local =
@@ -124,6 +125,17 @@ export default {
       return  "umuon";
     } 
   },
-  rAtomAignature:"0x00"
+  rAtomAignature:"0x00",
+  txHashUrl:(type:rSymbol,txHash:string)=>{
+    if(type==rSymbol.Atom){
+      return isdev ? `https://gaia.bigdipper.live/transactions/${txHash}`:`https://cosmos.bigdipper.live/transactions/${txHash}`;
+    }else if(type==rSymbol.Dot){
+      return `https://polkadot.subscan.io/extrinsic/${txHash}`
+    }else if(type==rSymbol.Ksm){
+      return `https://kusama.subscan.io/extrinsic/${txHash}`
+    }else{
+      return ""
+    }
+  }
 } 
  

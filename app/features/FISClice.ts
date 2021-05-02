@@ -309,26 +309,21 @@ export const stakingSignature = async (address: any, txHash: string) => {
 }
 
 export const bound = (address: string, txhash: string, blockhash: string, amount: number, pooladdress: string, type: rSymbol, cb?: Function): AppThunk => async (dispatch, getState) => {
-  try{
-   
-
+  try{ 
     let fisAddress = getState().FISModule.fisAccount.address;
     const keyringInstance = keyring.init(Symbol.Fis);
     let signature ="";
     const stafiApi = await stafiServer.createStafiApi();
-    let pubkey ="";
-
-    let poolPubkey =  pooladdress;
-    console.log(getState().rATOMModule,"======    console.log(getState().rATOMModule)")
+    let pubkey =""; 
+    let poolPubkey =  pooladdress; 
     if(type==rSymbol.Atom){ 
       signature=config.rAtomAignature; 
-  
       pubkey=getState().rATOMModule.atomAccount.pubkey;
     }else{
       signature = await stakingSignature(address, u8aToHex(keyringInstance.decodeAddress(fisAddress)));
       pubkey = u8aToHex(keyringInstance.decodeAddress(address));
     }
-    console.log({poolPubkey,pubkey:pubkey,signature,fisAddress,address})
+     
 
     
     
@@ -337,6 +332,7 @@ export const bound = (address: string, txhash: string, blockhash: string, amount
     message.info("Signature succeeded, proceeding staking.");
     await timeout(5000);
     const injector = await web3FromSource(stafiServer.getPolkadotJsSource());
+
     const bondResult = await stafiApi.tx.rTokenSeries.liquidityBond(pubkey,
       signature,
       poolPubkey,
