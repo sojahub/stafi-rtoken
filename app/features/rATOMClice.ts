@@ -296,6 +296,14 @@ export const transfer = (amountparam: string, cb?: Function): AppThunk => async 
     console.log(sendTokens)
     
   } catch (error) { 
+    dispatch(setProcessParameter({
+      sending: {
+        amount: amountparam,
+        address,
+        uuid:notice_uuid
+      }, 
+      href: cb ? "/rATOM/staker/info" : null
+    }))
     dispatch(setProcessSending({
       brocasting: processStatus.failure,
       packing: processStatus.default
@@ -317,7 +325,8 @@ export const query_rBalances_account = (): AppThunk => async (dispatch, getState
 }
 
 export const reSending = (cb?: Function): AppThunk => async (dispatch, getState) => {
-  const processParameter = getState().rATOMModule.processParameter
+  const processParameter = getState().rATOMModule.processParameter;
+  console.log(processParameter)
   if (processParameter) {
     const href = processParameter.href;
     dispatch(transfer(processParameter.sending.amount, () => {
@@ -332,10 +341,10 @@ export const reStaking = (cb?: Function): AppThunk => async (dispatch, getState)
     const staking = processParameter.staking
     const href = processParameter.href
     processParameter && dispatch(bound(staking.address,
-      staking.txHash,
-      staking.blockHash,
+      "0x"+staking.txHash,
+      "0x"+staking.blockHash,
       NumberUtil.tokenAmountToChain(staking.amount,rSymbol.Atom),
-      staking.selectedPool.poolPubkey,
+      staking.poolAddress,
       staking.type,
       (r: string) => { 
         // if (r != "failure") { 
