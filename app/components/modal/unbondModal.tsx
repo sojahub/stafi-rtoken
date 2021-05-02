@@ -3,8 +3,9 @@ import {Modal,Tooltip} from 'antd';
 import A from '@shared/components/button/a';
 import doubt from "@images/doubt.svg"
 import Button from '@shared/components/button/button';
-import NumberUtil from '@util/numberUtil'
-
+import NumberUtil from '@util/numberUtil';
+import config from '@config/index'
+import {Symbol} from '@keyring/defaults'
 import './unbondModal.scss';
 
 type Props={
@@ -38,9 +39,9 @@ export default function Index(props:Props){
                         <img src={doubt} />
                     </Tooltip></div></div>
             <div className="row period">
-              {props.type=="rDOT" && `—Period: around 29 days`}
-              {props.type=="rKSM" && `—Period: around 8 days`}
-              {props.type=="rATOM" && `—Period: around 22 days`}
+              {props.type=="rDOT" && `—Period: around ${config.unboundAroundDays(Symbol.Dot)} days`}
+              {props.type=="rKSM" && `—Period: around ${config.unboundAroundDays(Symbol.Ksm)} days`}
+              {props.type=="rATOM" && `—Period: around ${config.unboundAroundDays(Symbol.Atom)} days`}
             <div className="doubt"><Tooltip overlayClassName="modal_doubt_overlay" placement="topLeft" title={"unbond period is deteminted by designated chain."}>
                         <img src={doubt} />
                     </Tooltip></div></div>

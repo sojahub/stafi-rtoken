@@ -1,11 +1,12 @@
 import { createSlice } from '@reduxjs/toolkit'; 
 import { AppThunk, RootState } from '../store';
+import config from '@config/index';
 import { setLocalStorageItem, getLocalStorageItem, removeLocalStorageItem, Keys } from '@util/common';
 import {setProcessParameter} from './rDOTClice';
 import {setProcessParameter as krmSetProcessParameter} from './rKSMClice';
 import {initProcess,setProcessSlider,setProcessSending,setProcessStaking,processStatus} from './globalClice';
-import {rTokenSeries_bondStates,getMinting} from './FISClice';
-import {rSymbol} from '@keyring/defaults'
+import {getMinting} from './FISClice';
+import {rSymbol,Symbol} from '@keyring/defaults'
 import moment from 'moment'; 
 import { message,Modal } from 'antd';
 export enum noticeStatus{
@@ -201,7 +202,7 @@ export const notice_text=(item:any)=>{
   if(item.subType==noticesubType.Stake){
     return `Staked ${item.amount} ${item.rSymbol.toUpperCase()} from your Wallet to StaFi Validator Pool Contract`
   }else if(item.subType==noticesubType.Unbond){
-    return `Unbond ${item.amount} ${item.rSymbol.toUpperCase()} from Pool Contract, it will be completed around ${moment(item.dateTime).add(8, 'days').format("MM.DD")}`
+    return `Unbond ${item.amount} ${item.rSymbol.toUpperCase()} from Pool Contract, it will be completed around ${moment(item.dateTime).add(config.unboundAroundDays(item.rSymbol), 'days').format("MM.DD")}`
   }else if(item.subType==noticesubType.Withdraw){
     return `Withdraw ${item.amount} ${item.rSymbol.toUpperCase()} from contracts to wallet`
   }else if(item.subType==noticesubType.Swap){

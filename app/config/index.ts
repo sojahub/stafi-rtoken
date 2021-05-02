@@ -1,5 +1,5 @@
 
-import {rSymbol} from '@keyring/defaults'
+import {rSymbol,Symbol} from '@keyring/defaults'
 export const isdev=()=>{
   let host = window.location.host;
   var local =
@@ -135,6 +135,19 @@ export default {
       return `https://kusama.subscan.io/extrinsic/${txHash}`
     }else{
       return ""
+    }
+  },
+  unboundAroundDays:(type:Symbol)=>{
+    if(type==Symbol.Dot){
+      return 29;
+    }else if(type==Symbol.Ksm){
+      return 8;
+    }else if(type==Symbol.Atom){
+      return 22;
+    }else if(type==Symbol.Fis){
+      return 29;
+    }else{
+      return 0
     }
   }
 } 

@@ -21,7 +21,7 @@ import {stafi_uuid} from '@util/common'
 import {addNoticeModal,noticesubType,noticeStatus,noticeType} from './noticeClice';
 import { u8aToHex } from '@polkadot/util' 
 import CommonClice from './commonClice'
- 
+import config from '@config/index'
 
 
 
@@ -424,7 +424,7 @@ export const unbond = (amount: string,recipient:string,willAmount:any, cb?: Func
     } 
     const keyringInstance = keyring.init(Symbol.Dot);
     
-    dispatch(fisUnbond(amount, rSymbol.Dot, u8aToHex(keyringInstance.decodeAddress(recipient)), selectedPool.poolPubkey,"Unbond succeeded, unbonding period is around 29 days", (r?:string) => {
+    dispatch(fisUnbond(amount, rSymbol.Dot, u8aToHex(keyringInstance.decodeAddress(recipient)), selectedPool.poolPubkey,"Unbond succeeded, unbonding period is around "+config.unboundAroundDays(Symbol.Dot)+" days", (r?:string) => {
       dispatch(reloadData()); 
       if(r != "Failed"){  
         dispatch(add_DOT_unbond_Notice(stafi_uuid(),willAmount,noticeStatus.Confirmed));

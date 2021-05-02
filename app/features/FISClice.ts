@@ -592,7 +592,7 @@ export const unbond=(amount:string,cb?:Function):AppThunk=>async (dispatch,getSt
     cb && cb();
     return;
   } 
-  fisUnbond(amount,rSymbol.Fis,recipient,selectedPool.poolPubkey,"Unbond successfully, you can withdraw your unbonded FIS 29 days later.",()=>{
+  fisUnbond(amount,rSymbol.Fis,recipient,selectedPool.poolPubkey,"Unbond successfully, you can withdraw your unbonded FIS "+config.unboundAroundDays(Symbol.Fis)+" days later.",()=>{
     dispatch(reloadData());
   }) 
 }

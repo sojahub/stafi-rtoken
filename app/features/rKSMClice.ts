@@ -6,7 +6,7 @@ import { message as M, message } from 'antd';
 import keyring from '@servers/index'; 
 import { setLocalStorageItem, getLocalStorageItem, removeLocalStorageItem, Keys } from '@util/common';
 import CommonClice from './commonClice'
-
+import config from '@config/index'
 import {rSymbol,Symbol} from '@keyring/defaults'
 import {
   processStatus, setProcessSlider, setProcessSending,initProcess,setLoading,setProcessType
@@ -425,7 +425,7 @@ export const unbond = (amount: string,recipient:string,willAmount:any, cb?: Func
     } 
     const keyringInstance = keyring.init(Symbol.Ksm);
     
-    dispatch(fisUnbond(amount, rSymbol.Ksm, u8aToHex(keyringInstance.decodeAddress(recipient)), selectedPool.poolPubkey,"Unbond succeeded, unbonding period is around 8 days", (r?:string) => {
+    dispatch(fisUnbond(amount, rSymbol.Ksm, u8aToHex(keyringInstance.decodeAddress(recipient)), selectedPool.poolPubkey,"Unbond succeeded, unbonding period is around "+config.unboundAroundDays(Symbol.Ksm)+" days", (r?:string) => {
       dispatch(reloadData()); 
       if(r != "Failed"){  
         dispatch(add_KSM_unbond_Notice(stafi_uuid(),willAmount,noticeStatus.Confirmed));

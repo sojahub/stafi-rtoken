@@ -374,7 +374,7 @@ export const unbond = (amount: string,recipient:string,willAmount:any, cb?: Func
     } 
     const keyringInstance = keyring.init(Symbol.Atom);
     
-    dispatch(fisUnbond(amount, rSymbol.Atom, u8aToHex(keyringInstance.decodeAddress(recipient)), selectedPool.poolPubkey,"Unbond succeeded, unbonding period is around 22 days", (r?:string) => {
+    dispatch(fisUnbond(amount, rSymbol.Atom, u8aToHex(keyringInstance.decodeAddress(recipient)), selectedPool.poolPubkey,"Unbond succeeded, unbonding period is around "+config.unboundAroundDays(Symbol.Atom)+" days", (r?:string) => {
       dispatch(reloadData()); 
       if(r != "Failed"){  
         dispatch(add_ATOM_unbond_Notice(stafi_uuid(),willAmount,noticeStatus.Confirmed));
