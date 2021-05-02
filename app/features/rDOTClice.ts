@@ -200,7 +200,7 @@ export const transfer = (amountparam: string, cb?: Function): AppThunk => async 
     return;
   } 
   
-  const ex =await dotApi.tx.balances.transferKeepAlive(selectedPool, amount.toString()); 
+  const ex =await dotApi.tx.balances.transferKeepAlive(selectedPool.address, amount.toString()); 
   
   let index=0;
   ex.signAndSend(address, { signer: injector.signer }, (result: any) => {
@@ -296,7 +296,7 @@ export const transfer = (amountparam: string, cb?: Function): AppThunk => async 
                   blockHash: asInBlock,
                   address,
                   type: rSymbol.Dot,
-                  poolAddress: selectedPool
+                  poolAddress: selectedPool.poolPubkey
                 }
               }))  
 
@@ -304,7 +304,7 @@ export const transfer = (amountparam: string, cb?: Function): AppThunk => async 
               dispatch(add_DOT_stake_Notice(notice_uuid,amountparam,noticeStatus.Pending,{
                 process:getState().globalModule.process,
                 processParameter:getState().rDOTModule.processParameter}))
-              asInBlock && dispatch(bound(address, tx, asInBlock, amount, selectedPool, rSymbol.Dot, (r: string) => {
+              asInBlock && dispatch(bound(address, tx, asInBlock, amount, selectedPool.poolPubkey, rSymbol.Dot, (r: string) => {
                 if(r=="loading"){
                   dispatch(add_DOT_stake_Notice(notice_uuid,amountparam,noticeStatus.Pending))
                 }else{ 
@@ -424,7 +424,7 @@ export const unbond = (amount: string,recipient:string,willAmount:any, cb?: Func
     } 
     const keyringInstance = keyring.init(Symbol.Dot);
     
-    dispatch(fisUnbond(amount, rSymbol.Dot, u8aToHex(keyringInstance.decodeAddress(recipient)), u8aToHex(keyringInstance.decodeAddress(selectedPool)),"Unbond succeeded, unbonding period is around 29 days", (r?:string) => {
+    dispatch(fisUnbond(amount, rSymbol.Dot, u8aToHex(keyringInstance.decodeAddress(recipient)), selectedPool.poolPubkey,"Unbond succeeded, unbonding period is around 29 days", (r?:string) => {
       dispatch(reloadData()); 
       if(r != "Failed"){  
         dispatch(add_DOT_unbond_Notice(stafi_uuid(),willAmount,noticeStatus.Confirmed));
@@ -540,10 +540,10 @@ export const getBlock = (blockHash: string, txHash: string, uuid?:string,cb?: Fu
               blockHash,
               address,
               type: rSymbol.Dot,
-              poolAddress: selectedPool
+              poolAddress: selectedPool.poolPubkey
             }
           }))
-          dispatch(bound(address, txHash, blockHash, amount, selectedPool, rSymbol.Dot, (r:string) => {
+          dispatch(bound(address, txHash, blockHash, amount, selectedPool.poolPubkey, rSymbol.Dot, (r:string) => {
             // dispatch(setStakeHash(null));
 
             if(r=="loading"){

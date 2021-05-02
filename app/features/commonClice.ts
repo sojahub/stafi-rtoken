@@ -53,6 +53,7 @@ export default class CommonClice{
             // dispatch(setValidPools());
             cb && cb({
               address: poolAddress,
+              poolPubkey:poolPubkey,
               active: active
             })
           }).catch((error: any) => { });
@@ -126,7 +127,7 @@ export default class CommonClice{
         }
       });
       if (data) {
-        return data.address
+        return data
       } else {
         message.error("There is no matching pool, please try again later.");
         return null;
@@ -140,7 +141,7 @@ export default class CommonClice{
         }
       });
       if (data) {
-        return data.address
+        return data
       } else {
         message.error("There is no matching pool, please try again later.");
         return null;

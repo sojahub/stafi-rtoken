@@ -72,7 +72,7 @@ const rATOMClice = createSlice({
     setAtomAccount(state, { payload }) { 
       if(payload){
         setLocalStorageItem(Keys.AtomAccountKey, { address: payload.address})
-      } 
+      }  
       state.atomAccount = payload;
     },
     setTransferrableAmountShow(state, { payload }) {
@@ -182,10 +182,11 @@ const queryBalance = async (account: any, dispatch: any, getState: any) => {
       const balanace=balances.find(item=>{
         return item.denom==config.rAtomDenom();
       });
-      account2.balance=balanace?balanace.amount:0; 
+      account2.balance=balanace? NumberUtil.tokenAmountToHuman(balanace.amount,rSymbol.Atom):0; 
   }else{
-    account2.balance=0;
+    account2.balance=0; 
   } 
+  account2.balance=NumberUtil.handleFisAmountToFixed(account2.balance);
   dispatch(setTransferrableAmountShow(account2.balance));
   dispatch(setAtomAccount(account2)); 
   dispatch(setAtomAccounts(account2));  
@@ -206,9 +207,10 @@ export const transfer = (amountparam: string, cb?: Function): AppThunk => async 
   if (selectedPool == null) { 
     return;
   } 
-  const sendTokens= await client.sendTokens(currentAddress, selectedPool, coins(amount, demon), memo);
+   
+  const sendTokens= await client.sendTokens(currentAddress, selectedPool.address, coins(amount, demon), memo);
 
-  console.log(sendTokens);
+  console.log(sendTokens,"======sendTokenssendTokens");
   // const processParameter=getState().rATOMModule.processParameter;
   // const notice_uuid=(processParameter && processParameter.uuid) || stafi_uuid(); 
 
@@ -378,7 +380,7 @@ export const query_rBalances_account = (): AppThunk => async (dispatch, getState
     if (data == null) {
       dispatch(setTokenAmount(NumberUtil.handleFisAmountToFixed(0)))
     } else {
-      dispatch(setTokenAmount(NumberUtil.fisAmountToHuman(data.free)))
+      dispatch(setTokenAmount(NumberUtil.tokenAmountToHuman(data.free,rSymbol.Atom)))
     }
   })
 }
@@ -401,8 +403,8 @@ export const reStaking = (cb?: Function): AppThunk => async (dispatch, getState)
     processParameter && dispatch(bound(staking.address,
       staking.txHash,
       staking.blockHash,
-      NumberUtil.fisAmountToChain(staking.amount),
-      staking.poolAddress,
+      NumberUtil.tokenAmountToChain(staking.amount,rSymbol.Atom),
+      staking.selectedPool.poolPubkey,
       staking.type,
       (r: string) => { 
         // if (r != "failure") { 
@@ -441,7 +443,7 @@ export const unbond = (amount: string,recipient:string,willAmount:any, cb?: Func
     } 
     const keyringInstance = keyring.init(Symbol.Atom);
     
-    dispatch(fisUnbond(amount, rSymbol.Atom, u8aToHex(keyringInstance.decodeAddress(recipient)), u8aToHex(keyringInstance.decodeAddress(selectedPool)),"Unbond succeeded, unbonding period is around 8 days", (r?:string) => {
+    dispatch(fisUnbond(amount, rSymbol.Atom, u8aToHex(keyringInstance.decodeAddress(recipient)), selectedPool.poolPubkey,"Unbond succeeded, unbonding period is around 8 days", (r?:string) => {
       dispatch(reloadData()); 
       if(r != "Failed"){  
         dispatch(add_ATOM_unbond_Notice(stafi_uuid(),willAmount,noticeStatus.Confirmed));
@@ -561,29 +563,29 @@ export const getBlock = (blockHash: string, txHash: string, uuid?:string,cb?: Fu
           dispatch(setProcessSlider(true));
           dispatch(setProcessParameter({
             staking: {
-              amount: NumberUtil.fisAmountToHuman(amount),
+              amount: NumberUtil.tokenAmountToHuman(amount,rSymbol.Atom),
               txHash,
               blockHash,
               address,
               type: rSymbol.Atom,
-              poolAddress: selectedPool
+              poolAddress: selectedPool.address
             }
           }))
-          dispatch(bound(address, txHash, blockHash, amount, selectedPool, rSymbol.Atom, (r:string) => {
+          dispatch(bound(address, txHash, blockHash, amount, selectedPool.address, rSymbol.Atom, (r:string) => {
             // dispatch(setStakeHash(null));
 
             if(r=="loading"){
-              uuid && dispatch(add_ATOM_stake_Notice(uuid,NumberUtil.fisAmountToHuman(amount).toString(),noticeStatus.Pending))
+              uuid && dispatch(add_ATOM_stake_Notice(uuid,NumberUtil.tokenAmountToHuman(amount,rSymbol.Atom).toString(),noticeStatus.Pending))
             }else{ 
               dispatch(setStakeHash(null));
             }
 
             if(r == "failure"){
-              uuid && dispatch(add_ATOM_stake_Notice(uuid,NumberUtil.fisAmountToHuman(amount).toString(),noticeStatus.Error)
+              uuid && dispatch(add_ATOM_stake_Notice(uuid,NumberUtil.tokenAmountToHuman(amount,rSymbol.Atom).toString(),noticeStatus.Error)
               );
             }
             if(r=="successful"){
-                uuid && dispatch(add_ATOM_stake_Notice(uuid,NumberUtil.fisAmountToHuman(amount).toString(),noticeStatus.Confirmed));
+                uuid && dispatch(add_ATOM_stake_Notice(uuid,NumberUtil.tokenAmountToHuman(amount,rSymbol.Atom).toString(),noticeStatus.Confirmed));
                 cb && cb(); 
             } 
           }));

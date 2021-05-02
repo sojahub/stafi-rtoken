@@ -4,7 +4,8 @@ import PolkadotServer from '@servers/polkadot/index';
 import AtomServer from '@servers/atom/index'
 import {message} from 'antd';   
 import keyring from '@servers/index';
-import {rSymbol, Symbol} from '@keyring/defaults'; 
+import {rSymbol, Symbol} from '@keyring/defaults';
+import { u8aToHex } from '@polkadot/util'; 
 import { createSubstrate as dotCreateSubstrate,reloadData as dotReloadData } from './rDOTClice';
 import { createSubstrate as fisCreateSubstrate,reloadData as fisReloadData } from './FISClice';
 import { createSubstrate as ksmCreateSubstrate,reloadData as ksmReloadData } from './rKSMClice';
@@ -127,22 +128,14 @@ export const connectPolkadotjs = (type:Symbol,cb?:Function): AppThunk=>async (di
 
 export const connectAtomjs=(cb?:Function):AppThunk=>async (dispatch, getState)=>{ 
   await atomServer.connectAtomjs();
-  const accounts=await atomServer.getAccounts(); 
-  const dotKeyringInstance=keyring.init(Symbol.Atom);
-  // const accountsList=accounts.map((element:any)=>{  
-    const address= dotKeyringInstance.encodeAddress(dotKeyringInstance.decodeAddress(accounts.bech32Address)); 
-    console.log(accounts,address,"+++")
-    const account= {  
-      name: accounts.name,
-      address: address,
-      balance: '--'
-    }
-  // })  
-  // console.log(accounts,"=======accountsList")
-  // accountsList.forEach((account:any) => {    
-    dispatch(clice(Symbol.Atom).createSubstrate(account));
-  // });
-  console.log(accounts,"=========accounts")
+  const accounts=await atomServer.getAccounts();   
+  const account= {  
+    name: accounts.name,
+    address: accounts.bech32Address,
+    pubkey:u8aToHex(accounts.pubKey),
+    balance: '--'
+  }   
+  dispatch(clice(Symbol.Atom).createSubstrate(account)); 
   cb && cb();
 }
 export const reloadData = (type:Symbol,cb?:Function): AppThunk=>async (dispatch, getState)=>{ 

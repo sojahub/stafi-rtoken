@@ -123,6 +123,7 @@ export default {
     }else{
       return  "umuon";
     } 
-  }
+  },
+  rAtomAignature:"0x00"
 } 
  

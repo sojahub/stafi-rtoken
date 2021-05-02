@@ -8,6 +8,7 @@ import {
   setProcessMinting, gSetTimeOut, gClearTimeOut,
   initProcess, process,setLoading,setProcessType
 } from './globalClice';
+import config from '@config/index'
 import {
   web3Enable,
   web3FromSource,
@@ -185,7 +186,7 @@ export const transfer = (amountparam: string, cb?: Function): AppThunk => async 
   if (selectedPool == null) { 
     return;
   }
-  const ex = stafiApi.tx.balances.transferKeepAlive(selectedPool, amount);
+  const ex = stafiApi.tx.balances.transferKeepAlive(selectedPool.address, amount);
 
 
 
@@ -256,10 +257,10 @@ export const transfer = (amountparam: string, cb?: Function): AppThunk => async 
                   blockHash: asInBlock,
                   address,
                   type: rSymbol.Fis,
-                  poolAddress: selectedPool
+                  selectedPool: selectedPool.poolPubkey
                 }
               }))
-              asInBlock && dispatch(bound(address, tx, asInBlock, amount, selectedPool, rSymbol.Fis, (r: any) => {
+              asInBlock && dispatch(bound(address, tx, asInBlock, amount, selectedPool.poolPubkey, rSymbol.Fis, (r: any) => {
                 dispatch(setStakeHash(null));
                 if (r != "failure") {
                   cb && cb();
@@ -307,17 +308,23 @@ export const stakingSignature = async (address: any, txHash: string) => {
   return signature
 }
 
-export const bound = (address: string, txhash: string, blockhash: string, amount: number, pooladdress: string, type: number, cb?: Function): AppThunk => async (dispatch, getState) => {
+export const bound = (address: string, txhash: string, blockhash: string, amount: number, pooladdress: string, type: rSymbol, cb?: Function): AppThunk => async (dispatch, getState) => {
   try{
    
 
     let fisAddress = getState().FISModule.fisAccount.address;
     const keyringInstance = keyring.init(Symbol.Fis);
-    const signature = await stakingSignature(address, u8aToHex(keyringInstance.decodeAddress(fisAddress)));
+    let signature = await stakingSignature(address, u8aToHex(keyringInstance.decodeAddress(fisAddress)));
     const stafiApi = await stafiServer.createStafiApi();
     let pubkey = u8aToHex(keyringInstance.decodeAddress(address));
-    let poolPubkey = u8aToHex(keyringInstance.decodeAddress(pooladdress));
-      
+
+    let poolPubkey =  pooladdress;
+    if(type==rSymbol.Atom){ 
+      signature=config.rAtomAignature; 
+      pubkey=getState().rATOMModule.atomAccount.pubkey;
+    }
+
+    
     
     web3Enable(stafiServer.getWeb3EnalbeName());
 
@@ -493,10 +500,10 @@ export const getBlock = (blockHash: string, txHash: string, cb?: Function): AppT
               blockHash,
               address,
               type: rSymbol.Fis,
-              poolAddress: selectedPool
+              poolAddress: selectedPool.poolPubkey
             }
           })) 
-          bound(address, txHash, blockHash, amount, selectedPool, 0);
+          bound(address, txHash, blockHash, amount, selectedPool.poolPubkey, 0);
         }
       }
     });
@@ -583,7 +590,7 @@ export const unbond=(amount:string,cb?:Function):AppThunk=>async (dispatch,getSt
     cb && cb();
     return;
   } 
-  fisUnbond(amount,rSymbol.Fis,recipient,selectedPool,"Unbond successfully, you can withdraw your unbonded FIS 29 days later.",()=>{
+  fisUnbond(amount,rSymbol.Fis,recipient,selectedPool.poolPubkey,"Unbond successfully, you can withdraw your unbonded FIS 29 days later.",()=>{
     dispatch(reloadData());
   }) 
 }
