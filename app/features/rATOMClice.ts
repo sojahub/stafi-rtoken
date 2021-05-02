@@ -256,7 +256,7 @@ export const transfer = (amountparam: string, cb?: Function): AppThunk => async 
       dispatch(add_ATOM_stake_Notice(notice_uuid,amountparam,noticeStatus.Pending,{
         process:getState().globalModule.process,
         processParameter:getState().rATOMModule.processParameter}))
-        blockHash && dispatch(bound(address, "0x"+txHash, "0x"+blockHash, amount, selectedPool.poolPubkey, rSymbol.Atom, (r: string) => {
+      blockHash && dispatch(bound(address, "0x"+txHash, "0x"+blockHash, amount, selectedPool.poolPubkey, rSymbol.Atom, (r: string) => {
         if(r=="loading"){
           dispatch(add_ATOM_stake_Notice(notice_uuid,amountparam,noticeStatus.Pending))
         }else{ 

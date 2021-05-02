@@ -392,7 +392,7 @@ export const bound = (address: string, txhash: string, blockhash: string, amount
                     packing: processStatus.success,
                     finalizing: processStatus.loading,
                   })); 
-                  // cb && cb("loading");
+                  cb && cb("loading");
                   dispatch(getMinting(type, txhash, blockhash, cb));
                   // dispatch(gSetTimeOut(() => {
                   //   dispatch(setProcessStaking({
