@@ -40,7 +40,7 @@ export default function Index(props:Props){
       {(props.data && props.data.packing==processStatus.failure) && <img src={failure}/>}
       {(props.data && props.data.packing==processStatus.loading) && <SyncOutlined type="spin" spin={true}/>}
     </div>}
-    {(props.index!=3 && props.rSymbol!==rSymbol.Atom) && <div className="item">
+    {(props.index==2 || (props.index==1 && props.rSymbol!==rSymbol.Atom)) && <div className="item">
       <label>Finalizing...</label>
       {(props.data && props.data.finalizing==processStatus.success) && <img src={success}/>}
       {(props.data && props.data.finalizing==processStatus.failure) && <img src={failure}/>}

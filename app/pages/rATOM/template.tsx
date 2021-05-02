@@ -5,8 +5,8 @@ import Content from '@shared/components/content';
 import {renderRoutes}  from 'react-router-config';
 import {getLocalStorageItem,Keys} from '@util/common'; 
 import {Symbol} from '@keyring/defaults'
-import {fetchStafiStakerApr,reloadData,connectAtomjs} from '@features/globalClice';
-import {continueProcess,getPools,bondFees,getTotalIssuance} from '@features/rATOMClice'
+import {fetchStafiStakerApr,reloadData,connectAtomjs,keplr_keystorechange} from '@features/globalClice';
+import {continueProcess,getPools,bondFees,getTotalIssuance,query_rBalances_account} from '@features/rATOMClice'
 import {bondSwitch} from '@features/FISClice'; 
 import '../template/index.scss'
 export default function Index(props:any){
@@ -20,17 +20,17 @@ export default function Index(props:any){
   })
 
   useEffect(()=>{
-    dispatch(getTotalIssuance());
-    
+    dispatch(getTotalIssuance()); 
+    dispatch(query_rBalances_account());
+   
   },[fisAccount,atomAccount])
   useEffect(()=>{ 
     dispatch(fetchStafiStakerApr()); 
     dispatch(bondFees());
     dispatch(bondSwitch()); 
     if(getLocalStorageItem(Keys.AtomAccountKey) && getLocalStorageItem(Keys.FisAccountKey)){
-      // dispatch(connectAtomjs());
       setTimeout(()=>{ 
-        dispatch(reloadData(Symbol.Atom));  
+        dispatch(connectAtomjs()); 
       },1000)
       dispatch(reloadData(Symbol.Fis)); 
     } 
@@ -39,6 +39,9 @@ export default function Index(props:any){
         dispatch(continueProcess());
       },20)
     }));
+    setTimeout(()=>{
+      dispatch(keplr_keystorechange()); 
+    },500)
   },[]) 
   const {loading} =useSelector((state:any)=>{
     return {

@@ -125,6 +125,11 @@ export const connectPolkadotjs = (type:Symbol,cb?:Function): AppThunk=>async (di
   cb && cb();
  }
 }
+export const keplr_keystorechange=(cb?:Function):AppThunk=>async (dispatch, getState)=>{ 
+  window.addEventListener("keplr_keystorechange", () => {
+    dispatch(connectAtomjs());
+  })
+}
 
 export const connectAtomjs=(cb?:Function):AppThunk=>async (dispatch, getState)=>{ 
   await atomServer.connectAtomjs();

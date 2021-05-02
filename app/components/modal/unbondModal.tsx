@@ -40,7 +40,7 @@ export default function Index(props:Props){
             <div className="row period">
               {props.type=="rDOT" && `—Period: around 29 days`}
               {props.type=="rKSM" && `—Period: around 8 days`}
-              {props.type=="rATOM" && `—Period: around 8 days`}
+              {props.type=="rATOM" && `—Period: around 22 days`}
             <div className="doubt"><Tooltip overlayClassName="modal_doubt_overlay" placement="topLeft" title={"unbond period is deteminted by designated chain."}>
                         <img src={doubt} />
                     </Tooltip></div></div>
