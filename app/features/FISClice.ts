@@ -318,19 +318,19 @@ export const bound = (address: string, txhash: string, blockhash: string, amount
     let poolPubkey =  pooladdress; 
     if(type==rSymbol.Atom){ 
       signature=config.rAtomAignature; 
-      pubkey=getState().rATOMModule.atomAccount.pubkey;
+      pubkey = getState().rATOMModule.atomAccount.pubkey;
+      
+      message.info("Sending succeeded, proceeding staking.");
     }else{
       signature = await stakingSignature(address, u8aToHex(keyringInstance.decodeAddress(fisAddress)));
       pubkey = u8aToHex(keyringInstance.decodeAddress(address));
+
+      message.info("Signature succeeded, proceeding staking.");
     }
-     
-
     
-    
-    web3Enable(stafiServer.getWeb3EnalbeName());
-
-    message.info("Signature succeeded, proceeding staking.");
     await timeout(5000);
+
+    web3Enable(stafiServer.getWeb3EnalbeName());
     const injector = await web3FromSource(stafiServer.getPolkadotJsSource());
 
     const bondResult = await stafiApi.tx.rTokenSeries.liquidityBond(pubkey,
