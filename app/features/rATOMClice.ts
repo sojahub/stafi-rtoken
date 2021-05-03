@@ -293,7 +293,6 @@ export const transfer = (amountparam: string, cb?: Function): AppThunk => async 
         processParameter:getState().rATOMModule.processParameter}));
  
     }
-    console.log(sendTokens)
     
   } catch (error) { 
     dispatch(setProcessParameter({
@@ -326,7 +325,6 @@ export const query_rBalances_account = (): AppThunk => async (dispatch, getState
 
 export const reSending = (cb?: Function): AppThunk => async (dispatch, getState) => {
   const processParameter = getState().rATOMModule.processParameter;
-  console.log(processParameter)
   if (processParameter) {
     const href = processParameter.href;
     dispatch(transfer(processParameter.sending.amount, () => {
