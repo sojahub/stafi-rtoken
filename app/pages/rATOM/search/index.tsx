@@ -5,7 +5,7 @@ import Input from '@shared/components/input/index';
 import Button from '@shared/components/button/button';
 import Select,{Option} from '@shared/components/select';
 import leftArrowSvg from '@images/left_arrow.svg';
-import {getBlock,onProceed} from '@features/rATOMClice'
+import {onProceed} from '@features/rATOMClice'
 import './index.scss';
 export default function Index(props:any){
   const [form] = Form.useForm();
@@ -15,11 +15,11 @@ export default function Index(props:any){
       message.error("Please enter txhash");
       return;
     }
-    if(!values.blockHash){
-      message.error("Please enter blockHash");
-      return;
-    }
-    dispatch(onProceed(values.blockHash,values.txHash,()=>{
+    // if(!values.blockHash){
+    //   message.error("Please enter blockHash");
+    //   return;
+    // }
+    dispatch(onProceed(values.txHash,()=>{
       props.history.push("/rATOM/staker/info");
     })) 
   };
@@ -47,9 +47,9 @@ export default function Index(props:any){
         <Form.Item label={<div className="item_title"><label>TxHash</label><a>How to get TxHash</a></div>} name="txHash">
           <Input placeholder="" />
         </Form.Item> 
-        <Form.Item label={<div className="item_title"><label>BlockHash</label><a>How to get BlockHash</a></div>} name="blockHash">
+        {/* <Form.Item label={<div className="item_title"><label>BlockHash</label><a>How to get BlockHash</a></div>} name="blockHash">
           <Input placeholder="" />
-        </Form.Item> 
+        </Form.Item>  */}
         <div className="btns">
           <Button btnType="square" htmlType="submit">Proceed</Button>
         </div> 

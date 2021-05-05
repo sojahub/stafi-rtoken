@@ -17,7 +17,8 @@ const vendors = [
   '@polkadot/keyring',
   'web3',
   'web3-utils',
-  '@cosmjs/stargate'
+  '@cosmjs/stargate',
+  '@cosmjs/proto-signing'
 ];
 
 module.exports = {

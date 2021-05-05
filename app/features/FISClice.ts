@@ -319,6 +319,8 @@ export const bound = (address: string, txhash: string, blockhash: string, amount
     if(type==rSymbol.Atom){ 
       signature=config.rAtomAignature; 
       pubkey = getState().rATOMModule.atomAccount.pubkey;
+      txhash = "0x" + txhash;
+      blockhash = "0x" + blockhash;
       
       message.info("Sending succeeded, proceeding staking.");
     }else{

@@ -1,19 +1,9 @@
-import {
-  web3Accounts,
-  web3Enable
-} from '@polkadot/extension-dapp';
-import { ApiPromise, WsProvider } from '@polkadot/api';
 import config,{isdev} from '@config/index'; 
 import {CosmosKeyring} from '@keyring/CosmosKeyring';
-import { SigningStargateClient, coins } from '@cosmjs/stargate';
-import {
-    makeAuthInfoBytes,
-    makeSignDoc,
-    makeSignBytes
-} from "@cosmjs/proto-signing";
+import { SigningStargateClient } from '@cosmjs/stargate';
 import { message } from 'antd';
 declare const window: any;
-let polkadotApi:any = null; 
+let cosmosApi:any = null; 
 
 export default class ExtensionDapp extends CosmosKeyring{
   constructor() {
@@ -119,8 +109,12 @@ export default class ExtensionDapp extends CosmosKeyring{
     return await window.keplr.getKey(config.rAtomChainId()); 
   }
   createApi() {
+    if (cosmosApi) {
+      return cosmosApi;
+    }
     const offlineSigner = window.getOfflineSigner(config.rAtomChainId());
-    return SigningStargateClient.connectWithSigner(config.rAtomCosmosChainRpc(), offlineSigner);
+    cosmosApi = SigningStargateClient.connectWithSigner(config.rAtomCosmosChainRpc(), offlineSigner);
+    return cosmosApi;
   }
   getTokenAddress() {
     return config.rATOMTokenAddress();

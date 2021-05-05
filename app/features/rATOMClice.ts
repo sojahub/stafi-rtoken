@@ -1,36 +1,29 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { AppThunk, RootState } from '../store';
+import { AppThunk } from '../store';
 import AtomServer from '@servers/atom/index';
-import PolkadotServer from '@servers/polkadot';
 import Stafi from '@servers/stafi/index';
-import { message as M, message } from 'antd';
+import { message } from 'antd';
 import keyring from '@servers/index'; 
 import { setLocalStorageItem, getLocalStorageItem, removeLocalStorageItem, Keys } from '@util/common';
 import CommonClice from './commonClice'
-
 import {rSymbol,Symbol} from '@keyring/defaults'
 import {
   processStatus, setProcessSlider, setProcessSending,initProcess,setLoading,setProcessType
 } from './globalClice';
 import {add_Notice} from './noticeClice'
-import {
-  web3Enable,
-  web3FromSource,
-} from '@polkadot/extension-dapp';
 import NumberUtil from '@util/numberUtil';
 import { bound, fisUnbond ,rTokenSeries_bondStates} from './FISClice';
 import {stafi_uuid} from '@util/common'
 import {findUuid,noticesubType,noticeStatus,noticeType} from './noticeClice';
 import { u8aToHex } from '@polkadot/util';
 import config,{isdev} from '@config/index';
-import { SigningStargateClient, coins } from '@cosmjs/stargate'; 
+import { coins } from '@cosmjs/stargate'; 
 import {
-    makeAuthInfoBytes,
-    makeSignDoc,
-    makeSignBytes
+  decodeTxRaw
 } from "@cosmjs/proto-signing";
+import _m0 from "protobufjs/minimal";
+
 const commonClice=new CommonClice();
-declare const window: any;
 
 const rATOMClice = createSlice({
   name: 'rATOMModule',
@@ -136,7 +129,6 @@ const rATOMClice = createSlice({
   },
 });
 const atomServer = new AtomServer();
-const polkadotServer = new PolkadotServer();
 const stafiServer = new Stafi();
 export const { setAtomAccounts,
   setAtomAccount,
@@ -179,7 +171,7 @@ const queryBalance = async (account: any, dispatch: any, getState: any) => {
    let balances = await client.getAllBalances(account2.address);
  
   if(balances.length>0){ 
-      const balanace=balances.find(item=>{
+      const balanace=balances.find((item: any) => {
         return item.denom==config.rAtomDenom();
       });
       account2.balance=balanace? NumberUtil.tokenAmountToHuman(balanace.amount,rSymbol.Atom):0; 
@@ -256,7 +248,7 @@ export const transfer = (amountparam: string, cb?: Function): AppThunk => async 
       dispatch(add_ATOM_stake_Notice(notice_uuid,amountparam,noticeStatus.Pending,{
         process:getState().globalModule.process,
         processParameter:getState().rATOMModule.processParameter}))
-      blockHash && dispatch(bound(address, "0x"+txHash, "0x"+blockHash, amount, selectedPool.poolPubkey, rSymbol.Atom, (r: string) => {
+      blockHash && dispatch(bound(address, txHash, blockHash, amount, selectedPool.poolPubkey, rSymbol.Atom, (r: string) => {
         if(r=="loading"){
           dispatch(add_ATOM_stake_Notice(notice_uuid,amountparam,noticeStatus.Pending))
         }else{ 
@@ -339,8 +331,8 @@ export const reStaking = (cb?: Function): AppThunk => async (dispatch, getState)
     const staking = processParameter.staking
     const href = processParameter.href
     processParameter && dispatch(bound(staking.address,
-      "0x"+staking.txHash,
-      "0x"+staking.blockHash,
+      staking.txHash,
+      staking.blockHash,
       NumberUtil.tokenAmountToChain(staking.amount,rSymbol.Atom),
       staking.poolAddress,
       staking.type,
@@ -417,8 +409,23 @@ export const continueProcess = (): AppThunk => async (dispatch, getState) => {
   }
 }
 
-export const onProceed=(blockHash: string, txHash: string,cb?:Function):AppThunk => async (dispatch,getstate)=>{
-  const noticeData=findUuid(getstate().noticeModule.noticeData,txHash,blockHash)
+export const onProceed = (txHash: string, cb?: Function): AppThunk => async (dispatch, getstate) => {
+  const client = await atomServer.createApi(); 
+  let indexedTx = null;
+  try {
+    indexedTx = await client.getTx(txHash);
+  } catch (error) {
+    message.error("Please input the right TxHash");
+    return;
+  }
+  if (!indexedTx) {
+    message.error("Please input the right TxHash");
+    return;
+  }
+  const block = await client.getBlock(indexedTx.height);
+  const blockHash = block.id;
+  
+  const noticeData = findUuid(getstate().noticeModule.noticeData,txHash,blockHash)
   
   let bondSuccessParamArr:any[] = [];
   bondSuccessParamArr.push(blockHash);
@@ -461,82 +468,160 @@ export const onProceed=(blockHash: string, txHash: string,cb?:Function):AppThunk
   }));
 }
 
-export const getBlock = (blockHash: string, txHash: string, uuid?:string,cb?: Function): AppThunk => async (dispatch, getState) => {
+export const getBlock = (blockHash: string, txHash: string, uuid?:string, cb?: Function): AppThunk => async (dispatch, getState) => {
   try {
-    const api = await polkadotServer.createPolkadotApi();
     const address = getState().rATOMModule.atomAccount.address;
     const validPools = getState().rATOMModule.validPools;
     const poolLimit = getState().rATOMModule.poolLimit;
-    const result = await api.rpc.chain.getBlock(blockHash);
-    let u = false;
-    result.block.extrinsics.forEach((ex: any) => { 
-      if (ex.hash.toHex() == txHash) {
-        const { method: { args, method, section } } = ex;
-        if (section == 'balances' && (method == 'transfer' || method == 'transferKeepAlive')) {
-          u = true;
-          let amount = args[1].toJSON();
 
-
-          let selectedPool =commonClice.getPool(amount, validPools, poolLimit);
-          if (selectedPool == null) {
-            // message.error("There is no matching pool, please try again later.");
-            return;
-          } 
-          dispatch(initProcess({
-            sending: {
-              packing: processStatus.success,
-              brocasting: processStatus.success,
-              finalizing: processStatus.success,
-              checkTx:txHash
-            },
-            staking: {
-              packing: processStatus.default,
-              brocasting: processStatus.default,
-              finalizing: processStatus.default,
-            },
-            minting:{
-              minting:processStatus.default
-            }
-          }))
-          dispatch(setProcessSlider(true));
-          dispatch(setProcessParameter({
-            staking: {
-              amount: NumberUtil.tokenAmountToHuman(amount,rSymbol.Atom),
-              txHash,
-              blockHash,
-              address,
-              type: rSymbol.Atom,
-              poolAddress: selectedPool.address
-            }
-          }))
-          dispatch(bound(address, txHash, blockHash, amount, selectedPool.address, rSymbol.Atom, (r:string) => {
-            // dispatch(setStakeHash(null));
-
-            if(r=="loading"){
-              uuid && dispatch(add_ATOM_stake_Notice(uuid,NumberUtil.tokenAmountToHuman(amount,rSymbol.Atom).toString(),noticeStatus.Pending))
-            }else{ 
-              dispatch(setStakeHash(null));
-            }
-
-            if(r == "failure"){
-              uuid && dispatch(add_ATOM_stake_Notice(uuid,NumberUtil.tokenAmountToHuman(amount,rSymbol.Atom).toString(),noticeStatus.Error)
-              );
-            }
-            if(r=="successful"){
-                uuid && dispatch(add_ATOM_stake_Notice(uuid,NumberUtil.tokenAmountToHuman(amount,rSymbol.Atom).toString(),noticeStatus.Confirmed));
-                cb && cb(); 
-            } 
-          }));
+    const client = await atomServer.createApi(); 
+    const indexedTx = await client.getTx(txHash);
+    if (!indexedTx) {
+      message.error("Please input the right TxHash");
+      return;
+    }
+    const decodeTx = decodeTxRaw(indexedTx.tx);
+    let messageValue: MsgSend = null;
+    if (decodeTx.body && decodeTx.body.messages) {
+      decodeTx.body.messages.forEach(message => {
+        if (message.typeUrl.indexOf("MsgSend") != -1) {
+          messageValue = decodeMessageValue(message.value);
         }
+      });
+    }
+    if (!messageValue) {
+      message.error("Something is wrong. Please Check your TxHash");
+      return;
+    }
+
+    const denom = config.rAtomDenom(); 
+    let amount = 0;
+    messageValue.amount.forEach(item => {
+      if (item.denom == denom) {
+        amount = Number(item.amount);
       }
     });
-
-    if (!u) {
-      message.error("No results were found");
+    if (amount <= 0) {
+      message.error("Wrong amount. Please Check your TxHash");
+      return;
     }
+
+    let selectedPool = commonClice.getPool(amount, validPools, poolLimit);
+    if (selectedPool == null) {
+      // message.error("There is no matching pool, please try again later.");
+      return;
+    }
+
+    dispatch(initProcess({
+      sending: {
+        packing: processStatus.success,
+        brocasting: processStatus.success,
+        finalizing: processStatus.success,
+        checkTx:txHash
+      },
+      staking: {
+        packing: processStatus.default,
+        brocasting: processStatus.default,
+        finalizing: processStatus.default,
+      },
+      minting:{
+        minting:processStatus.default
+      }
+    }))
+    dispatch(setProcessSlider(true));
+    dispatch(setProcessParameter({
+      staking: {
+        amount: NumberUtil.tokenAmountToHuman(amount, rSymbol.Atom),
+        txHash,
+        blockHash,
+        address,
+        type: rSymbol.Atom,
+        poolAddress: selectedPool.address
+      }
+    }))
+    dispatch(bound(address, txHash, blockHash, amount, selectedPool.poolPubkey, rSymbol.Atom, (r:string) => {
+      // dispatch(setStakeHash(null));
+
+      if(r=="loading"){
+        uuid && dispatch(add_ATOM_stake_Notice(uuid,NumberUtil.tokenAmountToHuman(amount,rSymbol.Atom).toString(),noticeStatus.Pending))
+      }else{ 
+        dispatch(setStakeHash(null));
+      }
+
+      if(r == "failure"){
+        uuid && dispatch(add_ATOM_stake_Notice(uuid,NumberUtil.tokenAmountToHuman(amount,rSymbol.Atom).toString(),noticeStatus.Error)
+        );
+      }
+      if(r=="successful"){
+          uuid && dispatch(add_ATOM_stake_Notice(uuid,NumberUtil.tokenAmountToHuman(amount,rSymbol.Atom).toString(),noticeStatus.Confirmed));
+          cb && cb(); 
+      } 
+    }));
+
   } catch (e) {
     message.error(e.message)
   }
+}
+
+export interface MsgSend {
+  fromAddress: string;
+  toAddress: string;
+  amount: Coin[];
+}
+
+export interface Coin {
+  denom: string;
+  amount: string;
+}
+
+const baseMsgSend: object = { fromAddress: "", toAddress: "" };
+
+export const decodeMessageValue = (input: _m0.Reader | Uint8Array, length?: number): MsgSend => {
+  const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+  let end = length === undefined ? reader.len : reader.pos + length;
+  const message = { ...baseMsgSend } as MsgSend;
+  message.amount = [];
+  while (reader.pos < end) {
+    const tag = reader.uint32();
+    switch (tag >>> 3) {
+      case 1:
+        message.fromAddress = reader.string();
+        break;
+      case 2:
+        message.toAddress = reader.string();
+        break;
+      case 3:
+        message.amount.push(decodeCoin(reader, reader.uint32()));
+        break;
+      default:
+        reader.skipType(tag & 7);
+        break;
+    }
+  }
+  return message;
+}
+
+const baseCoin: object = { denom: "", amount: "" };
+
+export const decodeCoin = (input: _m0.Reader | Uint8Array, length?: number): Coin => {
+  const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+  let end = length === undefined ? reader.len : reader.pos + length;
+  const message = { ...baseCoin } as Coin;
+  while (reader.pos < end) {
+    const tag = reader.uint32();
+    switch (tag >>> 3) {
+      case 1:
+        message.denom = reader.string();
+        break;
+      case 2:
+        message.amount = reader.string();
+        break;
+      default:
+        reader.skipType(tag & 7);
+        break;
+    }
+  }
+  return message;
 }
 
 
