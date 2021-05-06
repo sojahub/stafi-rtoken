@@ -28,12 +28,15 @@ export default function Index(props:any){
     dispatch(fetchStafiStakerApr()); 
     dispatch(bondFees());
     dispatch(bondSwitch()); 
-    if(getLocalStorageItem(Keys.AtomAccountKey) && getLocalStorageItem(Keys.FisAccountKey)){
+    if(getLocalStorageItem(Keys.AtomAccountKey)){
       setTimeout(()=>{ 
         dispatch(connectAtomjs()); 
       },1000)
-      dispatch(reloadData(Symbol.Fis)); 
+   
     } 
+    if(getLocalStorageItem(Keys.FisAccountKey)){
+      dispatch(reloadData(Symbol.Fis)); 
+    }
     dispatch(getPools(()=>{ 
       setTimeout(()=>{
         dispatch(continueProcess());

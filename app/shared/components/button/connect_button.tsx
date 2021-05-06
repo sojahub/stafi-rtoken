@@ -8,10 +8,11 @@ import { ProgressPlugin } from 'webpack';
 type Props={
     icon:any,
     children:any,
-    onClick?:Function
+    onClick?:Function,
+    disabled?:boolean
 }
 export default function Index(props:Props){
-    return <Button className="stafi_connect_button" onClick={()=>{
+    return <Button disabled={props.disabled} className="stafi_connect_button" onClick={()=>{
         props.onClick && props.onClick();
     }}>
        <img src={props.icon} />  {props.children}

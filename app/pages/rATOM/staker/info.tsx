@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react'; 
 import {useSelector,useDispatch} from 'react-redux';  
 import {query_rBalances_account,accountUnbonds,setRatioShow,rTokenRate} from '@features/rATOMClice';
-import NumberUtil from '@util/numberUtil';
-import {rSymbol} from '@keyring/defaults'
+import NumberUtil from '@util/numberUtil'; 
 import Content from '@components/content/stakeInfoContent'; 
 
 

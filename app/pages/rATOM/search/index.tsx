@@ -39,10 +39,8 @@ export default function Index(props:any){
       form={form}
       onFinish={onFinish}
     > 
-        <Form.Item initialValue="1" label="Token" name="token"> 
-          <Select >
-            <Option value="1">ATOM</Option> 
-          </Select>
+        <Form.Item initialValue="ATOM" label="Token" name="token">  
+              <Input disabled={true}/>
         </Form.Item> 
         <Form.Item label={<div className="item_title"><label>TxHash</label><a>How to get TxHash</a></div>} name="txHash">
           <Input placeholder="" />
@@ -50,7 +48,7 @@ export default function Index(props:any){
         {/* <Form.Item label={<div className="item_title"><label>BlockHash</label><a>How to get BlockHash</a></div>} name="blockHash">
           <Input placeholder="" />
         </Form.Item>  */}
-        <div className="btns">
+        <div className="btns atom_btns">
           <Button btnType="square" htmlType="submit">Proceed</Button>
         </div> 
     </Form>

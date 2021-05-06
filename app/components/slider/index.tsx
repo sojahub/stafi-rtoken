@@ -1,18 +1,18 @@
 import React, { useState,useEffect } from 'react';
 import Item from './item';
-import rETH_svg from '@images/rETH.svg';
-import selected_rETH_svg from '@images/selected_rETH.svg';
-import rFIS_svg from '@images/rFIS.svg';
-import selected_rFIS_svg from '@images/selected_rFIS.svg';
-import rDOT_svg from '@images/rDOT.svg';
-import selected_rDOT_svg from '@images/selected_rDOT.svg';
+import rETH_svg from '@images/r_eth.svg';
+import selected_rETH_svg from '@images/selected_r_eth.svg';
+import rFIS_svg from '@images/r_fis.svg';
+import selected_rFIS_svg from '@images/selected_r_fis.svg';
+import rDOT_svg from '@images/r_dot.svg';
+import selected_rDOT_svg from '@images/selected_r_dot.svg';
 import logo from '@images/logo2.png';
 import rAsset_svg from '@images/rAsset.svg';
 import selected_rAsset_svg from '@images/selected_rAssets.svg';
-import rKSM_svg from '@images/rKSM.svg';
-import selected_rKSM_svg from '@images/selected_rKSM.svg'
-import rATOM_svg from '@images/rATOM.svg';
-import selected_rATOM_svg from '@images/selected_rATOM.svg'
+import rKSM_svg from '@images/r_ksm.svg';
+import selected_rKSM_svg from '@images/selected_r_ksm.svg'
+import rATOM_svg from '@images/r_atom.svg';
+import selected_rATOM_svg from '@images/selected_r_atom.svg'
 import {isdev} from '../../config/index'
 
 import './index.scss'

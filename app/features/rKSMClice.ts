@@ -427,9 +427,11 @@ export const unbond = (amount: string,recipient:string,willAmount:any, cb?: Func
     
     dispatch(fisUnbond(amount, rSymbol.Ksm, u8aToHex(keyringInstance.decodeAddress(recipient)), selectedPool.poolPubkey,"Unbond succeeded, unbonding period is around "+config.unboundAroundDays(Symbol.Ksm)+" days", (r?:string) => {
       dispatch(reloadData()); 
-      if(r != "Failed"){  
+  
+      if(r == "Success"){  
         dispatch(add_KSM_unbond_Notice(stafi_uuid(),willAmount,noticeStatus.Confirmed));
-      }else{
+      }
+      if(r == "Failed"){  
         dispatch(add_KSM_unbond_Notice(stafi_uuid(),willAmount,noticeStatus.Error));
       } 
       cb && cb(); 

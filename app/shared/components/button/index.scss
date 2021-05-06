@@ -1,16 +1,25 @@
-.stafi_connect_button,.stafi_connect_button:hover,.stafi_connect_button:focus, .stafi_connect_button:active{
+.stafi_connect_button,
+.stafi_connect_button[disabled],
+.stafi_connect_button[disabled]:hover,
+.stafi_connect_button:hover,
+.stafi_connect_button:focus, 
+.stafi_connect_button:active{
     padding:10px 38px 10px 24px ;
     height: fit-content ;
     // background-color: #23292F ;
     background-color: transparent ;
     color:#fff ;
     border-color:#BFBFBF ;
+    font-size: 18px;
     img{
         margin-right: 25px;
         height:36px;
         width:36px;
     }
-} 
+}  
+.stafi_connect_button[disabled],.stafi_connect_button[disabled]:hover{
+    opacity: 0.5;
+}
 
 .stafi_button,.stafi_button:hover,.stafi_button:focus,.stafi_button:active{
     padding:12px 23px;

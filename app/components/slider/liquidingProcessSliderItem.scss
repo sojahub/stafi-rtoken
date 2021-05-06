@@ -28,6 +28,9 @@
       width: 12px;
     }
   }
+  .info_panel{
+    min-height: 40px;
+  }
   .item{
     display: flex;
     justify-content: space-between;
@@ -44,6 +47,9 @@
       width:12px;
       height:9px;
     }
+  }
+  .item.tx{
+    height:30px;
   }
   .item.failure{
     color:#FF6464;

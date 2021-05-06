@@ -426,9 +426,11 @@ export const unbond = (amount: string,recipient:string,willAmount:any, cb?: Func
     
     dispatch(fisUnbond(amount, rSymbol.Dot, u8aToHex(keyringInstance.decodeAddress(recipient)), selectedPool.poolPubkey,"Unbond succeeded, unbonding period is around "+config.unboundAroundDays(Symbol.Dot)+" days", (r?:string) => {
       dispatch(reloadData()); 
-      if(r != "Failed"){  
+     
+      if(r == "Success"){  
         dispatch(add_DOT_unbond_Notice(stafi_uuid(),willAmount,noticeStatus.Confirmed));
-      }else{
+      }
+      if(r == "Failed"){ 
         dispatch(add_DOT_unbond_Notice(stafi_uuid(),willAmount,noticeStatus.Error));
       } 
       cb && cb(); 

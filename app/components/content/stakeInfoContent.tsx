@@ -1,9 +1,9 @@
 import React, { useState } from 'react'; 
 import {message} from 'antd';
 import LeftContent from './leftContent'  
-import rDOT_stafi_svg from '@images/rDOT_stafi.png';
-import rKSM_stafi_svg from '@images/rKSM_stafi.png';
-import rATOM_stafi_svg from '@images/rATOM_stafi.svg'
+import rDOT_stafi_svg from '@images/selected_r_dot.svg';
+import rKSM_stafi_svg from '@images/selected_r_ksm.svg';
+import rATOM_stafi_svg from '@images/selected_r_atom.svg'
 import rDOT_DOT_svg from '@images/rDOT_DOT.svg'
 import Button from '@shared/components/button/button'
 import NumberUtil from '@util/numberUtil';

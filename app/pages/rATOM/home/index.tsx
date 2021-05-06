@@ -1,9 +1,11 @@
-import React from 'react';
-import {useSelector,useDispatch} from 'react-redux';
+import React, { useState } from 'react';
+import {useSelector,useDispatch, useStore} from 'react-redux';
 import {Redirect} from 'react-router'
 import HomeCard from '@components/card/homeCard';   
 import rFIS_svg from '@images/rFIS.svg';   
 import keplr from '@images/keplr.png';
+import Modal from '@shared/components/modal/connectModal';
+import Page_FIS from '../../rATOM/selectWallet_rFIS/index';
 import {connectPolkadot_atom,connectAtomjs} from '@features/globalClice';
 import Button from '@shared/components/button/connect_button';
 import './index.scss';
@@ -11,6 +13,7 @@ import './index.scss';
 
  
 export default function Inde(props:any){
+  const [visible,setVisible]=useState(false);
   const dispatch = useDispatch();
   const {fisAccount,atomAccount,fisAccounts,atomAccounts}=useSelector((state:any)=>{
     return {
@@ -30,7 +33,10 @@ export default function Inde(props:any){
      
       onIntroUrl=""
   >
-            {!!!atomAccount && atomAccounts.length<=0 && <Button icon={keplr} onClick={()=>{   
+            <Button
+             disabled={!!atomAccount}
+             icon={keplr}
+              onClick={()=>{   
               dispatch(connectAtomjs(()=>{
                 if(fisAccount){
                   props.history.push("/rATOM/type")
@@ -38,28 +44,38 @@ export default function Inde(props:any){
                   props.history.push({
                     pathname:"/rATOM/fiswallet",
                     state:{
-                        showBackIcon:true, 
+                        showBackIcon:false, 
                     }
                 }); 
                 }
               }));
             }}>
                Connect to Keplr extension
-            </Button>}
-            {!!!fisAccount && fisAccounts.length<=0  && <Button icon={rFIS_svg} onClick={()=>{   
+            </Button>
+            {<Button 
+            disabled={!!fisAccount }
+            icon={rFIS_svg} 
+             onClick={()=>{   
+              setVisible(true);
               dispatch(connectPolkadot_atom(()=>{
-                if(atomAccount){
-                  props.history.push({
-                    pathname:"/rATOM/fiswallet",
-                    state:{
-                        showBackIcon:true, 
-                    }
-                  }); 
-                }
-                // props.history.push("/rATOM/wallet")
+                setVisible(true);
+                // if(atomAccount){
+                //   props.history.push({
+                //     pathname:"/rATOM/fiswallet",
+                //     state:{
+                //         showBackIcon:false, 
+                //     }
+                //   }); 
+                // } 
               })) 
             }}>
               Connect to FIS extension
             </Button>}
+
+            <Modal visible={visible}>
+                <Page_FIS location={{}} type="header"  onClose={()=>{
+                      setVisible(false);
+                  }}/>
+          </Modal>
   </HomeCard>
 }

@@ -28,7 +28,9 @@
             background-color: #343B43;
             color:#979797;
             text-align: center;
-             
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
             >div:first-child{
                 font-size: 14px;
                 font-weight: bold; 

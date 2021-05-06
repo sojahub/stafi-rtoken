@@ -46,19 +46,20 @@ export default function Index(props:Props){
       {(props.data && props.data.finalizing==processStatus.failure) && <img src={failure}/>}
       {(props.data && props.data.finalizing==processStatus.loading) && <SyncOutlined type="spin" spin={true}/>}
     </div>}
-    {(props.data && props.data.checkTx) && <div className="item">
+    <div className="info_panel">
+      {(props.data && props.data.checkTx) &&  <div className="item">
       <label>Check Tx 
-        {props.index==1 && <a target="_blank" href={config.txHashUrl(props.rSymbol,props.data.checkTx)} className="address">{StringUtil.replacePkh(props.data.checkTx,6,60)}</a>} 
-        {props.index==2 && <a target="_blank" href={`https://stafi.subscan.io/extrinsic/${props.data.checkTx}`} className="address">{StringUtil.replacePkh(props.data.checkTx,6,60)}</a>}
-        {/* ”https://kusama.subscan.io/extrinsic/" + txHash */}
-        </label> 
-    </div>}
-
-    {(props.data && (props.data.brocasting==processStatus.failure || props.data.packing==processStatus.failure)) && <div className="item failure">
-        <label>{props.title} is fail</label> 
-        {props.showButton && <Button btnType="square" size="small" onClick={()=>{
-          props.onClick && props.onClick();
-        }}>Re-{props.title}</Button>}
-    </div>}
+          {props.index==1 && <a target="_blank" href={config.txHashUrl(props.rSymbol,props.data.checkTx)} className="address">{StringUtil.replacePkh(props.data.checkTx,6,60)}</a>} 
+          {props.index==2 && <a target="_blank" href={`https://stafi.subscan.io/extrinsic/${props.data.checkTx}`} className="address">{StringUtil.replacePkh(props.data.checkTx,6,60)}</a>}
+          {/* ”https://kusama.subscan.io/extrinsic/" + txHash */}
+          </label> 
+      </div>} 
+      {(props.data && (props.data.brocasting==processStatus.failure || props.data.packing==processStatus.failure)) && <div className="item failure">
+          <label>{props.title} is fail</label> 
+          {props.showButton && <Button btnType="square" size="small" onClick={()=>{
+            props.onClick && props.onClick();
+          }}>Re-{props.title}</Button>}
+      </div>}
+    </div>
   </div>
 }

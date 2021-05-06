@@ -40,10 +40,8 @@ export default function Index(props:any){
       form={form}
       onFinish={onFinish}
     > 
-        <Form.Item initialValue="1" label="Token" name="token"> 
-          <Select >
-            <Option value="1">DOT</Option> 
-          </Select>
+        <Form.Item initialValue="DOT" label="Token" name="token"> 
+        <Input disabled={true}/>
         </Form.Item> 
         <Form.Item label={<div className="item_title"><label>TxHash</label><a href={config.txHashAndBlockhashURl.dotURL} target="_blank">How to get TxHash</a></div>} name="txHash">
           <Input placeholder="" />

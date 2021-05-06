@@ -375,9 +375,10 @@ export const unbond = (amount: string,recipient:string,willAmount:any, cb?: Func
     
     dispatch(fisUnbond(amount, rSymbol.Atom, u8aToHex(keyringInstance.decodeAddress(recipient)), selectedPool.poolPubkey,"Unbond succeeded, unbonding period is around "+config.unboundAroundDays(Symbol.Atom)+" days", (r?:string) => {
       dispatch(reloadData()); 
-      if(r != "Failed"){  
+      if(r == "Success"){  
         dispatch(add_ATOM_unbond_Notice(stafi_uuid(),willAmount,noticeStatus.Confirmed));
-      }else{
+      }
+      if(r == "Failed"){ 
         dispatch(add_ATOM_unbond_Notice(stafi_uuid(),willAmount,noticeStatus.Error));
       } 
       cb && cb(); 
@@ -483,7 +484,7 @@ export const getBlock = (blockHash: string, txHash: string, uuid?:string, cb?: F
     const decodeTx = decodeTxRaw(indexedTx.tx);
     let messageValue: MsgSend = null;
     if (decodeTx.body && decodeTx.body.messages) {
-      decodeTx.body.messages.forEach(message => {
+      decodeTx.body.messages.forEach((message:any) => {
         if (message.typeUrl.indexOf("MsgSend") != -1) {
           messageValue = decodeMessageValue(message.value);
         }

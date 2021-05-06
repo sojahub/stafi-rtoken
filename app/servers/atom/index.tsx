@@ -85,7 +85,7 @@ export default class ExtensionDapp extends CosmosKeyring{
       }
     }
     if (!window.getOfflineSigner || !window.keplr) { 
-      message.error("Please install keplr extension");
+      message.error("Please install Keplr extension");
     } else {
       if (window.keplr.experimentalSuggestChain) {
           try {
@@ -103,7 +103,7 @@ export default class ExtensionDapp extends CosmosKeyring{
         message.error("Please use the recent version of keplr extension");
       }
     }  
-     await window.keplr.enable(config.rAtomChainId());
+    return await window.keplr.enable(config.rAtomChainId());
   } 
   async getAccounts(){ 
     return await window.keplr.getKey(config.rAtomChainId()); 

@@ -322,12 +322,12 @@ export const bound = (address: string, txhash: string, blockhash: string, amount
       txhash = "0x" + txhash;
       blockhash = "0x" + blockhash;
       
-      message.info("Sending succeeded, proceeding staking.");
+      message.info("Sending succeeded, proceeding staking");
     }else{
       signature = await stakingSignature(address, u8aToHex(keyringInstance.decodeAddress(fisAddress)));
       pubkey = u8aToHex(keyringInstance.decodeAddress(address));
 
-      message.info("Signature succeeded, proceeding staking.");
+      message.info("Signature succeeded, proceeding staking");
     }
     
     await timeout(5000);
@@ -636,7 +636,7 @@ export const fisUnbond = (amount: string, rSymbol: number, recipient: string, se
         dispatch(setLoading(false));
         if(e=="Error: Cancelled"){
           message.error("Cancelled"); 
-          cb && cb("Failed");
+          cb && cb("Cancel");
         }else{
           console.error(e);
         }

@@ -17,9 +17,9 @@ import CommonClice from '@features/commonClice';
 import {Symbol,rSymbol} from '@keyring/defaults';
 import NumberUtil from '@util/numberUtil'
 import rasset_fis_svg from '@images/rFIS.svg';
-import rasset_rfis_svg from '@images/rasset_rfis.svg';  
-import rasset_rksm_svg from '@images/rasset_rksm.svg'; 
-import rasset_rdot_svg from '@images/rasset_rdot.svg'; 
+import rasset_rfis_svg from '@images/r_fis.svg';  
+import rasset_rksm_svg from '@images/r_ksm.svg'; 
+import rasset_rdot_svg from '@images/r_dot.svg'; 
 import {getRtokenPriceList} from '@features/bridgeClice'
 
 import './page.scss'

@@ -10,9 +10,9 @@ import './index.scss'
 import selected_rETH from '@images/selected_rETH.svg';  
 import selected_rFIS from '@images/selected_rFIS.svg';  
 import rasset_fis_svg from '@images/rFIS.svg';
-import rasset_rfis_svg from '@images/rasset_rfis.svg';  
-import rasset_rksm_svg from '@images/rasset_rksm.svg'; 
-import rasset_rdot_svg from '@images/rasset_rdot.svg'; 
+import rasset_rfis_svg from '@images/r_fis.svg';  
+import rasset_rksm_svg from '@images/r_ksm.svg'; 
+import rasset_rdot_svg from '@images/r_dot.svg'; 
 import down_arrow_svg from "@images/down_arrow.svg"
 import Understood from '@components/modal/understood';
 import {bridgeCommon_ChainFees,getBridgeEstimateEthFee,nativeToErc20Swap,erc20ToNativeSwap}from '@features/bridgeClice';

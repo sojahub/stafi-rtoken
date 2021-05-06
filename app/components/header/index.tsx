@@ -4,7 +4,7 @@ import Modal from '@shared/components/modal/connectModal';
 import notice from '@images/notice.svg';
 import StringUtil from '@util/stringUtil';
 import Popover from './popover';
-import {connectPolkadot,connectPolkadot_ksm,connectPolkadotjs} from '@features/globalClice';
+import {connectPolkadot,connectPolkadot_ksm,connectPolkadotjs,connectAtomjs} from '@features/globalClice';
 import {reloadData as dotReloadData,query_rBalances_account as dotquery_rBalances_account} from '@features/rDOTClice';
 import {reloadData as ksmReloadData,query_rBalances_account as ksmquery_rBalances_account} from '@features/rKSMClice';
 import Page from '../../pages/rDOT/selectWallet/index';
@@ -42,11 +42,12 @@ export default function Index(props:Props){
             } 
         }
         if(location.pathname.includes("/rATOM")){ 
-            if(state.rATOMModule.atomAccount && state.FISModule.fisAccount){
+            if(state.rATOMModule.atomAccount || state.FISModule.fisAccount){
                 return {
                     atomAccount:state.rATOMModule.atomAccount,
                     fisAccount:state.FISModule.fisAccount,
                     noticeData:state.noticeModule.noticeData,
+                    type:"rATOM"
                 }
             } 
         }
@@ -136,10 +137,14 @@ export default function Index(props:Props){
                 <div>{account.ksmAccount.balance} KSM</div>
                 <div>{StringUtil.replacePkh(account.ksmAccount.address,6,44)}</div>
             </div>} 
-            {account.atomAccount && <div   className="header_tool account">
+            {account.type=="rATOM" && (account.atomAccount ? <div   className="header_tool account">
                 <div>{account.atomAccount.balance} ATOM</div>
                 <div>{StringUtil.replacePkh(account.atomAccount.address,6,38)}</div>
-            </div>} 
+            </div>:<div onClick={()=>{
+                 dispatch(connectAtomjs());
+            }}  className="header_tool account">
+                 connect to Kepir
+            </div>)} 
             {account.ethAccount && <div  className="header_tool account">
                 <div>{account.ethAccount.balance} ETH</div>
                 <div>{StringUtil.replacePkh(account.ethAccount.address,4,38)}</div>

@@ -5,6 +5,10 @@
     font-size: 12px;
     color:#fff; 
 } 
+.stafi_input[disabled],.stafi_input[disabled]:hover{
+    background: #2B3239;
+    border-color:#B3B3B5;
+}
 .stafi_address_input,.stafi_address_input:hover{
     width: 100%;
     height:51px;
