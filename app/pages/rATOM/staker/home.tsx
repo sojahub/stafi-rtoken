@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'; 
+import {Modal} from 'antd';
 import {useDispatch,useSelector} from 'react-redux';
 import Content from '@components/content/stakeContent_DOT'; 
 import {transfer,rTokenLedger} from '@features/rATOMClice'; 
@@ -7,13 +8,15 @@ import {ratioToAmount} from '@util/common'
 import { message } from 'antd';
 import NumberUtil from '@util/numberUtil';
 import { setProcessSlider } from '@features/globalClice'; 
-import { rSymbol } from '@keyring/defaults';
-
+import atom_stake_tips from '@images/atom_stake_tips.png'
+import Button from '@shared/components/button/button';
+import './index.scss';
 export default function Index(props:any){
 
  const dispatch=useDispatch();
  
   const [amount,setAmount]=useState<any>(); 
+  const [visible,setVisible] =useState(false)
   useEffect(()=>{ 
     dispatch(rTokenRate());
     dispatch(rTokenLedger())
@@ -32,7 +35,7 @@ export default function Index(props:any){
   })
 
 
-  return  <Content
+  return <> <Content
   amount={amount}
   willAmount={ratio=='--'?"--":ratioToAmount(amount,ratio)}
   unit={"ATOM"}
@@ -53,13 +56,33 @@ export default function Index(props:any){
         message.error("No enough FIS to pay for the fee");
         return;
       }
-      dispatch(transfer(amount,()=>{
-        dispatch(setProcessSlider(false));
-        props.history.push("/rATOM/staker/info")
-      }));
+      setVisible(true)
+      // dispatch(transfer(amount,()=>{
+      //   dispatch(setProcessSlider(false));
+      //   props.history.push("/rATOM/staker/info")
+      // }));
     }else{
       message.error("Please enter the amount")
     } 
   }}
   type="rATOM"></Content>
+  <Modal visible={visible}
+  title={null}
+  footer={null}
+  width={350}
+  onCancel={()=>{
+    setVisible(false)
+  }}
+  className="atom_stake_tips_modal"
+  >
+      <img src={atom_stake_tips}/>
+      <Button btnType="square" onClick={()=>{
+        setVisible(false)
+        dispatch(transfer(amount,()=>{
+          dispatch(setProcessSlider(false));
+          props.history.push("/rATOM/staker/info")
+        }));
+      }}>UnderStood</Button>
+  </Modal>
+  </>
 }
