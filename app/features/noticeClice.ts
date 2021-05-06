@@ -4,6 +4,7 @@ import config from '@config/index';
 import { setLocalStorageItem, getLocalStorageItem, removeLocalStorageItem, Keys } from '@util/common';
 import {setProcessParameter} from './rDOTClice';
 import {setProcessParameter as krmSetProcessParameter} from './rKSMClice';
+import {setProcessParameter as atomSetProcessParameter} from './rATOMClice';
 import {initProcess,setProcessSlider,setProcessSending,setProcessStaking,processStatus} from './globalClice';
 import {getMinting} from './FISClice';
 import {rSymbol,Symbol} from '@keyring/defaults'
@@ -143,9 +144,14 @@ export const setProcess=(item:any,list:any,cb?:Function):AppThunk=>async (dispat
       dispatch(initProcess(item.subData.process)); 
       if(item.subData.process.rSymbol==rSymbol.Ksm){
         dispatch(krmSetProcessParameter(item.subData.processParameter));
-      }else{
+      }
+      if(item.subData.process.rSymbol==rSymbol.Dot){
         dispatch(setProcessParameter(item.subData.processParameter));
       }
+      if(item.subData.process.rSymbol==rSymbol.Atom){
+        dispatch(atomSetProcessParameter(item.subData.processParameter));
+      }
+      
     }
   }
 }

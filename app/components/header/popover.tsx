@@ -34,7 +34,11 @@ export default function Index(props:Props){
 
       const hasGo_KSM=location.pathname.includes("/rKSM")
       if(item.rSymbol==Symbol.Ksm && !hasGo_KSM){ 
-        props.history && props.history.push("/rKsm/home");
+        props.history && props.history.push("/rKSM/home");
+      }
+      const hasGo_ATOM=location.pathname.includes("/rATOM")
+      if(item.rSymbol==Symbol.Ksm && !hasGo_KSM){ 
+        props.history && props.history.push("/rATOM/home");
       }
     }}/>
   })}
