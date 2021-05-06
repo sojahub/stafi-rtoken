@@ -392,8 +392,8 @@ export const continueProcess = (): AppThunk => async (dispatch, getState) => {
   const stakeHash = getState().rATOMModule.stakeHash;
   if (stakeHash && stakeHash.blockHash && stakeHash.txHash) { 
     let bondSuccessParamArr:any[] = [];
-    bondSuccessParamArr.push(stakeHash.blockHash);
-    bondSuccessParamArr.push(stakeHash.txHash);
+    bondSuccessParamArr.push("0x" + stakeHash.blockHash);
+    bondSuccessParamArr.push("0x" + stakeHash.txHash);
     let statusObj={
       num:0
     }
@@ -428,12 +428,12 @@ export const onProceed = (txHash: string, cb?: Function): AppThunk => async (dis
   const noticeData = findUuid(getstate().noticeModule.noticeData,txHash,blockHash)
   
   let bondSuccessParamArr:any[] = [];
-  bondSuccessParamArr.push(blockHash);
-  bondSuccessParamArr.push(txHash);
+  bondSuccessParamArr.push("0x" + blockHash);
+  bondSuccessParamArr.push("0x" + txHash);
   let statusObj={
     num:0
   } 
-  dispatch(rTokenSeries_bondStates(rSymbol.Atom, bondSuccessParamArr,statusObj,(e:string)=>{
+  dispatch(rTokenSeries_bondStates(rSymbol.Atom, bondSuccessParamArr, statusObj, (e: string) => {
     if(e=="successful"){ 
       dispatch(setStakeHash(null));
       message.success("Transaction has been proceeded",3,()=>{
