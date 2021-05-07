@@ -423,6 +423,7 @@ export const onProceed = (txHash: string, cb?: Function): AppThunk => async (dis
     message.error("Please input the right TxHash");
     return;
   }
+
   const block = await client.getBlock(indexedTx.height);
   const blockHash = block.id;
   
@@ -473,7 +474,6 @@ export const getBlock = (blockHash: string, txHash: string, uuid?:string, cb?: F
   try {
     const address = getState().rATOMModule.atomAccount.address;
     const validPools = getState().rATOMModule.validPools;
-    const poolLimit = getState().rATOMModule.poolLimit;
 
     const client = await atomServer.createApi(); 
     const indexedTx = await client.getTx(txHash);
@@ -484,6 +484,16 @@ export const getBlock = (blockHash: string, txHash: string, uuid?:string, cb?: F
     const decodeTx = decodeTxRaw(indexedTx.tx);
     let messageValue: MsgSend = null;
     if (decodeTx.body && decodeTx.body.messages) {
+      if (!decodeTx.body.memo) {
+        message.error("No memo in the transaction. Please Check your TxHash");
+        return;
+      }
+
+      const keyringInstance = keyring.init(Symbol.Fis);
+      if (!keyringInstance.checkAddress(decodeTx.body.memo)) {
+        message.error("Wrong memo in the transaction. Please Check your TxHash");
+        return;
+      }
       decodeTx.body.messages.forEach((message:any) => {
         if (message.typeUrl.indexOf("MsgSend") != -1) {
           messageValue = decodeMessageValue(message.value);
@@ -506,10 +516,22 @@ export const getBlock = (blockHash: string, txHash: string, uuid?:string, cb?: F
       message.error("Wrong amount. Please Check your TxHash");
       return;
     }
+    if (messageValue.fromAddress != address) {
+      message.error("Please switch your ATOM account in the Keplr extension to the account that sent the transaction");
+      return;
+    }
 
-    let selectedPool = commonClice.getPool(amount, validPools, poolLimit);
-    if (selectedPool == null) {
-      // message.error("There is no matching pool, please try again later.");
+    const atomKeyringInstance = keyring.init(Symbol.Atom);
+    let poolPubkey = u8aToHex(atomKeyringInstance.decodeAddress(messageValue.toAddress));
+
+    const poolData = validPools.find((item: any) => {
+      if (item.poolPubkey == poolPubkey) {
+        return true;
+      }
+    });
+
+    if (!poolData) {
+      message.error("The destination address in the transaction does not match the pool address");
       return;
     }
 
@@ -537,10 +559,10 @@ export const getBlock = (blockHash: string, txHash: string, uuid?:string, cb?: F
         blockHash,
         address,
         type: rSymbol.Atom,
-        poolAddress: selectedPool.address
+        poolAddress: poolPubkey
       }
     }))
-    dispatch(bound(address, txHash, blockHash, amount, selectedPool.poolPubkey, rSymbol.Atom, (r:string) => {
+    dispatch(bound(address, txHash, blockHash, amount, poolPubkey, rSymbol.Atom, (r:string) => {
       // dispatch(setStakeHash(null));
 
       if(r=="loading"){

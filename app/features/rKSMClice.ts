@@ -512,7 +512,6 @@ export const getBlock = (blockHash: string, txHash: string, uuid?:string,cb?: Fu
     const api = await polkadotServer.createPolkadotApi();
     const address = getState().rKSMModule.ksmAccount.address;
     const validPools = getState().rKSMModule.validPools;
-    const poolLimit = getState().rKSMModule.poolLimit;
     const result = await api.rpc.chain.getBlock(blockHash);
     let u = false;
     result.block.extrinsics.forEach((ex: any) => { 
@@ -520,14 +519,28 @@ export const getBlock = (blockHash: string, txHash: string, uuid?:string,cb?: Fu
         const { method: { args, method, section } } = ex;
         if (section == 'balances' && (method == 'transfer' || method == 'transferKeepAlive')) {
           u = true;
-          let amount = args[1].toJSON();
 
-
-          let selectedPool =commonClice.getPool(amount, validPools, poolLimit);
-          if (selectedPool == null) {
-            // message.error("There is no matching pool, please try again later.");
+          if (ex.signer.toString() != address) {
+            message.error("Please select your KSM account that sent the transaction");
             return;
-          } 
+          }
+
+          let amount = args[1].toJSON();
+          const poolAddress = args[0].toJSON().id;
+          const keyringInstance = keyring.init(Symbol.Ksm);
+          let poolPubkey = u8aToHex(keyringInstance.decodeAddress(poolAddress));
+
+          const poolData = validPools.find((item: any) => {
+            if (item.poolPubkey == poolPubkey) {
+              return true;
+            }
+          });
+
+          if (!poolData) {
+            message.error("The destination address in the transaction does not match the pool address");
+            return;
+          }
+  
           dispatch(initProcess({
             sending: {
               packing: processStatus.success,
@@ -552,10 +565,10 @@ export const getBlock = (blockHash: string, txHash: string, uuid?:string,cb?: Fu
               blockHash,
               address,
               type: rSymbol.Ksm,
-              poolAddress: selectedPool.poolPubkey
+              poolAddress: poolPubkey
             }
           }))
-          dispatch(bound(address, txHash, blockHash, amount, selectedPool.poolPubkey, rSymbol.Ksm, (r:string) => {
+          dispatch(bound(address, txHash, blockHash, amount, poolPubkey, rSymbol.Ksm, (r:string) => {
             // dispatch(setStakeHash(null));
 
             if(r=="loading"){
