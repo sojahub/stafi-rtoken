@@ -5,8 +5,9 @@ import { AppThunk } from '../store';
 import NumberUtil from '@util/numberUtil';
 import StafiServer from '@servers/stafi';
 import EthServer from '@servers/eth'; 
-import KsmServer from '@servers/ksm'
-import DotServer from '@servers/polkadot'
+import KsmServer from '@servers/ksm';
+import DotServer from '@servers/polkadot';
+import AtomServer from '@servers/atom'
 import keyring from '@servers/index';
 import rpc from '@util/rpc'
 import {  u8aToHex } from '@polkadot/util';
@@ -26,6 +27,7 @@ const stafiServer = new StafiServer();
 const ethServer=new EthServer();
 const ksmServer=new KsmServer();
 const dotServer=new DotServer();
+const atomServer=new AtomServer();
 const bridgeClice = createSlice({
   name: 'bridgeModule',
   initialState: {  
@@ -180,6 +182,11 @@ export const erc20ToNativeSwap=(tokenStr:string,tokenType:string, tokenAmount:an
       from: ethAddress
     });
     allowance = getState().ETHModule.RDOTErc20Allowance
+  }else if (tokenType == 'ratom') { 
+    tokenContract = new web3.eth.Contract(atomServer.getTokenAbi(), atomServer.getTokenAddress(), {
+      from: ethAddress
+    });
+    allowance = getState().ETHModule.RATOMErc20Allowance
   }
   if (!tokenContract) {
     dispatch(setLoading(false));

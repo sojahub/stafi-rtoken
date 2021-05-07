@@ -9,7 +9,8 @@ import {connectMetamask,monitoring_Method,handleEthAccount} from '@features/rETH
 import {getAssetBalanceAll} from '@features/ETHClice';
 import {rTokenRate as ksm_rTokenRate,getUnbondCommission as ksm_getUnbondCommission} from '@features/rKSMClice';
 import {rTokenRate as dot_rTokenRate,getUnbondCommission as dot_getUnbondCommission} from '@features/rDOTClice'
-import {rTokenRate as fis_rTokenRate,getUnbondCommission as fis_getUnbondCommission} from '@features/FISClice'
+import {rTokenRate as fis_rTokenRate,getUnbondCommission as fis_getUnbondCommission} from '@features/FISClice';
+import {rTokenRate as atom_rTokenRate,getUnbondCommission as atom_getUnbondCommission} from '@features/FISClice'
 import CommonClice from '@features/commonClice';
 import CountAmount from './components/countAmount'; 
 import DataItem from './components/list/item';
@@ -19,6 +20,7 @@ import rasset_rfis_svg from '@images/r_fis.svg';
 import rasset_reth_svg from '@images/r_eth.svg'; 
 import rasset_rksm_svg from '@images/r_ksm.svg'; 
 import rasset_rdot_svg from '@images/r_dot.svg'; 
+import rasset_ratom_svg from '@images/r_atom.svg'; 
 import {getRtokenPriceList} from '@features/bridgeClice'
 import './page.scss'
 
@@ -27,8 +29,8 @@ export default function Index(props:any){
  
   const dispatch=useDispatch();
 
-  const {ethAccount,ksm_ercBalance,fis_ercBalance,eth_ercBalance,rfis_ercBalance,dot_ercBalance,
-    ksmWillAmount,fisWillAmount,dotWillAmount,unitPriceList}=useSelector((state:any)=>{ 
+  const {ethAccount,ksm_ercBalance,fis_ercBalance,eth_ercBalance,rfis_ercBalance,dot_ercBalance,atom_ercBalance,
+    ksmWillAmount,fisWillAmount,dotWillAmount,unitPriceList,atomWillAmount}=useSelector((state:any)=>{ 
     return {
       unitPriceList:state.bridgeModule.priceList,
       ethAccount:state.rETHModule.ethAccount,
@@ -37,9 +39,11 @@ export default function Index(props:any){
       rfis_ercBalance:state.ETHModule.ercRFISBalance,
       eth_ercBalance:state.ETHModule.ercETHBalance,
       dot_ercBalance:state.ETHModule.ercRDOTBalance,
+      atom_ercBalance:state.ETHModule.ercRATOMBalance,
       ksmWillAmount:commonClice.getWillAmount(state.rKSMModule.ratio,state.rKSMModule.unbondCommission,state.ETHModule.ercRKSMBalance),
       fisWillAmount:commonClice.getWillAmount(state.FISModule.ratio,state.FISModule.unbondCommission,state.ETHModule.ercRFISBalance),
-      dotWillAmount:commonClice.getWillAmount(state.rDOTModule.ratio,state.rDOTModule.unbondCommission,state.ETHModule.ercRDOTBalance)
+      dotWillAmount:commonClice.getWillAmount(state.rDOTModule.ratio,state.rDOTModule.unbondCommission,state.ETHModule.ercRDOTBalance),
+      atomWillAmount:commonClice.getWillAmount(state.rATOMModule.ratio,state.rATOMModule.unbondCommission,state.ETHModule.ercRATOMBalance)
     }
   })
   const totalPrice=useMemo(()=>{
@@ -58,6 +62,8 @@ export default function Index(props:any){
         count=count+(item.price*dot_ercBalance);
       }else if(item.symbol=="rETH" && eth_ercBalance && eth_ercBalance!="--"){
         count=count+(item.price*eth_ercBalance);
+      }else if(item.symbol=="rRATOM" && atom_ercBalance && atom_ercBalance!="--"){
+        count=count+(item.price*atom_ercBalance);
       }
     });
     return count
@@ -71,9 +77,11 @@ export default function Index(props:any){
       dispatch(ksm_rTokenRate());
       dispatch(fis_rTokenRate() );
       dispatch(dot_rTokenRate() );
+      dispatch(atom_rTokenRate() );
       dispatch(ksm_getUnbondCommission());
       dispatch(fis_getUnbondCommission());
       dispatch(dot_getUnbondCommission());
+      dispatch(atom_getUnbondCommission());
     }
 
   },[ethAccount && ethAccount.address])
@@ -173,6 +181,23 @@ export default function Index(props:any){
               pathname:"/rAsset/swap/erc20",
               state:{ 
                 rSymbol:"rKSM"
+              }
+            })
+          }}
+        />
+         <DataItem 
+          rSymbol="rATOM"
+          icon={rasset_ratom_svg}
+          fullName="Cosmos"
+          balance={ksm_ercBalance=="--" ?"--":NumberUtil.handleFisAmountToFixed(atom_ercBalance)}
+          willGetBalance={atomWillAmount}
+          unit="ATOM"
+          operationType="erc20"
+          onSwapClick={()=>{
+            props.history.push({
+              pathname:"/rAsset/swap/erc20",
+              state:{ 
+                rSymbol:"rATOM"
               }
             })
           }}
