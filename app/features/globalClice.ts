@@ -132,10 +132,8 @@ export const keplr_keystorechange=(cb?:Function):AppThunk=>async (dispatch, getS
 }
 
 export const connectAtomjs=(cb?:Function):AppThunk=>async (dispatch, getState)=>{ 
-  const a= await atomServer.connectAtomjs();
-  console.log(a,"===a")
+  const a = await atomServer.connectAtomjs();
   const accounts=await atomServer.getAccounts();  
-  console.log(accounts,"=======accounts") 
   const account= {  
     name: accounts.name,
     address: accounts.bech32Address,

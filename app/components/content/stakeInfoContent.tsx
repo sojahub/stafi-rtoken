@@ -45,7 +45,7 @@ export default function Index(props:Props){
           <div className="describe">
             {props.type=="rDOT" && ` Your current staked DOT  is ${(props.tokenAmount !="--" && props.ratio != "--") ? NumberUtil.handleFisRoundToFixed(props.tokenAmount * props.ratio) : "--"}`}
             {props.type=="rKSM" && `Your current staked KSM  is ${(props.tokenAmount !="--" && props.ratio != "--") ? NumberUtil.handleFisRoundToFixed(props.tokenAmount * props.ratio) : "--"}`}
-            {props.type=="rATOM" && `Your current staked ATOM  is ${(props.tokenAmount !="--" && props.ratio != "--") ? NumberUtil.handleFisRoundToFixed(props.tokenAmount * props.ratio) : "--"}`}
+            {props.type=="rATOM" && `Your current staked ATOM  is ${(props.tokenAmount !="--" && props.ratio != "--") ? NumberUtil.handleAtomRoundToFixed(props.tokenAmount * props.ratio) : "--"}`}
             {props.type == "rDOT" && props.totalUnbonding > 0 && `. Unbonding DOT is ${props.totalUnbonding}`}
             {props.type=="rKSM" && props.totalUnbonding > 0 && `. Unbonding KSM is ${props.totalUnbonding}`}
             {props.type=="rATOM" && props.totalUnbonding > 0 && `. Unbonding ATOM is ${props.totalUnbonding}`}

@@ -106,12 +106,12 @@ export default {
     return parseInt(amount * 1000) / 1000;
   },
 
-  // The return string contains 6 decimal places and 3 decimal places, including 0
+  // The return string contains 6 decimal places, including 0
   handleFisAmountToFixed(amount) { 
     return (Math.floor(amount * 1000000) / 1000000).toFixed(6) || "--";
   },
 
-  // The return string contains 6 decimal places and 3 decimal places, including 0
+  // The return string contains 6 decimal places, including 0
   handleFisRoundToFixed(amount) { 
     return (Math.round(amount * 100000000) / 100000000).toFixed(6) || "--";
   },
@@ -128,7 +128,13 @@ export default {
   fisAmountToChain(amount) {
     return Math.round(Number(amount) * 1000000000000);
   },
- tokenAmountToHuman(amount,symbol){
+
+  // The return string contains 4 decimal places, including 0
+  handleAtomRoundToFixed(amount) { 
+    return (Math.round(amount * 1000000) / 1000000).toFixed(4) || "--";
+  },
+
+  tokenAmountToHuman(amount,symbol){
    switch(symbol){
      case rSymbol.Dot:
       return amount / 10000000000;
@@ -141,21 +147,21 @@ export default {
      default:
         return amount / 1000000000000;
    } 
- },
- tokenAmountToChain(amount,symbol) {
-  switch(symbol){
-    case rSymbol.Dot:
-      return Math.round(Number(amount) * 10000000000);
-    case rSymbol.Atom:
-      return Math.round(Number(amount) * 1000000);
-    case rSymbol.Fis:
-      return Math.round(Number(amount) * 1000000000000);
-    case rSymbol.Ksm:
-      return Math.round(Number(amount) * 1000000000000);
-    default:
-      return Math.round(Number(amount) * 1000000000000);
-  }  
-},
+  },
+  tokenAmountToChain(amount,symbol) {
+    switch(symbol){
+      case rSymbol.Dot:
+        return Math.round(Number(amount) * 10000000000);
+      case rSymbol.Atom:
+        return Math.round(Number(amount) * 1000000);
+      case rSymbol.Fis:
+        return Math.round(Number(amount) * 1000000000000);
+      case rSymbol.Ksm:
+        return Math.round(Number(amount) * 1000000000000);
+      default:
+        return Math.round(Number(amount) * 1000000000000);
+    }  
+  },
   fisFeeToHuman(fee) {
     return fee / 1000000000;
   },
