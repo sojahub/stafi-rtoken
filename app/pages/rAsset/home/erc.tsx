@@ -62,12 +62,12 @@ export default function Index(props:any){
         count=count+(item.price*dot_ercBalance);
       }else if(item.symbol=="rETH" && eth_ercBalance && eth_ercBalance!="--"){
         count=count+(item.price*eth_ercBalance);
-      }else if(item.symbol=="rRATOM" && atom_ercBalance && atom_ercBalance!="--"){
+      }else if(item.symbol=="rATOM" && atom_ercBalance && atom_ercBalance!="--"){
         count=count+(item.price*atom_ercBalance);
       }
     });
     return count
-  },[unitPriceList,ksm_ercBalance,fis_ercBalance,rfis_ercBalance,eth_ercBalance,dot_ercBalance]);
+  },[unitPriceList,ksm_ercBalance,fis_ercBalance,rfis_ercBalance,eth_ercBalance,dot_ercBalance, atom_ercBalance]);
   useEffect(()=>{ 
     if(ethAccount && ethAccount.address){
       dispatch(handleEthAccount(ethAccount.address));
@@ -189,7 +189,7 @@ export default function Index(props:any){
           rSymbol="rATOM"
           icon={rasset_ratom_svg}
           fullName="Cosmos"
-          balance={ksm_ercBalance=="--" ?"--":NumberUtil.handleFisAmountToFixed(atom_ercBalance)}
+          balance={atom_ercBalance=="--" ?"--":NumberUtil.handleFisAmountToFixed(atom_ercBalance)}
           willGetBalance={atomWillAmount}
           unit="ATOM"
           operationType="erc20"

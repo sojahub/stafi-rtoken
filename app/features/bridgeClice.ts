@@ -183,7 +183,7 @@ export const erc20ToNativeSwap=(tokenStr:string,tokenType:string, tokenAmount:an
     });
     allowance = getState().ETHModule.RDOTErc20Allowance
   }else if (tokenType == 'ratom') { 
-    tokenContract = new web3.eth.Contract(atomServer.getTokenAbi(), atomServer.getTokenAddress(), {
+    tokenContract = new web3.eth.Contract(atomServer.getTokenAbi(), atomServer.getRATOMTokenAddress(), {
       from: ethAddress
     });
     allowance = getState().ETHModule.RATOMErc20Allowance

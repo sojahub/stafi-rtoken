@@ -140,7 +140,7 @@ export const getFISAssetBalance=():AppThunk=>(dispatch,getState)=>{
   export const getRATOMAssetBalance=():AppThunk=>(dispatch,getState)=>{  
     if(getState().rETHModule.ethAccount){ 
       const address=getState().rETHModule.ethAccount.address;   
-      getAssetBalance(address,atomServer.getTokenAbi(), atomServer.getTokenAddress(),(v:any)=>{
+      getAssetBalance(address,atomServer.getTokenAbi(), atomServer.getRATOMTokenAddress(),(v:any)=>{
         dispatch(setErcRATOMBalance(v))
       })
     }
@@ -200,7 +200,7 @@ export const getFISErc20Allowance=():AppThunk=>(dispatch,getState)=>{
   export const getRATOMErc20Allowance=():AppThunk=>(dispatch,getState)=>{
     if(getState().rETHModule.ethAccount){ 
       const address=getState().rETHModule.ethAccount.address;  
-      getErc20Allowance(address,atomServer.getTokenAbi(), atomServer.getTokenAddress(),(v:any)=>{
+      getErc20Allowance(address,atomServer.getTokenAbi(), atomServer.getRATOMTokenAddress(),(v:any)=>{
         dispatch(setRATOMErc20Allowance(v))
       })
     }
@@ -229,8 +229,12 @@ const getErc20Allowance=async (ethAddress:string,getTokenAbi:string,getTokenAddr
     tokenAddress = fisServer.getFISTokenAddress();
   } else if (selectedToken == 'rFIS') {
     tokenAddress = fisServer.getRFISTokenAddress();
-  } else if (selectedToken == 'rksm') {
+  } else if (selectedToken == 'rKSM') {
     tokenAddress = ksmServer.getRKSMTokenAddress();
+  } else if (selectedToken == 'rDOT') {
+    tokenAddress = dotServer.getRDOTTokenAddress();
+  } else if (selectedToken == 'rATOM') {
+    tokenAddress = atomServer.getRATOMTokenAddress();
   }
   return 'https://etherscan.io/token/' + tokenAddress + '?a=' + ethAddress;
 }

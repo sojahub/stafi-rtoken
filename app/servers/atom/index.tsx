@@ -116,7 +116,7 @@ export default class ExtensionDapp extends CosmosKeyring{
     cosmosApi = SigningStargateClient.connectWithSigner(config.rAtomCosmosChainRpc(), offlineSigner);
     return cosmosApi;
   }
-  getTokenAddress() {
+  getRATOMTokenAddress() {
     return config.rATOMTokenAddress();
   }
   
