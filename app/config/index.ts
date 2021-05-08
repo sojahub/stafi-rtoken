@@ -128,7 +128,7 @@ export default {
   rAtomAignature:"0x00",
   txHashUrl:(type:rSymbol,txHash:string)=>{
     if(type==rSymbol.Atom){
-      return isdev ? `https://gaia.bigdipper.live/transactions/${txHash}`:`https://cosmos.bigdipper.live/transactions/${txHash}`;
+      return `https://www.mintscan.io/cosmos/txs/${txHash}`;
     }else if(type==rSymbol.Dot){
       return `https://polkadot.subscan.io/extrinsic/${txHash}`
     }else if(type==rSymbol.Ksm){
