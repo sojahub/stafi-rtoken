@@ -454,7 +454,8 @@ export const continueProcess = (): AppThunk => async (dispatch, getState) => {
         message.success("minting succeeded",3,()=>{ 
           dispatch(setStakeHash(null));
         });  
-      }else{
+      }else if(e=="failure" || e=="stakingFailure"){
+        dispatch(setStakeHash(null));
         dispatch(getBlock(stakeHash.blockHash, stakeHash.txHash,stakeHash.notice_uuid))
       } 
     }));

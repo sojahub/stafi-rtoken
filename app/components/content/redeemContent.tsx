@@ -55,13 +55,8 @@ export default function Index(props:Props){
              </div>
         </div>
         <div className="input_panel"> 
-            <Input placeholder={"AMOUNT"} value={props.amount}  onChange={(e:string)=>{
-                if(e>props.tokenAmount){
-                    message.error("The input amount exceeds your transferrable balance.");
-                    props.onAmountChange && props.onAmountChange("")
-                }else{
-                    props.onAmountChange && props.onAmountChange(e)
-                }
+            <Input placeholder={"AMOUNT"} maxInput={props.tokenAmount} value={props.amount}  onChange={(e:string)=>{
+                props.onAmountChange && props.onAmountChange(e)
             }}  icon={getIcon()}/>
             <div className="balance"> 
                 {props.type} balance {(props.tokenAmount=="--")? "--": NumberUtil.handleFisAmountToFixed(props.tokenAmount)}

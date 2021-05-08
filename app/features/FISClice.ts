@@ -542,17 +542,32 @@ export const getMinting = (type: number, txHash: string, blockHash: string, cb?:
     }
   }));
 } 
-
+export const bondStates=(type: number, txHash: string, blockHash: string,cb?:Function): AppThunk => async (dispatch, getState)=>{
+  const stafiApi = await stafiServer.createStafiApi();
+  let bondSuccessParamArr:any[] = [];
+  bondSuccessParamArr.push(blockHash);
+  bondSuccessParamArr.push(txHash);
+  const result= await stafiApi.query.rTokenSeries.bondStates(type, bondSuccessParamArr) 
+  let bondState = result.toJSON();   
+  if (bondState=="Success") { 
+    cb && cb("successful");
+  } else if (bondState == "Fail") {  
+    cb && cb("failure");
+  } else if(bondState == null){
+    cb && cb('stakingFailure');
+  }else { 
+    cb && cb("pending");
+  } 
+}
 export const rTokenSeries_bondStates=(type: number, bondSuccessParamArr:any,statusObj:any,cb?:Function): AppThunk => async (dispatch, getState)=>{
   statusObj.num=statusObj.num+1; 
   const stafiApi = await stafiServer.createStafiApi();
   const result= await stafiApi.query.rTokenSeries.bondStates(type, bondSuccessParamArr) 
-  let bondState = result.toJSON();    
+  let bondState = result.toJSON();   
   if (bondState=="Success") {
     dispatch(setProcessMinting({
       brocasting: processStatus.success
-    }));
-    
+    })); 
     cb && cb("successful");
   } else if (bondState == "Fail") { 
     dispatch(setProcessMinting({
@@ -562,7 +577,7 @@ export const rTokenSeries_bondStates=(type: number, bondSuccessParamArr:any,stat
   } else if(bondState == null){
     cb && cb('stakingFailure');
   }else if(statusObj.num<=40){  
-    cb && cb("padding");
+    cb && cb("pending");
     setTimeout(()=>{ 
       dispatch(rTokenSeries_bondStates(type, bondSuccessParamArr,statusObj,cb))
     }, 15000); 

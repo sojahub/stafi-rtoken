@@ -3,7 +3,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import { Popover} from 'antd';
 import Item from './popoverItem';
 import {setProcessSlider} from '@features/globalClice' 
-import {readNotice,setProcess} from '@features/noticeClice';
+import {readNotice,setProcess,checkAll_minting} from '@features/noticeClice';
 import {Symbol} from '@keyring/defaults'
 import './popover.scss';
 
@@ -47,6 +47,7 @@ export default function Index(props:Props){
   </> )
    return <Popover onVisibleChange={(e)=>{
     if(e){
+      dispatch(checkAll_minting(data.datas))
       dispatch(readNotice({}));
     }
     

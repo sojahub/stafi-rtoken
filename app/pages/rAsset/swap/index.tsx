@@ -63,10 +63,10 @@ const datas=[{
 }]
 export default function Index(props:any){  
   const dispatch =useDispatch();
-  const [fromAoumt,setFormAmount]=useState();
+  const [fromAoumt,setFormAmount]=useState<any>();
   const [selectDataSource,setSelectDataSource]=useState(datas);
   const [fromType,setFormType]=useState(datas[0]); 
-  const [address,setAddress]=useState(); 
+  const [address,setAddress]=useState<any>(); 
 
   const [visible,setVisible]=useState(false); 
   const [operationType,setOperationType]=useState<undefined | 'erc20' |'native'>();
@@ -187,8 +187,9 @@ export default function Index(props:any){
             <TypeInput 
             placeholder="0.0" 
             value={fromAoumt} 
-            onChange={(value:any)=>{
-              setFormAmount(value)
+            maxInput={fromType.amount}
+            onChange={(value:any)=>{ 
+              setFormAmount(value) 
             }} 
             selectDataSource={selectDataSource} 
             token={fromType} 
@@ -196,6 +197,7 @@ export default function Index(props:any){
             token_title={fromType.title}
             selectTitle={operationType=="native"?"Select a native rToken":"Select an erc20 rToken"}
             onSelectChange={(e:any)=>{ 
+              setFormAmount("") 
               setFormType(e);
             }}/> 
           </div>
@@ -210,10 +212,7 @@ export default function Index(props:any){
           <div>
             <TypeInput disabled={true}  
             placeholder="0.0" 
-            value={fromAoumt} 
-            onChange={(value:any)=>{
-              setFormAmount(value)
-            }} 
+            value={fromAoumt}  
             selectDataSource={datas} 
             token={fromType}
             token_icon={operationType=="native" ? selected_rETH :selected_rFIS}

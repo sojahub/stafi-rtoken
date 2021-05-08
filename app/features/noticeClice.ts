@@ -6,7 +6,7 @@ import {setProcessParameter} from './rDOTClice';
 import {setProcessParameter as krmSetProcessParameter} from './rKSMClice';
 import {setProcessParameter as atomSetProcessParameter} from './rATOMClice';
 import {initProcess,setProcessSlider,setProcessSending,setProcessStaking,processStatus} from './globalClice';
-import {getMinting} from './FISClice';
+import {getMinting,bondStates} from './FISClice';
 import {rSymbol,Symbol} from '@keyring/defaults'
 import moment from 'moment'; 
 import { message,Modal } from 'antd';
@@ -63,16 +63,18 @@ const noticeClice = createSlice({
         data={};  
         data.datas=[] 
       } 
-      data.showNew=true;
+      if(payload.showNew){
+        data.showNew=payload.showNew;
+      }
       const m=data.datas.find((item:any)=>{
-        return item.uuid==payload.uuid
+        return item.uuid==payload.data.uuid
       })
       if(m){
         data.datas=data.datas.map((item:any)=>{ 
-          return item.uuid==payload.uuid ? payload :item;
+          return item.uuid==payload.data.uuid ? payload.data :item;
         })
       }else{
-        data.datas.push(payload);
+        data.datas.push(payload.data);
       }  
       data.datas = data.datas.sort((a:any,b:any)=>{ 
         return moment(a.dateTime,formatStr).isAfter(moment(b.dateTime,formatStr))?-1:1;
@@ -98,19 +100,39 @@ export const {addNoticeModal,readNotice}=noticeClice.actions
 
 export const add_Notice=(uuid:string,rSymbol:string,type:string,subType:string,amount:string,status:string,subData?:any):AppThunk=>async (dispatch,getState)=>{
   dispatch(addNoticeModal({
-    uuid:uuid,   //信息唯一标识
-    title:subType,   
-    type:type,
-    subType:subType,
-    // content:content,
-    amount:amount,
-    dateTime:moment().format(formatStr),
-    status:status,
-    rSymbol:rSymbol,
-    subData:subData, 
+    data:{
+      uuid:uuid,   //信息唯一标识
+      title:subType,   
+      type:type,
+      subType:subType,
+      // content:content,
+      amount:amount,
+      dateTime:moment().format(formatStr),
+      status:status,
+      rSymbol:rSymbol,
+      subData:subData, 
+    },
+    showNew:true
   }))
 }
 
+export const update_Notice=(uuid:string,rSymbol:string,type:string,subType:string,amount:string,status:string,subData?:any):AppThunk=>async (dispatch,getState)=>{
+  dispatch(addNoticeModal({
+    data:{
+      uuid:uuid,   //信息唯一标识
+      title:subType,   
+      type:type,
+      subType:subType,
+      // content:content,
+      amount:amount,
+      dateTime:moment().format(formatStr),
+      status:status,
+      rSymbol:rSymbol,
+      subData:subData, 
+    },
+    showNew:false
+  }))
+}
  
 
 export const setProcess=(item:any,list:any,cb?:Function):AppThunk=>async (dispatch,getState)=>{
@@ -168,14 +190,23 @@ const re_Minting=(item:any,):AppThunk=>(dispatch,getState)=>{
     finalizing:  processStatus.success,
   })); 
   const staking=item.subData.processParameter.staking;
-  dispatch(getMinting(staking.type,staking.txHash,staking.blockHash,(e:string)=>{
+  let txHash="";
+  let blockHash="";
+  if(staking.type==rSymbol.Atom){
+    txHash="0x"+staking.txHash;
+    blockHash="0x"+staking.blockHash;
+  }else{
+    txHash=staking.txHash;
+    blockHash=staking.blockHash;
+  }
+  dispatch(getMinting(staking.type,txHash,blockHash,(e:string)=>{ 
     if(e=="successful"){ 
-     dispatch(add_Notice(item.uuid,item.rSymbol,item.type,item.subType,item.content,noticeStatus.Confirmed,{
+     dispatch(add_Notice(item.uuid,item.rSymbol,item.type,item.subType,item.amount,noticeStatus.Confirmed,{
       process:getState().globalModule.process,
       processParameter:item.subData.processParameter
      }))
-    }else{
-      dispatch(add_Notice(item.uuid,item.rSymbol,item.type,item.subType,item.content,noticeStatus.Error,{
+    }else if(e=="failure" || e=="stakingFailure"){
+      dispatch(add_Notice(item.uuid,item.rSymbol,item.type,item.subType,item.amount,noticeStatus.Error,{
         process:getState().globalModule.process,
         processParameter:item.subData.processParameter
       }));
@@ -203,7 +234,109 @@ export const findUuid=(datas:any,txHash:string,blockHash:string)=>{
   return null;
 }
  
-
+export const checkAll_minting=(list:any):AppThunk=>(dispatch,getState)=>{
+  if(list){
+    const arryList=list.filter((i:any)=>{
+      return i.status != noticeStatus.Confirmed;
+    }); 
+    arryList.forEach((item:any) => {
+      const staking=item.subData.processParameter.staking;
+      let process={...item.subData.process}; 
+      let txHash="";
+      let blockHash="";
+      if(staking.type==rSymbol.Atom){
+        txHash="0x"+staking.txHash;
+        blockHash="0x"+staking.blockHash;
+      }else{
+        txHash=staking.txHash;
+        blockHash=staking.blockHash;
+      }
+      dispatch(bondStates(staking.type,txHash,blockHash,(e:string)=>{ 
+        if(e=="successful"){ 
+          process.sending={...process.sending,...{
+            brocasting: processStatus.success,
+            packing: processStatus.success,
+            finalizing:  processStatus.success,
+          }}
+          process.staking={...process.staking,...{
+            brocasting: processStatus.success,
+            packing: processStatus.success,
+            finalizing:  processStatus.success,
+          }}
+          process.minting={...process.minting,...{
+            brocasting: processStatus.success, 
+            minting:  processStatus.success,
+          }}
+         dispatch(update_Notice(item.uuid,item.rSymbol,item.type,item.subType,item.amount,noticeStatus.Confirmed,{
+          process:process,
+          processParameter:item.subData.processParameter
+         }))
+        }else if(e=="stakingFailure"){
+          if(item.status==noticeStatus.Pending){
+            process.sending={...process.sending,...{
+              brocasting: processStatus.success,
+              packing: processStatus.success,
+              finalizing:  processStatus.success,
+            }}
+            process.staking={...process.staking,...{
+              brocasting: processStatus.success,
+              packing: processStatus.failure,
+              finalizing:  processStatus.failure,
+            }}
+            process.minting={...process.minting,...{
+              brocasting: processStatus.default, 
+              minting:  processStatus.default,
+            }}
+          }
+          dispatch(update_Notice(item.uuid,item.rSymbol,item.type,item.subType,item.amount,noticeStatus.Error,{
+            process:process,
+            processParameter:item.subData.processParameter
+          }));
+        }else if(e=="pending"){ 
+          process.sending={...process.sending,...{
+            brocasting: processStatus.success,
+            packing: processStatus.success,
+            finalizing:  processStatus.success,
+          }}
+          process.staking={...process.staking,...{
+            brocasting: processStatus.success,
+            packing: processStatus.success,
+            finalizing:  processStatus.success,
+          }}
+          process.minting={...process.minting,...{
+            brocasting: processStatus.loading, 
+            minting:  processStatus.loading,
+          }}  
+          dispatch(update_Notice(item.uuid,item.rSymbol,item.type,item.subType,item.amount,noticeStatus.Pending,{
+            process:process,
+            processParameter:item.subData.processParameter
+          }));
+        }else{
+          if(item.status==noticeStatus.Pending){
+            process.sending={...process.sending,...{
+              brocasting: processStatus.success,
+              packing: processStatus.success,
+              finalizing:  processStatus.success,
+            }}
+            process.staking={...process.staking,...{
+              brocasting: processStatus.success,
+              packing: processStatus.success,
+              finalizing:  processStatus.success,
+            }}
+            process.minting={...process.minting,...{
+              brocasting: processStatus.failure, 
+              minting:  processStatus.failure,
+            }}
+          }
+          dispatch(update_Notice(item.uuid,item.rSymbol,item.type,item.subType,item.amount,noticeStatus.Error,{
+            process:process,
+            processParameter:item.subData.processParameter
+          }));
+        }
+      }));
+    });
+  }
+}
 export const notice_text=(item:any)=>{
   if(item.subType==noticesubType.Stake){
     return `Staked ${item.amount} ${item.rSymbol.toUpperCase()} from your Wallet to StaFi Validator Pool Contract`

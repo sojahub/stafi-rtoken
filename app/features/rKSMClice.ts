@@ -451,12 +451,13 @@ export const continueProcess = (): AppThunk => async (dispatch, getState) => {
     let statusObj={
       num:0
     }
-    dispatch(rTokenSeries_bondStates(rSymbol.Ksm, bondSuccessParamArr,statusObj,(e:string)=>{
+    dispatch(rTokenSeries_bondStates(rSymbol.Ksm, bondSuccessParamArr,statusObj,(e:string)=>{ 
       if(e=="successful"){
         message.success("minting succeeded",3,()=>{ 
           dispatch(setStakeHash(null));
         }); 
-      }else{
+      }else if(e=="failure" || e=="stakingFailure"){
+        dispatch(setStakeHash(null));
         dispatch(getBlock(stakeHash.blockHash, stakeHash.txHash,stakeHash.notice_uuid))
       } 
     }));
@@ -518,9 +519,8 @@ export const getBlock = (blockHash: string, txHash: string, uuid?:string,cb?: Fu
       if (ex.hash.toHex() == txHash) {
         const { method: { args, method, section } } = ex;
         if (section == 'balances' && (method == 'transfer' || method == 'transferKeepAlive')) {
-          u = true;
-
-          if (ex.signer.toString() != address) {
+          u = true; 
+          if (ex.signer.toString() != address) { 
             message.error("Please select your KSM account that sent the transaction");
             return;
           }

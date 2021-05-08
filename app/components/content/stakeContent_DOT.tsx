@@ -60,14 +60,8 @@ export default function Index(props:Props){
             <div className="tip">
             {props.type=="rDOT" ? `Stakable`:"Transferable"} {props.unit}: {props.transferrableAmount}
             </div>
-            <Input placeholder="AMOUNT" value={props.amount} onChange={(e:any)=>{
-                if(parseFloat(e)>parseFloat(props.transferrableAmount)){
-                    message.error("The input amount exceeds your transferrable balance.");
-                    props.onChange && props.onChange(null);
-                } else{
-                    props.onChange && props.onChange(e);
-                }
-                
+            <Input placeholder="AMOUNT" value={props.amount} maxInput={props.transferrableAmount} onChange={(e:any)=>{
+                props.onChange && props.onChange(e); 
             }}  icon={getIcon()}/>
 
 {/* selected_rKSM */}

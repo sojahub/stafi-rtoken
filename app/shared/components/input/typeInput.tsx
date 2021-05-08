@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import {Input,Popover} from 'antd';  
+import {Input,Popover,message} from 'antd';  
 import black_close from '@images/black_close.svg';
 import leftArrowSvg from '@images/left_arrow.svg';
 
@@ -17,7 +17,8 @@ type Props={
     token_icon:any,
     token_title:string,
     disabled?:boolean, 
-    selectTitle?:string
+    selectTitle?:string,
+    maxInput?:string | number
 }
 export default function Index(props:Props){
 
@@ -31,8 +32,13 @@ export default function Index(props:Props){
       value = value.replace(/\.{2,}/g,".");     
       value = value.replace(".","$#$").replace(/\./g,"").replace("$#$",".");
       value = value.replace(/^(\-)*(\d+)\.(\d\d\d\d\d\d).*$/,'$1$2.$3');  
-      props.onChange && props.onChange(value);
-        props.onChange && props.onChange(value);
+      if(Number(value)>Number(props.maxInput)){
+        message.error("The input amount exceeds your transferrable balance");
+        props.onChange && props.onChange(""); 
+      }else{
+        props.onChange && props.onChange(value); 
+      }
+    
     }}
     value={props.value}
     placeholder={props.placeholder} 

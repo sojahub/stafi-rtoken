@@ -1,5 +1,5 @@
 import React from 'react';
-import {Input} from 'antd';
+import {Input,message} from 'antd';
 import {regular,parseInterge} from '@util/utils'
 
 import './index.scss';
@@ -9,7 +9,8 @@ type Props={
     icon:any,
     unit?:string,
     value?:string | number ,
-    onChange?:Function
+    onChange?:Function,
+    maxInput?:string | number ,
 }
 export default function Index(props:Props){
     return <Input 
@@ -20,7 +21,13 @@ export default function Index(props:Props){
         value = value.replace(/\.{2,}/g,".");     
         value = value.replace(".","$#$").replace(/\./g,"").replace("$#$",".");
         value = value.replace(/^(\-)*(\d+)\.(\d\d\d\d\d\d).*$/,'$1$2.$3');  
-        props.onChange && props.onChange(value);
+        if(Number(value)>Number(props.maxInput)){
+            message.error("The input amount exceeds your transferrable balance");
+            props.onChange && props.onChange("");
+        }else{
+            props.onChange && props.onChange(value);
+        }
+     
     }}
     value={props.value}
     placeholder={props.placeholder} 
