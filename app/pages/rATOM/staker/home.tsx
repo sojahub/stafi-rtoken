@@ -7,6 +7,7 @@ import { rTokenRate } from '@features/rATOMClice';
 import {ratioToAmount} from '@util/common'
 import { message } from 'antd';
 import NumberUtil from '@util/numberUtil';
+import {setSessionStorageItem,getSessionStorageItem} from '@util/common'
 import { setProcessSlider } from '@features/globalClice'; 
 import atom_stake_tips from '@images/atom_stake_tips.png'
 import Button from '@shared/components/button/button';
@@ -56,11 +57,16 @@ export default function Index(props:any){
         message.error("No enough FIS to pay for the fee");
         return;
       }
-      setVisible(true)
-      // dispatch(transfer(amount,()=>{
-      //   dispatch(setProcessSlider(false));
-      //   props.history.push("/rATOM/staker/info")
-      // }));
+      if(getSessionStorageItem("atom_stake_tips_modal")){
+          dispatch(transfer(amount,()=>{
+            dispatch(setProcessSlider(false));
+            props.history.push("/rATOM/staker/info")
+          }));
+      }else{
+        setVisible(true)
+      }
+    
+    
     }else{
       message.error("Please enter the amount")
     } 
@@ -75,14 +81,16 @@ export default function Index(props:any){
   }}
   className="atom_stake_tips_modal"
   >
+
       <img src={atom_stake_tips}/>
       <Button btnType="square" onClick={()=>{
+        setSessionStorageItem("atom_stake_tips_modal",true)
         setVisible(false)
         dispatch(transfer(amount,()=>{
           dispatch(setProcessSlider(false));
           props.history.push("/rATOM/staker/info")
         }));
-      }}>UnderStood</Button>
+      }}>Understood</Button>
   </Modal>
   </>
 }

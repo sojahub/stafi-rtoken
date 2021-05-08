@@ -10,7 +10,7 @@ import {getAssetBalanceAll} from '@features/ETHClice';
 import {rTokenRate as ksm_rTokenRate,getUnbondCommission as ksm_getUnbondCommission} from '@features/rKSMClice';
 import {rTokenRate as dot_rTokenRate,getUnbondCommission as dot_getUnbondCommission} from '@features/rDOTClice'
 import {rTokenRate as fis_rTokenRate,getUnbondCommission as fis_getUnbondCommission} from '@features/FISClice';
-import {rTokenRate as atom_rTokenRate,getUnbondCommission as atom_getUnbondCommission} from '@features/FISClice'
+import {rTokenRate as atom_rTokenRate,getUnbondCommission as atom_getUnbondCommission} from '@features/rATOMClice'
 import CommonClice from '@features/commonClice';
 import CountAmount from './components/countAmount'; 
 import DataItem from './components/list/item';

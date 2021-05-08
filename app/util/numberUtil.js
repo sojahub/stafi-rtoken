@@ -108,11 +108,17 @@ export default {
 
   // The return string contains 6 decimal places, including 0
   handleFisAmountToFixed(amount) { 
+    if(amount=="--"){
+      return "--"
+    }
     return (Math.floor(amount * 1000000) / 1000000).toFixed(6) || "--";
   },
 
   // The return string contains 6 decimal places, including 0
   handleFisRoundToFixed(amount) { 
+    if(amount=="--"){
+      return "--"
+    }
     return (Math.round(amount * 100000000) / 100000000).toFixed(6) || "--";
   },
 
@@ -131,6 +137,9 @@ export default {
 
   // The return string contains 4 decimal places, including 0
   handleAtomRoundToFixed(amount) { 
+    if(amount=="--"){
+      return "--"
+    }
     return (Math.round(amount * 1000000) / 1000000).toFixed(4) || "--";
   },
 
