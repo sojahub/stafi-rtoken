@@ -106,14 +106,14 @@ export default {
   },
   rAtomChainId:()=>{
     if(process.env.NODE_ENV=="production" &&  !isdev()){
-      return "stargate-final";
+      return "cosmoshub-4";
     }else{
       return "stargate-final";
     } 
   },
   rAtomCosmosChainRpc:()=>{
     if(process.env.NODE_ENV=="production" &&  !isdev()){
-      return  "https://testcosmosrpc.wetez.io";
+      return  "https://cosmos-rpc1.stafi.io";
     }else{
       return  "https://testcosmosrpc.wetez.io";
     } 
