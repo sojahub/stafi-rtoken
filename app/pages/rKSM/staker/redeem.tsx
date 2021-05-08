@@ -32,7 +32,7 @@ export default function Index(props:any){
       fisFee:state.rKSMModule.unbondCommission,
       address:state.rKSMModule.ksmAccount.address,
       unBondFees:state.rKSMModule.unBondFees,  
-      willAmount: commonClice.getWillAmount(ratio,unbondCommission,amount),
+      willAmount: commonClice.getWillAmount(ratio,state.rKSMModule.unbondCommission,amount),
       estimateUnBondTxFees: state.FISModule.estimateUnBondTxFees,
       fisBalance: state.FISModule.fisAccount.balance 
     }
