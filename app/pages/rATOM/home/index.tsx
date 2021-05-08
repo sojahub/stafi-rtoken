@@ -26,7 +26,6 @@ export default function Inde(props:any){
   if(fisAccount && atomAccount){
     return <Redirect to="/rATOM/type" />
   }
-  console.log(atomAccounts,fisAccounts,"=====fisAccounts")
   return <HomeCard 
       title={<><label>Liquify</label> Your Staking ATOM</>}
       subTitle={"Staking via StaFi Staking Contract and get rATOM in return"} 
