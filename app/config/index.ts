@@ -113,7 +113,7 @@ export default {
   },
   rAtomCosmosChainRpc:()=>{
     if(process.env.NODE_ENV=="production" &&  !isdev()){
-      return  "https://cosmos-rpc1.stafi.io";
+      return  "https://rpc.cosmos.network";
     }else{
       return  "https://testcosmosrpc.wetez.io";
     } 
