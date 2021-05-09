@@ -294,11 +294,11 @@ const routesFactory=(role?:any)=>{
         }]
       },{
         path: '*',
-        component: () => <Redirect to="/rDOT/home"/>
+        component: () => <Redirect to="/rAsset/native"/>
       }]
     },{
       path: '*',
-      component: () => <Redirect to="/rDOT/home"/>
+      component: () => <Redirect to="/rAsset/native"/>
     }
     
   ]
