@@ -33,11 +33,11 @@ export default function Index(props:any){
     useEffect(()=>{
         if(getLocalStorageItem(Keys.KsmAccountKey)==null && getLocalStorageItem(Keys.FisAccountKey)){
             dispatch(connectPolkadotjs(Symbol.Ksm));  
-            dispatch(getPools(()=>{
-                setTimeout(()=>{
-                  dispatch(continueProcess());
-                },20)
-              }));
+            // dispatch(getPools(()=>{
+            //     setTimeout(()=>{
+            //       dispatch(continueProcess());
+            //     },20)
+            //   }));
         }
     },[])
 

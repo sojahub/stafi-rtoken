@@ -31,11 +31,10 @@ export default function Index(props:any){
       dispatch(reloadData(Symbol.Dot)); 
       dispatch(reloadData(Symbol.Fis)); 
     } 
-    dispatch(getPools(()=>{
-      setTimeout(()=>{
-        dispatch(continueProcess());
-      },20)
-    }));
+    dispatch(getPools());
+    setTimeout(()=>{
+      dispatch(continueProcess());
+    },50)
   },[]) 
 
   const {loading} =useSelector((state:any)=>{
