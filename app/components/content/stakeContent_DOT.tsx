@@ -31,9 +31,10 @@ type Props={
 
 }
 export default function Index(props:Props){
-    const {bondSwitch}=useSelector((state:any)=>{  
+    const {bondSwitch,processSlider}=useSelector((state:any)=>{  
         return { 
-          bondSwitch:state.FISModule.bondSwitch
+          bondSwitch:state.FISModule.bondSwitch,
+          processSlider:state.globalModule.processSlider
         }
       })
  
@@ -66,8 +67,7 @@ export default function Index(props:Props){
 
 {/* selected_rKSM */}
             {/* unit={"Max"} */}
-            <div  className="pool">
-                
+            <div  className="pool"> 
                 {props.type=="rKSM" && `${isNaN(props.totalStakedToken)?"--":props.totalStakedToken} KSM is staked via rKSM `}
                 {props.type=="rDOT" && `${isNaN(props.totalStakedToken)?"--":props.totalStakedToken} DOT is staked via rDOT `}
                 {props.type=="rATOM" && `${isNaN(props.totalStakedToken)?"--":props.totalStakedToken} ATOM is staked via rATOM `}
@@ -113,7 +113,7 @@ export default function Index(props:Props){
                 </div>
             </div>
         </div> 
-        <div className="btns"> <Button disabled={(!props.amount || props.amount==0 || haswarn)} onClick={()=>{
+        <div className="btns"> <Button disabled={(!props.amount || props.amount==0 || haswarn || processSlider)} onClick={()=>{
              props.onStakeClick && props.onStakeClick()
          }}>Stake</Button>
         </div>

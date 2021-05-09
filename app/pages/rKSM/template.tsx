@@ -31,12 +31,11 @@ export default function Index(props:any){
     if(getLocalStorageItem(Keys.KsmAccountKey) && getLocalStorageItem(Keys.FisAccountKey)){
         dispatch(reloadData(Symbol.Ksm)); 
         dispatch(reloadData(Symbol.Fis)); 
-    } 
-    dispatch(getPools(()=>{ 
-      setTimeout(()=>{
-        dispatch(continueProcess());
-      },20)
-    }));
+    }  
+    dispatch(getPools()); 
+    setTimeout(()=>{ 
+      dispatch(continueProcess());
+    },50)
   },[]) 
   const {loading} =useSelector((state:any)=>{
     return {

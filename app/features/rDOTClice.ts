@@ -16,7 +16,7 @@ import {
   web3FromSource,
 } from '@polkadot/extension-dapp';
 import NumberUtil from '@util/numberUtil';
-import { bound, fisUnbond,rTokenSeries_bondStates } from './FISClice';
+import { bound, fisUnbond,rTokenSeries_bondStates,bondStates } from './FISClice';
 import {stafi_uuid} from '@util/common'
 import {addNoticeModal,noticesubType,noticeStatus,noticeType} from './noticeClice';
 import { u8aToHex } from '@polkadot/util' 
@@ -443,22 +443,30 @@ export const unbond = (amount: string,recipient:string,willAmount:any, cb?: Func
 export const continueProcess = (): AppThunk => async (dispatch, getState) => {
   const stakeHash = getState().rDOTModule.stakeHash; 
   if (stakeHash && stakeHash.blockHash && stakeHash.txHash) { 
-    let bondSuccessParamArr:any[] = [];
-    bondSuccessParamArr.push(stakeHash.blockHash);
-    bondSuccessParamArr.push(stakeHash.txHash);
-    let statusObj={
-      num:0
-    }
-    dispatch(rTokenSeries_bondStates(rSymbol.Dot, bondSuccessParamArr,statusObj,(e:string)=>{
+    // let bondSuccessParamArr:any[] = [];
+    // bondSuccessParamArr.push(stakeHash.blockHash);
+    // bondSuccessParamArr.push(stakeHash.txHash);
+    // let statusObj={
+    //   num:0
+    // }
+    dispatch(bondStates(rSymbol.Atom,stakeHash.txHash,stakeHash.blockHash,(e:string)=>{
       if(e=="successful"){
         message.success("minting succeeded",3,()=>{ 
           dispatch(setStakeHash(null));
-        });  
-      }else if(e=="failure" || e=="stakingFailure"){
-        dispatch(setStakeHash(null));
+        }); 
+      }else{ 
         dispatch(getBlock(stakeHash.blockHash, stakeHash.txHash,stakeHash.notice_uuid))
       } 
-    }));
+    })) 
+    // dispatch(rTokenSeries_bondStates(rSymbol.Dot, bondSuccessParamArr,statusObj,(e:string)=>{
+    //   if(e=="successful"){
+    //     message.success("minting succeeded",3,()=>{ 
+    //       dispatch(setStakeHash(null));
+    //     });  
+    //   }else if(e=="failure" || e=="stakingFailure"){ 
+    //     dispatch(getBlock(stakeHash.blockHash, stakeHash.txHash,stakeHash.notice_uuid))
+    //   } 
+    // }));
   }
 }
 

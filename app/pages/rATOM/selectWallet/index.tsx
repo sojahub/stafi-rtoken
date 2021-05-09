@@ -33,11 +33,11 @@ export default function Index(props:any){
     useEffect(()=>{
         if(getLocalStorageItem(Keys.AtomAccountKey)==null && getLocalStorageItem(Keys.FisAccountKey)){
             dispatch(connectPolkadotjs(Symbol.Atom));  
-            dispatch(getPools(()=>{
-                setTimeout(()=>{
-                  dispatch(continueProcess());
-                },20)
-              }));
+            // dispatch(getPools(()=>{
+            //     setTimeout(()=>{
+            //       dispatch(continueProcess());
+            //     },20)
+            //   }));
         }
     },[])
 
