@@ -520,14 +520,14 @@ export const getBlock = (blockHash: string, txHash: string, uuid?:string,cb?: Fu
         if (section == 'balances' && (method == 'transfer' || method == 'transferKeepAlive')) {
           u = true;
 
-          if (ex.signer.toString() != address) {
+          const keyringInstance = keyring.init(Symbol.Dot);
+          if (u8aToHex(keyringInstance.decodeAddress(ex.signer.toString())) != u8aToHex(keyringInstance.decodeAddress(address))) {
             message.error("Please select your DOT account that sent the transaction");
             return;
           }
 
           let amount = args[1].toJSON();
           const poolAddress = args[0].toJSON().id;
-          const keyringInstance = keyring.init(Symbol.Dot);
           let poolPubkey = u8aToHex(keyringInstance.decodeAddress(poolAddress));
 
           const poolData = validPools.find((item: any) => {

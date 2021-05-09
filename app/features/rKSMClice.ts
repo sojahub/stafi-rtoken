@@ -519,15 +519,16 @@ export const getBlock = (blockHash: string, txHash: string, uuid?:string,cb?: Fu
       if (ex.hash.toHex() == txHash) {
         const { method: { args, method, section } } = ex;
         if (section == 'balances' && (method == 'transfer' || method == 'transferKeepAlive')) {
-          u = true; 
-          if (ex.signer.toString() != address) { 
+          u = true;
+         
+          const keyringInstance = keyring.init(Symbol.Ksm);
+          if (u8aToHex(keyringInstance.decodeAddress(ex.signer.toString())) != u8aToHex(keyringInstance.decodeAddress(address))) { 
             message.error("Please select your KSM account that sent the transaction");
             return;
           }
 
           let amount = args[1].toJSON();
           const poolAddress = args[0].toJSON().id;
-          const keyringInstance = keyring.init(Symbol.Ksm);
           let poolPubkey = u8aToHex(keyringInstance.decodeAddress(poolAddress));
 
           const poolData = validPools.find((item: any) => {
