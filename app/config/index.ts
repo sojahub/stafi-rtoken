@@ -101,8 +101,9 @@ export default {
     } 
   },
   txHashAndBlockhashURl:{
-    dotURL:"https://docs.stafi.io/rproduct/rdot-solution/rdot-staker-guide/recovery-function#2-the-way-to-get-txhash-and-blockhash",
-    ksmURL:"https://docs.stafi.io/rproduct/rksm-solution/staker-guide/recovery-function#2-the-way-to-get-txhash-and-blockhash"
+    dotURL: "https://docs.stafi.io/rproduct/rdot-solution/rdot-staker-guide/recovery-function#2-the-way-to-get-txhash-and-blockhash",
+    ksmURL: "https://docs.stafi.io/rproduct/rksm-solution/staker-guide/recovery-function#2-the-way-to-get-txhash-and-blockhash",
+    atomURL: "https://docs.stafi.io/rproduct/ratom-solution/staker-guide/recovery-function#2-the-way-to-get-txhash"
   },
   rAtomChainId:()=>{
     if(process.env.NODE_ENV=="production" &&  !isdev()){

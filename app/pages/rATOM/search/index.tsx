@@ -3,7 +3,7 @@ import {Form,message} from 'antd';
 import {useDispatch} from 'react-redux';
 import Input from '@shared/components/input/index';
 import Button from '@shared/components/button/button';
-import Select,{Option} from '@shared/components/select';
+import config from '@config/index'
 import leftArrowSvg from '@images/left_arrow.svg';
 import {onProceed} from '@features/rATOMClice'
 import './index.scss';
@@ -39,10 +39,10 @@ export default function Index(props:any){
       form={form}
       onFinish={onFinish}
     > 
-        <Form.Item initialValue="ATOM" label="Token" name="token">  
-              <Input disabled={true}/>
-        </Form.Item> 
-        <Form.Item label={<div className="item_title"><label>TxHash</label><a>How to get TxHash</a></div>} name="txHash">
+      <Form.Item initialValue="ATOM" label="Token" name="token">  
+            <Input disabled={true}/>
+      </Form.Item> 
+      <Form.Item label={<div className="item_title"><label>TxHash</label><a href={config.txHashAndBlockhashURl.atomURL} target="_blank">How to get TxHash</a></div>} name="txHash">
           <Input placeholder="" />
         </Form.Item> 
         {/* <Form.Item label={<div className="item_title"><label>BlockHash</label><a>How to get BlockHash</a></div>} name="blockHash">
