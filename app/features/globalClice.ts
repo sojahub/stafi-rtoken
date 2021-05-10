@@ -132,16 +132,21 @@ export const keplr_keystorechange=(cb?:Function):AppThunk=>async (dispatch, getS
 }
 
 export const connectAtomjs=(cb?:Function):AppThunk=>async (dispatch, getState)=>{ 
-  const a = await atomServer.connectAtomjs();
-  const accounts=await atomServer.getAccounts();  
-  const account= {  
-    name: accounts.name,
-    address: accounts.bech32Address,
-    pubkey:u8aToHex(accounts.pubKey),
-    balance: '--'
-  }   
-  dispatch(clice(Symbol.Atom).createSubstrate(account)); 
-  cb && cb();
+ 
+  try{ 
+    await atomServer.connectAtomjs(); 
+    const accounts=await atomServer.getAccounts();  
+    const account= {  
+      name: accounts.name,
+      address: accounts.bech32Address,
+      pubkey:u8aToHex(accounts.pubKey),
+      balance: '--'
+    }   
+    dispatch(clice(Symbol.Atom).createSubstrate(account)); 
+    cb && cb();
+  }catch(e){ 
+    message.error("Please create an account")
+  }
 }
 export const reloadData = (type:Symbol,cb?:Function): AppThunk=>async (dispatch, getState)=>{ 
   dispatch(clice(type).reloadData()); 
