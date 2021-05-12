@@ -43,7 +43,7 @@ export default function Index(props:Props){
               return rKSM;
           }else if( props.type=="rDOT"){
               return rDOT;
-          }else if(props.type="rATOM"){
+          }else if(props.type=="rATOM"){
               return rATOM;
           }
       }
