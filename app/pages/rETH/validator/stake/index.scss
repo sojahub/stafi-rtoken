@@ -1,0 +1,25 @@
+
+.stafi_reth_validator_context{ 
+    .upload_title{
+        margin-top:28px;
+    }
+    .upload_sub_title{
+        margin-bottom: 20px;
+    }
+    .address{
+        font-size: 12px;
+        margin-bottom: 10px;
+        a{
+            font-size: 12px; 
+        }
+    }
+    .stake_btns{
+        margin-top: 25px;
+        display: flex;
+        align-items: center;
+        .stafi_a{
+            margin-right: 30px;
+        }
+    }
+    
+}

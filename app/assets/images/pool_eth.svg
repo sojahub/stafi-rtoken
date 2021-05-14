@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="36px" height="36px" viewBox="0 0 36 36" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 48.1 (47250) - http://www.bohemiancoding.com/sketch -->
+    <title>Group 4</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Stafi-Product-1-Copy-7" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" transform="translate(-460.000000, -405.000000)">
+        <g id="Group-4" transform="translate(460.000000, 405.000000)">
+            <circle id="Oval-18" fill="#00F3AB" cx="18" cy="18" r="18"></circle>
+            <g id="Group" transform="translate(4.500000, 4.050000)">
+                <rect id="Rectangle-42" fill="#23292F" x="0" y="0" width="27" height="27.45" rx="13.5"></rect>
+                <g id="Group-25" transform="translate(9.900000, 7.200000)" fill="#149F6D">
+                    <polygon id="Rectangle-14" points="3.825 0 7.65 6.88700349 3.825 9.39873418 0 6.96802706"></polygon>
+                    <polygon id="Rectangle-14-Copy" points="3.99130435 0 3.99130435 5.26653208 3.99130435 9.39873418 0 6.96802706"></polygon>
+                    <polygon id="Rectangle-18" points="3.825 5.29746835 7.65 6.95374878 3.825 9.39873418 0 7.03261928"></polygon>
+                    <polygon id="Rectangle-18-Copy" points="3.99130435 5.29746835 3.99130435 6.95374878 3.99130435 9.39873418 0 7.03261928"></polygon>
+                    <polygon id="Rectangle-28" points="0 7.68987342 3.825 10.1107595 7.65 7.68987342 3.825 13.5"></polygon>
+                    <polygon id="Rectangle-28-Copy" points="0 7.68987342 3.99130435 10.1107595 3.99130435 13.5"></polygon>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

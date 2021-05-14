@@ -6,6 +6,20 @@ import {Symbol} from '@keyring/defaults'
 
 import HomeTemplate from './pages/template/homeTemplate'
 
+import ETHHomeTemplate from './pages/rETH/template';
+import RETHHome from './pages/rETH/home' 
+import RETHStaker from './pages/rETH/staker';
+import RETHValidator from './pages/rETH/validator';
+import RETHValidatorHome from './pages/rETH/validator/home/validatorContent'
+import RETHValidatorDeposit from './pages/rETH/validator/deposit';
+import RETHValidatorStake from './pages/rETH/validator/stake';
+import RETHValidatorStatus from './pages/rETH/validator/status';
+import RETHStakerIndex from './pages/rETH/staker/home';
+import RETHStakerInfo from './pages/rETH/staker/info';
+import RETHStakerRedeem from './pages/rETH/staker/redeem';
+import RETHSeach from './pages/rETH/search';
+import RETHType from './pages/rETH/selectType';
+
 import DOTHomeTemplate from './pages/rDOT/template';
 import RDOTHome from './pages/rDOT/home'
 import RDOTWallet from './pages/rDOT/selectWallet';
@@ -128,6 +142,97 @@ const routesFactory=(role?:any)=>{
         },{
           path: '*',
           component: () => <Redirect to="/rDOT/home"/>
+        }]
+      },{
+        id:"RETH_home",
+        path:"/rETH",
+        type:"rETH",
+        rSymbol:rSymbol.Eth,
+        component: ETHHomeTemplate,
+        routes:[{
+          id:"RETH_home_index",
+          path:"/rETH/home",
+          rSymbol:rSymbol.Eth,
+          component:RETHHome
+        },{
+          id:"RETH_staker",
+          type:"Staker",
+          path:"/rETH/staker",
+          rSymbol:rSymbol.Eth,
+          component:authorizedRoute(Symbol.Eth)(RETHStaker),
+          routes:[
+            {
+              id:"RETH_staker_index",
+              path:"/rETH/staker/index",
+              type:"Staker",
+              rSymbol:rSymbol.Eth,
+              component:RETHStakerIndex
+            },{
+              id:"RETH_staker_index_info",
+              path:"/rETH/staker/info",
+              type:"-Status",
+              rSymbol:rSymbol.Eth,
+              component:RETHStakerInfo
+            },{
+              id:"RDOT_staker_index_redeem",
+              path:"/rETH/staker/redeem",
+              type:"Staker",
+              rSymbol:rSymbol.Eth,
+              component:RETHStakerRedeem
+            },{
+              path: '*',
+              component: () => <Redirect to="/rETH/staker/index"/>
+            }
+          ]
+        },{
+          id:"RETH_validator",
+          type:"Validator",
+          path:"/rETH/validator",
+          rSymbol:rSymbol.Eth,
+          component:authorizedRoute(Symbol.Eth)(RETHValidator),
+          routes:[{
+            id:"RETH_validator_home",
+            type:"validator",
+            path:"/rETH/validator/index",
+            rSymbol:rSymbol.Eth,
+            component:authorizedRoute(Symbol.Eth)(RETHValidatorHome),
+          },{
+            id:"RETH_validator_deposit",
+            type:"-Deposit",
+            path:"/rETH/validator/deposit",
+            rSymbol:rSymbol.Eth,
+            component:authorizedRoute(Symbol.Eth)(RETHValidatorDeposit)
+          },{
+            id:"RETH_validator_stake",
+            type:"-Stake",
+            path:"/rETH/validator/stake",
+            rSymbol:rSymbol.Eth,
+            component:authorizedRoute(Symbol.Eth)(RETHValidatorStake)
+          },{
+            id:"RETH_validator_status",
+            type:"-Status",
+            path:"/rETH/validator/status",
+            rSymbol:rSymbol.Eth,
+            component:authorizedRoute(Symbol.Eth)(RETHValidatorStatus)
+          },{
+            path: '*',
+            component: () => <Redirect to="/rETH/validator/index"/>
+          }],
+          
+
+        },{
+          id:"RETH_search",
+          path:"/rETH/search",
+          rSymbol:rSymbol.Eth,
+          component:authorizedRoute(Symbol.Eth)(RETHSeach)
+        },{
+          id:"RETH_type",
+          path:"/rETH/type",
+          rSymbol:rSymbol.Eth,
+          component:authorizedRoute(Symbol.Eth)(RETHType)
+        },{
+          path: '*',
+          component: () => <Redirect to="/rETH/home"/>
         }]
       },{
         id:"RKSM_home",

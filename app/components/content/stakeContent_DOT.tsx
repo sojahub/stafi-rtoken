@@ -55,6 +55,7 @@ export default function Index(props:Props){
             {props.type=="rKSM" && `Stake KSM`}
             {props.type=="rDOT" && `Stake DOT`}
             {props.type=="rATOM" && `Stake ATOM`}
+            {props.type=="rETH" && `Stake ETH`}
         </label>
         {haswarn && <div className="warn">Unable to stake, system is waiting for matching validators</div>}
         <div className={`input_panel dot_input_panel ${haswarn && 'showWarn'}`}>
@@ -67,10 +68,11 @@ export default function Index(props:Props){
 
 {/* selected_rKSM */}
             {/* unit={"Max"} */}
-            <div  className="pool"> 
+            <div  className="pool">  
                 {props.type=="rKSM" && `${isNaN(props.totalStakedToken)?"--":props.totalStakedToken} KSM is staked via rKSM `}
                 {props.type=="rDOT" && `${isNaN(props.totalStakedToken)?"--":props.totalStakedToken} DOT is staked via rDOT `}
                 {props.type=="rATOM" && `${isNaN(props.totalStakedToken)?"--":props.totalStakedToken} ATOM is staked via rATOM `}
+                {props.type=="rETH" && <>{isNaN(props.totalStakedToken)?"--":props.totalStakedToken} ETH is staked in <A>pool</A> contracts</>}
                 {/* <A>stats</A> */}
             </div>
         </div>

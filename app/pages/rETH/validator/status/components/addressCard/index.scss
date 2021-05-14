@@ -1,0 +1,19 @@
+.stafi_status_validator_context{
+    .address_list{
+        .address_item{
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 12px;
+            padding:10px 0px 10px 71px;
+            border-bottom: 1px solid #474747;
+            a{
+                font-size: 12px;
+            };
+        }
+        >.address_item:last-child{
+            border-width: 0px;
+        }
+    }
+
+}

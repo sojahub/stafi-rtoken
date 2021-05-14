@@ -23,23 +23,24 @@ const account=(type:string)=>{
     case Symbol.Atom:
       if(getLocalStorageItem(Keys.AtomAccountKey)==null || getLocalStorageItem(Keys.FisAccountKey)==null){
         return '/rATOM/home' 
-      }
-      // if(getLocalStorageItem(Keys.AtomAccountKey)==null && getLocalStorageItem(Keys.FisAccountKey)){
-      //   return '/rATOM/home';
-      // }
+      } 
       return true;
-    case Symbol.Dot:
-      // if(getLocalStorageItem(Keys.DotAccountKey)==null){
-      //   return '/rDOT/home' 
-      // }
+    case Symbol.Dot: 
       if(getLocalStorageItem(Keys.DotAccountKey)==null && getLocalStorageItem(Keys.FisAccountKey)==null){
         return '/rDOT/home' 
       }
       if(getLocalStorageItem(Keys.DotAccountKey)==null && getLocalStorageItem(Keys.FisAccountKey)){
         return '/rDOT/wallet';
       } 
-      return true;
-      // return getLocalStorageItem(Keys.DotAccountKey) && getLocalStorageItem(Keys.FisAccountKey);
+      return true; 
+    case Symbol.Eth: 
+      if(getLocalStorageItem(Keys.MetamaskAccountKey)==null && getLocalStorageItem(Keys.FisAccountKey)==null){
+        return '/rETH/home' 
+      }
+      if(getLocalStorageItem(Keys.MetamaskAccountKey)==null && getLocalStorageItem(Keys.FisAccountKey)){
+        return '/rETH/wallet';
+      } 
+      return true; 
     case Symbol.Fis:
       return getLocalStorageItem(Keys.FisAccountKey);
     default:

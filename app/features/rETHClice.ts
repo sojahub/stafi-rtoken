@@ -14,7 +14,6 @@ const rETHClice = createSlice({
   name: 'rETHModule',
   initialState: {  
     ethAccount:getLocalStorageItem(Keys.MetamaskAccountKey),
-    ercBalance:"--"
   },
   reducers: {  
      setEthAccount(state,{payload}){
@@ -22,22 +21,19 @@ const rETHClice = createSlice({
         state.ethAccount=payload;
         removeLocalStorageItem(Keys.MetamaskAccountKey);
        }else{
-        if(state.ethAccount && state.ethAccount.address==payload.address){ 
-            state.ethAccount={...state.ethAccount,...payload} 
-            setLocalStorageItem(Keys.MetamaskAccountKey, {address:payload.address})
-        }else{
-            state.ethAccount=payload;
-            setLocalStorageItem(Keys.MetamaskAccountKey, {address:payload.address})
+          if(state.ethAccount && state.ethAccount.address==payload.address){ 
+              state.ethAccount={...state.ethAccount,...payload} 
+              setLocalStorageItem(Keys.MetamaskAccountKey, {address:payload.address})
+          }else{
+              state.ethAccount=payload;
+              setLocalStorageItem(Keys.MetamaskAccountKey, {address:payload.address})
+          }
         }
-        }
-     },
-     setErcBalance(state,{payload}){
-       state.ercBalance=payload
      }
   },
 });
 
-export const {setEthAccount,setErcBalance}=rETHClice.actions
+export const {setEthAccount}=rETHClice.actions
 
 declare const window: any;
 declare const ethereum: any;
