@@ -14,6 +14,7 @@ import RETHValidatorHome from './pages/rETH/validator/home/validatorContent'
 import RETHValidatorDeposit from './pages/rETH/validator/deposit';
 import RETHValidatorStake from './pages/rETH/validator/stake';
 import RETHValidatorStatus from './pages/rETH/validator/status';
+import RETHPoolContract from './pages/rETH/validator/poolContract'
 import RETHStakerIndex from './pages/rETH/staker/home';
 import RETHStakerInfo from './pages/rETH/staker/info';
 import RETHStakerRedeem from './pages/rETH/staker/redeem';
@@ -214,6 +215,12 @@ const routesFactory=(role?:any)=>{
             path:"/rETH/validator/status",
             rSymbol:rSymbol.Eth,
             component:authorizedRoute(Symbol.Eth)(RETHValidatorStatus)
+          },{
+            id:"RETH_validator_poolContract",
+            type:"validator",
+            path:"/rETH/validator/poolContract",
+            rSymbol:rSymbol.Eth,
+            component:authorizedRoute(Symbol.Eth)(RETHPoolContract),
           },{
             path: '*',
             component: () => <Redirect to="/rETH/validator/index"/>

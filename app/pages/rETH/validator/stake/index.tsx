@@ -6,7 +6,7 @@ import Upload from '@shared/components/upload';
 import Button from '@shared/components/button/button';
 import LeftContent from '@components/content/leftContent';
 import './index.scss'
-export default function Index(){
+export default function Index(props:any){
     return <LeftContent className="stafi_validator_context stafi_reth_validator_context">
         <div className="reth_title"> Stake </div>
        <div className="reth_sub_title">

@@ -6,9 +6,14 @@ import Button from '@shared/components/button/button';
 import AddressCard from './components/addressCard';
 import AddressItem from './components/addressCard/item';
 import down_arrow from '@images/selectedIcon2.svg'
+import NoDetails from '@shared/components/noDetails'
 import './index.scss'
-export default function Index(){
-    return <LeftContent className="stafi_status_validator_context">
+export default function Index(props:any){
+
+  // return <LeftContent className="stafi_status_validator_context">
+  //     <NoDetails type="max"/> 
+  // </LeftContent>
+  return <LeftContent className="stafi_status_validator_context">
         <div className="staked_eth">
             <div className="title">
                 <img src={selected_rETH_svg} /> Staked ETH
@@ -34,7 +39,8 @@ export default function Index(){
             <div className="title">
                 <img src={pool_eth_svg} />Pool Contracts (5)  <img className="icon" src={down_arrow} />
             </div>
-            <div className="Row">
+            <NoDetails type="small"/> 
+            {/* <div className="Row">
               <AddressCard >
                     <AddressItem status="Active" />
                     <AddressItem status="Pending"/>
@@ -48,7 +54,7 @@ export default function Index(){
                   
                 }}>New Deposit</Button>
               </div>
-            </div>
+            </div> */}
         </div>
     </LeftContent>
 }
