@@ -23,7 +23,7 @@ export default function Index(props:any){
                     64.15
                 </label>
                 <Button size="small" btnType="ellipse" onClick={()=>{
-                  
+                   props.history.push("/rETH/liquefy"); 
               }}>Liquefy</Button>
             </div>
             <div className="apr_panel">

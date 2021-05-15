@@ -67,5 +67,5 @@ export default function Index(props:any){
       }
     })
   }}
-  type="rDOT"></Content>
+  type="rETH"></Content>
 }

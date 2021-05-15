@@ -7,9 +7,11 @@ import A from '@shared/components/button/a'
 import Status from './components/status'
 import Process from './components/process'
 import './index.scss';
-export default function Index(porps:any){
+export default function Index(props:any){
     return <LeftContent className="stafi_validator_context stafi_reth_poolConract_context">
-        <BackIcon />
+        <BackIcon  onClick={()=>{
+      props.history.goBack();
+    }}/>
         <div className="title">
           <img src={selected_rETH}/>  Pool Contract
         </div>

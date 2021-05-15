@@ -5,11 +5,7 @@ export const rDOT_data=[{
     {
       text:'-Status',
       url:"/rETH/staker/info"
-    },
-    {
-      text:'-Recovery',
-      url:"/rETH/search"
-    }
+    } 
   ]
 },{
   text:"Validator",

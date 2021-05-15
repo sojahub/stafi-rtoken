@@ -28,7 +28,7 @@ type Props={
     totalStakedToken?:any,
     bondFees?:any
     type:"rDOT"|"rETH"|"rFIS"|"rKSM"|"rATOM",
-
+    histroy?:any
 }
 export default function Index(props:Props){
     const {bondSwitch,processSlider}=useSelector((state:any)=>{  
@@ -72,7 +72,9 @@ export default function Index(props:Props){
                 {props.type=="rKSM" && `${isNaN(props.totalStakedToken)?"--":props.totalStakedToken} KSM is staked via rKSM `}
                 {props.type=="rDOT" && `${isNaN(props.totalStakedToken)?"--":props.totalStakedToken} DOT is staked via rDOT `}
                 {props.type=="rATOM" && `${isNaN(props.totalStakedToken)?"--":props.totalStakedToken} ATOM is staked via rATOM `}
-                {props.type=="rETH" && <>{isNaN(props.totalStakedToken)?"--":props.totalStakedToken} ETH is staked in <A>pool</A> contracts</>}
+                {props.type=="rETH" && <>{isNaN(props.totalStakedToken)?"--":props.totalStakedToken} ETH is staked in <A onClick={()=>{
+                   props.histroy &&  props.histroy.push("/rETH/validator/poolContract")
+                }}>pool</A> contracts</>}
                 {/* <A>stats</A> */}
             </div>
         </div>

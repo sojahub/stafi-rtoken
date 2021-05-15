@@ -33,9 +33,10 @@ export default function Index(props:any){
   })
  
   return  <Content
+  histroy={props.history}
   amount={amount}
   willAmount={ratio=='--'?"--":ratioToAmount(amount,ratio)}
-  unit={"DOT"}
+  unit={"ETH"}
   transferrableAmount={transferrableAmount}
   apr={stafiStakerApr} 
   onChange={(value:any)=>{   

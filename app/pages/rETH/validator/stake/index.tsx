@@ -11,7 +11,9 @@ export default function Index(props:any){
         <div className="reth_title"> Stake </div>
        <div className="reth_sub_title">
         Pool contract can be staked once 32ETH is matched to your node, 
-        Check <A underline={true}>pool status</A>
+        Check <A underline={true} onClick={()=>{
+            props.history.push("/rETH/poolStatus")
+        }}>pool status</A>
        </div>
 
         <div className="address">
@@ -24,7 +26,7 @@ export default function Index(props:any){
        </div>
         <Upload/>
         <div className="btns stake_btns">
-          <A>Offboard</A>
+          <A isGrey={true}>Offboard</A>
            <Button>
                Stake
            </Button>
