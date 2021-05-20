@@ -90,14 +90,14 @@ export default {
     if(process.env.NODE_ENV=="production" &&  !isdev()){
       return '0x91c48208a9a171eb26e6f2bd48f41b958e19ebab';
     }else{
-      return '0xeab816f88fe0ebae4971e33f3a21e34ff695791b';
+      return '0x05da428a68da64a2b085a4d2d4279d952d7b647a';
     }  
   },
   bridgeAddress:()=>{
     if(process.env.NODE_ENV=="production" &&  !isdev()){
       return '0x13ef51f0525df6045267baed411f535d86586bc1';
     }else{
-      return '0x57e7c280a3828bf9a5356d7c926fcd555cf0bdc8';
+      return '0xc3ce28a291def0f5762c545431036a6819b8d6d2';
     } 
   },
   txHashAndBlockhashURl:{
