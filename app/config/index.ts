@@ -88,14 +88,14 @@ export default {
   },
   erc20HandlerAddress:()=>{
     if(process.env.NODE_ENV=="production" &&  !isdev()){
-      return '0x91c48208a9a171eb26e6f2bd48f41b958e19ebab';
+      return '0x2b6b6fce3af32efe4430e446717bda72b95ebb9a';
     }else{
       return '0x05da428a68da64a2b085a4d2d4279d952d7b647a';
     }  
   },
   bridgeAddress:()=>{
     if(process.env.NODE_ENV=="production" &&  !isdev()){
-      return '0x13ef51f0525df6045267baed411f535d86586bc1';
+      return '0xc0609ea6e4345555276fac1636b5c27ebc17d817';
     }else{
       return '0xc3ce28a291def0f5762c545431036a6819b8d6d2';
     } 
