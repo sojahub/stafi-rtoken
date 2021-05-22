@@ -102,7 +102,7 @@ export default class CommonClice{
         let accountUnbonds = result.toJSON(); 
         if (accountUnbonds && accountUnbonds.length > 0) {
           accountUnbonds.forEach((accountUnbond:any) => {
-            if (accountUnbond.unlock_era > currentEra) {
+            if (Number(accountUnbond.unlock_era) > Number(currentEra)) {
                 totalUnbonding = totalUnbonding + accountUnbond.value;
             }
           });
@@ -120,7 +120,7 @@ export default class CommonClice{
       const unbondCommission = NumberUtil.fisFeeToHuman(result.toJSON());
       return unbondCommission;
     }
-    getPool(tokenAmount: any, validPools: any, poolLimit: any) {
+    getPool(tokenAmount: number, validPools: any, poolLimit: number) {
       const data = validPools.find((item: any) => {
         if (poolLimit == 0 || Number(item.active) + tokenAmount <= poolLimit) {
           return true;

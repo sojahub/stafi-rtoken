@@ -164,7 +164,7 @@ const queryBalance = async (account: any, dispatch: any, getState: any) => {
   dispatch(setFisAccounts(account2));
 }
 
-export const transfer = (amountparam: string, cb?: Function): AppThunk => async (dispatch, getState) => {
+export const transfer = (amountparam: number, cb?: Function): AppThunk => async (dispatch, getState) => {
 
   dispatch(setProcessSending({
     brocasting: processStatus.loading,
