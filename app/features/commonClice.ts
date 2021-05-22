@@ -120,9 +120,9 @@ export default class CommonClice{
       const unbondCommission = NumberUtil.fisFeeToHuman(result.toJSON());
       return unbondCommission;
     }
-    getPool(tokenAmount: number, validPools: any, poolLimit: number) {
+    getPool(tokenAmount: any, validPools: any, poolLimit: any) {
       const data = validPools.find((item: any) => {
-        if (poolLimit == 0 || Number(item.active) + tokenAmount <= poolLimit) {
+        if (poolLimit == 0 || Number(item.active) + Number(tokenAmount) <= Number(poolLimit)) {
           return true;
         }
       });
