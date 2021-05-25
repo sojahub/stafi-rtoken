@@ -114,18 +114,18 @@ export default {
       return '0xd363ed9ee73c8b6bd048ae188000be454f7b7925';
     }  
   },
-  erc20HandlerAddress:()=>{
+  erc20HandlerAddress:()=>{ 
     if(!isdev()){
-      return '0x91c48208a9a171eb26e6f2bd48f41b958e19ebab';
+      return '0x2b6b6fce3af32efe4430e446717bda72b95ebb9a'; 
     }else{
-      return '0xeab816f88fe0ebae4971e33f3a21e34ff695791b';
+      return '0x05da428a68da64a2b085a4d2d4279d952d7b647a';
     }  
   },
-  bridgeAddress:()=>{
+  bridgeAddress:()=>{ 
     if(!isdev()){
-      return '0x13ef51f0525df6045267baed411f535d86586bc1';
+      return '0xc0609ea6e4345555276fac1636b5c27ebc17d817'; 
     }else{
-      return '0x57e7c280a3828bf9a5356d7c926fcd555cf0bdc8';
+      return '0xc3ce28a291def0f5762c545431036a6819b8d6d2';
     } 
   },
   txHashAndBlockhashURl:{

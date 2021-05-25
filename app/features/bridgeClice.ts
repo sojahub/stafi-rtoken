@@ -195,7 +195,7 @@ export const erc20ToNativeSwap=(tokenStr:string,tokenType:string, tokenAmount:an
 
   const amount = web3.utils.toWei(tokenAmount.toString());
   try { 
-    if (allowance < amount) { 
+    if (Number(allowance) < Number(amount)) { 
         const approveResult = await tokenContract.methods.approve(bridgeServer.getBridgeErc20HandlerAddress(), web3.utils.toWei('10000000')).send();
         if (approveResult && approveResult.status) {
             let bridgeContract = new web3.eth.Contract(bridgeServer.getBridgeAbi(), bridgeServer.getBridgeAddress(), {
