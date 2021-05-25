@@ -10,16 +10,17 @@ import './index.scss';
  
 export default function Inde(props:any){
   const dispatch = useDispatch();
-  // const hasAcount=useSelector((state:any)=>{
-  //   if(state.FISModule.fisAccount){
-  //     return true
-  //   }else{
-  //     return false
-  //   }
-  // })
-  // if(hasAcount){
-  //   return <Redirect to="/rETH/type" />
-  // }
+ 
+
+  const {ethAccount}=useSelector((state:any)=>{ 
+    return { 
+      ethAccount:state.rETHModule.ethAccount, 
+    }
+  })
+
+  if(ethAccount){
+    return <Redirect to="/rETH/type" />
+  }
   return <HomeCard 
       title={<><label>Liquify</label> Your Staking ETH 2.0</>}
       subTitle={"Staking via StaFi Staking Contract and get rETH in return."}
@@ -27,8 +28,8 @@ export default function Inde(props:any){
       // onIntroUrl="https://docs.stafi.io/rproduct/rdot-solution"
   >
      <Button icon={metamask_png} onClick={()=>{
-        // dispatch(connectMetamask());
-        // dispatch(monitoring_Method());
+        dispatch(connectMetamask());
+        dispatch(monitoring_Method());
         props.history.push("/rETH/type")
       }}>
                 Connect to Metamask

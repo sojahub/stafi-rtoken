@@ -6,7 +6,8 @@ import rKSM_stafi_svg from '@images/selected_r_ksm.svg';
 import rATOM_stafi_svg from '@images/selected_r_atom.svg'
 import rETH_stafi_svg from '@images/selected_r_eth.svg'
 import rDOT_DOT_svg from '@images/rDOT_DOT.svg'
-import Button from '@shared/components/button/button'
+import Button from '@shared/components/button/button';
+import TradePopover from "../tradePopover"
 import NumberUtil from '@util/numberUtil';
 import Modal from '../modal/swapModal' 
 import config from '@config/index';
@@ -41,7 +42,7 @@ export default function Index(props:Props){
               }}>Redeem</Button>
               <Button onClick={()=>{
                 setVisibleModal(true);
-              }} size="small" btnType="ellipse">Trade</Button>
+              }} size="small" btnType="ellipse">Trade</Button> 
             </div>
           </div>
           <div className="describe">

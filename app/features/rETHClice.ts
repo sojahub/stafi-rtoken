@@ -14,6 +14,12 @@ const rETHClice = createSlice({
   name: 'rETHModule',
   initialState: {  
     ethAccount:getLocalStorageItem(Keys.MetamaskAccountKey),
+    ratio:"--",
+    balance:"--",
+    minimumDeposit:"--",
+    waitingStaked:"--",
+    totalStakedAmount:"--",
+    apr:"--"
   },
   reducers: {  
      setEthAccount(state,{payload}){
@@ -29,11 +35,35 @@ const rETHClice = createSlice({
               setLocalStorageItem(Keys.MetamaskAccountKey, {address:payload.address})
           }
         }
+     },
+     setRatio(state,{payload}){
+       state.ratio=payload;
+     },
+     setBalance(state,{payload}){
+      state.balance=payload;
+     },
+     setMinimumDeposit(state,{payload}){
+       state.minimumDeposit,payload
+     },
+     setWaitingStaked(state,{payload}){
+       state.waitingStaked=payload
+     },
+     setTotalStakedAmount(state,{payload}){
+       state.totalStakedAmount=payload
+     },
+     setApr(state,{payload}){
+       state.apr=payload;
      }
   },
 });
 
-export const {setEthAccount}=rETHClice.actions
+export const {setEthAccount,
+  setRatio,
+  setBalance,
+  setMinimumDeposit,
+  setWaitingStaked,
+  setTotalStakedAmount,
+  setApr}=rETHClice.actions
 
 declare const window: any;
 declare const ethereum: any;
@@ -151,5 +181,84 @@ export const  checkEthAddress=(address:string)=> {
   }
 }
 
+
+export const reloadData = ():AppThunk => async (dispatch,getState)=>{
+  dispatch(rTokenRate());
+  dispatch(get_eth_getBalance());
+  dispatch(getMinimumDeposit());
+
+  dispatch(getApr());
+  dispatch(getNextCapacity());
+}
+
+export const rTokenRate=():AppThunk=>async (dispatch,getState)=>{
+  let web3=ethServer.getWeb3(); 
+  let contract = new web3.eth.Contract(ethServer.getRETHTokenAbi(),ethServer.getRETHTokenAddress());
+  const amount = web3.utils.toWei('1');
+  const result = await contract.methods.getEthValue(amount).call();
+  let ratio = web3.utils.fromWei(result, 'ether'); 
+  dispatch(setRatio(NumberUtil.handleEthAmountRateToFixed(ratio)))
+}
+
+export const get_eth_getBalance=():AppThunk=>async  (dispatch,getState)=>{
+  let web3=ethServer.getWeb3(); 
+  const address=getState().rETHModule.ethAccount;
+  const result = await ethereum.request({ method: 'eth_getBalance', params: [ address, 'latest'] })
+  setBalance(web3.utils.fromWei(result, 'ether')) 
+}
+ 
+
+export const getMinimumDeposit=():AppThunk=>async (dispatch,getState)=>{
+  let web3=ethServer.getWeb3(); 
+  const address=getState().rETHModule.ethAccount;
+  let userDepositContract = new web3.eth.Contract(ethServer.getStafiUserDepositAbi(), ethServer.getStafiUserDepositAddress(), {
+    from: address
+  });
+   const result=userDepositContract.methods.getMinimumDeposit().call()
+   setMinimumDeposit(web3.utils.fromWei(result, 'ether'))
+}
+
+
+export const getNextCapacity=():AppThunk=>async (dispatch,getState)=>{
+  let web3=ethServer.getWeb3(); 
+  const address=getState().rETHModule.ethAccount;
+  let poolQueueContract = new web3.eth.Contract(ethServer.getStafiStakingPoolQueueAbi(), ethServer.getStafiStakingPoolQueueAddress(), {
+    from: address
+  });
+  let userDepositContract = new web3.eth.Contract(ethServer.getStafiUserDepositAbi(), ethServer.getStafiUserDepositAddress(), {
+    from: address
+  });
+  const  nextCapacity =await poolQueueContract.methods.getNextCapacity().call();
+  if (nextCapacity > 0) {
+    const result=await  userDepositContract.methods.getBalance().call() 
+      let balance = parseFloat(web3.utils.fromWei(result, 'ether'));
+     const waitingStaked = NumberUtil.handleEthAmountToFixed(balance);
+     dispatch(setWaitingStaked(waitingStaked)); 
+ 
+  } else {
+  // this.isPoolWaiting = false;
+    const result =await ethServer.getStakingPoolStatus() 
+      if (result.status == '80000') {
+        if (result.data) {
+          if (result.data.stakeAmount) {
+            const totalStakedAmount = NumberUtil.handleEthAmountToFixed(result.data.stakeAmount);
+            dispatch(setTotalStakedAmount(totalStakedAmount));
+          }
+        }
+      } 
+ 
+  }
+}
+
+export const getApr=():AppThunk=>async (dispatch,getState)=>{
+  const result =await ethServer.getArp() 
+    if (result.status == '80000') {
+      if (result.data && result.data.stakerApr) {
+        const apr = result.data.stakerApr + '%';
+        dispatch(setApr(apr));
+      }
+    } 
+ 
+}
 
 export default rETHClice.reducer;
