@@ -1,6 +1,8 @@
 import React from 'react';
 import GhostButton from '@shared/components/button/ghostButton' 
 import { message } from 'antd';
+import TradePopover from '@components/tradePopover';
+import dow_svg from '@images/dow_green.svg'
 
 type Props={
   rSymbol:string
@@ -27,7 +29,7 @@ export default function Index(props:Props){
         </div>
     </div>
     <div className="col_btns">
-      {props.operationType=="erc20" && <GhostButton onClick={()=>{
+    {props.operationType=="erc20" && props.rSymbol!="rETH" && <GhostButton onClick={()=>{
           if(props.trade){
             window.open(props.trade);
           }else{
@@ -35,7 +37,12 @@ export default function Index(props:Props){
           }
         }}>
             Trade
-        </GhostButton>}
+        </GhostButton>} 
+          {props.operationType=="erc20" && props.rSymbol=="rETH" && <TradePopover data={[{label:"Curve",url:"https://curve.fi/reth"},{label:"Trade",url:props.trade}]}>
+        <GhostButton>
+            Trade<img className="dow_svg" src={dow_svg}/>
+        </GhostButton>
+          </TradePopover>}
         {!(props.operationType=="erc20" && props.rSymbol=="rETH") && <GhostButton onClick={()=>{
           props.onSwapClick && props.onSwapClick();
         }}>
