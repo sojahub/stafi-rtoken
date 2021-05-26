@@ -38,7 +38,7 @@ export default function Index(props:Props){
         }}>
             Trade
         </GhostButton>} 
-          {props.operationType=="erc20" && props.rSymbol=="rETH" && <TradePopover data={[{label:"Curve",url:"https://curve.fi/reth"},{label:"Trade",url:props.trade}]}>
+          {props.operationType=="erc20" && props.rSymbol=="rETH" && <TradePopover data={[{label:"Curve",url:"https://curve.fi/reth"},{label:"Uniswap",url:props.trade}]}>
         <GhostButton>
             Trade<img className="dow_svg" src={dow_svg}/>
         </GhostButton>
