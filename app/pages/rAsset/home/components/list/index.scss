@@ -47,4 +47,9 @@
   >.list_item:last-child{
     border-bottom-width: 0px;
   }
+  .dow_svg{
+    width: 5px;
+    margin-left: 5px;
+    transform: rotate(-90deg);
+  }
 }

@@ -6,8 +6,8 @@ type Props={
     children:any,
     data:any[]
 }
-export default function Index(props:Props){
-    return <Popover overlayClassName={"stafi-popover-link"} trigger="click" content={<div>
+export default function Index(props:Props){ 
+    return <Popover overlayClassName={"stafi-popover-link"} placement="bottom" trigger="click" content={<div> 
         {
             props.data && props.data.map((item)=>{
 
