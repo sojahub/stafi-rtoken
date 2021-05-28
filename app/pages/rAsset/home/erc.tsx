@@ -204,7 +204,7 @@ export default function Index(props:any){
         />
        </DataList> <CountAmount totalValue={totalPrice} /></> : <div className="rAsset_content"> 
      <Button icon={metamask} onClick={()=>{
-        dispatch(connectMetamask());
+        dispatch(connectMetamask('0x3'));
         dispatch(monitoring_Method());
       }}>
           Connect to Metamask

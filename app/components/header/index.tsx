@@ -51,7 +51,7 @@ export default function Index(props:Props){
                 }
             } 
         }
-        if(location.pathname.includes("/rAsset")){
+        if(location.pathname.includes("/rAsset") || location.pathname.includes("/rETH")){
             
             if(location.pathname.includes("/rAsset/native") || location.pathname.includes("/rAsset/swap/native")){
                 if(state.FISModule.fisAccount){

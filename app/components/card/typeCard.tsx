@@ -5,7 +5,9 @@ import rDOT_svg from '@images/rDOT_black2.svg'
 import rKSM_svg from '@images/rKSM_black2.svg'
 import rFIS_svg from '@images/rFIS_black.svg'
 import rATOM_svg from '@images/selected_rATOM.svg'
-import validator_svg from '@images/validator_2.svg'
+import reth_staker from '@images/reth_staker.svg'
+import validator_svg from '@images/validator_2.svg';
+import reth_validator from '@images/reth_validator.svg'
 import './index.scss';
 import { useSelector } from 'react-redux';
 
@@ -17,23 +19,15 @@ type Props={
   apr?:any
 }
 export default function Index(props:Props){
-  const {balance}=useSelector((state:any)=>{
-    if(props.type=="rDOT"){
+  const {totalStakedAmount}=useSelector((state:any)=>{ 
+    if(props.type=="rETH"){
       return {
-        balance:state.rDOTModule.dotAccount?state.rDOTModule.dotAccount.balance:"--"
-      }
-    }
-    if(props.type=="rKSM"){
-      return {
-        balance:state.rKSMModule.ksmAccount?state.rKSMModule.ksmAccount.balance:"--"
-      }
-    }
-    if(props.type=="rATOM"){
-      return {
-        balance:state.rATOMModule.ksmAccount?state.rATOMModule.atomAccount.balance:"--"
+        totalStakedAmount:state.rETHModule.totalStakedAmount
       }
     }
   })
+
+
   return <div className="stafi_type_card"> 
       <div className="type_card_item" onClick={()=>{
         props.onClick && props.onClick("Staker");
@@ -57,8 +51,9 @@ export default function Index(props:Props){
             {props.type=="rKSM" && <img src={rKSM_svg} />}
             {props.type=="rFIS" && <img src={rFIS_svg} />}
             {props.type=="rATOM" && <img src={rATOM_svg} />}
+            {props.type=="rETH" && <img src={reth_staker} />}
             <div>
-                {props.type} 
+                {props.type=="rETH"?"Staked":props.type} 
               </div>
             <label>
               {props.total}
@@ -79,12 +74,14 @@ export default function Index(props:Props){
               <label>12.89%</label>
           </div>
           <div className="r_panel">
-              <img src={validator_svg} />
+            {props.type=="rETH"?<img src={reth_validator} />:<img src={validator_svg} />}
+  
               <div>
-              All OVs
+              
+              {props.type=="rETH"?'Pools':'All OVs'}
               </div>
-              <label>
-                16
+              <label> 
+                 {props.type=="rETH"?totalStakedAmount:16} 
               </label>
           </div>
       </div>

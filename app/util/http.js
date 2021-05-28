@@ -63,7 +63,7 @@ export const toQueryParam = (queryParams) => {
   });
   return params;
 }; 
-export const GETWAY = `${webConfig.webApiSite}/stafi/v1`;
+export const GETWAY = `${webConfig.api()}/stafi/v1`;
  
 
 const urlShim = (url) => {

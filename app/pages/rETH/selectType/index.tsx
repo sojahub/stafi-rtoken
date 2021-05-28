@@ -1,32 +1,27 @@
 import React, { useEffect } from 'react';
 import {Redirect} from 'react-router'
 import {useDispatch, useSelector} from 'react-redux';
-import TypeCard from '@components/card/typeCard';
-import {getTotalIssuance,rTokenLedger} from '@features/rDOTClice'
+import TypeCard from '@components/card/typeCard'; 
 
 export default function Index(props:any){
 
   const dispatch=useDispatch();
-  const {stafiStakerApr,totalIssuance,stakerApr,tokenAmount}=useSelector((state:any)=>{
+  const {stafiStakerApr,totalStakedAmount,stakerApr,tokenAmount}=useSelector((state:any)=>{
     return { 
       stafiStakerApr:state.globalModule.stafiStakerApr,
-      totalIssuance:state.rDOTModule.totalIssuance,
-      stakerApr:state.rDOTModule.stakerApr,
-      tokenAmount:state.rDOTModule.tokenAmount
+      totalStakedAmount:state.rETHModule.totalStakedAmount,
+      stakerApr:state.rETHModule.apr,
+      tokenAmount:state.rETHModule.balance
     }
-  })
-  useEffect(()=>{
-    dispatch(getTotalIssuance());
-    dispatch(rTokenLedger())
-  },[])
+  }) 
 
   if(tokenAmount!="--" && tokenAmount!=0){
     return <Redirect to="/rETH/staker/info" />
   }
   return <TypeCard 
-      type="rDOT" 
+      type="rETH" 
       stafiStakerApr={stafiStakerApr}
-      total={totalIssuance}
+      total={totalStakedAmount}
       apr={stakerApr}
       onClick={(e:string)=>{
         if(e=="Staker"){

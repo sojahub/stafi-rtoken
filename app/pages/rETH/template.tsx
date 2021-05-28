@@ -5,38 +5,21 @@ import Content from '@shared/components/content';
 import {renderRoutes}  from 'react-router-config';
 import {getLocalStorageItem,Keys} from '@util/common';
 
-import {Symbol} from '@keyring/defaults'
-import {fetchStafiStakerApr,reloadData} from '@features/globalClice';
-import {continueProcess,getPools,bondFees,getTotalIssuance} from '@features/rDOTClice'
+import {Symbol} from '@keyring/defaults' 
+import {reloadData} from '@features/rETHClice'
 import {bondSwitch} from '@features/FISClice'; 
 import '../template/index.scss'
 export default function Index(props:any){
   const dispatch = useDispatch();
-
-  const {fisAccount,dotAccount}=useSelector((state:any)=>{
-    return {
-      fisAccount:state.FISModule.fisAccount,
-      dotAccount:state.rDOTModule.dotAccount
+ 
+  const {ethAccount}=useSelector((state:any)=>{ 
+    return { 
+      ethAccount:state.rETHModule.ethAccount, 
     }
   })
   useEffect(()=>{
-    dispatch(getTotalIssuance());
-    
-  },[fisAccount,dotAccount]);
-  useEffect(()=>{ 
-    dispatch(fetchStafiStakerApr());
-    dispatch(bondFees());
-    dispatch(bondSwitch()); 
-    if(getLocalStorageItem(Keys.DotAccountKey) && getLocalStorageItem(Keys.FisAccountKey)){
-      dispatch(reloadData(Symbol.Dot)); 
-      dispatch(reloadData(Symbol.Fis)); 
-    } 
-    dispatch(getPools());
-    setTimeout(()=>{
-      dispatch(continueProcess());
-    },50)
-  },[]) 
-
+    dispatch(reloadData());
+  },[])
   const {loading} =useSelector((state:any)=>{
     return {
       loading:state.globalModule.loading

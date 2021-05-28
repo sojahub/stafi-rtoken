@@ -68,14 +68,19 @@ export const {setEthAccount,
 declare const window: any;
 declare const ethereum: any;
 
-export const connectMetamask=():AppThunk=>async (dispatch,getState)=> {
+export const connectMetamask=(chainId:string):AppThunk=>async (dispatch,getState)=> {
   if (typeof window.ethereum !== 'undefined' && ethereum.isMetaMask) {
     ethereum.autoRefreshOnNetworkChange = false;
     
-    ethereum.request({ method: 'eth_chainId' }).then((chainId:any) => {
+    ethereum.request({ method: 'eth_chainId' }).then((chainId:any) => { 
       if (isdev()) {
-        if (ethereum.chainId != '0x3') { 
-          message.warning('Please connect to Ropsten Test Network!') 
+        if (ethereum.chainId != chainId) { 
+          if(chainId=="0x3"){
+            message.warning('Please connect to Ropsten Test Network!') 
+          }
+          if(chainId=="0x5"){
+            message.warning('Please connect to Goerli Test Network!') 
+          }
           return;
         }
       } else if (ethereum.chainId != '0x1') { 
@@ -84,8 +89,7 @@ export const connectMetamask=():AppThunk=>async (dispatch,getState)=> {
       }
 
       ethereum.request({ method: 'eth_requestAccounts' }).then((accounts:any) => { 
-        dispatch(handleEthAccount(accounts[0]))
-        
+        dispatch(handleEthAccount(accounts[0])) 
       }).catch((error:any) => {
      
         dispatch(setEthAccount(null))
@@ -182,7 +186,7 @@ export const  checkEthAddress=(address:string)=> {
 }
 
 
-export const reloadData = ():AppThunk => async (dispatch,getState)=>{
+export const reloadData = ():AppThunk => async (dispatch,getState)=>{ 
   dispatch(rTokenRate());
   dispatch(get_eth_getBalance());
   dispatch(getMinimumDeposit());
@@ -197,31 +201,38 @@ export const rTokenRate=():AppThunk=>async (dispatch,getState)=>{
   const amount = web3.utils.toWei('1');
   const result = await contract.methods.getEthValue(amount).call();
   let ratio = web3.utils.fromWei(result, 'ether'); 
+  console.log("ratio:",ratio)
   dispatch(setRatio(NumberUtil.handleEthAmountRateToFixed(ratio)))
 }
 
 export const get_eth_getBalance=():AppThunk=>async  (dispatch,getState)=>{
   let web3=ethServer.getWeb3(); 
-  const address=getState().rETHModule.ethAccount;
+  const address=getState().rETHModule.ethAccount.address;
   const result = await ethereum.request({ method: 'eth_getBalance', params: [ address, 'latest'] })
-  setBalance(web3.utils.fromWei(result, 'ether')) 
+  const balance = web3.utils.fromWei(result, 'ether');
+  console.log("balance:",balance)
+  dispatch(setEthAccount({address:address,balance:'--'}))
+  setBalance(balance);
 }
  
 
 export const getMinimumDeposit=():AppThunk=>async (dispatch,getState)=>{
   let web3=ethServer.getWeb3(); 
-  const address=getState().rETHModule.ethAccount;
+  const address=getState().rETHModule.ethAccount.address;
+  console.log(address)
   let userDepositContract = new web3.eth.Contract(ethServer.getStafiUserDepositAbi(), ethServer.getStafiUserDepositAddress(), {
     from: address
   });
-   const result=userDepositContract.methods.getMinimumDeposit().call()
-   setMinimumDeposit(web3.utils.fromWei(result, 'ether'))
+   const result=await userDepositContract.methods.getMinimumDeposit().call()
+   const minimumDeposit=web3.utils.fromWei(result, 'ether');
+   console.log("minimumDeposit:",minimumDeposit)
+   setMinimumDeposit(minimumDeposit)
 }
 
 
 export const getNextCapacity=():AppThunk=>async (dispatch,getState)=>{
   let web3=ethServer.getWeb3(); 
-  const address=getState().rETHModule.ethAccount;
+  const address=getState().rETHModule.ethAccount.address;
   let poolQueueContract = new web3.eth.Contract(ethServer.getStafiStakingPoolQueueAbi(), ethServer.getStafiStakingPoolQueueAddress(), {
     from: address
   });
@@ -229,10 +240,13 @@ export const getNextCapacity=():AppThunk=>async (dispatch,getState)=>{
     from: address
   });
   const  nextCapacity =await poolQueueContract.methods.getNextCapacity().call();
+
+  console.log("nextCapacity:",nextCapacity)
   if (nextCapacity > 0) {
     const result=await  userDepositContract.methods.getBalance().call() 
       let balance = parseFloat(web3.utils.fromWei(result, 'ether'));
      const waitingStaked = NumberUtil.handleEthAmountToFixed(balance);
+     console.log("waitingStaked:",waitingStaked)
      dispatch(setWaitingStaked(waitingStaked)); 
  
   } else {
@@ -242,6 +256,7 @@ export const getNextCapacity=():AppThunk=>async (dispatch,getState)=>{
         if (result.data) {
           if (result.data.stakeAmount) {
             const totalStakedAmount = NumberUtil.handleEthAmountToFixed(result.data.stakeAmount);
+            console.log("totalStakedAmount:",totalStakedAmount)
             dispatch(setTotalStakedAmount(totalStakedAmount));
           }
         }
@@ -255,6 +270,7 @@ export const getApr=():AppThunk=>async (dispatch,getState)=>{
     if (result.status == '80000') {
       if (result.data && result.data.stakerApr) {
         const apr = result.data.stakerApr + '%';
+        console.log("apr:",apr)
         dispatch(setApr(apr));
       }
     } 

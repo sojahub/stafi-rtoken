@@ -4,7 +4,7 @@ import {Redirect} from 'react-router'
 import HomeCard from '@components/card/homeCard'; 
 import rDOT_svg from '@images/rDOT.svg'  
 import metamask_png from '@images/metamask.png'
-import {connectMetamask,monitoring_Method} from '@features/rETHClice'; 
+import {connectMetamask,monitoring_Method,reloadData,handleEthAccount} from '@features/rETHClice'; 
 import Button from '@shared/components/button/connect_button';
 import './index.scss';
  
@@ -28,8 +28,10 @@ export default function Inde(props:any){
       // onIntroUrl="https://docs.stafi.io/rproduct/rdot-solution"
   >
      <Button icon={metamask_png} onClick={()=>{
-        dispatch(connectMetamask());
+       dispatch(reloadData());
+        dispatch(connectMetamask('0x5'));
         dispatch(monitoring_Method());
+        dispatch(handleEthAccount(ethAccount.address))
         props.history.push("/rETH/type")
       }}>
                 Connect to Metamask
