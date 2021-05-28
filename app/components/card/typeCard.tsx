@@ -19,10 +19,10 @@ type Props={
   apr?:any
 }
 export default function Index(props:Props){
-  const {totalStakedAmount}=useSelector((state:any)=>{ 
+  const {poolCount}=useSelector((state:any)=>{ 
     if(props.type=="rETH"){
       return {
-        totalStakedAmount:state.rETHModule.totalStakedAmount
+        poolCount:state.rETHModule.poolCount
       }
     }
   })
@@ -81,7 +81,7 @@ export default function Index(props:Props){
               {props.type=="rETH"?'Pools':'All OVs'}
               </div>
               <label> 
-                 {props.type=="rETH"?totalStakedAmount:16} 
+                 {props.type=="rETH"?poolCount:16} 
               </label>
           </div>
       </div>

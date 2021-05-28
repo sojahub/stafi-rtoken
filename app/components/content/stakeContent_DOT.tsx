@@ -8,13 +8,9 @@ import A from '@shared/components/button/a'
 import rDOT from '@images/selected_rDOT.svg';
 import rKSM from '@images/selected_rKSM.svg';
 import rATOM from '@images/selected_rATOM.svg'
-import doubt from "@images/doubt.svg";
-import NumberUtil from '@util/numberUtil';
-import add_svg from '@images/add.svg'
+import doubt from "@images/doubt.svg"; 
 
-import './index.scss';
-import { message } from 'antd';
-import { rSymbol } from '@keyring/defaults';
+import './index.scss'; 
 type Props={
     onRecovery:Function,
     onStakeClick:Function,
@@ -27,8 +23,8 @@ type Props={
     validPools?:any[],
     totalStakedToken?:any,
     bondFees?:any
-    type:"rDOT"|"rETH"|"rFIS"|"rKSM"|"rATOM",
-    histroy?:any
+    type:"rDOT"|"rFIS"|"rKSM"|"rATOM",
+    histroy?:any, 
 }
 export default function Index(props:Props){
     const {bondSwitch,processSlider}=useSelector((state:any)=>{  
@@ -55,14 +51,13 @@ export default function Index(props:Props){
             {props.type=="rKSM" && `Stake KSM`}
             {props.type=="rDOT" && `Stake DOT`}
             {props.type=="rATOM" && `Stake ATOM`}
-            {props.type=="rETH" && `Stake ETH`}
         </label>
         {haswarn && <div className="warn">Unable to stake, system is waiting for matching validators</div>}
         <div className={`input_panel dot_input_panel ${haswarn && 'showWarn'}`}>
-            <div className="tip">
-            {props.type=="rDOT" ? `Stakable`:"Transferable"} {props.unit}: {props.transferrableAmount}
+            <div className="tip"> 
+                {props.type=="rDOT" ? `Stakable`:"Transferable"} {props.unit}: {props.transferrableAmount} 
             </div>
-            <Input placeholder="AMOUNT" value={props.amount} maxInput={props.transferrableAmount} onChange={(e:any)=>{
+            <Input  placeholder="AMOUNT" value={props.amount} maxInput={props.transferrableAmount} onChange={(e:any)=>{
                 props.onChange && props.onChange(e); 
             }}  icon={getIcon()}/>
 
@@ -72,9 +67,7 @@ export default function Index(props:Props){
                 {props.type=="rKSM" && `${isNaN(props.totalStakedToken)?"--":props.totalStakedToken} KSM is staked via rKSM `}
                 {props.type=="rDOT" && `${isNaN(props.totalStakedToken)?"--":props.totalStakedToken} DOT is staked via rDOT `}
                 {props.type=="rATOM" && `${isNaN(props.totalStakedToken)?"--":props.totalStakedToken} ATOM is staked via rATOM `}
-                {props.type=="rETH" && <>{isNaN(props.totalStakedToken)?"--":props.totalStakedToken} ETH is staked in <A onClick={()=>{
-                   props.histroy &&  props.histroy.push("/rETH/validator/poolContract")
-                }}>pool</A> contracts</>}
+                
                 {/* <A>stats</A> */}
             </div>
         </div>

@@ -10,7 +10,7 @@ type Props={
     unit?:string,
     value?:string | number ,
     onChange?:Function,
-    maxInput?:string | number ,
+    maxInput?:string | number 
 }
 export default function Index(props:Props){
     return <Input 
@@ -21,7 +21,7 @@ export default function Index(props:Props){
         value = value.replace(/\.{2,}/g,".");     
         value = value.replace(".","$#$").replace(/\./g,"").replace("$#$",".");
         value = value.replace(/^(\-)*(\d+)\.(\d\d\d\d\d\d).*$/,'$1$2.$3');  
-        if(Number(value)>Number(props.maxInput)){
+        if(Number(value)>Number(props.maxInput)){ 
             message.error("The input amount exceeds your transferrable balance");
             props.onChange && props.onChange("");
         }else{

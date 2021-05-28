@@ -8,6 +8,7 @@ import EthServer from '@servers/eth/index';
 import { message } from 'antd';
 import { keccakAsHex } from '@polkadot/util-crypto';  
 import {getAssetBalanceAll} from './ETHClice'
+import {setLoading} from './globalClice'
 
 const ethServer=new EthServer();
 const rETHClice = createSlice({
@@ -19,7 +20,9 @@ const rETHClice = createSlice({
     minimumDeposit:"--",
     waitingStaked:"--",
     totalStakedAmount:"--",
-    apr:"--"
+    apr:"--",
+    isPoolWaiting:true,
+    poolCount:"--"
   },
   reducers: {  
      setEthAccount(state,{payload}){
@@ -43,7 +46,7 @@ const rETHClice = createSlice({
       state.balance=payload;
      },
      setMinimumDeposit(state,{payload}){
-       state.minimumDeposit,payload
+       state.minimumDeposit=payload
      },
      setWaitingStaked(state,{payload}){
        state.waitingStaked=payload
@@ -53,6 +56,12 @@ const rETHClice = createSlice({
      },
      setApr(state,{payload}){
        state.apr=payload;
+     },
+     setIsPoolWaiting(state,{payload}){
+      state.isPoolWaiting=payload;
+     },
+     setPoolCount(state,{payload}){
+       state.poolCount=payload
      }
   },
 });
@@ -63,7 +72,10 @@ export const {setEthAccount,
   setMinimumDeposit,
   setWaitingStaked,
   setTotalStakedAmount,
-  setApr}=rETHClice.actions
+  setApr,
+  setIsPoolWaiting,
+  setPoolCount
+}=rETHClice.actions
 
 declare const window: any;
 declare const ethereum: any;
@@ -200,8 +212,7 @@ export const rTokenRate=():AppThunk=>async (dispatch,getState)=>{
   let contract = new web3.eth.Contract(ethServer.getRETHTokenAbi(),ethServer.getRETHTokenAddress());
   const amount = web3.utils.toWei('1');
   const result = await contract.methods.getEthValue(amount).call();
-  let ratio = web3.utils.fromWei(result, 'ether'); 
-  console.log("ratio:",ratio)
+  let ratio = web3.utils.fromWei(result, 'ether');  
   dispatch(setRatio(NumberUtil.handleEthAmountRateToFixed(ratio)))
 }
 
@@ -209,24 +220,21 @@ export const get_eth_getBalance=():AppThunk=>async  (dispatch,getState)=>{
   let web3=ethServer.getWeb3(); 
   const address=getState().rETHModule.ethAccount.address;
   const result = await ethereum.request({ method: 'eth_getBalance', params: [ address, 'latest'] })
-  const balance = web3.utils.fromWei(result, 'ether');
-  console.log("balance:",balance)
+  const balance = web3.utils.fromWei(result, 'ether'); 
   dispatch(setEthAccount({address:address,balance:'--'}))
-  setBalance(balance);
+  dispatch(setBalance(balance));
 }
  
 
 export const getMinimumDeposit=():AppThunk=>async (dispatch,getState)=>{
   let web3=ethServer.getWeb3(); 
-  const address=getState().rETHModule.ethAccount.address;
-  console.log(address)
+  const address=getState().rETHModule.ethAccount.address; 
   let userDepositContract = new web3.eth.Contract(ethServer.getStafiUserDepositAbi(), ethServer.getStafiUserDepositAddress(), {
     from: address
   });
    const result=await userDepositContract.methods.getMinimumDeposit().call()
-   const minimumDeposit=web3.utils.fromWei(result, 'ether');
-   console.log("minimumDeposit:",minimumDeposit)
-   setMinimumDeposit(minimumDeposit)
+   const minimumDeposit=web3.utils.fromWei(result, 'ether'); 
+   dispatch(setMinimumDeposit(minimumDeposit))
 }
 
 
@@ -241,22 +249,20 @@ export const getNextCapacity=():AppThunk=>async (dispatch,getState)=>{
   });
   const  nextCapacity =await poolQueueContract.methods.getNextCapacity().call();
 
-  console.log("nextCapacity:",nextCapacity)
+   
   if (nextCapacity > 0) {
-    const result=await  userDepositContract.methods.getBalance().call() 
-      let balance = parseFloat(web3.utils.fromWei(result, 'ether'));
-     const waitingStaked = NumberUtil.handleEthAmountToFixed(balance);
-     console.log("waitingStaked:",waitingStaked)
+     const result=await  userDepositContract.methods.getBalance().call() 
+     let balance = parseFloat(web3.utils.fromWei(result, 'ether'));
+     const waitingStaked = NumberUtil.handleEthAmountToFixed(balance); 
      dispatch(setWaitingStaked(waitingStaked)); 
  
-  } else {
-  // this.isPoolWaiting = false;
+  } else { 
+    dispatch(setIsPoolWaiting(false));
     const result =await ethServer.getStakingPoolStatus() 
       if (result.status == '80000') {
         if (result.data) {
           if (result.data.stakeAmount) {
-            const totalStakedAmount = NumberUtil.handleEthAmountToFixed(result.data.stakeAmount);
-            console.log("totalStakedAmount:",totalStakedAmount)
+            const totalStakedAmount = NumberUtil.handleEthAmountToFixed(result.data.stakeAmount); 
             dispatch(setTotalStakedAmount(totalStakedAmount));
           }
         }
@@ -269,12 +275,42 @@ export const getApr=():AppThunk=>async (dispatch,getState)=>{
   const result =await ethServer.getArp() 
     if (result.status == '80000') {
       if (result.data && result.data.stakerApr) {
-        const apr = result.data.stakerApr + '%';
-        console.log("apr:",apr)
+        const apr = result.data.stakerApr + '%'; 
         dispatch(setApr(apr));
       }
     } 
  
 }
 
+export const get=():AppThunk=>async (dispatch,getState)=>{
+  let web3=ethServer.getWeb3(); 
+  const address=getState().rETHModule.ethAccount.address;
+  let managerContract = new web3.eth.Contract(ethServer.getStafiStakingPoolManagerAbi(), ethServer.getStafiStakingPoolManagerAddress(), {
+    from: address
+  });
+  const poolCount=await managerContract.methods.getStakingPoolCount().call();
+  dispatch(setPoolCount(poolCount));
+}
+export const send=(value:Number,cb?:Function):AppThunk=>async (dispatch,getState)=>{
+  let web3=ethServer.getWeb3(); 
+  const address=getState().rETHModule.ethAccount.address; 
+  let contract = new web3.eth.Contract(ethServer.getStafiUserDepositAbi(), ethServer.getStafiUserDepositAddress(), {
+    from: address
+  });
+  const amount = web3.utils.toWei(value.toString()); 
+  setLoading(true)
+  try { 
+  const result =await contract.methods.deposit().send({value: amount}) 
+    setLoading(false) 
+    if (result && result.status) { 
+      message.success("Deposit successfully");
+      cb && cb();
+    } else { 
+      message.success("Error! Please try again");
+    }
+  } catch (error) {
+    setLoading(true)
+    message.success(error.message);
+  } 
+}
 export default rETHClice.reducer;

@@ -11,7 +11,8 @@ export default function Index(props:any){
       stafiStakerApr:state.globalModule.stafiStakerApr,
       totalStakedAmount:state.rETHModule.totalStakedAmount,
       stakerApr:state.rETHModule.apr,
-      tokenAmount:state.rETHModule.balance
+      tokenAmount:state.rETHModule.balance,
+      poolCount:state.rETHModule.poolCount
     }
   }) 
 
