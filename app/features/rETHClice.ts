@@ -205,6 +205,7 @@ export const reloadData = ():AppThunk => async (dispatch,getState)=>{
 
   dispatch(getApr());
   dispatch(getNextCapacity());
+  dispatch(getPoolCount());
 }
 
 export const rTokenRate=():AppThunk=>async (dispatch,getState)=>{
@@ -282,7 +283,7 @@ export const getApr=():AppThunk=>async (dispatch,getState)=>{
  
 }
 
-export const get=():AppThunk=>async (dispatch,getState)=>{
+export const getPoolCount=():AppThunk=>async (dispatch,getState)=>{
   let web3=ethServer.getWeb3(); 
   const address=getState().rETHModule.ethAccount.address;
   let managerContract = new web3.eth.Contract(ethServer.getStafiStakingPoolManagerAbi(), ethServer.getStafiStakingPoolManagerAddress(), {

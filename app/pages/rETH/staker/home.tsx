@@ -17,8 +17,7 @@ export default function Index(props:any){
   },[])
  
   const {balance,ratio,stafiStakerApr,minimumDeposit,totalStakedAmount,waitingStaked,isPoolWaiting}=useSelector((state:any)=>{ 
-     
-    console.log(state,"=====minimumDeposit")
+      
     return {
       balance:state.rETHModule.balance,
       ratio:state.rETHModule.ratio,
@@ -30,8 +29,7 @@ export default function Index(props:any){
       totalStakedAmount:state.rETHModule.totalStakedAmount,
       
     }
-  })
- console.log(balance,"===minimumDeposit")
+  }) 
   return  <><Content
   histroy={props.history}
   amount={amount}
