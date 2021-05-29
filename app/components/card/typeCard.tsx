@@ -24,6 +24,10 @@ export default function Index(props:Props){
       return {
         poolCount:state.rETHModule.poolCount
       }
+    }else{
+      return {
+        poolCount:"--"
+      }
     }
   })
 

@@ -9,12 +9,9 @@ import {send,reloadData} from '@features/rETHClice'
 export default function Index(props:any){
 
   const [ethNoteModalVisible,setEthNoteModalVisible]=useState(false);
- const dispatch=useDispatch();
+  const dispatch=useDispatch();
  
   const [amount,setAmount]=useState<any>(); 
-  useEffect(()=>{
-   
-  },[])
  
   const {balance,ratio,stafiStakerApr,minimumDeposit,totalStakedAmount,waitingStaked,isPoolWaiting}=useSelector((state:any)=>{ 
       

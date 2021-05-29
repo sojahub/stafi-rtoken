@@ -7,7 +7,7 @@ import Web3Utils from 'web3-utils';
 import EthServer from '@servers/eth/index'; 
 import { message } from 'antd';
 import { keccakAsHex } from '@polkadot/util-crypto';  
-import {getAssetBalanceAll} from './ETHClice'
+import {getAssetBalanceAll,getAssetBalance} from './ETHClice'
 import {setLoading} from './globalClice'
 
 const ethServer=new EthServer();
@@ -16,13 +16,15 @@ const rETHClice = createSlice({
   initialState: {  
     ethAccount:getLocalStorageItem(Keys.MetamaskAccountKey),
     ratio:"--",
+    ratioShow:"--",
     balance:"--",
     minimumDeposit:"--",
     waitingStaked:"--",
     totalStakedAmount:"--",
     apr:"--",
     isPoolWaiting:true,
-    poolCount:"--"
+    poolCount:"--",
+    rethAmount:"--"
   },
   reducers: {  
      setEthAccount(state,{payload}){
@@ -62,6 +64,12 @@ const rETHClice = createSlice({
      },
      setPoolCount(state,{payload}){
        state.poolCount=payload
+     },
+     setRethAmount(state,{payload}){
+       state.rethAmount=payload
+     },
+     setRatioShow(state,{payload}){
+      state.ratioShow=payload
      }
   },
 });
@@ -74,7 +82,9 @@ export const {setEthAccount,
   setTotalStakedAmount,
   setApr,
   setIsPoolWaiting,
-  setPoolCount
+  setPoolCount,
+  setRethAmount,
+  setRatioShow
 }=rETHClice.actions
 
 declare const window: any;
@@ -313,5 +323,12 @@ export const send=(value:Number,cb?:Function):AppThunk=>async (dispatch,getState
     setLoading(true)
     message.success(error.message);
   } 
+}
+
+export const getRethAmount=():AppThunk=>async (dispatch,getState)=>{
+  const address=getState().rETHModule.ethAccount.address;
+  getAssetBalance(address,ethServer.getRETHTokenAbi(), ethServer.getRETHTokenAddress(),(v:any)=>{
+    dispatch(setRethAmount(v))
+  })
 }
 export default rETHClice.reducer;

@@ -1,27 +1,25 @@
 import React, { useEffect, useState } from 'react'; 
-import {useSelector,useDispatch} from 'react-redux'; 
-import { rTokenRate } from '@features/rDOTClice';
-import {query_rBalances_account,accountUnbonds,setRatioShow} from '@features/rDOTClice'
-import {rSymbol} from '@keyring/defaults'
+import {useSelector,useDispatch} from 'react-redux';  
+import {setRatioShow,getRethAmount} from '@features/rETHClice'
 import Content from '@components/content/stakeInfoContent'; 
 import NumberUtil from '@util/numberUtil';
+import { message } from 'antd';
 
 
 export default function Index(props:any){ 
 
   const dispatch=useDispatch();
   useEffect(()=>{ 
-    dispatch(query_rBalances_account())
-    dispatch(rTokenRate());
-    dispatch(accountUnbonds())
+    dispatch(getRethAmount());
   },[])
  
 
   const {ratio,tokenAmount,ratioShow,totalUnbonding} = useSelector((state:any)=>{
     return {
-      ratio:state.rDOTModule.ratio,
-      tokenAmount:state.rDOTModule.tokenAmount,
-      ratioShow:state.rDOTModule.ratioShow,
+      ratio:state.rETHModule.ratio, 
+      ratioShow:state.rETHModule.ratioShow, 
+      tokenAmount:state.rETHModule.rethAmount,
+
       totalUnbonding:state.rDOTModule.totalUnbonding
     }
   }) 
@@ -54,18 +52,11 @@ export default function Index(props:any){
     props.history.push("/rETH/staker/index")
   }}
   onRdeemClick={()=>{
-    props.history.push("/rETH/staker/redeem")
+    message.info("Redemption will be available once Phase 1.5 of ETH2 lives.");
   }}
   onUniswapClick={()=>{
     // 
   }}
-  onSwapClick={()=>{
-    props.history.push({
-      pathname:"/rAsset/swap/native",
-      state:{ 
-        rSymbol:"rDOT", 
-      }
-    })
-  }}
+  hours={8}
   type="rETH"></Content>
 }

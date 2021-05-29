@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {Modal,Radio} from 'antd'
 import './ethNoteModal.scss'
 
@@ -10,6 +10,9 @@ type Props={
 export default function Index(props:Props){
 
     const [agree,setAgree]=useState(false);
+    useEffect(()=>{
+        setAgree(false);
+    },[props.visible])
     return <Modal 
     visible={props.visible}
     title={"Note"}
