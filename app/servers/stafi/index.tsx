@@ -29,6 +29,11 @@ export default class Index extends SubstrateKeyring{
       ResourceId: '[u8; 32]',
       DepositNonce: 'u64',
       RateType: 'u64',
+      AccountInfo: {
+        nonce: 'u32',
+        refcount: 'RefCount',
+        data: 'AccountData'
+      },
       AccountRData: {
         free: 'u128'
       },
