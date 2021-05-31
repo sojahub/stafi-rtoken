@@ -10,11 +10,13 @@ type Props={
     unit?:string,
     value?:string | number ,
     onChange?:Function,
-    maxInput?:string | number 
+    maxInput?:string | number,
+    disabled?:boolean
 }
 export default function Index(props:Props){
     return <Input 
     className="amount_input" 
+    disabled={props.disabled}
     onChange={(e)=>{   
         let value = e.target.value.replace(/[^\d\.]/g,""); 
         value = value.replace(/^\./g,"");         

@@ -7,8 +7,8 @@ import Web3Utils from 'web3-utils';
 import EthServer from '@servers/eth/index'; 
 import { message } from 'antd';
 import { keccakAsHex } from '@polkadot/util-crypto';  
-import {getAssetBalanceAll,getAssetBalance} from './ETHClice'
-import {setLoading} from './globalClice'
+import {getAssetBalanceAll,getAssetBalance} from './ETHClice';
+import {setLoading} from './globalClice';
 
 const ethServer=new EthServer();
 const rETHClice = createSlice({
@@ -21,10 +21,13 @@ const rETHClice = createSlice({
     minimumDeposit:"--",
     waitingStaked:"--",
     totalStakedAmount:"--",
-    apr:"--",
+    stakerApr:"--",
+    validatorApr:"--",
     isPoolWaiting:true,
     poolCount:"--",
-    rethAmount:"--"
+    rethAmount:"--",
+    depositWaitingStaked:"--",
+    waitingPoolCount:"--"
   },
   reducers: {  
      setEthAccount(state,{payload}){
@@ -56,8 +59,8 @@ const rETHClice = createSlice({
      setTotalStakedAmount(state,{payload}){
        state.totalStakedAmount=payload
      },
-     setApr(state,{payload}){
-       state.apr=payload;
+     setStakerApr(state,{payload}){
+       state.stakerApr=payload;
      },
      setIsPoolWaiting(state,{payload}){
       state.isPoolWaiting=payload;
@@ -70,6 +73,15 @@ const rETHClice = createSlice({
      },
      setRatioShow(state,{payload}){
       state.ratioShow=payload
+     },
+     setValidatorApr(state,{payload}){
+       state.validatorApr=payload
+     },
+     setDepositWaitingStaked(state,{payload}){
+       state.depositWaitingStaked=payload;
+     },
+     setWaitingPoolCount(state,{payload}){
+       state.waitingPoolCount=payload;
      }
   },
 });
@@ -80,11 +92,14 @@ export const {setEthAccount,
   setMinimumDeposit,
   setWaitingStaked,
   setTotalStakedAmount,
-  setApr,
+  setStakerApr,
   setIsPoolWaiting,
   setPoolCount,
   setRethAmount,
-  setRatioShow
+  setRatioShow,
+  setValidatorApr,
+  setDepositWaitingStaked,
+  setWaitingPoolCount
 }=rETHClice.actions
 
 declare const window: any;
@@ -213,7 +228,8 @@ export const reloadData = ():AppThunk => async (dispatch,getState)=>{
   dispatch(get_eth_getBalance());
   dispatch(getMinimumDeposit());
 
-  dispatch(getApr());
+  dispatch(getStakerApr());
+  dispatch(getValidatorApr());
   dispatch(getNextCapacity());
   dispatch(getPoolCount());
 }
@@ -231,8 +247,8 @@ export const get_eth_getBalance=():AppThunk=>async  (dispatch,getState)=>{
   let web3=ethServer.getWeb3(); 
   const address=getState().rETHModule.ethAccount.address;
   const result = await ethereum.request({ method: 'eth_getBalance', params: [ address, 'latest'] })
-  const balance = web3.utils.fromWei(result, 'ether'); 
-  dispatch(setEthAccount({address:address,balance:'--'}))
+  const balance = web3.utils.fromWei(result, 'ether');  
+  dispatch(setEthAccount({address:address,balance:NumberUtil.handleEthAmountToFixed(balance)}))
   dispatch(setBalance(balance));
 }
  
@@ -282,15 +298,25 @@ export const getNextCapacity=():AppThunk=>async (dispatch,getState)=>{
   }
 }
 
-export const getApr=():AppThunk=>async (dispatch,getState)=>{
-  const result =await ethServer.getArp() 
+export const getStakerApr=():AppThunk=>async (dispatch,getState)=>{
+  const result =await ethServer.getArp(1) 
     if (result.status == '80000') {
       if (result.data && result.data.stakerApr) {
         const apr = result.data.stakerApr + '%'; 
-        dispatch(setApr(apr));
+        dispatch(setStakerApr(apr));
       }
     } 
  
+}
+
+export const getValidatorApr=():AppThunk=>async (dispatch,getState)=>{
+  const result =await ethServer.getArp(2) 
+    if (result.status == '80000') {
+      if (result.data && result.data.validatorApr) {
+        const apr = result.data.validatorApr + '%'; 
+        dispatch(setValidatorApr(apr));
+      }
+    }  
 }
 
 export const getPoolCount=():AppThunk=>async (dispatch,getState)=>{
@@ -320,7 +346,7 @@ export const send=(value:Number,cb?:Function):AppThunk=>async (dispatch,getState
       message.success("Error! Please try again");
     }
   } catch (error) {
-    setLoading(true)
+    setLoading(false)
     message.success(error.message);
   } 
 }
@@ -330,5 +356,56 @@ export const getRethAmount=():AppThunk=>async (dispatch,getState)=>{
   getAssetBalance(address,ethServer.getRETHTokenAbi(), ethServer.getRETHTokenAddress(),(v:any)=>{
     dispatch(setRethAmount(v))
   })
+}
+
+
+export const getDepositBalance=():AppThunk=>async (dispatch,getState)=>{
+  const address=getState().rETHModule.ethAccount.address;
+  let web3=ethServer.getWeb3(); 
+  let userDepositContract = new web3.eth.Contract(ethServer.getStafiUserDepositAbi(), ethServer.getStafiUserDepositAddress(), {
+    from: address
+  });
+
+const result =await userDepositContract.methods.getBalance().call() 
+  let balance = parseFloat(web3.utils.fromWei(result, 'ether'));
+  const waitingStaked = NumberUtil.handleEthAmountToFixed(balance);
+  dispatch(setDepositWaitingStaked(waitingStaked));
+  if (Number(waitingStaked) <= 0) {
+    let poolQueueContract = new web3.eth.Contract(ethServer.getStafiStakingPoolQueueAbi(), ethServer.getStafiStakingPoolQueueAddress(), {
+      from: address
+    });
+
+    const waitingPoolCount =await poolQueueContract.methods.getLength(2).call() 
+      if (waitingPoolCount > 0) {
+        dispatch(setWaitingPoolCount(waitingPoolCount)); 
+      } else{
+        dispatch(setWaitingPoolCount(0)); 
+      }
+
+  }
+ 
+}
+
+export const deposit=(ethAmount:Number,cb?:Function):AppThunk=>async (dispatch,getState)=>{
+  let web3 = ethServer.getWeb3();
+  let contract = new web3.eth.Contract(ethServer.getStafiNodeDepositAbi(), ethServer.getStafiNodeDepositAddress(), {
+    from: ethereum.selectedAddress
+  });
+  const amount = web3.utils.toWei(ethAmount.toString());
+
+  setLoading(true);
+ try { 
+    const result=await contract.methods.deposit().send({value: amount}) 
+    setLoading(false); 
+    if (result && result.status) {
+      message.success("Deposit successfully");
+      cb && cb();
+    } else {
+      message.error("Error! Please try again"); 
+    }
+  } catch (error) {
+    setLoading(false);
+    message.error(error.message); 
+  } 
 }
 export default rETHClice.reducer;

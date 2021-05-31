@@ -7,9 +7,8 @@ import {getTotalIssuance,rTokenLedger} from '@features/rATOMClice'
 export default function Index(props:any){
 
   const dispatch=useDispatch();
-  const {stafiStakerApr,totalIssuance,stakerApr,tokenAmount}=useSelector((state:any)=>{
-    return { 
-      stafiStakerApr:state.globalModule.stafiStakerApr,
+  const {totalIssuance,stakerApr,tokenAmount}=useSelector((state:any)=>{
+    return {  
       totalIssuance:state.rATOMModule.totalIssuance,
       stakerApr:state.rATOMModule.stakerApr,
       tokenAmount:state.rATOMModule.tokenAmount,
@@ -24,8 +23,7 @@ export default function Index(props:any){
     return <Redirect to="/rATOM/staker/info" />
   }
   return <TypeCard 
-      type="rATOM" 
-      stafiStakerApr={stafiStakerApr}
+      type="rATOM"  
       total={totalIssuance}
       apr={stakerApr}
       onClick={(e:string)=>{

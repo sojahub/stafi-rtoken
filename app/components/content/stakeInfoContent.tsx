@@ -57,7 +57,7 @@ export default function Index(props:Props){
             {props.type == "rDOT" && props.totalUnbonding > 0 && `. Unbonding DOT is ${props.totalUnbonding}`}
             {props.type=="rKSM" && props.totalUnbonding > 0 && `. Unbonding KSM is ${props.totalUnbonding}`}
             {props.type=="rATOM" && props.totalUnbonding > 0 && `. Unbonding ATOM is ${props.totalUnbonding}`}
-            {props.type=="rETH" && props.totalUnbonding > 0 && `. Unbonding ETH is ${props.totalUnbonding}`}
+            
           </div>
       </div>
       <div  className="item">

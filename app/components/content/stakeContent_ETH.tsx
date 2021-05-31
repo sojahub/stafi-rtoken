@@ -16,7 +16,7 @@ type Props={
     willAmount?:string | 0,
     apr?:string,  
     type:"rETH",
-    histroy?:any,  
+    history?:any,  
     totalStakedAmount?:any, 
     waitingStaked:any,
     isPoolWaiting:boolean
@@ -47,13 +47,13 @@ export default function Index(props:Props){
             <div  className="pool">  
                 {
                     props.isPoolWaiting?<>{props.waitingStaked} ETH is waiting to be staked in the <A onClick={()=>{
-                        props.histroy &&  props.histroy.push("/rETH/poolStatus")
+                        props.history &&  props.history.push("/rETH/poolStatus")
                      }}>pool</A> contracts</>:<>
                             {Number(props.totalStakedAmount)<=0?<>
                                {props.totalStakedAmount} ETH is staked in pool contracts
                             </>:<>
                                {props.totalStakedAmount} ETH is staked in <A onClick={()=>{
-                        props.histroy &&  props.histroy.push("/rETH/poolStatus")
+                        props.history &&  props.history.push("/rETH/poolStatus")
                      }}>pool</A> contracts
                             </>}
                      </>

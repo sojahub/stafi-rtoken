@@ -13,12 +13,12 @@ export default function Index(props:any){
  
   const [amount,setAmount]=useState<any>(); 
  
-  const {balance,ratio,stafiStakerApr,minimumDeposit,totalStakedAmount,waitingStaked,isPoolWaiting}=useSelector((state:any)=>{ 
+  const {balance,ratio,stakerApr,minimumDeposit,totalStakedAmount,waitingStaked,isPoolWaiting}=useSelector((state:any)=>{ 
       
     return {
       balance:state.rETHModule.balance,
       ratio:state.rETHModule.ratio,
-      stafiStakerApr:state.rETHModule.apr,
+      stakerApr:state.rETHModule.stakerApr,
       minimumDeposit:state.rETHModule.minimumDeposit,
 
       isPoolWaiting:state.rETHModule.isPoolWaiting,
@@ -28,11 +28,11 @@ export default function Index(props:any){
     }
   }) 
   return  <><Content
-  histroy={props.history}
+  history={props.history}
   amount={amount}
   willAmount={ratio=='--'?"--":ratioToAmount(amount,ratio)} 
   transferrableAmount={balance}
-  apr={stafiStakerApr} 
+  apr={stakerApr} 
   onChange={(value:any)=>{   
     if(Number(value)>0 &&  Number(value)> Number(minimumDeposit)){
       message.error(`The deposited amount is less than the minimum deposit size:${minimumDeposit}`);

@@ -51,7 +51,7 @@ export default function Index(props:Props){
                 }
             } 
         }
-        if(location.pathname.includes("/rAsset") || location.pathname.includes("/rETH")){
+        if(location.pathname.includes("/rAsset")){
             
             if(location.pathname.includes("/rAsset/native") || location.pathname.includes("/rAsset/swap/native")){
                 if(state.FISModule.fisAccount){
@@ -68,7 +68,13 @@ export default function Index(props:Props){
                 }
             } 
         }
-        
+        if(location.pathname.includes("/rETH")){
+            if(state.rETHModule.ethAccount){
+                return { 
+                    ethAccount:state.rETHModule.ethAccount,
+                }
+            }
+        }
         return null
     })
     const {noticeData}=useSelector((state:any)=>{  
@@ -144,7 +150,7 @@ export default function Index(props:Props){
                  dispatch(connectAtomjs());
             }}  className="header_tool account">
                  connect to Kepir
-            </div>)} 
+            </div>)}  
             {account.ethAccount && <div  className="header_tool account">
                 <div>{account.ethAccount.balance} ETH</div>
                 <div>{StringUtil.replacePkh(account.ethAccount.address,4,38)}</div>

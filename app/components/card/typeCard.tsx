@@ -14,7 +14,6 @@ import { useSelector } from 'react-redux';
 type Props={
   type:"rDOT"|"rETH"|"rFIS"|"rKSM"|"rATOM",
   onClick:Function,
-  stafiStakerApr?:any,
   total?:any,
   apr?:any
 }

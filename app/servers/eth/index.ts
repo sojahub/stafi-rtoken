@@ -82,9 +82,9 @@ export default class Index{
     return api.post(url)
   }
 
-  getArp(){
+  getArp(arpType:number){
     const url="webapi/reth/arp";
-    return api.post(url,{arpType:1})
+    return api.post(url,{arpType})
   } 
 }
 
