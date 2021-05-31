@@ -24,6 +24,8 @@ export default class Index extends SubstrateKeyring{
 
   createStafiApi() {
     const types = {
+      Address: 'IndicesLookupSource',
+      LookupSource: 'IndicesLookupSource',
       RefCount: 'u32',
       ChainId: 'u8',
       ResourceId: '[u8; 32]',
