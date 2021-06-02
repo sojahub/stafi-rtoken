@@ -8,6 +8,7 @@ import AddressItem from './components/addressCard/item';
 import down_arrow from '@images/selectedIcon2.svg'
 import NoDetails from '@shared/components/noDetails'
 import './index.scss'
+import { message } from 'antd';
 export default function Index(props:any){
 
   // return <LeftContent className="stafi_status_validator_context">
@@ -23,7 +24,8 @@ export default function Index(props:any){
                     64.15
                 </label>
                 <Button size="small" btnType="ellipse" onClick={()=>{
-                   props.history.push("/rETH/liquefy"); 
+                  //  props.history.push("/rETH/liquefy"); 
+                   message.info('This feature is not yet open.');
               }}>Liquefy</Button>
             </div>
             <div className="apr_panel">
@@ -51,7 +53,7 @@ export default function Index(props:any){
 
               <div className="btns">
               <Button size="small" btnType="ellipse" onClick={()=>{
-                  
+                  props.history.push("/rETH/validator/deposit")
                 }}>New Deposit</Button>
               </div>
             </div> */}

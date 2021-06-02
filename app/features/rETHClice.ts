@@ -1,14 +1,14 @@
 import { createSlice } from '@reduxjs/toolkit';  
 import {isdev} from '@config/index'
 import { AppThunk, RootState } from '../store';
-import { setLocalStorageItem, getLocalStorageItem, removeLocalStorageItem, Keys } from '@util/common';
+import { setLocalStorageItem, getLocalStorageItem, removeLocalStorageItem, Keys,localStorage_poolPubKey,localStorage_currentEthPool } from '@util/common';
 import NumberUtil from '@util/numberUtil';
 import Web3Utils from 'web3-utils';
 import EthServer from '@servers/eth/index'; 
 import { message } from 'antd';
 import { keccakAsHex } from '@polkadot/util-crypto';  
 import {getAssetBalanceAll,getAssetBalance} from './ETHClice';
-import {setLoading} from './globalClice';
+import {setLoading} from './globalClice'; 
 
 const ethServer=new EthServer();
 const rETHClice = createSlice({
@@ -27,7 +27,11 @@ const rETHClice = createSlice({
     poolCount:"--",
     rethAmount:"--",
     depositWaitingStaked:"--",
-    waitingPoolCount:"--"
+    waitingPoolCount:"--",
+    poolAddress:null,
+    poolAddressItems:[],
+    currentPoolStatus:null,
+    currentTotalDeposit:0
   },
   reducers: {  
      setEthAccount(state,{payload}){
@@ -82,6 +86,18 @@ const rETHClice = createSlice({
      },
      setWaitingPoolCount(state,{payload}){
        state.waitingPoolCount=payload;
+     },
+     setPoolAddress(state,{payload}){ 
+       state.poolAddress=payload
+     },
+     setPoolAddressItems(state,{payload}){
+      state.poolAddressItems=payload
+     },
+     setCurrentPoolStatus(state,{payload}){
+       state.currentPoolStatus=payload
+     },
+     setCurrentTotalDeposit(state,{payload}){
+       state.currentTotalDeposit=payload
      }
   },
 });
@@ -99,7 +115,11 @@ export const {setEthAccount,
   setRatioShow,
   setValidatorApr,
   setDepositWaitingStaked,
-  setWaitingPoolCount
+  setWaitingPoolCount,
+  setPoolAddress,
+  setPoolAddressItems,
+  setCurrentPoolStatus,
+  setCurrentTotalDeposit
 }=rETHClice.actions
 
 declare const window: any;
@@ -386,7 +406,7 @@ const result =await userDepositContract.methods.getBalance().call()
  
 }
 
-export const deposit=(ethAmount:Number,cb?:Function):AppThunk=>async (dispatch,getState)=>{
+export const handleDeposit=(ethAmount:Number,cb?:Function):AppThunk=>async (dispatch,getState)=>{
   let web3 = ethServer.getWeb3();
   let contract = new web3.eth.Contract(ethServer.getStafiNodeDepositAbi(), ethServer.getStafiNodeDepositAddress(), {
     from: ethereum.selectedAddress
@@ -407,5 +427,167 @@ export const deposit=(ethAmount:Number,cb?:Function):AppThunk=>async (dispatch,g
     setLoading(false);
     message.error(error.message); 
   } 
+}
+
+// export const setCurrentEthPool=(validatorAddress:string, poolAddress:string)=>{ 
+//     setLocalStorageItem(Keys.rEthCurrentPoolPrefix+validatorAddress,poolAddress);
+// }
+// export const getCurrentEthPool=(validatorAddress:string)=>{ 
+//     return getLocalStorageItem(Keys.rEthCurrentPoolPrefix+validatorAddress );
+// }
+
+
+export const getNodeStakingPoolCount=():AppThunk=>async (dispatch,getState)=>{
+  let web3 = ethServer.getWeb3();
+  const currentAddress=getState().rETHModule.ethAccount.address;
+  const poolAddressItems=[];
+  let contract = new web3.eth.Contract(ethServer.getStafiStakingPoolManagerAbi(), ethServer.getStafiStakingPoolManagerAddress(), {
+    from: currentAddress
+  });
+ 
+
+
+  const poolCount =await contract.methods.getNodeStakingPoolCount(currentAddress).call() 
+  if (poolCount > 0) {
+    let currentPool = localStorage_currentEthPool.getCurrentEthPool(currentAddress);
+    for (let index = 0; index < poolCount; index++) {
+      const poolAddress= await contract.methods.getNodeStakingPoolAt(currentAddress, index).call()
+      poolAddressItems.push(poolAddress); 
+        if (currentPool) {
+          if (currentPool == poolAddress) {  
+            dispatch( handleCurrentPool(poolAddress))
+            dispatch(setPoolAddress(poolAddress))
+          }
+        } else if (index == poolCount - 1) {
+          dispatch(setPoolAddress(poolAddress)) 
+          dispatch(handleCurrentPool(poolAddress))
+          localStorage_currentEthPool.setCurrentEthPool(currentAddress, poolAddress);
+        }
+   
+    }  
+    dispatch(setPoolAddressItems(poolAddressItems));
+  } 
+}
+
+ 
+
+export const handleCurrentPool=(currentPoolAddress:string):AppThunk=> async (dispatch,getState)=>{
+  let web3 = ethServer.getWeb3();
+  const currentAddress=getState().rETHModule.ethAccount.address;
+  let poolContract = new web3.eth.Contract(ethServer.getStafiStakingPoolAbi(), currentPoolAddress, {
+    from: currentAddress
+  }); 
+  const status=await poolContract.methods.getStatus().call();
+    dispatch(setCurrentPoolStatus(status));
+ 
+  let currentTotalDeposit = 0;
+
+  const nodeDepositBalance=await poolContract.methods.getNodeDepositBalance().call() 
+  currentTotalDeposit += parseFloat(web3.utils.fromWei(nodeDepositBalance, 'ether'));
+    // this.currentTotalDepositShow = NumberUtil.handleEthRoundToFixed(this.currentTotalDeposit);
+ 
+
+  const userDepositBalance = await poolContract.methods.getUserDepositBalance().call();
+  currentTotalDeposit += parseFloat(web3.utils.fromWei(userDepositBalance, 'ether'));
+    // this.currentTotalDepositShow = NumberUtil.handleEthRoundToFixed(this.currentTotalDeposit);
+ 
+
+  const nodeRefundBalance=await poolContract.methods.getNodeRefundBalance().call();
+  currentTotalDeposit += parseFloat(web3.utils.fromWei(nodeRefundBalance, 'ether'));
+    // this.currentTotalDepositShow = NumberUtil.handleEthRoundToFixed(this.currentTotalDeposit);
+  dispatch(setCurrentTotalDeposit(NumberUtil.handleEthRoundToFixed(currentTotalDeposit)))
+ 
+}
+
+export const handleOffboard=(cb?:Function):AppThunk=>async (dispatch,getState)=>{
+  let web3 = ethServer.getWeb3();
+  const currentPoolAddress=getState().rETHModule.poolAddress;
+  const currentAddress=getState().rETHModule.ethAccount.address;
+  const currentPoolStatus=getState().rETHModule.currentPoolStatus;
+  let poolContract = new web3.eth.Contract(ethServer.getStafiStakingPoolAbi(), currentPoolAddress, {
+    from: currentAddress
+  }); 
+  dispatch(setLoading(true));
+  if (currentPoolStatus == 4) {
+    try {
+      const result = await  poolContract.methods.close().send() 
+        dispatch(setLoading(false)); 
+        if (result && result.status) { 
+          message.success('Offboard successfully')
+          cb && cb()
+          dispatch(reloadData())
+        } else { 
+          message.error('Error! Please try again')
+        } 
+    } catch (error) {
+      dispatch(setLoading(false));
+      message.error(error.message)
+    } 
+  } else { 
+    try { 
+      const result=await poolContract.methods.dissolve().send() 
+      if (result && result.status) {
+        try{
+        const closeResult=await poolContract.methods.close().send() 
+
+          dispatch(setLoading(false))
+          if (closeResult && closeResult.status) {
+          
+            message.error('Offboard successfully');
+            cb && cb()
+            dispatch(reloadData())
+          } else {
+            message.error('Error! Please try again');
+          }
+          
+        }catch(error){
+          dispatch(setLoading(false))
+          message.error(error.message);
+        };
+      } else { 
+        dispatch(setLoading(false))
+        message.error('Error! Please try again'); 
+      } 
+    } catch (error) {
+      dispatch(setLoading(false))
+      message.error(error.message);
+    }
+  }
+}
+
+
+
+export const handleStake=(validatorKeys:any[],cb?:Function):AppThunk=>async (dispatch,getState)=>{
+ 
+  let web3 = ethServer.getWeb3();
+  const currentAddress=getState().rETHModule.ethAccount.address;
+  const currentPoolAddress=getState().rETHModule.poolAddress;
+  let poolContract = new web3.eth.Contract(ethServer.getStafiStakingPoolAbi(), currentPoolAddress, {
+    from: currentAddress
+  });
+  
+  dispatch(setLoading(true))
+  try {
+ 
+  let pubkey = '0x' + validatorKeys[0].pubkey;
+  const result =await poolContract.methods.stake(
+    pubkey, 
+    '0x' + validatorKeys[0].signature, 
+    '0x' + validatorKeys[0].deposit_data_root
+  ).send();
+    dispatch(setLoading(false)) 
+    if (result && result.status) { 
+      localStorage_poolPubKey.setPoolPubKey(currentPoolAddress, pubkey);
+      message.error('Stake successfully');
+      cb && cb();
+    } else {
+      message.error('Error! Please try again');
+    }
+     
+  } catch (error) {
+    dispatch(setLoading(false)) 
+    message.error(error.message);
+  }
+
 }
 export default rETHClice.reducer;

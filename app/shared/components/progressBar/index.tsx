@@ -2,7 +2,7 @@ import React from 'react';
 
 import './index.scss'
 type Props={
-    text?:string,
+    text?:any,
     icon?:any,
     progress?:number
 }

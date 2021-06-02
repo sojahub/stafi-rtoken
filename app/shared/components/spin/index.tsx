@@ -5,7 +5,7 @@ import {
 import './index.scss';
 
 const IconFont = createFromIconfontCN({
-  scriptUrl: ['http://at.alicdn.com/t/font_2582233_im43gq2fz9.js'],
+  scriptUrl: ['http://at.alicdn.com/t/font_2583425_js8d5swz4uc.js'],
 });
 
 export default function Index(Props: {type:string,fontSize?:string,color?:string }) {

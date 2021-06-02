@@ -24,6 +24,6 @@ export default function Index(props:Props){
     </div>}
     >
         <div>Tx is pending to be finalized</div>
-        <Spin indicator={<Spin_Icon type="icon-loading" />} />
+        <Spin indicator={<Spin_Icon type="icon-loading1" />} />
     </Modal>
 }

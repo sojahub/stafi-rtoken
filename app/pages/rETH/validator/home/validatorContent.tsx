@@ -5,10 +5,8 @@ import './index.scss';
 
 import { message } from 'antd';
 
-type Props={
-    onRecovery:Function
-}
-export default function Index(props:Props){
+ 
+export default function Index(props:any){
     return <LeftContent className="stafi_validator_context stafi_reth_validator_context">
         <label className="title">Validator Process</label> 
         <div className="sub_title">
@@ -31,7 +29,7 @@ export default function Index(props:Props){
         </div>
         <div className="btns">
             <Button  onClick={()=>{
-                message.warning("OV Registration is not open yet.")
+                props.history && props.history.push("/rETH/validator/deposit")
             }}>Start</Button>
         </div>
     </LeftContent>

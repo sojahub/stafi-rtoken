@@ -7,7 +7,7 @@ import LeftContent from '@components/content/leftContent';
 import './index.scss';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'app/store';
-import {getDepositBalance,deposit,reloadData} from '@features/rETHClice';
+import {getDepositBalance,handleDeposit,reloadData} from '@features/rETHClice';
 import Modal from '@components/modal/ethDepositModal'
 export default function Index(props:any){
     const dispatch=useDispatch();
@@ -30,8 +30,7 @@ export default function Index(props:any){
        </div>
        <Input disabled={true} value={amount} placeholder="AMOUNT" icon={rETH}/>
        <div className="pool">
-            {(Number(depositWaitingStaked)>0 || depositWaitingStaked=="--") && <>{depositWaitingStaked} ETH  is waiting to be staked，check <A onClick={()=>{
-                    console.log(props,"======props")
+            {(Number(depositWaitingStaked)>0 || depositWaitingStaked=="--") && <>{depositWaitingStaked} ETH  is waiting to be staked，check <A onClick={()=>{ 
                     props.history &&  props.history.push("/rETH/poolStatus")
                 }}>pool</A> status</>}
             {!(Number(depositWaitingStaked)>0 || depositWaitingStaked=="--") && <>
@@ -47,7 +46,7 @@ export default function Index(props:any){
        </div>
        <div className="btns reth_btns">
        <Button  onClick={()=>{ 
-           dispatch(deposit(amount,()=>{
+           dispatch(handleDeposit(amount,()=>{
                 setVisible(true)
            }))
                
