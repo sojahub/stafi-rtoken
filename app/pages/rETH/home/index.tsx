@@ -27,8 +27,7 @@ export default function Inde(props:any){
   
       // onIntroUrl="https://docs.stafi.io/rproduct/rdot-solution"
   >
-     <Button icon={metamask_png} onClick={()=>{
-        
+     <Button icon={metamask_png} onClick={()=>{ 
         dispatch(connectMetamask('0x5'));
         dispatch(monitoring_Method());
         ethAccount && dispatch(handleEthAccount(ethAccount.address))

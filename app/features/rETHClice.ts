@@ -9,15 +9,15 @@ import { message } from 'antd';
 import { keccakAsHex } from '@polkadot/util-crypto';  
 import {getAssetBalanceAll,getAssetBalance} from './ETHClice';
 import {setLoading} from './globalClice'; 
-import StringUtil from '@util/stringUtil'
-import { matchPath } from 'react-router';
+import StringUtil from '@util/stringUtil' 
 
 const ethServer=new EthServer();
 const rETHClice = createSlice({
   name: 'rETHModule',
   initialState: {  
+    chainId:'',
     ethAccount:getLocalStorageItem(Keys.MetamaskAccountKey),
-    ratio:"--",
+    ratio:"--", 
     ratioShow:"--",
     balance:"--",
     minimumDeposit:"--",
@@ -34,7 +34,8 @@ const rETHClice = createSlice({
     poolAddressItems:[],
     currentPoolStatus:null,
     currentTotalDeposit:0,
-    selfDeposited:"--"
+    selfDeposited:"--", 
+    isload_monitoring:false
   },
   reducers: {  
      setEthAccount(state,{payload}){ 
@@ -104,6 +105,9 @@ const rETHClice = createSlice({
      },
      setSelfDeposited(state,{payload}){
        state.selfDeposited=payload
+     },
+     setIsloadMonitoring(state,{payload}){
+       state.isload_monitoring=payload
      }
   },
 });
@@ -126,7 +130,8 @@ export const {setEthAccount,
   setPoolAddressItems,
   setCurrentPoolStatus,
   setCurrentTotalDeposit,
-  setSelfDeposited
+  setSelfDeposited,
+  setIsloadMonitoring
 }=rETHClice.actions
 
 declare const window: any;
@@ -186,29 +191,35 @@ export const handleEthAccount=(address:string):AppThunk=>(dispatch,getState)=>{
 
 
 export const monitoring_Method=():AppThunk=>(dispatch,getState)=> { 
-  if (typeof window.ethereum !== 'undefined' && ethereum.isMetaMask) {
-    ethereum.autoRefreshOnNetworkChange = false;
+  const isload_monitoring =getState().rETHModule.isload_monitoring;
 
-    ethereum.on('accountsChanged', (accounts:any) => {
-      // this.ethAccount = accounts[0];
+  if(isload_monitoring){
+    return;
+  } 
+  if (typeof window.ethereum !== 'undefined' && ethereum.isMetaMask) {
+    dispatch(setIsloadMonitoring(true));
+    ethereum.autoRefreshOnNetworkChange = false; 
+    ethereum.on('accountsChanged', (accounts:any) => { 
       if (accounts.length>0) { 
-        dispatch(handleEthAccount(accounts[0]));
+        dispatch(handleEthAccount(accounts[0])); 
         // setTimeout(()=>{
         //   dispatch(getAssetBalanceAll()); 
         // },20)
-      } else {
-   
+      } else { 
         dispatch(handleEthAccount(null))
       }
     }); 
 
     ethereum.on('chainChanged', (chainId:any) => {
       if (isdev()) {
-        if (ethereum.chainId != '0x3') {
-          message.warning('Please connect to Ropsten Test Network!'); 
-       
+        if (ethereum.chainId != "0x3" && location.pathname.includes("/rAsset/erc")) {
+          message.warning('Please connect to Ropsten Test Network!');  
           dispatch(setEthAccount(null));
-        }
+        } 
+        if (ethereum.chainId != "0x5" && location.pathname.includes("/rETH")) {
+          message.warning('Please connect to Goerli Test Network!');  
+          dispatch(setEthAccount(null));
+        } 
       } else if (ethereum.chainId != '0x1') {
         message.warning('Please connect to Ethereum Main Network!');
         

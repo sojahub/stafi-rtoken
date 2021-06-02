@@ -6,7 +6,7 @@ import {renderRoutes}  from 'react-router-config';
 import {getLocalStorageItem,Keys} from '@util/common';
 
 import {Symbol} from '@keyring/defaults' 
-import {reloadData} from '@features/rETHClice'  
+import {reloadData,monitoring_Method} from '@features/rETHClice'  
 import '../template/index.scss'
 export default function Index(props:any){
   const dispatch = useDispatch();
@@ -17,8 +17,11 @@ export default function Index(props:any){
     }
   })
   useEffect(()=>{ 
-    ethAccount && ethAccount.address &&  dispatch(reloadData()); 
+    ethAccount && ethAccount.address &&  dispatch(reloadData());  
   },[(ethAccount==null)])
+  useEffect(()=>{  
+    dispatch(monitoring_Method());
+  },[])
   const {loading} =useSelector((state:any)=>{
     return {
       loading:state.globalModule.loading
