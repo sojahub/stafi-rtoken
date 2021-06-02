@@ -28,10 +28,10 @@ export default function Inde(props:any){
       // onIntroUrl="https://docs.stafi.io/rproduct/rdot-solution"
   >
      <Button icon={metamask_png} onClick={()=>{
-       dispatch(reloadData());
+        
         dispatch(connectMetamask('0x5'));
         dispatch(monitoring_Method());
-        dispatch(handleEthAccount(ethAccount.address))
+        ethAccount && dispatch(handleEthAccount(ethAccount.address))
         props.history.push("/rETH/type")
       }}>
                 Connect to Metamask

@@ -9,6 +9,8 @@ import { message } from 'antd';
 import { keccakAsHex } from '@polkadot/util-crypto';  
 import {getAssetBalanceAll,getAssetBalance} from './ETHClice';
 import {setLoading} from './globalClice'; 
+import StringUtil from '@util/stringUtil'
+import { matchPath } from 'react-router';
 
 const ethServer=new EthServer();
 const rETHClice = createSlice({
@@ -31,10 +33,11 @@ const rETHClice = createSlice({
     poolAddress:null,
     poolAddressItems:[],
     currentPoolStatus:null,
-    currentTotalDeposit:0
+    currentTotalDeposit:0,
+    selfDeposited:"--"
   },
   reducers: {  
-     setEthAccount(state,{payload}){
+     setEthAccount(state,{payload}){ 
        if(payload==null){
         state.ethAccount=payload;
         removeLocalStorageItem(Keys.MetamaskAccountKey);
@@ -98,6 +101,9 @@ const rETHClice = createSlice({
      },
      setCurrentTotalDeposit(state,{payload}){
        state.currentTotalDeposit=payload
+     },
+     setSelfDeposited(state,{payload}){
+       state.selfDeposited=payload
      }
   },
 });
@@ -119,7 +125,8 @@ export const {setEthAccount,
   setPoolAddress,
   setPoolAddressItems,
   setCurrentPoolStatus,
-  setCurrentTotalDeposit
+  setCurrentTotalDeposit,
+  setSelfDeposited
 }=rETHClice.actions
 
 declare const window: any;
@@ -186,9 +193,9 @@ export const monitoring_Method=():AppThunk=>(dispatch,getState)=> {
       // this.ethAccount = accounts[0];
       if (accounts.length>0) { 
         dispatch(handleEthAccount(accounts[0]));
-        setTimeout(()=>{
-          dispatch(getAssetBalanceAll); 
-        },20)
+        // setTimeout(()=>{
+        //   dispatch(getAssetBalanceAll()); 
+        // },20)
       } else {
    
         dispatch(handleEthAccount(null))
@@ -590,4 +597,144 @@ export const handleStake=(validatorKeys:any[],cb?:Function):AppThunk=>async (dis
   }
 
 }
+
+
+export const self=():AppThunk=>async (dispatch,getState)=>{
+  let web3 = ethServer.getWeb3();
+  const currentAddress=getState().rETHModule.ethAccount.address;
+  let contract = new web3.eth.Contract(ethServer.getStafiStakingPoolManagerAbi(), ethServer.getStafiStakingPoolManagerAddress(), {
+    from: currentAddress
+  });
+  let addressItems:any[]=[];
+  let pubKeys = [];;
+  let pubKeyMap=new Map();
+  let selfDeposited=0;
+
+ const poolCount = await contract.methods.getNodeStakingPoolCount(currentAddress).call();
+  if (poolCount > 0) {
+   // this.poolCount = poolCount;
+  
+    for (let index = 0; index < poolCount; index++) {
+    const poolAddress=await  contract.methods.getNodeStakingPoolAt(currentAddress, index).call(); 
+        let item = {
+          address: poolAddress,
+          shortAddress: StringUtil.replacePkh(poolAddress, 4, 38),
+          status: -1
+        }
+        addressItems.push(item);
+
+        let pubKey = localStorage_poolPubKey.getPoolPubKey(poolAddress);
+        if (pubKey) { 
+          pubKeys.push(pubKey);
+          pubKeyMap.set(pubKey, poolAddress.toLowerCase());
+         // this.updateStatus();
+        } else {
+          const pubkey =await contract.methods.getStakingPoolPubkey(poolAddress).call()
+          if (pubkey) { 
+            pubKeys.push(pubKey);
+            pubKeyMap.set(pubKey, poolAddress.toLowerCase());
+            localStorage_poolPubKey.setPoolPubKey(poolAddress, pubkey);
+          } else {
+            pubKeys.push('');
+          }
+           // this.updateStatus();
+          
+        }
+
+        let poolContract = new web3.eth.Contract(ethServer.getStafiStakingPoolAbi(), poolAddress, {
+          from: currentAddress
+        });
+
+        const status=await poolContract.methods.getStatus().call() 
+        if (status == 4) {
+          addressItems.some((item) => {
+            if (item.address.toLowerCase() == poolAddress.toLowerCase()) {
+              item.status = 8; 
+              return true;
+            }
+          });
+        }
+    
+
+        const  depositBalance= await poolContract.methods.getNodeDepositBalance().call() 
+        let parsedDepositBalance = parseFloat(web3.utils.fromWei(depositBalance, 'ether'));
+        selfDeposited += parsedDepositBalance;
+         // this.selfDepositedShow = NumberUtil.handleEthRoundToFixed(this.selfDeposited);
+    }
+  }
+
+  dispatch(setSelfDeposited(selfDeposited))
+ 
+}
+
+// export const  updateStatus=():AppThunk=>async ()=> {
+//   if (this.pubKeys.length == this.poolCount) {
+//     let validPubKeys = [];
+//     this.pubKeys.forEach((pubkey) => {
+//       if (pubkey) {
+//         validPubKeys.push(pubkey);
+//       }
+//     });
+//     if (validPubKeys.length == 0) {
+//       this.addressItems.forEach((item) => {
+//         item.status = 7;
+//       });
+//       return;
+//     }
+//     Rpc.fetchStakingPoolList({pubkeyList: JSON.stringify(validPubKeys)}).then(result => {
+//       if (result.status == '80000') {
+//         if (result.data) {
+//           let totalStakeAmount = 0;
+//           if (result.data.allStakeAmount) {
+//             totalStakeAmount = result.data.allStakeAmount;
+//           }
+//           if (result.data.apr) {
+//             this.currentApr = result.data.apr + '%';
+//           }
+//           if (result.data.list) {
+
+//             let remoteDataItems = result.data.list;
+
+//             let map = new Map();
+//             remoteDataItems.forEach((remoteItem) => {
+//               if (remoteItem.pubkey) {
+//                 map.set(this.pubKeyMap.get(remoteItem.pubkey), remoteItem);
+//                 if (remoteItem.status == 7) {
+//                   totalStakeAmount = Number(totalStakeAmount) + 32;
+//                 }
+//               }
+//             });
+
+//             this.addressItems.forEach((item) => {
+//               let key = item.address.toLowerCase();
+//               if (map.has(key)) {
+//                 item.status = map.get(key).status == 7 ? 2 : map.get(key).status; 
+//               } else {
+//                 item.status = 7;
+//               }
+//             });
+//           }
+
+//           if (totalStakeAmount > 0) {
+//             let count = 0;
+//             let totalCount = 10;
+//             let ratioAmount = 0;
+//             let piece = totalStakeAmount / totalCount;
+//             let interval = setInterval(() => {
+//               count++;
+//               ratioAmount += piece;
+//               if (count == totalCount) {
+//                 ratioAmount = totalStakeAmount;
+//                 window.clearInterval(interval);
+//               }
+//               this.totalStakedETHShow = NumberUtil.handleEthGweiToFixed(ratioAmount);
+//             }, 100);
+//           }
+          
+//         }
+//       } 
+//     });
+
+//   }
+// }
 export default rETHClice.reducer;

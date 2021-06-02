@@ -9,8 +9,17 @@ import down_arrow from '@images/selectedIcon2.svg'
 import NoDetails from '@shared/components/noDetails'
 import './index.scss'
 import { message } from 'antd';
+import { useSelector } from 'react-redux';
+import { RootState } from 'app/store';
+import NumberUtil from '@util/numberUtil';
 export default function Index(props:any){
 
+  const {selfDeposited,apr} =useSelector((state:RootState)=>{
+    return  {
+      selfDeposited:state.rETHModule.selfDeposited,
+      apr:state.rETHModule.validatorApr
+    }
+  })
   // return <LeftContent className="stafi_status_validator_context">
   //     <NoDetails type="max"/> 
   // </LeftContent>
@@ -30,10 +39,10 @@ export default function Index(props:any){
             </div>
             <div className="apr_panel">
                 <div>
-                  Self-deposited: 16 
+                  Self-deposited: {NumberUtil.handleEthRoundToFixed(selfDeposited)}
                 </div>
                 <div>
-                  Current APR: 12.93%
+                  Current APR: {apr}
                 </div>
             </div>
         </div>
