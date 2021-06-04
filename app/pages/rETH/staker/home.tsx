@@ -57,7 +57,8 @@ export default function Index(props:any){
     onNext={()=>{
       setEthNoteModalVisible(false);
       dispatch(send(amount,()=>{ 
-        dispatch(reloadData())
+        dispatch(reloadData());
+        props.history.push("/rETH/staker/info")
       }))
     }}
   /> 

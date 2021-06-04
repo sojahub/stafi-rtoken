@@ -3,15 +3,17 @@ import A from '@shared/components/button/a'
 import './index.scss'
 
 type Props={
-    status:"Active" | "Pending" | "Waiting" |"Unresponsive" | "Exit"
+    status:string,
+    address:string,
+    onClick?:Function
 }
 export default function Index(props:Props){
     return <div className="address_item">
         <div>
-        Address: <A underline={true}>0x23…HNe8</A>
+        Address: <A onClick={props.onClick} underline={true}>{props.address}</A>
         </div>
         <div>
-        Active
+        {status}
         </div>
     </div>
 }

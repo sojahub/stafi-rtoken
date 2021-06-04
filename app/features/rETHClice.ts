@@ -25,6 +25,8 @@ const rETHClice = createSlice({
     totalStakedAmount:"--",
     stakerApr:"--",
     validatorApr:"--",
+    poolStakerApr:"--",
+    poolValidatorApr:"--",
     isPoolWaiting:true,
     poolCount:"--",
     rethAmount:"--",
@@ -38,7 +40,10 @@ const rETHClice = createSlice({
     isload_monitoring:false,
     status_Apr:'--',
     totalStakedETH:'--',
-    addressItems:[]
+    addressItems:[],
+    unmatchedValidators:'--',
+    poolStatusTotalRETH:'--',
+    poolStatusUnmatchedETH:'--'
   },
   reducers: {  
      setEthAccount(state,{payload}){ 
@@ -120,6 +125,21 @@ const rETHClice = createSlice({
      },
      setAddressItems(state,{payload}){
        state.addressItems=payload
+     },
+     setPoolStakerApr(state,{payload}){
+      state.poolStakerApr=payload
+     },
+     setPoolValidatorApr(state,{payload}){
+       state.poolValidatorApr=payload
+     },
+     setUnmatchedValidators(state,{payload}){
+       state.unmatchedValidators=payload
+     },
+     setPoolStatusTotalRETH(state,{payload}){
+       state.poolStatusTotalRETH=payload
+     },
+     setPoolStatusUnmatchedETH(state,{payload}){
+       state.poolStatusUnmatchedETH=payload;
      }
   },
 });
@@ -146,7 +166,12 @@ export const {setEthAccount,
   setIsloadMonitoring,
   setStatus_Apr,
   setTotalStakedETH,
-  setAddressItems
+  setAddressItems,
+  setPoolStakerApr,
+  setPoolValidatorApr,
+  setUnmatchedValidators,
+  setPoolStatusTotalRETH,
+  setPoolStatusUnmatchedETH
 }=rETHClice.actions
 
 declare const window: any;
@@ -344,7 +369,7 @@ export const getNextCapacity=():AppThunk=>async (dispatch,getState)=>{
           if (result.data.stakeAmount) {
             const totalStakedAmount = NumberUtil.handleEthAmountToFixed(result.data.stakeAmount); 
             dispatch(setTotalStakedAmount(totalStakedAmount));
-          }
+          } 
         }
       } 
  
@@ -382,16 +407,17 @@ export const getPoolCount=():AppThunk=>async (dispatch,getState)=>{
   dispatch(setPoolCount(poolCount));
 }
 export const send=(value:Number,cb?:Function):AppThunk=>async (dispatch,getState)=>{
+  dispatch(setLoading(true));
   let web3=ethServer.getWeb3(); 
   const address=getState().rETHModule.ethAccount.address; 
   let contract = new web3.eth.Contract(ethServer.getStafiUserDepositAbi(), ethServer.getStafiUserDepositAddress(), {
     from: address
   });
   const amount = web3.utils.toWei(value.toString()); 
-  setLoading(true)
+ 
   try { 
   const result =await contract.methods.deposit().send({value: amount}) 
-    setLoading(false) 
+  dispatch(setLoading(false))
     if (result && result.status) { 
       message.success("Deposit successfully");
       cb && cb();
@@ -399,7 +425,7 @@ export const send=(value:Number,cb?:Function):AppThunk=>async (dispatch,getState
       message.success("Error! Please try again");
     }
   } catch (error) {
-    setLoading(false)
+    dispatch(setLoading(false))
     message.success(error.message);
   } 
 }
@@ -511,7 +537,7 @@ export const handleCurrentPool=(currentPoolAddress:string):AppThunk=> async (dis
     from: currentAddress
   }); 
   const status=await poolContract.methods.getStatus().call();
-    dispatch(setCurrentPoolStatus(status));
+  dispatch(setCurrentPoolStatus(status));
  
   let currentTotalDeposit = 0;
 
@@ -657,8 +683,7 @@ export const getSelfDeposited=():AppThunk=>async (dispatch,getState)=>{
           pubKeyMap.set(pubKey, poolAddress.toLowerCase());
           dispatch(updateStatus(pubKeys,pubKeyMap,poolCount,addressItems));
         } else {
-          const pubkey =await contract.methods.getStakingPoolPubkey(poolAddress).call()
-          console.log(pubkey,"===poolCount")
+          const pubkey =await contract.methods.getStakingPoolPubkey(poolAddress).call() 
           if (pubkey) { 
             pubKeys.push(pubKey);
             pubKeyMap.set(pubKey, poolAddress.toLowerCase());
@@ -682,7 +707,7 @@ export const getSelfDeposited=():AppThunk=>async (dispatch,getState)=>{
               return true;
             }
           });
-         // dispatch(setadd)
+          
         }
     
 
@@ -692,7 +717,7 @@ export const getSelfDeposited=():AppThunk=>async (dispatch,getState)=>{
          // this.selfDepositedShow = NumberUtil.handleEthRoundToFixed(this.selfDeposited);
     }
   }
-
+  dispatch(setAddressItems(addressItems))
   dispatch(setSelfDeposited(selfDeposited))
  
 }
@@ -772,5 +797,62 @@ export const  updateStatus=(pubKeys:any[],pubKeyMap:any,poolCount:Number,address
       }
 
   }
+}
+
+export const getStakingPoolStatus=():AppThunk=>async (dispatch,getState)=>{
+  const result =await ethServer.getStakingPoolStatus() 
+  if (result.status == '80000') {
+    if (result.data) {
+      if (result.data.stakeAmount) {
+        const totalStakedAmount = NumberUtil.handleEthAmountToFixed(result.data.stakeAmount); 
+        dispatch(setTotalStakedAmount(totalStakedAmount));
+      }
+      if (result.data.validatorApr) { 
+        dispatch(setPoolValidatorApr(result.data.validatorApr + '%'))
+      }
+      if (result.data.stakerApr) { 
+        dispatch(setPoolStakerApr(result.data.stakerApr + '%'))
+
+      }
+    }
+  } 
+
+} 
+
+export const getUnmatchedValidators=():AppThunk=>async (dispatch,getState)=>{
+  const web3=ethServer.getWeb3();
+  const address=getState().rETHModule.ethAccount.address; 
+  let poolQueueContract = new web3.eth.Contract(ethServer.getStafiStakingPoolQueueAbi(), ethServer.getStafiStakingPoolQueueAddress(), {
+    from: address
+  });
+
+  const result =await poolQueueContract.methods.getLength('2').call()
+//  this.unmatchedValidators = result;
+  dispatch(setUnmatchedValidators(result))
+ 
+}
+
+export const getTotalRETH=():AppThunk=>async (dispatch,getState)=>{
+  const address=getState().rETHModule.ethAccount.address; 
+  let web3 = ethServer.getWeb3();
+  let contract = new web3.eth.Contract(ethServer.getRETHTokenAbi(), ethServer.getRETHTokenAddress(), {
+    from: address
+  });
+  const result=await contract.methods.totalSupply().call() 
+  let totalRETH = parseFloat(web3.utils.fromWei(result, 'ether')); 
+  dispatch(setPoolStatusTotalRETH(NumberUtil.handleEthAmountToFixed(totalRETH)))
+  
+}
+export const getUnmatchedETH=():AppThunk=>async (dispatch,getState)=>{
+  const address=getState().rETHModule.ethAccount.address; 
+  let web3 = ethServer.getWeb3();
+  let userContract = new web3.eth.Contract(ethServer.getStafiUserDepositAbi(), ethServer.getStafiUserDepositAddress(), {
+    from: address
+  });
+  
+  const result=await userContract.methods.getBalance().call() 
+  let unmatchedETH = parseFloat(web3.utils.fromWei(result, 'ether'));
+  dispatch(setPoolStatusUnmatchedETH(NumberUtil.handleEthAmountToFixed(unmatchedETH)));
+ 
 }
 export default rETHClice.reducer;

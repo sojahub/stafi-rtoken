@@ -30,7 +30,7 @@ export default function Index(props:any){
        </div>
        <Input disabled={true} value={amount} placeholder="AMOUNT" icon={rETH}/>
        <div className="pool">
-            {(Number(depositWaitingStaked)>0 || depositWaitingStaked=="--") && <>{depositWaitingStaked} ETH  is waiting to be staked，check <A onClick={()=>{ 
+            {(Number(depositWaitingStaked)>0 || depositWaitingStaked=="--") && <>{depositWaitingStaked} ETH  is waiting to be staked，check <A underline={true} onClick={()=>{ 
                     props.history &&  props.history.push("/rETH/poolStatus")
                 }}>pool</A> status</>}
             {!(Number(depositWaitingStaked)>0 || depositWaitingStaked=="--") && <>

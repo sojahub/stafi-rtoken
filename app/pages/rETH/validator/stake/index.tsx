@@ -11,6 +11,8 @@ import './index.scss'
 import { useDispatch, useSelector } from 'react-redux';
 import OffboardModal from '@components/modal/offboardModal'
 import { RootState } from 'app/store';
+import StringUtil from '@util/stringUtil';
+
 export default function Index(props:any){
     const dispatch = useDispatch()
     const [offboardModalVisible,setOffboardModalVisible]=useState(false)
@@ -71,25 +73,27 @@ export default function Index(props:any){
         <div className="reth_title"> Stake </div>
        <div className="reth_sub_title">
         Pool contract can be staked once 32ETH is matched to your node, 
-        Check <A underline={true} onClick={()=>{
+        check <A underline={true} onClick={()=>{
             props.history.push("/rETH/poolStatus")
         }}>pool status</A>
        </div>
 
         <div className="address">
-            Contract Address: <A underline={true}>{poolAddress}</A>
+            Contract Address: <A underline={true}>{StringUtil.replacePkh(poolAddress,4,38)}</A>
         </div>
         <ProgressBar icon={eth_svg} text={currentTotalDeposit} progress={currentTotalDeposit*100/poolTotalStake}/>
         <div className="reth_title upload_title"> Upload </div>
        <div className="reth_sub_title upload_sub_title">
-            Follow the <A underline={true}>instruction</A> and upload your file
+            Follow the <A onClick={()=>{
+              window.open("https://docs.stafi.io/rproduct/reth-solution/original-validator-guide#2-use-deposit-cli-to-generate-a-key-file");
+              }}  underline={true}>instruction</A> and upload your file
        </div>
         <Upload currentPoolStatus={currentPoolStatus} onChange={(e:any)=>{
              filesChange(e);
         }}/>
         <div className="btns stake_btns">
-          <A isGrey={true} onClick={()=>{
-              setOffboardModalVisible(true)
+          <A  isGrey={true} onClick={()=>{ 
+              currentPoolStatus ==1 &&  setOffboardModalVisible(true) 
           }}>Offboard</A>
            <Button disabled={btnActiveStatus!=1 || validatorKeysState.length != 1} onClick={()=>{
               if (currentPoolStatus == 2) {

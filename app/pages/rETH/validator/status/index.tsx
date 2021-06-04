@@ -12,15 +12,42 @@ import { message } from 'antd';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'app/store';
 import NumberUtil from '@util/numberUtil';
-import {getSelfDeposited} from '@features/rETHClice'
+import {getSelfDeposited} from '@features/rETHClice';
+import StringUtil from '@util/stringUtil';
+
+const getStatus=(status:any)=>{
+  switch(status){
+    case -1:
+      return '--'; 
+    case 2:
+      return 'Pending';
+    case 3:
+      return 'Active';
+    case 4:
+      return 'Exited';
+    case 5:
+      return 'Exiting';
+    case 6:
+      return 'Slashing';
+    case 7:
+      return 'Waiting';
+    case 8:
+      return 'Dissolved';
+    default:
+      return '--'; 
+  }
+}
+
+
 export default function Index(props:any){
 
   const dispatch =useDispatch();
-  const {selfDeposited,apr,totalStakedETH} =useSelector((state:RootState)=>{
+  const {selfDeposited,apr,totalStakedETH,addressItems} =useSelector((state:RootState)=>{
     return  {
       selfDeposited:state.rETHModule.selfDeposited,
       apr:state.rETHModule.status_Apr,
-      totalStakedETH:state.rETHModule.totalStakedETH
+      totalStakedETH:state.rETHModule.totalStakedETH,
+      addressItems:state.rETHModule.addressItems
     }
   })
   useEffect(()=>{
@@ -57,16 +84,15 @@ export default function Index(props:any){
         </div>
         <div className="pool_contracts">
             <div className="title">
-                <img src={pool_eth_svg} />Pool Contracts (5)  <img className="icon" src={down_arrow} />
+                <img src={pool_eth_svg} />Pool Contracts ({addressItems.length})  <img className="icon" src={down_arrow} />
             </div>
-            <NoDetails type="small"/> 
-            {/* <div className="Row">
+            {addressItems.length == 0 ? <NoDetails type="small"/>: <div className="Row">
               <AddressCard >
-                    <AddressItem status="Active" />
-                    <AddressItem status="Pending"/>
-                    <AddressItem status="Waiting"/>
-                    <AddressItem status="Unresponsive"/>
-                    <AddressItem status="Exit"/>
+                {addressItems.map((item)=>{
+                  return  <AddressItem onClick={()=>{
+
+                  }} address={StringUtil.replacePkh(item.shortAddress,4,38)} status={getStatus(item.status)}/>
+                })} 
               </AddressCard>
 
               <div className="btns">
@@ -74,7 +100,9 @@ export default function Index(props:any){
                   props.history.push("/rETH/validator/deposit")
                 }}>New Deposit</Button>
               </div>
-            </div> */}
+            </div>}
+            
+            {/*  */}
         </div>
     </LeftContent>
 }
