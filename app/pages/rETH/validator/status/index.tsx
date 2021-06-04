@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import LeftContent from '@components/content/leftContent';
 import selected_rETH_svg from '@images/selected_rETH.svg';
 import pool_eth_svg from '@images/pool_eth.svg';
@@ -9,20 +9,29 @@ import down_arrow from '@images/selectedIcon2.svg'
 import NoDetails from '@shared/components/noDetails'
 import './index.scss'
 import { message } from 'antd';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'app/store';
 import NumberUtil from '@util/numberUtil';
+import {getSelfDeposited} from '@features/rETHClice'
 export default function Index(props:any){
 
-  const {selfDeposited,apr} =useSelector((state:RootState)=>{
+  const dispatch =useDispatch();
+  const {selfDeposited,apr,totalStakedETH} =useSelector((state:RootState)=>{
     return  {
       selfDeposited:state.rETHModule.selfDeposited,
-      apr:state.rETHModule.validatorApr
+      apr:state.rETHModule.status_Apr,
+      totalStakedETH:state.rETHModule.totalStakedETH
     }
   })
-  // return <LeftContent className="stafi_status_validator_context">
-  //     <NoDetails type="max"/> 
-  // </LeftContent>
+  useEffect(()=>{
+    dispatch(getSelfDeposited())
+  },[])
+  if(totalStakedETH=="--"){
+  return <LeftContent className="stafi_status_validator_context">
+      <NoDetails type="max"/> 
+  </LeftContent>
+  }
+
   return <LeftContent className="stafi_status_validator_context">
         <div className="staked_eth">
             <div className="title">
@@ -30,7 +39,7 @@ export default function Index(props:any){
             </div>
             <div className="liquefy_panel">
                 <label>
-                    64.15
+                    {totalStakedETH}
                 </label>
                 <Button size="small" btnType="ellipse" onClick={()=>{
                   //  props.history.push("/rETH/liquefy"); 

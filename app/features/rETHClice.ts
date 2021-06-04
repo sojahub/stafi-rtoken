@@ -35,7 +35,10 @@ const rETHClice = createSlice({
     currentPoolStatus:null,
     currentTotalDeposit:0,
     selfDeposited:"--", 
-    isload_monitoring:false
+    isload_monitoring:false,
+    status_Apr:'--',
+    totalStakedETH:'--',
+    addressItems:[]
   },
   reducers: {  
      setEthAccount(state,{payload}){ 
@@ -108,6 +111,15 @@ const rETHClice = createSlice({
      },
      setIsloadMonitoring(state,{payload}){
        state.isload_monitoring=payload
+     },
+     setStatus_Apr(state,{payload}){
+       state.status_Apr=payload;
+     },
+     setTotalStakedETH(state,{payload}){
+       state.totalStakedETH=payload;
+     },
+     setAddressItems(state,{payload}){
+       state.addressItems=payload
      }
   },
 });
@@ -131,7 +143,10 @@ export const {setEthAccount,
   setCurrentPoolStatus,
   setCurrentTotalDeposit,
   setSelfDeposited,
-  setIsloadMonitoring
+  setIsloadMonitoring,
+  setStatus_Apr,
+  setTotalStakedETH,
+  setAddressItems
 }=rETHClice.actions
 
 declare const window: any;
@@ -577,9 +592,11 @@ export const handleOffboard=(cb?:Function):AppThunk=>async (dispatch,getState)=>
 
 export const handleStake=(validatorKeys:any[],cb?:Function):AppThunk=>async (dispatch,getState)=>{
  
+
   let web3 = ethServer.getWeb3();
   const currentAddress=getState().rETHModule.ethAccount.address;
   const currentPoolAddress=getState().rETHModule.poolAddress;
+  console.log(validatorKeys,currentPoolAddress,currentAddress,"============currentAddress")
   let poolContract = new web3.eth.Contract(ethServer.getStafiStakingPoolAbi(), currentPoolAddress, {
     from: currentAddress
   });
@@ -610,7 +627,7 @@ export const handleStake=(validatorKeys:any[],cb?:Function):AppThunk=>async (dis
 }
 
 
-export const self=():AppThunk=>async (dispatch,getState)=>{
+export const getSelfDeposited=():AppThunk=>async (dispatch,getState)=>{
   let web3 = ethServer.getWeb3();
   const currentAddress=getState().rETHModule.ethAccount.address;
   let contract = new web3.eth.Contract(ethServer.getStafiStakingPoolManagerAbi(), ethServer.getStafiStakingPoolManagerAddress(), {
@@ -638,9 +655,10 @@ export const self=():AppThunk=>async (dispatch,getState)=>{
         if (pubKey) { 
           pubKeys.push(pubKey);
           pubKeyMap.set(pubKey, poolAddress.toLowerCase());
-         // this.updateStatus();
+          dispatch(updateStatus(pubKeys,pubKeyMap,poolCount,addressItems));
         } else {
           const pubkey =await contract.methods.getStakingPoolPubkey(poolAddress).call()
+          console.log(pubkey,"===poolCount")
           if (pubkey) { 
             pubKeys.push(pubKey);
             pubKeyMap.set(pubKey, poolAddress.toLowerCase());
@@ -648,7 +666,7 @@ export const self=():AppThunk=>async (dispatch,getState)=>{
           } else {
             pubKeys.push('');
           }
-           // this.updateStatus();
+          dispatch(updateStatus(pubKeys,pubKeyMap,poolCount,addressItems));
           
         }
 
@@ -664,6 +682,7 @@ export const self=():AppThunk=>async (dispatch,getState)=>{
               return true;
             }
           });
+         // dispatch(setadd)
         }
     
 
@@ -678,74 +697,80 @@ export const self=():AppThunk=>async (dispatch,getState)=>{
  
 }
 
-// export const  updateStatus=():AppThunk=>async ()=> {
-//   if (this.pubKeys.length == this.poolCount) {
-//     let validPubKeys = [];
-//     this.pubKeys.forEach((pubkey) => {
-//       if (pubkey) {
-//         validPubKeys.push(pubkey);
-//       }
-//     });
-//     if (validPubKeys.length == 0) {
-//       this.addressItems.forEach((item) => {
-//         item.status = 7;
-//       });
-//       return;
-//     }
-//     Rpc.fetchStakingPoolList({pubkeyList: JSON.stringify(validPubKeys)}).then(result => {
-//       if (result.status == '80000') {
-//         if (result.data) {
-//           let totalStakeAmount = 0;
-//           if (result.data.allStakeAmount) {
-//             totalStakeAmount = result.data.allStakeAmount;
-//           }
-//           if (result.data.apr) {
-//             this.currentApr = result.data.apr + '%';
-//           }
-//           if (result.data.list) {
+export const  updateStatus=(pubKeys:any[],pubKeyMap:any,poolCount:Number,addressItems:any[]):AppThunk=>async (dispatch,getState)=>{
+  console.log(pubKeys,poolCount,"===poolCountpoolCount")
+  if (pubKeys.length == poolCount) {
+    let validPubKeys:any[] = [];
+   
+    pubKeys.forEach((pubkey) => {
+      if (pubkey) {
+        validPubKeys.push(pubkey);
+      }
+    });
 
-//             let remoteDataItems = result.data.list;
+    console.log(pubKeys,validPubKeys,validPubKeys.length,"======validPubKeys")
+    if (validPubKeys.length == 0) {
+      addressItems.forEach((item) => {
+        item.status = 7;
+      });
+      return;
+    }
+    const result=await ethServer.getPoolist({pubkeyList: JSON.stringify(validPubKeys)}) ;
+      if (result.status == '80000') {
+        if (result.data) {
+          let totalStakeAmount = 0;
+          if (result.data.allStakeAmount) {
+            totalStakeAmount = result.data.allStakeAmount;
+          }
+          if (result.data.apr) {
+            // this.currentApr = result.data.apr + '%';
+            dispatch(setStatus_Apr(result.data.apr + '%'))
+          }
+          if (result.data.list) {
 
-//             let map = new Map();
-//             remoteDataItems.forEach((remoteItem) => {
-//               if (remoteItem.pubkey) {
-//                 map.set(this.pubKeyMap.get(remoteItem.pubkey), remoteItem);
-//                 if (remoteItem.status == 7) {
-//                   totalStakeAmount = Number(totalStakeAmount) + 32;
-//                 }
-//               }
-//             });
+            let remoteDataItems = result.data.list;
 
-//             this.addressItems.forEach((item) => {
-//               let key = item.address.toLowerCase();
-//               if (map.has(key)) {
-//                 item.status = map.get(key).status == 7 ? 2 : map.get(key).status; 
-//               } else {
-//                 item.status = 7;
-//               }
-//             });
-//           }
+            let map = new Map();
+            remoteDataItems.forEach((remoteItem:any) => {
+              if (remoteItem.pubkey) {
+                map.set(pubKeyMap.get(remoteItem.pubkey), remoteItem);
+                if (remoteItem.status == 7) {
+                  totalStakeAmount = Number(totalStakeAmount) + 32;
+                }
+              }
+            });
 
-//           if (totalStakeAmount > 0) {
-//             let count = 0;
-//             let totalCount = 10;
-//             let ratioAmount = 0;
-//             let piece = totalStakeAmount / totalCount;
-//             let interval = setInterval(() => {
-//               count++;
-//               ratioAmount += piece;
-//               if (count == totalCount) {
-//                 ratioAmount = totalStakeAmount;
-//                 window.clearInterval(interval);
-//               }
-//               this.totalStakedETHShow = NumberUtil.handleEthGweiToFixed(ratioAmount);
-//             }, 100);
-//           }
+            addressItems.forEach((item) => {
+              let key = item.address.toLowerCase();
+              if (map.has(key)) {
+                item.status = map.get(key).status == 7 ? 2 : map.get(key).status; 
+              } else {
+                item.status = 7;
+              }
+            });
+          }
+
+          dispatch(setTotalStakedETH(totalStakeAmount));
+          // if (totalStakeAmount > 0) {
+          //   let count = 0;
+          //   let totalCount = 10;
+          //   let ratioAmount = 0;
+          //   let piece = totalStakeAmount / totalCount;
+          //   let interval = setInterval(() => {
+          //     count++;
+          //     ratioAmount += piece;
+          //     if (count == totalCount) {
+          //       ratioAmount = totalStakeAmount;
+          //       window.clearInterval(interval);
+          //     }
+          //     // this.totalStakedETHShow = NumberUtil.handleEthGweiToFixed(ratioAmount);
+          //     dispatch(setTotalStakedETH(NumberUtil.handleEthGweiToFixed(ratioAmount)));
+          //   }, 100);
+          // }
           
-//         }
-//       } 
-//     });
+        }
+      }
 
-//   }
-// }
+  }
+}
 export default rETHClice.reducer;

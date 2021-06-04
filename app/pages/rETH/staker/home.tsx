@@ -34,9 +34,9 @@ export default function Index(props:any){
   transferrableAmount={balance}
   apr={stakerApr} 
   onChange={(value:any)=>{   
-    if(Number(value)>0 &&  Number(value)> Number(minimumDeposit)){
+    if(Number(value)>0 &&  Number(value) < Number(minimumDeposit)){
       message.error(`The deposited amount is less than the minimum deposit size:${minimumDeposit}`);
-      setAmount(0);   
+      setAmount('');   
       return ;
     } 
     setAmount(value);   

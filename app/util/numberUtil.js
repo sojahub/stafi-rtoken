@@ -93,6 +93,9 @@ export default {
 
   // The return string contains 6 decimal places and 2 decimal places, including 0
   handleEthRoundToFixed(amount) {
+    if(amount=="--" || isNaN(amount)){
+      return "--"
+    }
     return (Math.floor(amount * 100) / 100).toFixed(2);
   },
 

@@ -86,6 +86,11 @@ export default class Index{
     const url="webapi/reth/arp";
     return api.post(url,{arpType})
   } 
+
+  getPoolist(pam:any){
+    const url="webapi/reth/poolist";
+    return api.post(url,pam)
+  } 
 }
 
 // export default{

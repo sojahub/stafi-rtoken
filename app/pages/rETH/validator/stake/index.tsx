@@ -20,10 +20,12 @@ export default function Index(props:any){
     useEffect(()=>{
         dispatch(getNodeStakingPoolCount())
     },[])
-    const {currentTotalDeposit,currentPoolStatus}=useSelector((state:RootState)=>{
+    const {currentTotalDeposit,currentPoolStatus,poolAddressItems,poolAddress}=useSelector((state:RootState)=>{
         return {
             currentTotalDeposit:state.rETHModule.currentTotalDeposit,
             currentPoolStatus:state.rETHModule.currentPoolStatus, 
+            poolAddressItems:state.rETHModule.poolAddressItems,
+            poolAddress:state.rETHModule.poolAddress
         }
     })
     const filesChange=(file:any) =>{
@@ -75,7 +77,7 @@ export default function Index(props:any){
        </div>
 
         <div className="address">
-            Contract Address: <A underline={true}>0x23…HNe8</A>
+            Contract Address: <A underline={true}>{poolAddress}</A>
         </div>
         <ProgressBar icon={eth_svg} text={currentTotalDeposit} progress={currentTotalDeposit*100/poolTotalStake}/>
         <div className="reth_title upload_title"> Upload </div>
