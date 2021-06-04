@@ -293,7 +293,7 @@ export const rTokenRate=():AppThunk=>async (dispatch,getState)=>{
   const amount = web3.utils.toWei('1');
   const result = await contract.methods.getEthValue(amount).call();
   let ratio = web3.utils.fromWei(result, 'ether');  
-  dispatch(setRatio(NumberUtil.handleEthAmountRateToFixed(ratio)))
+  dispatch(setRatio(ratio))
 }
 
 export const get_eth_getBalance=():AppThunk=>async  (dispatch,getState)=>{

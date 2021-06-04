@@ -44,7 +44,7 @@ export default function Index(props:any){
     }
   },[ratio])
   return  <Content 
-  ratio={ratio}
+  ratio={NumberUtil.handleEthAmountRateToFixed(ratio)}
   ratioShow={ratioShow}
   tokenAmount={tokenAmount}
   totalUnbonding={totalUnbonding}
