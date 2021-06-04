@@ -157,6 +157,7 @@ export default function Index(props:any){
           balance={dot_ercBalance=="--" ?"--":NumberUtil.handleFisAmountToFixed(dot_ercBalance)}
           willGetBalance={dotWillAmount}
           unit="DOT"
+          trade={`https://app.uniswap.org/#/swap?inputCurrency=ETH&outputCurrency=0x505f5a4ff10985fe9f93f2ae3501da5fe665f08a`}
           operationType="erc20"
           onSwapClick={()=>{
             props.history.push({
@@ -175,6 +176,7 @@ export default function Index(props:any){
           balance={ksm_ercBalance=="--" ?"--":NumberUtil.handleFisAmountToFixed(ksm_ercBalance)}
           willGetBalance={ksmWillAmount}
           unit="KSM"
+          trade={`https://app.uniswap.org/#/swap?inputCurrency=ETH&outputCurrency=0x3c3842c4d3037ae121d69ea1e7a0b61413be806c`}
           operationType="erc20"
           onSwapClick={()=>{
             props.history.push({
@@ -192,6 +194,7 @@ export default function Index(props:any){
           balance={atom_ercBalance=="--" ?"--":NumberUtil.handleFisAmountToFixed(atom_ercBalance)}
           willGetBalance={atomWillAmount}
           unit="ATOM"
+          trade={`https://app.uniswap.org/#/swap?inputCurrency=ETH&outputCurrency=0xd01cb3d113a864763dd3977fe1e725860013b0ed`}
           operationType="erc20"
           onSwapClick={()=>{
             props.history.push({
