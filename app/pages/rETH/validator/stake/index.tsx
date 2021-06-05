@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import A from '@shared/components/button/a';
 import {message} from 'antd'
 import ProgressBar from '@shared/components/progressBar';
-import eth_svg from '@images/eth_2.svg'
+import eth_svg from '@images/eth.svg'
 import Upload from '@shared/components/upload';
 import Button from '@shared/components/button/button';
 import LeftContent from '@components/content/leftContent';
@@ -74,12 +74,14 @@ export default function Index(props:any){
        <div className="reth_sub_title">
         Pool contract can be staked once 32ETH is matched to your node, 
         check <A underline={true} onClick={()=>{
-            props.history.push("/rETH/poolStatus")
+            props.history.push({pathname: "/rETH/poolStatus",
+            state: poolAddress})
         }}>pool status</A>
        </div>
 
+        
         <div className="address">
-            Contract Address: <A underline={true}>{StringUtil.replacePkh(poolAddress,4,38)}</A>
+           {(poolAddress && poolAddress.length>0) ?<>Contract Address: <A underline={true}>{StringUtil.replacePkh(poolAddress,4,38)}</A></>:"No Contract Addresses Founded"} 
         </div>
         <ProgressBar icon={eth_svg} text={currentTotalDeposit} progress={currentTotalDeposit*100/poolTotalStake}/>
         <div className="reth_title upload_title"> Upload </div>

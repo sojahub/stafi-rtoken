@@ -242,6 +242,7 @@ export const monitoring_Method=():AppThunk=>(dispatch,getState)=> {
     ethereum.on('accountsChanged', (accounts:any) => { 
       if (accounts.length>0) { 
         dispatch(handleEthAccount(accounts[0])); 
+        dispatch(reloadData());
         // setTimeout(()=>{
         //   dispatch(getAssetBalanceAll()); 
         // },20)
@@ -622,7 +623,7 @@ export const handleStake=(validatorKeys:any[],cb?:Function):AppThunk=>async (dis
   let web3 = ethServer.getWeb3();
   const currentAddress=getState().rETHModule.ethAccount.address;
   const currentPoolAddress=getState().rETHModule.poolAddress;
-  console.log(validatorKeys,currentPoolAddress,currentAddress,"============currentAddress")
+   
   let poolContract = new web3.eth.Contract(ethServer.getStafiStakingPoolAbi(), currentPoolAddress, {
     from: currentAddress
   });
@@ -723,7 +724,7 @@ export const getSelfDeposited=():AppThunk=>async (dispatch,getState)=>{
 }
 
 export const  updateStatus=(pubKeys:any[],pubKeyMap:any,poolCount:Number,addressItems:any[]):AppThunk=>async (dispatch,getState)=>{
-  console.log(pubKeys,poolCount,"===poolCountpoolCount")
+  
   if (pubKeys.length == poolCount) {
     let validPubKeys:any[] = [];
    
@@ -733,7 +734,7 @@ export const  updateStatus=(pubKeys:any[],pubKeyMap:any,poolCount:Number,address
       }
     });
 
-    console.log(pubKeys,validPubKeys,validPubKeys.length,"======validPubKeys")
+ 
     if (validPubKeys.length == 0) {
       addressItems.forEach((item) => {
         item.status = 7;

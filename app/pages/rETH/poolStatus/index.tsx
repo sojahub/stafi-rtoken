@@ -6,6 +6,7 @@ import {getStakingPoolStatus,getUnmatchedValidators,getPoolCount,getTotalRETH,ge
 import './index.scss';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'app/store';
+import  StringUtil from '@util/stringUtil'
 export default function Index(props:any){
    
   const dispatch=useDispatch();
@@ -16,6 +17,7 @@ export default function Index(props:any){
     dispatch(getUnmatchedETH());
     dispatch(getTotalRETH())
   },[])
+ 
   const {poolStakerApr,poolValidatorApr,totalStakedAmount,unmatchedValidators,poolCount,poolStatusUnmatchedETH,poolStatusTotalRETH} = useSelector((state:RootState)=>{
     return {
       poolStakerApr:state.rETHModule.poolStakerApr,
@@ -40,7 +42,11 @@ export default function Index(props:any){
       {/* <DataItem label="Minted rETH" value={poolStatusTotalRETH} other={<>
         Contracts address: <A underline={true}> 0x23…HNe8</A>
       </>}/> */}
-      <DataItem label="Minted rETH" value={poolStatusTotalRETH}  />
+      <DataItem label="Minted rETH" value={poolStatusTotalRETH}  other={
+        props.location.state && <>
+        Contracts address: <A underline={true}>{StringUtil.replacePkh(props.location.state,4,38)}</A>
+      </>
+      }/>
       <DataItem label="Staked ETH" value={totalStakedAmount} other={`Pool Contracts: ${poolCount}`}/> 
       {/* <DataItem label="Pool ETH " value={0} other="Pool Contracts: 23"/> */}
       <DataItem label="Unmatched ETH" value={poolStatusUnmatchedETH}/>

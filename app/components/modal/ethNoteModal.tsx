@@ -10,8 +10,7 @@ type Props={
 export default function Index(props:Props){
 
     const [agree,setAgree]=useState(false);
-    useEffect(()=>{
-        console.log(setAgree(false))
+    useEffect(()=>{ 
         setAgree(false); 
     },[props.visible])
     return <Modal 
