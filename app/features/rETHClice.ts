@@ -540,6 +540,7 @@ export const handleCurrentPool=(currentPoolAddress:string):AppThunk=> async (dis
   const status=await poolContract.methods.getStatus().call();
   dispatch(setCurrentPoolStatus(status));
  
+  dispatch(setPoolAddress(currentPoolAddress));
   let currentTotalDeposit = 0;
 
   const nodeDepositBalance=await poolContract.methods.getNodeDepositBalance().call() 

@@ -12,6 +12,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import OffboardModal from '@components/modal/offboardModal'
 import { RootState } from 'app/store';
 import StringUtil from '@util/stringUtil';
+import Popover from '@shared/components/popover/addressSelect'
+import drop_down_arrow from '@images/drop_down_arrow.svg'
 
 export default function Index(props:any){
     const dispatch = useDispatch()
@@ -71,17 +73,19 @@ export default function Index(props:any){
       }
     return <LeftContent className="stafi_validator_context stafi_reth_validator_context">
         <div className="reth_title"> Stake </div>
-       <div className="reth_sub_title">
-        Pool contract can be staked once 32ETH is matched to your node, 
-        check <A underline={true} onClick={()=>{
-            props.history.push({pathname: "/rETH/poolStatus",
-            state: poolAddress})
-        }}>pool status</A>
+          <div className="reth_sub_title">
+            Pool contract can be staked once 32ETH is matched to your node, 
+            check <A underline={true} onClick={()=>{
+                props.history.push({pathname: "/rETH/poolStatus",
+                state: poolAddress})
+            }}>pool status</A>
        </div>
 
         
         <div className="address">
-           {(poolAddress && poolAddress.length>0) ?<>Contract Address: <A underline={true}>{StringUtil.replacePkh(poolAddress,4,38)}</A></>:"No Contract Addresses Founded"} 
+           {(poolAddress && poolAddress.length>0) ?<>Contract Address:<Popover onClick={(e:any)=>{
+              dispatch(handleCurrentPool(e));
+           }} datas={poolAddressItems} data={poolAddress}><label> <A underline={true}>{StringUtil.replacePkh(poolAddress,4,38)}</A><img src={drop_down_arrow} /></label></Popover></>:"No Contract Addresses Founded"} 
         </div>
         <ProgressBar icon={eth_svg} text={currentTotalDeposit} progress={currentTotalDeposit*100/poolTotalStake}/>
         <div className="reth_title upload_title"> Upload </div>
@@ -94,9 +98,14 @@ export default function Index(props:any){
              filesChange(e);
         }}/>
         <div className="btns stake_btns">
-          <A  isGrey={true} onClick={()=>{ 
+          {/* <A  isGrey={true} onClick={()=>{ 
               currentPoolStatus ==1 &&  setOffboardModalVisible(true) 
-          }}>Offboard</A>
+          }}>Offboard</A> */}
+          <Button disabled={currentPoolStatus==2} onClick={()=>{
+              setOffboardModalVisible(true) 
+           }}>
+               Offboard 
+           </Button>
            <Button disabled={btnActiveStatus!=1 || validatorKeysState.length != 1} onClick={()=>{
               if (currentPoolStatus == 2) {
                 message.error("This pool contract has been staked");

@@ -14,10 +14,10 @@
         }
     }
     .stake_btns{
-        margin-top: 25px;
+        margin-top: 20px;
         display: flex;
         align-items: center;
-        .stafi_a{
+        >.stafi_button:first-child{
             margin-right: 30px;
         }
     }
