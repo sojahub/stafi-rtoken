@@ -220,7 +220,7 @@ const routesFactory=(role?:any)=>{
           },{
             id:"RETH_validator_poolContract",
             type:"validator",
-            path:"/rETH/validator/poolContract",
+            path:"/rETH/validator/poolContract/:poolAddress",
             rSymbol:rSymbol.Eth,
             component:authorizedRoute(Symbol.Eth)(RETHPoolContract),
           },{

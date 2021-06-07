@@ -90,7 +90,7 @@ export default function Index(props:any){
               <AddressCard >
                 {addressItems.map((item)=>{
                   return  <AddressItem onClick={()=>{
-
+                    props.history.push("/rETH/validator/poolContract/"+item)
                   }} address={StringUtil.replacePkh(item.shortAddress,4,38)} status={getStatus(item.status)}/>
                 })} 
               </AddressCard>

@@ -44,7 +44,9 @@ export default function Index(props:any){
       </>}/> */}
       <DataItem label="Minted rETH" value={poolStatusTotalRETH}  other={
         props.location.state && <>
-        Contracts address: <A underline={true}>{StringUtil.replacePkh(props.location.state,4,38)}</A>
+        Contracts address: <A onClick={()=>{
+          props.history.push("/rETH/validator/poolContract/"+props.location.state)
+        }} underline={true}>{StringUtil.replacePkh(props.location.state,4,38)}</A>
       </>
       }/>
       <DataItem label="Staked ETH" value={totalStakedAmount} other={`Pool Contracts: ${poolCount}`}/> 

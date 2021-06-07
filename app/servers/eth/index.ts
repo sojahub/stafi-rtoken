@@ -91,6 +91,12 @@ export default class Index{
     const url="webapi/reth/poolist";
     return api.post(url,pam)
   } 
+
+  getPoolInfo(poolAddress:string,pubkey:string){
+    
+    const url="webapi/reth/poolinfo";
+    return api.post(url,{contract: poolAddress, pubkey: pubkey})
+  }
 }
 
 // export default{

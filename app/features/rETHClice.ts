@@ -11,6 +11,7 @@ import {getAssetBalanceAll,getAssetBalance} from './ETHClice';
 import {setLoading} from './globalClice'; 
 import StringUtil from '@util/stringUtil' 
 
+
 const ethServer=new EthServer();
 const rETHClice = createSlice({
   name: 'rETHModule',
@@ -43,7 +44,8 @@ const rETHClice = createSlice({
     addressItems:[],
     unmatchedValidators:'--',
     poolStatusTotalRETH:'--',
-    poolStatusUnmatchedETH:'--'
+    poolStatusUnmatchedETH:'--',
+    stakingPoolDetail:null
   },
   reducers: {  
      setEthAccount(state,{payload}){ 
@@ -140,6 +142,9 @@ const rETHClice = createSlice({
      },
      setPoolStatusUnmatchedETH(state,{payload}){
        state.poolStatusUnmatchedETH=payload;
+     },
+     setStakingPoolDetail(state,{payload}){
+       state.stakingPoolDetail=payload;
      }
   },
 });
@@ -171,7 +176,8 @@ export const {setEthAccount,
   setPoolValidatorApr,
   setUnmatchedValidators,
   setPoolStatusTotalRETH,
-  setPoolStatusUnmatchedETH
+  setPoolStatusUnmatchedETH,
+  setStakingPoolDetail
 }=rETHClice.actions
 
 declare const window: any;
@@ -243,9 +249,9 @@ export const monitoring_Method=():AppThunk=>(dispatch,getState)=> {
       if (accounts.length>0) { 
         dispatch(handleEthAccount(accounts[0])); 
         dispatch(reloadData());
-        // setTimeout(()=>{
-        //   dispatch(getAssetBalanceAll()); 
-        // },20)
+        setTimeout(()=>{
+          dispatch(getAssetBalanceAll()); 
+        },20)
       } else { 
         dispatch(handleEthAccount(null))
       }
@@ -857,4 +863,80 @@ export const getUnmatchedETH=():AppThunk=>async (dispatch,getState)=>{
   dispatch(setPoolStatusUnmatchedETH(NumberUtil.handleEthAmountToFixed(unmatchedETH)));
  
 }
+
+
+
+
+export const getPoolInfo=(poolAddress:string):AppThunk=>async (dispatch,getState)=>{ 
+ 
+  const currentAddress=getState().rETHModule.ethAccount.address; 
+  
+  let poolPubkey = localStorage_poolPubKey.getPoolPubKey(poolAddress); 
+  if (poolPubkey) {
+    dispatch(getStakingPoolDetail(poolAddress,poolPubkey));
+    return;
+  }
+
+  let web3 = ethServer.getWeb3();
+  let contract = new web3.eth.Contract(ethServer.getStafiStakingPoolManagerAbi(), ethServer.getStafiStakingPoolManagerAddress(), {
+    from: currentAddress
+  });
+  const pubkey=await contract.methods.getStakingPoolPubkey(poolAddress).call()
+    if (pubkey) {
+      localStorage_poolPubKey.setPoolPubKey(poolAddress, pubkey);
+      dispatch(getStakingPoolDetail(poolAddress,pubkey));
+    } else {
+      let poolContract = new web3.eth.Contract(ethServer.getStafiStakingPoolAbi(), poolAddress, {
+        from: currentAddress
+      });
+
+      const depositBalance = await poolContract.methods.getUserDepositBalance().call()
+        if (depositBalance == 0) {
+          dispatch(setStakingPoolDetail({status:0,currentBalance:'8:00',effectiveBalance:"8:00"}))
+        } else { 
+          dispatch(setStakingPoolDetail({status:0,currentBalance:'32:00',effectiveBalance:"32:00"}))
+        } 
+        
+    } 
+}
+
+export const getStakingPoolDetail=(poolAddress:string,pubkey:any):AppThunk=>async (dispatch,getState)=>{
+  ethServer.getPoolInfo(poolAddress,pubkey).then(result => {
+    if (result.status == '80000' && result.data) {
+      if (result.data.status != 7) {
+        let detail:any={}
+        detail.status = result.data.status;
+        detail.currentBalance = result.data.currentBalance;
+        detail.effectiveBalance = NumberUtil.handleEthGweiToFixed(parseFloat(result.data.effectiveBalance));
+        detail.activationEligibilityEpoch = result.data.activationeligibilityepoch;
+        detail.activationEpoch = result.data.activeSince;
+        detail.apr = result.data.apr + '%';
+
+        let income = result.data.income; 
+        if (income && Array.isArray(income) && income.length > 0) {
+          detail.rewardDetails = income;
+        }
+        dispatch(setStakingPoolDetail(detail))
+      } else { 
+        dispatch(setStakingPoolDetail({status:1,currentBalance:'32:00',effectiveBalance:"32:00"}))
+      }
+    } 
+  });
+}
+
+
+export const rewardDetails= [
+  {
+    cycle: '1 day',
+    reward: '--'
+  },
+  {
+    cycle: '3 day',
+    reward: '--'
+  },
+  {
+    cycle: '7 day',
+    reward: '--'
+  }
+]
 export default rETHClice.reducer;

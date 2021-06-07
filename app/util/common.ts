@@ -77,7 +77,7 @@ export const localStorage_poolPubKey={
     /**
      * get pool pubkey
      */
-    getPoolPubKey: function(poolAddress:string) {
+    getPoolPubKey: function(poolAddress:string) { 
       return getLocalStorageItem(Keys.poolPubKeyPrefix + poolAddress);
     },
 }
