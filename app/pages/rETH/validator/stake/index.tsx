@@ -85,7 +85,7 @@ export default function Index(props:any){
 
         
         <div className="address">
-           {(poolAddress && poolAddress.length>0) ?<>Contract Address:<Popover onClick={(e:any)=>{
+           {(poolAddress && poolAddress.length>0) ?<>Contract Address:<Popover onClick={(e:any)=>{ 
               dispatch(handleCurrentPool(e));
            }} datas={poolAddressItems} data={poolAddress}><label> <A underline={true}>{StringUtil.replacePkh(poolAddress,4,38)}</A><img src={drop_down_arrow} /></label></Popover></>:"No Contract Addresses Founded"} 
         </div>
