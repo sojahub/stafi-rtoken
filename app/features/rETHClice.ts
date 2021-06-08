@@ -222,8 +222,7 @@ export const connectMetamask=(chainId:string):AppThunk=>async (dispatch,getState
 
 
 export const handleEthAccount=(address:string):AppThunk=>(dispatch,getState)=>{
- 
-   
+  
   dispatch(setEthAccount({address:address,balance:'--'}))
   ethereum.request({ method: 'eth_getBalance', params: [address, 'latest'] }).then((result:any) => {
     //const address = StringUtil.replacePkh(address, 4, 38);
@@ -245,12 +244,13 @@ export const monitoring_Method=():AppThunk=>(dispatch,getState)=> {
   if (typeof window.ethereum !== 'undefined' && ethereum.isMetaMask) {
     dispatch(setIsloadMonitoring(true));
     ethereum.autoRefreshOnNetworkChange = false; 
-    ethereum.on('accountsChanged', (accounts:any) => { 
+    ethereum.on('accountsChanged', (accounts:any) => {   
       if (accounts.length>0) { 
         dispatch(handleEthAccount(accounts[0])); 
-        dispatch(reloadData());
+       
         setTimeout(()=>{
           dispatch(getAssetBalanceAll()); 
+          dispatch(reloadData());
         },20)
       } else { 
         dispatch(handleEthAccount(null))
@@ -308,7 +308,7 @@ export const  checkEthAddress=(address:string)=> {
 }
 
 
-export const reloadData = ():AppThunk => async (dispatch,getState)=>{ 
+export const reloadData = ():AppThunk => async (dispatch,getState)=>{  
   dispatch(rTokenRate());
   dispatch(get_eth_getBalance());
   dispatch(getMinimumDeposit());
@@ -317,6 +317,10 @@ export const reloadData = ():AppThunk => async (dispatch,getState)=>{
   dispatch(getValidatorApr());
   dispatch(getNextCapacity());
   dispatch(getPoolCount());
+  dispatch(getRethAmount());
+  dispatch(getNodeStakingPoolCount());
+  dispatch(getDepositBalance());
+  dispatch(getSelfDeposited());
 }
 
 export const rTokenRate=():AppThunk=>async (dispatch,getState)=>{
@@ -532,9 +536,15 @@ export const getNodeStakingPoolCount=():AppThunk=>async (dispatch,getState)=>{
           localStorage_currentEthPool.setCurrentEthPool(currentAddress, poolAddress);
         }
    
-    }  
+    } 
     dispatch(setPoolAddressItems(poolAddressItems));
-  } 
+  }else{
+    dispatch(setPoolAddressItems([]));
+    dispatch(setCurrentTotalDeposit(0))
+    dispatch(setCurrentPoolStatus(0));
+ 
+    dispatch(setPoolAddress(null));
+  }
 }
 
  
@@ -650,9 +660,10 @@ export const handleStake=(validatorKeys:any[],cb?:Function):AppThunk=>async (dis
     if (result && result.status) { 
       localStorage_poolPubKey.setPoolPubKey(currentPoolAddress, pubkey);
       message.error('Stake successfully');
-      cb && cb();
+      cb && cb("ok");
     } else {
       message.error('Error! Please try again');
+      cb && cb("error");
     }
      
   } catch (error) {
