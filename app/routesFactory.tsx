@@ -17,7 +17,7 @@ import RETHValidatorStatus from './pages/rETH/validator/status';
 import RETHPoolContract from './pages/rETH/validator/poolContract'
 import RETHStakerIndex from './pages/rETH/staker/home';
 import RETHStakerInfo from './pages/rETH/staker/info';
-import RETHStakerRedeem from './pages/rETH/staker/redeem';
+// import RETHStakerRedeem from './pages/rETH/staker/redeem';
 import RETHSeach from './pages/rETH/search';
 import RETHPoolStatus from './pages/rETH/poolStatus';
 import RETHType from './pages/rETH/selectType';
@@ -176,12 +176,6 @@ const routesFactory=(role?:any)=>{
               type:"-Status",
               rSymbol:rSymbol.Eth,
               component:RETHStakerInfo
-            },{
-              id:"RDOT_staker_index_redeem",
-              path:"/rETH/staker/redeem",
-              type:"Staker",
-              rSymbol:rSymbol.Eth,
-              component:RETHStakerRedeem
             },{
               path: '*',
               component: () => <Redirect to="/rETH/staker/index"/>
