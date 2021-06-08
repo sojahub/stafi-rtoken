@@ -41,6 +41,7 @@ const rETHClice = createSlice({
     isload_monitoring:false,
     status_Apr:'--',
     totalStakedETH:'--',
+    totalStakedETHShow:'--',
     addressItems:[],
     unmatchedValidators:'--',
     poolStatusTotalRETH:'--',
@@ -125,6 +126,9 @@ const rETHClice = createSlice({
      setTotalStakedETH(state,{payload}){
        state.totalStakedETH=payload;
      },
+     setTotalStakedETHShow(state,{payload}){
+      state.totalStakedETHShow=payload
+     }, 
      setAddressItems(state,{payload}){
        state.addressItems=payload
      },
@@ -171,6 +175,7 @@ export const {setEthAccount,
   setIsloadMonitoring,
   setStatus_Apr,
   setTotalStakedETH,
+  setTotalStakedETHShow,
   setAddressItems,
   setPoolStakerApr,
   setPoolValidatorApr,
@@ -682,15 +687,14 @@ export const getSelfDeposited=():AppThunk=>async (dispatch,getState)=>{
   });
   dispatch(setTotalStakedETH('--'));
   dispatch(setAddressItems([])) 
+  dispatch(setSelfDeposited('--'))
   let addressItems:any[]=[];
   let pubKeys = [];;
   let pubKeyMap=new Map();
   let selfDeposited=0;
 
  const poolCount = await contract.methods.getNodeStakingPoolCount(currentAddress).call();
-
-  if (poolCount > 0) { 
-    console.log(poolCount,"=======poolCount")
+  if (poolCount > 0) {  
     for (let index = 0; index < poolCount; index++) {
     const poolAddress=await  contract.methods.getNodeStakingPoolAt(currentAddress, index).call(); 
         let data = {
@@ -700,7 +704,7 @@ export const getSelfDeposited=():AppThunk=>async (dispatch,getState)=>{
         }
         addressItems.push(data);
 
-        let pubKey = localStorage_poolPubKey.getPoolPubKey(poolAddress);
+        let pubKey = localStorage_poolPubKey.getPoolPubKey(poolAddress); 
         if (pubKey) { 
           pubKeys.push(pubKey);
           pubKeyMap.set(pubKey, poolAddress.toLowerCase()); 
@@ -709,11 +713,11 @@ export const getSelfDeposited=():AppThunk=>async (dispatch,getState)=>{
             dispatch(setAddressItems(addressItems)) 
           }));
         } else {
-          const pubkey =await contract.methods.getStakingPoolPubkey(poolAddress).call() 
-          if (pubkey) { 
-            pubKeys.push(pubKey);
-            pubKeyMap.set(pubKey, poolAddress.toLowerCase());
-            localStorage_poolPubKey.setPoolPubKey(poolAddress, pubkey);
+          const poolPubkey =await contract.methods.getStakingPoolPubkey(poolAddress).call()  
+          if (poolPubkey) { 
+            pubKeys.push(poolPubkey);
+            pubKeyMap.set(poolPubkey, poolAddress.toLowerCase());
+            localStorage_poolPubKey.setPoolPubKey(poolAddress, poolPubkey);
           } else {
             pubKeys.push('');
           } 
@@ -754,8 +758,7 @@ export const getSelfDeposited=():AppThunk=>async (dispatch,getState)=>{
  
 }
 
-export const  updateStatus=(pubKeys:any[],pubKeyMap:any,poolCount:Number,addressItems:any[],cb:Function):AppThunk=>async (dispatch,getState)=>{
-  console.log(pubKeys.length , poolCount,pubKeys.length == poolCount,"===pubKeys.length == poolCount")
+export const  updateStatus=(pubKeys:any[],pubKeyMap:any,poolCount:Number,addressItems:any[],cb:Function):AppThunk=>async (dispatch,getState)=>{ 
   if (pubKeys.length == poolCount) {
     let validPubKeys:any[] = [];
    
@@ -770,6 +773,8 @@ export const  updateStatus=(pubKeys:any[],pubKeyMap:any,poolCount:Number,address
       addressItems.forEach((item) => {
         item.status = 7;
       });
+      dispatch(setTotalStakedETH(0));
+      cb && cb(addressItems) 
       return;
     }
     const result=await ethServer.getPoolist({pubkeyList: JSON.stringify(validPubKeys)}); 
@@ -891,7 +896,7 @@ export const getUnmatchedETH=():AppThunk=>async (dispatch,getState)=>{
 
 
 export const getPoolInfo=(poolAddress:string):AppThunk=>async (dispatch,getState)=>{ 
- 
+  dispatch(setStakingPoolDetail(null))
   const currentAddress=getState().rETHModule.ethAccount.address; 
   
   let poolPubkey = localStorage_poolPubKey.getPoolPubKey(poolAddress); 

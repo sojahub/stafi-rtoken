@@ -14,9 +14,8 @@ export default function Index(props:any){
   useEffect(()=>{  
     dispatch(getPoolInfo(props.match.params.poolAddress));
   },[])
-  const {poolAddress,stakingPoolDetail}=useSelector((state:any)=>{
-    return {
-      poolAddress:state.rETHModule.poolAddress,
+  const {stakingPoolDetail}=useSelector((state:any)=>{
+    return { 
       stakingPoolDetail:state.rETHModule.stakingPoolDetail
     }
   }) 
@@ -29,7 +28,9 @@ export default function Index(props:any){
         </div>
         <div className="pool_info">
         <PoolItem>
-           Address: <A underline={true}>{props.match.params.poolAddress}</A>
+           Address: <A onClick={()=>{
+             window.open('https://etherscan.io/address/' + props.match.params.poolAddress);
+           }} underline={true}>{props.match.params.poolAddress}</A>
         </PoolItem>
         <PoolItem label="Process">
            <Process currentBalance={stakingPoolDetail?stakingPoolDetail.currentBalance:"--"} status={stakingPoolDetail ? stakingPoolDetail.status : 0}/>

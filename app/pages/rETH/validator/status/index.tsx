@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import LeftContent from '@components/content/leftContent';
 import selected_rETH_svg from '@images/selected_rETH.svg';
 import pool_eth_svg from '@images/pool_eth.svg';
@@ -9,11 +9,10 @@ import down_arrow from '@images/selectedIcon2.svg'
 import NoDetails from '@shared/components/noDetails'
 import './index.scss'
 import { message } from 'antd';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector, useStore } from 'react-redux';
 import { RootState } from 'app/store';
 import NumberUtil from '@util/numberUtil';
-import {getSelfDeposited} from '@features/rETHClice';
-import StringUtil from '@util/stringUtil';
+import {getSelfDeposited,setTotalStakedETHShow} from '@features/rETHClice'; 
 
 const getStatus=(status:any)=>{
   switch(status){
@@ -41,12 +40,13 @@ const getStatus=(status:any)=>{
 
 export default function Index(props:any){
 
-  const dispatch =useDispatch();
-  const {selfDeposited,apr,totalStakedETH,addressItems} =useSelector((state:RootState)=>{
+  const dispatch =useDispatch(); 
+  const {selfDeposited,apr,totalStakedETH,totalStakedETHShow,addressItems} =useSelector((state:RootState)=>{
     return  {
       selfDeposited:state.rETHModule.selfDeposited,
       apr:state.rETHModule.status_Apr,
       totalStakedETH:state.rETHModule.totalStakedETH,
+      totalStakedETHShow:state.rETHModule.totalStakedETHShow,
       addressItems:state.rETHModule.addressItems
     }
   })
@@ -55,12 +55,29 @@ export default function Index(props:any){
   },[])
 
   
-
-  if(totalStakedETH=="--"){
-  return <LeftContent className="stafi_status_validator_context">
-      <NoDetails type="max"/> 
-  </LeftContent>
-  }
+  useEffect(()=>{
+    
+    let count = 0;
+    let totalCount = 10;
+    let totalStakedETHAmount = 0;
+    let piece = Number(totalStakedETH) / totalCount; 
+    if(totalStakedETH !="--"){
+      let interval = setInterval(() => {
+        count++;
+        totalStakedETHAmount += piece;
+        if (count == totalCount || Number(totalStakedETH)==0) {
+          totalStakedETHAmount = Number(totalStakedETH);
+          window.clearInterval(interval);
+        }
+        dispatch(setTotalStakedETHShow(NumberUtil.handleFisAmountRateToFixed(totalStakedETHAmount)))
+      }, 100);
+    }
+  },[totalStakedETH])
+  // if(totalStakedETH=="--"){
+  // return <LeftContent className="stafi_status_validator_context">
+  //     <NoDetails type="max"/> 
+  // </LeftContent>
+  // }
 
   return <LeftContent className="stafi_status_validator_context">
         <div className="staked_eth">
@@ -69,7 +86,7 @@ export default function Index(props:any){
             </div>
             <div className="liquefy_panel">
                 <label>
-                    {totalStakedETH}
+                    {totalStakedETHShow}
                 </label>
                 <Button disabled={true} size="small" btnType="ellipse" onClick={()=>{
                   //  props.history.push("/rETH/liquefy"); 
