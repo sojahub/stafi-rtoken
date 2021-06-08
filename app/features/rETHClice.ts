@@ -612,9 +612,9 @@ export const handleOffboard=(cb?:Function):AppThunk=>async (dispatch,getState)=>
           dispatch(setLoading(false))
           if (closeResult && closeResult.status) {
           
-            message.error('Offboard successfully');
-            cb && cb()
-            dispatch(reloadData())
+            message.success('Offboard successfully');
+            dispatch(reloadData());
+            cb && cb();
           } else {
             message.error('Error! Please try again');
           }
@@ -659,7 +659,7 @@ export const handleStake=(validatorKeys:any[],cb?:Function):AppThunk=>async (dis
     dispatch(setLoading(false)) 
     if (result && result.status) { 
       localStorage_poolPubKey.setPoolPubKey(currentPoolAddress, pubkey);
-      message.error('Stake successfully');
+      message.success('Stake successfully');
       cb && cb("ok");
     } else {
       message.error('Error! Please try again');
