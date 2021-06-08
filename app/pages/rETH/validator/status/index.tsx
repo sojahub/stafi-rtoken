@@ -89,9 +89,9 @@ export default function Index(props:any){
             {addressItems.length == 0 ? <NoDetails type="small"/>: <div className="Row">
               <AddressCard >
                 {addressItems.map((item)=>{
-                  return  <AddressItem onClick={()=>{
-                    props.history.push("/rETH/validator/poolContract/"+item)
-                  }} address={StringUtil.replacePkh(item.shortAddress,4,38)} status={getStatus(item.status)}/>
+                  return  <AddressItem onClick={()=>{ 
+                    props.history.push("/rETH/validator/poolContract/"+item.address)
+                  }} address={item.shortAddress} status={getStatus(item.status)}/>
                 })} 
               </AddressCard>
 

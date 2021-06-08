@@ -676,7 +676,7 @@ export const handleStake=(validatorKeys:any[],cb?:Function):AppThunk=>async (dis
 
 export const getSelfDeposited=():AppThunk=>async (dispatch,getState)=>{
   let web3 = ethServer.getWeb3();
-  const currentAddress=getState().rETHModule.ethAccount.address;
+  const currentAddress="0xD3FaA2F7B452Ade554786d94b57eb9CC62139b09" //getState().rETHModule.ethAccount.address;
   let contract = new web3.eth.Contract(ethServer.getStafiStakingPoolManagerAbi(), ethServer.getStafiStakingPoolManagerAddress(), {
     from: currentAddress
   });
@@ -686,9 +686,7 @@ export const getSelfDeposited=():AppThunk=>async (dispatch,getState)=>{
   let selfDeposited=0;
 
  const poolCount = await contract.methods.getNodeStakingPoolCount(currentAddress).call();
-  if (poolCount > 0) {
-   // this.poolCount = poolCount;
-  
+  if (poolCount > 0) { 
     for (let index = 0; index < poolCount; index++) {
     const poolAddress=await  contract.methods.getNodeStakingPoolAt(currentAddress, index).call(); 
         let data = {
@@ -701,8 +699,10 @@ export const getSelfDeposited=():AppThunk=>async (dispatch,getState)=>{
         let pubKey = localStorage_poolPubKey.getPoolPubKey(poolAddress);
         if (pubKey) { 
           pubKeys.push(pubKey);
-          pubKeyMap.set(pubKey, poolAddress.toLowerCase());
-          dispatch(updateStatus(pubKeys,pubKeyMap,poolCount,addressItems));
+          pubKeyMap.set(pubKey, poolAddress.toLowerCase()); 
+          dispatch(updateStatus(pubKeys,pubKeyMap,poolCount,addressItems,(e:any[])=>{
+            addressItems=e;
+          }));
         } else {
           const pubkey =await contract.methods.getStakingPoolPubkey(poolAddress).call() 
           if (pubkey) { 
@@ -711,8 +711,10 @@ export const getSelfDeposited=():AppThunk=>async (dispatch,getState)=>{
             localStorage_poolPubKey.setPoolPubKey(poolAddress, pubkey);
           } else {
             pubKeys.push('');
-          }
-          dispatch(updateStatus(pubKeys,pubKeyMap,poolCount,addressItems));
+          } 
+          dispatch(updateStatus(pubKeys,pubKeyMap,poolCount,addressItems,(e:any[])=>{
+            addressItems=e;
+          }));
           
         }
 
@@ -737,13 +739,13 @@ export const getSelfDeposited=():AppThunk=>async (dispatch,getState)=>{
         selfDeposited += parsedDepositBalance;
          // this.selfDepositedShow = NumberUtil.handleEthRoundToFixed(this.selfDeposited);
     }
-  }
-  dispatch(setAddressItems(addressItems))
+  } 
+  dispatch(setAddressItems(addressItems)) 
   dispatch(setSelfDeposited(selfDeposited))
  
 }
 
-export const  updateStatus=(pubKeys:any[],pubKeyMap:any,poolCount:Number,addressItems:any[]):AppThunk=>async (dispatch,getState)=>{
+export const  updateStatus=(pubKeys:any[],pubKeyMap:any,poolCount:Number,addressItems:any[],cb:Function):AppThunk=>async (dispatch,getState)=>{
   
   if (pubKeys.length == poolCount) {
     let validPubKeys:any[] = [];
@@ -761,22 +763,19 @@ export const  updateStatus=(pubKeys:any[],pubKeyMap:any,poolCount:Number,address
       });
       return;
     }
-    const result=await ethServer.getPoolist({pubkeyList: JSON.stringify(validPubKeys)}) ;
-    console.log(result,"========resultresultresultresult")
-      if (result.status == '80000') {
+    const result=await ethServer.getPoolist({pubkeyList: JSON.stringify(validPubKeys)}); 
+      if (result && result.status == '80000') {
         if (result.data) {
           let totalStakeAmount = 0;
           if (result.data.allStakeAmount) {
             totalStakeAmount = result.data.allStakeAmount;
           }
-          if (result.data.apr) {
-            // this.currentApr = result.data.apr + '%';
+          if (result.data.apr) { 
             dispatch(setStatus_Apr(result.data.apr + '%'))
           }
           if (result.data.list) {
 
-            let remoteDataItems = result.data.list;
-            console.log(remoteDataItems,"========remoteDataItems")
+            let remoteDataItems = result.data.list; 
             let map = new Map();
             remoteDataItems.forEach((remoteItem:any) => {
               if (remoteItem.pubkey) {
@@ -785,16 +784,17 @@ export const  updateStatus=(pubKeys:any[],pubKeyMap:any,poolCount:Number,address
                   totalStakeAmount = Number(totalStakeAmount) + 32;
                 }
               }
-            });
-            console.log(addressItems,"========addressItems")
-            addressItems.forEach((item) => {
+            }); 
+            let newAddressItems= addressItems.map((item)=>{
               let key = item.address.toLowerCase();
-              if (map.has(key)) {
-                item.status = map.get(key).status == 7 ? 2 : map.get(key).status; 
+           
+              if (map.has(key)) { 
+                return {...item,status : (map.get(key).status == 7 ? 2 : map.get(key).status)}  
               } else {
-                item.status = 7;
+                return {...item,status:7} 
               }
-            });
+            })
+            cb && cb(newAddressItems) 
           }
 
           dispatch(setTotalStakedETH(totalStakeAmount));
