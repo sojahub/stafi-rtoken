@@ -103,12 +103,12 @@ export default function Index(props:any){
           {/* <A  isGrey={true} onClick={()=>{ 
               currentPoolStatus ==1 &&  setOffboardModalVisible(true) 
           }}>Offboard</A> */}
-          <Button disabled={currentPoolStatus==2} onClick={()=>{
+          <Button disabled={currentPoolStatus==2 || poolAddressItems.length==0} onClick={()=>{
               setOffboardModalVisible(true) 
            }}>
                Offboard 
            </Button>
-           <Button disabled={btnActiveStatus!=1 || validatorKeysState.length != 1} onClick={()=>{
+           <Button disabled={btnActiveStatus!=1 || validatorKeysState.length != 1 || poolAddressItems.length==0} onClick={()=>{
               if (currentPoolStatus == 2) {
                 message.error("This pool contract has been staked");
                 return;
