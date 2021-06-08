@@ -13,7 +13,7 @@ export default function Index(props:Props){
         Address: <A onClick={props.onClick} underline={true}>{props.address}</A>
         </div>
         <div>
-        {status}
+        {props.status}
         </div>
     </div>
 }
