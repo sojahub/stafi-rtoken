@@ -485,10 +485,12 @@ export const handleDeposit=(ethAmount:Number,cb?:Function):AppThunk=>async (disp
     setLoading(false); 
     if (result && result.status) {
       message.success("Deposit successfully");
-      cb && cb();
+      cb && cb("ok");
     } else {
       message.error("Error! Please try again"); 
+      cb && cb("error");
     }
+   
   } catch (error) {
     setLoading(false);
     message.error(error.message); 

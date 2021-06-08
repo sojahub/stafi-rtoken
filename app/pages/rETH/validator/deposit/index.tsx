@@ -46,11 +46,14 @@ export default function Index(props:any){
        </div>
        <div className="btns reth_btns">
        <Button  onClick={()=>{ 
-           dispatch(handleDeposit(amount,()=>{
-                setVisible(true)
-           }))
-               
-            }}>Deposit</Button>
+           setVisible(true);
+           dispatch(handleDeposit(amount,(e:string)=>{ 
+                setVisible(false);
+                if(e=="ok"){
+                    props.history.push("/rETH/validator/stake")
+                }
+           }))  
+        }}>Deposit</Button>
        </div>
        <Modal 
         visible={visible}
