@@ -680,13 +680,17 @@ export const getSelfDeposited=():AppThunk=>async (dispatch,getState)=>{
   let contract = new web3.eth.Contract(ethServer.getStafiStakingPoolManagerAbi(), ethServer.getStafiStakingPoolManagerAddress(), {
     from: currentAddress
   });
+  dispatch(setTotalStakedETH('--'));
+  dispatch(setAddressItems([])) 
   let addressItems:any[]=[];
   let pubKeys = [];;
   let pubKeyMap=new Map();
   let selfDeposited=0;
 
  const poolCount = await contract.methods.getNodeStakingPoolCount(currentAddress).call();
+
   if (poolCount > 0) { 
+    console.log(poolCount,"=======poolCount")
     for (let index = 0; index < poolCount; index++) {
     const poolAddress=await  contract.methods.getNodeStakingPoolAt(currentAddress, index).call(); 
         let data = {
@@ -700,8 +704,9 @@ export const getSelfDeposited=():AppThunk=>async (dispatch,getState)=>{
         if (pubKey) { 
           pubKeys.push(pubKey);
           pubKeyMap.set(pubKey, poolAddress.toLowerCase()); 
-          dispatch(updateStatus(pubKeys,pubKeyMap,poolCount,addressItems,(e:any[])=>{
+          dispatch(updateStatus(pubKeys,pubKeyMap,poolCount,addressItems,(e:any[])=>{ 
             addressItems=e;
+            dispatch(setAddressItems(addressItems)) 
           }));
         } else {
           const pubkey =await contract.methods.getStakingPoolPubkey(poolAddress).call() 
@@ -712,8 +717,9 @@ export const getSelfDeposited=():AppThunk=>async (dispatch,getState)=>{
           } else {
             pubKeys.push('');
           } 
-          dispatch(updateStatus(pubKeys,pubKeyMap,poolCount,addressItems,(e:any[])=>{
+          dispatch(updateStatus(pubKeys,pubKeyMap,poolCount,addressItems,(e:any[])=>{ 
             addressItems=e;
+            dispatch(setAddressItems(addressItems)) 
           }));
           
         }
@@ -739,14 +745,17 @@ export const getSelfDeposited=():AppThunk=>async (dispatch,getState)=>{
         selfDeposited += parsedDepositBalance;
          // this.selfDepositedShow = NumberUtil.handleEthRoundToFixed(this.selfDeposited);
     }
-  } 
-  dispatch(setAddressItems(addressItems)) 
+  }else{
+    dispatch(setTotalStakedETH(0));
+    dispatch(setStatus_Apr('--%'))
+  }
+  // dispatch(setAddressItems(addressItems)) 
   dispatch(setSelfDeposited(selfDeposited))
  
 }
 
 export const  updateStatus=(pubKeys:any[],pubKeyMap:any,poolCount:Number,addressItems:any[],cb:Function):AppThunk=>async (dispatch,getState)=>{
-  
+  console.log(pubKeys.length , poolCount,pubKeys.length == poolCount,"===pubKeys.length == poolCount")
   if (pubKeys.length == poolCount) {
     let validPubKeys:any[] = [];
    
@@ -764,9 +773,10 @@ export const  updateStatus=(pubKeys:any[],pubKeyMap:any,poolCount:Number,address
       return;
     }
     const result=await ethServer.getPoolist({pubkeyList: JSON.stringify(validPubKeys)}); 
+   
       if (result && result.status == '80000') {
         if (result.data) {
-          let totalStakeAmount = 0;
+          let totalStakeAmount = 0; 
           if (result.data.allStakeAmount) {
             totalStakeAmount = result.data.allStakeAmount;
           }
@@ -779,7 +789,7 @@ export const  updateStatus=(pubKeys:any[],pubKeyMap:any,poolCount:Number,address
             let map = new Map();
             remoteDataItems.forEach((remoteItem:any) => {
               if (remoteItem.pubkey) {
-                map.set(pubKeyMap.get(remoteItem.pubkey), remoteItem);
+                map.set(pubKeyMap.get(remoteItem.pubkey), remoteItem); 
                 if (remoteItem.status == 7) {
                   totalStakeAmount = Number(totalStakeAmount) + 32;
                 }
@@ -788,7 +798,7 @@ export const  updateStatus=(pubKeys:any[],pubKeyMap:any,poolCount:Number,address
             let newAddressItems= addressItems.map((item)=>{
               let key = item.address.toLowerCase();
            
-              if (map.has(key)) { 
+              if (map.has(key)) {  
                 return {...item,status : (map.get(key).status == 7 ? 2 : map.get(key).status)}  
               } else {
                 return {...item,status:7} 

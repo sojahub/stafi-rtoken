@@ -53,6 +53,9 @@ export default function Index(props:any){
   useEffect(()=>{
     dispatch(getSelfDeposited())
   },[])
+
+  
+
   if(totalStakedETH=="--"){
   return <LeftContent className="stafi_status_validator_context">
       <NoDetails type="max"/> 
@@ -68,10 +71,10 @@ export default function Index(props:any){
                 <label>
                     {totalStakedETH}
                 </label>
-                <Button size="small" btnType="ellipse" onClick={()=>{
+                <Button disabled={true} size="small" btnType="ellipse" onClick={()=>{
                   //  props.history.push("/rETH/liquefy"); 
                    message.info('This feature is not yet open.');
-              }}>Liquefy</Button>
+              }}>Liquify</Button>
             </div>
             <div className="apr_panel">
                 <div>
@@ -82,6 +85,7 @@ export default function Index(props:any){
                 </div>
             </div>
         </div>
+        
         <div className="pool_contracts">
             <div className="title">
                 <img src={pool_eth_svg} />Pool Contracts ({addressItems.length})  <img className="icon" src={down_arrow} />
@@ -93,6 +97,7 @@ export default function Index(props:any){
                     props.history.push("/rETH/validator/poolContract/"+item.address)
                   }} address={item.shortAddress} status={getStatus(item.status)}/>
                 })} 
+                 
               </AddressCard>
 
               <div className="btns">
