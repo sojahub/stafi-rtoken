@@ -676,7 +676,7 @@ export const handleStake=(validatorKeys:any[],cb?:Function):AppThunk=>async (dis
 
 export const getSelfDeposited=():AppThunk=>async (dispatch,getState)=>{
   let web3 = ethServer.getWeb3();
-  const currentAddress="0xD3FaA2F7B452Ade554786d94b57eb9CC62139b09" //getState().rETHModule.ethAccount.address;
+  const currentAddress=getState().rETHModule.ethAccount.address;
   let contract = new web3.eth.Contract(ethServer.getStafiStakingPoolManagerAbi(), ethServer.getStafiStakingPoolManagerAddress(), {
     from: currentAddress
   });
