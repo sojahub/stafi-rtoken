@@ -12,7 +12,7 @@ import { message } from 'antd';
 import { useDispatch, useSelector, useStore } from 'react-redux';
 import { RootState } from 'app/store';
 import NumberUtil from '@util/numberUtil';
-import {getSelfDeposited,setTotalStakedETHShow} from '@features/rETHClice'; 
+import {getSelfDeposited,setTotalStakedETHShow,setRunCount} from '@features/rETHClice'; 
 
 const getStatus=(status:any)=>{
   switch(status){
@@ -40,25 +40,26 @@ const getStatus=(status:any)=>{
 
 export default function Index(props:any){
 
-  const dispatch =useDispatch(); 
-  const [runCount,setRunCount]=useState(0);
-  const {selfDeposited,apr,totalStakedETH,totalStakedETHShow,addressItems} =useSelector((state:RootState)=>{
+  const dispatch =useDispatch();  
+  const {selfDeposited,apr,totalStakedETH,totalStakedETHShow,addressItems,runCount} =useSelector((state:RootState)=>{
     return  {
       selfDeposited:state.rETHModule.selfDeposited,
       apr:state.rETHModule.status_Apr,
       totalStakedETH:state.rETHModule.totalStakedETH,
       totalStakedETHShow:state.rETHModule.totalStakedETHShow,
-      addressItems:state.rETHModule.addressItems
+      addressItems:state.rETHModule.addressItems,
+      runCount:state.rETHModule.runCount
     }
   })
   useEffect(()=>{
+    dispatch(setRunCount(0));
     dispatch(getSelfDeposited())
   },[])
 
   
-  useEffect(()=>{
+  useEffect(()=>{ 
     if(runCount==0 && totalStakedETH !="--"){
-      setRunCount(1);
+      dispatch(setRunCount(1)); 
       let count = 0;
       let totalCount = 10;
       let totalStakedETHAmount = 0;
@@ -71,10 +72,9 @@ export default function Index(props:any){
             window.clearInterval(interval);
           }
           dispatch(setTotalStakedETHShow(NumberUtil.handleFisAmountRateToFixed(totalStakedETHAmount)))
-        }, 100);
-      
+        }, 100); 
     } 
-  },[(totalStakedETH)])
+  },[totalStakedETH,runCount])
   // if(totalStakedETH=="--"){
   // return <LeftContent className="stafi_status_validator_context">
   //     <NoDetails type="max"/> 

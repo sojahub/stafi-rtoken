@@ -46,7 +46,8 @@ const rETHClice = createSlice({
     unmatchedValidators:'--',
     poolStatusTotalRETH:'--',
     poolStatusUnmatchedETH:'--',
-    stakingPoolDetail:null
+    stakingPoolDetail:null,
+    runCount:0
   },
   reducers: {  
      setEthAccount(state,{payload}){ 
@@ -149,6 +150,9 @@ const rETHClice = createSlice({
      },
      setStakingPoolDetail(state,{payload}){
        state.stakingPoolDetail=payload;
+     },
+     setRunCount(state,{payload}){
+       state.runCount=payload
      }
   },
 });
@@ -182,7 +186,8 @@ export const {setEthAccount,
   setUnmatchedValidators,
   setPoolStatusTotalRETH,
   setPoolStatusUnmatchedETH,
-  setStakingPoolDetail
+  setStakingPoolDetail,
+  setRunCount
 }=rETHClice.actions
 
 declare const window: any;
@@ -255,7 +260,7 @@ export const monitoring_Method=():AppThunk=>(dispatch,getState)=> {
        
         setTimeout(()=>{
           dispatch(getAssetBalanceAll()); 
-          dispatch(reloadData());
+          dispatch(reloadData()); 
         },20)
       } else { 
         dispatch(handleEthAccount(null))
@@ -326,6 +331,7 @@ export const reloadData = ():AppThunk => async (dispatch,getState)=>{
   dispatch(getNodeStakingPoolCount());
   dispatch(getDepositBalance());
   dispatch(getSelfDeposited());
+  dispatch(setRunCount(0));
 }
 
 export const rTokenRate=():AppThunk=>async (dispatch,getState)=>{
