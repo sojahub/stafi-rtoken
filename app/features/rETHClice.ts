@@ -586,8 +586,10 @@ export const handleCurrentPool=(currentPoolAddress:string):AppThunk=> async (dis
 export const handleOffboard=(cb?:Function):AppThunk=>async (dispatch,getState)=>{
   let web3 = ethServer.getWeb3();
   const currentPoolAddress=getState().rETHModule.poolAddress;
+ 
   const currentAddress=getState().rETHModule.ethAccount.address;
   const currentPoolStatus=getState().rETHModule.currentPoolStatus;
+  console.log(currentPoolAddress,currentAddress,currentPoolStatus)
   let poolContract = new web3.eth.Contract(ethServer.getStafiStakingPoolAbi(), currentPoolAddress, {
     from: currentAddress
   }); 

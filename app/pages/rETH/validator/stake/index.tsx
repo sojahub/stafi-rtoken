@@ -135,7 +135,7 @@ export default function Index(props:any){
                 }))
             }}
         />
-          <Modal 
+      <Modal 
         visible={visible}
         onClose={()=>{
             setVisible(false);
