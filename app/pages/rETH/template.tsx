@@ -2,12 +2,10 @@ import React, { useEffect } from 'react';
 import {Spin} from 'antd';
 import {useDispatch,useSelector} from 'react-redux'; 
 import Content from '@shared/components/content';
-import {renderRoutes}  from 'react-router-config';
-import {getLocalStorageItem,Keys} from '@util/common';
-
-import {Symbol} from '@keyring/defaults' 
+import {renderRoutes}  from 'react-router-config'; 
 import {reloadData,monitoring_Method} from '@features/rETHClice'  
 import '../template/index.scss'
+import './index.scss'
 export default function Index(props:any){
   const dispatch = useDispatch();
  
@@ -34,6 +32,7 @@ export default function Index(props:any){
       <div className="stafi_container">
         <Spin spinning={loading} size="large" tip="loading">
           <Content>
+            {!location.pathname.includes("/rETH/home") && <div className="stafi_reth_tip">Be aware of rETH can not be redeemed until Phase 1.5 of ETH2 !</div>}
             {renderRoutes(props.route.routes)}
           </Content> 
         </Spin>

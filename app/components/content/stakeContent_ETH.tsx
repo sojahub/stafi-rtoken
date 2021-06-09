@@ -32,7 +32,7 @@ export default function Index(props:Props){
         return rETH;
       }  
     return <LeftContent className="stafi_stake_context stafi_stake_context_eth">
-        <div className="stafi_Staker_tip">Be aware of rETH can not be redeemed until Phase 1.5 of ETH2 !</div>
+       
         <label className="title"> 
             Stake ETH
         </label>
