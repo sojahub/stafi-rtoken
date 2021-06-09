@@ -41,6 +41,7 @@ const getStatus=(status:any)=>{
 export default function Index(props:any){
 
   const dispatch =useDispatch(); 
+  const [runCount,setRunCount]=useState(0);
   const {selfDeposited,apr,totalStakedETH,totalStakedETHShow,addressItems} =useSelector((state:RootState)=>{
     return  {
       selfDeposited:state.rETHModule.selfDeposited,
@@ -56,23 +57,24 @@ export default function Index(props:any){
 
   
   useEffect(()=>{
-    
-    let count = 0;
-    let totalCount = 10;
-    let totalStakedETHAmount = 0;
-    let piece = Number(totalStakedETH) / totalCount; 
-    if(totalStakedETH !="--"){
-      let interval = setInterval(() => {
-        count++;
-        totalStakedETHAmount += piece;
-        if (count == totalCount || Number(totalStakedETH)==0) {
-          totalStakedETHAmount = Number(totalStakedETH);
-          window.clearInterval(interval);
-        }
-        dispatch(setTotalStakedETHShow(NumberUtil.handleFisAmountRateToFixed(totalStakedETHAmount)))
-      }, 100);
-    }
-  },[totalStakedETH])
+    if(runCount==0 && totalStakedETH !="--"){
+      setRunCount(1);
+      let count = 0;
+      let totalCount = 10;
+      let totalStakedETHAmount = 0;
+      let piece = Number(totalStakedETH) / totalCount; 
+        let interval = setInterval(() => {
+          count++;
+          totalStakedETHAmount += piece;
+          if (count == totalCount || Number(totalStakedETH)==0) {
+            totalStakedETHAmount = Number(totalStakedETH);
+            window.clearInterval(interval);
+          }
+          dispatch(setTotalStakedETHShow(NumberUtil.handleFisAmountRateToFixed(totalStakedETHAmount)))
+        }, 100);
+      
+    } 
+  },[(totalStakedETH)])
   // if(totalStakedETH=="--"){
   // return <LeftContent className="stafi_status_validator_context">
   //     <NoDetails type="max"/> 

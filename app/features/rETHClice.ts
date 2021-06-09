@@ -769,7 +769,7 @@ export const  updateStatus=(pubKeys:any[],pubKeyMap:any,poolCount:Number,address
         validPubKeys.push(pubkey);
       }
     });
-
+ 
  
     if (validPubKeys.length == 0) {
       addressItems.forEach((item) => {
@@ -781,7 +781,7 @@ export const  updateStatus=(pubKeys:any[],pubKeyMap:any,poolCount:Number,address
     }
     const result=await ethServer.getPoolist({pubkeyList: JSON.stringify(validPubKeys)}); 
    
-      if (result && result.status == '80000') {
+      if (result && result.status == '80000') { 
         if (result.data) {
           let totalStakeAmount = 0; 
           if (result.data.allStakeAmount) {
@@ -812,8 +812,7 @@ export const  updateStatus=(pubKeys:any[],pubKeyMap:any,poolCount:Number,address
               }
             })
             cb && cb(newAddressItems) 
-          }
-
+          } 
           dispatch(setTotalStakedETH(totalStakeAmount));
           // if (totalStakeAmount > 0) {
           //   let count = 0;

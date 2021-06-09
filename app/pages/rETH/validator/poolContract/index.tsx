@@ -35,7 +35,7 @@ export default function Index(props:any){
         <PoolItem label="Process">
            <Process currentBalance={stakingPoolDetail?stakingPoolDetail.currentBalance:"--"} status={stakingPoolDetail ? stakingPoolDetail.status : 0}/>
         </PoolItem>
-        <PoolItem label="Statuts">
+        <PoolItem label="Status">
          <Status currentBalance={stakingPoolDetail?stakingPoolDetail.currentBalance:"--"}  status={stakingPoolDetail ? stakingPoolDetail.status : 0}/>
         </PoolItem>
         <PoolItem label="Current Balance">
