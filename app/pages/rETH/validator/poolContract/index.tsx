@@ -53,10 +53,10 @@ export default function Index(props:any){
         <p>APR   {(stakingPoolDetail && stakingPoolDetail.apr)?stakingPoolDetail.apr:"--"} (estimated based on the last 7 days) </p>
         </PoolItem>
         <PoolItem label="Eligible for Activation">
-        6d days ago (Epoch {(stakingPoolDetail && stakingPoolDetail.activationEligibilityEpoch)?stakingPoolDetail.activationEligibilityEpoch:"--"})
+          Epoch {(stakingPoolDetail && stakingPoolDetail.activationEligibilityEpoch)?stakingPoolDetail.activationEligibilityEpoch:"--"}
         </PoolItem>
         <PoolItem label="Active since">
-        5d days ago (Epoch {(stakingPoolDetail && stakingPoolDetail.activationEpoch)?stakingPoolDetail.activationEpoch:"--"})
+          Epoch {(stakingPoolDetail && stakingPoolDetail.activationEpoch)?stakingPoolDetail.activationEpoch:"--"}
         </PoolItem> 
         </div>
     </LeftContent>

@@ -920,9 +920,9 @@ export const getPoolInfo=(poolAddress:string):AppThunk=>async (dispatch,getState
 
       const depositBalance = await poolContract.methods.getUserDepositBalance().call()
         if (depositBalance == 0) {
-          dispatch(setStakingPoolDetail({status:0,currentBalance:'8:00',effectiveBalance:"8:00"}))
+          dispatch(setStakingPoolDetail({status:0,currentBalance:'8.00',effectiveBalance:"8.00"}))
         } else { 
-          dispatch(setStakingPoolDetail({status:0,currentBalance:'32:00',effectiveBalance:"32:00"}))
+          dispatch(setStakingPoolDetail({status:0,currentBalance:'32.00',effectiveBalance:"32.00"}))
         } 
         
     } 
@@ -946,7 +946,7 @@ export const getStakingPoolDetail=(poolAddress:string,pubkey:any):AppThunk=>asyn
         }
         dispatch(setStakingPoolDetail(detail))
       } else { 
-        dispatch(setStakingPoolDetail({status:1,currentBalance:'32:00',effectiveBalance:"32:00"}))
+        dispatch(setStakingPoolDetail({status:1,currentBalance:'32.00',effectiveBalance:"32.00"}))
       }
     } 
   });
