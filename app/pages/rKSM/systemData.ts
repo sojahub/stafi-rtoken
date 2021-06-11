@@ -12,6 +12,15 @@ export const rKSM_data=[{
     }
   ]
 },{
+  text:"Reward",
+  url:"/rKSM/reward/index",
+  child:[
+    {
+      text:"-Recovery",
+      url:""
+    }
+  ]
+},{
   text:"Validator",
   url:"/rKSM/validator",
   // child:[

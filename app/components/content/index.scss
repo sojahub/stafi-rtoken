@@ -1,6 +1,6 @@
 
 .stafi_left_context{
-    padding: 24px 0px 0px 46px;
+    padding: 36px 30px 30px 30px;
     width: 100%;
 }
 .stafi_stake_context{
@@ -107,7 +107,7 @@
     flex-direction: column;
     justify-content: center;
     .item:first-child{
-        border-bottom:1px solid #474747;
+        border-bottom:1px solid #3B3B3B;
     }
     .item{
         flex:1;
@@ -147,8 +147,8 @@
     position: relative;
     .back_icon{
         position: absolute; 
-        left: 15px;
-        top: 35px;
+        left: 8px;
+        top: 47px;
         cursor: pointer;
     }
     .title{

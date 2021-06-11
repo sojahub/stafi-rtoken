@@ -12,6 +12,15 @@ export const rDOT_data=[{
     }
   ]
 },{
+  text:"Reward",
+  url:"/rDOT/reward/index",
+  child:[
+    {
+      text:"-Recovery",
+      url:""
+    }
+  ]
+},{
   text:"Validator",
   url:"/rDOT/validator",
   // child:[

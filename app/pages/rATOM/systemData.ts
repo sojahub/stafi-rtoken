@@ -12,6 +12,15 @@ export const rATOM_data=[{
     }
   ]
 },{
+  text:"Reward",
+  url:"/rATOM/reward/index",
+  child:[
+    {
+      text:"-Recovery",
+      url:""
+    }
+  ]
+},{
   text:"Validator",
   url:"/rATOM/validator",
   // child:[
