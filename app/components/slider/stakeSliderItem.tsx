@@ -19,6 +19,7 @@ export default function Index(props:Props){
     setShowChild(props.text==props.selectValue);
   })
   const active=()=>{
+    console.log(props.selectValue,"====props.selectValue")
     if(props.text==props.selectValue){
       return true
     }

@@ -5,19 +5,13 @@ export const rDOT_data=[{
     {
       text:'-Status',
       url:"/rDOT/staker/info"
+    },{
+      text:'-Reward',
+      url:"/rDOT/staker/reward"
     },
     {
       text:'-Recovery',
       url:"/rDOT/search"
-    }
-  ]
-},{
-  text:"Reward",
-  url:"/rDOT/reward/index",
-  child:[
-    {
-      text:"-Recovery",
-      url:""
     }
   ]
 },{

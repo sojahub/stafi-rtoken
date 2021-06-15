@@ -16,9 +16,8 @@ import RDOTStakerIndex from './pages/rDOT/staker/home';
 import RDOTStakerInfo from './pages/rDOT/staker/info';
 import RDOTStakerRedeem from './pages/rDOT/staker/redeem';
 import RDOTSeach from './pages/rDOT/search';
-import RDOTType from './pages/rDOT/selectType';
-import RDOTReward from './pages/rDOT/reward'
-import RDOTRewardHome from './pages/rDOT/reward/home'
+import RDOTType from './pages/rDOT/selectType'; 
+import RDOTStakerReward from './pages/rDOT/staker/reward'
 
 import RKSMHomeTemplate from './pages/rKSM/template';
 import RKSMHome from './pages/rKSM/home'
@@ -30,9 +29,8 @@ import RKSMStakerIndex from './pages/rKSM/staker/home';
 import RKSMStakerInfo from './pages/rKSM/staker/info';
 import RKSMStakerRedeem from './pages/rKSM/staker/redeem';
 import RKSMSeach from './pages/rKSM/search';
-import RKSMType from './pages/rKSM/selectType';
-import RKSMReward from './pages/rKSM/reward';
-import RKSMRewardHome from './pages/rKSM/reward/home';
+import RKSMType from './pages/rKSM/selectType'; 
+import RKSMStakerReward from './pages/rKSM/staker/reward';
 
 
 import RATOMHomeTemplate from './pages/rATOM/template';
@@ -45,9 +43,8 @@ import RATOMStakerIndex from './pages/rATOM/staker/home';
 import RATOMStakerInfo from './pages/rATOM/staker/info';
 import RATOMStakerRedeem from './pages/rATOM/staker/redeem';
 import RATOMSeach from './pages/rATOM/search';
-import RATOMType from './pages/rATOM/selectType';
-import RATOMReward from './pages/rATOM/reward';
-import RATOMRewardHome from './pages/rATOM/reward/home';
+import RATOMType from './pages/rATOM/selectType'; 
+import RATOMStakerReward from './pages/rATOM/staker/reward';
 
 import RAssetTemplate from './pages/rAsset/template';
 import RAssetNative from './pages/rAsset/home/native';
@@ -105,6 +102,12 @@ const routesFactory=(role?:any)=>{
               rSymbol:rSymbol.Dot,
               component:RDOTStakerInfo
             },{
+              id:"RDOT_reward_index",
+              path:"/rDOT/staker/reward",
+              type:"Staker",
+              rSymbol:rSymbol.Dot,
+              component:RDOTStakerReward
+            },{
               id:"RDOT_staker_index_redeem",
               path:"/rDOT/staker/redeem",
               type:"Staker",
@@ -113,21 +116,6 @@ const routesFactory=(role?:any)=>{
             },{
               path: '*',
               component: () => <Redirect to="/rDOT/staker/index"/>
-            }
-          ]
-        },{
-          id:"RDOT_reward",
-          type:"Reward",
-          path:"/rDOT/reward",
-          rSymbol:rSymbol.Dot,
-          component:authorizedRoute(Symbol.Dot)(RDOTReward),
-          routes:[
-            {
-              id:"RDOT_reward_index",
-              path:"/rDOT/reward/index",
-              type:"Staker",
-              rSymbol:rSymbol.Dot,
-              component:RDOTRewardHome
             }
           ]
         },{
@@ -190,7 +178,13 @@ const routesFactory=(role?:any)=>{
               type:"-Status",
               rSymbol:rSymbol.Ksm,
               component:RKSMStakerInfo
-            },,{
+            },{
+              id:"RKSM_reward_index",
+              path:"/rKSM/staker/reward",
+              type:"Staker",
+              rSymbol:rSymbol.Ksm,
+              component:RKSMStakerReward
+            },{
               id:"RKSM_staker_index_redeem",
               path:"/rKSM/staker/redeem",
               type:"Staker",
@@ -199,21 +193,6 @@ const routesFactory=(role?:any)=>{
             },{
               path: '*',
               component: () => <Redirect to="/rKSM/staker/index"/>
-            }
-          ]
-        },{
-          id:"RKSM_reward",
-          type:"Reward",
-          path:"/rKSM/reward",
-          rSymbol:rSymbol.Ksm,
-          component:authorizedRoute(Symbol.Ksm)(RKSMReward),
-          routes:[
-            {
-              id:"RKSM_reward_index",
-              path:"/rKSM/reward/index",
-              type:"Staker",
-              rSymbol:rSymbol.Ksm,
-              component:RKSMRewardHome
             }
           ]
         },{
@@ -276,7 +255,13 @@ const routesFactory=(role?:any)=>{
               type:"-Status",
               rSymbol:rSymbol.Atom,
               component:RATOMStakerInfo
-            },,{
+            },{
+              id:"RATOM_reward_index",
+              path:"/rATOM/staker/reward",
+              type:"Staker",
+              rSymbol:rSymbol.Ksm,
+              component:RATOMStakerReward
+            },{
               id:"RATOM_staker_index_redeem",
               path:"/rATOM/staker/redeem",
               type:"Staker",
@@ -285,21 +270,6 @@ const routesFactory=(role?:any)=>{
             },{
               path: '*',
               component: () => <Redirect to="/rATOM/staker/index"/>
-            }
-          ]
-        },{
-          id:"RATOM_reward",
-          type:"Reward",
-          path:"/rATOM/reward",
-          rSymbol:rSymbol.Atom,
-          component:authorizedRoute(Symbol.Atom)(RATOMReward),
-          routes:[
-            {
-              id:"RATOM_reward_index",
-              path:"/rATOM/reward/index",
-              type:"Staker",
-              rSymbol:rSymbol.Ksm,
-              component:RATOMRewardHome
             }
           ]
         },{
