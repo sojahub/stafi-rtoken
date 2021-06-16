@@ -1,6 +1,6 @@
 import Content from '@components/content/stakeContent_DOT';
 import { setProcessSlider } from '@features/globalClice';
-import { balancesAll, rTokenLedger, rTokenRate, transfer } from '@features/rKSMClice';
+import { balancesAll, rTokenLedger, rTokenRate, transfer } from '@features/rSOLClice';
 import { ratioToAmount } from '@util/common';
 import NumberUtil from '@util/numberUtil';
 import { message } from 'antd';
@@ -20,15 +20,15 @@ export default function Index(props: any) {
     (state: any) => {
       const fisCompare =
         NumberUtil.fisAmountToChain(state.FISModule.fisAccount.balance) <
-        state.rKSMModule.bondFees + state.FISModule.estimateBondTxFees;
+        state.rSOLModule.bondFees + state.FISModule.estimateBondTxFees;
       return {
-        transferrableAmount: state.rKSMModule.transferrableAmountShow,
-        ratio: state.rKSMModule.ratio,
-        stafiStakerApr: state.rKSMModule.stakerApr,
+        transferrableAmount: state.rSOLModule.transferrableAmountShow,
+        ratio: state.rSOLModule.ratio,
+        stafiStakerApr: state.rSOLModule.stakerApr,
         fisCompare: fisCompare,
-        validPools: state.rKSMModule.validPools,
-        totalIssuance: state.rKSMModule.totalIssuance,
-        bondFees: state.rKSMModule.bondFees,
+        validPools: state.rSOLModule.validPools,
+        totalIssuance: state.rSOLModule.totalIssuance,
+        bondFees: state.rSOLModule.bondFees,
       };
     },
   );
@@ -37,14 +37,14 @@ export default function Index(props: any) {
     <Content
       amount={amount}
       willAmount={ratio == '--' ? '--' : ratioToAmount(amount, ratio)}
-      unit={'KSM'}
+      unit={'SOL'}
       transferrableAmount={transferrableAmount}
       apr={stafiStakerApr}
       onChange={(value: any) => {
         setAmount(value);
       }}
       onRecovery={() => {
-        props.history.push('/rKSM/search');
+        props.history.push('/rSOL/search');
       }}
       validPools={validPools}
       bondFees={NumberUtil.fisAmountToHuman(bondFees) || '--'}
@@ -58,13 +58,13 @@ export default function Index(props: any) {
           dispatch(
             transfer(amount, () => {
               dispatch(setProcessSlider(false));
-              props.history.push('/rKSM/staker/info');
+              props.history.push('/rSOL/staker/info');
             }),
           );
         } else {
           message.error('Please enter the amount');
         }
       }}
-      type='rKSM'></Content>
+      type='rSOL'></Content>
   );
 }

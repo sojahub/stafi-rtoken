@@ -1,0 +1,72 @@
+.stafi_search_container{
+  padding:34px 106px;
+  position: relative;
+  .back_icon{
+    position: absolute;
+    left:63px;
+    top:42px;
+    cursor: pointer;
+  }
+  >div{
+    display: flex;
+    justify-content: center;
+  }
+  .title{
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+  .sub_title{
+    font-size: 14px;
+    margin-bottom: 35px;
+    width: 460px;
+    text-align: left;
+    margin: 0px;
+    line-height: 18px;
+    flex-direction: column;
+    >div{
+      margin:20px 0px 25px 0px;
+    }
+  }
+
+  .ant-form-item{
+    .ant-form-item-label{
+      label{
+        color:#fff;
+      }
+      >label{
+        width:100%;
+        display: block;
+      }
+      .item_title{
+        display: flex;
+        justify-content: space-between;
+        a{
+          color:#fff;
+          text-decoration: underline; 
+        }
+      }
+    }
+    .stafi_input{
+      border-radius: 7px;
+      color:#8F8F8F
+    }
+    .stafi_select {
+      .ant-select-selector{
+        border-radius: 7px;
+        .ant-select-selection-item{
+          color:#8F8F8F
+        }
+      }
+    }
+  }
+  .btns{
+    display: flex;
+    justify-content: flex-end;
+    margin-top:40px;
+    .stafi_button{
+      width:144px;
+    }
+  }
+
+}
