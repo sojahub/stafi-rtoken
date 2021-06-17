@@ -4,6 +4,7 @@ import GhostButton from '@shared/components/button/ghostButton';
 import poolUniswapIcon from '@images/poolUniswapIcon.png';
 import poolCurveIcon from '@images/poolCurveIcon.svg';
 import poolWrapFiIcon from '@images/poolWrapFiIcon.svg';
+import BottonPopover from '@components/tradePopover/buttonPopover' 
 
 type Props={
   pairIcon:any,
@@ -38,13 +39,10 @@ export default function Index(props:Props){
                   {props.poolOn}
                 </div>
                 <div className="col col6"> 
-                    <GhostButton> Add liquidity</GhostButton>
-                    <GhostButton> Stake</GhostButton>
-                    {/* <TradePopover data={[{label:"Curve",url:"https://curve.fi/reth"},{label:"Uniswap",url:props.trade}]}>
-        <GhostButton>
-        Stake<img className="dow_svg" src={dow_svg}/>
-        </GhostButton>
-          </TradePopover> */}
+                    <GhostButton> Add liquidity</GhostButton> 
+                    <BottonPopover data={[{label:"Stafi",url:"https://curve.fi/reth"},{label:"WrapFi",url:''}]}>
+                      Stake 
+                    </BottonPopover>
                 </div>
             </div>
 }
