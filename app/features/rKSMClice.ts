@@ -630,7 +630,7 @@ export const rTokenLedger=():AppThunk=>async (dispatch, getState)=>{
   if (currentEra) {
     let rateResult = await stafiApi.query.rTokenRate.eraRate(rSymbol.Ksm, currentEra - 1) 
     const currentRate = rateResult.toJSON(); 
-    const rateResult2 = await stafiApi.query.rTokenRate.eraRate(rSymbol.Ksm, currentEra - 2)
+    const rateResult2 = await stafiApi.query.rTokenRate.eraRate(rSymbol.Ksm, currentEra - 29)
     let lastRate = rateResult2.toJSON();
     dispatch(handleStakerApr(currentRate,lastRate));
   } else {
@@ -638,13 +638,12 @@ export const rTokenLedger=():AppThunk=>async (dispatch, getState)=>{
   }  
 }
 const handleStakerApr = (currentRate?: any, lastRate?: any): AppThunk => async (dispatch, getState) => {
-    dispatch(setStakerApr('16.0%')); 
-  //  if (currentRate && lastRate) {
-  //     const apr = NumberUtil.handleEthRoundToFixed((currentRate - lastRate)/lastRate * 4 * 365.25 * 100) + '%';
-  //     dispatch(setStakerApr(apr));
-  //   } else {
-  //     dispatch(setStakerApr('16.0%')); 
-  //   }
+   if (currentRate && lastRate) {
+     const apr = NumberUtil.handleEthRoundToFixed((currentRate - lastRate) / 1000000000000 / 7 * 365.25 * 100) + '%';
+      dispatch(setStakerApr(apr));
+    } else {
+      dispatch(setStakerApr('16.0%')); 
+    }
   }
   export const checkAddress = (address:string)=>{
     const keyringInstance = keyring.init(Symbol.Ksm);
