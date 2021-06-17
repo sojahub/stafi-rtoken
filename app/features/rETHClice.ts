@@ -47,7 +47,8 @@ const rETHClice = createSlice({
     poolStatusTotalRETH:'--',
     poolStatusUnmatchedETH:'--',
     stakingPoolDetail:null,
-    runCount:0
+    runCount:0,
+    ethAmount:4,
   },
   reducers: {  
      setEthAccount(state,{payload}){ 
@@ -153,6 +154,9 @@ const rETHClice = createSlice({
      },
      setRunCount(state,{payload}){
        state.runCount=payload
+     },
+     setEthAmount(state,{payload}){
+       state.ethAmount=payload
      }
   },
 });
@@ -187,7 +191,8 @@ export const {setEthAccount,
   setPoolStatusTotalRETH,
   setPoolStatusUnmatchedETH,
   setStakingPoolDetail,
-  setRunCount
+  setRunCount,
+  setEthAmount
 }=rETHClice.actions
 
 declare const window: any;
@@ -960,6 +965,25 @@ export const getStakingPoolDetail=(poolAddress:string,pubkey:any):AppThunk=>asyn
 }
 
 
+export const getDepositAmount=():AppThunk=>async (dispatch,getState)=>{
+  const web3=ethServer.getWeb3();
+  const currentAddress=getState().rETHModule.ethAccount.address; 
+  let nodeDepositContract = new web3.eth.Contract(ethServer.getStafiNodeDepositAbi(), ethServer.getStafiNodeDepositAddress(), {
+    from: currentAddress
+  });
+  
+  const depositAmount =await nodeDepositContract.methods.getCurrentNodeDepositAmount().call();
+  dispatch(setEthAmount(web3.utils.fromWei(depositAmount, 'ether')))
+  let nodeManagerContract = new web3.eth.Contract(ethServer.getStafiNodeManagerAbi(), ethServer.getStafiNodeManagerAddress(), {
+    from: currentAddress
+  }); 
+  const trusted=await nodeManagerContract.methods.getNodeTrusted(currentAddress).call();
+  if (trusted) { 
+    dispatch(setEthAmount("0"));
+  } 
+}
+
+
 export const rewardDetails= [
   {
     cycle: '1 day',
@@ -973,5 +997,5 @@ export const rewardDetails= [
     cycle: '7 day',
     reward: '--'
   }
-]
+] 
 export default rETHClice.reducer;
