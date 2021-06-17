@@ -50,6 +50,10 @@ import RAssetTemplate from './pages/rAsset/template';
 import RAssetNative from './pages/rAsset/home/native';
 import RAssetErc from './pages/rAsset/home/erc';
 import RAssetSwap from './pages/rAsset/swap';
+
+import RPoolHomeTemplate from './pages/rPool/template';
+import RPoolHome from './pages/rPool/home'
+
 import {rSymbol} from '@keyring/defaults'
   
 const routesFactory=(role?:any)=>{ 
@@ -312,6 +316,22 @@ const routesFactory=(role?:any)=>{
         },{
           path: '*',
           component: () => <Redirect to="/rAsset/native"/>
+        }]
+      },{
+        id:"RPool_index",
+        path:"/rPool",
+        type:"rPool",
+        // rSymbol:rSymbol.Atom,
+        component: RPoolHomeTemplate,
+        routes:[{
+          id:"RPool_home",
+          path:"/rPool/home",
+          width:920,
+          // rSymbol:rSymbol.Atom,
+          component:RPoolHome
+        },{
+          path: '*',
+          component: () => <Redirect to="/rATOM/home"/>
         }]
       },{
         path: '*',

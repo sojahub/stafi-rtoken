@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="36px" height="36px" viewBox="0 0 36 36" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 48.1 (47250) - http://www.bohemiancoding.com/sketch -->
+    <title>Group 2 Copy 51</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <polygon id="path-1" points="0.0381242699 9.79098536 0.0381242699 9.4372715 15.7466313 0.0106020689 27.9630976 7.36698373 27.9630976 7.7239605 12.2911044 16.9960704"></polygon>
+        <polygon id="path-2" points="3.49206382 6.11028977 10.1397257 9.68614198 10.3627451 13.6829268 0.296949221 7.81904321"></polygon>
+    </defs>
+    <g id="Stafi-Product-1-Copy-16" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" transform="translate(-43.000000, -185.000000)">
+        <g id="Group-2-Copy-51" transform="translate(43.000000, 185.000000)">
+            <ellipse id="Oval-5-Copy-2" fill="#FFFFFF" cx="17.8651479" cy="18" rx="17.8651479" ry="18"></ellipse>
+            <path d="M6,12.8847656 L6,7.2421875 C6.03515643,5.41405336 6.94920979,4.5 8.7421875,4.5 L11.3789062,4.5 L11.3789062,5.71289062 L9.32226562,5.71289062 C8.37304213,5.71289062 7.88085955,6.18749525 7.84570312,7.13671875 L7.84570312,12.8847656 L6,12.8847656 Z" id="r" fill="#00F3AB"></path>
+            <g id="Group-6" transform="translate(4.000000, 10.000000)">
+                <g id="Group-5">
+                    <g id="Group-4">
+                        <g id="Group-2">
+                            <g id="Group">
+                                <g id="Rectangle-6">
+                                    <use fill="#FFFFFF" fill-rule="evenodd" xlink:href="#path-1"></use>
+                                    <path stroke="#FDFDFD" stroke-width="0.636363636" d="M0.282386673,9.66176661 L0.255660344,9.61504624 L0.283378518,9.56608648 L0.356306088,9.60896987 L0.356306088,9.6174076 L0.282386673,9.66176661 Z M0.363407791,9.61314587 L12.2906099,16.6266646 L27.6413216,7.54463629 L15.7463491,0.38184831 L0.363407791,9.61314587 Z M27.6449158,7.54250986 L27.7192562,7.49852742 L27.7462427,7.54627932 L27.7201201,7.59208632 L27.6449158,7.54680057 L27.6449158,7.54250986 Z"></path>
+                                </g>
+                                <polygon id="Rectangle-6" fill="#D4D9DC" points="0.0803790357 9.76643286 0.0803790357 9.46172147 12.3238221 16.6043239 12.2920021 16.9457627"></polygon>
+                                <polygon id="Rectangle" fill="#D8D8D8" points="12.3027618 16.6025643 27.9249952 7.38209618 27.9249952 7.69421995 12.291077 16.9956683"></polygon>
+                            </g>
+                            <g id="Group-Copy" transform="translate(13.803922, 8.341463) rotate(-180.000000) translate(-13.803922, -8.341463) translate(1.803922, 1.341463)">
+                                <polygon id="Rectangle-6" points="0.0312425627 7.86449986 0.206368008 7.74930424 13.2021506 0.00870576393 23.308938 6.04931185 23.308938 6.34243911 10.3433635 13.9561228"></polygon>
+                                <polygon id="Rectangle-2" fill="#3B3E40" points="10.1320935 9.6789492 19.886625 3.93158897 23.3371544 6.08310236 10.3258899 13.6463386"></polygon>
+                                <g id="Rectangle-3">
+                                    <use fill="#23292F" fill-rule="evenodd" xlink:href="#path-2"></use>
+                                    <path stroke="#232930" stroke-width="0.636363636" d="M3.4916279,6.47134909 L0.949436819,7.83091778 L10.0121234,13.1104347 L9.83197165,9.88189143 L3.4916279,6.47134909 Z"></path>
+                                </g>
+                                <polygon id="Rectangle-4" fill="#1A1F24" points="3.48113118 6.14034681 13.5782461 0.308116959 19.9684753 4.02417618 10.1312683 9.68311892"></polygon>
+                                <polygon id="Rectangle-6" fill="#D4D9DC" points="0.241325739 8.01959121 0.241325739 7.76938105 10.3704312 13.6344448 10.3441062 13.9148133"></polygon>
+                                <polygon id="Rectangle" fill="#D8D8D8" points="10.3530078 13.633 23.2774155 6.06172125 23.4586682 6.19781582 10.3433409 13.9557927"></polygon>
+                            </g>
+                        </g>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

@@ -13,6 +13,8 @@ import rKSM_svg from '@images/r_ksm.svg';
 import selected_rKSM_svg from '@images/selected_r_ksm.svg'
 import rATOM_svg from '@images/r_atom.svg';
 import selected_rATOM_svg from '@images/selected_r_atom.svg'
+import rPool_svg from '@images/r_pool.svg';
+import selected_rPool_svg from '@images/selected_r_pool.svg'
 import {isdev} from '../../config/index'
 
 import './index.scss'
@@ -24,6 +26,12 @@ const siderData=[
         text:"rAsset", 
         urlKeywords:'/rAsset',
         url:"/rAsset/native"
+    },{
+        icon:rPool_svg,
+        selectedIcon:selected_rPool_svg,
+        text:"rPool", 
+        urlKeywords:'/rPool',
+        url:"/rPool/home"
     },
     {
         icon:rETH_svg,

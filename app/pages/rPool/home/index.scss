@@ -1,0 +1,76 @@
+.stafi_rpool_home_card{
+    .title{
+        font-size: 20px;
+        font-weight: bold;
+        display: flex;
+        justify-content: space-between;
+        a{
+            font-size: 14px;
+            font-weight: lighter;
+             text-decoration: underline;
+        }
+    }
+    .card_list{
+        padding:20px 0px 30px 0px;
+        border-bottom: 1px solid #3B3B3B;
+        display: flex; 
+    }
+    .table{
+        .row,.head{
+            display: flex; 
+            padding:15px 0px;
+            .col1{
+                width:177px
+            }
+            .col2{
+                width:150px
+            }
+            .col3{
+                width:120px
+            }
+            .col4{
+                width:120px
+            }
+            .col5{
+                width:102px
+            }
+            .col6{
+                flex:1;
+            }
+        }
+        .row{
+            border-bottom: 1px solid #3B3B3B;
+            .col{
+                font-size: 14px;
+            }
+            .col1{
+                font-size: 16px;
+                font-weight: bold;
+            }
+            .col2{
+                >div{
+                    display: flex; 
+                    width:100%;
+                    align-items: center;
+                    >div{
+                        display: inline-block;
+                        min-width: 75px;
+                    }
+                    label{
+                        font-size: 8px;
+                        color:#7C7C7C;
+                    }
+                }
+            }
+        }
+        .head{
+            font-size: 14px;
+            font-weight: bold;
+            color:#7C7C7C;
+        }
+        .table_body{
+            height:270px;
+            overflow: auto;
+        }
+    }
+}
