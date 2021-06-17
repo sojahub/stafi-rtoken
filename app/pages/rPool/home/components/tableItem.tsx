@@ -1,27 +1,50 @@
 import React from 'react';
-import rpool_Icon from '@images/rpool_rfis.svg'
-import GhostButton from '@shared/components/button/ghostButton' 
-export default function Index(){
+
+import GhostButton from '@shared/components/button/ghostButton';
+import poolUniswapIcon from '@images/poolUniswapIcon.png';
+import poolCurveIcon from '@images/poolCurveIcon.svg';
+import poolWrapFiIcon from '@images/poolWrapFiIcon.svg';
+
+type Props={
+  pairIcon:any,
+  pairValue:string,
+  apyList:any[],
+  liquidity:any,
+  slippage:any,
+  poolOn:"Uniswap"|"Curve"|"WrapFi"
+}
+export default function Index(props:Props){
     return <div className="row">
                 <div className="col col1">
-                  <img src={rpool_Icon} />   rFIS/ETH
+                  <img src={props.pairIcon} /> {props.pairValue}
                 </div>
                 <div className="col col2">
-                   <div><div>+22.12% </div><label>fis</label></div>
-                   <div><div>+22.12% </div><label>fis</label></div>
+                  {
+                    props.apyList.map((item)=>{
+                      return <div><div>{item.value} </div><label>{item.unit}</label></div>
+                    })
+                  } 
                 </div>
                 <div className="col  col3">
-                $12328.12
+                ${props.liquidity}
                 </div>
                 <div className="col col4">
-                $12328.12
+                ${props.slippage}
                 </div>
                 <div className="col col5">
-                Uniswap
+                 {props.poolOn=="Uniswap" && <img src={poolUniswapIcon} />} 
+                 {props.poolOn=="Curve" && <img src={poolCurveIcon} />} 
+                 {props.poolOn=="WrapFi" && <img src={poolWrapFiIcon} />} 
+                  {props.poolOn}
                 </div>
                 <div className="col col6"> 
                     <GhostButton> Add liquidity</GhostButton>
                     <GhostButton> Stake</GhostButton>
+                    {/* <TradePopover data={[{label:"Curve",url:"https://curve.fi/reth"},{label:"Uniswap",url:props.trade}]}>
+        <GhostButton>
+        Stake<img className="dow_svg" src={dow_svg}/>
+        </GhostButton>
+          </TradePopover> */}
                 </div>
             </div>
 }

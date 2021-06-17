@@ -3,7 +3,8 @@ import Card from '@components/card/index';
 import A from '@shared/components/button/a';
 import CardItem from './components/cardItem';
 import TableHead from './components/tableHead';
-import TableItem from './components/tableItem'
+import TableItem from './components/tableItem';
+import rpool_rfis_Icon from '@images/rpool_rfis.svg'
 import './index.scss';
 
 export default function Inde(props:any){ 
@@ -21,14 +22,46 @@ export default function Inde(props:any){
             
             <TableHead/>
             <div className="table_body">
-            <TableItem/>
-            <TableItem/>
-            <TableItem/>
-            <TableItem/>
-            <TableItem/>
-            <TableItem/>
-            <TableItem/>
-            <TableItem/>
+            <TableItem pairIcon={rpool_rfis_Icon} pairValue="pairValue" apyList={[
+              {
+                value:"+22.12%",
+                unit:"fis"
+              },{
+                value:"+22.12%",
+                unit:"fis"
+              }
+            ]}  liquidity="12328.12" slippage="12328.12" poolOn="Uniswap"/>
+
+<TableItem pairIcon={rpool_rfis_Icon} pairValue="pairValue" apyList={[
+              {
+                value:"+22.12%",
+                unit:"fis"
+              },{
+                value:"+22.12%",
+                unit:"fis"
+              }
+            ]}  liquidity="12328.12" slippage="12328.12" poolOn="Curve"/>
+
+<TableItem pairIcon={rpool_rfis_Icon} pairValue="pairValue" apyList={[
+              {
+                value:"+22.12%",
+                unit:"fis"
+              },{
+                value:"+22.12%",
+                unit:"fis"
+              }
+            ]}  liquidity="12328.12" slippage="12328.12" poolOn="WrapFi"/>
+
+<TableItem pairIcon={rpool_rfis_Icon} pairValue="pairValue" apyList={[
+              {
+                value:"+22.12%",
+                unit:"fis"
+              },{
+                value:"+22.12%",
+                unit:"fis"
+              }
+            ]}  liquidity="12328.12" slippage="12328.12" poolOn="WrapFi"/>
+            
             </div>
       </div>
   </Card>

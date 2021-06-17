@@ -32,10 +32,21 @@
                 width:120px
             }
             .col5{
-                width:102px
+                width:102px;
+                img{
+                    width:14px;
+                    height:14px;
+                    margin-right: 6px;
+                }
             }
             .col6{
                 flex:1;
+                button{
+                    margin-right: 10px;
+                }
+                >button:last-child{
+                    margin-right: 0px;
+                }
             }
         }
         .row{
