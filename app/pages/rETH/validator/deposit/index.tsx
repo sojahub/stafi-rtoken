@@ -47,7 +47,7 @@ export default function Index(props:any){
             </div> 
        </div>
        <div className="btns reth_btns">
-       <Button disabled={ethAmount==0}  onClick={()=>{ 
+       <Button  onClick={()=>{ 
            setVisible(true);
            dispatch(handleDeposit(ethAmount,(e:string)=>{ 
                 setVisible(false);
