@@ -503,10 +503,10 @@ export const handleDeposit=(ethAmount:Number,cb?:Function):AppThunk=>async (disp
   });
   const amount = web3.utils.toWei(ethAmount.toString());
 
-  setLoading(true);
+ dispatch(setLoading(true));
  try {  
     const result=await contract.methods.deposit().send({value: amount})  
-    setLoading(false); 
+    dispatch(setLoading(false)); 
     if (result && result.status) {
       message.success("Deposit successfully");
       dispatch(add_ETH_validator_deposit_Notice(stafi_uuid(),ethAmount.toString(),noticeStatus.Confirmed))
@@ -518,7 +518,7 @@ export const handleDeposit=(ethAmount:Number,cb?:Function):AppThunk=>async (disp
     }
    
   } catch (error) {
-    setLoading(false); 
+    dispatch(setLoading(false)); 
     message.error(error.message); 
   } 
 }
