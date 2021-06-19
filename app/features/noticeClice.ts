@@ -342,8 +342,10 @@ export const checkAll_minting=(list:any):AppThunk=>(dispatch,getState)=>{
   }
 }
 export const notice_text=(item:any)=>{
-  if(item.subType==noticesubType.Stake){
+  if(item.type==noticeType.Staker && item.subType==noticesubType.Stake){
     return `Staked ${item.amount} ${item.rSymbol.toUpperCase()} from your Wallet to StaFi Validator Pool Contract`
+  }else if(item.type==noticeType.Validator && item.subType==noticesubType.Stake){
+    return `Your pool contract is staked`
   }else if(item.subType==noticesubType.Unbond){
     return `Unbond ${item.amount} ${item.rSymbol.toUpperCase()} from Pool Contract, it will be completed around ${moment(item.dateTime).add(config.unboundAroundDays(item.rSymbol), 'days').format("MM.DD")}`
   }else if(item.subType==noticesubType.Withdraw){
@@ -354,6 +356,10 @@ export const notice_text=(item:any)=>{
     }else{
       return `Swap ${item.amount}  ERC20 ${item.rSymbol} to Native, it may take 2~10 minutes to arrive`
     } 
+  }else if(item.subType==noticesubType.Deposit){
+    return `Deposit ${item.amount} ETH to register as a validator`;
+  }else if(item.subType==noticesubType.Offboard){
+    return `Validator Offboarded`
   }
   return "";
 }

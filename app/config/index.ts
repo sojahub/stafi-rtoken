@@ -191,6 +191,7 @@ export default {
   },
   uniswap:{
     rethURL:"https://app.uniswap.org/#/swap?inputCurrency=0x9559aaa82d9649c7a7b220e7c461d2e74c9a3593&outputCurrency=ETH",
+    rethURL_pair:"https://v2.info.uniswap.org/pair/0x5f49da032defe35489ddb205f3dc66d8a76318b3",
     rfisURL:"https://app.uniswap.org/#/swap?inputCurrency=ETH&outputCurrency=0xc82eb6dea0c93edb8b697b89ad1b13d19469d635",
     fisURL:"https://app.uniswap.org/#/swap?inputCurrency=ETH&outputCurrency=0xef3a930e1ffffacd2fc13434ac81bd278b0ecc8d",
     rdotURL:"https://app.uniswap.org/#/swap?inputCurrency=ETH&outputCurrency=0x505f5a4ff10985fe9f93f2ae3501da5fe665f08a",

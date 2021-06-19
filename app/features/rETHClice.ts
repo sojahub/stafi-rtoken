@@ -9,8 +9,10 @@ import { message } from 'antd';
 import { keccakAsHex } from '@polkadot/util-crypto';  
 import {getAssetBalanceAll,getAssetBalance} from './ETHClice';
 import {setLoading} from './globalClice'; 
+import {noticeType,noticesubType,add_Notice,noticeStatus} from './noticeClice'
 import StringUtil from '@util/stringUtil' 
-
+import {Symbol} from '@keyring/defaults';
+import {stafi_uuid} from '@util/common'
 
 const ethServer=new EthServer();
 const rETHClice = createSlice({
@@ -443,17 +445,19 @@ export const send=(value:Number,cb?:Function):AppThunk=>async (dispatch,getState
   const amount = web3.utils.toWei(value.toString()); 
  
   try { 
-  const result =await contract.methods.deposit().send({value: amount}) 
-  dispatch(setLoading(false))
+    const result =await contract.methods.deposit().send({value: amount}) 
+    dispatch(setLoading(false))
     if (result && result.status) { 
       message.success("Deposit successfully");
+      dispatch(add_ETH_Staker_stake_Notice(stafi_uuid(),value.toString(),noticeStatus.Confirmed));
       cb && cb();
     } else { 
-      message.success("Error! Please try again");
+      dispatch(add_ETH_Staker_stake_Notice(stafi_uuid(),value.toString(),noticeStatus.Error));
+      message.error("Error! Please try again");
     }
   } catch (error) {
-    dispatch(setLoading(false))
-    message.success(error.message);
+    dispatch(setLoading(false));  
+    message.error(error.message);
   } 
 }
 
@@ -500,19 +504,21 @@ export const handleDeposit=(ethAmount:Number,cb?:Function):AppThunk=>async (disp
   const amount = web3.utils.toWei(ethAmount.toString());
 
   setLoading(true);
- try { 
-    const result=await contract.methods.deposit().send({value: amount}) 
+ try {  
+    const result=await contract.methods.deposit().send({value: amount})  
     setLoading(false); 
     if (result && result.status) {
       message.success("Deposit successfully");
+      dispatch(add_ETH_validator_deposit_Notice(stafi_uuid(),ethAmount.toString(),noticeStatus.Confirmed))
       cb && cb("ok");
     } else {
       message.error("Error! Please try again"); 
+      dispatch(add_ETH_validator_deposit_Notice(stafi_uuid(),ethAmount.toString(),noticeStatus.Error))
       cb && cb("error");
     }
    
   } catch (error) {
-    setLoading(false);
+    setLoading(false); 
     message.error(error.message); 
   } 
 }
@@ -599,8 +605,7 @@ export const handleOffboard=(cb?:Function):AppThunk=>async (dispatch,getState)=>
   const currentPoolAddress=getState().rETHModule.poolAddress;
  
   const currentAddress=getState().rETHModule.ethAccount.address;
-  const currentPoolStatus=getState().rETHModule.currentPoolStatus;
-  console.log(currentPoolAddress,currentAddress,currentPoolStatus)
+  const currentPoolStatus=getState().rETHModule.currentPoolStatus; 
   let poolContract = new web3.eth.Contract(ethServer.getStafiStakingPoolAbi(), currentPoolAddress, {
     from: currentAddress
   }); 
@@ -611,9 +616,11 @@ export const handleOffboard=(cb?:Function):AppThunk=>async (dispatch,getState)=>
         dispatch(setLoading(false)); 
         if (result && result.status) { 
           message.success('Offboard successfully')
+          dispatch(add_ETH_validator_offboard_Notice(stafi_uuid(),noticeStatus.Confirmed))
           cb && cb()
           dispatch(reloadData())
         } else { 
+          dispatch(add_ETH_validator_offboard_Notice(stafi_uuid(),noticeStatus.Error))
           message.error('Error! Please try again')
         } 
     } catch (error) {
@@ -678,9 +685,11 @@ export const handleStake=(validatorKeys:any[],cb?:Function):AppThunk=>async (dis
     if (result && result.status) { 
       localStorage_poolPubKey.setPoolPubKey(currentPoolAddress, pubkey);
       message.success('Stake successfully');
+      dispatch(add_ETH_validator_stake_Notice(stafi_uuid(),noticeStatus.Confirmed))
       cb && cb("ok");
     } else {
       message.error('Error! Please try again');
+      dispatch(add_ETH_validator_stake_Notice(stafi_uuid(),noticeStatus.Error))
       cb && cb("error");
     }
      
@@ -998,4 +1007,25 @@ export const rewardDetails= [
     reward: '--'
   }
 ] 
+
+
+
+//validator-Deposit
+
+const add_ETH_Staker_stake_Notice=(uuid:string,amount:string,status:string,subData?:any):AppThunk=>async (dispatch,getState)=>{
+  dispatch(add_ETH_Notice(uuid,noticeType.Staker,noticesubType.Stake,amount,status,subData))
+}
+const add_ETH_validator_deposit_Notice=(uuid:string,amount:string,status:string,subData?:any):AppThunk=>async (dispatch,getState)=>{
+  dispatch(add_ETH_Notice(uuid,noticeType.Validator,noticesubType.Deposit,amount,status,subData))
+}
+const add_ETH_validator_stake_Notice=(uuid:string,status:string,subData?:any):AppThunk=>async (dispatch,getState)=>{
+  dispatch(add_ETH_Notice(uuid,noticeType.Validator,noticesubType.Stake,"",status,subData))
+} 
+const add_ETH_validator_offboard_Notice=(uuid:string,status:string,subData?:any):AppThunk=>async (dispatch,getState)=>{
+  dispatch(add_ETH_Notice(uuid,noticeType.Validator,noticesubType.Offboard,"",status,subData))
+}
+ 
+const add_ETH_Notice=(uuid:string,type:string,subType:string,content:string,status:string,subData?:any):AppThunk=>async (dispatch,getState)=>{
+    dispatch(add_Notice(uuid,Symbol.Eth,type,subType,content,status,subData))
+}
 export default rETHClice.reducer;

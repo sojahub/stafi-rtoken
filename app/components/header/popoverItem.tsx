@@ -1,6 +1,6 @@
 import React from 'react';
 import {Empty} from 'antd'; 
-import { noticesubType,notice_text } from '@features/noticeClice'; 
+import { noticesubType,noticeType,notice_text } from '@features/noticeClice'; 
 type Props={ 
   data?:any,
   onClick?:Function,
@@ -24,8 +24,11 @@ export default function Index(props:Props){
     <div>
       {props.data.dateTime}
     </div>
-    <a className={`${props.data.status} ${props.data.subType}`} onClick={()=>{ 
-      props.data.subType==noticesubType.Stake && props.onClick && props.onClick();
+    <a className={`${props.data.status} ${props.data.rSymbol!="eth" && props.data.subType}`} onClick={()=>{ 
+      
+      if(props.data.rSymbol!="eth" && props.data.type==noticeType.Staker && props.data.subType==noticesubType.Stake) {
+        props.onClick && props.onClick();
+      }
     }}>
       {props.data.status}
     </a>
