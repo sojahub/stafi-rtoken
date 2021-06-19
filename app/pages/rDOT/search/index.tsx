@@ -2,8 +2,7 @@ import React from 'react';
 import {Form, message} from 'antd';
 import {useDispatch} from 'react-redux';
 import Input from '@shared/components/input/index';
-import Button from '@shared/components/button/button';
-import Select,{Option} from '@shared/components/select';
+import Button from '@shared/components/button/button'; 
 import leftArrowSvg from '@images/left_arrow.svg';
 import {onProceed} from '@features/rDOTClice'
 import config from '@config/index'
