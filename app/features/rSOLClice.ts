@@ -208,23 +208,24 @@ export const transfer =
       return;
     }
 
+    dispatch(
+      setProcessSending({
+        brocasting: processStatus.loading,
+        packing: processStatus.default,
+        finalizing: processStatus.default,
+      }),
+    );
+    dispatch(setProcessType(rSymbol.Sol));
+    dispatch(setProcessSlider(true));
+
     try {
+      await timeout(3000);
+      message.info('Please approve transaction in sollet wallet.');
+
       const result = await solServer.sendTransaction(amount, selectedPool.address);
       console.log('solana sendTransaction txhash: ', result.txHash);
 
       if (result.blockHash && result.txHash) {
-        dispatch(
-          setProcessSending({
-            brocasting: processStatus.loading,
-            packing: processStatus.default,
-            finalizing: processStatus.default,
-          }),
-        );
-        dispatch(setProcessType(rSymbol.Sol));
-        dispatch(setProcessSlider(true));
-
-        await timeout(3000);
-
         dispatch(
           setProcessSending({
             brocasting: processStatus.success,

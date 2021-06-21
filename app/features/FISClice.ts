@@ -338,7 +338,8 @@ export const stakingSignature = async (address: any, txHash: string) => {
 
 export const solSignature = async (address: any, fisAddress: string) => {
   message.info('Sending succeeded, proceeding signature.');
-  await timeout(1000);
+  await timeout(3000);
+  message.info('Please approve sign request in sollet wallet.');
 
   const fisKeyring = keyringInstance.init(Symbol.Fis);
   const solServer = new SolServer();
