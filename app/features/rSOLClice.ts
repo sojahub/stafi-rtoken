@@ -14,7 +14,7 @@ import { AppThunk } from '../store';
 import CommonClice from './commonClice';
 import { bondStates, bound, fisUnbond, rTokenSeries_bondStates } from './FISClice';
 import { initProcess, processStatus, setProcessSending, setProcessSlider, setProcessType } from './globalClice';
-import { add_Notice, findUuid, noticeStatus, noticesubType, noticeType } from './noticeClice';
+import { add_Notice, findUuidWithoutBlockhash, noticeStatus, noticesubType, noticeType } from './noticeClice';
 
 const commonClice = new CommonClice();
 const solServer = new SolServer();
@@ -215,6 +215,8 @@ export const transfer =
       dispatch(setProcessSlider(true));
 
       const result = await solServer.sendTransaction(amount, selectedPool.address);
+
+      console.log('solana sendTransaction txhash: ', result.txHash);
 
       if (result.blockHash && result.txHash) {
         dispatch(
@@ -429,7 +431,7 @@ export const continueProcess = (): AppThunk => async (dispatch, getState) => {
             dispatch(setStakeHash(null));
           });
         } else {
-          dispatch(getBlock(stakeHash.blockHash, stakeHash.txHash, stakeHash.notice_uuid));
+          dispatch(getBlock(stakeHash.txHash, stakeHash.notice_uuid));
         }
       }),
     );
@@ -437,12 +439,12 @@ export const continueProcess = (): AppThunk => async (dispatch, getState) => {
 };
 
 export const onProceed =
-  (blockHash: string, txHash: string, cb?: Function): AppThunk =>
+  (txHash: string, cb?: Function): AppThunk =>
   async (dispatch, getstate) => {
-    const noticeData = findUuid(getstate().noticeModule.noticeData, txHash, blockHash);
+    const noticeData = findUuidWithoutBlockhash(getstate().noticeModule.noticeData, txHash);
 
     let bondSuccessParamArr: any[] = [];
-    bondSuccessParamArr.push(blockHash);
+    // bondSuccessParamArr.push(blockHash);
     bondSuccessParamArr.push(txHash);
     let statusObj = {
       num: 0,
@@ -457,7 +459,7 @@ export const onProceed =
           noticeData && dispatch(add_SOL_stake_Notice(noticeData.uuid, noticeData.amount, noticeStatus.Confirmed));
         } else if (e == 'failure' || e == 'stakingFailure') {
           dispatch(
-            getBlock(blockHash, txHash, noticeData ? noticeData.uuid : null, () => {
+            getBlock(txHash, noticeData ? noticeData.uuid : null, () => {
               cb && cb('successful');
             }),
           );
@@ -489,21 +491,21 @@ export const onProceed =
   };
 
 export const getBlock =
-  (blockHash: string, txHash: string, uuid?: string, cb?: Function): AppThunk =>
+  (txHash: string, uuid?: string, cb?: Function): AppThunk =>
   async (dispatch, getState) => {
     try {
       const address = getState().rSOLModule.solAccount.address;
       const validPools = getState().rSOLModule.validPools;
 
       const solServer = new SolServer();
-      const { amount, poolAddress } = await solServer.getTransactionDetail(
+      const { amount, poolAddress, blockhash } = await solServer.getTransactionDetail(
         getState().rSOLModule.solAccount.address,
         txHash,
       );
 
-      console.log(`transaction info: ${amount} ${poolAddress}`);
+      console.log(`transaction info: ${amount} ${poolAddress} ${blockhash}`);
 
-      if (!amount || !poolAddress) {
+      if (!amount || !poolAddress || !blockhash) {
         message.error('Transaction record not found!');
         return;
       }
@@ -543,7 +545,7 @@ export const getBlock =
           staking: {
             amount: NumberUtil.fisAmountToHuman(amount),
             txHash,
-            blockHash,
+            blockhash,
             address,
             type: rSymbol.Sol,
             poolAddress: poolData.poolPubkey,
@@ -551,7 +553,7 @@ export const getBlock =
         }),
       );
       dispatch(
-        bound(address, txHash, blockHash, amount, poolData.poolPubkey, rSymbol.Sol, (r: string) => {
+        bound(address, txHash, blockhash, amount, poolData.poolPubkey, rSymbol.Sol, (r: string) => {
           if (r == 'loading') {
             uuid &&
               dispatch(

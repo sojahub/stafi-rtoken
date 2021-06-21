@@ -1,11 +1,10 @@
+import { checkAll_minting, readNotice, setProcess } from '@features/noticeClice';
+import { Symbol } from '@keyring/defaults';
+import { Popover } from 'antd';
 import React from 'react';
-import {useDispatch, useSelector} from 'react-redux';
-import { Popover} from 'antd';
-import Item from './popoverItem';
-import {setProcessSlider} from '@features/globalClice' 
-import {readNotice,setProcess,checkAll_minting} from '@features/noticeClice';
-import {Symbol} from '@keyring/defaults'
+import { useDispatch, useSelector } from 'react-redux';
 import './popover.scss';
+import Item from './popoverItem';
 
 type Props={
   children:any,
@@ -47,7 +46,7 @@ export default function Index(props:Props){
   </> )
    return <Popover onVisibleChange={(e)=>{
     if(e){
-      dispatch(checkAll_minting(data.datas))
+      data && dispatch(checkAll_minting(data.datas));
       dispatch(readNotice({}));
     }
     

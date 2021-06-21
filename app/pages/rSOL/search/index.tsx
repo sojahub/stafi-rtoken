@@ -19,10 +19,6 @@ export default function Index(props: any) {
       message.error('Please enter txhash');
       return;
     }
-    if (!values.blockHash) {
-      message.error('Please enter blockHash');
-      return;
-    }
 
     const wallet = solServer.getWallet();
     if (!wallet.connected) {
@@ -38,7 +34,7 @@ export default function Index(props: any) {
 
   const startRecovery = (values: any) => {
     dispatch(
-      onProceed(values.blockHash, values.txHash, () => {
+      onProceed(values.txHash, () => {
         props.history.push('/rSOL/staker/info');
       }),
     );
@@ -73,18 +69,6 @@ export default function Index(props: any) {
             </div>
           }
           name='txHash'>
-          <Input placeholder='' />
-        </Form.Item>
-        <Form.Item
-          label={
-            <div className='item_title'>
-              <label>BlockHash</label>
-              <a href={config.txHashAndBlockhashURl.solURL} target='_blank'>
-                How to get BlockHash
-              </a>
-            </div>
-          }
-          name='blockHash'>
           <Input placeholder='' />
         </Form.Item>
         <div className='btns'>

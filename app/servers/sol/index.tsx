@@ -42,14 +42,7 @@ export default class ExtensionDapp extends SolKeyring {
       let signed = await wallet.signTransaction(transaction);
       let txid = await connection.sendRawTransaction(signed.serialize());
       const result = await connection.confirmTransaction(txid);
-
-      console.log('txid: ', txid);
-      console.log('blockhash: ', blockhash);
-      console.log('result: ', result);
-
       const block = await connection.getBlock(result.context.slot);
-      console.log('block: ', block);
-
       return {
         blockHash: block.blockhash,
         txHash: txid,
@@ -62,20 +55,23 @@ export default class ExtensionDapp extends SolKeyring {
 
   getTransactionDetail = async (address: string, txHash: string) => {
     const connection = new Connection(config.solRpcApi(), { wsEndpoint: config.solRpcWs() });
-    const confirmedSignatures = (await connection.getConfirmedSignaturesForAddress2(new PublicKey(address)))
-      .filter((x) => x.signature == txHash)
-      .map((x) => x.signature);
-    const confirmedTxs = await connection.getParsedConfirmedTransactions(confirmedSignatures);
-    if (confirmedTxs.length == 1) {
-      try {
-        const lamports = this.getTxLamports(confirmedTxs[0].transaction.message.instructions[0]);
-        const destination = this.getTxDestination(confirmedTxs[0].transaction.message.instructions[0]);
-        return {
-          amount: lamports,
-          poolAddress: destination,
-        };
-      } catch (error) {}
+    const parsedTx = await connection.getParsedConfirmedTransaction(txHash);
+
+    if (!parsedTx || !parsedTx.slot) {
+      return {};
     }
+    console.log(`testTx: ${JSON.stringify(parsedTx)}`);
+    const block = await connection.getBlock(parsedTx.slot);
+
+    try {
+      const lamports = this.getTxLamports(parsedTx.transaction.message.instructions[0]);
+      const destination = this.getTxDestination(parsedTx.transaction.message.instructions[0]);
+      return {
+        amount: lamports,
+        poolAddress: destination,
+        blockhash: block.blockhash,
+      };
+    } catch (error) {}
     return {};
   };
 

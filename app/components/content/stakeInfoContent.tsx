@@ -109,7 +109,7 @@ export default function Index(props: Props) {
           {props.type == 'rDOT' && ` Updated every 24 hours`}
           {props.type == 'rKSM' && ` Updated every 6 hours `}
           {props.type == 'rATOM' && ` Updated every 24 hours `}
-          {props.type == 'rSOL' && ` Updated every 24 hours `}
+          {props.type == 'rSOL' && ` Updated every 66 hours `}
         </div>
       </div>
       <Modal
