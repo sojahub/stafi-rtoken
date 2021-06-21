@@ -2,6 +2,7 @@ import doubt from '@images/doubt.svg';
 import rATOM from '@images/selected_rATOM.svg';
 import rDOT from '@images/selected_rDOT.svg';
 import rKSM from '@images/selected_rKSM.svg';
+import rSOL from '@images/selected_r_sol.svg';
 import Button from '@shared/components/button/button';
 import Input from '@shared/components/input/amountInput';
 import { Tooltip } from 'antd';
@@ -39,6 +40,8 @@ export default function Index(props: Props) {
       return rDOT;
     } else if (props.type == 'rATOM') {
       return rATOM;
+    } else if (props.type == 'rSOL') {
+      return rSOL;
     }
   };
   const haswarn = useMemo(() => {
@@ -50,6 +53,7 @@ export default function Index(props: Props) {
         {props.type == 'rKSM' && `Stake KSM`}
         {props.type == 'rDOT' && `Stake DOT`}
         {props.type == 'rATOM' && `Stake ATOM`}
+        {props.type == 'rSOL' && `Stake SOL`}
       </label>
       {haswarn && <div className='warn'>Unable to stake, system is waiting for matching validators</div>}
       <div className={`input_panel dot_input_panel ${haswarn && 'showWarn'}`}>
@@ -75,6 +79,8 @@ export default function Index(props: Props) {
             `${isNaN(props.totalStakedToken) ? '--' : props.totalStakedToken} DOT is staked via rDOT `}
           {props.type == 'rATOM' &&
             `${isNaN(props.totalStakedToken) ? '--' : props.totalStakedToken} ATOM is staked via rATOM `}
+          {props.type == 'rSOL' &&
+            `${isNaN(props.totalStakedToken) ? '--' : props.totalStakedToken} SOL is staked via rSOL `}
           {/* <A>stats</A> */}
         </div>
       </div>
