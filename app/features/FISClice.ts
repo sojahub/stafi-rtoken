@@ -338,7 +338,7 @@ export const stakingSignature = async (address: any, txHash: string) => {
 
 export const solSignature = async (address: any, fisAddress: string) => {
   message.info('Sending succeeded, proceeding signature.');
-  await timeout(5000);
+  await timeout(1000);
 
   const fisKeyring = keyringInstance.init(Symbol.Fis);
   const solServer = new SolServer();
@@ -347,6 +347,10 @@ export const solSignature = async (address: any, fisAddress: string) => {
   // let { signature } = await solServer.getWallet().sign(new TextEncoder().encode(fisAddress), 'utf8');
   let { signature } = await solServer.getWallet().sign(fisKeyring.decodeAddress(fisAddress), 'utf8');
   // return new TextDecoder().decode(signature);
+  console.log('signature: ', signature);
+  if (!signature) {
+    return null;
+  }
   return u8aToHex(signature);
 };
 
@@ -362,6 +366,13 @@ export const bound =
   ): AppThunk =>
   async (dispatch, getState) => {
     try {
+      dispatch(
+        setProcessStaking({
+          brocasting: processStatus.loading,
+          packing: processStatus.default,
+          finalizing: processStatus.default,
+        }),
+      );
       let fisAddress = getState().FISModule.fisAccount.address;
       const keyringInstance = keyring.init(Symbol.Fis);
       let signature = '';
@@ -377,11 +388,7 @@ export const bound =
         message.info('Sending succeeded, proceeding staking');
       } else if (type == rSymbol.Sol) {
         signature = await solSignature(address, fisAddress);
-        // pubkey = getState().rSOLModule.solAccount.address;
         const solKeyring = keyring.init(Symbol.Sol);
-        // pubkey = u8aToHex(solKeyring.decodeAddress(getState().rSOLModule.solAccount.address));
-        // blockhash = u8aToHex(solKeyring.decodeAddress(blockhash));
-        // txhash = u8aToHex(solKeyring.decodeAddress(txhash));
         pubkey = u8aToHex(new PublicKey(getState().rSOLModule.solAccount.address).toBytes());
 
         console.log('blockhash: ', blockhash);
@@ -537,7 +544,7 @@ export const bound =
       }
     } catch (e) {
       dispatch(setLoading(false));
-      if (e == 'Error: Cancelled') {
+      if (e == 'Error: Cancelled' || e == 'Error: Transaction cancelled') {
         message.error('Cancelled');
         dispatch(
           setProcessStaking({
