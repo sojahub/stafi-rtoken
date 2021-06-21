@@ -22,7 +22,7 @@ type Props = {
   validPools?: any[];
   totalStakedToken?: any;
   bondFees?: any;
-  type: 'rDOT' | 'rETH' | 'rFIS' | 'rKSM' | 'rATOM';
+  type: 'rDOT' | 'rETH' | 'rFIS' | 'rKSM' | 'rATOM' | 'rSOL';
 };
 export default function Index(props: Props) {
   const { bondSwitch, processSlider } = useSelector((state: any) => {

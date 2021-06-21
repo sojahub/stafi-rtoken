@@ -1,4 +1,6 @@
 import { rSymbol, Symbol } from '@keyring/defaults';
+import { clusterApiUrl } from '@solana/web3.js';
+
 export const isdev = () => {
   let host = window.location.host;
   var local = /192\.168\./.test(host) || /127\.0\./.test(host) || /localhost/.test(host);
@@ -26,6 +28,26 @@ export default {
     } else {
       return 'wss://kusama-test-rpc.stafi.io';
     }
+  },
+  solRpcApi: () => {
+    if (process.env.NODE_ENV == 'production' && !isdev()) {
+      return clusterApiUrl('mainnet-beta');
+    } else {
+      // return clusterApiUrl('devnet');
+      return 'https://solana-dev-rpc.wetez.io';
+    }
+  },
+  solRpcWs: () => {
+    if (process.env.NODE_ENV == 'production' && !isdev()) {
+      // return clusterApiUrl('mainnet-beta');
+      return '';
+    } else {
+      // return clusterApiUrl('devnet');
+      return 'wss://solana-dev-wss.wetez.io';
+    }
+  },
+  solWalletProviderUrl: () => {
+    return 'https://www.sollet.io';
   },
   api: () => {
     if (process.env.NODE_ENV == 'production' && !isdev()) {

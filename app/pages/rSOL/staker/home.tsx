@@ -1,16 +1,19 @@
 import Content from '@components/content/stakeContent_DOT';
 import { setProcessSlider } from '@features/globalClice';
 import { balancesAll, rTokenLedger, rTokenRate, transfer } from '@features/rSOLClice';
+import SolServer from '@servers/sol/index';
 import { ratioToAmount } from '@util/common';
 import NumberUtil from '@util/numberUtil';
 import { message } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
+const solServer = new SolServer();
+
 export default function Index(props: any) {
   const dispatch = useDispatch();
-
   const [amount, setAmount] = useState<any>();
+
   useEffect(() => {
     dispatch(balancesAll());
     dispatch(rTokenRate());
@@ -33,6 +36,38 @@ export default function Index(props: any) {
     },
   );
 
+  const clickStake = () => {
+    if (amount) {
+      if (fisCompare) {
+        message.error('No enough FIS to pay for the fee');
+        return;
+      }
+
+      const wallet = solServer.getWallet();
+      if (!wallet.connected) {
+        wallet.connect().then((res) => {
+          // console.log('connect result: ', res);
+          if (res) {
+            startStake();
+          }
+        });
+      } else {
+        startStake();
+      }
+    } else {
+      message.error('Please enter the amount');
+    }
+  };
+
+  const startStake = () => {
+    dispatch(
+      transfer(amount, () => {
+        dispatch(setProcessSlider(false));
+        props.history.push('/rSOL/staker/info');
+      }),
+    );
+  };
+
   return (
     <Content
       amount={amount}
@@ -49,22 +84,7 @@ export default function Index(props: any) {
       validPools={validPools}
       bondFees={NumberUtil.fisAmountToHuman(bondFees) || '--'}
       totalStakedToken={NumberUtil.handleFisAmountToFixed(totalIssuance * ratio)}
-      onStakeClick={() => {
-        if (amount) {
-          if (fisCompare) {
-            message.error('No enough FIS to pay for the fee');
-            return;
-          }
-          dispatch(
-            transfer(amount, () => {
-              dispatch(setProcessSlider(false));
-              props.history.push('/rSOL/staker/info');
-            }),
-          );
-        } else {
-          message.error('Please enter the amount');
-        }
-      }}
+      onStakeClick={clickStake}
       type='rSOL'></Content>
   );
 }

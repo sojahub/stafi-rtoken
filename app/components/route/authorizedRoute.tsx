@@ -39,12 +39,12 @@ const account = (type: string) => {
     case Symbol.Fis:
       return getLocalStorageItem(Keys.FisAccountKey);
     case Symbol.Sol:
-      if (getLocalStorageItem(Keys.SolAccountKey) == null && getLocalStorageItem(Keys.FisAccountKey) == null) {
+      if (getLocalStorageItem(Keys.SolAccountKey) == null || getLocalStorageItem(Keys.FisAccountKey) == null) {
         return '/rSOL/home';
       }
-      if (getLocalStorageItem(Keys.SolAccountKey) == null && getLocalStorageItem(Keys.FisAccountKey)) {
-        return '/rSOL/wallet';
-      }
+      // if (getLocalStorageItem(Keys.SolAccountKey) == null && getLocalStorageItem(Keys.FisAccountKey)) {
+      //   return '/rSOL/wallet';
+      // }
       return true;
     default:
       return '/rKSM/home';

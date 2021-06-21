@@ -4,6 +4,7 @@ import { createSlice } from '@reduxjs/toolkit';
 import AtomServer from '@servers/atom/index';
 import keyring from '@servers/index';
 import PolkadotServer from '@servers/polkadot/index';
+import SolServer from '@servers/sol/index';
 import Rpc from '@util/rpc';
 import { message } from 'antd';
 import { AppThunk } from '../store';
@@ -23,6 +24,7 @@ export enum processStatus {
 const polkadotServer = new PolkadotServer();
 
 const atomServer = new AtomServer();
+const solServer = new SolServer();
 export const process = {
   rSymbol: '',
   sending: {
@@ -156,13 +158,22 @@ export const connectAtomjs =
       message.error('Please create an account');
     }
   };
+export const connectSoljs =
+  (cb?: Function): AppThunk =>
+  async (dispatch, getState) => {
+    try {
+      solServer.connectSolJs();
+    } catch (e) {
+      message.error('Please create an account');
+    }
+  };
 export const reloadData =
   (type: Symbol, cb?: Function): AppThunk =>
   async (dispatch, getState) => {
     dispatch(clice(type).reloadData());
     cb && cb();
   };
-const clice = (symbol: string) => {
+export const clice = (symbol: string) => {
   switch (symbol) {
     case Symbol.Xtz:
     case Symbol.Fis:
@@ -237,7 +248,7 @@ export const connectPolkadot_atom =
 export const connectPolkadot_sol =
   (cb?: Function): AppThunk =>
   async (dispatch, getState) => {
-    await dispatch(connectPolkadotjs(Symbol.Sol));
+    // await dispatch(connectPolkadotjs(Symbol.Sol));
     await dispatch(connectPolkadotjs(Symbol.Fis));
     cb && cb();
   };

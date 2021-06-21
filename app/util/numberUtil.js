@@ -1,7 +1,7 @@
-import {rSymbol} from '@keyring/defaults'
+import { rSymbol } from '@keyring/defaults';
 export default {
   // Add floating point numbers
-  floatAdd: function(arg1, arg2) {
+  floatAdd: function (arg1, arg2) {
     var r1, r2, m;
     try {
       r1 = arg1.toString().split('.')[1].length;
@@ -18,7 +18,7 @@ export default {
   },
 
   // Subtraction of floating point numbers
-  floatSub: function(arg1, arg2) {
+  floatSub: function (arg1, arg2) {
     var r1, r2, m, n;
     try {
       r1 = arg1.toString().split('.')[1].length;
@@ -31,13 +31,12 @@ export default {
       r2 = 0;
     }
     m = Math.pow(10, Math.max(r1, r2));
-    
+
     n = r1 >= r2 ? r1 : r2;
     return ((Math.round(arg1 * m) - Math.round(arg2 * m)) / m).toFixed(n);
   },
 
- 
-  floatMul: function(arg1, arg2) {
+  floatMul: function (arg1, arg2) {
     var m = 0,
       s1 = arg1.toString(),
       s2 = arg2.toString();
@@ -47,14 +46,11 @@ export default {
     try {
       m += s2.split('.')[1].length;
     } catch (e) {}
-    return (
-      (Number(s1.replace('.', '')) * Number(s2.replace('.', ''))) /
-      Math.pow(10, m)
-    );
+    return (Number(s1.replace('.', '')) * Number(s2.replace('.', ''))) / Math.pow(10, m);
   },
 
   // Division of floating point numbers
-  floatDiv: function(arg1, arg2) {
+  floatDiv: function (arg1, arg2) {
     var t1 = 0,
       t2 = 0,
       r1,
@@ -107,19 +103,19 @@ export default {
   },
 
   // The return string contains 6 decimal places, including 0
-  handleFisAmountToFixed(amount) { 
-    if(amount=="--"){
-      return "--"
+  handleFisAmountToFixed(amount) {
+    if (amount == '--') {
+      return '--';
     }
-    return (Math.floor(amount * 1000000) / 1000000).toFixed(6) || "--";
+    return (Math.floor(amount * 1000000) / 1000000).toFixed(6) || '--';
   },
 
   // The return string contains 6 decimal places, including 0
-  handleFisRoundToFixed(amount) { 
-    if(amount=="--"){
-      return "--"
+  handleFisRoundToFixed(amount) {
+    if (amount == '--') {
+      return '--';
     }
-    return (Math.round(amount * 100000000) / 100000000).toFixed(6) || "--";
+    return (Math.round(amount * 100000000) / 100000000).toFixed(6) || '--';
   },
 
   // Returns a string containing 6 decimal places, including 0
@@ -136,29 +132,31 @@ export default {
   },
 
   // The return string contains 4 decimal places, including 0
-  handleAtomRoundToFixed(amount) { 
-    if(amount=="--"){
-      return "--"
+  handleAtomRoundToFixed(amount) {
+    if (amount == '--') {
+      return '--';
     }
-    return (Math.round(amount * 1000000) / 1000000).toFixed(4) || "--";
+    return (Math.round(amount * 1000000) / 1000000).toFixed(4) || '--';
   },
 
-  tokenAmountToHuman(amount,symbol){
-   switch(symbol){
-     case rSymbol.Dot:
-      return amount / 10000000000;
-    case rSymbol.Atom:
-      return amount / 1000000;
-     case rSymbol.Fis:
+  tokenAmountToHuman(amount, symbol) {
+    switch (symbol) {
+      case rSymbol.Dot:
+        return amount / 10000000000;
+      case rSymbol.Atom:
+        return amount / 1000000;
+      case rSymbol.Fis:
         return amount / 1000000000000;
-     case rSymbol.Ksm:
+      case rSymbol.Ksm:
         return amount / 1000000000000;
-     default:
+      case rSymbol.Sol:
+        return amount / 1000000000;
+      default:
         return amount / 1000000000000;
-   } 
+    }
   },
-  tokenAmountToChain(amount,symbol) {
-    switch(symbol){
+  tokenAmountToChain(amount, symbol) {
+    switch (symbol) {
       case rSymbol.Dot:
         return Math.round(Number(amount) * 10000000000);
       case rSymbol.Atom:
@@ -167,9 +165,11 @@ export default {
         return Math.round(Number(amount) * 1000000000000);
       case rSymbol.Ksm:
         return Math.round(Number(amount) * 1000000000000);
+      case rSymbol.Sol:
+        return Math.round(Number(amount) * 1000000000);
       default:
         return Math.round(Number(amount) * 1000000000000);
-    }  
+    }
   },
   fisFeeToHuman(fee) {
     return fee / 1000000000;
@@ -181,7 +181,5 @@ export default {
   },
   rTokenRateToHuman(amount) {
     return amount / 1000000000000;
-  },  
-}; 
-
- 
+  },
+};

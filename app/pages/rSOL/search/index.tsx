@@ -1,12 +1,16 @@
 import config from '@config/index';
 import { onProceed } from '@features/rSOLClice';
 import leftArrowSvg from '@images/left_arrow.svg';
+import SolServer from '@servers/sol/index';
 import Button from '@shared/components/button/button';
 import Input from '@shared/components/input/index';
 import { Form, message } from 'antd';
 import React from 'react';
 import { useDispatch } from 'react-redux';
 import './index.scss';
+
+const solServer = new SolServer();
+
 export default function Index(props: any) {
   const [form] = Form.useForm();
   const dispatch = useDispatch();
@@ -19,12 +23,27 @@ export default function Index(props: any) {
       message.error('Please enter blockHash');
       return;
     }
+
+    const wallet = solServer.getWallet();
+    if (!wallet.connected) {
+      wallet.connect().then((res) => {
+        if (res) {
+          startRecovery(values);
+        }
+      });
+    } else {
+      startRecovery(values);
+    }
+  };
+
+  const startRecovery = (values: any) => {
     dispatch(
       onProceed(values.blockHash, values.txHash, () => {
         props.history.push('/rSOL/staker/info');
       }),
     );
   };
+
   return (
     <div className='stafi_search_container'>
       <img

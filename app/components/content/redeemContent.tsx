@@ -1,14 +1,13 @@
-import React, { useState } from 'react'; 
-import {message} from 'antd'
-import LeftContent from './leftContent'  
-import Input from '@shared/components/input/amountInput';
+import leftArrowSvg from '@images/left_arrow.svg';
+import rATOM from '@images/selected_rATOM.svg';
 import rDOT from '@images/selected_rDOT.svg';
 import rKSM from '@images/selected_rKSM.svg';
-import rATOM from '@images/selected_rATOM.svg';
-import leftArrowSvg from '@images/left_arrow.svg'
-import NumberUtil from '@util/numberUtil'
 import Button from '@shared/components/button/button';
-import EditInput from '@shared/components/input/editAddresInput' 
+import Input from '@shared/components/input/amountInput';
+import EditInput from '@shared/components/input/editAddresInput';
+import NumberUtil from '@util/numberUtil';
+import React, { useState } from 'react';
+import LeftContent from './leftContent';
 type Props={
      onRdeemClick?:Function,
      amount?:string,
@@ -19,7 +18,7 @@ type Props={
      address?:string,
      onInputChange?:Function,
      onInputConfirm?:Function,
-     type:"rDOT"|"rETH"|"rFIS"|"rKSM"|"rATOM"
+     type:"rDOT"|"rETH"|"rFIS"|"rKSM"|"rATOM"|"rSOL"
 }
 export default function Index(props:Props){
     const [inputEdit,setInputEdit]=useState(false);

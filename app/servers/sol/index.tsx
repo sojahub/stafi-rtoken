@@ -1,17 +1,92 @@
 import config from '@config/index';
-import { SubstrateKeyring } from '@keyring/SubstrateKeyring';
+import { SolKeyring } from '@keyring/SolKeyring';
 import { ApiPromise, WsProvider } from '@polkadot/api';
 import { web3Accounts, web3Enable } from '@polkadot/extension-dapp';
-import { KeypairType } from '@polkadot/util-crypto/types';
+import Wallet from '@project-serum/sol-wallet-adapter';
+import { Connection, PublicKey, SystemProgram, Transaction } from '@solana/web3.js';
 import Stafi from '../stafi';
 
 let polkadotApi: any = null;
-export default class ExtensionDapp extends SubstrateKeyring {
-  constructor(keypairType: KeypairType = 'sr25519') {
-    super(keypairType);
-    this._ss58_format = 2;
+let wallet = new Wallet(config.solWalletProviderUrl(), config.solRpcApi());
+
+export default class ExtensionDapp extends SolKeyring {
+  constructor() {
+    super();
     this._symbol = 'sol';
   }
+
+  async connectSolJs() {
+    await wallet.connect();
+  }
+
+  getWallet() {
+    return wallet;
+  }
+
+  sendTransaction = async (amount: number, poolAddress: string) => {
+    let transaction = new Transaction().add(
+      SystemProgram.transfer({
+        fromPubkey: wallet.publicKey,
+        // toPubkey: wallet.publicKey,
+        toPubkey: new PublicKey(poolAddress),
+        lamports: amount,
+      }),
+    );
+
+    const connection = new Connection(config.solRpcApi(), { wsEndpoint: config.solRpcWs() });
+    let { blockhash } = await connection.getRecentBlockhash();
+    transaction.recentBlockhash = blockhash;
+    transaction.feePayer = wallet.publicKey;
+
+    try {
+      let signed = await wallet.signTransaction(transaction);
+      let txid = await connection.sendRawTransaction(signed.serialize());
+      const result = await connection.confirmTransaction(txid);
+
+      console.log('txid: ', txid);
+      console.log('blockhash: ', blockhash);
+      console.log('result: ', result);
+
+      const block = await connection.getBlock(result.context.slot);
+      console.log('block: ', block);
+
+      return {
+        blockHash: block.blockhash,
+        txHash: txid,
+      };
+    } catch (e) {
+      console.warn(e);
+    }
+    return {};
+  };
+
+  getTransactionDetail = async (address: string, txHash: string) => {
+    const connection = new Connection(config.solRpcApi(), { wsEndpoint: config.solRpcWs() });
+    const confirmedSignatures = (await connection.getConfirmedSignaturesForAddress2(new PublicKey(address)))
+      .filter((x) => x.signature == txHash)
+      .map((x) => x.signature);
+    const confirmedTxs = await connection.getParsedConfirmedTransactions(confirmedSignatures);
+    if (confirmedTxs.length == 1) {
+      try {
+        const lamports = this.getTxLamports(confirmedTxs[0].transaction.message.instructions[0]);
+        const destination = this.getTxDestination(confirmedTxs[0].transaction.message.instructions[0]);
+        return {
+          amount: lamports,
+          poolAddress: destination,
+        };
+      } catch (error) {}
+    }
+    return {};
+  };
+
+  getTxLamports = (instruction: any) => {
+    return instruction.parsed.info.lamports;
+  };
+
+  getTxDestination = (instruction: any) => {
+    return instruction.parsed.info.destination;
+  };
+
   connectPolkadotjs() {
     const stafi = new Stafi();
     return web3Enable(stafi.getWeb3EnalbeName()).then(() => web3Accounts());

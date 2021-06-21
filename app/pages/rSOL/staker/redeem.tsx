@@ -8,7 +8,7 @@ import {
   query_rBalances_account,
   rTokenRate,
   unbond,
-  unbondFees,
+  unbondFees
 } from '@features/rSOLClice';
 import NumberUtil from '@util/numberUtil';
 import { message } from 'antd';
@@ -16,6 +16,7 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 const commonClice = new CommonClice();
+
 export default function Index(props: any) {
   const dispatch = useDispatch();
   const [recipient, setRecipient] = useState<string>();
@@ -52,6 +53,7 @@ export default function Index(props: any) {
       fisBalance: state.FISModule.fisAccount.balance,
     };
   });
+
   useEffect(() => {
     setRecipient(address);
   }, [address]);
@@ -64,6 +66,18 @@ export default function Index(props: any) {
       dispatch(setLoading(false));
     };
   }, []);
+
+  const startRedeem = () => {
+    dispatch(setLoading(true));
+    setVisible(false);
+    setAmount('');
+    dispatch(
+      unbond(amount, recipient, willAmount, () => {
+        dispatch(setLoading(false));
+      }),
+    );
+  };
+
   return (
     <>
       <Content
@@ -110,14 +124,7 @@ export default function Index(props: any) {
             message.error('No enough FIS to pay for the fee');
             return;
           }
-          dispatch(setLoading(true));
-          setVisible(false);
-          setAmount('');
-          dispatch(
-            unbond(amount, recipient, willAmount, () => {
-              dispatch(setLoading(false));
-            }),
-          );
+          startRedeem();
         }}
         type='rSOL'
       />

@@ -1,19 +1,17 @@
-
-import { KeyringPair, KeyringStruct, KeyringJson } from './types';
+import { hexToU8a, u8aToHex } from '@polkadot/util';
 import {
-  naclKeypairFromSeed as naclFromSeed,
-  schnorrkelKeypairFromSeed as schnorrkelFromSeed,
-  checkAddress, encodeAddress, decodeAddress, mnemonicToMiniSecret, mnemonicValidate
+  checkAddress, decodeAddress, encodeAddress, mnemonicToMiniSecret,
+  mnemonicValidate, naclKeypairFromSeed as naclFromSeed,
+  schnorrkelKeypairFromSeed as schnorrkelFromSeed
 } from '@polkadot/util-crypto';
-import { stringToU8a, u8aToString, u8aToHex, hexToU8a } from '@polkadot/util';
 import { KeypairType } from '@polkadot/util-crypto/types';
 import Base from './Base';
+import { KeyringPair, KeyringStruct } from './types';
 
 const ENTROPY_SIZE = 128;
 const MNEMONIC_TO_SEED_PASSWORD = '';
 
 export class SubstrateKeyring extends Base implements KeyringStruct {
-
   private _type: KeypairType;
 
   protected _ss58_format = 42;
@@ -75,18 +73,17 @@ export class SubstrateKeyring extends Base implements KeyringStruct {
   }
 
   public decodeAddress(key: string): Uint8Array {
+    console.log('decodeAddress: ', key);
     return decodeAddress(key);
   }
 
   public sign(secretKey: string, message: string): any {
     console.log(secretKey, message);
-    return {}
+    return {};
   }
 
   private createAccountFromSeed(seed: Uint8Array): KeyringPair {
-    const keypair = this._type === 'sr25519'
-      ? schnorrkelFromSeed(seed)
-      : naclFromSeed(seed);
+    const keypair = this._type === 'sr25519' ? schnorrkelFromSeed(seed) : naclFromSeed(seed);
 
     const secretKey = u8aToHex(keypair.secretKey);
     const publicKey = u8aToHex(keypair.publicKey);
@@ -96,8 +93,8 @@ export class SubstrateKeyring extends Base implements KeyringStruct {
     return {
       secretKey: secretKey,
       publicKey: publicKey,
-      address: address
-    }
+      address: address,
+    };
   }
 
   private validateSecretKey(secretKey: string): boolean {
@@ -107,7 +104,7 @@ export class SubstrateKeyring extends Base implements KeyringStruct {
     } catch (error) {
       return false;
     }
-    
+
     return len == this._secLength;
   }
 }

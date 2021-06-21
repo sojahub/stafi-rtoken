@@ -1,11 +1,11 @@
-import React from 'react';
-import {Modal,Tooltip} from 'antd';
+import config from '@config/index';
+import doubt from "@images/doubt.svg";
+import { Symbol } from '@keyring/defaults';
 import A from '@shared/components/button/a';
-import doubt from "@images/doubt.svg"
 import Button from '@shared/components/button/button';
 import NumberUtil from '@util/numberUtil';
-import config from '@config/index'
-import {Symbol} from '@keyring/defaults'
+import { Modal, Tooltip } from 'antd';
+import React from 'react';
 import './unbondModal.scss';
 
 type Props={
@@ -16,7 +16,7 @@ type Props={
   onOk?:Function,
   onCancel?:Function,
   bondFees?:any,
-  type:"rDOT"|"rETH"|"rFIS"|"rKSM"|"rATOM",
+  type:"rDOT"|"rETH"|"rFIS"|"rKSM"|"rATOM"|"rSOL",
 }
 export default function Index(props:Props){
   return <Modal visible={props.visible} 

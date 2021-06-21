@@ -1,11 +1,7 @@
-import {
-  web3Accounts,
-  web3Enable
-} from '@polkadot/extension-dapp';
-import { ApiPromise, WsProvider } from '@polkadot/api';
 import config from '@config/index';
-import { KeypairType } from '@polkadot/util-crypto/types';
 import { SubstrateKeyring } from '@keyring/SubstrateKeyring';
+import { ApiPromise, WsProvider } from '@polkadot/api';
+import { KeypairType } from '@polkadot/util-crypto/types';
 
 let stafiApi:any = null
 export default class Index extends SubstrateKeyring{
@@ -44,7 +40,8 @@ export default class Index extends SubstrateKeyring{
           'RFIS',
           'RDOT',
           'RKSM',
-          'RATOM'
+          'RATOM',
+          'RSOL'
         ]
       },
       AccountXData: {

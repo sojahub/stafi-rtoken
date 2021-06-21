@@ -1,14 +1,12 @@
-import React, { useState } from 'react'; 
-import {message} from 'antd';
-import LeftContent from './leftContent'  
+import rDOT_DOT_svg from '@images/rDOT_DOT.svg';
+import rATOM_stafi_svg from '@images/selected_r_atom.svg';
 import rDOT_stafi_svg from '@images/selected_r_dot.svg';
 import rKSM_stafi_svg from '@images/selected_r_ksm.svg';
-import rATOM_stafi_svg from '@images/selected_r_atom.svg'
-import rDOT_DOT_svg from '@images/rDOT_DOT.svg'
-import Button from '@shared/components/button/button'
+import Button from '@shared/components/button/button';
 import NumberUtil from '@util/numberUtil';
-import Modal from '../modal/swapModal' 
-import config from '@config/index';
+import React, { useState } from 'react';
+import Modal from '../modal/swapModal';
+import LeftContent from './leftContent';
 
 type Props={
      onRdeemClick?:Function,
@@ -16,7 +14,7 @@ type Props={
      tokenAmount?:any
      ratioShow?:any,
      onStakeClick?:any,
-     type:"rDOT"|"rETH"|"rFIS"|"rKSM"|"rATOM",
+     type:"rDOT"|"rETH"|"rFIS"|"rKSM"|"rATOM"|"rSOL",
      totalUnbonding?:any,
      onSwapClick?:Function,
      onUniswapClick?:Function

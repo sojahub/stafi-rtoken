@@ -1,28 +1,23 @@
 import config from '@config/index';
 import { rSymbol, Symbol } from '@keyring/defaults';
-import { web3Enable, web3FromSource } from '@polkadot/extension-dapp';
+import { web3Enable } from '@polkadot/extension-dapp';
 import { u8aToHex } from '@polkadot/util';
 import { createSlice } from '@reduxjs/toolkit';
 import keyring from '@servers/index';
-import PolkadotServer from '@servers/sol/index';
+import { default as PolkadotServer, default as SolServer } from '@servers/sol/index';
 import Stafi from '@servers/stafi/index';
+import * as solanaWeb3 from '@solana/web3.js';
 import { getLocalStorageItem, Keys, removeLocalStorageItem, setLocalStorageItem, stafi_uuid } from '@util/common';
 import NumberUtil from '@util/numberUtil';
-import { message as M, message } from 'antd';
+import { message } from 'antd';
 import { AppThunk } from '../store';
 import CommonClice from './commonClice';
 import { bondStates, bound, fisUnbond, rTokenSeries_bondStates } from './FISClice';
-import {
-  initProcess,
-  processStatus,
-  setLoading,
-  setProcessSending,
-  setProcessSlider,
-  setProcessType,
-} from './globalClice';
+import { initProcess, processStatus, setProcessSending, setProcessSlider, setProcessType } from './globalClice';
 import { add_Notice, findUuid, noticeStatus, noticesubType, noticeType } from './noticeClice';
 
 const commonClice = new CommonClice();
+const solServer = new SolServer();
 
 const rSOLClice = createSlice({
   name: 'rSOLModule',
@@ -152,6 +147,7 @@ export const {
 
 export const reloadData = (): AppThunk => async (dispatch, getState) => {
   const account = getState().rSOLModule.solAccount;
+  console.log('reloadData for sol: ', account);
   if (account) {
     dispatch(createSubstrate(account));
   }
@@ -169,212 +165,154 @@ const queryBalance = async (account: any, dispatch: any, getState: any) => {
   dispatch(setSolAccounts(account));
   let account2: any = { ...account };
 
-  const api = await polkadotServer.createPolkadotApi();
-  const result = await api.query.system.account(account2.address);
-  if (result) {
-    let fisFreeBalance = NumberUtil.fisAmountToHuman(result.data.free);
-    account2.balance = NumberUtil.handleEthAmountRound(fisFreeBalance);
-  }
-  const solAccount = getState().rSOLModule.solAccount;
-  if (solAccount && solAccount.address == account2.address) {
-    dispatch(setSolAccount(account2));
-  }
+  const connection = new solanaWeb3.Connection(config.solRpcApi(), 'singleGossip');
+  const balance = await connection.getBalance(new solanaWeb3.PublicKey(account2.address));
+  console.log('balance: ', balance);
+
+  account2.balance = balance ? NumberUtil.tokenAmountToHuman(balance, rSymbol.Sol) : 0;
+  // const solAccount = getState().rSOLModule.solAccount;
+  // if (solAccount && solAccount.address == account2.address) {
+  // dispatch(setSolAccount(account2));
+  // }
+
+  dispatch(setTransferrableAmountShow(account2.balance));
+  dispatch(setSolAccount(account2));
   dispatch(setSolAccounts(account2));
 };
 
 export const transfer =
   (amountparam: string, cb?: Function): AppThunk =>
   async (dispatch, getState) => {
+    // await timeout(5000);
     const processParameter = getState().rSOLModule.processParameter;
     const notice_uuid = (processParameter && processParameter.uuid) || stafi_uuid();
 
     dispatch(initProcess(null));
-    const amount = NumberUtil.fisAmountToChain(amountparam);
+
+    const amount = NumberUtil.tokenAmountToChain(amountparam, rSymbol.Sol);
+
     const validPools = getState().rSOLModule.validPools;
     const poolLimit = getState().rSOLModule.poolLimit;
     const address = getState().rSOLModule.solAccount.address;
     web3Enable(stafiServer.getWeb3EnalbeName());
-    const injector = await web3FromSource(stafiServer.getPolkadotJsSource());
-
-    const dotApi = await polkadotServer.createPolkadotApi();
+    // const injector = await web3FromSource(stafiServer.getPolkadotJsSource());
 
     const selectedPool = commonClice.getPool(amount, validPools, poolLimit);
     if (selectedPool == null) {
       return;
     }
 
-    const ex = await dotApi.tx.balances.transferKeepAlive(selectedPool.address, amount.toString());
-    let index = 0;
-    ex.signAndSend(address, { signer: injector.signer }, (result: any) => {
-      if (index == 0) {
+    try {
+      dispatch(
+        setProcessSending({
+          brocasting: processStatus.loading,
+          packing: processStatus.default,
+          finalizing: processStatus.default,
+        }),
+      );
+      dispatch(setProcessType(rSymbol.Sol));
+      dispatch(setProcessSlider(true));
+
+      const result = await solServer.sendTransaction(amount, selectedPool.address);
+
+      if (result.blockHash && result.txHash) {
         dispatch(
           setProcessSending({
-            brocasting: processStatus.loading,
-            packing: processStatus.default,
-            finalizing: processStatus.default,
+            brocasting: processStatus.success,
+            packing: processStatus.success,
+            checkTx: result.txHash,
           }),
         );
-        dispatch(setProcessType(rSymbol.Sol));
-        dispatch(setProcessSlider(true));
-        index = index + 1;
-      }
-      const tx = ex.hash.toHex();
-      try {
-        let asInBlock = '';
-        try {
-          asInBlock = '' + result.status.asInBlock;
-        } catch (e) {
-          // do nothing
-        }
-        if (asInBlock) {
-          dispatch(
-            setProcessParameter({
-              sending: {
-                amount: amountparam,
-                txHash: tx,
-                blockHash: asInBlock,
-                address,
-                uuid: notice_uuid,
-              },
-              href: cb ? '/rSOL/staker/info' : null,
-            }),
-          );
-          dispatch(
-            setStakeHash({
-              txHash: tx,
-              blockHash: asInBlock,
-              notice_uuid: notice_uuid,
-            }),
-          );
-        }
 
-        if (result.status.isInBlock) {
-          dispatch(
-            setProcessSending({
-              brocasting: processStatus.success,
-              packing: processStatus.loading,
-              checkTx: tx,
-            }),
-          );
-          dispatch(add_SOL_stake_Notice(notice_uuid, amountparam, noticeStatus.Pending));
+        dispatch(reloadData());
 
-          result.events
-            .filter((e: any) => {
-              return e.event.section == 'system';
-            })
-            .forEach((data: any) => {
-              if (data.event.method === 'ExtrinsicFailed') {
-                const [dispatchError] = data.event.data;
-                if (dispatchError.isModule) {
-                  try {
-                    const mod = dispatchError.asModule;
-                    const error = data.registry.findMetaError(
-                      new Uint8Array([mod.index.toNumber(), mod.error.toNumber()]),
-                    );
+        dispatch(
+          setProcessParameter({
+            sending: {
+              amount: amountparam,
+              txHash: result.txHash,
+              blockHash: result.blockHash,
+              address,
+              uuid: notice_uuid,
+            },
+            staking: {
+              amount: amountparam,
+              txHash: result.txHash,
+              blockHash: result.blockHash,
+              address,
+              type: rSymbol.Sol,
+              poolAddress: selectedPool.poolPubkey,
+            },
+            href: cb ? '/rSOL/staker/info' : null,
+          }),
+        );
 
-                    let message: string = 'Something is wrong, please try again later!';
-                    if (error.name == '') {
-                      message = '';
-                    }
-                    message && M.info(message);
-                  } catch (error) {
-                    M.error(error.message);
-                  }
-                }
-                dispatch(reloadData());
-                dispatch(
-                  setProcessSending({
-                    packing: processStatus.failure,
-                    checkTx: tx,
-                  }),
-                );
-                dispatch(setStakeHash(null));
-                dispatch(add_SOL_stake_Notice(notice_uuid, amountparam, noticeStatus.Error));
-              } else if (data.event.method === 'ExtrinsicSuccess') {
-                dispatch(
-                  setProcessSending({
-                    packing: processStatus.success,
-                    finalizing: processStatus.loading,
-                  }),
-                );
-                // dispatch(gSetTimeOut(() => {
-                //   dispatch(setProcessSending({
-                //     finalizing: processStatus.failure,
-                //   }));
-                // }, 10 * 60 * 1000));
-                dispatch(reloadData());
-                dispatch(
-                  setProcessParameter({
-                    staking: {
-                      amount: amountparam,
-                      txHash: tx,
-                      blockHash: asInBlock,
-                      address,
-                      type: rSymbol.Sol,
-                      poolAddress: selectedPool.poolPubkey,
-                    },
-                  }),
-                );
+        dispatch(
+          add_SOL_stake_Notice(notice_uuid, amountparam, noticeStatus.Pending, {
+            process: getState().globalModule.process,
+            processParameter: getState().rSOLModule.processParameter,
+          }),
+        );
 
-                dispatch(
-                  add_SOL_stake_Notice(notice_uuid, amountparam, noticeStatus.Pending, {
-                    process: getState().globalModule.process,
-                    processParameter: getState().rSOLModule.processParameter,
-                  }),
-                );
-                asInBlock &&
-                  dispatch(
-                    bound(address, tx, asInBlock, amount, selectedPool.poolPubkey, rSymbol.Sol, (r: string) => {
-                      if (r == 'loading') {
-                        dispatch(add_SOL_stake_Notice(notice_uuid, amountparam, noticeStatus.Pending));
-                      } else {
-                        dispatch(setStakeHash(null));
-                      }
+        console.log('start dispatch bound');
+        dispatch(
+          bound(address, result.txHash, result.blockHash, amount, selectedPool.poolPubkey, rSymbol.Sol, (r: string) => {
+            if (r == 'loading') {
+              dispatch(add_SOL_stake_Notice(notice_uuid, amountparam, noticeStatus.Pending));
+            } else {
+              dispatch(setStakeHash(null));
+            }
 
-                      if (r == 'failure') {
-                        dispatch(add_SOL_stake_Notice(notice_uuid, amountparam, noticeStatus.Error));
-                      }
+            if (r == 'failure') {
+              dispatch(add_SOL_stake_Notice(notice_uuid, amountparam, noticeStatus.Error));
+            }
 
-                      if (r == 'successful') {
-                        dispatch(add_SOL_stake_Notice(notice_uuid, amountparam, noticeStatus.Confirmed));
-                        cb && cb();
-                        dispatch(reloadData());
-                      }
-                    }),
-                  );
-              }
-            });
-        } else if (result.status.isFinalized) {
-          dispatch(
-            setProcessSending({
-              finalizing: processStatus.success,
-            }),
-          );
-        } else if (result.isError) {
-          M.error(result.toHuman());
-        }
-      } catch (e) {
-        M.error(e.message);
-      }
-    }).catch((e: any) => {
-      dispatch(setLoading(false));
-      if (e == 'Error: Cancelled') {
-        message.error('Cancelled');
+            if (r == 'successful') {
+              dispatch(add_SOL_stake_Notice(notice_uuid, amountparam, noticeStatus.Confirmed));
+              cb && cb();
+              dispatch(reloadData());
+            }
+          }),
+        );
       } else {
-        console.error(e);
+        dispatch(
+          setProcessSending({
+            brocasting: processStatus.success,
+            packing: processStatus.failure,
+          }),
+        );
+        dispatch(
+          setProcessParameter({
+            sending: {
+              amount: amountparam,
+              address,
+              uuid: notice_uuid,
+            },
+            href: cb ? '/rSOL/staker/info' : null,
+          }),
+        );
+        dispatch(reloadData());
+        dispatch(
+          add_SOL_stake_Notice(notice_uuid, amountparam, noticeStatus.Error, {
+            process: getState().globalModule.process,
+            processParameter: getState().rSOLModule.processParameter,
+          }),
+        );
       }
-    });
+    } catch (error) {
+      console.log('error: ', error);
+    }
   };
 
 export const balancesAll = (): AppThunk => async (dispatch, getState) => {
-  const api = await polkadotServer.createPolkadotApi();
-  const address = getState().rSOLModule.solAccount.address;
-  const result = await api.derive.balances.all(address);
-  if (result) {
-    const transferrableAmount = NumberUtil.fisAmountToHuman(result.availableBalance);
-    const transferrableAmountShow = NumberUtil.handleFisAmountToFixed(transferrableAmount);
-    dispatch(setTransferrableAmountShow(transferrableAmountShow));
-  }
+  // const api = await polkadotServer.createPolkadotApi();
+  // const address = getState().rSOLModule.solAccount.address;
+  // const result = await api.derive.balances.all(address);
+  // if (result) {
+  //   const transferrableAmount = NumberUtil.fisAmountToHuman(result.availableBalance);
+  //   const transferrableAmountShow = NumberUtil.handleFisAmountToFixed(transferrableAmount);
+  //   dispatch(setTransferrableAmountShow(transferrableAmountShow));
+  // }
 };
 
 export const query_rBalances_account = (): AppThunk => async (dispatch, getState) => {
@@ -382,7 +320,7 @@ export const query_rBalances_account = (): AppThunk => async (dispatch, getState
     if (data == null) {
       dispatch(setTokenAmount(NumberUtil.handleFisAmountToFixed(0)));
     } else {
-      dispatch(setTokenAmount(NumberUtil.fisAmountToHuman(data.free)));
+      dispatch(setTokenAmount(NumberUtil.tokenAmountToHuman(data.free, rSymbol.Sol)));
     }
   });
 };
@@ -453,13 +391,12 @@ export const unbond =
         cb && cb();
         return;
       }
-      const keyringInstance = keyring.init(Symbol.Sol);
-
+      
       dispatch(
         fisUnbond(
           amount,
           rSymbol.Sol,
-          u8aToHex(keyringInstance.decodeAddress(recipient)),
+          u8aToHex(new solanaWeb3.PublicKey(recipient).toBytes()),
           selectedPool.poolPubkey,
           'Unbond succeeded, unbonding period is around ' + config.unboundAroundDays(Symbol.Sol) + ' days',
           (r?: string) => {
@@ -483,8 +420,9 @@ export const unbond =
 export const continueProcess = (): AppThunk => async (dispatch, getState) => {
   const stakeHash = getState().rSOLModule.stakeHash;
   if (stakeHash && stakeHash.blockHash && stakeHash.txHash) {
+    console.log('continueProcess------------------->');
     dispatch(
-      bondStates(rSymbol.Atom, stakeHash.txHash, stakeHash.blockHash, (e: string) => {
+      bondStates(rSymbol.Sol, stakeHash.txHash, stakeHash.blockHash, (e: string) => {
         if (e == 'successful') {
           message.success('minting succeeded', 3, () => {
             dispatch(setStakeHash(null));
@@ -553,113 +491,192 @@ export const getBlock =
   (blockHash: string, txHash: string, uuid?: string, cb?: Function): AppThunk =>
   async (dispatch, getState) => {
     try {
-      const api = await polkadotServer.createPolkadotApi();
       const address = getState().rSOLModule.solAccount.address;
       const validPools = getState().rSOLModule.validPools;
-      const result = await api.rpc.chain.getBlock(blockHash);
-      let u = false;
-      result.block.extrinsics.forEach((ex: any) => {
-        if (ex.hash.toHex() == txHash) {
-          const {
-            method: { args, method, section },
-          } = ex;
-          if (section == 'balances' && (method == 'transfer' || method == 'transferKeepAlive')) {
-            u = true;
 
-            const keyringInstance = keyring.init(Symbol.Sol);
-            if (
-              u8aToHex(keyringInstance.decodeAddress(ex.signer.toString())) !=
-              u8aToHex(keyringInstance.decodeAddress(address))
-            ) {
-              message.error('Please select your SOL account that sent the transaction');
-              return;
-            }
+      const solServer = new SolServer();
+      const { amount, poolAddress } = await solServer.getTransactionDetail(
+        getState().rSOLModule.solAccount.address,
+        txHash,
+      );
 
-            let amount = args[1].toJSON();
-            const poolAddress = args[0].toJSON().id;
-            let poolPubkey = u8aToHex(keyringInstance.decodeAddress(poolAddress));
+      console.log(`transaction info: ${amount} ${poolAddress}`);
 
-            const poolData = validPools.find((item: any) => {
-              if (item.poolPubkey == poolPubkey) {
-                return true;
-              }
-            });
+      if (!amount || !poolAddress) {
+        message.error('Transaction record not found!');
+        return;
+      }
 
-            if (!poolData) {
-              message.error('The destination address in the transaction does not match the pool address');
-              return;
-            }
-
-            dispatch(
-              initProcess({
-                sending: {
-                  packing: processStatus.success,
-                  brocasting: processStatus.success,
-                  finalizing: processStatus.success,
-                  checkTx: txHash,
-                },
-                staking: {
-                  packing: processStatus.default,
-                  brocasting: processStatus.default,
-                  finalizing: processStatus.default,
-                },
-                minting: {
-                  minting: processStatus.default,
-                },
-              }),
-            );
-            dispatch(setProcessSlider(true));
-            dispatch(
-              setProcessParameter({
-                staking: {
-                  amount: NumberUtil.fisAmountToHuman(amount),
-                  txHash,
-                  blockHash,
-                  address,
-                  type: rSymbol.Sol,
-                  poolAddress: poolPubkey,
-                },
-              }),
-            );
-            dispatch(
-              bound(address, txHash, blockHash, amount, poolPubkey, rSymbol.Sol, (r: string) => {
-                // dispatch(setStakeHash(null));
-
-                if (r == 'loading') {
-                  uuid &&
-                    dispatch(
-                      add_SOL_stake_Notice(uuid, NumberUtil.fisAmountToHuman(amount).toString(), noticeStatus.Pending),
-                    );
-                } else {
-                  dispatch(setStakeHash(null));
-                }
-
-                if (r == 'failure') {
-                  uuid &&
-                    dispatch(
-                      add_SOL_stake_Notice(uuid, NumberUtil.fisAmountToHuman(amount).toString(), noticeStatus.Error),
-                    );
-                }
-                if (r == 'successful') {
-                  uuid &&
-                    dispatch(
-                      add_SOL_stake_Notice(
-                        uuid,
-                        NumberUtil.fisAmountToHuman(amount).toString(),
-                        noticeStatus.Confirmed,
-                      ),
-                    );
-                  cb && cb();
-                }
-              }),
-            );
-          }
+      const poolData = validPools.find((item: any) => {
+        if (keyring.init(Symbol.Sol).encodeAddress(item.poolPubkey) == poolAddress) {
+          return true;
         }
       });
 
-      if (!u) {
-        message.error('No results were found');
+      if (!poolData) {
+        message.error('The destination address in the transaction does not match the pool address');
+        return;
       }
+
+      dispatch(
+        initProcess({
+          sending: {
+            packing: processStatus.success,
+            brocasting: processStatus.success,
+            finalizing: processStatus.success,
+            checkTx: txHash,
+          },
+          staking: {
+            packing: processStatus.default,
+            brocasting: processStatus.default,
+            finalizing: processStatus.default,
+          },
+          minting: {
+            minting: processStatus.default,
+          },
+        }),
+      );
+      dispatch(setProcessSlider(true));
+      dispatch(
+        setProcessParameter({
+          staking: {
+            amount: NumberUtil.fisAmountToHuman(amount),
+            txHash,
+            blockHash,
+            address,
+            type: rSymbol.Sol,
+            poolAddress: poolData.poolPubkey,
+          },
+        }),
+      );
+      dispatch(
+        bound(address, txHash, blockHash, amount, poolData.poolPubkey, rSymbol.Sol, (r: string) => {
+          if (r == 'loading') {
+            uuid &&
+              dispatch(
+                add_SOL_stake_Notice(uuid, NumberUtil.fisAmountToHuman(amount).toString(), noticeStatus.Pending),
+              );
+          } else {
+            dispatch(setStakeHash(null));
+          }
+
+          if (r == 'failure') {
+            uuid &&
+              dispatch(add_SOL_stake_Notice(uuid, NumberUtil.fisAmountToHuman(amount).toString(), noticeStatus.Error));
+          }
+          if (r == 'successful') {
+            uuid &&
+              dispatch(
+                add_SOL_stake_Notice(uuid, NumberUtil.fisAmountToHuman(amount).toString(), noticeStatus.Confirmed),
+              );
+            cb && cb();
+          }
+        }),
+      );
+
+      // let u = false;
+      // result.block.extrinsics.forEach((ex: any) => {
+      // if (ex.hash.toHex() == txHash) {
+      //   const {
+      //     method: { args, method, section },
+      //   } = ex;
+      //   if (section == 'balances' && (method == 'transfer' || method == 'transferKeepAlive')) {
+      //     u = true;
+
+      //     const keyringInstance = keyring.init(Symbol.Sol);
+      //     if (
+      //       u8aToHex(keyringInstance.decodeAddress(ex.signer.toString())) !=
+      //       u8aToHex(keyringInstance.decodeAddress(address))
+      //     ) {
+      //       message.error('Please select your SOL account that sent the transaction');
+      //       return;
+      //     }
+
+      //     let amount = args[1].toJSON();
+      //     const poolAddress = args[0].toJSON().id;
+      //     let poolPubkey = u8aToHex(keyringInstance.decodeAddress(poolAddress));
+
+      //     const poolData = validPools.find((item: any) => {
+      //       if (item.poolPubkey == poolPubkey) {
+      //         return true;
+      //       }
+      //     });
+
+      //     if (!poolData) {
+      //       message.error('The destination address in the transaction does not match the pool address');
+      //       return;
+      //     }
+
+      //     dispatch(
+      //       initProcess({
+      //         sending: {
+      //           packing: processStatus.success,
+      //           brocasting: processStatus.success,
+      //           finalizing: processStatus.success,
+      //           checkTx: txHash,
+      //         },
+      //         staking: {
+      //           packing: processStatus.default,
+      //           brocasting: processStatus.default,
+      //           finalizing: processStatus.default,
+      //         },
+      //         minting: {
+      //           minting: processStatus.default,
+      //         },
+      //       }),
+      //     );
+      //     dispatch(setProcessSlider(true));
+      //     dispatch(
+      //       setProcessParameter({
+      //         staking: {
+      //           amount: NumberUtil.fisAmountToHuman(amount),
+      //           txHash,
+      //           blockHash,
+      //           address,
+      //           type: rSymbol.Sol,
+      //           poolAddress: poolPubkey,
+      //         },
+      //       }),
+      //     );
+      //     dispatch(
+      //       bound(address, txHash, blockHash, amount, poolPubkey, rSymbol.Sol, (r: string) => {
+      //         // dispatch(setStakeHash(null));
+
+      //         if (r == 'loading') {
+      //           uuid &&
+      //             dispatch(
+      //               add_SOL_stake_Notice(uuid, NumberUtil.fisAmountToHuman(amount).toString(), noticeStatus.Pending),
+      //             );
+      //         } else {
+      //           dispatch(setStakeHash(null));
+      //         }
+
+      //         if (r == 'failure') {
+      //           uuid &&
+      //             dispatch(
+      //               add_SOL_stake_Notice(uuid, NumberUtil.fisAmountToHuman(amount).toString(), noticeStatus.Error),
+      //             );
+      //         }
+      //         if (r == 'successful') {
+      //           uuid &&
+      //             dispatch(
+      //               add_SOL_stake_Notice(
+      //                 uuid,
+      //                 NumberUtil.fisAmountToHuman(amount).toString(),
+      //                 noticeStatus.Confirmed,
+      //               ),
+      //             );
+      //           cb && cb();
+      //         }
+      //       }),
+      //     );
+      //   }
+      // }
+      // });
+
+      // if (!u) {
+      // message.error('No results were found');
+      // }
     } catch (e) {
       message.error(e.message);
     }
