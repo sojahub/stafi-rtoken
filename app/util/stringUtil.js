@@ -1,16 +1,10 @@
 export default {
   //Replace the address string with
-  replacePkh: function(pkh, start, end) {
+  replacePkh: function (pkh, start, end) {
     if (!pkh) {
       return pkh;
     }
-    if (
-      start < 0 ||
-      start >= pkh.length ||
-      pkh.length == 0 ||
-      end < 0 ||
-      end >= pkh.length
-    ) {
+    if (start < 0 || start >= pkh.length || pkh.length == 0 || end < 0 || end >= pkh.length) {
       return pkh;
     }
 
@@ -20,7 +14,21 @@ export default {
     return sFrontPart + '...' + sTailPart;
   },
 
-  mixTextOverflow: function(text, length) {
+  replacePkhRemain6: function (pkh) {
+    if (!pkh) {
+      return pkh;
+    }
+    if (pkh.length <= 12) {
+      return pkh;
+    }
+
+    let sFrontPart = pkh.substr(0, 6);
+    let sTailPart = pkh.substr(pkh.length - 6, pkh.length);
+
+    return sFrontPart + '...' + sTailPart;
+  },
+
+  mixTextOverflow: function (text, length) {
     if (text.replace(/[\u4e00-\u9fa5]/g, 'aa').length <= length) {
       return text;
     } else {
@@ -40,5 +48,5 @@ export default {
       }
       return outputText + '...';
     }
-  }
+  },
 };

@@ -165,6 +165,8 @@ export default {
       return `https://polkadot.subscan.io/extrinsic/${txHash}`;
     } else if (type == rSymbol.Ksm) {
       return `https://kusama.subscan.io/extrinsic/${txHash}`;
+    } else if (type == rSymbol.Sol) {
+      return `https://explorer.solana.com/tx/${txHash}`;
     } else {
       return '';
     }

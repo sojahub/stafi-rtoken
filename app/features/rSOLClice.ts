@@ -7,7 +7,14 @@ import keyring from '@servers/index';
 import { default as PolkadotServer, default as SolServer } from '@servers/sol/index';
 import Stafi from '@servers/stafi/index';
 import * as solanaWeb3 from '@solana/web3.js';
-import { getLocalStorageItem, Keys, removeLocalStorageItem, setLocalStorageItem, stafi_uuid } from '@util/common';
+import {
+  getLocalStorageItem,
+  Keys,
+  removeLocalStorageItem,
+  setLocalStorageItem,
+  stafi_uuid,
+  timeout
+} from '@util/common';
 import NumberUtil from '@util/numberUtil';
 import { message } from 'antd';
 import { AppThunk } from '../store';
@@ -184,7 +191,6 @@ const queryBalance = async (account: any, dispatch: any, getState: any) => {
 export const transfer =
   (amountparam: string, cb?: Function): AppThunk =>
   async (dispatch, getState) => {
-    // await timeout(5000);
     const processParameter = getState().rSOLModule.processParameter;
     const notice_uuid = (processParameter && processParameter.uuid) || stafi_uuid();
 
@@ -196,7 +202,6 @@ export const transfer =
     const poolLimit = getState().rSOLModule.poolLimit;
     const address = getState().rSOLModule.solAccount.address;
     web3Enable(stafiServer.getWeb3EnalbeName());
-    // const injector = await web3FromSource(stafiServer.getPolkadotJsSource());
 
     const selectedPool = commonClice.getPool(amount, validPools, poolLimit);
     if (selectedPool == null) {
@@ -204,25 +209,27 @@ export const transfer =
     }
 
     try {
-      dispatch(
-        setProcessSending({
-          brocasting: processStatus.loading,
-          packing: processStatus.default,
-          finalizing: processStatus.default,
-        }),
-      );
-      dispatch(setProcessType(rSymbol.Sol));
-      dispatch(setProcessSlider(true));
-
       const result = await solServer.sendTransaction(amount, selectedPool.address);
-
       console.log('solana sendTransaction txhash: ', result.txHash);
 
       if (result.blockHash && result.txHash) {
         dispatch(
           setProcessSending({
+            brocasting: processStatus.loading,
+            packing: processStatus.default,
+            finalizing: processStatus.default,
+          }),
+        );
+        dispatch(setProcessType(rSymbol.Sol));
+        dispatch(setProcessSlider(true));
+
+        await timeout(3000);
+
+        dispatch(
+          setProcessSending({
             brocasting: processStatus.success,
             packing: processStatus.success,
+            finalizing: processStatus.success,
             checkTx: result.txHash,
           }),
         );
