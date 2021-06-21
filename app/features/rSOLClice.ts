@@ -169,7 +169,8 @@ const queryBalance = async (account: any, dispatch: any, getState: any) => {
   const balance = await connection.getBalance(new solanaWeb3.PublicKey(account2.address));
   console.log('balance: ', balance);
 
-  account2.balance = balance ? NumberUtil.tokenAmountToHuman(balance, rSymbol.Sol) : 0;
+  let solBalance = NumberUtil.tokenAmountToHuman(balance, rSymbol.Sol);
+  account2.balance = solBalance ? NumberUtil.handleEthAmountRound(solBalance) : 0;
   // const solAccount = getState().rSOLModule.solAccount;
   // if (solAccount && solAccount.address == account2.address) {
   // dispatch(setSolAccount(account2));
@@ -391,7 +392,7 @@ export const unbond =
         cb && cb();
         return;
       }
-      
+
       dispatch(
         fisUnbond(
           amount,
