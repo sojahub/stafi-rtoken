@@ -1,0 +1,22 @@
+.stafi_pool_status{
+    display: flex;
+    align-items: center;
+    padding:3px 8px;
+    background-color: #E7F9F6;
+    width:fit-content;
+    border-radius: 3px;
+    color: #00F3AB;
+    font-size: 12px;
+    font-weight: bold;
+    .icon{
+        height:15px;
+        width:15px;
+        border-radius: 50%;
+        background-color: #00F3AB;
+        margin-right: 5px;
+        
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+}

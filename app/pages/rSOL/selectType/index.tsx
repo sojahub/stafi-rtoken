@@ -25,7 +25,7 @@ export default function Index(props: any) {
   return (
     <TypeCard
       type='rSOL'
-      stafiStakerApr={stafiStakerApr}
+      // stafiStakerApr={stafiStakerApr}
       total={totalIssuance}
       apr={stakerApr}
       onClick={(e: string) => {

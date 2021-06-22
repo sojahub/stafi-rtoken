@@ -67,5 +67,6 @@ export default function Index(props:any){
       }
     })
   }}
+  hours={6}
   type="rKSM"></Content>
 }

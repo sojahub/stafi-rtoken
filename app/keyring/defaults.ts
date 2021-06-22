@@ -9,9 +9,11 @@ enum Symbol {
   One = 'one',
   Matic = 'matic',
   Sol = 'sol',
+  Eth="eth"
 }
 
 enum rSymbol {
+  Eth = -2,
   Asset = -1,
   Fis = 0,
   Dot = 1,
@@ -43,3 +45,4 @@ export {
   PKCS8_HEADER,
   PUB_LENGTH,
 };
+

@@ -1,0 +1,27 @@
+export const rDOT_data=[{
+  text:"Staker",
+  url:"/rETH/staker/index",
+  child:[
+    {
+      text:'-Status',
+      url:"/rETH/staker/info"
+    } 
+  ]
+},{
+  text:"Validator",
+  url:"/rETH/validator/index",
+  child:[
+    {
+      text:'-Deposit',
+      url:"/rETH/validator/deposit"
+    },
+    {
+      text:'-Stake',
+      url:"/rETH/validator/stake"
+    },
+    {
+      text:'-Status',
+      url:"/rETH/validator/status"
+    }
+  ]
+}]

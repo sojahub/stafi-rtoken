@@ -4,8 +4,9 @@ import {Select} from 'antd'
 import selectedIcon from '@images/selectedIcon.svg'
 import './index.scss';
 
+
 export default function Index(props:any){
-  return <Select {...props} className="stafi_select" placeholder="Please select" suffixIcon={
+  return <Select {...props} className={`stafi_select ${props.size=="max" && "max"}`} placeholder="Please select" suffixIcon={
     <img src={selectedIcon} className="pec_select_suffixIcon" />
   }>
     {props.children}

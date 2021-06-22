@@ -1,12 +1,12 @@
 .stafi_content{
-  width:638px;
+  width:683px;
   height:535px;
   background-color: #2B3239;
   border-radius: 19px;
   position: relative;
 }
 
-.stafi_content::after{
+.stafi_content_notice::after{
   content: "Notice: Please DO NOT use your Ledger account, otherwise your assets will be lost.";
   position: absolute;
   bottom: -57px;
@@ -16,4 +16,4 @@
   color: #C4C4C4;
   text-align:center;
   left:0px;
-}
+} 

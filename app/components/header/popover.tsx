@@ -46,7 +46,7 @@ export default function Index(props:Props){
   </> )
    return <Popover onVisibleChange={(e)=>{
     if(e){
-      data && dispatch(checkAll_minting(data.datas));
+      dispatch(checkAll_minting(data?data.datas:[]))
       dispatch(readNotice({}));
     }
     

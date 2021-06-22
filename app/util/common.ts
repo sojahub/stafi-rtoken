@@ -21,6 +21,9 @@ export enum Keys {
 
   MetamaskAccountKey = 'stafi_Metamask_account',
   StafiNoticeKey = 'stafi_notice',
+
+  rEthCurrentPoolPrefix = 'current:pool:',
+  poolPubKeyPrefix = 'poolpubkey:',
 }
 
 export const setSessionStorageItem = (key: string, val: any) => {
@@ -65,3 +68,35 @@ export const stafi_uuid = () => {
 export function timeout(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
+
+export const localStorage_poolPubKey = {
+  /**
+   * set pool pubkey
+   */
+  setPoolPubKey: function (poolAddress: string, pubkey: string) {
+    setLocalStorageItem(Keys.poolPubKeyPrefix + poolAddress, pubkey);
+  },
+
+  /**
+   * get pool pubkey
+   */
+  getPoolPubKey: function (poolAddress: string) {
+    return getLocalStorageItem(Keys.poolPubKeyPrefix + poolAddress);
+  },
+};
+
+export const localStorage_currentEthPool = {
+  /**
+   * set current pool
+   */
+  setCurrentEthPool: function (validatorAddress: string, poolAddress: string) {
+    Keys.rEthCurrentPoolPrefix + validatorAddress, poolAddress;
+  },
+
+  /**
+   * get current pool
+   */
+  getCurrentEthPool: function (validatorAddress: string) {
+    return getLocalStorageItem(Keys.rEthCurrentPoolPrefix + validatorAddress);
+  },
+};

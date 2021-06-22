@@ -14,9 +14,7 @@ import _m0 from 'protobufjs/minimal';
 import { AppThunk } from '../store';
 import CommonClice from './commonClice';
 import { bondStates, bound, fisUnbond, rTokenSeries_bondStates } from './FISClice';
-import {
-  initProcess, processStatus, setProcessSending, setProcessSlider, setProcessType
-} from './globalClice';
+import { initProcess, processStatus, setProcessSending, setProcessSlider, setProcessType } from './globalClice';
 import { add_Notice, findUuid, noticeStatus, noticesubType, noticeType } from './noticeClice';
 
 const commonClice = new CommonClice();
@@ -755,24 +753,37 @@ export const rTokenLedger = (): AppThunk => async (dispatch, getState) => {
   if (currentEra) {
     let rateResult = await stafiApi.query.rTokenRate.eraRate(rSymbol.Atom, currentEra - 1);
     const currentRate = rateResult.toJSON();
-    const rateResult2 = await stafiApi.query.rTokenRate.eraRate(rSymbol.Atom, currentEra - 2);
+    const rateResult2 = await stafiApi.query.rTokenRate.eraRate(rSymbol.Atom, currentEra - 8);
     let lastRate = rateResult2.toJSON();
     dispatch(handleStakerApr(currentRate, lastRate));
   } else {
     dispatch(handleStakerApr());
   }
 };
+
 const handleStakerApr =
   (currentRate?: any, lastRate?: any): AppThunk =>
   async (dispatch, getState) => {
-    dispatch(setStakerApr('9.8%'));
-    //  if (currentRate && lastRate) {
-    //     const apr = NumberUtil.handleEthRoundToFixed((currentRate - lastRate)/lastRate * 365.25 * 100) + '%';
-    //     dispatch(setStakerApr(apr));
-    //   } else {
-    //     dispatch(setStakerApr('9.8%'));
-    //   }
+    if (currentRate && lastRate) {
+      const apr =
+        NumberUtil.handleEthRoundToFixed(((currentRate - lastRate) / 1000000000000 / 7.2) * 365.25 * 100) + '%';
+      dispatch(setStakerApr(apr));
+    } else {
+      dispatch(setStakerApr('9.8%'));
+    }
   };
+// };
+// const handleStakerApr =
+//   (currentRate?: any, lastRate?: any): AppThunk =>
+//   async (dispatch, getState) => {
+//     dispatch(setStakerApr('9.8%'));
+//     //  if (currentRate && lastRate) {
+//     //     const apr = NumberUtil.handleEthRoundToFixed((currentRate - lastRate)/lastRate * 365.25 * 100) + '%';
+//     //     dispatch(setStakerApr(apr));
+//     //   } else {
+//     //     dispatch(setStakerApr('9.8%'));
+//     //   }
+//   };
 export const checkAddress = (address: string) => {
   const keyringInstance = keyring.init(Symbol.Atom);
   return keyringInstance.checkAddress(address);

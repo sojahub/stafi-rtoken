@@ -5,7 +5,7 @@ type Props={
     className?:string
 }
 export default function Index(props:Props){
-    return <div className={`stafi_content ${props.className}`}>
+    return <div className={`stafi_content ${location.pathname.includes("/rETH")?'':'stafi_content_notice'} ${props.className}`}>
         {props.children}
     </div>
 }

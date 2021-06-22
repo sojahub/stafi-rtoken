@@ -20,14 +20,8 @@ const account = (type: string) => {
       if (getLocalStorageItem(Keys.AtomAccountKey) == null || getLocalStorageItem(Keys.FisAccountKey) == null) {
         return '/rATOM/home';
       }
-      // if(getLocalStorageItem(Keys.AtomAccountKey)==null && getLocalStorageItem(Keys.FisAccountKey)){
-      //   return '/rATOM/home';
-      // }
       return true;
     case Symbol.Dot:
-      // if(getLocalStorageItem(Keys.DotAccountKey)==null){
-      //   return '/rDOT/home'
-      // }
       if (getLocalStorageItem(Keys.DotAccountKey) == null && getLocalStorageItem(Keys.FisAccountKey) == null) {
         return '/rDOT/home';
       }
@@ -35,16 +29,20 @@ const account = (type: string) => {
         return '/rDOT/wallet';
       }
       return true;
-    // return getLocalStorageItem(Keys.DotAccountKey) && getLocalStorageItem(Keys.FisAccountKey);
+    case Symbol.Eth:
+      if (getLocalStorageItem(Keys.MetamaskAccountKey) == null && getLocalStorageItem(Keys.FisAccountKey) == null) {
+        return '/rETH/home';
+      }
+      if (getLocalStorageItem(Keys.MetamaskAccountKey) == null && getLocalStorageItem(Keys.FisAccountKey)) {
+        return '/rETH/wallet';
+      }
+      return true;
     case Symbol.Fis:
       return getLocalStorageItem(Keys.FisAccountKey);
     case Symbol.Sol:
       if (getLocalStorageItem(Keys.SolAccountKey) == null || getLocalStorageItem(Keys.FisAccountKey) == null) {
         return '/rSOL/home';
       }
-      // if (getLocalStorageItem(Keys.SolAccountKey) == null && getLocalStorageItem(Keys.FisAccountKey)) {
-      //   return '/rSOL/wallet';
-      // }
       return true;
     default:
       return '/rKSM/home';

@@ -1,0 +1,31 @@
+.eth_deposit_modal{
+    .ant-modal-body{
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        padding:22px; 
+        font-size: 18px;
+        font-weight: bold;
+        color:#282B4A; 
+        .ant-spin{
+            margin-top:32px;
+        }
+    }
+    .ant-modal-footer{
+        text-align: center;
+        padding:0px;
+        border-top-width: 0px;
+        height: 40px;
+        div{
+            color:#fff;
+            background-color: #00F3AB;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            cursor: pointer;
+        }
+    }
+}

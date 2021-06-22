@@ -14,6 +14,7 @@ import {
   reloadData as ksmReloadData
 } from '@features/rKSMClice';
 import notice from '@images/notice.svg';
+import report_icon from '@images/report_icon.svg';
 import { rSymbol, Symbol } from '@keyring/defaults';
 import Modal from '@shared/components/modal/connectModal';
 import StringUtil from '@util/stringUtil';
@@ -53,16 +54,6 @@ export default function Index(props: Props) {
         };
       }
     }
-    if (location.pathname.includes('/rSOL')) {
-      if (state.rSOLModule.solAccount && state.FISModule.fisAccount) {
-        return {
-          solAccount: state.rSOLModule.solAccount,
-          fisAccount: state.FISModule.fisAccount,
-          noticeData: state.noticeModule.noticeData,
-          type: 'rSOL',
-        };
-      }
-    }
     if (location.pathname.includes('/rATOM')) {
       if (state.rATOMModule.atomAccount || state.FISModule.fisAccount) {
         return {
@@ -89,7 +80,23 @@ export default function Index(props: Props) {
         }
       }
     }
-
+    if (location.pathname.includes('/rETH')) {
+      if (state.rETHModule.ethAccount) {
+        return {
+          ethAccount: state.rETHModule.ethAccount,
+        };
+      }
+    }
+    if (location.pathname.includes('/rSOL')) {
+      if (state.rSOLModule.solAccount && state.FISModule.fisAccount) {
+        return {
+          solAccount: state.rSOLModule.solAccount,
+          fisAccount: state.FISModule.fisAccount,
+          noticeData: state.noticeModule.noticeData,
+          type: 'rSOL',
+        };
+      }
+    }
     return null;
   });
   const { noticeData } = useSelector((state: any) => {
@@ -133,109 +140,116 @@ export default function Index(props: Props) {
         )}
       </Modal>
       <div></div>
-      {account == null && (Tool.pageType() == rSymbol.Ksm || Tool.pageType() == rSymbol.Dot) && (
-        <div
-          className='header_tool'
-          onClick={() => {
-            if (Tool.pageType() == rSymbol.Dot) {
-              dispatch(
-                connectPolkadot(() => {
-                  props.history.push('/rDOT/wallet');
-                }),
-              );
-            }
-            if (Tool.pageType() == rSymbol.Ksm) {
-              dispatch(
-                connectPolkadot_ksm(() => {
-                  props.history.push('/rKSM/wallet');
-                }),
-              );
-            }
-          }}>
-          Connect to Polkadotjs
-        </div>
-      )}
-      {account && (
-        <div className='header_tools'>
-          <div className={`header_tool notice ${noticeData && noticeData.showNew && 'new'}`}>
-            <Popover history={props.history}>
-              <img src={notice} />
-            </Popover>
+      <div className='info_span'>
+        {account == null && (Tool.pageType() == rSymbol.Ksm || Tool.pageType() == rSymbol.Dot) && (
+          <div
+            className='header_tool'
+            onClick={() => {
+              if (Tool.pageType() == rSymbol.Dot) {
+                dispatch(
+                  connectPolkadot(() => {
+                    props.history.push('/rDOT/wallet');
+                  }),
+                );
+              }
+              if (Tool.pageType() == rSymbol.Ksm) {
+                dispatch(
+                  connectPolkadot_ksm(() => {
+                    props.history.push('/rKSM/wallet');
+                  }),
+                );
+              }
+            }}>
+            Connect to Polkadotjs
           </div>
-          {account.fisAccount && (
-            <div
-              onClick={() => {
-                setModalType('fis');
-                dispatch(connectPolkadotjs(Symbol.Fis));
-                setVisible(true);
-              }}
-              className='header_tool account fis'>
-              <div>{account.fisAccount.balance} FIS</div>
-              <div>{StringUtil.replacePkh(account.fisAccount.address, 6, 44)}</div>
+        )}
+        {account && (
+          <div className='header_tools'>
+            <div className={`header_tool notice ${noticeData && noticeData.showNew && 'new'}`}>
+              <Popover history={props.history}>
+                <img src={notice} />
+              </Popover>
             </div>
-          )}
-          {account.dotAccount && (
-            <div
-              onClick={() => {
-                setModalType('dot');
-                dispatch(connectPolkadotjs(Symbol.Dot));
-                setVisible(true);
-              }}
-              className='header_tool account'>
-              <div>{account.dotAccount.balance} DOT</div>
-              <div>{StringUtil.replacePkh(account.dotAccount.address, 6, 44)}</div>
-            </div>
-          )}
-          {account.ksmAccount && (
-            <div
-              onClick={() => {
-                setModalType('ksm');
-                dispatch(connectPolkadotjs(Symbol.Ksm));
-                setVisible(true);
-              }}
-              className='header_tool account'>
-              <div>{account.ksmAccount.balance} KSM</div>
-              <div>{StringUtil.replacePkh(account.ksmAccount.address, 6, 44)}</div>
-            </div>
-          )}
-          {account.type == 'rSOL' &&
-            (account.solAccount ? (
-              <div className='header_tool account'>
-                <div>{account.solAccount.balance} SOL</div>
-                <div>{StringUtil.replacePkh(account.solAccount.address, 6, 38)}</div>
-              </div>
-            ) : (
+            {account.fisAccount && (
               <div
                 onClick={() => {
-                  dispatch(connectSoljs());
+                  setModalType('fis');
+                  dispatch(connectPolkadotjs(Symbol.Fis));
+                  setVisible(true);
                 }}
-                className='header_tool account'>
-                connect to Phantom
+                className='header_tool account fis'>
+                <div>{account.fisAccount.balance} FIS</div>
+                <div>{StringUtil.replacePkh(account.fisAccount.address, 6, 44)}</div>
               </div>
-            ))}
-          {account.type == 'rATOM' &&
-            (account.atomAccount ? (
-              <div className='header_tool account'>
-                <div>{account.atomAccount.balance} ATOM</div>
-                <div>{StringUtil.replacePkh(account.atomAccount.address, 6, 38)}</div>
-              </div>
-            ) : (
+            )}
+            {account.dotAccount && (
               <div
                 onClick={() => {
-                  dispatch(connectAtomjs());
+                  setModalType('dot');
+                  dispatch(connectPolkadotjs(Symbol.Dot));
+                  setVisible(true);
                 }}
                 className='header_tool account'>
-                connect to Kepir
+                <div>{account.dotAccount.balance} DOT</div>
+                <div>{StringUtil.replacePkh(account.dotAccount.address, 6, 44)}</div>
               </div>
-            ))}
-          {account.ethAccount && (
-            <div className='header_tool account'>
-              <div>{account.ethAccount.balance} ETH</div>
-              <div>{StringUtil.replacePkh(account.ethAccount.address, 4, 38)}</div>
-            </div>
-          )}
+            )}
+            {account.ksmAccount && (
+              <div
+                onClick={() => {
+                  setModalType('ksm');
+                  dispatch(connectPolkadotjs(Symbol.Ksm));
+                  setVisible(true);
+                }}
+                className='header_tool account'>
+                <div>{account.ksmAccount.balance} KSM</div>
+                <div>{StringUtil.replacePkh(account.ksmAccount.address, 6, 44)}</div>
+              </div>
+            )}
+            {account.type == 'rATOM' &&
+              (account.atomAccount ? (
+                <div className='header_tool account'>
+                  <div>{account.atomAccount.balance} ATOM</div>
+                  <div>{StringUtil.replacePkh(account.atomAccount.address, 6, 38)}</div>
+                </div>
+              ) : (
+                <div
+                  onClick={() => {
+                    dispatch(connectAtomjs());
+                  }}
+                  className='header_tool account'>
+                  connect to Kepir
+                </div>
+              ))}
+            {account.type == 'rSOL' &&
+              (account.solAccount ? (
+                <div className='header_tool account'>
+                  <div>{account.solAccount.balance} SOL</div>
+                  <div>{StringUtil.replacePkh(account.solAccount.address, 6, 38)}</div>
+                </div>
+              ) : (
+                <div
+                  onClick={() => {
+                    dispatch(connectSoljs());
+                  }}
+                  className='header_tool account'>
+                  connect to Phantom
+                </div>
+              ))}
+            {account.ethAccount && (
+              <div className='header_tool account'>
+                <div>{account.ethAccount.balance} ETH</div>
+                <div>{StringUtil.replacePkh(account.ethAccount.address, 4, 38)}</div>
+              </div>
+            )}
+          </div>
+        )}
+        <div className='report_icon'>
+          <a target='_blank' href='https://info.stafi.io/'>
+            <img src={report_icon} />
+          </a>
         </div>
-      )}
+      </div>
     </div>
   );
 }

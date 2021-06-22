@@ -15,6 +15,7 @@ import CommonClice from '@features/commonClice';
 import CountAmount from './components/countAmount'; 
 import DataItem from './components/list/item';
 import NumberUtil from '@util/numberUtil';
+import config from '@config/index'
 import rasset_fis_svg from '@images/rFIS.svg';
 import rasset_rfis_svg from '@images/r_fis.svg'; 
 import rasset_reth_svg from '@images/r_eth.svg'; 
@@ -101,7 +102,7 @@ export default function Index(props:any){
           balance={fis_ercBalance=="--" ?"--":NumberUtil.handleFisAmountToFixed(fis_ercBalance)}
           willGetBalance={0}
           unit="FIS"
-          trade={`https://app.uniswap.org/#/swap?inputCurrency=ETH&outputCurrency=0xef3a930e1ffffacd2fc13434ac81bd278b0ecc8d`}
+          trade={config.uniswap.fisURL}
           operationType="erc20"
           onSwapClick={()=>{
             props.history.push({
@@ -121,7 +122,7 @@ export default function Index(props:any){
           balance={rfis_ercBalance=="--" ?"--":NumberUtil.handleFisAmountToFixed(rfis_ercBalance)}
           willGetBalance={fisWillAmount}
           unit="FIS"
-          trade={`https://app.uniswap.org/#/swap?inputCurrency=ETH&outputCurrency=0xc82eb6dea0c93edb8b697b89ad1b13d19469d635`}
+          trade={config.uniswap.rfisURL}
           operationType="erc20"
           onSwapClick={()=>{
             props.history.push({
@@ -140,7 +141,7 @@ export default function Index(props:any){
           willGetBalance={"0.000000"}
           unit="ETH"
           operationType="erc20"
-          trade={`https://app.uniswap.org/#/swap?inputCurrency=0x9559aaa82d9649c7a7b220e7c461d2e74c9a3593&outputCurrency=ETH`}
+          trade={config.uniswap.rethURL}
           onSwapClick={()=>{
             props.history.push({
               pathname:"/rAsset/swap/native/erc20",
@@ -157,7 +158,7 @@ export default function Index(props:any){
           balance={dot_ercBalance=="--" ?"--":NumberUtil.handleFisAmountToFixed(dot_ercBalance)}
           willGetBalance={dotWillAmount}
           unit="DOT"
-          trade={`https://app.uniswap.org/#/swap?inputCurrency=ETH&outputCurrency=0x505f5a4ff10985fe9f93f2ae3501da5fe665f08a`}
+          trade={config.uniswap.rdotURL}
           operationType="erc20"
           onSwapClick={()=>{
             props.history.push({
@@ -176,7 +177,7 @@ export default function Index(props:any){
           balance={ksm_ercBalance=="--" ?"--":NumberUtil.handleFisAmountToFixed(ksm_ercBalance)}
           willGetBalance={ksmWillAmount}
           unit="KSM"
-          trade={`https://app.uniswap.org/#/swap?inputCurrency=ETH&outputCurrency=0x3c3842c4d3037ae121d69ea1e7a0b61413be806c`}
+          trade={config.uniswap.rksmURL}
           operationType="erc20"
           onSwapClick={()=>{
             props.history.push({
@@ -194,7 +195,7 @@ export default function Index(props:any){
           balance={atom_ercBalance=="--" ?"--":NumberUtil.handleFisAmountToFixed(atom_ercBalance)}
           willGetBalance={atomWillAmount}
           unit="ATOM"
-          trade={`https://app.uniswap.org/#/swap?inputCurrency=ETH&outputCurrency=0xd01cb3d113a864763dd3977fe1e725860013b0ed`}
+          trade={config.uniswap.ratomURL}
           operationType="erc20"
           onSwapClick={()=>{
             props.history.push({
@@ -207,7 +208,7 @@ export default function Index(props:any){
         />
        </DataList> <CountAmount totalValue={totalPrice} /></> : <div className="rAsset_content"> 
      <Button icon={metamask} onClick={()=>{
-        dispatch(connectMetamask());
+        dispatch(connectMetamask('0x3'));
         dispatch(monitoring_Method());
       }}>
           Connect to Metamask

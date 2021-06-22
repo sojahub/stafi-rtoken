@@ -41,6 +41,7 @@ export default function Index(props: any) {
   return (
     <Content
       ratio={ratio}
+      hours={66}
       ratioShow={ratioShow}
       tokenAmount={tokenAmount}
       totalUnbonding={totalUnbonding}

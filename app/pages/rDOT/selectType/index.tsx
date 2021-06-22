@@ -7,9 +7,8 @@ import {getTotalIssuance,rTokenLedger} from '@features/rDOTClice'
 export default function Index(props:any){
 
   const dispatch=useDispatch();
-  const {stafiStakerApr,totalIssuance,stakerApr,tokenAmount}=useSelector((state:any)=>{
-    return { 
-      stafiStakerApr:state.globalModule.stafiStakerApr,
+  const { totalIssuance,stakerApr,tokenAmount}=useSelector((state:any)=>{
+    return {  
       totalIssuance:state.rDOTModule.totalIssuance,
       stakerApr:state.rDOTModule.stakerApr,
       tokenAmount:state.rDOTModule.tokenAmount
@@ -24,8 +23,7 @@ export default function Index(props:any){
     return <Redirect to="/rDOT/staker/info" />
   }
   return <TypeCard 
-      type="rDOT" 
-      stafiStakerApr={stafiStakerApr}
+      type="rDOT"  
       total={totalIssuance}
       apr={stakerApr}
       onClick={(e:string)=>{
