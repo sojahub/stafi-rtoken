@@ -28,7 +28,7 @@ export default function Index(props:Props){
         Cancel
     </div></>}
     >
-        <div><img width={50} src={payment}/></div>
+        <div className="offboardModal_icon"><img width={50} src={payment}/></div>
             <div className="title">Confirm to offboard</div>
             <div className="content">
             Are your sure to offboard? All deposits will be refunded once confirm

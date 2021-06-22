@@ -740,69 +740,76 @@ export const getSelfDeposited=():AppThunk=>async (dispatch,getState)=>{
   let pubKeyMap=new Map();
   let selfDeposited=0;
 
- const poolCount = await contract.methods.getNodeStakingPoolCount(currentAddress).call();
-  if (poolCount > 0) {  
-    for (let index = 0; index < poolCount; index++) {
-    const poolAddress=await  contract.methods.getNodeStakingPoolAt(currentAddress, index).call(); 
-        let data = {
-          address: poolAddress,
-          shortAddress: StringUtil.replacePkh(poolAddress, 4, 38),
-          status: -1
-        }
-        addressItems.push(data);
-
-        let pubKey = localStorage_poolPubKey.getPoolPubKey(poolAddress); 
-        if (pubKey) { 
-          pubKeys.push(pubKey);
-          pubKeyMap.set(pubKey, poolAddress.toLowerCase()); 
-          dispatch(updateStatus(pubKeys,pubKeyMap,poolCount,addressItems,(e:any[])=>{ 
-            addressItems=e;
-            dispatch(setAddressItems(addressItems)) 
-          }));
-        } else {
-          const poolPubkey =await contract.methods.getStakingPoolPubkey(poolAddress).call()  
-          if (poolPubkey) { 
-            pubKeys.push(poolPubkey);
-            pubKeyMap.set(poolPubkey, poolAddress.toLowerCase());
-            localStorage_poolPubKey.setPoolPubKey(poolAddress, poolPubkey);
-          } else {
-            pubKeys.push('');
-          } 
-          dispatch(updateStatus(pubKeys,pubKeyMap,poolCount,addressItems,(e:any[])=>{ 
-            addressItems=e;
-            dispatch(setAddressItems(addressItems)) 
-          }));
-          
-        }
-
-        let poolContract = new web3.eth.Contract(ethServer.getStafiStakingPoolAbi(), poolAddress, {
-          from: currentAddress
-        });
-
-        const status=await poolContract.methods.getStatus().call();
-        if (status == 4) {
-          addressItems.some((item) => {
-            if (item.address.toLowerCase() == poolAddress.toLowerCase()) {
-              item.status = 8; 
-              return true;
-            }
-          });
-          
-        }
+  dispatch(setLoading(true));
+  try {
     
-
-        const  depositBalance= await poolContract.methods.getNodeDepositBalance().call() 
-        let parsedDepositBalance = parseFloat(web3.utils.fromWei(depositBalance, 'ether'));
-        selfDeposited += parsedDepositBalance;
-         // this.selfDepositedShow = NumberUtil.handleEthRoundToFixed(this.selfDeposited);
-    }
-  }else{
-    dispatch(setTotalStakedETH(0));
-    dispatch(setStatus_Apr('--%'))
-  }
-  // dispatch(setAddressItems(addressItems)) 
-  dispatch(setSelfDeposited(selfDeposited))
  
+    const poolCount = await contract.methods.getNodeStakingPoolCount(currentAddress).call();
+      if (poolCount > 0) {  
+        for (let index = 0; index < poolCount; index++) {
+        const poolAddress=await  contract.methods.getNodeStakingPoolAt(currentAddress, index).call(); 
+            let data = {
+              address: poolAddress,
+              shortAddress: StringUtil.replacePkh(poolAddress, 4, 38),
+              status: -1
+            }
+            addressItems.push(data);
+
+            let pubKey = localStorage_poolPubKey.getPoolPubKey(poolAddress); 
+            if (pubKey) { 
+              pubKeys.push(pubKey);
+              pubKeyMap.set(pubKey, poolAddress.toLowerCase()); 
+              dispatch(updateStatus(pubKeys,pubKeyMap,poolCount,addressItems,(e:any[])=>{ 
+                addressItems=e;
+                dispatch(setAddressItems(addressItems)) 
+              }));
+            } else {
+              const poolPubkey =await contract.methods.getStakingPoolPubkey(poolAddress).call()  
+              if (poolPubkey) { 
+                pubKeys.push(poolPubkey);
+                pubKeyMap.set(poolPubkey, poolAddress.toLowerCase());
+                localStorage_poolPubKey.setPoolPubKey(poolAddress, poolPubkey);
+              } else {
+                pubKeys.push('');
+              } 
+              dispatch(updateStatus(pubKeys,pubKeyMap,poolCount,addressItems,(e:any[])=>{ 
+                addressItems=e;
+                dispatch(setAddressItems(addressItems)) 
+              }));
+              
+            }
+
+            let poolContract = new web3.eth.Contract(ethServer.getStafiStakingPoolAbi(), poolAddress, {
+              from: currentAddress
+            });
+
+            const status=await poolContract.methods.getStatus().call();
+            if (status == 4) {
+              addressItems.some((item) => {
+                if (item.address.toLowerCase() == poolAddress.toLowerCase()) {
+                  item.status = 8; 
+                  return true;
+                }
+              });
+              
+            }
+        
+
+            const  depositBalance= await poolContract.methods.getNodeDepositBalance().call() 
+            let parsedDepositBalance = parseFloat(web3.utils.fromWei(depositBalance, 'ether'));
+            selfDeposited += parsedDepositBalance;
+            // this.selfDepositedShow = NumberUtil.handleEthRoundToFixed(this.selfDeposited);
+        }
+      }else{
+        dispatch(setTotalStakedETH(0));
+        dispatch(setStatus_Apr('--%'))
+      }
+      // dispatch(setAddressItems(addressItems)) 
+      dispatch(setLoading(false));
+      dispatch(setSelfDeposited(selfDeposited))
+    } catch (error) {
+      dispatch(setLoading(false));
+    }
 }
 
 export const  updateStatus=(pubKeys:any[],pubKeyMap:any,poolCount:Number,addressItems:any[],cb:Function):AppThunk=>async (dispatch,getState)=>{ 
@@ -859,25 +866,10 @@ export const  updateStatus=(pubKeys:any[],pubKeyMap:any,poolCount:Number,address
             cb && cb(newAddressItems) 
           } 
           dispatch(setTotalStakedETH(totalStakeAmount));
-          // if (totalStakeAmount > 0) {
-          //   let count = 0;
-          //   let totalCount = 10;
-          //   let ratioAmount = 0;
-          //   let piece = totalStakeAmount / totalCount;
-          //   let interval = setInterval(() => {
-          //     count++;
-          //     ratioAmount += piece;
-          //     if (count == totalCount) {
-          //       ratioAmount = totalStakeAmount;
-          //       window.clearInterval(interval);
-          //     } 
-          //     dispatch(setTotalStakedETH(NumberUtil.handleEthGweiToFixed(ratioAmount)));
-          //   }, 100);
-          // }
+          
           
         }
-      }
-
+      } 
   }
 }
 
