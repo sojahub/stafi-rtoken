@@ -166,7 +166,7 @@ export default {
     } else if (type == rSymbol.Ksm) {
       return `https://kusama.subscan.io/extrinsic/${txHash}`;
     } else if (type == rSymbol.Sol) {
-      return `https://explorer.solana.com/tx/${txHash}`;
+      return `https://solanabeach.io/transaction/${txHash}`;
     } else {
       return '';
     }
