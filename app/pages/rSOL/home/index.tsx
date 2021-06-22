@@ -30,7 +30,8 @@ export default function Inde(props: any) {
   useEffect(() => {
     if (wallet) {
       wallet.on('connect', (publicKey) => {
-        console.log('on sol wallet connect: ', publicKey.toString());
+        console.log('on sol wallet connect: ', publicKey);
+        console.log('on sol wallet connect: ', publicKey.toBase58());
         if (fisAccount) {
           props.history.push('/rSOL/type');
         } else if (fisAccounts && fisAccounts.length > 0) {
@@ -44,8 +45,8 @@ export default function Inde(props: any) {
 
         const account = {
           name: '',
-          pubkey: publicKey.toString(),
-          address: publicKey.toString(),
+          pubkey: publicKey.toBase58(),
+          address: publicKey.toBase58(),
           balance: '--',
         };
         dispatch(clice(Symbol.Sol).createSubstrate(account));

@@ -17,6 +17,7 @@ import {
 } from '@util/common';
 import NumberUtil from '@util/numberUtil';
 import { message } from 'antd';
+import base58 from 'bs58';
 import { AppThunk } from '../store';
 import CommonClice from './commonClice';
 import { bondStates, bound, fisUnbond, rTokenSeries_bondStates } from './FISClice';
@@ -220,12 +221,17 @@ export const transfer =
 
     try {
       await timeout(3000);
-      message.info('Please approve transaction in sollet wallet.');
+      message.info('Please approve transaction in sollet wallet.', 5);
 
       const result = await solServer.sendTransaction(amount, selectedPool.address);
       console.log('solana sendTransaction txhash: ', result.txHash);
 
       if (result.blockHash && result.txHash) {
+        console.log(`solana tx complete: ${result.blockHash} ${result.txHash}`);
+
+        const hexBlockHash = u8aToHex(base58.decode(result.blockHash));
+        const hexTxHash = u8aToHex(base58.decode(result.txHash));
+
         dispatch(
           setProcessSending({
             brocasting: processStatus.success,
@@ -241,15 +247,15 @@ export const transfer =
           setProcessParameter({
             sending: {
               amount: amountparam,
-              txHash: result.txHash,
-              blockHash: result.blockHash,
+              txHash: hexTxHash,
+              blockHash: hexBlockHash,
               address,
               uuid: notice_uuid,
             },
             staking: {
               amount: amountparam,
-              txHash: result.txHash,
-              blockHash: result.blockHash,
+              txHash: hexTxHash,
+              blockHash: hexBlockHash,
               address,
               type: rSymbol.Sol,
               poolAddress: selectedPool.poolPubkey,
@@ -267,7 +273,7 @@ export const transfer =
 
         console.log('start dispatch bound');
         dispatch(
-          bound(address, result.txHash, result.blockHash, amount, selectedPool.poolPubkey, rSymbol.Sol, (r: string) => {
+          bound(address, hexTxHash, hexBlockHash, amount, selectedPool.poolPubkey, rSymbol.Sol, (r: string) => {
             if (r == 'loading') {
               dispatch(add_SOL_stake_Notice(notice_uuid, amountparam, noticeStatus.Pending));
             } else {
@@ -282,33 +288,13 @@ export const transfer =
               dispatch(add_SOL_stake_Notice(notice_uuid, amountparam, noticeStatus.Confirmed));
               cb && cb();
               dispatch(reloadData());
+              dispatch(setProcessSlider(false));
             }
           }),
         );
       } else {
-        dispatch(
-          setProcessSending({
-            brocasting: processStatus.success,
-            packing: processStatus.failure,
-          }),
-        );
-        dispatch(
-          setProcessParameter({
-            sending: {
-              amount: amountparam,
-              address,
-              uuid: notice_uuid,
-            },
-            href: cb ? '/rSOL/staker/info' : null,
-          }),
-        );
+        dispatch(setProcessSlider(false));
         dispatch(reloadData());
-        dispatch(
-          add_SOL_stake_Notice(notice_uuid, amountparam, noticeStatus.Error, {
-            process: getState().globalModule.process,
-            processParameter: getState().rSOLModule.processParameter,
-          }),
-        );
       }
     } catch (error) {
       console.log('error: ', error);
@@ -354,6 +340,10 @@ export const reStaking =
   (cb?: Function): AppThunk =>
   async (dispatch, getState) => {
     const processParameter = getState().rSOLModule.processParameter;
+
+    console.log('processParameter: ', JSON.stringify(processParameter));
+    // return;
+
     if (processParameter) {
       const staking = processParameter.staking;
       const href = processParameter.href;
@@ -363,7 +353,7 @@ export const reStaking =
             staking.address,
             staking.txHash,
             staking.blockHash,
-            NumberUtil.fisAmountToChain(staking.amount),
+            NumberUtil.solAmountToChain(staking.amount),
             staking.poolAddress,
             staking.type,
             (r: string) => {
@@ -385,6 +375,7 @@ export const reStaking =
                 dispatch(add_SOL_stake_Notice(processParameter.sending.uuid, staking.amount, noticeStatus.Confirmed));
                 href && cb && cb(href);
                 dispatch(reloadData());
+                dispatch(setProcessSlider(false));
               }
             },
           ),
@@ -451,9 +442,13 @@ export const onProceed =
   async (dispatch, getstate) => {
     const noticeData = findUuidWithoutBlockhash(getstate().noticeModule.noticeData, txHash);
 
+    console.log('onProceed noticeData: ', JSON.stringify(noticeData));
+
+    const { blockhash } = await solServer.getTransactionDetail(getstate().rSOLModule.solAccount.address, txHash);
+
     let bondSuccessParamArr: any[] = [];
-    // bondSuccessParamArr.push(blockHash);
-    bondSuccessParamArr.push(txHash);
+    bondSuccessParamArr.push(u8aToHex(base58.decode(blockhash)));
+    bondSuccessParamArr.push(u8aToHex(base58.decode(txHash)));
     let statusObj = {
       num: 0,
     };
@@ -529,13 +524,16 @@ export const getBlock =
         return;
       }
 
+      const hexBlockHash = u8aToHex(base58.decode(blockhash));
+      const hexTxHash = u8aToHex(base58.decode(txHash));
+
       dispatch(
         initProcess({
           sending: {
             packing: processStatus.success,
             brocasting: processStatus.success,
             finalizing: processStatus.success,
-            checkTx: txHash,
+            checkTx: hexTxHash,
           },
           staking: {
             packing: processStatus.default,
@@ -551,9 +549,9 @@ export const getBlock =
       dispatch(
         setProcessParameter({
           staking: {
-            amount: NumberUtil.fisAmountToHuman(amount),
-            txHash,
-            blockhash,
+            amount: NumberUtil.solAmountToHuman(amount),
+            hexTxHash,
+            hexBlockHash,
             address,
             type: rSymbol.Sol,
             poolAddress: poolData.poolPubkey,
@@ -561,11 +559,11 @@ export const getBlock =
         }),
       );
       dispatch(
-        bound(address, txHash, blockhash, amount, poolData.poolPubkey, rSymbol.Sol, (r: string) => {
+        bound(address, hexTxHash, hexBlockHash, amount, poolData.poolPubkey, rSymbol.Sol, (r: string) => {
           if (r == 'loading') {
             uuid &&
               dispatch(
-                add_SOL_stake_Notice(uuid, NumberUtil.fisAmountToHuman(amount).toString(), noticeStatus.Pending),
+                add_SOL_stake_Notice(uuid, NumberUtil.solAmountToHuman(amount).toString(), noticeStatus.Pending),
               );
           } else {
             dispatch(setStakeHash(null));
@@ -573,14 +571,15 @@ export const getBlock =
 
           if (r == 'failure') {
             uuid &&
-              dispatch(add_SOL_stake_Notice(uuid, NumberUtil.fisAmountToHuman(amount).toString(), noticeStatus.Error));
+              dispatch(add_SOL_stake_Notice(uuid, NumberUtil.solAmountToHuman(amount).toString(), noticeStatus.Error));
           }
           if (r == 'successful') {
             uuid &&
               dispatch(
-                add_SOL_stake_Notice(uuid, NumberUtil.fisAmountToHuman(amount).toString(), noticeStatus.Confirmed),
+                add_SOL_stake_Notice(uuid, NumberUtil.solAmountToHuman(amount).toString(), noticeStatus.Confirmed),
               );
             cb && cb();
+            dispatch(setProcessSlider(false));
           }
         }),
       );
@@ -798,6 +797,7 @@ const add_DOT_Swap_Notice =
 const add_SOL_Notice =
   (uuid: string, type: string, subType: string, content: string, status: string, subData?: any): AppThunk =>
   async (dispatch, getState) => {
+    console.log(`add_SOL_Notice, ${type} ${subType} ${status} ${subData}`);
     dispatch(add_Notice(uuid, Symbol.Sol, type, subType, content, status, subData));
   };
 export default rSOLClice.reducer;

@@ -6,6 +6,7 @@ import { reSending as solReSending, reStaking as solReStaking } from '@features/
 import close_svg from '@images/close.svg';
 import Liquiding_heard from '@images/liquiding_heard.svg';
 import { rSymbol } from '@keyring/defaults';
+import SolServer from '@servers/sol/index';
 import util from '@util/toolUtil';
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -16,6 +17,9 @@ type Props = {
   route: any;
   history: any;
 };
+
+const solServer = new SolServer();
+
 export default function Index(props: Props) {
   const dispatch = useDispatch();
   const { show, process } = useSelector((state: any) => {
@@ -78,13 +82,27 @@ export default function Index(props: Props) {
       );
     }
     if (util.pageType() == rSymbol.Sol) {
-      dispatch(
-        solReStaking((href: any) => {
-          href && props.history.push(href);
-        }),
-      );
+      const wallet = solServer.getWallet();
+      if (!wallet.connected) {
+        wallet.connect().then((res) => {
+          if (res) {
+            reStakeSol();
+          }
+        });
+      } else {
+        reStakeSol();
+      }
     }
   };
+
+  const reStakeSol = () => {
+    dispatch(
+      solReStaking((href: any) => {
+        href && props.history.push(href);
+      }),
+    );
+  };
+
   if (!show) {
     return null;
   }

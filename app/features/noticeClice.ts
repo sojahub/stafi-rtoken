@@ -10,6 +10,7 @@ import { initProcess, processStatus, setProcessSending, setProcessSlider, setPro
 import { setProcessParameter as atomSetProcessParameter } from './rATOMClice';
 import { setProcessParameter } from './rDOTClice';
 import { setProcessParameter as krmSetProcessParameter } from './rKSMClice';
+import { setProcessParameter as solSetProcessParameter } from './rSOLClice';
 export enum noticeStatus{
   Confirmed="Confirmed",
   Pending="Pending",
@@ -117,6 +118,7 @@ export const add_Notice=(uuid:string,rSymbol:string,type:string,subType:string,a
 }
 
 export const update_Notice=(uuid:string,rSymbol:string,type:string,subType:string,amount:string,status:string,subData?:any):AppThunk=>async (dispatch,getState)=>{
+  console.log('update notice');
   dispatch(addNoticeModal({
     data:{
       uuid:uuid,   //信息唯一标识
@@ -173,6 +175,9 @@ export const setProcess=(item:any,list:any,cb?:Function):AppThunk=>async (dispat
       if(item.subData.process.rSymbol==rSymbol.Atom){
         dispatch(atomSetProcessParameter(item.subData.processParameter));
       }
+      if(item.subData.process.rSymbol==rSymbol.Sol){
+        dispatch(solSetProcessParameter(item.subData.processParameter));
+      }
       
     }
   }
@@ -220,7 +225,7 @@ const re_Minting=(item:any,):AppThunk=>(dispatch,getState)=>{
 export const findUuid=(datas:any,txHash:string,blockHash:string)=>{  
   if(datas){
     const data = datas.datas.find((item:any)=>{
-      if(item && item.subData && item.subData.processParameter && item.subData.processParameter.sending.txHash==txHash && item.subData.processParameter.sending.blockHash==blockHash){
+      if(item && item.subData && item.subData.processParameter && item.subData.processParameter.sending.txHash==txHash && item.subData.processParameter.sending && item.subData.processParameter.sending.blockHash==blockHash){
         return true;
       }else{
         return false;
@@ -243,6 +248,7 @@ export const findUuidWithoutBlockhash = (datas: any, txHash: string) => {
         item &&
         item.subData &&
         item.subData.processParameter &&
+        item.subData.processParameter.sending &&
         item.subData.processParameter.sending.txHash == txHash
       ) {
         return true;

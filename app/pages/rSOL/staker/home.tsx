@@ -2,6 +2,7 @@ import Content from '@components/content/stakeContent_DOT';
 import { setProcessSlider } from '@features/globalClice';
 import { balancesAll, rTokenLedger, rTokenRate, transfer } from '@features/rSOLClice';
 import SolServer from '@servers/sol/index';
+import { PublicKey } from '@solana/web3.js';
 import { ratioToAmount } from '@util/common';
 import NumberUtil from '@util/numberUtil';
 import { message } from 'antd';
@@ -46,7 +47,6 @@ export default function Index(props: any) {
       const wallet = solServer.getWallet();
       if (!wallet.connected) {
         wallet.connect().then((res) => {
-          // console.log('connect result: ', res);
           if (res) {
             startStake();
           }
@@ -57,6 +57,10 @@ export default function Index(props: any) {
     } else {
       message.error('Please enter the amount');
     }
+  };
+
+  const getAddress = (result: any) => {
+    return new PublicKey(result._bn).toBase58();
   };
 
   const startStake = () => {

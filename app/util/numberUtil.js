@@ -130,8 +130,16 @@ export default {
     return amount / 1000000000000;
   },
 
+  solAmountToHuman(amount) {
+    return amount / 1000000000;
+  },
+
   fisAmountToChain(amount) {
     return Math.round(Number(amount) * 1000000000000);
+  },
+
+  solAmountToChain(amount) {
+    return Math.round(Number(amount) * 1000000000);
   },
 
   // The return string contains 4 decimal places, including 0

@@ -10,7 +10,6 @@ import { PublicKey } from '@solana/web3.js';
 import { getLocalStorageItem, Keys, removeLocalStorageItem, setLocalStorageItem, timeout } from '@util/common';
 import NumberUtil from '@util/numberUtil';
 import { message as M, message } from 'antd';
-import base58 from 'bs58';
 import { AppThunk } from '../store';
 import CommonClice from './commonClice';
 import {
@@ -339,7 +338,7 @@ export const stakingSignature = async (address: any, txHash: string) => {
 export const solSignature = async (address: any, fisAddress: string) => {
   message.info('Sending succeeded, proceeding signature.');
   await timeout(3000);
-  message.info('Please approve sign request in sollet wallet.');
+  message.info('Please approve sign request in sollet wallet.', 5);
 
   const fisKeyring = keyringInstance.init(Symbol.Fis);
   const solServer = new SolServer();
@@ -358,8 +357,8 @@ export const solSignature = async (address: any, fisAddress: string) => {
 export const bound =
   (
     address: string,
-    txhash: string,
-    blockhash: string,
+    txhash: any,
+    blockhash: any,
     amount: number,
     pooladdress: string,
     type: rSymbol,
@@ -391,12 +390,8 @@ export const bound =
         signature = await solSignature(address, fisAddress);
         const solKeyring = keyring.init(Symbol.Sol);
         pubkey = u8aToHex(new PublicKey(getState().rSOLModule.solAccount.address).toBytes());
-
-        console.log('blockhash: ', blockhash);
-        console.log('txHash: ', txhash);
-
-        blockhash = u8aToHex(base58.decode(blockhash));
-        txhash = u8aToHex(base58.decode(txhash));
+        // blockhash = u8aToHex(base58.decode(blockhash));
+        // txhash = u8aToHex(base58.decode(txhash));
 
         // console.log('solAccount: ', getState().rSOLModule.solAccount);
         message.info('Signature succeeded, proceeding staking');
@@ -545,7 +540,7 @@ export const bound =
       }
     } catch (e) {
       dispatch(setLoading(false));
-      if (e == 'Error: Cancelled' || e == 'Error: Transaction cancelled') {
+      if (e == 'Error: Cancelled' || e == 'Error: Transaction cancelled' || e == 'Error: Wallet disconnected') {
         message.error('Cancelled');
         dispatch(
           setProcessStaking({
@@ -664,7 +659,7 @@ export const getMinting =
     );
   };
 export const bondStates =
-  (type: number, txHash: string, blockHash: string, cb?: Function): AppThunk =>
+  (type: number, txHash: any, blockHash: any, cb?: Function): AppThunk =>
   async (dispatch, getState) => {
     const stafiApi = await stafiServer.createStafiApi();
     let bondSuccessParamArr: any[] = [];
@@ -672,6 +667,8 @@ export const bondStates =
     bondSuccessParamArr.push(txHash);
     const result = await stafiApi.query.rTokenSeries.bondStates(type, bondSuccessParamArr);
     let bondState = result.toJSON();
+    console.log(`bondSuccessParamArr: ${type} ${JSON.stringify(bondSuccessParamArr)}`);
+    console.log('bondState result: ', bondState);
     if (bondState == 'Success') {
       cb && cb('successful');
     } else if (bondState == 'Fail') {
@@ -688,6 +685,8 @@ export const rTokenSeries_bondStates =
     statusObj.num = statusObj.num + 1;
     const stafiApi = await stafiServer.createStafiApi();
     const result = await stafiApi.query.rTokenSeries.bondStates(type, bondSuccessParamArr);
+    console.log(`bondSuccessParamArr2: ${type} ${JSON.stringify(bondSuccessParamArr)}`);
+    console.log('bondState result2: ', JSON.stringify(result));
     let bondState = result.toJSON();
     if (bondState == 'Success') {
       dispatch(

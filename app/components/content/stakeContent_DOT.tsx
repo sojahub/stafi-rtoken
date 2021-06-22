@@ -2,7 +2,7 @@ import doubt from "@images/doubt.svg";
 import rATOM from '@images/selected_rATOM.svg';
 import rDOT from '@images/selected_rDOT.svg';
 import rKSM from '@images/selected_rKSM.svg';
-import rSOL from '@images/selected_r_sol.svg';
+import rSOL from '@images/solana.svg';
 import Button from '@shared/components/button/button';
 import Input from '@shared/components/input/amountInput';
 import { Tooltip } from 'antd';
