@@ -646,15 +646,15 @@ export const handleOffboard=(cb?:Function):AppThunk=>async (dispatch,getState)=>
     } 
   } else { 
     try { 
-      const result=await poolContract.methods.dissolve().send() 
+      const result=await poolContract.methods.dissolve().send();
+      dispatch(setCurrentPoolStatus(4));
       if (result && result.status) {
         try{
           const closeResult=await poolContract.methods.close().send() 
-
+          dispatch(setCurrentPoolStatus(0));
           dispatch(setLoading(false))
           clearTimeout(timeout)
-          if (closeResult && closeResult.status) {
-          
+          if (closeResult && closeResult.status) { 
             message.success('Offboard successfully');
             dispatch(reloadData());
             cb && cb();
