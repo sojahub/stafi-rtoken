@@ -265,6 +265,10 @@ export const checkAll_minting=(list:any):AppThunk=>(dispatch,getState)=>{
     }); 
     arryList.forEach((item:any) => {
       const staking=item.subData.processParameter.staking;
+      if (!staking) {
+        // continue
+        return true;
+      }
       let process={...item.subData.process}; 
       let txHash="";
       let blockHash="";

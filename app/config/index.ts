@@ -180,6 +180,8 @@ export default {
       return 22;
     } else if (type == Symbol.Fis) {
       return 29;
+    } else if (type == Symbol.Sol) {
+      return 10;
     } else {
       return 0;
     }
