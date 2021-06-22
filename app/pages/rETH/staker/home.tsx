@@ -45,11 +45,14 @@ export default function Index(props:any){
   totalStakedAmount={totalStakedAmount}
   waitingStaked={waitingStaked}
   isPoolWaiting={isPoolWaiting}
-  onStakeClick={()=>{ 
-    setEthNoteModalVisible(true);
+  onStakeClick={()=>{  
+    dispatch(send(amount,()=>{ 
+      dispatch(reloadData());
+      props.history.push("/rETH/staker/info")
+    }))
   }}
   type="rETH"></Content>
-  <EthNoteModal 
+  {/* <EthNoteModal 
     visible={ethNoteModalVisible}
     onCancel={()=>{
       setEthNoteModalVisible(false);
@@ -61,6 +64,6 @@ export default function Index(props:any){
         props.history.push("/rETH/staker/info")
       }))
     }}
-  /> 
+  />  */}
   </>
 }

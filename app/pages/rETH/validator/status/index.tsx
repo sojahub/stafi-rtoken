@@ -111,8 +111,9 @@ export default function Index(props:any){
             </div>
             {addressItems.length == 0 ? <NoDetails type="small"/>: <div className="Row">
               <AddressCard >
-                {addressItems.map((item)=>{
+                {addressItems.map((item)=>{ 
                   return  <AddressItem onClick={()=>{ 
+                   
                     props.history.push("/rETH/validator/poolContract/"+item.address)
                   }} address={item.shortAddress} status={getStatus(item.status)}/>
                 })} 
@@ -124,9 +125,7 @@ export default function Index(props:any){
                   props.history.push("/rETH/validator/deposit")
                 }}>New Deposit</Button>
               </div>
-            </div>}
-            
-            {/*  */}
+            </div>} 
         </div>
     </LeftContent>
 }

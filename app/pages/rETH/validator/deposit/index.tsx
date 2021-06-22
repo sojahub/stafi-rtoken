@@ -45,10 +45,8 @@ export default function Index(props:any){
             </div> 
        </div>
        <div className="btns reth_btns">
-       <Button  onClick={()=>{ 
-        //    setVisible(true);
-           dispatch(handleDeposit(ethAmount,(e:string)=>{ 
-                // setVisible(false);
+       <Button  onClick={()=>{  
+           dispatch(handleDeposit(ethAmount,(e:string)=>{  
                 if(e=="ok"){
                     props.history.push("/rETH/validator/stake")
                 }

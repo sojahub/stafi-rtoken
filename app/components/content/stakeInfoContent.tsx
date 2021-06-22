@@ -5,7 +5,7 @@ import rDOT_stafi_svg from '@images/selected_r_dot.svg';
 import rKSM_stafi_svg from '@images/selected_r_ksm.svg';
 import rATOM_stafi_svg from '@images/selected_r_atom.svg'
 import rETH_stafi_svg from '@images/selected_r_eth.svg'
-import dow_svg from '@images/left_arrow.svg';
+import dow_svg from '@images/left_arrow_black.svg';
 import rDOT_DOT_svg from '@images/rDOT_DOT.svg'
 import Button from '@shared/components/button/button';
 import TradePopover from "../tradePopover"

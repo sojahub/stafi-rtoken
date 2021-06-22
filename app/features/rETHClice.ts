@@ -442,10 +442,14 @@ export const send=(value:Number,cb?:Function):AppThunk=>async (dispatch,getState
   let contract = new web3.eth.Contract(ethServer.getStafiUserDepositAbi(), ethServer.getStafiUserDepositAddress(), {
     from: address
   });
-  const amount = web3.utils.toWei(value.toString()); 
- 
+  const amount = web3.utils.toWei(value.toString());  
   try { 
-    const result =await contract.methods.deposit().send({value: amount}) 
+    let timeout=setTimeout(()=>{
+      message.warning("Tx is pending to be finalized, please check it later")
+      dispatch(setLoading(false))
+    },5*60*1000)
+    const result =await contract.methods.deposit().send({value: amount})  
+    clearTimeout(timeout);
     dispatch(setLoading(false))
     if (result && result.status) { 
       message.success("Deposit successfully");
@@ -456,7 +460,7 @@ export const send=(value:Number,cb?:Function):AppThunk=>async (dispatch,getState
       message.error("Error! Please try again");
     }
   } catch (error) {
-    dispatch(setLoading(false));  
+    dispatch(setLoading(false));   
     message.error(error.message);
   } 
 }
@@ -504,9 +508,14 @@ export const handleDeposit=(ethAmount:Number,cb?:Function):AppThunk=>async (disp
   const amount = web3.utils.toWei(ethAmount.toString());
 
  dispatch(setLoading(true));
+  let timeout=setTimeout(()=>{
+  message.warning("Tx is pending to be finalized, please check it later")
+  dispatch(setLoading(false))
+ },5*60*1000)
  try {  
     const result=await contract.methods.deposit().send({value: amount})  
     dispatch(setLoading(false)); 
+    clearTimeout(timeout)
     if (result && result.status) {
       message.success("Deposit successfully");
       dispatch(add_ETH_validator_deposit_Notice(stafi_uuid(),ethAmount.toString(),noticeStatus.Confirmed))
@@ -519,6 +528,7 @@ export const handleDeposit=(ethAmount:Number,cb?:Function):AppThunk=>async (disp
    
   } catch (error) {
     dispatch(setLoading(false)); 
+    clearTimeout(timeout)
     message.error(error.message); 
   } 
 }
@@ -610,10 +620,16 @@ export const handleOffboard=(cb?:Function):AppThunk=>async (dispatch,getState)=>
     from: currentAddress
   }); 
   dispatch(setLoading(true));
+  let timeout=setTimeout(()=>{
+    message.warning("Tx is pending to be finalized, please check it later")
+    dispatch(setLoading(false))
+  },5*60*1000);
   if (currentPoolStatus == 4) {
     try {
+     
       const result = await  poolContract.methods.close().send() 
         dispatch(setLoading(false)); 
+        clearTimeout(timeout) 
         if (result && result.status) { 
           message.success('Offboard successfully')
           dispatch(add_ETH_validator_offboard_Notice(stafi_uuid(),noticeStatus.Confirmed))
@@ -624,7 +640,8 @@ export const handleOffboard=(cb?:Function):AppThunk=>async (dispatch,getState)=>
           message.error('Error! Please try again')
         } 
     } catch (error) {
-      dispatch(setLoading(false));
+      dispatch(setLoading(false)); 
+      clearTimeout(timeout) 
       message.error(error.message)
     } 
   } else { 
@@ -632,9 +649,10 @@ export const handleOffboard=(cb?:Function):AppThunk=>async (dispatch,getState)=>
       const result=await poolContract.methods.dissolve().send() 
       if (result && result.status) {
         try{
-        const closeResult=await poolContract.methods.close().send() 
+          const closeResult=await poolContract.methods.close().send() 
 
           dispatch(setLoading(false))
+          clearTimeout(timeout)
           if (closeResult && closeResult.status) {
           
             message.success('Offboard successfully');
@@ -646,13 +664,16 @@ export const handleOffboard=(cb?:Function):AppThunk=>async (dispatch,getState)=>
           
         }catch(error){
           dispatch(setLoading(false))
+          clearTimeout(timeout)
           message.error(error.message);
         };
       } else { 
         dispatch(setLoading(false))
+        clearTimeout(timeout)
         message.error('Error! Please try again'); 
       } 
     } catch (error) {
+      clearTimeout(timeout)
       dispatch(setLoading(false))
       message.error(error.message);
     }
@@ -674,7 +695,10 @@ export const handleStake=(validatorKeys:any[],cb?:Function):AppThunk=>async (dis
   
   dispatch(setLoading(true))
   try {
- 
+  let timeout=setTimeout(()=>{
+      message.warning("Tx is pending to be finalized, please check it later")
+      dispatch(setLoading(false))
+    },5*60*1000);
   let pubkey = '0x' + validatorKeys[0].pubkey;
   const result =await poolContract.methods.stake(
     pubkey, 
@@ -682,6 +706,7 @@ export const handleStake=(validatorKeys:any[],cb?:Function):AppThunk=>async (dis
     '0x' + validatorKeys[0].deposit_data_root
   ).send();
     dispatch(setLoading(false)) 
+    clearTimeout(timeout)
     if (result && result.status) { 
       localStorage_poolPubKey.setPoolPubKey(currentPoolAddress, pubkey);
       message.success('Stake successfully');
@@ -930,7 +955,7 @@ export const getPoolInfo=(poolAddress:string):AppThunk=>async (dispatch,getState
   let contract = new web3.eth.Contract(ethServer.getStafiStakingPoolManagerAbi(), ethServer.getStafiStakingPoolManagerAddress(), {
     from: currentAddress
   });
-  const pubkey=await contract.methods.getStakingPoolPubkey(poolAddress).call()
+  const pubkey=await contract.methods.getStakingPoolPubkey(poolAddress).call();
     if (pubkey) {
       localStorage_poolPubKey.setPoolPubKey(poolAddress, pubkey);
       dispatch(getStakingPoolDetail(poolAddress,pubkey));
@@ -951,7 +976,7 @@ export const getPoolInfo=(poolAddress:string):AppThunk=>async (dispatch,getState
 
 export const getStakingPoolDetail=(poolAddress:string,pubkey:any):AppThunk=>async (dispatch,getState)=>{
   ethServer.getPoolInfo(poolAddress,pubkey).then(result => {
-    if (result.status == '80000' && result.data) {
+    if (result.status == '80000' && result.data) { 
       if (result.data.status != 7) {
         let detail:any={}
         detail.status = result.data.status;
