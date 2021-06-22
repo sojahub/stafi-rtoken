@@ -1,27 +1,23 @@
-import { createSlice } from '@reduxjs/toolkit';
-import { AppThunk } from '../store';
-import AtomServer from '@servers/atom/index';
-import Stafi from '@servers/stafi/index';
-import { message } from 'antd';
-import keyring from '@servers/index'; 
-import { setLocalStorageItem, getLocalStorageItem, removeLocalStorageItem, Keys } from '@util/common';
-import CommonClice from './commonClice'
-import {rSymbol,Symbol} from '@keyring/defaults'
-import {
-  processStatus, setProcessSlider, setProcessSending,initProcess,setLoading,setProcessType
-} from './globalClice';
-import {add_Notice} from './noticeClice'
-import NumberUtil from '@util/numberUtil';
-import { bound, fisUnbond ,rTokenSeries_bondStates,bondStates} from './FISClice';
-import {stafi_uuid} from '@util/common'
-import {findUuid,noticesubType,noticeStatus,noticeType} from './noticeClice';
-import { u8aToHex } from '@polkadot/util';
-import config,{isdev} from '@config/index';
-import { coins } from '@cosmjs/stargate'; 
+import config from '@config/index';
 import {
   decodeTxRaw
 } from "@cosmjs/proto-signing";
+import { coins } from '@cosmjs/stargate';
+import { rSymbol, Symbol } from '@keyring/defaults';
+import { u8aToHex } from '@polkadot/util';
+import { createSlice } from '@reduxjs/toolkit';
+import AtomServer from '@servers/atom/index';
+import keyring from '@servers/index';
+import Stafi from '@servers/stafi/index';
+import { getLocalStorageItem, Keys, removeLocalStorageItem, setLocalStorageItem, stafi_uuid } from '@util/common';
+import NumberUtil from '@util/numberUtil';
+import { message } from 'antd';
 import _m0 from "protobufjs/minimal";
+import { AppThunk } from '../store';
+import CommonClice from './commonClice';
+import { bondStates, bound, fisUnbond, rTokenSeries_bondStates } from './FISClice';
+import { initProcess, processStatus, setProcessSending, setProcessSlider, setProcessType } from './globalClice';
+import { add_Notice, findUuid, noticeStatus, noticesubType, noticeType } from './noticeClice';
 
 const commonClice=new CommonClice();
 

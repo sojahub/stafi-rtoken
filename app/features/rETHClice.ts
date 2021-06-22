@@ -1,18 +1,17 @@
-import { createSlice } from '@reduxjs/toolkit';  
-import {isdev} from '@config/index'
-import { AppThunk, RootState } from '../store';
-import { setLocalStorageItem, getLocalStorageItem, removeLocalStorageItem, Keys,localStorage_poolPubKey,localStorage_currentEthPool } from '@util/common';
+import { isdev } from '@config/index';
+import { Symbol } from '@keyring/defaults';
+import { keccakAsHex } from '@polkadot/util-crypto';
+import { createSlice } from '@reduxjs/toolkit';
+import EthServer from '@servers/eth/index';
+import { getLocalStorageItem, Keys, localStorage_currentEthPool, localStorage_poolPubKey, removeLocalStorageItem, setLocalStorageItem, stafi_uuid } from '@util/common';
 import NumberUtil from '@util/numberUtil';
-import Web3Utils from 'web3-utils';
-import EthServer from '@servers/eth/index'; 
+import StringUtil from '@util/stringUtil';
 import { message } from 'antd';
-import { keccakAsHex } from '@polkadot/util-crypto';  
-import {getAssetBalanceAll,getAssetBalance} from './ETHClice';
-import {setLoading} from './globalClice'; 
-import {noticeType,noticesubType,add_Notice,noticeStatus} from './noticeClice'
-import StringUtil from '@util/stringUtil' 
-import {Symbol} from '@keyring/defaults';
-import {stafi_uuid} from '@util/common'
+import Web3Utils from 'web3-utils';
+import { AppThunk } from '../store';
+import { getAssetBalance, getAssetBalanceAll } from './ETHClice';
+import { setLoading } from './globalClice';
+import { add_Notice, noticeStatus, noticesubType, noticeType } from './noticeClice';
 
 const ethServer=new EthServer();
 const rETHClice = createSlice({

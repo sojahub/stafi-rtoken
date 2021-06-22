@@ -1,24 +1,24 @@
-import { createSlice } from '@reduxjs/toolkit';  
-import BridgeServer from '@servers/bridge';
-import Stafi from '@servers/stafi/index'
-import { AppThunk } from '../store';
-import NumberUtil from '@util/numberUtil';
-import StafiServer from '@servers/stafi';
-import EthServer from '@servers/eth'; 
-import KsmServer from '@servers/ksm';
-import DotServer from '@servers/polkadot';
-import AtomServer from '@servers/atom'
-import keyring from '@servers/index';
-import rpc from '@util/rpc'
-import {  u8aToHex } from '@polkadot/util';
-import {setLoading} from './globalClice'
-import { message } from 'antd';
 import {
     web3Enable,
-    web3FromSource,
-  } from '@polkadot/extension-dapp'; 
-  import {stafi_uuid} from '@util/common'
-  import {findUuid,noticesubType,noticeStatus,add_Notice,noticeType} from './noticeClice';
+    web3FromSource
+} from '@polkadot/extension-dapp';
+import { u8aToHex } from '@polkadot/util';
+import { createSlice } from '@reduxjs/toolkit';
+import AtomServer from '@servers/atom';
+import BridgeServer from '@servers/bridge';
+import EthServer from '@servers/eth';
+import keyring from '@servers/index';
+import KsmServer from '@servers/ksm';
+import DotServer from '@servers/polkadot';
+import StafiServer from '@servers/stafi';
+import Stafi from '@servers/stafi/index';
+import { stafi_uuid } from '@util/common';
+import NumberUtil from '@util/numberUtil';
+import rpc from '@util/rpc';
+import { message } from 'antd';
+import { AppThunk } from '../store';
+import { setLoading } from './globalClice';
+import { add_Notice, noticeStatus, noticesubType, noticeType } from './noticeClice';
 
 const STAFI_CHAIN_ID = 1;
 const ETH_CHAIN_ID = 2;

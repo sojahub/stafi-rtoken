@@ -1,15 +1,15 @@
-import { createSlice } from '@reduxjs/toolkit'; 
-import { AppThunk, RootState } from '../store';
 import config from '@config/index';
-import { setLocalStorageItem, getLocalStorageItem, removeLocalStorageItem, Keys } from '@util/common';
-import {setProcessParameter} from './rDOTClice';
-import {setProcessParameter as krmSetProcessParameter} from './rKSMClice';
-import {setProcessParameter as atomSetProcessParameter} from './rATOMClice';
-import {initProcess,setProcessSlider,setProcessSending,setProcessStaking,processStatus} from './globalClice';
-import {getMinting,bondStates} from './FISClice';
-import {rSymbol,Symbol} from '@keyring/defaults'
-import moment from 'moment'; 
-import { message,Modal } from 'antd';
+import { rSymbol } from '@keyring/defaults';
+import { createSlice } from '@reduxjs/toolkit';
+import { getLocalStorageItem, Keys, setLocalStorageItem } from '@util/common';
+import { Modal } from 'antd';
+import moment from 'moment';
+import { AppThunk } from '../store';
+import { bondStates, getMinting } from './FISClice';
+import { initProcess, processStatus, setProcessSending, setProcessSlider, setProcessStaking } from './globalClice';
+import { setProcessParameter as atomSetProcessParameter } from './rATOMClice';
+import { setProcessParameter } from './rDOTClice';
+import { setProcessParameter as krmSetProcessParameter } from './rKSMClice';
 export enum noticeStatus{
   Confirmed="Confirmed",
   Pending="Pending",
