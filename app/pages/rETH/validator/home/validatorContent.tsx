@@ -10,13 +10,13 @@ export default function Index(props:any){
         1.Deposit
         </div>
         <div className="describe">
-        Deposit 8 ETH to register as a delegated validator on StaFi, StaFi Staking Contract will match 24 ETH to your node so that it can meet the validator requirements of ETH2.0.
+        Deposit 4 ETH to register as a delegated validator on StaFi, StaFi Staking Contract will match 28 ETH to your node so that it can meet the validator requirements of ETH2.0.
         </div>
         <div className="sub_title">
         2.Stake
         </div>
         <div className="describe"> 
-        Once 32ETH is matched to your node, you can deploy a pool contract to deposit 32ETH to the Deposit contract on ETH1.0, and then wait for validation progress on ETH2.0.
+        Once 32 ETH is matched to your node, you can deploy a pool contract to deposit 32 ETH to the Deposit contract on ETH1.0, and then wait for validation progress on ETH2.0.
         </div>
         <div className="sub_title">
         3.Status
