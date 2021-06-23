@@ -8,6 +8,15 @@
     .header_logo{
         height:30px;
     }
+    .info_span{
+        display: flex;
+        align-items: center;
+        .report_icon{
+            img{
+                cursor: pointer;
+            }
+        }
+    }
     .header_tool{
         padding:6px;
         background-color: #343B43;

@@ -31,8 +31,7 @@ export default function Index(props:any){
     
       <div className="stafi_container">
         <Spin spinning={loading} size="large" tip="loading">
-          <Content>
-            {!location.pathname.includes("/rETH/home") && <div className="stafi_reth_tip">Be aware of rETH can not be redeemed until Phase 1.5 of ETH2 !</div>}
+          <Content> 
             {renderRoutes(props.route.routes)}
           </Content> 
         </Spin>

@@ -1,16 +1,17 @@
-import { createSlice } from '@reduxjs/toolkit';  
-import {isdev} from '@config/index'
-import { AppThunk, RootState } from '../store';
-import { setLocalStorageItem, getLocalStorageItem, removeLocalStorageItem, Keys,localStorage_poolPubKey,localStorage_currentEthPool } from '@util/common';
+import { isdev } from '@config/index';
+import { Symbol } from '@keyring/defaults';
+import { keccakAsHex } from '@polkadot/util-crypto';
+import { createSlice } from '@reduxjs/toolkit';
+import EthServer from '@servers/eth/index';
+import { getLocalStorageItem, Keys, localStorage_currentEthPool, localStorage_poolPubKey, removeLocalStorageItem, setLocalStorageItem, stafi_uuid } from '@util/common';
 import NumberUtil from '@util/numberUtil';
-import Web3Utils from 'web3-utils';
-import EthServer from '@servers/eth/index'; 
+import StringUtil from '@util/stringUtil';
 import { message } from 'antd';
-import { keccakAsHex } from '@polkadot/util-crypto';  
-import {getAssetBalanceAll,getAssetBalance} from './ETHClice';
-import {setLoading} from './globalClice'; 
-import StringUtil from '@util/stringUtil' 
-
+import Web3Utils from 'web3-utils';
+import { AppThunk } from '../store';
+import { getAssetBalance, getAssetBalanceAll } from './ETHClice';
+import { setLoading } from './globalClice';
+import { add_Notice, noticeStatus, noticesubType, noticeType } from './noticeClice';
 
 const ethServer=new EthServer();
 const rETHClice = createSlice({
@@ -440,20 +441,26 @@ export const send=(value:Number,cb?:Function):AppThunk=>async (dispatch,getState
   let contract = new web3.eth.Contract(ethServer.getStafiUserDepositAbi(), ethServer.getStafiUserDepositAddress(), {
     from: address
   });
-  const amount = web3.utils.toWei(value.toString()); 
- 
+  const amount = web3.utils.toWei(value.toString());  
   try { 
-  const result =await contract.methods.deposit().send({value: amount}) 
-  dispatch(setLoading(false))
+    let timeout=setTimeout(()=>{
+      message.warning("Tx is pending to be finalized, please check it later")
+      dispatch(setLoading(false))
+    },5*60*1000)
+    const result =await contract.methods.deposit().send({value: amount})  
+    clearTimeout(timeout);
+    dispatch(setLoading(false))
     if (result && result.status) { 
       message.success("Deposit successfully");
+      dispatch(add_ETH_Staker_stake_Notice(stafi_uuid(),value.toString(),noticeStatus.Confirmed));
       cb && cb();
     } else { 
-      message.success("Error! Please try again");
+      dispatch(add_ETH_Staker_stake_Notice(stafi_uuid(),value.toString(),noticeStatus.Error));
+      message.error("Error! Please try again");
     }
   } catch (error) {
-    dispatch(setLoading(false))
-    message.success(error.message);
+    dispatch(setLoading(false));   
+    message.error(error.message);
   } 
 }
 
@@ -499,20 +506,28 @@ export const handleDeposit=(ethAmount:Number,cb?:Function):AppThunk=>async (disp
   });
   const amount = web3.utils.toWei(ethAmount.toString());
 
-  setLoading(true);
- try { 
-    const result=await contract.methods.deposit().send({value: amount}) 
-    setLoading(false); 
+ dispatch(setLoading(true));
+  let timeout=setTimeout(()=>{
+  message.warning("Tx is pending to be finalized, please check it later")
+  dispatch(setLoading(false))
+ },5*60*1000)
+ try {  
+    const result=await contract.methods.deposit().send({value: amount})  
+    dispatch(setLoading(false)); 
+    clearTimeout(timeout)
     if (result && result.status) {
       message.success("Deposit successfully");
+      dispatch(add_ETH_validator_deposit_Notice(stafi_uuid(),ethAmount.toString(),noticeStatus.Confirmed))
       cb && cb("ok");
     } else {
       message.error("Error! Please try again"); 
+      dispatch(add_ETH_validator_deposit_Notice(stafi_uuid(),ethAmount.toString(),noticeStatus.Error))
       cb && cb("error");
     }
    
   } catch (error) {
-    setLoading(false);
+    dispatch(setLoading(false)); 
+    clearTimeout(timeout)
     message.error(error.message); 
   } 
 }
@@ -599,37 +614,47 @@ export const handleOffboard=(cb?:Function):AppThunk=>async (dispatch,getState)=>
   const currentPoolAddress=getState().rETHModule.poolAddress;
  
   const currentAddress=getState().rETHModule.ethAccount.address;
-  const currentPoolStatus=getState().rETHModule.currentPoolStatus;
-  console.log(currentPoolAddress,currentAddress,currentPoolStatus)
+  const currentPoolStatus=getState().rETHModule.currentPoolStatus; 
   let poolContract = new web3.eth.Contract(ethServer.getStafiStakingPoolAbi(), currentPoolAddress, {
     from: currentAddress
   }); 
   dispatch(setLoading(true));
+  let timeout=setTimeout(()=>{
+    message.warning("Tx is pending to be finalized, please check it later")
+    dispatch(setLoading(false))
+  },5*60*1000);
   if (currentPoolStatus == 4) {
     try {
+     
       const result = await  poolContract.methods.close().send() 
         dispatch(setLoading(false)); 
+        clearTimeout(timeout) 
         if (result && result.status) { 
           message.success('Offboard successfully')
+          dispatch(add_ETH_validator_offboard_Notice(stafi_uuid(),noticeStatus.Confirmed))
           cb && cb()
           dispatch(reloadData())
         } else { 
+          dispatch(add_ETH_validator_offboard_Notice(stafi_uuid(),noticeStatus.Error))
           message.error('Error! Please try again')
         } 
     } catch (error) {
-      dispatch(setLoading(false));
+      dispatch(setLoading(false)); 
+      clearTimeout(timeout) 
       message.error(error.message)
     } 
   } else { 
     try { 
-      const result=await poolContract.methods.dissolve().send() 
+      const result=await poolContract.methods.dissolve().send();
+  
       if (result && result.status) {
+        dispatch(setCurrentPoolStatus(4));
         try{
-        const closeResult=await poolContract.methods.close().send() 
-
+          const closeResult=await poolContract.methods.close().send()  
           dispatch(setLoading(false))
-          if (closeResult && closeResult.status) {
-          
+          clearTimeout(timeout)
+          if (closeResult && closeResult.status) { 
+            dispatch(setCurrentPoolStatus(0));
             message.success('Offboard successfully');
             dispatch(reloadData());
             cb && cb();
@@ -639,13 +664,16 @@ export const handleOffboard=(cb?:Function):AppThunk=>async (dispatch,getState)=>
           
         }catch(error){
           dispatch(setLoading(false))
+          clearTimeout(timeout)
           message.error(error.message);
         };
       } else { 
         dispatch(setLoading(false))
+        clearTimeout(timeout)
         message.error('Error! Please try again'); 
       } 
     } catch (error) {
+      clearTimeout(timeout)
       dispatch(setLoading(false))
       message.error(error.message);
     }
@@ -667,7 +695,10 @@ export const handleStake=(validatorKeys:any[],cb?:Function):AppThunk=>async (dis
   
   dispatch(setLoading(true))
   try {
- 
+  let timeout=setTimeout(()=>{
+      message.warning("Tx is pending to be finalized, please check it later")
+      dispatch(setLoading(false))
+    },5*60*1000);
   let pubkey = '0x' + validatorKeys[0].pubkey;
   const result =await poolContract.methods.stake(
     pubkey, 
@@ -675,12 +706,15 @@ export const handleStake=(validatorKeys:any[],cb?:Function):AppThunk=>async (dis
     '0x' + validatorKeys[0].deposit_data_root
   ).send();
     dispatch(setLoading(false)) 
+    clearTimeout(timeout)
     if (result && result.status) { 
       localStorage_poolPubKey.setPoolPubKey(currentPoolAddress, pubkey);
       message.success('Stake successfully');
+      dispatch(add_ETH_validator_stake_Notice(stafi_uuid(),noticeStatus.Confirmed))
       cb && cb("ok");
     } else {
       message.error('Error! Please try again');
+      dispatch(add_ETH_validator_stake_Notice(stafi_uuid(),noticeStatus.Error))
       cb && cb("error");
     }
      
@@ -706,69 +740,76 @@ export const getSelfDeposited=():AppThunk=>async (dispatch,getState)=>{
   let pubKeyMap=new Map();
   let selfDeposited=0;
 
- const poolCount = await contract.methods.getNodeStakingPoolCount(currentAddress).call();
-  if (poolCount > 0) {  
-    for (let index = 0; index < poolCount; index++) {
-    const poolAddress=await  contract.methods.getNodeStakingPoolAt(currentAddress, index).call(); 
-        let data = {
-          address: poolAddress,
-          shortAddress: StringUtil.replacePkh(poolAddress, 4, 38),
-          status: -1
-        }
-        addressItems.push(data);
-
-        let pubKey = localStorage_poolPubKey.getPoolPubKey(poolAddress); 
-        if (pubKey) { 
-          pubKeys.push(pubKey);
-          pubKeyMap.set(pubKey, poolAddress.toLowerCase()); 
-          dispatch(updateStatus(pubKeys,pubKeyMap,poolCount,addressItems,(e:any[])=>{ 
-            addressItems=e;
-            dispatch(setAddressItems(addressItems)) 
-          }));
-        } else {
-          const poolPubkey =await contract.methods.getStakingPoolPubkey(poolAddress).call()  
-          if (poolPubkey) { 
-            pubKeys.push(poolPubkey);
-            pubKeyMap.set(poolPubkey, poolAddress.toLowerCase());
-            localStorage_poolPubKey.setPoolPubKey(poolAddress, poolPubkey);
-          } else {
-            pubKeys.push('');
-          } 
-          dispatch(updateStatus(pubKeys,pubKeyMap,poolCount,addressItems,(e:any[])=>{ 
-            addressItems=e;
-            dispatch(setAddressItems(addressItems)) 
-          }));
-          
-        }
-
-        let poolContract = new web3.eth.Contract(ethServer.getStafiStakingPoolAbi(), poolAddress, {
-          from: currentAddress
-        });
-
-        const status=await poolContract.methods.getStatus().call();
-        if (status == 4) {
-          addressItems.some((item) => {
-            if (item.address.toLowerCase() == poolAddress.toLowerCase()) {
-              item.status = 8; 
-              return true;
-            }
-          });
-          
-        }
+  dispatch(setLoading(true));
+  try {
     
-
-        const  depositBalance= await poolContract.methods.getNodeDepositBalance().call() 
-        let parsedDepositBalance = parseFloat(web3.utils.fromWei(depositBalance, 'ether'));
-        selfDeposited += parsedDepositBalance;
-         // this.selfDepositedShow = NumberUtil.handleEthRoundToFixed(this.selfDeposited);
-    }
-  }else{
-    dispatch(setTotalStakedETH(0));
-    dispatch(setStatus_Apr('--%'))
-  }
-  // dispatch(setAddressItems(addressItems)) 
-  dispatch(setSelfDeposited(selfDeposited))
  
+    const poolCount = await contract.methods.getNodeStakingPoolCount(currentAddress).call();
+      if (poolCount > 0) {  
+        for (let index = 0; index < poolCount; index++) {
+        const poolAddress=await  contract.methods.getNodeStakingPoolAt(currentAddress, index).call(); 
+            let data = {
+              address: poolAddress,
+              shortAddress: StringUtil.replacePkh(poolAddress, 4, 38),
+              status: -1
+            }
+            addressItems.push(data);
+
+            let pubKey = localStorage_poolPubKey.getPoolPubKey(poolAddress); 
+            if (pubKey) { 
+              pubKeys.push(pubKey);
+              pubKeyMap.set(pubKey, poolAddress.toLowerCase()); 
+              dispatch(updateStatus(pubKeys,pubKeyMap,poolCount,addressItems,(e:any[])=>{ 
+                addressItems=e;
+                dispatch(setAddressItems(addressItems)) 
+              }));
+            } else {
+              const poolPubkey =await contract.methods.getStakingPoolPubkey(poolAddress).call()  
+              if (poolPubkey) { 
+                pubKeys.push(poolPubkey);
+                pubKeyMap.set(poolPubkey, poolAddress.toLowerCase());
+                localStorage_poolPubKey.setPoolPubKey(poolAddress, poolPubkey);
+              } else {
+                pubKeys.push('');
+              } 
+              dispatch(updateStatus(pubKeys,pubKeyMap,poolCount,addressItems,(e:any[])=>{ 
+                addressItems=e;
+                dispatch(setAddressItems(addressItems)) 
+              }));
+              
+            }
+
+            let poolContract = new web3.eth.Contract(ethServer.getStafiStakingPoolAbi(), poolAddress, {
+              from: currentAddress
+            });
+
+            const status=await poolContract.methods.getStatus().call();
+            if (status == 4) {
+              addressItems.some((item) => {
+                if (item.address.toLowerCase() == poolAddress.toLowerCase()) {
+                  item.status = 8; 
+                  return true;
+                }
+              });
+              
+            }
+        
+
+            const  depositBalance= await poolContract.methods.getNodeDepositBalance().call() 
+            let parsedDepositBalance = parseFloat(web3.utils.fromWei(depositBalance, 'ether'));
+            selfDeposited += parsedDepositBalance;
+            // this.selfDepositedShow = NumberUtil.handleEthRoundToFixed(this.selfDeposited);
+        }
+      }else{
+        dispatch(setTotalStakedETH(0));
+        dispatch(setStatus_Apr('--%'))
+      }
+      // dispatch(setAddressItems(addressItems)) 
+      dispatch(setLoading(false));
+      dispatch(setSelfDeposited(selfDeposited))
+    } catch (error) {
+      dispatch(setLoading(false));
+    }
 }
 
 export const  updateStatus=(pubKeys:any[],pubKeyMap:any,poolCount:Number,addressItems:any[],cb:Function):AppThunk=>async (dispatch,getState)=>{ 
@@ -825,25 +866,10 @@ export const  updateStatus=(pubKeys:any[],pubKeyMap:any,poolCount:Number,address
             cb && cb(newAddressItems) 
           } 
           dispatch(setTotalStakedETH(totalStakeAmount));
-          // if (totalStakeAmount > 0) {
-          //   let count = 0;
-          //   let totalCount = 10;
-          //   let ratioAmount = 0;
-          //   let piece = totalStakeAmount / totalCount;
-          //   let interval = setInterval(() => {
-          //     count++;
-          //     ratioAmount += piece;
-          //     if (count == totalCount) {
-          //       ratioAmount = totalStakeAmount;
-          //       window.clearInterval(interval);
-          //     } 
-          //     dispatch(setTotalStakedETH(NumberUtil.handleEthGweiToFixed(ratioAmount)));
-          //   }, 100);
-          // }
+          
           
         }
-      }
-
+      } 
   }
 }
 
@@ -921,7 +947,7 @@ export const getPoolInfo=(poolAddress:string):AppThunk=>async (dispatch,getState
   let contract = new web3.eth.Contract(ethServer.getStafiStakingPoolManagerAbi(), ethServer.getStafiStakingPoolManagerAddress(), {
     from: currentAddress
   });
-  const pubkey=await contract.methods.getStakingPoolPubkey(poolAddress).call()
+  const pubkey=await contract.methods.getStakingPoolPubkey(poolAddress).call();
     if (pubkey) {
       localStorage_poolPubKey.setPoolPubKey(poolAddress, pubkey);
       dispatch(getStakingPoolDetail(poolAddress,pubkey));
@@ -942,7 +968,7 @@ export const getPoolInfo=(poolAddress:string):AppThunk=>async (dispatch,getState
 
 export const getStakingPoolDetail=(poolAddress:string,pubkey:any):AppThunk=>async (dispatch,getState)=>{
   ethServer.getPoolInfo(poolAddress,pubkey).then(result => {
-    if (result.status == '80000' && result.data) {
+    if (result.status == '80000' && result.data) { 
       if (result.data.status != 7) {
         let detail:any={}
         detail.status = result.data.status;
@@ -998,4 +1024,25 @@ export const rewardDetails= [
     reward: '--'
   }
 ] 
+
+
+
+//validator-Deposit
+
+const add_ETH_Staker_stake_Notice=(uuid:string,amount:string,status:string,subData?:any):AppThunk=>async (dispatch,getState)=>{
+  dispatch(add_ETH_Notice(uuid,noticeType.Staker,noticesubType.Stake,amount,status,subData))
+}
+const add_ETH_validator_deposit_Notice=(uuid:string,amount:string,status:string,subData?:any):AppThunk=>async (dispatch,getState)=>{
+  dispatch(add_ETH_Notice(uuid,noticeType.Validator,noticesubType.Deposit,amount,status,subData))
+}
+const add_ETH_validator_stake_Notice=(uuid:string,status:string,subData?:any):AppThunk=>async (dispatch,getState)=>{
+  dispatch(add_ETH_Notice(uuid,noticeType.Validator,noticesubType.Stake,"",status,subData))
+} 
+const add_ETH_validator_offboard_Notice=(uuid:string,status:string,subData?:any):AppThunk=>async (dispatch,getState)=>{
+  dispatch(add_ETH_Notice(uuid,noticeType.Validator,noticesubType.Offboard,"",status,subData))
+}
+ 
+const add_ETH_Notice=(uuid:string,type:string,subType:string,content:string,status:string,subData?:any):AppThunk=>async (dispatch,getState)=>{
+    dispatch(add_Notice(uuid,Symbol.Eth,type,subType,content,status,subData))
+}
 export default rETHClice.reducer;

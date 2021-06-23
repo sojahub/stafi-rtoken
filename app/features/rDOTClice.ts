@@ -1,27 +1,26 @@
-import { createSlice } from '@reduxjs/toolkit';
-import { AppThunk, RootState } from '../store';
-import PolkadotServer from '@servers/polkadot/index';
-import Stafi from '@servers/stafi/index';
-import { message as M, message } from 'antd';
-import keyring from '@servers/index';
-import { setLocalStorageItem, getLocalStorageItem, removeLocalStorageItem, Keys } from '@util/common';
-import {rSymbol,Symbol} from '@keyring/defaults'
-import {
-  processStatus, setProcessSlider, setProcessSending,
-   initProcess,setLoading,setProcessType
-} from './globalClice';
-import {add_Notice,findUuid} from './noticeClice';
+import config from '@config/index';
+import { rSymbol, Symbol } from '@keyring/defaults';
 import {
   web3Enable,
-  web3FromSource,
+  web3FromSource
 } from '@polkadot/extension-dapp';
+import { u8aToHex } from '@polkadot/util';
+import { createSlice } from '@reduxjs/toolkit';
+import keyring from '@servers/index';
+import PolkadotServer from '@servers/polkadot/index';
+import Stafi from '@servers/stafi/index';
+import { getLocalStorageItem, Keys, removeLocalStorageItem, setLocalStorageItem, stafi_uuid } from '@util/common';
 import NumberUtil from '@util/numberUtil';
-import { bound, fisUnbond,rTokenSeries_bondStates,bondStates } from './FISClice';
-import {stafi_uuid} from '@util/common'
-import {addNoticeModal,noticesubType,noticeStatus,noticeType} from './noticeClice';
-import { u8aToHex } from '@polkadot/util' 
-import CommonClice from './commonClice'
-import config from '@config/index'
+import { message as M, message } from 'antd';
+import { AppThunk } from '../store';
+import CommonClice from './commonClice';
+import { bondStates, bound, fisUnbond, rTokenSeries_bondStates } from './FISClice';
+import {
+  initProcess, processStatus,
+  setLoading, setProcessSending, setProcessSlider,
+  setProcessType
+} from './globalClice';
+import { add_Notice, findUuid, noticeStatus, noticesubType, noticeType } from './noticeClice';
 
 
 
@@ -636,7 +635,7 @@ export const rTokenLedger=():AppThunk=>async (dispatch, getState)=>{
   if (currentEra) {
     let rateResult = await stafiApi.query.rTokenRate.eraRate(rSymbol.Dot, currentEra - 1) 
     const currentRate = rateResult.toJSON(); 
-    const rateResult2 = await stafiApi.query.rTokenRate.eraRate(rSymbol.Dot, currentEra - 2)
+    const rateResult2 = await stafiApi.query.rTokenRate.eraRate(rSymbol.Dot, currentEra - 8)
     let lastRate = rateResult2.toJSON();
     dispatch(handleStakerApr(currentRate,lastRate));
   } else {
@@ -644,13 +643,12 @@ export const rTokenLedger=():AppThunk=>async (dispatch, getState)=>{
   }  
 }
 const handleStakerApr = (currentRate?: any, lastRate?: any): AppThunk => async (dispatch, getState) => {
-    dispatch(setStakerApr('14.9%')); 
-    // if (currentRate && lastRate) {
-    //   const apr = NumberUtil.handleEthRoundToFixed((currentRate - lastRate)/lastRate * 365.25 * 100) + '%';
-    //   dispatch(setStakerApr(apr));
-    // } else {
-    //   dispatch(setStakerApr('14.9%')); 
-    // }
+    if (currentRate && lastRate) {
+      const apr = NumberUtil.handleEthRoundToFixed((currentRate - lastRate) / 1000000000000 / 7 * 365.25 * 100) + '%';
+      dispatch(setStakerApr(apr));
+    } else {
+      dispatch(setStakerApr('14.9%')); 
+    }
   }
 
   export const checkAddress = (address:string)=>{

@@ -32,7 +32,7 @@ export default function Index(props:any){
              window.open('https://etherscan.io/address/' + props.match.params.poolAddress);
            }} underline={true}>{props.match.params.poolAddress}</A>
         </PoolItem>
-        <PoolItem label="Process">
+        <PoolItem label="Process"> 
            <Process currentBalance={stakingPoolDetail?stakingPoolDetail.currentBalance:"--"} status={stakingPoolDetail ? stakingPoolDetail.status : 0}/>
         </PoolItem>
         <PoolItem label="Status">

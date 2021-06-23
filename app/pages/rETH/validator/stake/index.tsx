@@ -13,16 +13,14 @@ import OffboardModal from '@components/modal/offboardModal'
 import { RootState } from 'app/store';
 import StringUtil from '@util/stringUtil';
 import Popover from '@shared/components/popover/addressSelect'
-import drop_down_arrow from '@images/drop_down_arrow.svg'
-import Modal from '@components/modal/ethDepositModal'
+import drop_down_arrow from '@images/drop_down_arrow.svg' 
 
 export default function Index(props:any){
     const dispatch = useDispatch()
     const [offboardModalVisible,setOffboardModalVisible]=useState(false)
     const [validatorKeysState,setValidatorKeysState]=useState<any>([])
     const [btnActiveStatus,setBtnActiveStatus]=useState(0);
-    const [poolTotalStake,setPoolTotalStake]=useState(32);
-    const [visible,setVisible]=useState(false);
+    const [poolTotalStake,setPoolTotalStake]=useState(32); 
     useEffect(()=>{
         dispatch(getNodeStakingPoolCount())
     },[])
@@ -112,10 +110,8 @@ export default function Index(props:any){
               if (currentPoolStatus == 2) {
                 message.error("This pool contract has been staked");
                 return;
-              } 
-              setVisible(true);
+              }  
               dispatch(handleStake(validatorKeysState,(e:string)=>{
-                setVisible(false);
                 if(e=="ok"){
                   props.history.push("/rETH/validator/status");
                 }
@@ -135,11 +131,6 @@ export default function Index(props:any){
                 }))
             }}
         />
-      <Modal 
-        visible={visible}
-        onClose={()=>{
-            setVisible(false);
-        }}
-       />
+  
     </LeftContent>
 }

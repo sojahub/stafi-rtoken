@@ -1,16 +1,16 @@
-import { createSlice } from '@reduxjs/toolkit'; 
-import { AppThunk, RootState } from '../store'; 
-import PolkadotServer from '@servers/polkadot/index';
-import AtomServer from '@servers/atom/index'
-import {message} from 'antd';   
+import { Symbol } from '@keyring/defaults';
+import { u8aToHex } from '@polkadot/util';
+import { createSlice } from '@reduxjs/toolkit';
+import AtomServer from '@servers/atom/index';
 import keyring from '@servers/index';
-import {rSymbol, Symbol} from '@keyring/defaults';
-import { u8aToHex } from '@polkadot/util'; 
-import { createSubstrate as dotCreateSubstrate,reloadData as dotReloadData } from './rDOTClice';
-import { createSubstrate as fisCreateSubstrate,reloadData as fisReloadData } from './FISClice';
-import { createSubstrate as ksmCreateSubstrate,reloadData as ksmReloadData } from './rKSMClice';
-import { createSubstrate as atomCreateSubstrate,reloadData as atomReloadData } from './rATOMClice';
+import PolkadotServer from '@servers/polkadot/index';
 import Rpc from '@util/rpc';
+import { message } from 'antd';
+import { AppThunk } from '../store';
+import { createSubstrate as fisCreateSubstrate, reloadData as fisReloadData } from './FISClice';
+import { createSubstrate as atomCreateSubstrate, reloadData as atomReloadData } from './rATOMClice';
+import { createSubstrate as dotCreateSubstrate, reloadData as dotReloadData } from './rDOTClice';
+import { createSubstrate as ksmCreateSubstrate, reloadData as ksmReloadData } from './rKSMClice';
 
 export enum processStatus {
   default=0,

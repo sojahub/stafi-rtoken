@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import {Modal,Radio} from 'antd'
+import A from '@shared/components/button/a';
+import config from '@config/index'
 import './ethNoteModal.scss'
 
 type Props={
@@ -29,7 +31,15 @@ export default function Index(props:Props){
     }}
     width={310}
     >
-ETH2.0 is not enable staked ETH (like rETH) to be redeemed until phase1.5. rETH can only be swapped to ETH in Uniswap. Other marketplaces are in construction.
+ETH2.0 Staking does't support withdraw function 
+for now, so You couldn't redeem the staked ETH 
+until ETH 2.0 Phase1.5 is rolled out. 
+You could trade rETH token into ETH for liquidity 
+on DEX like <A onClick={()=>{
+    window.open(config.uniswap.rethURL_pair)
+}} underline={true}>Uniswap</A> or <A underline={true} onClick={()=>{
+    window.open(config.curve.rethURL)
+}}>Curve</A>.
 
     <div className="radio_panel">
         <Radio value={true} checked={agree} onChange={(e)=>{

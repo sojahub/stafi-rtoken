@@ -8,10 +8,8 @@ import './index.scss';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'app/store';
 import {getDepositBalance,handleDeposit,reloadData,getDepositAmount} from '@features/rETHClice';
-import Modal from '@components/modal/ethDepositModal'
 export default function Index(props:any){
-    const dispatch=useDispatch();
-    const [visible,setVisible]=useState(false);
+    const dispatch=useDispatch(); 
     // const [amount,setAmount]=useState(8);
     const { validatorApr,depositWaitingStaked,waitingPoolCount,ethAmount } = useSelector((state:RootState)=>{
         return {
@@ -47,21 +45,14 @@ export default function Index(props:any){
             </div> 
        </div>
        <div className="btns reth_btns">
-       <Button  onClick={()=>{ 
-           setVisible(true);
-           dispatch(handleDeposit(ethAmount,(e:string)=>{ 
-                setVisible(false);
+       <Button  onClick={()=>{  
+           dispatch(handleDeposit(ethAmount,(e:string)=>{  
                 if(e=="ok"){
                     props.history.push("/rETH/validator/stake")
                 }
            }))  
         }}>Deposit</Button>
        </div>
-       <Modal 
-        visible={visible}
-        onClose={()=>{
-            setVisible(false);
-        }}
-       ></Modal>
+      
     </LeftContent>
 }
