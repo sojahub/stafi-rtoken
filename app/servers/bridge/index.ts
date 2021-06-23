@@ -20,6 +20,8 @@ export default class Index{
         return '0x000000000000000000000000000000bada4d69537ffd62dbcde10ddda21b2001';
       } else if (tokenType == 'ratom') {
         return '0x0000000000000000000000000000006e15faef60f5e197166fe64110456a8601';
+      } else if (tokenType == 'rsol') {
+        return '0x000000000000000000000000000000659b930f8568952cb7b0c8b7eda3060b01';
       }
     }
     getRsymbolByTokenType(tokenType: string) {
@@ -32,6 +34,8 @@ export default class Index{
           return rSymbol.Ksm;
         case 'ratom':
           return rSymbol.Atom;
+        case 'rsol':
+          return rSymbol.Sol;
         default:
           return rSymbol.Fis;
       }
