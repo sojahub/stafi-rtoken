@@ -1,15 +1,12 @@
 import config from '@config/index';
 import { onProceed } from '@features/rSOLClice';
 import leftArrowSvg from '@images/left_arrow.svg';
-import SolServer from '@servers/sol/index';
 import Button from '@shared/components/button/button';
 import Input from '@shared/components/input/index';
 import { Form, message } from 'antd';
 import React from 'react';
 import { useDispatch } from 'react-redux';
 import './index.scss';
-
-const solServer = new SolServer();
 
 export default function Index(props: any) {
   const [form] = Form.useForm();
@@ -20,16 +17,12 @@ export default function Index(props: any) {
       return;
     }
 
-    const wallet = solServer.getWallet();
-    if (!wallet.connected) {
-      wallet.connect().then((res) => {
-        if (res) {
-          startRecovery(values);
-        }
-      });
-    } else {
-      startRecovery(values);
+    if (values.txHash.length !== 88) {
+      message.error('Please enter valid txhash');
+      return;
     }
+
+    startRecovery(values);
   };
 
   const startRecovery = (values: any) => {

@@ -2,6 +2,7 @@ import { hexToU8a } from '@polkadot/util';
 import { mnemonicValidate } from '@polkadot/util-crypto';
 import { PublicKey } from '@solana/web3.js';
 import * as bip32 from 'bip32';
+import base58 from 'bs58';
 import * as crypto from 'crypto';
 import Base from './Base';
 import { KeyringPair, KeyringStruct } from './types';
@@ -53,7 +54,7 @@ export class SolKeyring extends Base implements KeyringStruct {
   }
 
   public checkAddress(address: string): boolean {
-    if (!address || address.length < 0) {
+    if (!address || address.length !== 44) {
       return false;
     }
     try {
@@ -71,6 +72,7 @@ export class SolKeyring extends Base implements KeyringStruct {
   }
 
   public decodeAddress(accAddress: string): Buffer {
+    return base58.decode(accAddress);
     // const { prefix, words } = bech32.decode(accAddress);
     // if (prefix !== this._acc_addr_prefix) {
     //   throw Error('Wrong prefix');
@@ -82,7 +84,6 @@ export class SolKeyring extends Base implements KeyringStruct {
     // }
 
     // return buffer;
-    return Buffer.from(new TextEncoder().encode(accAddress));
   }
 
   public sign(secretKey: string, message: string): any {

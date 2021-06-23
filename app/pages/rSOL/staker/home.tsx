@@ -1,6 +1,7 @@
 import Content from '@components/content/stakeContent_DOT';
-import { setProcessSlider } from '@features/globalClice';
+import { clice, setProcessSlider } from '@features/globalClice';
 import { balancesAll, rTokenLedger, rTokenRate, transfer } from '@features/rSOLClice';
+import { Symbol } from '@keyring/defaults';
 import SolServer from '@servers/sol/index';
 import { PublicKey } from '@solana/web3.js';
 import { ratioToAmount } from '@util/common';
@@ -8,18 +9,47 @@ import NumberUtil from '@util/numberUtil';
 import { message } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { Redirect } from 'react-router-dom';
 
 const solServer = new SolServer();
 
 export default function Index(props: any) {
   const dispatch = useDispatch();
   const [amount, setAmount] = useState<any>();
+  const { solAccount } = useSelector((state: any) => {
+    return {
+      solAccount: state.rSOLModule.solAccount,
+    };
+  });
+
+  if (!solAccount) {
+    return <Redirect to={'/rSOL/home'} />;
+  }
 
   useEffect(() => {
     dispatch(balancesAll());
     dispatch(rTokenRate());
     dispatch(rTokenLedger());
   }, []);
+
+  let publicKey: any;
+  if (solServer.getWallet() && solServer.getWallet().connected) {
+    publicKey = solServer.getWallet().publicKey;
+  }
+  useEffect(() => {
+    if (publicKey && publicKey.toBase58() !== solAccount.address) {
+      // message.warn('Sollet address switched', 5);
+      setAmount('');
+      const account = {
+        name: '',
+        pubkey: publicKey.toBase58(),
+        address: publicKey.toBase58(),
+        balance: '--',
+      };
+      dispatch(clice(Symbol.Sol).createSubstrate(account));
+    }
+  }, [publicKey]);
+
   const { transferrableAmount, ratio, stafiStakerApr, fisCompare, validPools, totalIssuance, bondFees } = useSelector(
     (state: any) => {
       const fisCompare =
@@ -46,21 +76,42 @@ export default function Index(props: any) {
 
       const wallet = solServer.getWallet();
       if (!wallet.connected) {
-        wallet.connect().then((res) => {
-          if (res) {
-            startStake();
-          }
-        });
+        wallet
+          .connect()
+          .then((res) => {
+            if (res) {
+              checkWalletAddress(getPublicKey(res));
+            }
+          })
+          .catch((error) => {
+            console.warn('stake home connect sollet error: ', error);
+          });
       } else {
-        startStake();
+        checkWalletAddress(wallet.publicKey);
       }
     } else {
       message.error('Please enter the amount');
     }
   };
 
-  const getAddress = (result: any) => {
-    return new PublicKey(result._bn).toBase58();
+  const getPublicKey = (result: any) => {
+    return new PublicKey(result._bn);
+  };
+
+  const checkWalletAddress = (publicKey: PublicKey) => {
+    if (publicKey.toBase58() == solAccount.address) {
+      startStake();
+    } else {
+      message.warn('Sollet address mismatch, please resubmit', 5);
+      setAmount('');
+      const account = {
+        name: '',
+        pubkey: publicKey.toBase58(),
+        address: publicKey.toBase58(),
+        balance: '--',
+      };
+      dispatch(clice(Symbol.Sol).createSubstrate(account));
+    }
   };
 
   const startStake = () => {

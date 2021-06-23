@@ -16,7 +16,9 @@ export default class ExtensionDapp extends SolKeyring {
   }
 
   async connectSolJs() {
-    await wallet.connect();
+    if (!wallet.connected || !wallet.publicKey) {
+      await wallet.connect();
+    }
   }
 
   getWallet() {
@@ -49,21 +51,24 @@ export default class ExtensionDapp extends SolKeyring {
       };
     } catch (e) {
       console.warn(e);
+      throw e;
     }
-    return {};
   };
 
-  getTransactionDetail = async (address: string, txHash: string) => {
-    const connection = new Connection(config.solRpcApi(), { wsEndpoint: config.solRpcWs() });
-    const parsedTx = await connection.getParsedConfirmedTransaction(txHash);
-
-    if (!parsedTx || !parsedTx.slot) {
-      return {};
-    }
-    console.log(`testTx: ${JSON.stringify(parsedTx)}`);
-    const block = await connection.getBlock(parsedTx.slot);
-
+  getTransactionDetail = async (address: string, txHash: any) => {
     try {
+      const connection = new Connection(config.solRpcApi(), { wsEndpoint: config.solRpcWs() });
+      const parsedTx = await connection.getParsedConfirmedTransaction(txHash).catch((error) => {
+        console.log('getTransactionDetail error: ', error);
+        throw new Error();
+      });
+
+      if (!parsedTx || !parsedTx.slot) {
+        return {};
+      }
+      console.log(`testTx: ${JSON.stringify(parsedTx)}`);
+      const block = await connection.getBlock(parsedTx.slot);
+
       const lamports = this.getTxLamports(parsedTx.transaction.message.instructions[0]);
       const destination = this.getTxDestination(parsedTx.transaction.message.instructions[0]);
       return {
@@ -71,8 +76,10 @@ export default class ExtensionDapp extends SolKeyring {
         poolAddress: destination,
         blockhash: block.blockhash,
       };
-    } catch (error) {}
-    return {};
+    } catch (error) {
+      console.log('getTransactionDetail error: ', error);
+      throw new Error();
+    }
   };
 
   getTxLamports = (instruction: any) => {

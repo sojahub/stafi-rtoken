@@ -223,7 +223,10 @@ export const transfer =
       await timeout(3000);
       message.info('Please approve transaction in sollet wallet.', 5);
 
-      const result = await solServer.sendTransaction(amount, selectedPool.address);
+      let result: any;
+      result = await solServer.sendTransaction(amount, selectedPool.address).catch((error) => {
+        throw error;
+      });
       console.log('solana sendTransaction txhash: ', result.txHash);
 
       if (result.blockHash && result.txHash) {
@@ -297,7 +300,11 @@ export const transfer =
         dispatch(reloadData());
       }
     } catch (error) {
-      console.log('error: ', error);
+      if (error == 'Error: Transaction cancelled') {
+        message.error('cancelled');
+        dispatch(setProcessSlider(false));
+        dispatch(reloadData());
+      }
     }
   };
 
@@ -443,9 +450,23 @@ export const onProceed =
     const noticeData = findUuidWithoutBlockhash(getstate().noticeModule.noticeData, txHash);
 
     console.log('onProceed noticeData: ', JSON.stringify(noticeData));
+    let blockhash: any;
+    try {
+      const result = await solServer.getTransactionDetail(getstate().rSOLModule.solAccount.address, txHash);
+      if (result) {
+        blockhash = result.blockhash;
+      }
+    } catch (error) {
+      message.error('Transaction record not found!');
+      return;
+    }
 
-    const { blockhash } = await solServer.getTransactionDetail(getstate().rSOLModule.solAccount.address, txHash);
+    dispatch(_onProceedInternal(noticeData, blockhash, txHash, cb));
+  };
 
+const _onProceedInternal =
+  (noticeData: any, blockhash: any, txHash: string, cb?: Function): AppThunk =>
+  async (dispatch, getstate) => {
     let bondSuccessParamArr: any[] = [];
     bondSuccessParamArr.push(u8aToHex(base58.decode(blockhash)));
     bondSuccessParamArr.push(u8aToHex(base58.decode(txHash)));
@@ -461,11 +482,24 @@ export const onProceed =
           });
           noticeData && dispatch(add_SOL_stake_Notice(noticeData.uuid, noticeData.amount, noticeStatus.Confirmed));
         } else if (e == 'failure' || e == 'stakingFailure') {
-          dispatch(
-            getBlock(txHash, noticeData ? noticeData.uuid : null, () => {
-              cb && cb('successful');
-            }),
-          );
+          const wallet = solServer.getWallet();
+          if (!wallet.connected) {
+            wallet.connect().then((res) => {
+              if (res) {
+                dispatch(
+                  getBlock(txHash, noticeData ? noticeData.uuid : null, () => {
+                    cb && cb('successful');
+                  }),
+                );
+              }
+            });
+          } else {
+            dispatch(
+              getBlock(txHash, noticeData ? noticeData.uuid : null, () => {
+                cb && cb('successful');
+              }),
+            );
+          }
         } else {
           if (getstate().globalModule.processSlider == false) {
             dispatch(

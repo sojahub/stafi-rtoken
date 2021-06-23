@@ -223,7 +223,11 @@ export default function Index(props: Props) {
               ))}
             {account.type == 'rSOL' &&
               (account.solAccount ? (
-                <div className='header_tool account'>
+                <div
+                  className='header_tool account'
+                  onClick={() => {
+                    dispatch(connectSoljs());
+                  }}>
                   <div>{account.solAccount.balance} SOL</div>
                   <div>{StringUtil.replacePkh(account.solAccount.address, 6, 38)}</div>
                 </div>
