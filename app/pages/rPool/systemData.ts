@@ -1,18 +1,14 @@
 export const rPool_data=[{
   text:"Staker",
-  url:"/rKSM/staker/index",
-  child:[
+  url:"/rPool/staker/index",
+  child:[ 
     {
-      text:'-Status',
-      url:"/rKSM/staker/info"
+      text:"-Insurance",
+      url:"/rPool/staker/insurance"
     },
     {
       text:'-Reward',
-      url:"/rKSM/staker/reward"
-    },
-    {
-      text:'-Recovery',
-      url:"/rKSM/search"
+      url:"/rPool/staker/reward"
     }
   ]
 },{

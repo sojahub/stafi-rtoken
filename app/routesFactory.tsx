@@ -53,6 +53,9 @@ import RAssetSwap from './pages/rAsset/swap';
 
 import RPoolHomeTemplate from './pages/rPool/template';
 import RPoolHome from './pages/rPool/home'
+import RPoolStaker from './pages/rPool/staker';
+import RPoolStakerReward from './pages/rPool/staker/reward';
+import RPoolStakerInsurance from './pages/rPool/staker/insurance';
 
 import {rSymbol} from '@keyring/defaults'
   
@@ -330,6 +333,25 @@ const routesFactory=(role?:any)=>{
           // rSymbol:rSymbol.Atom,
           component:RPoolHome
         },{
+          id:"RPool_staker",
+          type:"Staker",
+          path:"/rPool/staker",
+          rSymbol:rSymbol.Dot,
+          component:RPoolStaker,
+          routes:[{
+              id:"RPool_reward_index",
+              path:"/rPool/staker/reward",
+              type:"Staker",
+              rSymbol:rSymbol.Ksm,
+              component:RPoolStakerReward
+            },{
+              id:"RPool_insurance_index",
+              path:"/rPool/staker/insurance",
+              type:"Staker",
+              rSymbol:rSymbol.Ksm,
+              component:RPoolStakerInsurance
+            }
+          ]},{
           path: '*',
           component: () => <Redirect to="/rATOM/home"/>
         }]
