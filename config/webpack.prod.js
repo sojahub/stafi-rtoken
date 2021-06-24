@@ -1,5 +1,5 @@
 const WebpackBar = require('webpackbar')
-const webpackConfigCreator = require("./webpack.common");
+const webpackConfigCreator = require("./webpack.common-new");
 const TerserJsPlugin = require('terser-webpack-plugin');
 const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 // const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
@@ -38,27 +38,27 @@ const options={
           new CssMinimizerPlugin()
         ],
        
-        splitChunks:{
+        // splitChunks:{
         
-          cacheGroups:{
+        //   cacheGroups:{
            
-            common:{
-              chunks:'initial',
-              name:'commons',  
-              minSize:30,  
-              minChunks:2  
-            },
+        //     common:{
+        //       chunks:'initial',
+        //       name:'commons',  
+        //       minSize:30,  
+        //       minChunks:2  
+        //     },
             
-            vender:{
-              priority:1,  
-              test:/node_modules/,
-              chunks:'initial',
-              name:'vendors',
-              minSize:0,
-              minChunks:1
-            }
-          }
-        }
+        //     vender:{
+        //       priority:1,  
+        //       test:/node_modules/,
+        //       chunks:'initial',
+        //       name:'vendors',
+        //       minSize:0,
+        //       minChunks:1
+        //     }
+        //   }
+        // }
       },
 } 
 const webpackConfig = webpackConfigCreator(options)
