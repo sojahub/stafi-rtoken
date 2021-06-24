@@ -8,7 +8,7 @@ export default function Index(props: Props) {
   return (
     <div
       className={`stafi_content ${
-        location.pathname.includes('/rETH') || location.pathname.includes('rAsset/erc') ? '' : 'stafi_content_notice'
+        location.pathname.includes('/rETH') || location.pathname.includes('rAsset/erc') || location.pathname.includes('swap/erc') ? '' : 'stafi_content_notice'
       } ${props.className}`}>
       {props.children}
     </div>

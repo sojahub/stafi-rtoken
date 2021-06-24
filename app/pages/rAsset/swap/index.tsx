@@ -1,66 +1,85 @@
-import React, { useEffect, useState } from 'react'; 
-import {message} from 'antd';
-import Content from '@shared/components/content';
-import Title from '@shared/components/cardTitle';
-import Back from '@shared/components/backIcon';
-import Input from '@shared/components/input/addressInput';
-import TypeInput from '@shared/components/input/typeInput'; 
-import Button from '@shared/components/button/button'
-import './index.scss' 
-import selected_rETH from '@images/selected_rETH.svg';  
-import selected_rFIS from '@images/selected_rFIS.svg';  
-import rasset_fis_svg from '@images/rFIS.svg';
-import rasset_rfis_svg from '@images/r_fis.svg';  
-import rasset_rksm_svg from '@images/r_ksm.svg'; 
-import rasset_ratom_svg from '@images/r_atom.svg'; 
-import rasset_rdot_svg from '@images/r_dot.svg'; 
-import down_arrow_svg from "@images/down_arrow.svg"
 import Understood from '@components/modal/understood';
-import {bridgeCommon_ChainFees,getBridgeEstimateEthFee,nativeToErc20Swap,erc20ToNativeSwap}from '@features/bridgeClice';
-import {rTokenRate as ksm_rTokenRate,query_rBalances_account,getUnbondCommission,reloadData as ksmReloadData} from '@features/rKSMClice';
-import {rTokenRate as fis_rTokenRate,query_rBalances_account as fis_query_rBalances_account,getUnbondCommission as fis_getUnbondCommission,reloadData as fisReloadData,checkAddress as fis_checkAddress} from '@features/FISClice'; 
-import {getAssetBalanceAll,getErc20Allowances,clickSwapToErc20Link,clickSwapToNativeLink} from '@features/ETHClice'
-import {checkEthAddress} from '@features/rETHClice'
+import { bridgeCommon_ChainFees, erc20ToNativeSwap, getBridgeEstimateEthFee, nativeToErc20Swap } from '@features/bridgeClice';
+import { clickSwapToErc20Link, clickSwapToNativeLink, getAssetBalanceAll, getErc20Allowances } from '@features/ETHClice';
+import { checkAddress as fis_checkAddress, getUnbondCommission as fis_getUnbondCommission, query_rBalances_account as fis_query_rBalances_account, reloadData as fisReloadData, rTokenRate as fis_rTokenRate } from '@features/FISClice';
 import {
-  reloadData as dotReloadData,
-  rTokenRate as dot_rTokenRate,
-  getUnbondCommission as dot_getUnbondCommission,
-  query_rBalances_account as dot_query_rBalances_account
-} from '@features/rDOTClice'
-import {
-  reloadData as atomReloadData,
-  rTokenRate as atom_rTokenRate,
   getUnbondCommission as atom_getUnbondCommission,
-  query_rBalances_account as atom_query_rBalances_account
-} from '@features/rATOMClice'
-import { useSelector,useDispatch } from 'react-redux';
+  query_rBalances_account as atom_query_rBalances_account, reloadData as atomReloadData,
+  rTokenRate as atom_rTokenRate
+} from '@features/rATOMClice';
+import {
+  getUnbondCommission as dot_getUnbondCommission,
+  query_rBalances_account as dot_query_rBalances_account, reloadData as dotReloadData,
+  rTokenRate as dot_rTokenRate
+} from '@features/rDOTClice';
+import { checkEthAddress } from '@features/rETHClice';
+import { getUnbondCommission, query_rBalances_account, reloadData as ksmReloadData, rTokenRate as ksm_rTokenRate } from '@features/rKSMClice';
+import {
+  getUnbondCommission as sol_getUnbondCommission,
+  query_rBalances_account as sol_query_rBalances_account,
+  reloadData as solReloadData,
+  rTokenRate as sol_rTokenRate
+} from '@features/rSOLClice';
+import down_arrow_svg from "@images/down_arrow.svg";
+import rasset_fis_svg from '@images/rFIS.svg';
+import rasset_rsol_svg from '@images/rSOL.svg';
+import rasset_ratom_svg from '@images/r_atom.svg';
+import rasset_rdot_svg from '@images/r_dot.svg';
+import rasset_rfis_svg from '@images/r_fis.svg';
+import rasset_rksm_svg from '@images/r_ksm.svg';
+import selected_rETH from '@images/selected_rETH.svg';
+import selected_rFIS from '@images/selected_rFIS.svg';
+import Back from '@shared/components/backIcon';
+import Button from '@shared/components/button/button';
+import Title from '@shared/components/cardTitle';
+import Content from '@shared/components/content';
+import Input from '@shared/components/input/addressInput';
+import TypeInput from '@shared/components/input/typeInput';
 import NumberUtil from '@util/numberUtil';
-const datas=[{
-  icon:rasset_fis_svg, 
-  title:"FIS",
-  amount:"--",
-  type:'fis'
-},{
-  icon:rasset_rfis_svg, 
-  title:"rFIS",
-  amount:"--",
-  type:'rfis'
-},{
-  icon:rasset_rdot_svg, 
-  title:"rDOT",
-  amount:"--",
-  type:'rdot'
-},{
-  icon:rasset_rksm_svg, 
-  title:"rKSM",
-  amount:"--",
-  type:'rksm'
-},{
-  icon:rasset_ratom_svg, 
-  title:"rATOM",
-  amount:"--",
-  type:'ratom'
-}]
+import { message } from 'antd';
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import './index.scss';
+
+const datas = [
+  {
+    icon: rasset_fis_svg,
+    title: 'FIS',
+    amount: '--',
+    type: 'fis',
+  },
+  {
+    icon: rasset_rfis_svg,
+    title: 'rFIS',
+    amount: '--',
+    type: 'rfis',
+  },
+  {
+    icon: rasset_rdot_svg,
+    title: 'rDOT',
+    amount: '--',
+    type: 'rdot',
+  },
+  {
+    icon: rasset_rksm_svg,
+    title: 'rKSM',
+    amount: '--',
+    type: 'rksm',
+  },
+  {
+    icon: rasset_ratom_svg,
+    title: 'rATOM',
+    amount: '--',
+    type: 'ratom',
+  },
+  {
+    icon: rasset_rsol_svg,
+    title: 'rSOL',
+    amount: '--',
+    type: 'rsol',
+  },
+];
+
 export default function Index(props:any){  
   const dispatch =useDispatch();
   const [fromAoumt,setFormAmount]=useState<any>();
@@ -88,38 +107,47 @@ export default function Index(props:any){
       dispatch(bridgeCommon_ChainFees());
       dispatch(getBridgeEstimateEthFee());
   },[])
-
  
-  const {fisAccount,ethAccount,erc20EstimateFee,estimateEthFee,rksm_balance,rfis_balance,fis_balance,rdot_balance,ratom_balance}=useSelector((state:any)=>{
-
-    if(operationType=="erc20"){
-      return { 
-        rksm_balance:NumberUtil.handleFisAmountToFixed(state.ETHModule.ercRKSMBalance),
-        rfis_balance:NumberUtil.handleFisAmountToFixed(state.ETHModule.ercRFISBalance),
-        fis_balance:NumberUtil.handleFisAmountToFixed(state.ETHModule.ercFISBalance),
-        rdot_balance:NumberUtil.handleFisAmountToFixed(state.ETHModule.ercRDOTBalance),
-        ratom_balance:NumberUtil.handleFisAmountToFixed(state.ETHModule.ercRATOMBalance),
-        erc20EstimateFee:state.bridgeModule.erc20EstimateFee,
-        estimateEthFee:state.bridgeModule.estimateEthFee,
-        fisAccount:state.FISModule.fisAccount,
-        ethAccount:state.rETHModule.ethAccount,
-      }
-    }else{ 
+  const {
+    fisAccount,
+    ethAccount,
+    erc20EstimateFee,
+    estimateEthFee,
+    rksm_balance,
+    rfis_balance,
+    fis_balance,
+    rdot_balance,
+    ratom_balance,
+    rsol_balance,
+  } = useSelector((state: any) => {
+    if (operationType == 'erc20') {
       return {
-       
-        rksm_balance:NumberUtil.handleFisAmountToFixed(state.rKSMModule.tokenAmount), 
-        rfis_balance:NumberUtil.handleFisAmountToFixed(state.FISModule.tokenAmount),
-        rdot_balance:NumberUtil.handleFisAmountToFixed(state.rDOTModule.tokenAmount),
-        ratom_balance:NumberUtil.handleFisAmountToFixed(state.rATOMModule.tokenAmount),
-        fis_balance:state.FISModule.fisAccount ? state.FISModule.fisAccount.balance:"--",
-
-        erc20EstimateFee:state.bridgeModule.erc20EstimateFee,
-        estimateEthFee:state.bridgeModule.estimateEthFee,
-        fisAccount:state.FISModule.fisAccount,
-        ethAccount:state.rETHModule.ethAccount,
-      }
+        fis_balance: NumberUtil.handleFisAmountToFixed(state.ETHModule.ercFISBalance),
+        rfis_balance: NumberUtil.handleFisAmountToFixed(state.ETHModule.ercRFISBalance),
+        rksm_balance: NumberUtil.handleFisAmountToFixed(state.ETHModule.ercRKSMBalance),
+        rdot_balance: NumberUtil.handleFisAmountToFixed(state.ETHModule.ercRDOTBalance),
+        ratom_balance: NumberUtil.handleFisAmountToFixed(state.ETHModule.ercRATOMBalance),
+        rsol_balance: NumberUtil.handleFisAmountToFixed(state.ETHModule.ercRSOLBalance),
+        erc20EstimateFee: state.bridgeModule.erc20EstimateFee,
+        estimateEthFee: state.bridgeModule.estimateEthFee,
+        fisAccount: state.FISModule.fisAccount,
+        ethAccount: state.rETHModule.ethAccount,
+      };
+    } else {
+      return {
+        fis_balance: state.FISModule.fisAccount ? state.FISModule.fisAccount.balance : '--',
+        rfis_balance: NumberUtil.handleFisAmountToFixed(state.FISModule.tokenAmount),
+        rksm_balance: NumberUtil.handleFisAmountToFixed(state.rKSMModule.tokenAmount),
+        rdot_balance: NumberUtil.handleFisAmountToFixed(state.rDOTModule.tokenAmount),
+        ratom_balance: NumberUtil.handleFisAmountToFixed(state.rATOMModule.tokenAmount),
+        rsol_balance: NumberUtil.handleFisAmountToFixed(state.rSOLModule.tokenAmount),
+        erc20EstimateFee: state.bridgeModule.erc20EstimateFee,
+        estimateEthFee: state.bridgeModule.estimateEthFee,
+        fisAccount: state.FISModule.fisAccount,
+        ethAccount: state.rETHModule.ethAccount,
+      };
     }
-  })
+  });
 
 
   useEffect(()=>{
@@ -128,14 +156,17 @@ export default function Index(props:any){
       dispatch(fis_query_rBalances_account());
       dispatch(dot_query_rBalances_account());
       dispatch(atom_query_rBalances_account())
+      dispatch(sol_query_rBalances_account())
       dispatch(ksm_rTokenRate());
       dispatch(fis_rTokenRate() );
       dispatch(dot_rTokenRate());
-      dispatch(atom_rTokenRate())
+      dispatch(atom_rTokenRate());
+      dispatch(sol_rTokenRate());
       dispatch(getUnbondCommission());
       dispatch(fis_getUnbondCommission());
       dispatch(dot_getUnbondCommission());
       dispatch(atom_getUnbondCommission());
+      dispatch(sol_getUnbondCommission());
     }
   },[fisAccount,operationType])
   useEffect(()=>{ 
@@ -152,6 +183,7 @@ export default function Index(props:any){
     selectDataSource[2].amount=rdot_balance
     selectDataSource[3].amount=rksm_balance
     selectDataSource[4].amount=ratom_balance
+    selectDataSource[5].amount=rsol_balance
     setSelectDataSource([...selectDataSource]);
    
       if(fromType.title="FIS"){
@@ -164,9 +196,11 @@ export default function Index(props:any){
         fromType.amount=rdot_balance;
       }else if(fromType.title="rATOM"){
         fromType.amount=ratom_balance;
+      }else if(fromType.title="rSOL"){
+        fromType.amount=rsol_balance;
       }
       setFormType({...fromType}); 
-  },[rksm_balance,rfis_balance,fis_balance,rdot_balance,ratom_balance])
+  },[rksm_balance,rfis_balance,fis_balance,rdot_balance,ratom_balance,rsol_balance])
   
 
   const checkAddress=(address:string)=>{
@@ -263,7 +297,6 @@ export default function Index(props:any){
           } 
 
           if(operationType=="native"){
-         
             dispatch(nativeToErc20Swap(fromType.title,fromType.type,fromAoumt,address,()=>{
               setVisible(true);
             }))
@@ -291,6 +324,9 @@ export default function Index(props:any){
           }
           if(fromType.title=="rATOM"){
             dispatch(atomReloadData());
+          }
+          if(fromType.title=="rSOL"){
+            dispatch(solReloadData());
           }
         }else{
           dispatch(getAssetBalanceAll()); 

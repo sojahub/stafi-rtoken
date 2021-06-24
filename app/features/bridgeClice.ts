@@ -1,24 +1,25 @@
-import { createSlice } from '@reduxjs/toolkit';  
-import BridgeServer from '@servers/bridge';
-import Stafi from '@servers/stafi/index'
-import { AppThunk } from '../store';
-import NumberUtil from '@util/numberUtil';
-import StafiServer from '@servers/stafi';
-import EthServer from '@servers/eth'; 
-import KsmServer from '@servers/ksm';
-import DotServer from '@servers/polkadot';
-import AtomServer from '@servers/atom'
-import keyring from '@servers/index';
-import rpc from '@util/rpc'
-import {  u8aToHex } from '@polkadot/util';
-import {setLoading} from './globalClice'
-import { message } from 'antd';
 import {
     web3Enable,
-    web3FromSource,
-  } from '@polkadot/extension-dapp'; 
-  import {stafi_uuid} from '@util/common'
-  import {findUuid,noticesubType,noticeStatus,add_Notice,noticeType} from './noticeClice';
+    web3FromSource
+} from '@polkadot/extension-dapp';
+import { u8aToHex } from '@polkadot/util';
+import { createSlice } from '@reduxjs/toolkit';
+import AtomServer from '@servers/atom';
+import BridgeServer from '@servers/bridge';
+import EthServer from '@servers/eth';
+import keyring from '@servers/index';
+import KsmServer from '@servers/ksm';
+import DotServer from '@servers/polkadot';
+import SolServer from '@servers/sol';
+import StafiServer from '@servers/stafi';
+import Stafi from '@servers/stafi/index';
+import { stafi_uuid } from '@util/common';
+import NumberUtil from '@util/numberUtil';
+import rpc from '@util/rpc';
+import { message } from 'antd';
+import { AppThunk } from '../store';
+import { setLoading } from './globalClice';
+import { add_Notice, noticeStatus, noticesubType, noticeType } from './noticeClice';
 
 const STAFI_CHAIN_ID = 1;
 const ETH_CHAIN_ID = 2;
@@ -28,6 +29,7 @@ const ethServer=new EthServer();
 const ksmServer=new KsmServer();
 const dotServer=new DotServer();
 const atomServer=new AtomServer();
+const solServer=new SolServer();
 const bridgeClice = createSlice({
   name: 'bridgeModule',
   initialState: {  
@@ -118,6 +120,8 @@ export const nativeToErc20Swap=(tokenStr:string,tokenType:string, tokenAmount:an
                                     message_str = 'Something is wrong, please make sure you have enough FIS and rKSM balance';
                                 } else if (tokenType == 'ratom') {
                                     message_str = 'Something is wrong, please make sure you have enough FIS and rATOM balance';
+                                } else if (tokenType == 'rsol') {
+                                    message_str = 'Something is wrong, please make sure you have enough FIS and rSOL balance';
                                 }
                                 if (error.name == 'ServicePaused') {
                                     message_str = 'Service is paused, please try again later!'; 
@@ -187,6 +191,11 @@ export const erc20ToNativeSwap=(tokenStr:string,tokenType:string, tokenAmount:an
       from: ethAddress
     });
     allowance = getState().ETHModule.RATOMErc20Allowance
+  }else if (tokenType == 'rsol') { 
+    tokenContract = new web3.eth.Contract(solServer.getTokenAbi(), solServer.getRSOLTokenAddress(), {
+      from: ethAddress
+    });
+    allowance = getState().ETHModule.RSOLErc20Allowance
   }
   if (!tokenContract) {
     dispatch(setLoading(false));
@@ -257,11 +266,12 @@ const add_Swap_Notice=(token:string,amount:string,status:string,subData:any):App
 
 
 
-export const getRtokenPriceList=():AppThunk=>async (dispatch,getState)=>{
-    const result=await rpc.fetchRtokenPriceList(); 
-    if(result && result.status=="80000"){
-        dispatch(setPriceList(result.data));
-    }
-}
+export const getRtokenPriceList = (): AppThunk => async (dispatch, getState) => {
+  const result = await rpc.fetchRtokenPriceList();
+  if (result && result.status == '80000') {
+    // console.log('fetchRtokenPriceList result: ', JSON.stringify(result.data));
+    dispatch(setPriceList(result.data));
+  }
+};
 
 export default bridgeClice.reducer;

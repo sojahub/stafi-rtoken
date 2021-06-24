@@ -272,11 +272,11 @@ export const checkAll_minting=(list:any):AppThunk=>(dispatch,getState)=>{
       return i.status != noticeStatus.Confirmed;
     }); 
     arryList.forEach((item:any) => {
-      const staking=item.subData.processParameter.staking;
-      if (!staking) {
+      if (!item.subData||!item.subData.processParameter||!item.subData.processParameter.staking) {
         // continue
         return true;
       }
+      const staking=item.subData.processParameter.staking;
       if(item.subData && item.subData.processParameter){
         const staking=item.subData.processParameter.staking;
         let process={...item.subData.process}; 
