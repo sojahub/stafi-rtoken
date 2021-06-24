@@ -81,6 +81,7 @@ const rSOLClice = createSlice({
       state.ratioShow = payload;
     },
     setTokenAmount(state, { payload }) {
+      // console.log('setTokenAmount sol: ', payload);
       state.tokenAmount = payload;
     },
     setProcessParameter(state, { payload }) {
@@ -429,7 +430,7 @@ export const unbond =
 export const continueProcess = (): AppThunk => async (dispatch, getState) => {
   const stakeHash = getState().rSOLModule.stakeHash;
   if (stakeHash && stakeHash.blockHash && stakeHash.txHash) {
-    console.log('continueProcess------------------->');
+    // console.log('continueProcess------------------->');
     dispatch(
       bondStates(rSymbol.Sol, stakeHash.txHash, stakeHash.blockHash, (e: string) => {
         if (e == 'successful') {

@@ -1,4 +1,5 @@
 import { rSymbol } from '@keyring/defaults';
+import { divide, floor } from 'mathjs';
 export default {
   // Add floating point numbers
   floatAdd: function (arg1, arg2) {
@@ -89,8 +90,8 @@ export default {
 
   // The return string contains 6 decimal places and 2 decimal places, including 0
   handleEthRoundToFixed(amount) {
-    if(amount=="--" || isNaN(amount)){
-      return "--"
+    if (amount == '--' || isNaN(amount)) {
+      return '--';
     }
     return (Math.floor(amount * 100) / 100).toFixed(2);
   },
@@ -110,7 +111,7 @@ export default {
     if (amount == '--') {
       return '--';
     }
-    return (Math.floor(amount * 1000000) / 1000000).toFixed(6) || '--';
+    return (floor(amount * 1000000) / 1000000).toFixed(6) || '--';
   },
 
   // The return string contains 6 decimal places, including 0
@@ -151,20 +152,30 @@ export default {
   },
 
   tokenAmountToHuman(amount, symbol) {
+    let factor;
     switch (symbol) {
       case rSymbol.Dot:
-        return amount / 10000000000;
+        factor = 10000000000;
+        break;
       case rSymbol.Atom:
-        return amount / 1000000;
+        factor = 1000000;
+        break;
       case rSymbol.Fis:
-        return amount / 1000000000000;
+        factor = 1000000000000;
+        break;
       case rSymbol.Ksm:
-        return amount / 1000000000000;
+        factor = 1000000000000;
+        break;
       case rSymbol.Sol:
-        return amount / 1000000000;
+        factor = 1000000000;
+        break;
       default:
-        return amount / 1000000000000;
+        factor = 1000000000000;
+        break;
     }
+
+    // console.log(`amount: ${amount} factor: ${factor}`);
+    return divide(amount, factor);
   },
   tokenAmountToChain(amount, symbol) {
     switch (symbol) {
