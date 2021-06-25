@@ -109,7 +109,25 @@ export default function Index(props:any){
     });
     return count;
   }, [unitPriceList, ksm_ercBalance, fis_ercBalance, rfis_ercBalance, eth_ercBalance, dot_ercBalance, atom_ercBalance, sol_ercBalance]);
+
+  let time: any;
+
   useEffect(() => {
+    updateData();
+    time = setInterval(updateData, 30000);
+    return () => {
+      if (time) {
+        clearInterval(time);
+      }
+    };
+  }, [ethAccount && ethAccount.address]);
+
+  useEffect(()=>{
+    dispatch(getRtokenPriceList());
+    dispatch(monitoring_Method());
+  },[]);
+
+  const updateData = () => {
     if (ethAccount && ethAccount.address) {
       dispatch(handleEthAccount(ethAccount.address));
 
@@ -126,11 +144,8 @@ export default function Index(props:any){
       dispatch(atom_getUnbondCommission());
       dispatch(sol_getUnbondCommission());
     }
-  }, [ethAccount && ethAccount.address]);
-  useEffect(()=>{
-    dispatch(getRtokenPriceList());
-    dispatch(monitoring_Method());
-  },[])
+  };
+
   return  <Content>
     <Tag type="erc" onClick={()=>{
       props.history.push("/rAsset/native")
