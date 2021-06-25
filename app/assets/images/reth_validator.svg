@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="44px" height="26px" viewBox="0 0 44 26" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 48.1 (47250) - http://www.bohemiancoding.com/sketch -->
+    <title>Group 5</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <polygon id="path-1" points="0.0599095669 14.9744482 0.0599095669 14.4334741 24.7447064 0.016214929 43.9420105 11.2671516 43.9420105 11.8131161 19.3145926 25.99399"></polygon>
+        <polygon id="path-2" points="5.48752886 9.34514906 15.9338546 14.8140995 16.2843137 20.9268293 0.46663449 11.9585367"></polygon>
+    </defs>
+    <g id="Stafi-Product-1-Copy-19" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" transform="translate(-810.000000, -427.000000)">
+        <g id="Group-6" transform="translate(810.000000, 427.000000)">
+            <g id="Group-5">
+                <g id="Group-4">
+                    <g id="Group-2">
+                        <g id="Group">
+                            <g id="Rectangle-6">
+                                <use fill="#FFFFFF" fill-rule="evenodd" xlink:href="#path-1"></use>
+                                <path stroke="#FDFDFD" stroke-width="0.55" d="M0.334909567,14.8149808 L19.3141738,25.6768992 L43.6670105,11.6541336 L43.6670105,11.4247309 L24.7444673,0.334822997 L0.334909567,14.5913276 L0.334909567,14.8149808 Z"></path>
+                            </g>
+                            <polygon id="Rectangle-6" fill="#D4D9DC" points="0.126309913 14.9368973 0.126309913 14.4708681 19.3660062 25.3948483 19.3160032 25.9170488"></polygon>
+                            <polygon id="Rectangle" fill="#D8D8D8" points="19.3329114 25.3921572 43.8821353 11.2902647 43.8821353 11.7676305 19.3145496 25.9933751"></polygon>
+                        </g>
+                        <g id="Group-Copy" transform="translate(22.049020, 12.463415) rotate(-180.000000) translate(-22.049020, -12.463415) translate(3.549020, 1.463415)">
+                            <polygon id="Rectangle-6" points="0.0490954557 12.0280586 0.324292585 11.8518771 20.7462367 0.0133146978 36.6283311 9.25188871 36.6283311 9.700201 16.253857 21.3446584"></polygon>
+                            <polygon id="Rectangle-2" fill="#A4FFE2" points="15.9218611 14.8030988 31.2504108 6.01301842 36.6726711 9.30356832 16.2263984 20.8708708"></polygon>
+                            <g id="Rectangle-3">
+                                <use fill="#A4FFE2" fill-rule="evenodd" xlink:href="#path-2"></use>
+                                <path stroke="#8EBAFF" stroke-width="0.55" d="M5.48715999,9.65536288 L1.04241266,11.9688646 L15.980874,20.4386591 L15.6682266,14.9854425 L5.48715999,9.65536288 Z"></path>
+                            </g>
+                            <polygon id="Rectangle-4" fill="#00F7A7" points="5.470349 9.39111866 21.3372439 0.471237702 31.3790327 6.15462239 15.9205645 14.809476"></polygon>
+                            <polygon id="Rectangle-6" fill="#D4D9DC" points="0.379226161 12.2652571 0.379226161 11.8825828 16.2963919 20.8526803 16.255024 21.2814791"></polygon>
+                            <polygon id="Rectangle" fill="#D8D8D8" points="16.2690123 20.8504705 36.5787958 9.27086779 36.8636215 9.47901243 16.2538215 21.3441535"></polygon>
+                        </g>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

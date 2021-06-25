@@ -1,11 +1,11 @@
-import { createSlice } from '@reduxjs/toolkit';  
-import { AppThunk, RootState } from '../store'; 
-import EthServer from '@servers/eth/index';
-import FisServer from '@servers/stafi';
-import KsmServer from '@servers/ksm';
+import { createSlice } from '@reduxjs/toolkit';
 import AtomServer from '@servers/atom';
 import BridgeServer from '@servers/bridge';
+import EthServer from '@servers/eth/index';
+import KsmServer from '@servers/ksm';
 import DotServer from '@servers/polkadot';
+import FisServer from '@servers/stafi';
+import { AppThunk } from '../store';
 
 const ethServer =new EthServer();
 const fisServer =new FisServer();
@@ -145,7 +145,7 @@ export const getFISAssetBalance=():AppThunk=>(dispatch,getState)=>{
       })
     }
   }
-const getAssetBalance=(ethAddress:string,getTokenAbi:string,getTokenAddress:string,cb?:Function)=>{
+export const getAssetBalance=(ethAddress:string,getTokenAbi:string,getTokenAddress:string,cb?:Function)=>{
     let web3=ethServer.getWeb3(); 
     let contract = new web3.eth.Contract(getTokenAbi, getTokenAddress, {
       from: ethAddress

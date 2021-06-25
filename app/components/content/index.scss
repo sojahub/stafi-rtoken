@@ -4,8 +4,7 @@
     width: 100%;
 }
 .stafi_stake_context{
-    // padding: 36px 0px 0px 46px;
-    // width: 100%;
+    
     .title{
         font-size:30px;
         font-weight: bold;
@@ -96,12 +95,26 @@
             font-weight: initial;
             color:#C1C1C1;
         }
-        button{
-            padding: 12px 33px;
-        }
+        // button{
+        //     padding: 12px 33px;
+        // }
     }
 }
-
+.stafi_stake_context_eth{
+    .input_panel{
+        margin-top:60px;
+    
+        .pool{
+            margin-top:30px;
+        }
+    }
+    .money_panel{
+        margin-top:60px;
+    }
+    .btns{
+        margin-top:38px;
+    }
+}
 .stafi_stake_info_context{
     display: flex;
     flex-direction: column;
@@ -131,6 +144,11 @@
                 align-items: center;
                 button{
                     margin-left:10px;
+                }
+                .dow_svg{
+                    width: 5px;
+                    margin-left: 5px;
+                    transform: rotate(-90deg);
                 }
             }
             
@@ -188,6 +206,7 @@
         button{
             margin-right: 10px;
         }
+       
     }
     .unbonding{
         font-size: 12px;

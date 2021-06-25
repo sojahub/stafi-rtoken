@@ -1,26 +1,28 @@
-import { createSlice } from '@reduxjs/toolkit';
-import { Button, message as M, message } from 'antd';
-import { AppThunk, RootState } from '../store';
-import Stafi from '@servers/stafi/index';
-import {timeout} from '@util/common';
-import {
-  processStatus, setProcessSlider, setProcessSending, setProcessStaking,
-  setProcessMinting, gSetTimeOut, gClearTimeOut,
-  initProcess, process,setLoading,setProcessType
-} from './globalClice';
-import config from '@config/index'
+import config from '@config/index';
+import { rSymbol, Symbol } from '@keyring/defaults';
 import {
   web3Enable,
-  web3FromSource,
+  web3FromSource
 } from '@polkadot/extension-dapp';
-
-import { stringToHex, u8aToHex } from '@polkadot/util'
-import NumberUtil from '@util/numberUtil';
+import { u8aToHex } from '@polkadot/util';
+import { createSlice } from '@reduxjs/toolkit';
 import keyring from '@servers/index';
-import { Symbol,rSymbol } from '@keyring/defaults';
-import CommonClice from './commonClice'
+import Stafi from '@servers/stafi/index';
+import { getLocalStorageItem, Keys, removeLocalStorageItem, setLocalStorageItem, timeout } from '@util/common';
+import NumberUtil from '@util/numberUtil';
+import { message as M, message } from 'antd';
+import { AppThunk } from '../store';
+import CommonClice from './commonClice';
+import {
+  gClearTimeOut, gSetTimeOut,
+  initProcess, processStatus,
 
-import { setLocalStorageItem, getLocalStorageItem, Keys, removeLocalStorageItem } from '@util/common'
+  setLoading, setProcessMinting, setProcessSending, setProcessSlider, setProcessStaking,
+
+  setProcessType
+} from './globalClice';
+
+
 
 
 

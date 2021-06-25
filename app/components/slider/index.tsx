@@ -38,7 +38,8 @@ const siderData=[
         selectedIcon:selected_rETH_svg,
         text:"rETH", 
         urlKeywords:'/rETH',
-        url:"https://rtoken.stafi.io/reth"
+        // url:"https://rtoken.stafi.io/reth"
+        url:"/rETH/home"
     },
     {
         icon:rFIS_svg,

@@ -1,0 +1,58 @@
+.stafi_liquefy_container{
+  padding:34px 90px;
+  position: relative;
+  .back_icon{
+    position: absolute;
+    left:63px;
+    top:42px;
+    cursor: pointer;
+  }
+  >div{
+    display: flex; 
+  }
+  .title{
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+  .sub_title{
+    font-size: 14px;
+    color:#C4C4C4;
+    width: 460px;
+    text-align: left;
+    margin: 0px;
+    line-height: 18px;
+    flex-direction: column;
+    margin-bottom: 23px;
+  }
+
+  .ant-form-item{
+    .ant-form-item-label{
+      label{
+        font-size: 18px;
+        font-weight: bold;
+        color:#7A7A7A;
+      }
+ 
+    }
+    .stafi_input{
+      border-radius: 7px;
+      color: #ffffff;
+      height: 50px;
+      font-size: 16px;
+    }
+    .stafi_select {
+      .ant-select-selector{
+        border-radius: 7px;
+        .ant-select-selection-item{
+          color:#fff
+        }
+      }
+    }
+  }
+  .btns{
+    display: flex;
+    justify-content: flex-end;
+    margin-top:40px;
+  } 
+}

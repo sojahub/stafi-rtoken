@@ -6,7 +6,7 @@ type Props={
     routes?:any[],
     location?:any
 }
-export default function Index(props:Props){
+export default function Index(props:Props){ 
     const width=useMemo(()=>{ 
         if(props.location && props.routes){
             const obj=props.routes.find((item)=>{
@@ -18,7 +18,7 @@ export default function Index(props:Props){
         }
         return null;
     },[props.location])
-    return <div style={width && {width:width}} className={`stafi_content ${props.className}`}>
+    return <div style={width && {width:width}} className={`stafi_content ${location.pathname.includes("/rETH")?'':'stafi_content_notice'} ${props.className}`}>
         {props.children}
     </div>
 }

@@ -7,7 +7,8 @@ enum Symbol {
   Icx = 'icx',
   Kava = 'kava',
   One = 'one',
-  Matic = 'matic'
+  Matic = 'matic',
+  Eth="eth"
 }
 
 enum rSymbol {
@@ -15,7 +16,8 @@ enum rSymbol {
   Fis = 0, 
   Dot = 1, 
   Ksm = 2,
-  Atom = 3
+  Atom = 3,
+  Eth = 4,
 }
 
 

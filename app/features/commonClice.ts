@@ -1,11 +1,9 @@
-import {message} from 'antd'
-import EthServer from '@servers/eth';
-import NumberUtil from '@util/numberUtil';
-import {rSymbol,Symbol} from '@keyring/defaults'
-import StafiServer from '@servers/stafi';
-import keyring from '@servers/index';
+import { rSymbol, Symbol } from '@keyring/defaults';
 import { hexToU8a } from '@polkadot/util';
-import BridgeServer from '@servers/bridge';
+import keyring from '@servers/index';
+import StafiServer from '@servers/stafi';
+import NumberUtil from '@util/numberUtil';
+import { message } from 'antd';
   
 const stafiServer=new StafiServer(); 
 export default class CommonClice{ 

@@ -1,0 +1,38 @@
+.stafi_reth_validator_context{
+    .reth_title{
+        font-size: 30px;
+        font-weight: bold;
+    }
+    .reth_sub_title{
+        font-size: 16px;
+        color: #c4c4c4;
+        margin-bottom: 30px;
+        line-height: 18px;
+    }
+    .pool{
+        font-size: 16px;
+        color: #c4c4c4;
+        margin-top: 10px;
+    }
+    .data_info{
+        margin-top:77px;
+        display:flex;
+        align-items: center;
+        >div{
+            display:flex;
+            flex-direction: column; 
+            .data_value{
+                font-weight: bold;
+                font-size: 30px;
+                color:#00F3AB;
+            }
+        }
+        .data_add{
+            margin:0px 10px;
+        }
+        
+    }
+    .reth_btns{
+        margin-top: 116px;
+    }
+}

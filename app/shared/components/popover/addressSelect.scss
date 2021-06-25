@@ -1,0 +1,13 @@
+.stafi_popover_addressSelect{
+    .ant-popover-inner-content{
+        padding:0px;
+        .address_Item{
+            padding:7px 13px;
+            cursor: pointer;
+        }
+        .address_Item:hover,.address_Item.selected{
+            background-color: #EEEEEE;
+        }
+    }
+}
+ 

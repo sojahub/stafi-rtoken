@@ -1,15 +1,15 @@
-import { createSlice } from '@reduxjs/toolkit'; 
-import { AppThunk, RootState } from '../store';
 import config from '@config/index';
-import { setLocalStorageItem, getLocalStorageItem, removeLocalStorageItem, Keys } from '@util/common';
-import {setProcessParameter} from './rDOTClice';
-import {setProcessParameter as krmSetProcessParameter} from './rKSMClice';
-import {setProcessParameter as atomSetProcessParameter} from './rATOMClice';
-import {initProcess,setProcessSlider,setProcessSending,setProcessStaking,processStatus} from './globalClice';
-import {getMinting,bondStates} from './FISClice';
-import {rSymbol,Symbol} from '@keyring/defaults'
-import moment from 'moment'; 
-import { message,Modal } from 'antd';
+import { rSymbol } from '@keyring/defaults';
+import { createSlice } from '@reduxjs/toolkit';
+import { getLocalStorageItem, Keys, setLocalStorageItem } from '@util/common';
+import { Modal } from 'antd';
+import moment from 'moment';
+import { AppThunk } from '../store';
+import { bondStates, getMinting } from './FISClice';
+import { initProcess, processStatus, setProcessSending, setProcessSlider, setProcessStaking } from './globalClice';
+import { setProcessParameter as atomSetProcessParameter } from './rATOMClice';
+import { setProcessParameter } from './rDOTClice';
+import { setProcessParameter as krmSetProcessParameter } from './rKSMClice';
 export enum noticeStatus{
   Confirmed="Confirmed",
   Pending="Pending",
@@ -179,39 +179,41 @@ export const setProcess=(item:any,list:any,cb?:Function):AppThunk=>async (dispat
 }
 
 const re_Minting=(item:any,):AppThunk=>(dispatch,getState)=>{
-  dispatch(setProcessSending({
-    brocasting: processStatus.success,
-    packing: processStatus.success,
-    finalizing:  processStatus.success,
-  }));
-  dispatch(setProcessStaking({
-    brocasting: processStatus.success,
-    packing: processStatus.success,
-    finalizing:  processStatus.success,
-  })); 
-  const staking=item.subData.processParameter.staking;
-  let txHash="";
-  let blockHash="";
-  if(staking.type==rSymbol.Atom){
-    txHash="0x"+staking.txHash;
-    blockHash="0x"+staking.blockHash;
-  }else{
-    txHash=staking.txHash;
-    blockHash=staking.blockHash;
-  }
-  dispatch(getMinting(staking.type,txHash,blockHash,(e:string)=>{ 
-    if(e=="successful"){ 
-     dispatch(add_Notice(item.uuid,item.rSymbol,item.type,item.subType,item.amount,noticeStatus.Confirmed,{
-      process:getState().globalModule.process,
-      processParameter:item.subData.processParameter
-     }))
-    }else if(e=="failure" || e=="stakingFailure"){
-      dispatch(add_Notice(item.uuid,item.rSymbol,item.type,item.subType,item.amount,noticeStatus.Error,{
+  if(item.subData && item.subData.processParameter){
+    dispatch(setProcessSending({
+      brocasting: processStatus.success,
+      packing: processStatus.success,
+      finalizing:  processStatus.success,
+    }));
+    dispatch(setProcessStaking({
+      brocasting: processStatus.success,
+      packing: processStatus.success,
+      finalizing:  processStatus.success,
+    })); 
+    const staking=item.subData.processParameter.staking;
+    let txHash="";
+    let blockHash="";
+    if(staking.type==rSymbol.Atom){
+      txHash="0x"+staking.txHash;
+      blockHash="0x"+staking.blockHash;
+    }else{
+      txHash=staking.txHash;
+      blockHash=staking.blockHash;
+    }
+    dispatch(getMinting(staking.type,txHash,blockHash,(e:string)=>{ 
+      if(e=="successful"){ 
+      dispatch(add_Notice(item.uuid,item.rSymbol,item.type,item.subType,item.amount,noticeStatus.Confirmed,{
         process:getState().globalModule.process,
         processParameter:item.subData.processParameter
-      }));
-    }
-  }));
+      }))
+      }else if(e=="failure" || e=="stakingFailure"){
+        dispatch(add_Notice(item.uuid,item.rSymbol,item.type,item.subType,item.amount,noticeStatus.Error,{
+          process:getState().globalModule.process,
+          processParameter:item.subData.processParameter
+        }));
+      }
+    }));
+  }
 }
 
 
@@ -240,79 +242,20 @@ export const checkAll_minting=(list:any):AppThunk=>(dispatch,getState)=>{
       return i.status != noticeStatus.Confirmed;
     }); 
     arryList.forEach((item:any) => {
-      const staking=item.subData.processParameter.staking;
-      let process={...item.subData.process}; 
-      let txHash="";
-      let blockHash="";
-      if(staking.type==rSymbol.Atom){
-        txHash="0x"+staking.txHash;
-        blockHash="0x"+staking.blockHash;
-      }else{
-        txHash=staking.txHash;
-        blockHash=staking.blockHash;
-      }
-      dispatch(bondStates(staking.type,txHash,blockHash,(e:string)=>{ 
-        if(e=="successful"){ 
-          process.sending={...process.sending,...{
-            brocasting: processStatus.success,
-            packing: processStatus.success,
-            finalizing:  processStatus.success,
-          }}
-          process.staking={...process.staking,...{
-            brocasting: processStatus.success,
-            packing: processStatus.success,
-            finalizing:  processStatus.success,
-          }}
-          process.minting={...process.minting,...{
-            brocasting: processStatus.success, 
-            minting:  processStatus.success,
-          }}
-         dispatch(update_Notice(item.uuid,item.rSymbol,item.type,item.subType,item.amount,noticeStatus.Confirmed,{
-          process:process,
-          processParameter:item.subData.processParameter
-         }))
-        }else if(e=="stakingFailure"){
-          if(item.status==noticeStatus.Pending){
-            process.sending={...process.sending,...{
-              brocasting: processStatus.success,
-              packing: processStatus.success,
-              finalizing:  processStatus.success,
-            }}
-            process.staking={...process.staking,...{
-              brocasting: processStatus.success,
-              packing: processStatus.failure,
-              finalizing:  processStatus.failure,
-            }}
-            process.minting={...process.minting,...{
-              brocasting: processStatus.default, 
-              minting:  processStatus.default,
-            }}
-          }
-          dispatch(update_Notice(item.uuid,item.rSymbol,item.type,item.subType,item.amount,noticeStatus.Error,{
-            process:process,
-            processParameter:item.subData.processParameter
-          }));
-        }else if(e=="pending"){ 
-          process.sending={...process.sending,...{
-            brocasting: processStatus.success,
-            packing: processStatus.success,
-            finalizing:  processStatus.success,
-          }}
-          process.staking={...process.staking,...{
-            brocasting: processStatus.success,
-            packing: processStatus.success,
-            finalizing:  processStatus.success,
-          }}
-          process.minting={...process.minting,...{
-            brocasting: processStatus.loading, 
-            minting:  processStatus.loading,
-          }}  
-          dispatch(update_Notice(item.uuid,item.rSymbol,item.type,item.subType,item.amount,noticeStatus.Pending,{
-            process:process,
-            processParameter:item.subData.processParameter
-          }));
+      if(item.subData && item.subData.processParameter){
+        const staking=item.subData.processParameter.staking;
+        let process={...item.subData.process}; 
+        let txHash="";
+        let blockHash="";
+        if(staking.type==rSymbol.Atom){
+          txHash="0x"+staking.txHash;
+          blockHash="0x"+staking.blockHash;
         }else{
-          if(item.status==noticeStatus.Pending){
+          txHash=staking.txHash;
+          blockHash=staking.blockHash;
+        }
+        dispatch(bondStates(staking.type,txHash,blockHash,(e:string)=>{ 
+          if(e=="successful"){ 
             process.sending={...process.sending,...{
               brocasting: processStatus.success,
               packing: processStatus.success,
@@ -324,22 +267,85 @@ export const checkAll_minting=(list:any):AppThunk=>(dispatch,getState)=>{
               finalizing:  processStatus.success,
             }}
             process.minting={...process.minting,...{
-              brocasting: processStatus.failure, 
-              minting:  processStatus.failure,
+              brocasting: processStatus.success, 
+              minting:  processStatus.success,
             }}
-          }
-          dispatch(update_Notice(item.uuid,item.rSymbol,item.type,item.subType,item.amount,noticeStatus.Error,{
+          dispatch(update_Notice(item.uuid,item.rSymbol,item.type,item.subType,item.amount,noticeStatus.Confirmed,{
             process:process,
             processParameter:item.subData.processParameter
-          }));
-        }
-      }));
+          }))
+          }else if(e=="stakingFailure"){
+            if(item.status==noticeStatus.Pending){
+              process.sending={...process.sending,...{
+                brocasting: processStatus.success,
+                packing: processStatus.success,
+                finalizing:  processStatus.success,
+              }}
+              process.staking={...process.staking,...{
+                brocasting: processStatus.success,
+                packing: processStatus.failure,
+                finalizing:  processStatus.failure,
+              }}
+              process.minting={...process.minting,...{
+                brocasting: processStatus.default, 
+                minting:  processStatus.default,
+              }}
+            }
+            dispatch(update_Notice(item.uuid,item.rSymbol,item.type,item.subType,item.amount,noticeStatus.Error,{
+              process:process,
+              processParameter:item.subData.processParameter
+            }));
+          }else if(e=="pending"){ 
+            process.sending={...process.sending,...{
+              brocasting: processStatus.success,
+              packing: processStatus.success,
+              finalizing:  processStatus.success,
+            }}
+            process.staking={...process.staking,...{
+              brocasting: processStatus.success,
+              packing: processStatus.success,
+              finalizing:  processStatus.success,
+            }}
+            process.minting={...process.minting,...{
+              brocasting: processStatus.loading, 
+              minting:  processStatus.loading,
+            }}  
+            dispatch(update_Notice(item.uuid,item.rSymbol,item.type,item.subType,item.amount,noticeStatus.Pending,{
+              process:process,
+              processParameter:item.subData.processParameter
+            }));
+          }else{
+            if(item.status==noticeStatus.Pending){
+              process.sending={...process.sending,...{
+                brocasting: processStatus.success,
+                packing: processStatus.success,
+                finalizing:  processStatus.success,
+              }}
+              process.staking={...process.staking,...{
+                brocasting: processStatus.success,
+                packing: processStatus.success,
+                finalizing:  processStatus.success,
+              }}
+              process.minting={...process.minting,...{
+                brocasting: processStatus.failure, 
+                minting:  processStatus.failure,
+              }}
+            }
+            dispatch(update_Notice(item.uuid,item.rSymbol,item.type,item.subType,item.amount,noticeStatus.Error,{
+              process:process,
+              processParameter:item.subData.processParameter
+            }));
+          }
+        }));
+      }
     });
   }
 }
 export const notice_text=(item:any)=>{
-  if(item.subType==noticesubType.Stake){
+  if(item.type==noticeType.Staker && item.subType==noticesubType.Stake){
     return `Staked ${item.amount} ${item.rSymbol.toUpperCase()} from your Wallet to StaFi Validator Pool Contract`
+  }else if(item.type==noticeType.Validator && item.subType==noticesubType.Stake){
+    return `Your pool contract is staked`
   }else if(item.subType==noticesubType.Unbond){
     return `Unbond ${item.amount} ${item.rSymbol.toUpperCase()} from Pool Contract, it will be completed around ${moment(item.dateTime).add(config.unboundAroundDays(item.rSymbol), 'days').format("MM.DD")}`
   }else if(item.subType==noticesubType.Withdraw){
@@ -350,6 +356,10 @@ export const notice_text=(item:any)=>{
     }else{
       return `Swap ${item.amount}  ERC20 ${item.rSymbol} to Native, it may take 2~10 minutes to arrive`
     } 
+  }else if(item.subType==noticesubType.Deposit){
+    return `Deposit ${item.amount} ETH to register as a validator`;
+  }else if(item.subType==noticesubType.Offboard){
+    return `Validator Offboarded`
   }
   return "";
 }
