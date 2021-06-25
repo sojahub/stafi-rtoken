@@ -3,7 +3,7 @@ import tidal from '@images/tidal.png';
 import Button from '@shared/components/button/button';
 import selected_rFIS_svg from '@images/selected_r_fis.svg';
 import React from 'react';
-import './insurance.scss';
+import './index.scss';
 
 export default function Index(){
     return <LeftContent className="rpool_content">

@@ -7,6 +7,10 @@ export const rPool_data=[{
       url:"/rPool/staker/insurance"
     },
     {
+      text:"-Status",
+      url:"/rPool/staker/status"
+    },
+    {
       text:'-Reward',
       url:"/rPool/staker/reward"
     }

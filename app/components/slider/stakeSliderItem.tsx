@@ -40,7 +40,7 @@ export default function Index(props:Props){
   }}>
     {props.text}
     {(showChild && props.child) && props.child.map((item:any)=>{ 
-      return <div className={`sub_item ${props.pathname==item.url && 'sub_active'}`} key={item.text} onClick={(e)=>{
+      return <div className={`sub_item ${props.pathname.includes(item.url) && 'sub_active'}`} key={item.text} onClick={(e)=>{
         e.stopPropagation();
         props.onClick && props.onClick(item.url);
       }}>

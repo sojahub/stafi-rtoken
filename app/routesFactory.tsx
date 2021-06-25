@@ -56,7 +56,9 @@ import RPoolHome from './pages/rPool/home'
 import RPoolStaker from './pages/rPool/staker';
 import RPoolStakerReward from './pages/rPool/staker/reward';
 import RPoolStakerInsurance from './pages/rPool/staker/insurance';
-
+import RPoolStakerStatus from './pages/rPool/staker/status';
+import RPoolStakerStatusNative from './pages/rPool/staker/status/native';
+import RPoolStakerStatusNativeErc20 from './pages/rPool/staker/status/erc20';
 import {rSymbol} from '@keyring/defaults'
   
 const routesFactory=(role?:any)=>{ 
@@ -341,15 +343,32 @@ const routesFactory=(role?:any)=>{
           routes:[{
               id:"RPool_reward_index",
               path:"/rPool/staker/reward",
-              type:"Staker",
-              rSymbol:rSymbol.Ksm,
+              type:"Staker", 
               component:RPoolStakerReward
             },{
               id:"RPool_insurance_index",
               path:"/rPool/staker/insurance",
-              type:"Staker",
-              rSymbol:rSymbol.Ksm,
+              type:"Staker", 
               component:RPoolStakerInsurance
+            },{
+              id:"RPool_status_index",
+              path:"/rPool/staker/status",
+              type:"Staker", 
+              component:RPoolStakerStatus,
+              routes:[{
+                id:"RPool_status_native_index",
+                path:"/rPool/staker/status/native",
+                type:"Staker", 
+                component:RPoolStakerStatusNative,
+              },{
+                id:"RPool_status_erc20_index",
+                path:"/rPool/staker/status/erc20",
+                type:"Staker", 
+                component:RPoolStakerStatusNativeErc20,
+              },{
+                path: '*',
+                component: () => <Redirect to="/rPool/staker/status/native"/>
+              }]
             }
           ]},{
           path: '*',
