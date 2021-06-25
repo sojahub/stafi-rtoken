@@ -1,10 +1,10 @@
 import React from 'react';
-
 import GhostButton from '@shared/components/button/ghostButton';
 import poolUniswapIcon from '@images/poolUniswapIcon.png';
 import poolCurveIcon from '@images/poolCurveIcon.svg';
 import poolWrapFiIcon from '@images/poolWrapFiIcon.svg';
 import BottonPopover from '@components/tradePopover/buttonPopover'; 
+import numberUtil from '@util/numberUtil';
 
 type Props={
   pairIcon:any,
@@ -31,10 +31,10 @@ export default function Index(props:Props){
                   } 
                 </div>
                 <div className="col  col3">
-                ${props.liquidity}
+                  ${numberUtil.amount_format(props.liquidity)}
                 </div>
                 <div className="col col4">
-                ${props.slippage}
+                  {props.slippage?`${Number(props.slippage).toFixed(2)}%`:'//'}
                 </div>
                 <div className="col col5">
                  {props.poolOn==1 && <><img src={poolUniswapIcon} /> Uniswap</>} 
@@ -42,14 +42,14 @@ export default function Index(props:Props){
                  {props.poolOn==3 && <><img src={poolWrapFiIcon} /> WrapFi</>}  
                 </div>
                 <div className="col col6"> 
-                    <GhostButton onClick={()=>{
+                    <GhostButton className="liquidity_btn" onClick={()=>{
                       window.open(props.liquidityUrl);
                     }}> Add liquidity</GhostButton> 
                     {props.poolOn==3?<BottonPopover data={[{label:"StaFi",url:props.stakeUrl},{label:"WrapFi",url:props.wrapFiUrl}]}>
                       Stake 
                     </BottonPopover>:<GhostButton onClick={()=>{
                       window.open(props.stakeUrl);
-                    }}>Stake</GhostButton> }
+                    }} className="stake_btn">Stake</GhostButton> }
                 </div>
             </div>
 }

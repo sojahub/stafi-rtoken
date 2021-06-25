@@ -9,7 +9,7 @@ type Props={
 }
 export default function Index(props:Props){
     return <Popover data={props.data}>
-            <GhostButton >
+            <GhostButton className="popover_btn">
                 {props.children}<img className="stafi_button_dow_svg" src={dow_svg}/>
             </GhostButton>
       </Popover>

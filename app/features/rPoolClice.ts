@@ -8,7 +8,8 @@ const rPoolClice = createSlice({
   initialState: {  
       rPoolList:[],
       totalLiquidity:"--",
-      apyAvg:'--'
+      apyAvg:'--',
+      slippageAvg:'-'
   },
   reducers: {   
        setRPoolList(state,{payload}){
@@ -19,6 +20,9 @@ const rPoolClice = createSlice({
        },
        setApyAvg(state,{payload}){
          state.apyAvg=payload
+       },
+       setSlippageAvg(state,{payload}){
+         state.slippageAvg=payload
        }
   },
 });
@@ -26,7 +30,8 @@ const rPoolClice = createSlice({
 export const { 
     setRPoolList,
     setTotalLiquidity,
-    setApyAvg
+    setApyAvg,
+    setSlippageAvg
 }=rPoolClice.actions
 
  export const getRPoolList=(): AppThunk => async (dispatch, getState)=>{
@@ -36,9 +41,15 @@ export const {
        let totalLiquidity=0;
        let apyCount=0;
        let apySum=0;
+       let slippageSum=0;
+       let slippageCount=0;
        dispatch(setRPoolList(list));
        list.forEach((item:any) => {
           totalLiquidity=totalLiquidity+Number(item.liquidity); 
+          if(item.slippage){
+            slippageCount=slippageCount+1;
+            slippageSum=slippageSum+Number(item.slippage); 
+          }
           if(item.apy && item.apy.length>0){
             apyCount=apyCount+1;
             item.apy.forEach((apyitem:any)=>{
@@ -48,6 +59,7 @@ export const {
        }); 
        dispatch(setTotalLiquidity(totalLiquidity.toFixed(2)));
        dispatch(setApyAvg((apySum/apyCount).toFixed(2)));
+       dispatch(setSlippageAvg((slippageSum/slippageCount).toFixed(2)))
    }
  }
 

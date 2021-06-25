@@ -12,6 +12,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import CardItem from './components/cardItem';
 import TableHead from './components/tableHead';
 import TableItem from './components/tableItem';
+import numberUtil from '@util/numberUtil'
 import './index.scss';
 
 export default function Inde(props:any){ 
@@ -20,9 +21,9 @@ export default function Inde(props:any){
   useEffect(()=>{
     dispatch(getRPoolList())
   },[])
-  const [sortField,setSortField]=useState('');
-  const [sortWay,setSortWay]=useState<undefined|string>();
-  const {list,totalLiquidity,apyAvg}=useSelector((state:RootState)=>{
+  const [sortField,setSortField]=useState('liquidity');
+  const [sortWay,setSortWay]=useState<undefined|string>('asc');
+  const {list,totalLiquidity,apyAvg,slippageAvg}=useSelector((state:RootState)=>{
      
     let rPoolList=[...state.rPoolModule.rPoolList]
     if(sortField || sortWay){
@@ -58,7 +59,8 @@ export default function Inde(props:any){
     return {
       list:rPoolList,
       totalLiquidity:state.rPoolModule.totalLiquidity,
-      apyAvg:state.rPoolModule.apyAvg
+      apyAvg:state.rPoolModule.apyAvg,
+      slippageAvg:state.rPoolModule.slippageAvg
     }
   })
   return <Card className="stafi_rpool_home_card">
@@ -66,9 +68,9 @@ export default function Inde(props:any){
         <label>Provide liquidity and earn reward</label><A>How to earn</A>
       </div>
       <div className="card_list">
-        <CardItem label="Total Liquidity" value={`$${totalLiquidity}`}/>
+        <CardItem label="Total Liquidity" value={`$${numberUtil.amount_format(totalLiquidity)}`}/>
         <CardItem label="Farming APY. avg" value={`${apyAvg}%`}/>
-        <CardItem label="rToken Price Slippage. avg" value="0.2%"/>
+        <CardItem label="rToken Price Slippage. avg" value={`${slippageAvg}%`}/>
       </div>
       <div className="table">
             
@@ -137,7 +139,7 @@ export default function Inde(props:any){
                   if(type==""){
                     return <></>
                   }
-                  return <TableItem wrapFiUrl={wrapFiUrl} liquidityUrl={liquidityUrl} history={props.history} stakeUrl={stakeUrl} pairIcon={icon} pairValue={type} apyList={item.apy}  liquidity={item.liquidity} slippage="12328.12" poolOn={item.platform}/>
+                  return <TableItem wrapFiUrl={wrapFiUrl} liquidityUrl={liquidityUrl} history={props.history} stakeUrl={stakeUrl} pairIcon={icon} pairValue={type} apyList={item.apy}  liquidity={item.liquidity} slippage={item.slippage} poolOn={item.platform}/>
                 })
               } 
             </div>
