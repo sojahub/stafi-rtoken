@@ -6,6 +6,7 @@ import rDOT_svg from '@images/r_dot.svg';
 import rETH_svg from '@images/r_eth.svg';
 import rFIS_svg from '@images/r_fis.svg';
 import rKSM_svg from '@images/r_ksm.svg';
+import rPool_svg from '@images/r_pool.svg';
 import selected_rAsset_svg from '@images/selected_rAssets.svg';
 import selected_rATOM_svg from '@images/selected_r_atom.svg';
 import selected_rDOT_svg from '@images/selected_r_dot.svg';
@@ -13,6 +14,7 @@ import selected_rETH_svg from '@images/selected_r_eth.svg';
 import selected_rFIS_svg from '@images/selected_r_fis.svg';
 import selected_rKSM_svg from '@images/selected_r_ksm.svg';
 import selected_rSOL_svg from '@images/selected_r_sol.svg';
+import selected_rPool_svg from '@images/selected_r_pool.svg'
 import React from 'react';
 import { isdev } from '../../config/index';
 import './index.scss';
@@ -25,6 +27,12 @@ const siderData = [
     text: 'rAsset',
     urlKeywords: '/rAsset',
     url: '/rAsset/native',
+  },{
+    icon:rPool_svg,
+    selectedIcon:selected_rPool_svg,
+    text:"rPool", 
+    urlKeywords:'/rPool',
+    url:"/rPool/home"
   },
   {
     icon: rETH_svg,

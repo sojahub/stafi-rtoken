@@ -10,6 +10,7 @@ import RAssetTemplate from './pages/rAsset/template';
 import RATOMHome from './pages/rATOM/home';
 import RATOMSeach from './pages/rATOM/search';
 import RATOMType from './pages/rATOM/selectType';
+import RATOMStakerReward from './pages/rATOM/staker/reward'
 import RATOMWallet from './pages/rATOM/selectWallet';
 import RATOMWalletFIS from './pages/rATOM/selectWallet_rFIS';
 import RATOMStaker from './pages/rATOM/staker';
@@ -21,6 +22,7 @@ import RATOMValidator from './pages/rATOM/validator';
 import RDOTHome from './pages/rDOT/home';
 import RDOTSeach from './pages/rDOT/search';
 import RDOTType from './pages/rDOT/selectType';
+import RDOTStakerReward from './pages/rDOT/staker/reward'
 import RDOTWallet from './pages/rDOT/selectWallet';
 import RDOTWalletFIS from './pages/rDOT/selectWallet_rFIS';
 import RDOTStaker from './pages/rDOT/staker';
@@ -46,6 +48,7 @@ import RETHValidatorStatus from './pages/rETH/validator/status';
 import RKSMHome from './pages/rKSM/home';
 import RKSMSeach from './pages/rKSM/search';
 import RKSMType from './pages/rKSM/selectType';
+import RKSMStakerReward from './pages/rKSM/staker/reward';
 import RKSMWallet from './pages/rKSM/selectWallet';
 import RKSMWalletFIS from './pages/rKSM/selectWallet_rFIS';
 import RKSMStaker from './pages/rKSM/staker';
@@ -66,13 +69,14 @@ import RSOLStakerRedeem from './pages/rSOL/staker/redeem';
 import RSOLHomeTemplate from './pages/rSOL/template';
 import RSOLValidator from './pages/rSOL/validator';
 import HomeTemplate from './pages/template/homeTemplate';
-
-
-
-
-
-
-
+import RPoolHomeTemplate from './pages/rPool/template';
+import RPoolHome from './pages/rPool/home'
+import RPoolStaker from './pages/rPool/staker';
+import RPoolStakerReward from './pages/rPool/staker/reward';
+import RPoolStakerInsurance from './pages/rPool/staker/insurance';
+import RPoolStakerStatus from './pages/rPool/staker/status';
+import RPoolStakerStatusNative from './pages/rPool/staker/status/native';
+import RPoolStakerStatusNativeErc20 from './pages/rPool/staker/status/erc20';
 
   
 const routesFactory=(role?:any)=>{ 
@@ -124,6 +128,12 @@ const routesFactory=(role?:any)=>{
               type:"-Status",
               rSymbol:rSymbol.Dot,
               component:RDOTStakerInfo
+            },{
+              id:"RDOT_reward_index",
+              path:"/rDOT/staker/reward",
+              type:"Staker",
+              rSymbol:rSymbol.Dot,
+              component:RDOTStakerReward
             },{
               id:"RDOT_staker_index_redeem",
               path:"/rDOT/staker/redeem",
@@ -291,7 +301,13 @@ const routesFactory=(role?:any)=>{
               type:"-Status",
               rSymbol:rSymbol.Ksm,
               component:RKSMStakerInfo
-            },,{
+            },{
+              id:"RKSM_reward_index",
+              path:"/rKSM/staker/reward",
+              type:"Staker",
+              rSymbol:rSymbol.Ksm,
+              component:RKSMStakerReward
+            },{
               id:"RKSM_staker_index_redeem",
               path:"/rKSM/staker/redeem",
               type:"Staker",
@@ -362,7 +378,13 @@ const routesFactory=(role?:any)=>{
               type:"-Status",
               rSymbol:rSymbol.Atom,
               component:RATOMStakerInfo
-            },,{
+            },{
+              id:"RATOM_reward_index",
+              path:"/rATOM/staker/reward",
+              type:"Staker",
+              rSymbol:rSymbol.Ksm,
+              component:RATOMStakerReward
+            },{
               id:"RATOM_staker_index_redeem",
               path:"/rATOM/staker/redeem",
               type:"Staker",
@@ -414,8 +436,7 @@ const routesFactory=(role?:any)=>{
           path: '*',
           component: () => <Redirect to="/rAsset/native"/>
         }]
-      },
-      {
+      },{
         id: 'RSOL_home',
         path: '/rSOL',
         type: 'rSOL',
@@ -499,8 +520,59 @@ const routesFactory=(role?:any)=>{
             component: () => <Redirect to='/rSOL/home' />,
           },
         ],
-      },
-      {
+      },{
+        id:"RPool_index",
+        path:"/rPool",
+        type:"rPool",
+        // rSymbol:rSymbol.Atom,
+        component: RPoolHomeTemplate,
+        routes:[{
+          id:"RPool_home",
+          path:"/rPool/home",
+          width:920,
+          // rSymbol:rSymbol.Atom,
+          component:RPoolHome
+        },{
+          id:"RPool_staker",
+          type:"Staker",
+          path:"/rPool/staker",
+          rSymbol:rSymbol.Dot,
+          component:RPoolStaker,
+          routes:[{
+              id:"RPool_reward_index",
+              path:"/rPool/staker/reward",
+              type:"Staker", 
+              component:RPoolStakerReward
+            },{
+              id:"RPool_insurance_index",
+              path:"/rPool/staker/insurance",
+              type:"Staker", 
+              component:RPoolStakerInsurance
+            },{
+              id:"RPool_status_index",
+              path:"/rPool/staker/status",
+              type:"Staker", 
+              component:RPoolStakerStatus,
+              routes:[{
+                id:"RPool_status_native_index",
+                path:"/rPool/staker/status/native",
+                type:"Staker", 
+                component:RPoolStakerStatusNative,
+              },{
+                id:"RPool_status_erc20_index",
+                path:"/rPool/staker/status/erc20",
+                type:"Staker", 
+                component:RPoolStakerStatusNativeErc20,
+              },{
+                path: '*',
+                component: () => <Redirect to="/rPool/staker/status/native"/>
+              }]
+            }
+          ]},{
+          path: '*',
+          component: () => <Redirect to="/rATOM/home"/>
+        }]
+      },{
         path: '*',
         component: () => <Redirect to="/rAsset/native"/>
       }]

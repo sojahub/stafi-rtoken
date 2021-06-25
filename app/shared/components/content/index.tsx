@@ -1,16 +1,24 @@
-import React from 'react';
+import React, { useMemo } from 'react'; 
 import './index.scss';
 type Props = {
-  children: any;
-  className?: string;
+  children: any,
+  className?: string,
+  routes?: any[],
+  location?: any
 };
-export default function Index(props: Props) {
-  return (
-    <div
-      className={`stafi_content ${
-        location.pathname.includes('/rETH') || location.pathname.includes('rAsset/erc') || location.pathname.includes('swap/erc') ? '' : 'stafi_content_notice'
-      } ${props.className}`}>
-      {props.children}
+export default function Index(props: Props) { 
+    const width = useMemo(() => { 
+      if (props.location && props.routes) {
+        const obj = props.routes.find((item) => {
+          return item.path == props.location.pathname;
+        })
+        if (obj) {
+          return obj.width
+        }
+      }
+      return null;
+    },[props.location])
+    return <div style={width && {width:width}} className={`stafi_content ${location.pathname.includes("/rETH") || location.pathname.includes('rAsset/erc') || location.pathname.includes('swap/erc') ? '' : 'stafi_content_notice'} ${props.className}`}>
+        {props.children}
     </div>
-  );
 }

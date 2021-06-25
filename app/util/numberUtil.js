@@ -203,5 +203,44 @@ export default {
   },
   rTokenRateToHuman(amount) {
     return amount / 1000000000000;
+  },  
+  amount_format(amount,decimals){
+    if(amount=="--"){
+      return "--"
+    }
+    return this.number_format(amount,decimals || 2,".",",")
   },
-};
+  number_format(number, decimals, dec_point, thousands_sep) {
+      /*
+      * Parameter Description:
+      * number：Number to format
+      * decimals：Keep a few decimal places
+      * dec_point：decimal symbol
+      * thousands_sep：Thousandth symbol
+      * */
+      number = (number + '').replace(/[^0-9+-Ee.]/g, '');
+      var n = !isFinite(+number) ? 0 : +number,
+          prec = !isFinite(+decimals) ? 0 : Math.abs(decimals),
+          sep = (typeof thousands_sep === 'undefined') ? ',' : thousands_sep,
+          dec = (typeof dec_point === 'undefined') ? '.' : dec_point,
+          s = '',
+          toFixedFix = function (n, prec) {
+              var k = Math.pow(10, prec);
+              return '' + Math.ceil(n * k) / k;
+          };
+  
+     
+    
+      s = (prec ? toFixedFix(n, prec) : '' + Math.round(n)).split('.');
+      var re = /(-?\d+)(\d{3})/;
+      while (re.test(s[0])) {
+          s[0] = s[0].replace(re, "$1" + sep + "$2");
+      }
+      
+      if ((s[1] || '').length < prec && number.indexOf(".")>-1) {
+          s[1] = s[1] || '';
+          s[1] += new Array(prec - s[1].length + 1).join('0');
+      }
+      return s.join(dec);
+  }
+}; 

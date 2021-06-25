@@ -18,7 +18,8 @@ const vendors = [
   'web3',
   'web3-utils',
   '@cosmjs/stargate',
-  '@cosmjs/proto-signing'
+  '@cosmjs/proto-signing',
+  '@reduxjs/toolkit'
 ];
 
 module.exports = {

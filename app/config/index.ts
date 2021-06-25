@@ -71,10 +71,10 @@ export default {
       return '0x6b3d7a220b96f3be9ff48e6be36a7e16f46b1393';
     }
   },
-  stafiNodeDepositAddress: () => {
-    if (!isdev()) {
-      return '0x50db2ce93c8b1f6771c985b6b840b587349496a0';
-    } else {
+  stafiNodeDepositAddress:() => { 
+    if(!isdev()){
+      return '0xafcf0e333614286d8e20000781121adb28cef33d';
+    }else{
       return '0xf072c7e6e36639870c3986196237a97fcccb0331';
     }
   },
@@ -85,17 +85,17 @@ export default {
       return '0x68b749894c5484687916d57616b5214cf9fc63cb';
     }
   },
-  stafiStakingPoolManagerAddress: () => {
-    if (!isdev()) {
-      return '0x1c9890c9cb9925a8651c10b5f557d744bafbed5a';
-    } else {
+  stafiStakingPoolManagerAddress:()=> {
+    if(!isdev()){
+      return '0x7acd9bf3728f4223bf504b1a652cef5ad2e6420b';
+    }else{
       return '0x3f1ea0333e9e1caba4ff3f4d44c0808a2eaa8468';
     }
   },
-  stafiStakingPoolQueueAddress: () => {
-    if (!isdev()) {
-      return '0xc59ea6cebb8089a0330800f50946610977c4fc96';
-    } else {
+  stafiStakingPoolQueueAddress:()=> { 
+    if(!isdev()){
+      return '0xeba81e821c8990e92f85d26aa428e45a8d26d1ab';
+    }else{
       return '0x40a0f8f23dbc635b8e54c8b785c62269cad8ebf8';
     }
   },

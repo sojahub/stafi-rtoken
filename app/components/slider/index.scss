@@ -56,21 +56,22 @@
     }
 }
 
-.stafi_stake_sider{
-    width:82px;
-    border-right:1px solid #474747;
+.stafi_stake_sider{ 
+    border-right:1px solid #3B3B3B;
+    padding:32px 22px;
     height:100%;
     .sider_item{
         font-size: 14px;
         font-weight: bold;
-        margin-bottom: 33px;
+        margin-bottom: 16px;
         cursor: pointer;
         text-align: left;
         width: fit-content;
+        
         .sub_item{
             font-size: 12px;
             font-weight: initial;
-            color:#fff;
+            color:#7B7B7B;
         }
         .sub_item.sub_active{
             color:#00F3AB;
@@ -79,15 +80,15 @@
     .sider_item.active{
         color:#00F3AB;
         .sub_item{
-          color:#fff;
+          color:#7B7B7B;
         }
         .sub_item.sub_active{
             color:#00F3AB;
         }
     }
-    >.sider_item:first-child{
-        margin-top:20.5px;
-    }
+    // >.sider_item:first-child{
+    //     margin-top:20.5px;
+    // }
     >.sider_item:last-child{
         margin-bottom:0px;
     }

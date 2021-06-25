@@ -7,6 +7,7 @@ import FISReducer from './FISClice';
 import globalReducer from './globalClice';
 import noticeReducer from './noticeClice';
 import rAssetReducer from './rAssetClice';
+import rPoolReducer from './rPoolClice'; 
 import rATOMReducer from './rATOMClice';
 import rDOTReducer from './rDOTClice';
 import rETHReducer from './rETHClice';
@@ -27,5 +28,6 @@ export default function createRootReducer(history?: History) {
     bridgeModule: bridgeReducer,
     ETHModule: ETHReducer,
     rATOMModule: rATOMReducer,
+    rPoolModule:rPoolReducer
   });
 }
