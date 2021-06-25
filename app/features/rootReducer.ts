@@ -11,6 +11,7 @@ import rETHReducer from './rETHClice';
 import bridgeReducer from './bridgeClice';
 import ETHReducer from './ETHClice';
 import rATOMReducer from './rATOMClice';
+import rPoolReducer from './rPoolClice';
 
 export default function createRootReducer(history?: History) {
   return combineReducers({ 
@@ -25,5 +26,6 @@ export default function createRootReducer(history?: History) {
     bridgeModule:bridgeReducer,
     ETHModule:ETHReducer,
     rATOMModule:rATOMReducer,
+    rPoolModule:rPoolReducer
   });
 }

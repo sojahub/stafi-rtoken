@@ -48,6 +48,12 @@
                     margin-right: 0px;
                 }
             }
+            .sort_field{
+                cursor: pointer;
+                img.desc{
+                    transform: rotate(180deg);
+                }
+            }
         }
         .row{
             border-bottom: 1px solid #3B3B3B;
