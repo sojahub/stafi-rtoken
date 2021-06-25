@@ -45,7 +45,7 @@ export default function Index(props:Props){
                     <GhostButton onClick={()=>{
                       window.open(props.liquidityUrl);
                     }}> Add liquidity</GhostButton> 
-                    {props.poolOn==3?<BottonPopover data={[{label:"Stafi",url:props.stakeUrl},{label:"WrapFi",url:props.wrapFiUrl}]}>
+                    {props.poolOn==3?<BottonPopover data={[{label:"StaFi",url:props.stakeUrl},{label:"WrapFi",url:props.wrapFiUrl}]}>
                       Stake 
                     </BottonPopover>:<GhostButton onClick={()=>{
                       window.open(props.stakeUrl);
