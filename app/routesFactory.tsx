@@ -406,7 +406,7 @@ const routesFactory=(role?:any)=>{
           rSymbol:rSymbol.Atom,
           component:authorizedRoute(Symbol.Atom)(RATOMSeach)
         },{
-          id:"RATOm_type",
+          id:"RATOM_type",
           path:"/rATOM/type",
           rSymbol:rSymbol.Atom,
           component:authorizedRoute(Symbol.Atom)(RATOMType)
@@ -485,7 +485,7 @@ const routesFactory=(role?:any)=>{
             }
           ]},{
           path: '*',
-          component: () => <Redirect to="/rATOM/home"/>
+          component: () => <Redirect to="/rPool/home"/>
         }]
       },{
         path: '*',
