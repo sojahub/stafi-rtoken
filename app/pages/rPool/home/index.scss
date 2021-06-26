@@ -15,24 +15,26 @@
         border-bottom: 1px solid #3B3B3B;
         display: flex; 
     }
-    .table{
+    .table{ 
         .row,.head{
             display: flex; 
             padding:15px 0px;
             .col1{
-                width:177px
+                width:177px;
+                padding-left:20px;
+
             }
             .col2{
                 width:150px
             }
             .col3{
-                width:120px
+                width:190px
             }
             .col4{
-                width:120px
+                width:160px
             }
             .col5{
-                width:102px;
+                width:156px;
                 img{
                     width:14px;
                     height:14px;
@@ -97,9 +99,17 @@
             font-weight: bold;
             color:#7C7C7C;
         }
-        .table_body{
-            height:270px;
-            overflow: auto;
+        // .table_body{
+        //     height:270px;
+        //     overflow: auto;
+        // }
+        .rtoken_type{
+            background-color: #293038;
+            border-radius: 2px;
+            margin-bottom:30px;
+            >.row:last-child{
+                border-bottom-width: 0px;
+            }
         }
     }
 }

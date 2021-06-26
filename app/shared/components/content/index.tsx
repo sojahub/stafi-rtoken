@@ -7,18 +7,20 @@ type Props={
     location?:any
 }
 export default function Index(props:Props){ 
-    const width=useMemo(()=>{ 
+    const className=useMemo(()=>{ 
         if(props.location && props.routes){
             const obj=props.routes.find((item)=>{
                 return item.path==props.location.pathname;
             })
             if(obj){
-                return obj.width
+                return obj.className
+            }else{
+                return '';
             }
         }
         return null;
     },[props.location])
-    return <div style={width && {width:width}} className={`stafi_content ${location.pathname.includes("/rETH")?'':'stafi_content_notice'} ${props.className}`}>
+    return <div  className={`stafi_content ${className} ${location.pathname.includes("/rETH")?'':'stafi_content_notice'} ${props.className}`}>
         {props.children}
     </div>
 }

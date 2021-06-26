@@ -21,7 +21,12 @@ type Props={
 export default function Index(props:Props){ 
     return <div className="row">
                 <div className="col col1">
-                  <img src={props.pairIcon} /> {props.pairValue}
+                  {props.pairIcon && <><img src={props.pairIcon} />{props.pairValue}</>}
+                </div>
+                <div className="col col5">
+                  {props.poolOn==1 && <><img src={poolUniswapIcon} /> Uniswap</>} 
+                  {props.poolOn==2 && <><img src={poolCurveIcon} /> Curve</>} 
+                  {props.poolOn==3 && <><img src={poolWrapFiIcon} /> WrapFi</>}  
                 </div>
                 <div className="col col2">
                   { 
@@ -36,20 +41,16 @@ export default function Index(props:Props){
                 <div className="col col4">
                   {props.slippage?`${Number(props.slippage).toFixed(2)}%`:'//'}
                 </div>
-                <div className="col col5">
-                 {props.poolOn==1 && <><img src={poolUniswapIcon} /> Uniswap</>} 
-                 {props.poolOn==2 && <><img src={poolCurveIcon} /> Curve</>} 
-                 {props.poolOn==3 && <><img src={poolWrapFiIcon} /> WrapFi</>}  
-                </div>
+               
                 <div className="col col6"> 
                     <GhostButton className="liquidity_btn" onClick={()=>{
                       window.open(props.liquidityUrl);
                     }}> Add liquidity</GhostButton> 
-                    {props.poolOn==3?<BottonPopover data={[{label:"StaFi",url:props.stakeUrl},{label:"WrapFi",url:props.wrapFiUrl}]}>
+                    {/* {props.poolOn==3?<BottonPopover data={[{label:"StaFi",url:props.stakeUrl},{label:"WrapFi",url:props.wrapFiUrl}]}>
                       Stake 
                     </BottonPopover>:<GhostButton onClick={()=>{
                       window.open(props.stakeUrl);
-                    }} className="stake_btn">Stake</GhostButton> }
+                    }} className="stake_btn">Stake</GhostButton> } */}
                 </div>
             </div>
 }
