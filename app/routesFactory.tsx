@@ -529,7 +529,8 @@ const routesFactory=(role?:any)=>{
         routes:[{
           id:"RPool_home",
           path:"/rPool/home",
-          width:920,
+          // width:920,
+          className:"stafi_content_full",
           // rSymbol:rSymbol.Atom,
           component:RPoolHome
         },{

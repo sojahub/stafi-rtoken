@@ -11,6 +11,9 @@ export default function Index(props:Props){
     <div className="col col1">
         Pair
     </div>
+    <div className="col  col5">
+        Pool on
+    </div>
     <div className="col col2 sort_field" onClick={()=>{
         props.onClick && props.onClick("apy")
     }}>
@@ -26,10 +29,9 @@ export default function Index(props:Props){
     }}>
         Slippage {props.sortField=="slippage"?<img className={`${props.sortWay=="desc" && "desc"}`} src={sort_arrow_white}/>:<img src={sort_arrow}/>}
     </div>
-    <div className="col  col5">
-        Pool on
-    </div>
-    <div className="col col6"> 
+   
+    <div className="col col6">
+        Farm 
     </div>
 </div>
 }
