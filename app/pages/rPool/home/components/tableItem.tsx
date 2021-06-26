@@ -21,7 +21,7 @@ type Props={
 export default function Index(props:Props){ 
     return <div className="row">
                 <div className="col col1">
-                  {props.pairIcon && <><img src={props.pairIcon} />{props.pairValue}</>}
+                  {props.pairIcon && <><img src={props.pairIcon} /> {props.pairValue}</>}
                 </div>
                 <div className="col col5">
                   {props.poolOn==1 && <><img src={poolUniswapIcon} /> Uniswap</>} 
@@ -29,6 +29,9 @@ export default function Index(props:Props){
                   {props.poolOn==3 && <><img src={poolWrapFiIcon} /> WrapFi</>}  
                 </div>
                 <div className="col col2">
+                  {
+                    props.apyList.length==0 && "0.00%"
+                  }
                   { 
                     props.apyList.map((item)=>{ 
                       return <div><div>+{item.apy}% </div><label>{item.symbol}</label></div>

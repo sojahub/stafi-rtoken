@@ -20,7 +20,7 @@ export default function Index(props:Props){
         }
         return null;
     },[props.location])
-    return <div  className={`stafi_content ${className} ${location.pathname.includes("/rETH")?'':'stafi_content_notice'} ${props.className}`}>
+    return <div  className={`stafi_content ${className} ${(location.pathname.includes("/rETH") || location.pathname.includes("/rPool"))?'':'stafi_content_notice'} ${props.className}`}>
         {props.children}
     </div>
 }
