@@ -7,6 +7,6 @@ type Props={
 }
 export default function Index(props:Props){
     return <Tooltip overlayClassName="stafi_doubt_overlay" placement="topLeft" title={props.tip}>
-    <img src={doubt} />
+    <img className="stafi_doubt_icon" src={doubt} />
 </Tooltip>
 }

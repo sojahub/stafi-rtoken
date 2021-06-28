@@ -12,7 +12,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import CardItem from './components/cardItem';
 import TableHead from './components/tableHead';
 import TableItem from './components/tableItem';
-import numberUtil from '@util/numberUtil'
+import numberUtil from '@util/numberUtil';
+import Doubt from '@shared/components/doubt'
 import './index.scss';
 
 const rTokenList:any=[
@@ -130,7 +131,7 @@ export default function Inde(props:any){
       <div className="card_list">
         <CardItem label="Total Liquidity" value={`$${numberUtil.amount_format(totalLiquidity)}`}/>
         <CardItem label="Farming APY. avg" value={`${apyAvg}%`}/>
-        <CardItem label="rToken Price Slippage. avg" value={`${slippageAvg}%`}/>
+        <CardItem label="rToken Price Slippage. avg" doubt={<Doubt tip="This stats indicates average slippage of rTokens."></Doubt>} value={`${slippageAvg}%`}/>
       </div>
       <div className="table">
             
