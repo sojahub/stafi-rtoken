@@ -12,7 +12,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import CardItem from './components/cardItem';
 import TableHead from './components/tableHead';
 import TableItem from './components/tableItem';
-import numberUtil from '@util/numberUtil'
+import numberUtil from '@util/numberUtil';
+import Doubt from '@shared/components/doubt'
 import './index.scss';
 
 const rTokenList:any=[
@@ -130,7 +131,7 @@ export default function Inde(props:any){
       <div className="card_list">
         <CardItem label="Total Liquidity" value={`$${numberUtil.amount_format(totalLiquidity)}`}/>
         <CardItem label="Farming APY. avg" value={`${apyAvg}%`}/>
-        <CardItem label="rToken Price Slippage. avg" value={`${slippageAvg}%`}/>
+        <CardItem label="rToken Price Slippage. avg" doubt={<Doubt tip="This stats indicates average slippage of rTokens."></Doubt>} value={`${slippageAvg}%`}/>
       </div>
       <div className="table">
             
@@ -156,38 +157,38 @@ export default function Inde(props:any){
                       let icon=null; 
                       let stakeUrl="";
                       let liquidityUrl="";
-                      let wrapFiUrl="";
+                      // let wrapFiUrl="";
                       if(item.platform==1 || item.platform==3){
                         if(item.contract=="0x5f49da032defe35489ddb205f3dc66d8a76318b3"){
                           type="rETH/ETH";
                           icon=rpool_reth_Icon;
                           stakeUrl="https://app.stafi.io/rETH";
                           liquidityUrl="https://app.uniswap.org/#/add/v2/0x9559aaa82d9649c7a7b220e7c461d2e74c9a3593/ETH";
-                          wrapFiUrl="https://drop.wrapfi.io/phase2/staker?pid=2";
+                          // wrapFiUrl="https://drop.wrapfi.io/phase2/staker?pid=2";
                         }else if(item.contract=="0xec736f21bea3d34f222ba101af231b57699760f3"){
                           type="rFIS/ETH";
                           icon=rpool_rfis_Icon;
                           stakeUrl="https://rtoken.stafi.io/rfis";
                           liquidityUrl="https://app.uniswap.org/#/add/v2/ETH/0xc82eb6dea0c93edb8b697b89ad1b13d19469d635";
-                          wrapFiUrl="https://drop.wrapfi.io/phase2/staker?pid=1";
+                          // wrapFiUrl="https://drop.wrapfi.io/phase2/staker?pid=1";
                         }else if(item.contract=="0x53e73e10b0315601c938e4d9454e8c7cf72e1236"){
                           type="rATOM/ETH";
                           icon=rpool_ratom_Icon;
                           stakeUrl="https://app.stafi.io/rATOM";
                           liquidityUrl="https://app.uniswap.org/#/add/v2/ETH/0xd01cb3d113a864763dd3977fe1e725860013b0ed";
-                          wrapFiUrl="https://drop.wrapfi.io/phase2/staker?pid=5";
+                          // wrapFiUrl="https://drop.wrapfi.io/phase2/staker?pid=5";
                         }else if(item.contract=="0xe5d71d5ea5729eceee5d246ced3cbecb2226a8ed"){
                           type="rDOT/ETH";
                           icon=rpool_rdot_Icon;
                           stakeUrl="https://app.stafi.io/rDOT";
                           liquidityUrl="https://app.uniswap.org/#/add/v2/ETH/0x505f5a4ff10985fe9f93f2ae3501da5fe665f08a";
-                          wrapFiUrl="https://drop.wrapfi.io/phase2/staker?pid=3";
+                          // wrapFiUrl="https://drop.wrapfi.io/phase2/staker?pid=3";
                         }else if(item.contract=="0x80693274615464086132e0751435e954a7dc687f"){
                           type="rKSM/ETH";
                           icon=rpool_rksm_Icon;
                           stakeUrl="https://app.stafi.io/rKSM";
                           liquidityUrl="https://app.uniswap.org/#/add/v2/ETH/0x3c3842c4d3037ae121d69ea1e7a0b61413be806c";
-                          wrapFiUrl="https://drop.wrapfi.io/phase2/staker?pid=4";
+                          // wrapFiUrl="https://drop.wrapfi.io/phase2/staker?pid=4";
                         }
                       }else if(item.platform==2){
                         if(item.contract=="0xF9440930043eb3997fc70e1339dBb11F341de7A8"){
@@ -195,13 +196,13 @@ export default function Inde(props:any){
                           icon=rpool_reth_Icon;
                           stakeUrl="https://app.stafi.io/rETH";
                           liquidityUrl="https://curve.fi/reth";
-                          wrapFiUrl="https://drop.wrapfi.io/phase2/staker?pid=2";
+                          // wrapFiUrl="https://drop.wrapfi.io/phase2/staker?pid=2";
                         }
                       }
                       if(type==""){
                         return <></>
                       }
-                      return <TableItem wrapFiUrl={wrapFiUrl} liquidityUrl={liquidityUrl} history={props.history} stakeUrl={stakeUrl} pairIcon={index==0?icon:null} pairValue={index==0?type:null} apyList={item.apy}  liquidity={item.liquidity} slippage={item.slippage} poolOn={item.platform}/>
+                      return <TableItem wrapFiUrl={"https://drop.wrapfi.io"} liquidityUrl={liquidityUrl} history={props.history} stakeUrl={stakeUrl} pairIcon={index==0?icon:null} pairValue={index==0?type:null} apyList={item.apy}  liquidity={item.liquidity} slippage={item.slippage} poolOn={item.platform}/>
                     })}
                   </div>
                   
