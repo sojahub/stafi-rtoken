@@ -54,7 +54,8 @@ function webpackCommonConfigCreator(options) {
     },
     output: {
       // filename:"js/[name].[chunkhash].bundle.js",
-      filename: 'index_bundle.js',
+      // filename: 'index_bundle.js',
+      filename: 'bundle.[contenthash].js',
       path: path.resolve(__dirname, '../build'),
       // assetModuleFilename: 'assets/[hash][ext][query]',
       publicPath: '/',
