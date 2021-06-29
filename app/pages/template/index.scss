@@ -6,6 +6,10 @@
     .stafi_layout_content{
         width:100%;
         >.stafi_layout{
+          height: calc(100% - 70px);
+          overflow: auto;
+        }
+        >.stafi_layout_full{
           height: 100%;
           overflow: auto;
         }

@@ -15,7 +15,7 @@ export default function Index(props:any){
       loading:state.globalModule.loading
     }
   }) 
-  return  <div className="stafi_layout">  
+  return  <div className="stafi_layout_full">  
       <div className="stafi_container">
         <Spin spinning={loading}size="large" tip="loading">
           <Content location={props.location} routes={props.route.routes}>
