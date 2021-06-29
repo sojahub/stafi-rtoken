@@ -83,6 +83,9 @@ export default function Index(props:Props){
             noticeData:state.noticeModule.noticeData,
         }
     })
+    if(location.pathname.includes("/rPool")){
+        return <></>
+    }
     return <div className="stafi_header">
         <Modal visible={visible}>
             {(modalType=="dot") && <Page location={{}} type="header"  onClose={()=>{
