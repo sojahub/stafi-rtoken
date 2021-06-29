@@ -4,7 +4,12 @@
     position: relative;
    
     .stafi_layout_content{
-        width:100%
+        width:100%;
+        >.stafi_layout{
+          height: 100%;
+          overflow: auto;
+        }
+
     }
     .stafi_container{
         padding-top:40px;
