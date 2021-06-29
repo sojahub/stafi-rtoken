@@ -177,7 +177,26 @@ export default function Index(props: Props) {
                 dispatch(connectAtomjs());
             }}  className="header_tool account">
                 connect to Kepir
-            </div>)} 
+            </div>)}
+            {account.type == 'rSOL' &&
+              (account.solAccount ? (
+                <div
+                  className='header_tool account'
+                  onClick={() => {
+                    dispatch(connectSoljs());
+                  }}>
+                  <div>{account.solAccount.balance} SOL</div>
+                  <div>{StringUtil.replacePkh(account.solAccount.address, 6, 38)}</div>
+                </div>
+              ) : (
+                <div
+                  onClick={() => {
+                    dispatch(connectSoljs());
+                  }}
+                  className='header_tool account'>
+                  connect to Phantom
+                </div>
+              ))}
             {account.ethAccount && <div  className="header_tool account">
                 <div>{account.ethAccount.balance} ETH</div>
                 <div>{StringUtil.replacePkh(account.ethAccount.address,4,38)}</div>
