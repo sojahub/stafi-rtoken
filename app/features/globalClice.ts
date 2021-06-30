@@ -208,7 +208,7 @@ export const connectPolkadot_ksm=(cb?:Function):AppThunk=>async (dispatch, getSt
   await dispatch(connectPolkadotjs(Symbol.Fis));
   cb && cb()
 }
-export const connectPolkadot_atom=(cb?:Function):AppThunk=>async (dispatch, getState)=>{
+export const connectPolkadot_fis=(cb?:Function):AppThunk=>async (dispatch, getState)=>{
   // await dispatch(connectAtomjs());
   await dispatch(connectPolkadotjs(Symbol.Fis));
   cb && cb()

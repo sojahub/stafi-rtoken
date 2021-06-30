@@ -7,7 +7,8 @@ import Button from '@shared/components/button/button'
 import A from '@shared/components/button/a'
 import rDOT from '@images/selected_rDOT.svg';
 import rKSM from '@images/selected_rKSM.svg';
-import rATOM from '@images/selected_rATOM.svg'
+import rATOM from '@images/selected_rATOM.svg';
+import rFIS from '@images/selected_rFIS.svg';
 import doubt from "@images/doubt.svg"; 
 
 import './index.scss'; 
@@ -41,7 +42,9 @@ export default function Index(props:Props){
               return rDOT;
           }else if(props.type=="rATOM"){
               return rATOM;
-          }
+          }else if(props.type=="rFIS"){
+            return rFIS;
+        }
       }
       const haswarn=useMemo(()=>{
         return !bondSwitch || !(props.validPools && props.validPools.length>0)
@@ -51,6 +54,7 @@ export default function Index(props:Props){
             {props.type=="rKSM" && `Stake KSM`}
             {props.type=="rDOT" && `Stake DOT`}
             {props.type=="rATOM" && `Stake ATOM`}
+            {props.type=="rFIS" && `Stake FIS`}
         </label>
         {haswarn && <div className="warn">Unable to stake, system is waiting for matching validators</div>}
         <div className={`input_panel dot_input_panel ${haswarn && 'showWarn'}`}>
@@ -67,7 +71,7 @@ export default function Index(props:Props){
                 {props.type=="rKSM" && `${isNaN(props.totalStakedToken)?"--":props.totalStakedToken} KSM is staked via rKSM `}
                 {props.type=="rDOT" && `${isNaN(props.totalStakedToken)?"--":props.totalStakedToken} DOT is staked via rDOT `}
                 {props.type=="rATOM" && `${isNaN(props.totalStakedToken)?"--":props.totalStakedToken} ATOM is staked via rATOM `}
-                
+                {props.type=="rFIS" && `${isNaN(props.totalStakedToken)?"--":props.totalStakedToken} FIS is staked via rFIS `}
                 {/* <A>stats</A> */}
             </div>
         </div>
@@ -98,7 +102,7 @@ export default function Index(props:Props){
                     {props.willAmount}
                 </div>
             </div>
-            <div className="money_panel_item">
+            {props.type!="rFIS" && <div className="money_panel_item">
                 <div className="relay_fee">Relay Fee: {props.bondFees} FIS</div> 
                 <div></div>
 
@@ -108,7 +112,7 @@ export default function Index(props:Props){
                         <img src={doubt} />
                     </Tooltip>
                 </div>
-            </div>
+            </div>}
         </div> 
         <div className="btns"> <Button disabled={(!props.amount || props.amount==0 || haswarn || processSlider)} onClick={()=>{
              props.onStakeClick && props.onStakeClick()

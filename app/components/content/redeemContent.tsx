@@ -5,6 +5,7 @@ import Input from '@shared/components/input/amountInput';
 import rDOT from '@images/selected_rDOT.svg';
 import rKSM from '@images/selected_rKSM.svg';
 import rATOM from '@images/selected_rATOM.svg';
+import rFIS from '@images/selected_rFIS.svg';
 import leftArrowSvg from '@images/left_arrow.svg'
 import NumberUtil from '@util/numberUtil'
 import Button from '@shared/components/button/button';
@@ -31,6 +32,8 @@ export default function Index(props:Props){
             return rKSM
         }else if(props.type=="rATOM"){
             return rATOM
+        }else if(props.type=="rFIS"){
+            return rFIS
         }
     }
   
@@ -41,12 +44,14 @@ export default function Index(props:Props){
          <div className="title">
            
             {props.type=="rDOT" && " Redeem DOT"}
+            {props.type=="rFIS" && " Redeem FIS"}
             {props.type=="rKSM" && " Redeem KSM"}
             {props.type=="rATOM" && " Redeem ATOM"}
          </div>
          <div className="subTitle">
                <div className="label"> 
                {props.type=="rDOT" && "1. Unbond DOT"}
+               {props.type=="rFIS" && "1. Unbond FIS"}
                {props.type=="rKSM" && "1. Unbond KSM"}
                {props.type=="rATOM" && "1. Unbond ATOM"}
                </div>
@@ -62,11 +67,7 @@ export default function Index(props:Props){
                 {props.type} balance {(props.tokenAmount=="--")? "--": NumberUtil.handleFisAmountToFixed(props.tokenAmount)}
             </div>
         </div>
-         {/* <div className="btns">
-           <Button disabled={!props.amount} size="small" btnType="ellipse" onClick={()=>{
-               props.onRdeemClick && props.onRdeemClick();
-           }}>Unbond</Button> Unbond will take 28 days and {(props.fisFee != "--") && numberUtil.fisFeeToFixed(props.fisFee)}% fee
-         </div> */}
+   
         <div className="subTitle">
        
         <div className="label"> 2. Receiving address</div>

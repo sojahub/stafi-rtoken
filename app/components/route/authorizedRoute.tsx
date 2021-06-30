@@ -42,7 +42,11 @@ const account=(type:string)=>{
       } 
       return true; 
     case Symbol.Fis:
-      return getLocalStorageItem(Keys.FisAccountKey);
+      if(getLocalStorageItem(Keys.FisAccountKey)){
+        return true
+      }else{
+        return '/rFIS/home' 
+      } 
     default:
         return "/rKSM/home";
 

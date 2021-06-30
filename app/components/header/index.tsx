@@ -76,6 +76,14 @@ export default function Index(props:Props){
                 }
             }
         }
+        if(location.pathname.includes("/rFIS")){ 
+            if(state.FISModule.fisAccount){
+                return { 
+                    fisAccount:state.FISModule.fisAccount,
+                    noticeData:state.noticeModule.noticeData,
+                }
+            } 
+        }
         return null
     })
     const {noticeData}=useSelector((state:any)=>{  
