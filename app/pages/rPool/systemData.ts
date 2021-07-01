@@ -6,10 +6,10 @@ export const rPool_data=[{
       text:"-Insurance",
       url:"/rPool/staker/insurance"
     },
-    {
-      text:"-Status",
-      url:"/rPool/staker/status"
-    },
+    // {
+    //   text:"-Status",
+    //   url:"/rPool/staker/status"
+    // },
     {
       text:'-Reward',
       url:"/rPool/staker/reward"

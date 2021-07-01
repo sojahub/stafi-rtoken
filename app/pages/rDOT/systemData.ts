@@ -5,10 +5,11 @@ export const rDOT_data=[{
     {
       text:'-Status',
       url:"/rDOT/staker/info"
-    },{
-      text:'-Reward',
-      url:"/rDOT/staker/reward"
     },
+    // {
+    //   text:'-Reward',
+    //   url:"/rDOT/staker/reward"
+    // },
     {
       text:'-Recovery',
       url:"/rDOT/search"

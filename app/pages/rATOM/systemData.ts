@@ -5,10 +5,11 @@ export const rATOM_data=[{
     {
       text:'-Status',
       url:"/rATOM/staker/info"
-    },{
-      text:'-Reward',
-      url:"/rATOM/staker/reward"
     },
+    // {
+    //   text:'-Reward',
+    //   url:"/rATOM/staker/reward"
+    // },
     {
       text:'-Recovery',
       url:"/rATOM/search"
