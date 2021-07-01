@@ -127,7 +127,7 @@ export default function Inde(props:any){
   return <Card className="stafi_rpool_home_card">
       <div className="title">
         <label>Provide liquidity and earn reward</label><A onClick={()=>{
-          window.open("https://docs.stafi.io/rproduct/rpool")
+          window.open("https://docs.stafi.io/rproduct/rpool/the-guide-for-rpool")
         }}>How to earn</A>
       </div>
       <div className="card_list">
