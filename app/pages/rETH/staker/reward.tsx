@@ -17,7 +17,7 @@ export default function Index(){
             rewardList_lastdata:state.rETHModule.rewardList_lastdata
         }
     }) 
-    return <RewardContent hours={8} rewardList={rewardList} getReward={getReward} type="KSM">
+    return <RewardContent hours={8} rewardList={rewardList} getReward={getReward} type="ETH">
         {
             rewardList.map((item,index)=>{
                 let reward:any='--';
