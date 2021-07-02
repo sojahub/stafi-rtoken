@@ -11,15 +11,17 @@
             right: -8px;
         }
     }
-    .tbody{ 
+    .tbody,.list-scrollbars{ 
         height: 336px;
         margin-bottom: 10px;
-        overflow: auto;
+        // overflow: auto;
     }
     .data_table{
-       
+        .ant-empty-description{
+            color:#ffffff;
+        }
         .row{
-            padding:0px 10px 0px 25px;
+            // padding:0px 10px 0px 25px;
             height:37px;
             display: flex;
             align-items: center;
@@ -31,10 +33,10 @@
                 width:53px
             }
             .col.col2{
-                width:96px
+                width:110px
             }
             .col.col3{
-                width:119px
+                width:110px
             }
             .col.col4{
                 width:149px
@@ -48,11 +50,15 @@
             .col.col5{
                 color:#00F3AB;
             }
+            
         }
         .row.heard{
             >div{ 
                 color:#7C7C7C;
             }
+        }
+        .tfoot{
+            margin-top: 20px;
         }
     }
 }

@@ -17,6 +17,7 @@ import CommonClice from './commonClice';
 import { bondStates, bound, fisUnbond, rTokenSeries_bondStates } from './FISClice';
 import { initProcess, processStatus, setLoading, setProcessSending, setProcessSlider, setProcessType } from './globalClice';
 import { add_Notice, findUuid, noticeStatus, noticesubType, noticeType } from './noticeClice';
+import RpcServer,{pageCount} from '@servers/rpc/index';
 
 const commonClice=new CommonClice();
 
@@ -41,7 +42,8 @@ const rKSMClice = createSlice({
     stakerApr:"--", 
     ercBalance:"--",
     totalUnbonding:null,
- 
+    rewardList:[],
+    rewardList_lastdata:null
   },
   reducers: {
     setKsmAccounts(state, { payload }) {
@@ -121,11 +123,18 @@ const rKSMClice = createSlice({
     },
     setUnBondFees(state,{payload}){
       state.unBondFees=payload
+    },
+    setRewardList(state,{payload}){
+      state.rewardList=payload
+    },
+    setRewardList_lastdata(state,{payload}){
+      state.rewardList_lastdata=payload
     }
   },
 });
 const polkadotServer = new PolkadotServer();
 const stafiServer = new Stafi();
+const rpcServer=new RpcServer();
 export const { setKsmAccounts,
   setKsmAccount,
   setTransferrableAmountShow,
@@ -141,7 +150,9 @@ export const { setKsmAccounts,
   setStakerApr,
   setTotalUnbonding,
   setUnBondFees,
-  setRatioShow
+  setRatioShow,
+  setRewardList,
+  setRewardList_lastdata
 } = rKSMClice.actions;
 
 
@@ -666,6 +677,40 @@ const add_KSM_stake_Notice=(uuid:string,amount:string,status:string,subData?:any
 export const rTokenRate = (): AppThunk => async (dispatch, getState) => {
   const ratio=await commonClice.rTokenRate(rSymbol.Ksm);
   dispatch(setRatio(ratio))
+}
+
+
+export const getReward=(pageIndex:Number,cb:Function):AppThunk=>async (dispatch, getState)=>{
+  const source=getState().FISModule.fisAccount.address; //"36NQ98C5uri7ruBKvdzWFeEJQEhGpzCvJVbMHkbTu2mCgMRo"
+  const result=await rpcServer.getReward(source,2,pageIndex); 
+  if(result.status==80000){ 
+    const rewardList=getState().rKSMModule.rewardList; 
+    if(result.data.rewardList.length>0){
+      const list=result.data.rewardList.map((item:any)=>{
+        const rate=NumberUtil.rTokenRateToHuman(item.rate);
+        const rbalance=NumberUtil.tokenAmountToHuman(item.rbalance,rSymbol.Ksm);
+        return {
+          ...item,
+          rbalance:rbalance,
+          rate:rate
+        }
+      })
+      if(result.data.rewardList.length<=pageCount){
+        dispatch(setRewardList_lastdata(null))
+      }else{
+        dispatch(setRewardList_lastdata(list[list.length-1]));
+        list.pop()
+      } 
+      dispatch(setRewardList([...rewardList,...list])); 
+      if(result.data.rewardList.length<=pageCount){
+        cb && cb(false)
+      }else{
+        cb && cb(true)
+      }
+    }else{
+      cb && cb(false)
+    }
+  }
 }
 const add_KSM_unbond_Notice=(uuid:string,amount:string,status:string,subData?:any):AppThunk=>async (dispatch,getState)=>{
   

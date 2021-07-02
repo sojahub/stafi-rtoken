@@ -31,9 +31,9 @@ export default {
   },
   api: ()=>{
     if(!isdev()){
-      return 'https://rtoken-api.stafi.io';
+      return 'https://rtoken-api.stafi.io'; 
     }else{
-      return 'https://rtoken-api.stafi.io';
+      return 'https://test-rtoken-api2.stafi.io';
     }  
   },
   stafiApi:"https://drop.stafi.io",

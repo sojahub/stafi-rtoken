@@ -86,23 +86,23 @@ export default class Index{
     return userDepositContract;
   }
   getStakingPoolStatus(){
-    const url="webapi/reth/poolstatus"
+    const url="v1/webapi/reth/poolstatus"
     return api.post(url)
   }
 
   getArp(arpType:number){
-    const url="webapi/reth/arp";
+    const url="v1/webapi/reth/arp";
     return api.post(url,{arpType})
   } 
 
   getPoolist(pam:any){
-    const url="webapi/reth/poolist";
+    const url="v1/webapi/reth/poolist";
     return api.post(url,pam)
   } 
 
   getPoolInfo(poolAddress:string,pubkey:string){
     
-    const url="webapi/reth/poolinfo";
+    const url="v1/webapi/reth/poolinfo";
     return api.post(url,{contract: poolAddress, pubkey: pubkey})
   }
 }

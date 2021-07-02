@@ -18,10 +18,11 @@ import RETHPoolContract from './pages/rETH/validator/poolContract'
 import RETHStakerIndex from './pages/rETH/staker/home';
 import RETHStakerInfo from './pages/rETH/staker/info';
 // import RETHStakerRedeem from './pages/rETH/staker/redeem';
-import RETHSeach from './pages/rETH/search';
+// import RETHSeach from './pages/rETH/search';
 import RETHPoolStatus from './pages/rETH/poolStatus';
 import RETHType from './pages/rETH/selectType';
-import RETHLiquefy from './pages/rETH/liquefy'
+import RETHLiquefy from './pages/rETH/liquefy';
+import RETHStakerReward from './pages/rETH/staker/reward'
 
 import DOTHomeTemplate from './pages/rDOT/template';
 import RDOTHome from './pages/rDOT/home'
@@ -188,6 +189,12 @@ const routesFactory=(role?:any)=>{
               type:"Staker",
               rSymbol:rSymbol.Eth,
               component:RETHStakerIndex
+            },{
+              id:"RETH_reward_index",
+              path:"/rETH/staker/reward",
+              type:"Staker",
+              rSymbol:rSymbol.Eth,
+              component:RETHStakerReward
             },{
               id:"RETH_staker_index_info",
               path:"/rETH/staker/info",
