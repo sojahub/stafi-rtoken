@@ -78,7 +78,7 @@ export default function Index(props: any) {
       if (!wallet.connected) {
         wallet
           .connect()
-          .then((res) => {
+          .then((res: any) => {
             if (res) {
               checkWalletAddress(getPublicKey(res));
             }

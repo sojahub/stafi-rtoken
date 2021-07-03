@@ -485,7 +485,7 @@ const _onProceedInternal =
         } else if (e == 'failure' || e == 'stakingFailure') {
           const wallet = solServer.getWallet();
           if (!wallet.connected) {
-            wallet.connect().then((res) => {
+            wallet.connect().then((res: any) => {
               if (res) {
                 dispatch(
                   getBlock(txHash, noticeData ? noticeData.uuid : null, () => {
