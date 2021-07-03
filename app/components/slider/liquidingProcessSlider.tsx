@@ -84,7 +84,7 @@ export default function Index(props: Props) {
     if (util.pageType() == rSymbol.Sol) {
       const wallet = solServer.getWallet();
       if (!wallet.connected) {
-        wallet.connect().then((res) => {
+        wallet.connect().then((res: any) => {
           if (res) {
             reStakeSol();
           }
