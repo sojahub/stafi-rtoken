@@ -33,6 +33,13 @@ export default {
     if(!isdev()){
       return 'https://rtoken-api.stafi.io'; 
     }else{
+      return 'https://rtoken-api.stafi.io'; 
+    }  
+  },
+  api2: ()=>{
+    if(!isdev()){
+      return 'https://rtoken-api2.stafi.io'; 
+    }else{
       return 'https://test-rtoken-api2.stafi.io';
     }  
   },
