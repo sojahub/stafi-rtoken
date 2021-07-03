@@ -2,10 +2,10 @@ import React from 'react'
 
 type Props={
     era:Number,
-    tokenAmount:Number,
-    ratio:Number,
-    redeemableToken:Number,
-    reward:Number
+    tokenAmount:string|Number,
+    ratio:string | Number,
+    redeemableToken:string | Number,
+    reward:any
 }
 export default function Index(props:Props){
     return <div className="row body">
@@ -22,7 +22,7 @@ export default function Index(props:Props){
         {props.redeemableToken}
     </div>
     <div className="col col5">
-        +{props.reward}
+        {props.reward=="--"?"--":props.reward}
     </div> 
 </div>
 }

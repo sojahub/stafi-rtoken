@@ -3,9 +3,12 @@ export const rDOT_data=[{
   url:"/rETH/staker/index",
   child:[
     {
+      text:'-Reward',
+      url:"/rETH/staker/reward"
+    },{
       text:'-Status',
       url:"/rETH/staker/info"
-    } 
+    }
   ]
 },{
   text:"Validator",

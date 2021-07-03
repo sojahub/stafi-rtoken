@@ -1,27 +1,23 @@
 import React, { useEffect } from 'react';
 import RewardContent from '@components/reward/index'
 import DataItem from '@components/reward/dataItem';
-import {getReward, getUnbondCommission} from '@features/rATOMClice';
+import {getReward} from '@features/rETHClice';
 import CommonClice from '@features/commonClice'
 import { useDispatch, useSelector } from 'react-redux';
 import NumberUtil from '@util/numberUtil'
-import { RootState } from 'app/store';
-import { rSymbol } from '@keyring/defaults';
+import { RootState } from 'app/store'; 
 
 const commonClice=new CommonClice()
 export default function Index(){
     const dispatch=useDispatch();
-    useEffect(()=>{ 
-        dispatch(getUnbondCommission());
-    },[])
-    const {rewardList,unbondCommission,rewardList_lastdata}=useSelector((state:RootState)=>{
+ 
+    const {rewardList,rewardList_lastdata}=useSelector((state:RootState)=>{
         return {
-            rewardList:state.rATOMModule.rewardList,
-            unbondCommission:state.rATOMModule.unbondCommission,
-            rewardList_lastdata:state.rATOMModule.rewardList_lastdata
+            rewardList:state.rETHModule.rewardList, 
+            rewardList_lastdata:state.rETHModule.rewardList_lastdata
         }
     }) 
-    return <RewardContent  hours={24} rewardList={rewardList} getReward={getReward} type="ATOM">
+    return <RewardContent hours={8} rewardList={rewardList} getReward={getReward} type="ETH">
         {
             rewardList.map((item,index)=>{
                 let reward:any='--';
@@ -34,7 +30,7 @@ export default function Index(){
                     reward=(reward>0 ? "+":"") + NumberUtil.handleFisAmountRateToFixed(reward);
                 }
                 
-                return <DataItem era={item.era} tokenAmount={NumberUtil.handleFisAmountToFixed(item.rbalance)} ratio={NumberUtil.handleFisAmountRateToFixed(item.rate)} redeemableToken={commonClice.getWillAmount(item.rate,unbondCommission,item.rbalance)} reward={reward} />
+                return <DataItem era={item.era} tokenAmount={NumberUtil.handleFisAmountToFixed(item.rbalance)} ratio={NumberUtil.handleFisAmountRateToFixed(item.rate)} redeemableToken={"0.000000"} reward={reward} />
             })
         } 
     </RewardContent>

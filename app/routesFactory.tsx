@@ -33,6 +33,7 @@ import DOTHomeTemplate from './pages/rDOT/template';
 import RDOTValidator from './pages/rDOT/validator';
 import RETHHome from './pages/rETH/home';
 import RETHLiquefy from './pages/rETH/liquefy';
+import RETHStakerReward from './pages/rETH/staker/reward'
 import RETHPoolStatus from './pages/rETH/poolStatus';
 import RETHType from './pages/rETH/selectType';
 import RETHStaker from './pages/rETH/staker';
@@ -189,6 +190,12 @@ const routesFactory=(role?:any)=>{
               type:"Staker",
               rSymbol:rSymbol.Eth,
               component:RETHStakerIndex
+            },{
+              id:"RETH_reward_index",
+              path:"/rETH/staker/reward",
+              type:"Staker",
+              rSymbol:rSymbol.Eth,
+              component:RETHStakerReward
             },{
               id:"RETH_staker_index_info",
               path:"/rETH/staker/info",
