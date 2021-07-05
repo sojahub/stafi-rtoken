@@ -77,6 +77,22 @@ import RPoolStakerInsurance from './pages/rPool/staker/insurance';
 import RPoolStakerStatus from './pages/rPool/staker/status';
 import RPoolStakerStatusNative from './pages/rPool/staker/status/native';
 import RPoolStakerStatusNativeErc20 from './pages/rPool/staker/status/erc20';
+
+import RMaticHomeTemplate from './pages/rMatic/template';
+import RMaticHome from './pages/rMatic/home'
+import RMaticWallet from './pages/rMatic/selectWallet';
+import RMaticWalletFIS from './pages/rMatic/selectWallet_rFIS';
+import RMaticStaker from './pages/rMatic/staker';
+import RMaticValidator from './pages/rMatic/validator';
+import RMaticStakerIndex from './pages/rMatic/staker/home';
+import RMaticStakerInfo from './pages/rMatic/staker/info';
+import RMaticStakerRedeem from './pages/rMatic/staker/redeem';
+import RMaticSeach from './pages/rMatic/search';
+import RMaticType from './pages/rMatic/selectType'; 
+import RMaticStakerReward from './pages/rMatic/staker/reward';
+
+
+
 import {rSymbol} from '@keyring/defaults'
   
 const routesFactory=(role?:any)=>{ 
@@ -388,7 +404,7 @@ const routesFactory=(role?:any)=>{
               id:"RATOM_reward_index",
               path:"/rATOM/staker/reward",
               type:"Staker",
-              rSymbol:rSymbol.Ksm,
+              rSymbol:rSymbol.Atom,
               component:RATOMStakerReward
             },{
               id:"RATOM_staker_index_redeem",
@@ -494,6 +510,83 @@ const routesFactory=(role?:any)=>{
           ]},{
           path: '*',
           component: () => <Redirect to="/rPool/home"/>
+        }]
+      },{
+        id:"RMatic_index",
+        path:"/rMatic",
+        type:"rMatic",
+        rSymbol:rSymbol.Matic,
+        component: RMaticHomeTemplate,
+        routes:[{
+          id:"RMatic_home",
+          path:"/rMatic/home",
+          rSymbol:rSymbol.Matic,
+          component:RMaticHome
+        },{
+          id:"RMatic_wallet",
+          path:"/rMatic/wallet",
+          rSymbol:rSymbol.Matic,
+          component:RMaticWallet
+        },{
+          id:"RMatic_wallet",
+          path:"/rMatic/fiswallet",
+          rSymbol:rSymbol.Matic,
+          component:RMaticWalletFIS
+        },{
+          id:"RMatic_staker",
+          type:"Staker",
+          path:"/rMatic/staker",
+          rSymbol:rSymbol.Matic,
+          component:authorizedRoute(Symbol.Matic)(RMaticStaker),
+          routes:[
+            {
+              id:"RMatic_staker_index",
+              path:"/rMatic/staker/index",
+              type:"Staker",
+              rSymbol:rSymbol.Matic,
+              component:RMaticStakerIndex
+            },{
+              id:"RMatic_staker_index_info",
+              path:"/rMatic/staker/info",
+              type:"-Status",
+              rSymbol:rSymbol.Matic,
+              component:RATOMStakerInfo
+            },{
+              id:"RMatic_reward_index",
+              path:"/rMatic/staker/reward",
+              type:"Staker",
+              rSymbol:rSymbol.Matic,
+              component:RMaticStakerReward
+            },{
+              id:"RMatic_staker_index_redeem",
+              path:"/rMatic/staker/redeem",
+              type:"Staker",
+              rSymbol:rSymbol.Matic,
+              component:RMaticStakerRedeem
+            },{
+              path: '*',
+              component: () => <Redirect to="/rMatic/staker/index"/>
+            }
+          ]
+        },{
+          id:"RMatic_validator",
+          type:"Validator",
+          path:"/rMatic/validator",
+          rSymbol:rSymbol.Matic,
+          component:authorizedRoute(Symbol.Matic)(RMaticValidator)
+        },{
+          id:"RMatic_search",
+          path:"/rMatic/search",
+          rSymbol:rSymbol.Matic,
+          component:authorizedRoute(Symbol.Matic)(RMaticSeach)
+        },{
+          id:"RMatic_type",
+          path:"/rMatic/type",
+          rSymbol:rSymbol.Matic,
+          component:authorizedRoute(Symbol.Matic)(RMaticType)
+        },{
+          path: '*',
+          component: () => <Redirect to="/rMatic/home"/>
         }]
       },{
         path: '*',

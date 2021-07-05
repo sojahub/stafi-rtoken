@@ -43,6 +43,8 @@ const account=(type:string)=>{
       return true; 
     case Symbol.Fis:
       return getLocalStorageItem(Keys.FisAccountKey);
+    case Symbol.Matic:
+      return true;
     default:
         return "/rKSM/home";
 

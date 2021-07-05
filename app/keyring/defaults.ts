@@ -18,6 +18,7 @@ enum rSymbol {
   Ksm = 2,
   Atom = 3,
   Eth = 4,
+  Matic=5,
 }
 
 
