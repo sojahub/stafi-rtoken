@@ -1,11 +1,11 @@
 import React from 'react';
 import Button from '@shared/components/button/button';
 import LeftContent from '@components/content/leftContent';
-import './index.scss'; 
+import '../index.scss'; 
 import { message } from 'antd';
 
 type Props={
-    onRecovery:Function
+    onBoard:Function
 }
 export default function Index(props:Props){
     return <LeftContent className="stafi_validator_context">
@@ -25,7 +25,9 @@ Original Validator on StaFi</label>
         </div>
          
         <div className="btns" style={{marginTop:67}}>
-            <Button  >Onboard</Button>
+            <Button  onClick={()=>{
+                props.onBoard && props.onBoard();
+            }}>Onboard</Button>
         </div>
     </LeftContent>
 }

@@ -74,7 +74,9 @@ import RFISStaker from './pages/rFIS/staker';
 import RFISValidator from './pages/rFIS/validator';
 import RFISStakerIndex from './pages/rFIS/staker/home';
 import RFISStakerInfo from './pages/rFIS/staker/info';
-import RFISStakerRedeem from './pages/rFIS/staker/redeem';
+import RFISStakerRedeem from './pages/rFIS/staker/redeem'; 
+import RFISValidatorOnboard from './pages/rFIS/validator/onboard';
+import RFISValidatorOffboard from './pages/rFIS/validator/offboard';
 
 const routesFactory=(role?:any)=>{ 
   const routes=[
@@ -471,7 +473,25 @@ const routesFactory=(role?:any)=>{
           type:"Validator",
           path:"/rFIS/validator",
           rSymbol:rSymbol.Fis,
-          component:authorizedRoute(Symbol.Fis)(RFISValidator)
+          component:authorizedRoute(Symbol.Fis)(RFISValidator),
+          routes:[
+            {
+              id:"RFIS_validator_index_onboard",
+              path:"/rFIS/validator/onboard",
+              type:"Validator",
+              rSymbol:rSymbol.Fis,
+              component:RFISValidatorOnboard
+            },{
+              id:"RFIS_validator_index_onboard",
+              path:"/rFIS/validator/offboard",
+              type:"Validator",
+              rSymbol:rSymbol.Fis,
+              component:RFISValidatorOffboard
+            },{
+              path: '*',
+              component: () => <Redirect to="/rFIS/validator/onboard"/>
+            }
+          ]
         }] 
       },{
         path: '*',
