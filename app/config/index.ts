@@ -60,7 +60,7 @@ export default {
   },
   stafiNodeManagerAddress:() => { 
     if(!isdev()){
-      return '0x4fd35afa32310eaa1354768be6ad2c5c6a62d572';
+      return '0x342702e87e8714c759a21299402d9ec99efa0caf';
     }else{
       return '0x68b749894c5484687916d57616b5214cf9fc63cb';
     }   
