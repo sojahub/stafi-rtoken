@@ -8,6 +8,7 @@ import Modal from '@shared/components/modal/connectModal';
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Page_FIS from '../../rATOM/selectWallet_rFIS/index';
+import {Redirect} from 'react-router'
 import './index.scss';
 
 
@@ -22,9 +23,9 @@ export default function Inde(props:any){
       ethAccount:state.rETHModule.ethAccount
     } 
   })
-  // if(fisAccount && ethAccount){
-  //   return <Redirect to="/rMatic/type" />
-  // }
+  if(fisAccount && ethAccount){
+    return <Redirect to="/rMatic/type" />
+  }
   return <HomeCard 
       title={<><label>Liquify</label> Your Staking Matic</>}
       subTitle={"Staking via StaFi Staking Contract and get rMatic in return"} 
@@ -32,11 +33,21 @@ export default function Inde(props:any){
       onIntroUrl=""
   >
             
-            <Button icon={metamask} onClick={()=>{ 
+            <Button disabled={!!ethAccount } icon={metamask} onClick={()=>{ 
                 dispatch(connectMetamask('0x5'));
                 dispatch(monitoring_Method());
-                ethAccount && dispatch(handleEthAccount(ethAccount.address))
-                props.history.push("/rMatic/type")
+                ethAccount && dispatch(handleEthAccount(ethAccount.address));
+                if(fisAccount){
+                  props.history.push("/rMatic/type")
+                }else if(fisAccounts && fisAccounts.length>0){
+                  props.history.push({
+                    pathname:"/rMatic/fiswallet",
+                    state:{
+                        showBackIcon:false, 
+                    }
+                  }); 
+                }
+                // props.history.push("/rMatic/type")
               }}>
                 Connect to Metamask
             </Button>

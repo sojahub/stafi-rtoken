@@ -5,6 +5,7 @@ import Input from '@shared/components/input/amountInput';
 import rDOT from '@images/selected_rDOT.svg';
 import rKSM from '@images/selected_rKSM.svg';
 import rATOM from '@images/selected_rATOM.svg';
+import rMatic from '@images/selected_rMatic.svg';
 import leftArrowSvg from '@images/left_arrow.svg'
 import NumberUtil from '@util/numberUtil'
 import Button from '@shared/components/button/button';
@@ -19,7 +20,7 @@ type Props={
      address?:string,
      onInputChange?:Function,
      onInputConfirm?:Function,
-     type:"rDOT"|"rETH"|"rFIS"|"rKSM"|"rATOM"
+     type:"rDOT"|"rETH"|"rFIS"|"rKSM"|"rATOM"|"rMatic"
 }
 export default function Index(props:Props){
     const [inputEdit,setInputEdit]=useState(false);
@@ -31,6 +32,8 @@ export default function Index(props:Props){
             return rKSM
         }else if(props.type=="rATOM"){
             return rATOM
+        }else if(props.type=="rMatic"){
+            return rMatic
         }
     }
   
@@ -43,12 +46,14 @@ export default function Index(props:Props){
             {props.type=="rDOT" && " Redeem DOT"}
             {props.type=="rKSM" && " Redeem KSM"}
             {props.type=="rATOM" && " Redeem ATOM"}
+            {props.type=="rMatic" && " Redeem Matic"}
          </div>
          <div className="subTitle">
                <div className="label"> 
                {props.type=="rDOT" && "1. Unbond DOT"}
                {props.type=="rKSM" && "1. Unbond KSM"}
                {props.type=="rATOM" && "1. Unbond ATOM"}
+               {props.type=="rMatic" && "1. Unbond Matic"}
                </div>
                 <div className="balance">
                 

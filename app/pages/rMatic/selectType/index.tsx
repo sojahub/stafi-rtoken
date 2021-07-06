@@ -2,16 +2,16 @@ import React, { useEffect } from 'react';
 import {Redirect} from 'react-router'
 import {useDispatch, useSelector} from 'react-redux';
 import TypeCard from '@components/card/typeCard';
-import {getTotalIssuance,rTokenLedger} from '@features/rATOMClice'
+import {getTotalIssuance,rTokenLedger} from '@features/rMaticClice'
 
 export default function Index(props:any){
 
   const dispatch=useDispatch();
   const {totalIssuance,stakerApr,tokenAmount}=useSelector((state:any)=>{
     return {  
-      totalIssuance:state.rATOMModule.totalIssuance,
-      stakerApr:state.rATOMModule.stakerApr,
-      tokenAmount:state.rATOMModule.tokenAmount,
+      totalIssuance:state.rMaticModule.totalIssuance,
+      stakerApr:state.rMaticModule.stakerApr,
+      tokenAmount:state.rMaticModule.tokenAmount,
     }
   })
   useEffect(()=>{

@@ -128,6 +128,13 @@ export default {
       return '0xd363ed9ee73c8b6bd048ae188000be454f7b7925';
     }  
   },
+  rMaticTokenAddress:()=>{
+    if(!isdev()){
+      return '0x7D1AfA7B718fb893dB30A3aBc0Cfc608AaCfeBB0';
+    }else{
+      return '0x499d11e0b6eac7c0593d8fb292dcbbf815fb29ae';
+    }  
+  },
   erc20HandlerAddress:()=>{ 
     if(!isdev()){
       return '0x2b6b6fce3af32efe4430e446717bda72b95ebb9a'; 
@@ -187,6 +194,8 @@ export default {
       return 8;
     }else if(type==Symbol.Atom){
       return 22;
+    }else if(type==Symbol.Matic){
+      return 22;
     }else if(type==Symbol.Fis){
       return 29;
     }else{
@@ -206,6 +215,5 @@ export default {
     ratomURL:"https://app.uniswap.org/#/swap?inputCurrency=ETH&outputCurrency=0xd01cb3d113a864763dd3977fe1e725860013b0ed",
 
   }
-  
 } 
  

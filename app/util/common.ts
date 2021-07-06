@@ -20,7 +20,10 @@ export enum Keys {
   StafiNoticeKey="stafi_notice",
 
   rEthCurrentPoolPrefix = 'current:pool:',
-  poolPubKeyPrefix = 'poolpubkey:'
+  poolPubKeyPrefix = 'poolpubkey:',
+
+  MaticProcessParameter = 'stafi_matic_processParameter', 
+  MaticStakeHash='stafi_matic_stakeHash', 
 }
 
 export const setSessionStorageItem = (key:string, val:any) => {

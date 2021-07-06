@@ -52,6 +52,16 @@ export default function Index(props:Props){
                 }
             } 
         }
+        if(location.pathname.includes("/rMatic")){ 
+            if(state.rETHModule.ethAccount || state.FISModule.fisAccount){
+                return {
+                    ethAccount:state.rETHModule.ethAccount,
+                    fisAccount:state.FISModule.fisAccount,
+                    noticeData:state.noticeModule.noticeData,
+                    type:"rMatic"
+                }
+            } 
+        }
         if(location.pathname.includes("/rAsset")){
             
             if(location.pathname.includes("/rAsset/native") || location.pathname.includes("/rAsset/swap/native")){

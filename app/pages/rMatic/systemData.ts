@@ -1,31 +1,31 @@
-export const rATOM_data=[{
+export const rMatic_data=[{
   text:"Staker",
-  url:"/rATOM/staker/index",
+  url:"/rMatic/staker/index",
   child:[
     {
       text:'-Status',
-      url:"/rATOM/staker/info"
+      url:"/rMatic/staker/info"
     },
     {
       text:'-Reward',
-      url:"/rATOM/staker/reward"
+      url:"/rMatic/staker/reward"
     },
     {
       text:'-Recovery',
-      url:"/rATOM/search"
+      url:"/rMatic/search"
     }
   ]
 },{
   text:"Validator",
-  url:"/rATOM/validator",
+  url:"/rMatic/validator",
   // child:[
   //   {
   //     text:'-OV',
-  //     url:"/rDOT/staker/info"
+  //     url:"/rMatic/staker/info"
   //   },
   //   {
   //     text:'-SSV',
-  //     url:"/rDOT/staker/info"
+  //     url:"/rMatic/staker/info"
   //   }
   // ]
 }]

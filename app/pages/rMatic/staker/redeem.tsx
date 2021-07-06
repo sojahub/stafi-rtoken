@@ -3,7 +3,8 @@ import {message,Spin} from 'antd';
 import {useSelector} from 'react-redux';
 import Content from '@components/content/redeemContent';  
 import {rSymbol} from '@keyring/defaults'
-import {rTokenRate,unbond,getUnbondCommission,query_rBalances_account,checkAddress,unbondFees} from '@features/rATOMClice';
+import {rTokenRate,unbond,getUnbondCommission,query_rBalances_account,unbondFees} from '@features/rMaticClice';
+import {checkEthAddress} from '@features/rETHClice'
 import {useDispatch} from 'react-redux';
 import UnbondModal from '@components/modal/unbondModal'
 import NumberUtil from '@util/numberUtil'
@@ -19,20 +20,20 @@ export default function Index(props:any){
  
   const {tokenAmount,unbondCommission,ratio,fisFee,address,unBondFees,willAmount,estimateUnBondTxFees,fisBalance} = useSelector((state:any)=>{ 
     let unbondCommission:any=0; 
-    let ratio=state.rATOMModule.ratio; 
-    let tokenAmount=state.rATOMModule.tokenAmount; 
+    let ratio=state.rMaticModule.ratio; 
+    let tokenAmount=state.rMaticModule.tokenAmount; 
      
-    if (state.rATOMModule.unbondCommission && amount) { 
-      unbondCommission = amount*state.rATOMModule.unbondCommission; 
+    if (state.rMaticModule.unbondCommission && amount) { 
+      unbondCommission = amount*state.rMaticModule.unbondCommission; 
     } 
     return { 
       ratio:ratio,
       tokenAmount:tokenAmount, 
       unbondCommission:unbondCommission,
-      fisFee:state.rATOMModule.unbondCommission,
-      address:state.rATOMModule.atomAccount.address,
-      unBondFees:state.rATOMModule.unBondFees,  
-      willAmount: commonClice.getWillAmount(ratio,state.rATOMModule.unbondCommission,amount),
+      fisFee:state.rMaticModule.unbondCommission,
+      address:state.rETHModule.ethAccount.address,
+      unBondFees:state.rMaticModule.unBondFees,  
+      willAmount: commonClice.getWillAmount(ratio,state.rMaticModule.unbondCommission,amount),
       estimateUnBondTxFees: state.FISModule.estimateUnBondTxFees,
       fisBalance: state.FISModule.fisAccount.balance 
     }
@@ -60,7 +61,7 @@ export default function Index(props:any){
     address={recipient} 
     onInputConfirm={(e:boolean)=>{
       if(!e){
-        if(!checkAddress(recipient)){ 
+        if(!checkEthAddress(recipient)){ 
           message.error("address input error");
           return false;
         } 
@@ -71,14 +72,14 @@ export default function Index(props:any){
       setRecipient(e)
     }}
     onRdeemClick={()=>{ 
-      if(checkAddress(recipient)){
+      if(checkEthAddress(recipient)){
         
         setVisible(true);
       }else{
         message.error("address input error");
       } 
     }}
-    type="rATOM"
+    type="rMatic"
   />
   <UnbondModal visible={visible} 
     unbondAmount={amount}
@@ -100,7 +101,7 @@ export default function Index(props:any){
         dispatch(setLoading(false));
       })) 
     }}
-    type="rATOM"
+    type="rMatic"
   />
   </>
 }

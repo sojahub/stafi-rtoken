@@ -170,6 +170,8 @@ export default {
         return Math.round(Number(amount) * 1000000000000);
       case rSymbol.Ksm:
         return Math.round(Number(amount) * 1000000000000);
+      case rSymbol.Matic:
+        return Math.round(Number(amount) * 1000000000000000000);
       default:
         return Math.round(Number(amount) * 1000000000000);
     }  

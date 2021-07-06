@@ -10,7 +10,7 @@ import { useDispatch } from 'react-redux';
 type Props={
     children:any,
     getReward:Function,
-    type:"DOT" | "KSM" | "ATOM" | "ETH",
+    type:"DOT" | "KSM" | "ATOM" | "ETH" | "Matic",
     rewardList?:any[],
     hours?:Number
 }

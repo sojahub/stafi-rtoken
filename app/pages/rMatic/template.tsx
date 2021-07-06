@@ -5,17 +5,17 @@ import Content from '@shared/components/content';
 import {renderRoutes}  from 'react-router-config';
 import {getLocalStorageItem,Keys} from '@util/common'; 
 import {Symbol} from '@keyring/defaults'
-import {fetchStafiStakerApr,reloadData,connectAtomjs,keplr_keystorechange} from '@features/globalClice';
-import {continueProcess,getPools,bondFees,getTotalIssuance,query_rBalances_account} from '@features/rATOMClice'
+import {fetchStafiStakerApr,reloadData} from '@features/globalClice';
+import {continueProcess,getPools,bondFees,getTotalIssuance,query_rBalances_account} from '@features/rMaticClice'
+import {reloadData as ethReloadData,monitoring_Method} from '@features/rETHClice'
 import {bondSwitch} from '@features/FISClice'; 
 import '../template/index.scss'
 export default function Index(props:any){
   const dispatch = useDispatch();
   
-  const {fisAccount,atomAccount}=useSelector((state:any)=>{
+  const {fisAccount}=useSelector((state:any)=>{
     return {
-      fisAccount:state.FISModule.fisAccount,
-      atomAccount:state.rATOMModule.atomAccount
+      fisAccount:state.FISModule.fisAccount
     }
   })
 
@@ -23,17 +23,16 @@ export default function Index(props:any){
     dispatch(getTotalIssuance()); 
     dispatch(query_rBalances_account());
    
-  },[fisAccount,atomAccount])
+  },[fisAccount])
   useEffect(()=>{ 
     dispatch(fetchStafiStakerApr()); 
     dispatch(bondFees());
     dispatch(bondSwitch()); 
-    if(getLocalStorageItem(Keys.AtomAccountKey)){
-      setTimeout(()=>{ 
-        dispatch(connectAtomjs()); 
-      },1000)
-   
-    } 
+    // if(getLocalStorageItem(Keys.AtomAccountKey)){
+    //   setTimeout(()=>{ 
+    //     dispatch(connectAtomjs()); 
+    //   },1000) 
+    // } 
     if(getLocalStorageItem(Keys.FisAccountKey)){
       dispatch(reloadData(Symbol.Fis)); 
     }
@@ -41,10 +40,26 @@ export default function Index(props:any){
     setTimeout(()=>{
       dispatch(continueProcess());
     },50)
-    setTimeout(()=>{
-      dispatch(keplr_keystorechange()); 
-    },500)
+    // setTimeout(()=>{
+    //   dispatch(keplr_keystorechange()); 
+    // },500)
   },[]) 
+
+ 
+  const {ethAccount}=useSelector((state:any)=>{ 
+    return { 
+      ethAccount:state.rETHModule.ethAccount, 
+    }
+  })
+  useEffect(()=>{ 
+    ethAccount && ethAccount.address &&  dispatch(ethReloadData());  
+  },[(ethAccount==null)])
+  useEffect(()=>{  
+    dispatch(monitoring_Method());
+  },[])
+
+
+
   const {loading} =useSelector((state:any)=>{
     return {
       loading:state.globalModule.loading

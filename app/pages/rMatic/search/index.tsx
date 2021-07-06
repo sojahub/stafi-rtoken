@@ -5,7 +5,7 @@ import Input from '@shared/components/input/index';
 import Button from '@shared/components/button/button';
 import config from '@config/index';
 import leftArrowSvg from '@images/left_arrow.svg';
-import {onProceed} from '@features/rATOMClice';
+import {onProceed} from '@features/rMaticClice';
 import './index.scss';
 export default function Index(props:any){
   const [form] = Form.useForm();

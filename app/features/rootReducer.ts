@@ -12,6 +12,7 @@ import rPoolReducer from './rPoolClice';
 import rDOTReducer from './rDOTClice';
 import rETHReducer from './rETHClice';
 import rKSMReducer from './rKSMClice'; 
+import rMaticReducer from './rMaticClice';
 
 export default function createRootReducer(history?: History) {
   return combineReducers({ 
@@ -26,6 +27,7 @@ export default function createRootReducer(history?: History) {
     bridgeModule:bridgeReducer,
     ETHModule:ETHReducer,
     rATOMModule:rATOMReducer,
-    rPoolModule:rPoolReducer
+    rPoolModule:rPoolReducer,
+    rMaticModule:rMaticReducer
   });
 }

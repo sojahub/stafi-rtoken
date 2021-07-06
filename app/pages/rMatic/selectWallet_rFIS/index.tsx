@@ -42,7 +42,7 @@ export default function Index(props:any){
         onConfirm={()=>{
             if(account.address){
                 dispatch(setFisAccount(account)) 
-                props.onClose?props.onClose(): props.history.push("/rATOM/type"); 
+                props.onClose?props.onClose(): props.history.push("/rMatic/type"); 
             }else{
                 message.error("Please select the FIS wallet");
             }

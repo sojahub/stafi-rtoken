@@ -8,6 +8,7 @@ import A from '@shared/components/button/a'
 import rDOT from '@images/selected_rDOT.svg';
 import rKSM from '@images/selected_rKSM.svg';
 import rATOM from '@images/selected_rATOM.svg'
+import rMatic from '@images/selected_rMatic.svg'
 import doubt from "@images/doubt.svg"; 
 
 import './index.scss'; 
@@ -23,7 +24,7 @@ type Props={
     validPools?:any[],
     totalStakedToken?:any,
     bondFees?:any
-    type:"rDOT"|"rFIS"|"rKSM"|"rATOM",
+    type:"rDOT"|"rFIS"|"rKSM"|"rATOM" | "rMatic",
     histroy?:any, 
 }
 export default function Index(props:Props){
@@ -41,7 +42,9 @@ export default function Index(props:Props){
               return rDOT;
           }else if(props.type=="rATOM"){
               return rATOM;
-          }
+          }else if(props.type=="rMatic"){
+            return rMatic;
+        }
       }
       const haswarn=useMemo(()=>{
         return !bondSwitch || !(props.validPools && props.validPools.length>0)
@@ -51,6 +54,7 @@ export default function Index(props:Props){
             {props.type=="rKSM" && `Stake KSM`}
             {props.type=="rDOT" && `Stake DOT`}
             {props.type=="rATOM" && `Stake ATOM`}
+            {props.type=="rMatic" && `Stake Matic`}
         </label>
         {haswarn && <div className="warn">Unable to stake, system is waiting for matching validators</div>}
         <div className={`input_panel dot_input_panel ${haswarn && 'showWarn'}`}>
@@ -67,7 +71,7 @@ export default function Index(props:Props){
                 {props.type=="rKSM" && `${isNaN(props.totalStakedToken)?"--":props.totalStakedToken} KSM is staked via rKSM `}
                 {props.type=="rDOT" && `${isNaN(props.totalStakedToken)?"--":props.totalStakedToken} DOT is staked via rDOT `}
                 {props.type=="rATOM" && `${isNaN(props.totalStakedToken)?"--":props.totalStakedToken} ATOM is staked via rATOM `}
-                
+                {props.type=="rMatic" && `${isNaN(props.totalStakedToken)?"--":props.totalStakedToken} Matic is staked via rMatic `}
                 {/* <A>stats</A> */}
             </div>
         </div>

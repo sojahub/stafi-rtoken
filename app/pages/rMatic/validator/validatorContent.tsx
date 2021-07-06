@@ -12,7 +12,7 @@ export default function Index(props:Props){
     return <LeftContent className="stafi_validator_context">
         <label className="title">Register as a OV on Cosmos </label>
         <div className="describe">
-        OV(Original Validator) is a block producer of Cosmos  chain which can receive delegated ATOM on chain and get incentive reward from joining consensus.
+        OV(Original Validator) is a block producer of Cosmos  chain which can receive delegated Matic on chain and get incentive reward from joining consensus.
         </div>
         <div className="sub_title">
             Prerequisites
@@ -27,7 +27,7 @@ export default function Index(props:Props){
             Apply
         </div>
         <div className="describe">
-        In the start-up phase, in order to maximize revenue, StaFi chain will automatically nominate the elected validators on Cosmos . As the number of rATOM increases, validator will be open to the community
+        In the start-up phase, in order to maximize revenue, StaFi chain will automatically nominate the elected validators on Cosmos . As the number of rMatic increases, validator will be open to the community
         </div>
         <div className="btns">
             <Button  onClick={()=>{

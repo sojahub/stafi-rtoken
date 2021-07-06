@@ -2,14 +2,13 @@ import React, { useEffect, useState } from 'react';
 import {Modal} from 'antd';
 import {useDispatch,useSelector} from 'react-redux';
 import Content from '@components/content/stakeContent_DOT'; 
-import {transfer,rTokenLedger} from '@features/rATOMClice'; 
-import { rTokenRate } from '@features/rATOMClice';
+import {transfer,rTokenLedger,rTokenRate} from '@features/rMaticClice';  
 import {ratioToAmount} from '@util/common'
 import { message } from 'antd';
 import NumberUtil from '@util/numberUtil';
 import {setSessionStorageItem,getSessionStorageItem} from '@util/common'
 import { setProcessSlider } from '@features/globalClice'; 
-import atom_stake_tips from '@images/atom_stake_tips.png'
+import stake_tips from '@images/atom_stake_tips.png'
 import Button from '@shared/components/button/button';
 import './index.scss';
 export default function Index(props:any){
@@ -23,15 +22,15 @@ export default function Index(props:any){
     dispatch(rTokenLedger())
   },[])
   const {transferrableAmount,ratio,stafiStakerApr,fisCompare,validPools,totalIssuance,bondFees}=useSelector((state:any)=>{ 
-    const fisCompare = NumberUtil.fisAmountToChain(state.FISModule.fisAccount.balance) < (state.rATOMModule.bondFees + state.FISModule.estimateBondTxFees);
+    const fisCompare = NumberUtil.fisAmountToChain(state.FISModule.fisAccount.balance) < (state.rMaticModule.bondFees + state.FISModule.estimateBondTxFees);
     return {
-      transferrableAmount:state.rATOMModule.transferrableAmountShow,
-      ratio:state.rATOMModule.ratio,
-      stafiStakerApr:state.rATOMModule.stakerApr,
+      transferrableAmount:state.rMaticModule.transferrableAmountShow,
+      ratio:state.rMaticModule.ratio,
+      stafiStakerApr:state.rMaticModule.stakerApr,
       fisCompare:fisCompare,
-      validPools:state.rATOMModule.validPools,
-      totalIssuance:state.rATOMModule.totalIssuance,
-      bondFees:state.rATOMModule.bondFees
+      validPools:state.rMaticModule.validPools,
+      totalIssuance:state.rMaticModule.totalIssuance,
+      bondFees:state.rMaticModule.bondFees
     }
   })
 
@@ -39,14 +38,14 @@ export default function Index(props:any){
   return <> <Content
   amount={amount}
   willAmount={ratio=='--'?"--":ratioToAmount(amount,ratio)}
-  unit={"ATOM"}
+  unit={"Matic"}
   transferrableAmount={transferrableAmount}
   apr={stafiStakerApr} 
   onChange={(value:any)=>{   
       setAmount(value);   
   }}
   onRecovery={()=>{ 
-     props.history.push("/rATOM/search")
+     props.history.push("/rMatic/search")
   }}
   validPools={validPools}  
   bondFees={NumberUtil.fisAmountToHuman(bondFees) || "--"}
@@ -60,7 +59,7 @@ export default function Index(props:any){
       if(getSessionStorageItem("atom_stake_tips_modal")){
           dispatch(transfer(amount,()=>{
             dispatch(setProcessSlider(false));
-            props.history.push("/rATOM/staker/info")
+            props.history.push("/rMatic/staker/info")
           }));
       }else{
         setVisible(true)
@@ -71,7 +70,7 @@ export default function Index(props:any){
       message.error("Please enter the amount")
     } 
   }}
-  type="rATOM"></Content>
+  type="rMatic"></Content>
   <Modal visible={visible}
   title={null}
   footer={null}
@@ -82,13 +81,13 @@ export default function Index(props:any){
   className="atom_stake_tips_modal"
   >
 
-      <img src={atom_stake_tips}/>
+      <img src={stake_tips}/>
       <Button btnType="square" onClick={()=>{
         setSessionStorageItem("atom_stake_tips_modal",true)
         setVisible(false)
         dispatch(transfer(amount,()=>{
           dispatch(setProcessSlider(false));
-          props.history.push("/rATOM/staker/info")
+          props.history.push("/rMatic/staker/info")
         }));
       }}>Understood</Button>
   </Modal>

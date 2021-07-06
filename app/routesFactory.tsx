@@ -550,7 +550,7 @@ const routesFactory=(role?:any)=>{
               path:"/rMatic/staker/info",
               type:"-Status",
               rSymbol:rSymbol.Matic,
-              component:RATOMStakerInfo
+              component:RMaticStakerInfo
             },{
               id:"RMatic_reward_index",
               path:"/rMatic/staker/reward",
