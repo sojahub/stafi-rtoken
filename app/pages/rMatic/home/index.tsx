@@ -1,6 +1,6 @@
 import HomeCard from '@components/card/homeCard';
 import { connectPolkadot_atom } from '@features/globalClice';
-import { connectMetamask, handleEthAccount, monitoring_Method } from '@features/rETHClice';
+import { connectMetamask, handleMaticAccount, monitoring_Method } from '@features/rMaticClice';
 import metamask from '@images/metamask.png';
 import rFIS_svg from '@images/rFIS.svg';
 import Button from '@shared/components/button/connect_button';
@@ -16,14 +16,14 @@ import './index.scss';
 export default function Inde(props:any){
   const [visible,setVisible]=useState(false);
   const dispatch = useDispatch();
-  const {fisAccount,ethAccount,fisAccounts}=useSelector((state:any)=>{
+  const {fisAccount,maticAccount,fisAccounts}=useSelector((state:any)=>{
     return {
       fisAccount:state.FISModule.fisAccount,
       fisAccounts:state.FISModule.fisAccounts,
-      ethAccount:state.rETHModule.ethAccount
+      maticAccount:state.rMaticModule.maticAccount
     } 
   })
-  if(fisAccount && ethAccount){
+  if(fisAccount && maticAccount){
     return <Redirect to="/rMatic/type" />
   }
   return <HomeCard 
@@ -33,10 +33,10 @@ export default function Inde(props:any){
       onIntroUrl=""
   >
             
-            <Button disabled={!!ethAccount } icon={metamask} onClick={()=>{ 
+            <Button disabled={!!maticAccount } icon={metamask} onClick={()=>{ 
                 dispatch(connectMetamask('0x5'));
                 dispatch(monitoring_Method());
-                ethAccount && dispatch(handleEthAccount(ethAccount.address));
+                maticAccount && dispatch(handleMaticAccount(maticAccount.address));
                 if(fisAccount){
                   props.history.push("/rMatic/type")
                 }else if(fisAccounts && fisAccounts.length>0){

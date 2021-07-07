@@ -5,6 +5,7 @@ import EthServer from '@servers/eth/index';
 import KsmServer from '@servers/ksm';
 import DotServer from '@servers/polkadot';
 import FisServer from '@servers/stafi';
+import MaticServer from '@servers/matic';
 import { AppThunk } from '../store';
 
 const ethServer =new EthServer();
@@ -13,6 +14,7 @@ const ksmServer=new KsmServer();
 const bridgeServer=new BridgeServer();
 const dotServer =new DotServer();
 const atomServer=new AtomServer();
+const maticServer=new MaticServer();
 const ETHClice = createSlice({
   name: 'ETHModule',
   initialState: {   
@@ -22,6 +24,7 @@ const ETHClice = createSlice({
     ercRKSMBalance:"--",
     ercRDOTBalance:"--",
     ercRATOMBalance:"--",
+    ercRMaticBalance:"--",
     FISErc20Allowance:"--",
     RFISErc20Allowance:"--",
     RKSMErc20Allowance:"--",
@@ -46,6 +49,9 @@ const ETHClice = createSlice({
     },
     setErcRATOMBalance(state,{payload}){
       state.ercRATOMBalance=payload;
+    },
+    setErcRMaticBalance(state,{payload}){
+      state.ercRMaticBalance=payload;
     },
     setFISErc20Allowance(state,{payload}){
         state.FISErc20Allowance=payload;
@@ -72,6 +78,7 @@ export const {
     setErcRKSMBalance,
     setErcRDOTBalance,
     setErcRATOMBalance,
+    setErcRMaticBalance,
     setFISErc20Allowance,
     setRFISErc20Allowance,
     setRKSMErc20Allowance,
@@ -142,6 +149,14 @@ export const getFISAssetBalance=():AppThunk=>(dispatch,getState)=>{
       const address=getState().rETHModule.ethAccount.address;   
       getAssetBalance(address,atomServer.getTokenAbi(), atomServer.getRATOMTokenAddress(),(v:any)=>{
         dispatch(setErcRATOMBalance(v))
+      })
+    }
+  }
+  export const getRMaticAssetBalance=():AppThunk=>(dispatch,getState)=>{  
+    if(getState().rETHModule.ethAccount){ 
+      const address=getState().rETHModule.ethAccount.address;   
+      getAssetBalance(address,maticServer.getTokenAbi(), maticServer.getTokenAddress(),(v:any)=>{
+         dispatch(setErcRMaticBalance(v));
       })
     }
   }

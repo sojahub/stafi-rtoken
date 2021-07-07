@@ -44,7 +44,7 @@ const account=(type:string)=>{
     case Symbol.Fis:
       return getLocalStorageItem(Keys.FisAccountKey);
     case Symbol.Matic:
-      if(getLocalStorageItem(Keys.MetamaskAccountKey)==null && getLocalStorageItem(Keys.FisAccountKey)==null){
+      if(getLocalStorageItem(Keys.MaticAccountKey)==null || getLocalStorageItem(Keys.FisAccountKey)==null){
         return '/rMatic/home' 
       }
       return true;

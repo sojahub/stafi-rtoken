@@ -6,8 +6,8 @@ import {renderRoutes}  from 'react-router-config';
 import {getLocalStorageItem,Keys} from '@util/common'; 
 import {Symbol} from '@keyring/defaults'
 import {fetchStafiStakerApr,reloadData} from '@features/globalClice';
-import {continueProcess,getPools,bondFees,getTotalIssuance,query_rBalances_account} from '@features/rMaticClice'
-import {reloadData as ethReloadData,monitoring_Method} from '@features/rETHClice'
+import {continueProcess,monitoring_Method,getPools,bondFees,getTotalIssuance,query_rBalances_account} from '@features/rMaticClice'
+ 
 import {bondSwitch} from '@features/FISClice'; 
 import '../template/index.scss'
 export default function Index(props:any){
@@ -46,14 +46,14 @@ export default function Index(props:any){
   },[]) 
 
  
-  const {ethAccount}=useSelector((state:any)=>{ 
+  const {maticAccount}=useSelector((state:any)=>{ 
     return { 
-      ethAccount:state.rETHModule.ethAccount, 
+      maticAccount:state.rMaticModule.maticAccount, 
     }
   })
   useEffect(()=>{ 
-    ethAccount && ethAccount.address &&  dispatch(ethReloadData());  
-  },[(ethAccount==null)])
+    maticAccount && maticAccount.address &&  dispatch(reloadData(Symbol.Matic));  
+  },[(maticAccount==null)])
   useEffect(()=>{  
     dispatch(monitoring_Method());
   },[])

@@ -11,7 +11,7 @@ import { createSubstrate as fisCreateSubstrate, reloadData as fisReloadData } fr
 import { createSubstrate as atomCreateSubstrate, reloadData as atomReloadData } from './rATOMClice';
 import { createSubstrate as dotCreateSubstrate, reloadData as dotReloadData } from './rDOTClice';
 import { createSubstrate as ksmCreateSubstrate, reloadData as ksmReloadData } from './rKSMClice';
-
+import {  reloadData as maticReloadData } from './rMaticClice';
 export enum processStatus {
   default=0,
   success = 1,
@@ -175,6 +175,10 @@ const clice=(symbol: string)=>{
         return {
           createSubstrate:atomCreateSubstrate,
           reloadData:atomReloadData
+        };
+      case Symbol.Matic: 
+        return { 
+          reloadData:maticReloadData
         };
       case Symbol.Kava: 
       case Symbol.One: 

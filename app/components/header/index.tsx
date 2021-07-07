@@ -53,9 +53,9 @@ export default function Index(props:Props){
             } 
         }
         if(location.pathname.includes("/rMatic")){ 
-            if(state.rETHModule.ethAccount || state.FISModule.fisAccount){
+            if(state.rMaticModule.maticAccount || state.FISModule.fisAccount){
                 return {
-                    ethAccount:state.rETHModule.ethAccount,
+                    maticAccount:state.rMaticModule.maticAccount,
                     fisAccount:state.FISModule.fisAccount,
                     noticeData:state.noticeModule.noticeData,
                     type:"rMatic"
@@ -170,6 +170,10 @@ export default function Index(props:Props){
                 {account.ethAccount && <div  className="header_tool account">
                     <div>{account.ethAccount.balance} ETH</div>
                     <div>{StringUtil.replacePkh(account.ethAccount.address,4,38)}</div>
+                </div>} 
+                {account.maticAccount && <div  className="header_tool account">
+                    <div>{account.maticAccount.balance} Matic</div>
+                    <div>{StringUtil.replacePkh(account.maticAccount.address,4,38)}</div>
                 </div>} 
             </div>}
             <div className="report_icon"><a  target="_blank" href="https://info.stafi.io/"><img src={report_icon} /></a></div>
