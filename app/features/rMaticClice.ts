@@ -282,9 +282,7 @@ export const transfer = (amountparam: string, cb?: Function): AppThunk => async 
   dispatch(initProcess(null));
  
   
-  
-  // const demon = config.rAtomDenom(); 
-  // const memo = getState().FISModule.fisAccount.address;
+ 
   const address= getState().rMaticModule.maticAccount.address;
   const validPools = getState().rMaticModule.validPools;
   const poolLimit = getState().rMaticModule.poolLimit;
@@ -586,7 +584,7 @@ export const getBlock = (blockHash: string, txHash: string, uuid?:string, cb?: F
       message.error("Please select your Matic account that sent the transaction");
       return;
     }
-    // const denom = config.rAtomDenom(); 
+   
     let amount = 0; 
 
     const decoder = new InputDataDecoder(maticServer.getTokenAbi());
@@ -633,7 +631,7 @@ export const getBlock = (blockHash: string, txHash: string, uuid?:string, cb?: F
         txHash,
         blockHash,
         address,
-        type: rSymbol.Atom,
+        type: rSymbol.Matic,
         poolAddress: poolPubkey
       }
     }))
