@@ -4,7 +4,8 @@ import rate_eleted_svg from '@images/rate_eleted.svg';
 import rDOT_svg from '@images/rDOT_black2.svg'
 import rKSM_svg from '@images/rKSM_black2.svg'
 import rFIS_svg from '@images/rFIS_black.svg'
-import rATOM_svg from '@images/selected_rATOM.svg'
+import rATOM_svg from '@images/selected_rATOM.svg';
+import rMatic_svg from '@images/selected_rMatic.svg'
 import reth_staker from '@images/reth_staker.svg'
 import validator_svg from '@images/validator_2.svg';
 import reth_validator from '@images/reth_validator.svg'
@@ -41,10 +42,10 @@ export default function Index(props:Props){
           <div className="sub_title">
             {props.type=="rDOT" && "Delegate your DOT, get rDOT"}
             {props.type=="rKSM" && "Delegate your KSM, get rKSM"}
-            {props.type=="rATOM" && "Delegate your ATOM, get rATOM"}
+            {props.type=="rATOM" && "Delegate your MATIC, get rMATIC"}
             {props.type=="rETH" && "Delegate your ETH"}
             {props.type=="rFIS" && "Delegate your FIS, get rFIS"}
-            {props.type=="rMatic" && "Delegate your Matic, get rMatic"}
+            {props.type=="rMatic" && "Delegate your MATIC, get rMATIC"}
           </div>
           <div className="apr_panel">
               <img src={apr_svg} /> 
@@ -56,7 +57,7 @@ export default function Index(props:Props){
             {props.type=="rFIS" && <img src={rFIS_svg} />}
             {props.type=="rATOM" && <img src={rATOM_svg} />}
             {props.type=="rETH" && <img src={reth_staker} />}
-            {props.type=="rMatic" && <img src={rATOM_svg} />}
+            {props.type=="rMatic" && <img src={rMatic_svg} />}
             <div>
                 {props.type=="rETH"?"Staked":props.type} 
               </div>

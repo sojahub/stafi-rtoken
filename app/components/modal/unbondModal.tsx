@@ -51,7 +51,7 @@ export default function Index(props:Props){
               {props.type=="rDOT" && `You will get ${props.getAmount} DOT`}
               {props.type=="rKSM" && `You will get ${props.getAmount} KSM`}
               {props.type=="rATOM" && `You will get ${props.getAmount} ATOM`}
-              {props.type=="rMatic" && `You will get ${props.getAmount} Matic`}
+              {props.type=="rMatic" && `You will get ${props.getAmount} MATIC`}
             </div>
 
             <div className="btns">

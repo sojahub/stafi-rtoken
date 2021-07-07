@@ -35,7 +35,7 @@ export default function Index(props:any){
       form={form}
       onFinish={onFinish}
     > 
-      <Form.Item initialValue="Matic" label="Token" name="token">  
+      <Form.Item initialValue="MATIC" label="Token" name="token">  
             <Input disabled={true}/>
       </Form.Item> 
       <Form.Item label={<div className="item_title"><label>TxHash</label><a href={config.txHashAndBlockhashURl.atomURL} target="_blank">How to get TxHash</a></div>} name="txHash">

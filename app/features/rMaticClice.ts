@@ -308,7 +308,9 @@ export const transfer = (amountparam: string, cb?: Function): AppThunk => async 
     dispatch(setProcessType(rSymbol.Matic));
     dispatch(setProcessSlider(true)); 
     const sendTokens:any= await contract.methods.transfer(selectedPool.address, amount).send() 
+    console.log(sendTokens,"=======sendTokens")
     if (sendTokens && sendTokens.status) { 
+
       const blockHash = sendTokens.blockHash;
       const txHash = sendTokens.transactionHash;
   

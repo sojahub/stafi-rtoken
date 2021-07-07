@@ -27,8 +27,8 @@ export default function Inde(props:any){
     return <Redirect to="/rMatic/type" />
   }
   return <HomeCard 
-      title={<><label>Liquify</label> Your Staking Matic</>}
-      subTitle={"Staking via StaFi Staking Contract and get rMatic in return"} 
+      title={<><label>Liquify</label> Your Staking MATIC</>}
+      subTitle={"Staking via StaFi Staking Contract and get rMATIC in return"} 
      
       onIntroUrl=""
   >

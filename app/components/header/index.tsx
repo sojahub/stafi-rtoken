@@ -12,6 +12,7 @@ import Page_FIS from '../../pages/rDOT/selectWallet_rFIS/index'
 import Page_Ksm from '../../pages/rKSM/selectWallet/index';
 import {rSymbol,Symbol} from '@keyring/defaults'
 import report_icon from '@images/report_icon.svg'
+import NumberUtil from '@util/numberUtil'
 import Tool from '@util/toolUtil'
 import './index.scss';
   
@@ -172,7 +173,7 @@ export default function Index(props:Props){
                     <div>{StringUtil.replacePkh(account.ethAccount.address,4,38)}</div>
                 </div>} 
                 {account.maticAccount && <div  className="header_tool account">
-                    <div>{account.maticAccount.balance} Matic</div>
+                    <div>{NumberUtil.handleFisAmountToFixed(account.maticAccount.balance)} MATIC</div>
                     <div>{StringUtil.replacePkh(account.maticAccount.address,4,38)}</div>
                 </div>} 
             </div>}

@@ -24,7 +24,7 @@ type Props={
     validPools?:any[],
     totalStakedToken?:any,
     bondFees?:any
-    type:"rDOT"|"rFIS"|"rKSM"|"rATOM" | "rMatic",
+    type:"rDOT"|"rFIS"|"rKSM"|"rATOM" | "rMATIC",
     histroy?:any, 
 }
 export default function Index(props:Props){
@@ -42,7 +42,7 @@ export default function Index(props:Props){
               return rDOT;
           }else if(props.type=="rATOM"){
               return rATOM;
-          }else if(props.type=="rMatic"){
+          }else if(props.type=="rMATIC"){
             return rMatic;
         }
       }
@@ -54,7 +54,7 @@ export default function Index(props:Props){
             {props.type=="rKSM" && `Stake KSM`}
             {props.type=="rDOT" && `Stake DOT`}
             {props.type=="rATOM" && `Stake ATOM`}
-            {props.type=="rMatic" && `Stake Matic`}
+            {props.type=="rMATIC" && `Stake MATIC`}
         </label>
         {haswarn && <div className="warn">Unable to stake, system is waiting for matching validators</div>}
         <div className={`input_panel dot_input_panel ${haswarn && 'showWarn'}`}>
@@ -71,7 +71,7 @@ export default function Index(props:Props){
                 {props.type=="rKSM" && `${isNaN(props.totalStakedToken)?"--":props.totalStakedToken} KSM is staked via rKSM `}
                 {props.type=="rDOT" && `${isNaN(props.totalStakedToken)?"--":props.totalStakedToken} DOT is staked via rDOT `}
                 {props.type=="rATOM" && `${isNaN(props.totalStakedToken)?"--":props.totalStakedToken} ATOM is staked via rATOM `}
-                {props.type=="rMatic" && `${isNaN(props.totalStakedToken)?"--":props.totalStakedToken} Matic is staked via rMatic `}
+                {props.type=="rMATIC" && `${isNaN(props.totalStakedToken)?"--":props.totalStakedToken} MATIC is staked via rMATIC `}
                 {/* <A>stats</A> */}
             </div>
         </div>

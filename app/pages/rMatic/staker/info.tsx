@@ -66,5 +66,5 @@ export default function Index(props:any){
     })
   }}
   hours={24}
-  type="rMatic"></Content>
+  type="rMATIC"></Content>
 }

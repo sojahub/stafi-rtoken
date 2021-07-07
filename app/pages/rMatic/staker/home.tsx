@@ -38,8 +38,8 @@ export default function Index(props:any){
   return <> <Content
   amount={amount}
   willAmount={ratio=='--'?"--":ratioToAmount(amount,ratio)}
-  unit={"Matic"}
-  transferrableAmount={transferrableAmount}
+  unit={"MATIC"}
+  transferrableAmount={NumberUtil.handleFisAmountToFixed(transferrableAmount)}
   apr={stafiStakerApr} 
   onChange={(value:any)=>{   
       setAmount(value);   
@@ -75,7 +75,7 @@ export default function Index(props:any){
       message.error("Please enter the amount")
     } 
   }}
-  type="rMatic"></Content>
+  type="rMATIC"></Content>
  
   </>
 }

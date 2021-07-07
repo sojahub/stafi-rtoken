@@ -115,8 +115,7 @@ export default function Inde(props:any){
       }else{
         return false;
       }
-    })
-    console.log(rTokenDatas,"=====rTokenDatasrTokenDatas")
+    }) 
     return {
       list:rTokenDatas,
       totalLiquidity:state.rPoolModule.totalLiquidity,

@@ -74,7 +74,7 @@ const siderData=[
     {
         icon:rMatic_svg,
         selectedIcon:selected_rMatic_svg,
-        text:"rMatic", 
+        text:"rMATIC", 
         urlKeywords:'/rMatic',
         url:"/rMatic/home"
     }

@@ -46,14 +46,14 @@ export default function Index(props:Props){
             {props.type=="rDOT" && " Redeem DOT"}
             {props.type=="rKSM" && " Redeem KSM"}
             {props.type=="rATOM" && " Redeem ATOM"}
-            {props.type=="rMatic" && " Redeem Matic"}
+            {props.type=="rMatic" && " Redeem MATIC"}
          </div>
          <div className="subTitle">
                <div className="label"> 
                {props.type=="rDOT" && "1. Unbond DOT"}
                {props.type=="rKSM" && "1. Unbond KSM"}
                {props.type=="rATOM" && "1. Unbond ATOM"}
-               {props.type=="rMatic" && "1. Unbond Matic"}
+               {props.type=="rMatic" && "1. Unbond MATIC"}
                </div>
                 <div className="balance">
                 
