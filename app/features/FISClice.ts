@@ -13,6 +13,7 @@ import NumberUtil from '@util/numberUtil';
 import { message as M, message } from 'antd';
 import { AppThunk } from '../store';
 import CommonClice from './commonClice';
+import { keccakFromHexString } from 'ethereumjs-util';
 import {
   gClearTimeOut, gSetTimeOut,
   initProcess, processStatus,
@@ -24,7 +25,7 @@ import {
 
 
 
-
+declare const ethereum: any;
 
 const FISClice = createSlice({
   name: 'FISModule',
@@ -325,7 +326,18 @@ export const bound = (address: string, txhash: string, blockhash: string, amount
       blockhash = "0x" + blockhash;
       
       message.info("Sending succeeded, proceeding staking");
-    }else{
+    }if(type==rSymbol.Matic){ 
+      const ethAddress=getState().rETHModule.ethAccount.address;
+      const fisPubkey = u8aToHex(keyringInstance.decodeAddress(fisAddress));
+
+      const msgHash = keccakFromHexString(fisPubkey);
+      pubkey = u8aToHex(keyringInstance.decodeAddress(address));
+      signature=await ethereum.request({
+        method: 'eth_sign',
+        params: [ethAddress, u8aToHex(msgHash)],
+      })
+     
+    } else{
       signature = await stakingSignature(address, u8aToHex(keyringInstance.decodeAddress(fisAddress)));
       pubkey = u8aToHex(keyringInstance.decodeAddress(address));
 
