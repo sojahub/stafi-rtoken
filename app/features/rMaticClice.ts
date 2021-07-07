@@ -16,8 +16,7 @@ import { initProcess, processStatus, setProcessSending, setProcessSlider, setPro
 import { add_Notice, findUuid, noticeStatus, noticesubType, noticeType } from './noticeClice';
 import RpcServer,{pageCount} from '@servers/rpc/index';
 import {setIsloadMonitoring} from './rETHClice';
-import EthServer from '@servers/eth/index';
-import numberUtil from '@util/numberUtil';
+import EthServer from '@servers/eth/index'; 
 import {isdev} from '@config/index';
 import Web3Utils from 'web3-utils';
 import {getAssetBalance} from './ETHClice';
@@ -267,8 +266,7 @@ export const monitoring_Method=():AppThunk=>(dispatch,getState)=> {
 
 export const balancesAll=():AppThunk=>(dispatch,getState)=>{  
   if(getState().rMaticModule.maticAccount){ 
-    const address=getState().rMaticModule.maticAccount.address;   
-    console.log(address,"=========address")
+    const address=getState().rMaticModule.maticAccount.address;    
     getAssetBalance(address,maticServer.getTokenAbi(), maticServer.getTokenAddress(),(v:any)=>{
       dispatch(setTransferrableAmountShow(v));
       dispatch(setMaticAccount({address:address,balance:v}))
@@ -311,8 +309,7 @@ export const transfer = (amountparam: string, cb?: Function): AppThunk => async 
     }));
     dispatch(setProcessType(rSymbol.Matic));
     dispatch(setProcessSlider(true)); 
-    const sendTokens:any= await contract.methods.transfer(selectedPool.address, amount).send() //contract.sendTokens(address, selectedPool.address, coins(amount, demon), memo);
-    console.log(sendTokens,"============sendTokenssendTokenssendTokens")
+    const sendTokens:any= await contract.methods.transfer(selectedPool.address, amount).send() 
     if (sendTokens && sendTokens.status) { 
       const blockHash = sendTokens.blockHash;
       const txHash = sendTokens.transactionHash;
@@ -519,8 +516,7 @@ export const onProceed = (txHash: string, cb?: Function): AppThunk => async (dis
   const result=await ethereum.request({
     method: 'eth_getTransactionByHash',
     params: [txHash],
-  }) 
-  console.log(result,"==========resultresultresultresult")
+  })  
   if(result){ 
     const address=getstate().rMaticModule.maticAccount.address; 
     if(address.toLowerCase() != result.from.toLowerCase()){
