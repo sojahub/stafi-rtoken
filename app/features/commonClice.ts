@@ -34,7 +34,7 @@ export default class CommonClice{
     async getPools(type:rSymbol,symbol:Symbol,cb?:Function){
       const stafiApi = await stafiServer.createStafiApi();
       const poolsData = await stafiApi.query.rTokenLedger.bondedPools(type)
-      let pools = poolsData.toJSON();
+      let pools = poolsData.toJSON(); 
       if (pools && pools.length > 0) {
         pools.forEach((poolPubkey: any) => {
           stafiApi.query.rTokenLedger.bondPipelines(type, poolPubkey).then((bondedData: any) => {
@@ -44,17 +44,23 @@ export default class CommonClice{
               active = bonded.active;
             }
             const keyringInstance = keyring.init(symbol);
-            let poolAddress = keyringInstance.encodeAddress(poolPubkey);
-            if(symbol==Symbol.Atom){
+            let poolAddress = null;
+            if(symbol==Symbol.Matic){
+              poolAddress=poolPubkey;
+            }else if(symbol==Symbol.Atom){
               poolAddress = keyringInstance.encodeAddress(hexToU8a(poolPubkey));
+            }else{
+              poolAddress = keyringInstance.encodeAddress(poolPubkey);
             }
-            // dispatch(setValidPools());
+            // dispatch(setValidPools()); 
             cb && cb({
               address: poolAddress,
               poolPubkey:poolPubkey,
               active: active
             })
-          }).catch((error: any) => { });
+          }).catch((error: any) => {
+            console.error(error,"=====error")
+           });
         })
       };
     }

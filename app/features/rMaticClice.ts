@@ -293,12 +293,13 @@ export const transfer = (amountparam: string, cb?: Function): AppThunk => async 
   const validPools = getState().rMaticModule.validPools;
   const poolLimit = getState().rMaticModule.poolLimit;
   
-   
+    
   let web3 = ethServer.getWeb3();
   let contract = new web3.eth.Contract(maticServer.getTokenAbi(), maticServer.getTokenAddress(), {
     from: address
-  });
-  const amount = web3.utils.toWei(numberUtil.tokenAmountToChain(amountparam,rSymbol.Matic));// NumberUtil.tokenAmountToChain(amountparam,rSymbol.Matic);
+  }); 
+  const amount = web3.utils.toWei(amountparam.toString());// NumberUtil.tokenAmountToChain(amountparam,rSymbol.Matic);
+ 
   const selectedPool =commonClice.getPool(amount, validPools, poolLimit);
   if (selectedPool == null) { 
     return;
@@ -311,12 +312,9 @@ export const transfer = (amountparam: string, cb?: Function): AppThunk => async 
       finalizing: processStatus.default
     }));
     dispatch(setProcessType(rSymbol.Matic));
-    dispatch(setProcessSlider(true));
-   // contract.methods.transfer(poolAddress, amount).send().then(result => {
-
- 
-    
+    dispatch(setProcessSlider(true)); 
     const sendTokens:any= await contract.methods.transfer(selectedPool.address, amount).send() //contract.sendTokens(address, selectedPool.address, coins(amount, demon), memo);
+    console.log(sendTokens,"============sendTokenssendTokenssendTokens")
     if (sendTokens && sendTokens.status) { 
       const blockHash = sendTokens.blockHash;
       const txHash = sendTokens.transactionHash;
@@ -393,7 +391,7 @@ export const transfer = (amountparam: string, cb?: Function): AppThunk => async 
     }
     
   } catch (error) { 
-    message.error(error.message); 
+    //  message.error(error.message); 
 
     dispatch(setProcessParameter({
       sending: {
@@ -580,114 +578,129 @@ export const onProceed = (blockHash: string, txHash: string, cb?: Function): App
 
 export const getBlock = (blockHash: string, txHash: string, uuid?:string, cb?: Function): AppThunk => async (dispatch, getState) => {
   try {
-    const address = getState().rMaticModule.maticAccount.address;
-    const validPools = getState().rMaticModule.validPools;
-
-    const client = await maticServer.createApi(); 
-    const indexedTx = await client.getTx(txHash);
-    if (!indexedTx) {
-      message.error("Please input the right TxHash");
-      return;
+    console.log("==========result")
+    const result=await ethereum.request({
+      method: 'eth_getBlockByHash',
+      params: [blockHash, false],
+    })
+    console.log(result,"==========result2")
+    if(result.transactions){
+      result.transactions.map((item:any)=>{
+          if(item==txHash){
+              console.log(true,"=========result3")
+          }
+      })
     }
-    const decodeTx = decodeTxRaw(indexedTx.tx);
-    let messageValue: MsgSend = null;
-    if (decodeTx.body && decodeTx.body.messages) {
-      if (!decodeTx.body.memo) {
-        message.error("No memo in the transaction. Please Check your TxHash");
-        return;
-      }
+    // const address = getState().rMaticModule.maticAccount.address;
+    // const validPools = getState().rMaticModule.validPools;
 
-      const keyringInstance = keyring.init(Symbol.Fis);
-      if (!keyringInstance.checkAddress(decodeTx.body.memo)) {
-        message.error("Wrong memo in the transaction. Please Check your TxHash");
-        return;
-      }
-      decodeTx.body.messages.forEach((message:any) => {
-        if (message.typeUrl.indexOf("MsgSend") != -1) {
-          messageValue = decodeMessageValue(message.value);
-        }
-      });
-    }
-    if (!messageValue) {
-      message.error("Something is wrong. Please Check your TxHash");
-      return;
-    }
+    // const client = await maticServer.createApi(); 
+    // const indexedTx = await client.getTx(txHash);
 
-    const denom = config.rAtomDenom(); 
-    let amount = 0;
-    messageValue.amount.forEach(item => {
-      if (item.denom == denom) {
-        amount = Number(item.amount);
-      }
-    });
-    if (amount <= 0) {
-      message.error("Wrong amount. Please Check your TxHash");
-      return;
-    }
-    if (messageValue.fromAddress != address) {
-      message.error("Please switch your Matic account in the Keplr extension to the account that sent the transaction");
-      return;
-    }
+    
+    // if (!indexedTx) {
+    //   message.error("Please input the right TxHash");
+    //   return;
+    // }
+    // const decodeTx = decodeTxRaw(indexedTx.tx);
+    // let messageValue: MsgSend = null;
+    // if (decodeTx.body && decodeTx.body.messages) {
+    //   if (!decodeTx.body.memo) {
+    //     message.error("No memo in the transaction. Please Check your TxHash");
+    //     return;
+    //   }
 
-    const atomKeyringInstance = keyring.init(Symbol.Matic);
-    let poolPubkey = u8aToHex(atomKeyringInstance.decodeAddress(messageValue.toAddress));
+    //   const keyringInstance = keyring.init(Symbol.Fis);
+    //   if (!keyringInstance.checkAddress(decodeTx.body.memo)) {
+    //     message.error("Wrong memo in the transaction. Please Check your TxHash");
+    //     return;
+    //   }
+    //   decodeTx.body.messages.forEach((message:any) => {
+    //     if (message.typeUrl.indexOf("MsgSend") != -1) {
+    //       messageValue = decodeMessageValue(message.value);
+    //     }
+    //   });
+    // }
+    // if (!messageValue) {
+    //   message.error("Something is wrong. Please Check your TxHash");
+    //   return;
+    // }
 
-    const poolData = validPools.find((item: any) => {
-      if (item.poolPubkey == poolPubkey) {
-        return true;
-      }
-    });
+    // const denom = config.rAtomDenom(); 
+    // let amount = 0;
+    // messageValue.amount.forEach(item => {
+    //   if (item.denom == denom) {
+    //     amount = Number(item.amount);
+    //   }
+    // });
+    // if (amount <= 0) {
+    //   message.error("Wrong amount. Please Check your TxHash");
+    //   return;
+    // }
+    // if (messageValue.fromAddress != address) {
+    //   message.error("Please switch your Matic account in the Keplr extension to the account that sent the transaction");
+    //   return;
+    // }
 
-    if (!poolData) {
-      message.error("The destination address in the transaction does not match the pool address");
-      return;
-    }
+    // const atomKeyringInstance = keyring.init(Symbol.Matic);
+    // let poolPubkey = u8aToHex(atomKeyringInstance.decodeAddress(messageValue.toAddress));
 
-    dispatch(initProcess({
-      sending: {
-        packing: processStatus.success,
-        brocasting: processStatus.success,
-        finalizing: processStatus.success,
-        checkTx:txHash
-      },
-      staking: {
-        packing: processStatus.default,
-        brocasting: processStatus.default,
-        finalizing: processStatus.default,
-      },
-      minting:{
-        minting:processStatus.default
-      }
-    }))
-    dispatch(setProcessSlider(true));
-    dispatch(setProcessParameter({
-      staking: {
-        amount: NumberUtil.tokenAmountToHuman(amount, rSymbol.Matic),
-        txHash,
-        blockHash,
-        address,
-        type: rSymbol.Matic,
-        poolAddress: poolPubkey
-      }
-    }))
-    dispatch(bound(address, txHash, blockHash, amount, poolPubkey, rSymbol.Matic, (r:string) => {
-      // dispatch(setStakeHash(null));
+    // const poolData = validPools.find((item: any) => {
+    //   if (item.poolPubkey == poolPubkey) {
+    //     return true;
+    //   }
+    // });
 
-      if(r=="loading"){
-        uuid && dispatch(add_Matic_stake_Notice(uuid,NumberUtil.tokenAmountToHuman(amount,rSymbol.Matic).toString(),noticeStatus.Pending))
-      }else{ 
-        dispatch(setStakeHash(null));
-      }
+    // if (!poolData) {
+    //   message.error("The destination address in the transaction does not match the pool address");
+    //   return;
+    // }
 
-      if(r == "failure"){
-        uuid && dispatch(add_Matic_stake_Notice(uuid,NumberUtil.tokenAmountToHuman(amount,rSymbol.Matic).toString(),noticeStatus.Error)
-        );
-      }
-      if(r=="successful"){
-          uuid && dispatch(add_Matic_stake_Notice(uuid,NumberUtil.tokenAmountToHuman(amount,rSymbol.Matic).toString(),noticeStatus.Confirmed));
-          cb && cb(); 
-      } 
-    }));
+    // dispatch(initProcess({
+    //   sending: {
+    //     packing: processStatus.success,
+    //     brocasting: processStatus.success,
+    //     finalizing: processStatus.success,
+    //     checkTx:txHash
+    //   },
+    //   staking: {
+    //     packing: processStatus.default,
+    //     brocasting: processStatus.default,
+    //     finalizing: processStatus.default,
+    //   },
+    //   minting:{
+    //     minting:processStatus.default
+    //   }
+    // }))
+    // dispatch(setProcessSlider(true));
+    // dispatch(setProcessParameter({
+    //   staking: {
+    //     amount: NumberUtil.tokenAmountToHuman(amount, rSymbol.Matic),
+    //     txHash,
+    //     blockHash,
+    //     address,
+    //     type: rSymbol.Matic,
+    //     poolAddress: poolPubkey
+    //   }
+    // }))
+    // dispatch(bound(address, txHash, blockHash, amount, poolPubkey, rSymbol.Matic, (r:string) => {
+    //   // dispatch(setStakeHash(null));
+
+    //   if(r=="loading"){
+    //     uuid && dispatch(add_Matic_stake_Notice(uuid,NumberUtil.tokenAmountToHuman(amount,rSymbol.Matic).toString(),noticeStatus.Pending))
+    //   }else{ 
+    //     dispatch(setStakeHash(null));
+    //   }
+
+    //   if(r == "failure"){
+    //     uuid && dispatch(add_Matic_stake_Notice(uuid,NumberUtil.tokenAmountToHuman(amount,rSymbol.Matic).toString(),noticeStatus.Error)
+    //     );
+    //   }
+    //   if(r=="successful"){
+    //       uuid && dispatch(add_Matic_stake_Notice(uuid,NumberUtil.tokenAmountToHuman(amount,rSymbol.Matic).toString(),noticeStatus.Confirmed));
+    //       cb && cb(); 
+    //   } 
+    // }));
 
   } catch (e) {
     message.error(e.message)
@@ -757,8 +770,8 @@ export const decodeCoin = (input: _m0.Reader | Uint8Array, length?: number): Coi
 
 
 export const getPools = (cb?:Function): AppThunk => async (dispatch, getState) => {
-  dispatch(setValidPools(null)); 
-  commonClice.getPools(rSymbol.Matic,Symbol.Matic,(data:any)=>{
+  dispatch(setValidPools(null));  
+  commonClice.getPools(rSymbol.Matic,Symbol.Matic,(data:any)=>{ 
     dispatch(setValidPools(data));
     cb && cb()
   }) 

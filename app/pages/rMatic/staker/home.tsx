@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import {Modal} from 'antd';
 import {useDispatch,useSelector} from 'react-redux';
 import Content from '@components/content/stakeContent_DOT'; 
-import {transfer,rTokenLedger,rTokenRate} from '@features/rMaticClice';  
+import {transfer,rTokenLedger,rTokenRate,getBlock} from '@features/rMaticClice';  
 import {ratioToAmount} from '@util/common'
 import { message } from 'antd';
 import NumberUtil from '@util/numberUtil';
@@ -20,6 +20,7 @@ export default function Index(props:any){
   useEffect(()=>{ 
     dispatch(rTokenRate());
     dispatch(rTokenLedger())
+    // dispatch(getBlock("0xc7a4cb19b7271416c17406b2a653a6810146a5c771a1ab7f2e468a281bb9b648","0x5d4791186fd8868c7e5a199eb42b7148564f25b9913d3ffa9f923170de9f0e3f"))
   },[])
   const {transferrableAmount,ratio,stafiStakerApr,fisCompare,validPools,totalIssuance,bondFees}=useSelector((state:any)=>{ 
     const fisCompare = NumberUtil.fisAmountToChain(state.FISModule.fisAccount.balance) < (state.rMaticModule.bondFees + state.FISModule.estimateBondTxFees);
@@ -56,14 +57,19 @@ export default function Index(props:any){
         message.error("No enough FIS to pay for the fee");
         return;
       }
-      if(getSessionStorageItem("atom_stake_tips_modal")){
-          dispatch(transfer(amount,()=>{
-            dispatch(setProcessSlider(false));
-            props.history.push("/rMatic/staker/info")
-          }));
-      }else{
-        setVisible(true)
-      }
+      
+      dispatch(transfer(amount,()=>{
+        dispatch(setProcessSlider(false));
+        props.history.push("/rMatic/staker/info")
+      }));
+      // if(getSessionStorageItem("atom_stake_tips_modal")){
+      //     dispatch(transfer(amount,()=>{
+      //       dispatch(setProcessSlider(false));
+      //       props.history.push("/rMatic/staker/info")
+      //     }));
+      // }else{
+      //   setVisible(true)
+      // }
     
     
     }else{
@@ -71,25 +77,6 @@ export default function Index(props:any){
     } 
   }}
   type="rMatic"></Content>
-  <Modal visible={visible}
-  title={null}
-  footer={null}
-  width={350}
-  onCancel={()=>{
-    setVisible(false)
-  }}
-  className="atom_stake_tips_modal"
-  >
-
-      <img src={stake_tips}/>
-      <Button btnType="square" onClick={()=>{
-        setSessionStorageItem("atom_stake_tips_modal",true)
-        setVisible(false)
-        dispatch(transfer(amount,()=>{
-          dispatch(setProcessSlider(false));
-          props.history.push("/rMatic/staker/info")
-        }));
-      }}>Understood</Button>
-  </Modal>
+ 
   </>
 }
