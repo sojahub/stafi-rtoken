@@ -15,7 +15,7 @@ export default function Index(props:any){
       message.error("Please enter txhash");
       return;
     } 
-    dispatch(onProceed(values.blockHash,values.txHash,()=>{
+    dispatch(onProceed(values.txHash,()=>{
       props.history.push("/rMatic/staker/info");
     })) 
   };
@@ -40,10 +40,7 @@ export default function Index(props:any){
       </Form.Item> 
       <Form.Item label={<div className="item_title"><label>TxHash</label><a href={config.txHashAndBlockhashURl.atomURL} target="_blank">How to get TxHash</a></div>} name="txHash">
           <Input placeholder="" />
-        </Form.Item> 
-        <Form.Item label={<div className="item_title"><label>BlockHash</label><a href={config.txHashAndBlockhashURl.dotURL} target="_blank">How to get BlockHash</a></div>} name="blockHash">
-          <Input placeholder="" />
-        </Form.Item> 
+        </Form.Item>  
         <div className="btns">
           <Button btnType="square" htmlType="submit">Proceed</Button>
         </div> 

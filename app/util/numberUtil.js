@@ -156,6 +156,8 @@ export default {
         return amount / 1000000000000;
      case rSymbol.Ksm:
         return amount / 1000000000000;
+    case rSymbol.Matic:
+      return amount / 1000000000000000000;
      default:
         return amount / 1000000000000;
    } 
