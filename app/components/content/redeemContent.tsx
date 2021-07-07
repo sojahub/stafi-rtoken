@@ -20,7 +20,7 @@ type Props={
      address?:string,
      onInputChange?:Function,
      onInputConfirm?:Function,
-     type:"rDOT"|"rETH"|"rFIS"|"rKSM"|"rATOM"|"rMatic"
+     type:"rDOT"|"rETH"|"rFIS"|"rKSM"|"rATOM"|"rMATIC"
 }
 export default function Index(props:Props){
     const [inputEdit,setInputEdit]=useState(false);
@@ -32,7 +32,7 @@ export default function Index(props:Props){
             return rKSM
         }else if(props.type=="rATOM"){
             return rATOM
-        }else if(props.type=="rMatic"){
+        }else if(props.type=="rMATIC"){
             return rMatic
         }
     }
@@ -46,14 +46,14 @@ export default function Index(props:Props){
             {props.type=="rDOT" && " Redeem DOT"}
             {props.type=="rKSM" && " Redeem KSM"}
             {props.type=="rATOM" && " Redeem ATOM"}
-            {props.type=="rMatic" && " Redeem MATIC"}
+            {props.type=="rMATIC" && " Redeem MATIC"}
          </div>
          <div className="subTitle">
                <div className="label"> 
                {props.type=="rDOT" && "1. Unbond DOT"}
                {props.type=="rKSM" && "1. Unbond KSM"}
                {props.type=="rATOM" && "1. Unbond ATOM"}
-               {props.type=="rMatic" && "1. Unbond MATIC"}
+               {props.type=="rMATIC" && "1. Unbond MATIC"}
                </div>
                 <div className="balance">
                 

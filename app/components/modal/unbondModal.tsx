@@ -16,7 +16,7 @@ type Props={
   onOk?:Function,
   onCancel?:Function,
   bondFees?:any,
-  type:"rDOT"|"rETH"|"rFIS"|"rKSM"|"rATOM"|"rMatic",
+  type:"rDOT"|"rETH"|"rFIS"|"rKSM"|"rATOM"|"rMATIC",
 }
 export default function Index(props:Props){
   return <Modal visible={props.visible} 
@@ -42,7 +42,7 @@ export default function Index(props:Props){
               {props.type=="rDOT" && `—Period: around ${config.unboundAroundDays(Symbol.Dot)} days`}
               {props.type=="rKSM" && `—Period: around ${config.unboundAroundDays(Symbol.Ksm)} days`}
               {props.type=="rATOM" && `—Period: around ${config.unboundAroundDays(Symbol.Atom)} days`}
-              {props.type=="rMatic" && `—Period: around ${config.unboundAroundDays(Symbol.Matic)} days`}
+              {props.type=="rMATIC" && `—Period: around ${config.unboundAroundDays(Symbol.Matic)} days`}
             <div className="doubt"><Tooltip overlayClassName="modal_doubt_overlay" placement="topLeft" title={"unbond period is deteminted by designated chain."}>
                         <img src={doubt} />
                     </Tooltip></div></div>
@@ -51,7 +51,7 @@ export default function Index(props:Props){
               {props.type=="rDOT" && `You will get ${props.getAmount} DOT`}
               {props.type=="rKSM" && `You will get ${props.getAmount} KSM`}
               {props.type=="rATOM" && `You will get ${props.getAmount} ATOM`}
-              {props.type=="rMatic" && `You will get ${props.getAmount} MATIC`}
+              {props.type=="rMATIC" && `You will get ${props.getAmount} MATIC`}
             </div>
 
             <div className="btns">

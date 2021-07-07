@@ -21,7 +21,7 @@ export default function Index(){
             rewardList_lastdata:state.rMaticModule.rewardList_lastdata
         }
     }) 
-    return <RewardContent  hours={24} rewardList={rewardList} getReward={getReward} type="Matic">
+    return <RewardContent  hours={24} rewardList={rewardList} getReward={getReward} type="MATIC">
         {
             rewardList.map((item,index)=>{
                 let reward:any='--';

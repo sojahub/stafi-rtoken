@@ -79,7 +79,7 @@ export default function Index(props:any){
         message.error("address input error");
       } 
     }}
-    type="rMatic"
+    type="rMATIC"
   />
   <UnbondModal visible={visible} 
     unbondAmount={amount}
@@ -101,7 +101,7 @@ export default function Index(props:any){
         dispatch(setLoading(false));
       })) 
     }}
-    type="rMatic"
+    type="rMATIC"
   />
   </>
 }
