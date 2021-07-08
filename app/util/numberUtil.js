@@ -156,6 +156,8 @@ export default {
         return amount / 1000000000000;
      case rSymbol.Ksm:
         return amount / 1000000000000;
+     case rSymbol.Eth:
+        return amount / 1000000000000000000;
      default:
         return amount / 1000000000000;
    } 
@@ -170,6 +172,8 @@ export default {
         return Math.round(Number(amount) * 1000000000000);
       case rSymbol.Ksm:
         return Math.round(Number(amount) * 1000000000000);
+      case rSymbol.Eth:
+        return Math.round(Number(amount) * 1000000000000000000);
       default:
         return Math.round(Number(amount) * 1000000000000);
     }  
