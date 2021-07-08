@@ -1,32 +1,31 @@
-import config from '@config/index'; 
+import config, { isdev } from '@config/index';
 import { rSymbol, Symbol } from '@keyring/defaults';
 import { u8aToHex } from '@polkadot/util';
 import { createSlice } from '@reduxjs/toolkit';
-import MaticServer from '@servers/matic/index';
+import EthServer from '@servers/eth/index';
 import keyring from '@servers/index';
+import MaticServer from '@servers/matic/index';
+import RpcServer, { pageCount } from '@servers/rpc/index';
 import Stafi from '@servers/stafi/index';
 import { getLocalStorageItem, Keys, removeLocalStorageItem, setLocalStorageItem, stafi_uuid } from '@util/common';
 import NumberUtil from '@util/numberUtil';
 import { message } from 'antd';
+import InputDataDecoder from 'ethereum-input-data-decoder';
 import _m0 from "protobufjs/minimal";
+import Web3Utils from 'web3-utils';
 import { AppThunk } from '../store';
 import CommonClice from './commonClice';
+import { getAssetBalance } from './ETHClice';
 import { bondStates, bound, fisUnbond, rTokenSeries_bondStates } from './FISClice';
 import { initProcess, processStatus, setProcessSending, setProcessSlider, setProcessType } from './globalClice';
 import { add_Notice, findUuid, noticeStatus, noticesubType, noticeType } from './noticeClice';
-import RpcServer,{pageCount} from '@servers/rpc/index';
-import {setIsloadMonitoring} from './rETHClice';
-import EthServer from '@servers/eth/index'; 
-import {isdev} from '@config/index';
-import Web3Utils from 'web3-utils';
-import {getAssetBalance} from './ETHClice';
-import InputDataDecoder from 'ethereum-input-data-decoder';
+import { setIsloadMonitoring } from './rETHClice';
 
 
 const commonClice=new CommonClice();
 
-const rMaticClice = createSlice({
-  name: 'rMaticModule',
+const rMATICClice = createSlice({
+  name: 'rMATICModule',
   initialState: {
     maticAccounts: [],
     maticAccount:getLocalStorageItem(Keys.MaticAccountKey) && {...getLocalStorageItem(Keys.MaticAccountKey),balance:"--"},
@@ -158,9 +157,9 @@ export const {
   setRatioShow,
   setRewardList,
   setRewardList_lastdata
-} = rMaticClice.actions; 
+} = rMATICClice.actions; 
 export const reloadData = (): AppThunk => async (dispatch, getState) => {
-  //const account = getState().rMaticModule.maticAccount;
+  //const account = getState().rMATICModule.maticAccount;
   // if(account){
   //   dispatch(createSubstrate(account));
   // }
@@ -265,8 +264,8 @@ export const monitoring_Method=():AppThunk=>(dispatch,getState)=> {
 }
 
 export const balancesAll=():AppThunk=>(dispatch,getState)=>{  
-  if(getState().rMaticModule.maticAccount){ 
-    const address=getState().rMaticModule.maticAccount.address;    
+  if(getState().rMATICModule.maticAccount){ 
+    const address=getState().rMATICModule.maticAccount.address;    
     getAssetBalance(address,maticServer.getTokenAbi(), maticServer.getTokenAddress(),(v:any)=>{
       dispatch(setTransferrableAmountShow(v));
       dispatch(setMaticAccount({address:address,balance:v}))
@@ -276,16 +275,16 @@ export const balancesAll=():AppThunk=>(dispatch,getState)=>{
  
 
 export const transfer = (amountparam: string, cb?: Function): AppThunk => async (dispatch, getState) => {
-  const processParameter=getState().rMaticModule.processParameter;
+  const processParameter=getState().rMATICModule.processParameter;
   const notice_uuid=(processParameter && processParameter.uuid) || stafi_uuid(); 
 
   dispatch(initProcess(null));
  
   
  
-  const address= getState().rMaticModule.maticAccount.address;
-  const validPools = getState().rMaticModule.validPools;
-  const poolLimit = getState().rMaticModule.poolLimit;
+  const address= getState().rMATICModule.maticAccount.address;
+  const validPools = getState().rMATICModule.validPools;
+  const poolLimit = getState().rMATICModule.poolLimit;
   
     
   let web3 = ethServer.getWeb3();
@@ -308,7 +307,6 @@ export const transfer = (amountparam: string, cb?: Function): AppThunk => async 
     dispatch(setProcessType(rSymbol.Matic));
     dispatch(setProcessSlider(true)); 
     const sendTokens:any= await contract.methods.transfer(selectedPool.address, amount).send() 
-    console.log(sendTokens,"=======sendTokens")
     if (sendTokens && sendTokens.status) { 
 
       const blockHash = sendTokens.blockHash;
@@ -341,12 +339,12 @@ export const transfer = (amountparam: string, cb?: Function): AppThunk => async 
           type: rSymbol.Matic,
           poolAddress: selectedPool.poolPubkey
         },
-        href: cb ? "/rMatic/staker/info" : null
+        href: cb ? "/rMATIC/staker/info" : null
       }))  
 
       dispatch(add_Matic_stake_Notice(notice_uuid,amountparam,noticeStatus.Pending,{
         process:getState().globalModule.process,
-        processParameter:getState().rMaticModule.processParameter}))
+        processParameter:getState().rMATICModule.processParameter}))
         blockHash && dispatch(bound(address, txHash, blockHash, amount, selectedPool.poolPubkey, rSymbol.Matic, (r: string) => {
         if(r=="loading"){
           dispatch(add_Matic_stake_Notice(notice_uuid,amountparam,noticeStatus.Pending))
@@ -377,12 +375,12 @@ export const transfer = (amountparam: string, cb?: Function): AppThunk => async 
           address,
           uuid:notice_uuid
         }, 
-        href: cb ? "/rMatic/staker/info" : null
+        href: cb ? "/rMATIC/staker/info" : null
       }))
       dispatch(reloadData());
       dispatch(add_Matic_stake_Notice(notice_uuid,amountparam,noticeStatus.Error,{
         process:getState().globalModule.process,
-        processParameter:getState().rMaticModule.processParameter}));
+        processParameter:getState().rMATICModule.processParameter}));
     }
     
   } catch (error) { 
@@ -394,7 +392,7 @@ export const transfer = (amountparam: string, cb?: Function): AppThunk => async 
         address,
         uuid:notice_uuid
       }, 
-      href: cb ? "/rMatic/staker/info" : null
+      href: cb ? "/rMATIC/staker/info" : null
     }))
     dispatch(setProcessSending({
       brocasting: processStatus.failure,
@@ -417,7 +415,7 @@ export const query_rBalances_account = (): AppThunk => async (dispatch, getState
 }
 
 export const reSending = (cb?: Function): AppThunk => async (dispatch, getState) => {
-  const processParameter = getState().rMaticModule.processParameter;
+  const processParameter = getState().rMATICModule.processParameter;
   if (processParameter) {
     const href = processParameter.href;
     dispatch(transfer(processParameter.sending.amount, () => {
@@ -427,7 +425,7 @@ export const reSending = (cb?: Function): AppThunk => async (dispatch, getState)
 }
 
 export const reStaking = (cb?: Function): AppThunk => async (dispatch, getState) => { 
-  const processParameter = getState().rMaticModule.processParameter 
+  const processParameter = getState().rMATICModule.processParameter 
   if (processParameter) {
     const staking = processParameter.staking
     const href = processParameter.href
@@ -466,7 +464,7 @@ export const reStaking = (cb?: Function): AppThunk => async (dispatch, getState)
 
 export const unbond = (amount: string,recipient:string,willAmount:any, cb?: Function): AppThunk => async (dispatch, getState) => {
   try{
-    const validPools = getState().rMaticModule.validPools; 
+    const validPools = getState().rMATICModule.validPools; 
     let selectedPool =commonClice.getPoolForUnbond(amount, validPools,rSymbol.Matic);
     if (selectedPool == null) { 
       cb && cb();
@@ -491,15 +489,10 @@ export const unbond = (amount: string,recipient:string,willAmount:any, cb?: Func
 }
 
 export const continueProcess = (): AppThunk => async (dispatch, getState) => {
-  const stakeHash = getState().rMaticModule.stakeHash;
+  const stakeHash = getState().rMATICModule.stakeHash;
   if (stakeHash && stakeHash.blockHash && stakeHash.txHash) { 
-    // let bondSuccessParamArr:any[] = [];
-    // bondSuccessParamArr.push("0x" + stakeHash.blockHash);
-    // bondSuccessParamArr.push("0x" + stakeHash.txHash);
-    // let statusObj={
-    //   num:0
-    // }
-    dispatch(bondStates(rSymbol.Matic,"0x" + stakeHash.txHash,"0x" + stakeHash.blockHash,(e:string)=>{
+ 
+    dispatch(bondStates(rSymbol.Matic,stakeHash.txHash,stakeHash.blockHash,(e:string)=>{
       if(e=="successful"){
         message.success("minting succeeded",3,()=>{ 
           dispatch(setStakeHash(null));
@@ -518,14 +511,14 @@ export const onProceed = (txHash: string, cb?: Function): AppThunk => async (dis
     params: [txHash],
   })  
   if(result){ 
-    const address=getstate().rMaticModule.maticAccount.address; 
+    const address=getstate().rMATICModule.maticAccount.address; 
     if(address.toLowerCase() != result.from.toLowerCase()){
       message.error("Please select your Matic account that sent the transaction");
       return;
     }
     const blockHash=result.blockHash;
-    const noticeData = findUuid(getstate().noticeModule.noticeData,txHash,blockHash)
-  
+    const noticeData = findUuid(getstate().noticeModule.noticeData,txHash,blockHash,dispatch)
+    
     let bondSuccessParamArr:any[] = [];
     bondSuccessParamArr.push(blockHash);
     bondSuccessParamArr.push(txHash);
@@ -573,8 +566,8 @@ export const onProceed = (txHash: string, cb?: Function): AppThunk => async (dis
 
 export const getBlock = (blockHash: string, txHash: string, uuid?:string, cb?: Function): AppThunk => async (dispatch, getState) => {
   try {
-    const address = getState().rMaticModule.maticAccount.address;
-    const validPools = getState().rMaticModule.validPools;
+    const address = getState().rMATICModule.maticAccount.address;
+    const validPools = getState().rMATICModule.validPools;
 
   
 
@@ -597,7 +590,7 @@ export const getBlock = (blockHash: string, txHash: string, uuid?:string, cb?: F
       return;
     }
      
-    let poolPubkey =result2.inputs[0];
+    let poolPubkey ="0x"+result2.inputs[0];
 
     const poolData = validPools.find((item: any) => {
       if (item.poolPubkey == poolPubkey) {
@@ -793,7 +786,7 @@ const add_Matic_stake_Notice=(uuid:string,amount:string,status:string,subData?:a
   setTimeout(()=>{
     dispatch(add_Matic_Notice(uuid,noticeType.Staker,noticesubType.Stake,amount,status,{
     process:getState().globalModule.process,
-    processParameter:getState().rMaticModule.processParameter}))
+    processParameter:getState().rMATICModule.processParameter}))
   },20);
 }
 
@@ -801,7 +794,7 @@ export const getReward=(pageIndex:Number,cb:Function):AppThunk=>async (dispatch,
   const source=getState().FISModule.fisAccount.address; //"36NQ98C5uri7ruBKvdzWFeEJQEhGpzCvJVbMHkbTu2mCgMRo"
   const result=await rpcServer.getReward(source,rSymbol.Matic,pageIndex); 
   if(result.status==80000){ 
-    const rewardList=getState().rMaticModule.rewardList; 
+    const rewardList=getState().rMATICModule.rewardList; 
     if(result.data.rewardList.length>0){
       const list=result.data.rewardList.map((item:any)=>{
         const rate=NumberUtil.rTokenRateToHuman(item.rate);
@@ -843,4 +836,4 @@ const add_Matic_Notice=(uuid:string,type:string,subType:string,content:string,st
  
     dispatch(add_Notice(uuid,Symbol.Matic,type,subType,content,status,subData))
 } 
-export default rMaticClice.reducer;
+export default rMATICClice.reducer;

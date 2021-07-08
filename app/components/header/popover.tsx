@@ -41,9 +41,9 @@ export default function Index(props:Props){
         props.history && props.history.push("/rATOM/home");
       }
 
-      const hasGo_rMatic=location.pathname.includes("/rMatic")
-      if(item.rSymbol==Symbol.Matic && !hasGo_rMatic){ 
-        props.history && props.history.push("/rMatic/home");
+      const hasGo_rMATIC=location.pathname.includes("/rMATIC")
+      if(item.rSymbol==Symbol.Matic && !hasGo_rMATIC){ 
+        props.history && props.history.push("/rMATIC/home");
       }
     }}/>
   })}

@@ -1,6 +1,6 @@
 import HomeCard from '@components/card/homeCard';
 import { connectPolkadot_atom } from '@features/globalClice';
-import { connectMetamask, handleMaticAccount, monitoring_Method } from '@features/rMaticClice';
+import { connectMetamask, handleMaticAccount, monitoring_Method } from '@features/rMATICClice';
 import metamask from '@images/metamask.png';
 import rFIS_svg from '@images/rFIS.svg';
 import Button from '@shared/components/button/connect_button';
@@ -20,11 +20,11 @@ export default function Inde(props:any){
     return {
       fisAccount:state.FISModule.fisAccount,
       fisAccounts:state.FISModule.fisAccounts,
-      maticAccount:state.rMaticModule.maticAccount
+      maticAccount:state.rMATICModule.maticAccount
     } 
   })
   if(fisAccount && maticAccount){
-    return <Redirect to="/rMatic/type" />
+    return <Redirect to="/rMATIC/type" />
   }
   return <HomeCard 
       title={<><label>Liquify</label> Your Staking MATIC</>}
@@ -38,16 +38,16 @@ export default function Inde(props:any){
                 dispatch(monitoring_Method());
                 maticAccount && dispatch(handleMaticAccount(maticAccount.address));
                 if(fisAccount){
-                  props.history.push("/rMatic/type")
+                  props.history.push("/rMATIC/type")
                 }else if(fisAccounts && fisAccounts.length>0){
                   props.history.push({
-                    pathname:"/rMatic/fiswallet",
+                    pathname:"/rMATIC/fiswallet",
                     state:{
                         showBackIcon:false, 
                     }
                   }); 
                 }
-                // props.history.push("/rMatic/type")
+                // props.history.push("/rMATIC/type")
               }}>
                 Connect to Metamask
             </Button>

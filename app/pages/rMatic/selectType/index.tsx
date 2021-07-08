@@ -2,16 +2,16 @@ import React, { useEffect } from 'react';
 import {Redirect} from 'react-router'
 import {useDispatch, useSelector} from 'react-redux';
 import TypeCard from '@components/card/typeCard';
-import {getTotalIssuance,rTokenLedger} from '@features/rMaticClice'
+import {getTotalIssuance,rTokenLedger} from '@features/rMATICClice'
 
 export default function Index(props:any){
 
   const dispatch=useDispatch();
   const {totalIssuance,stakerApr,tokenAmount}=useSelector((state:any)=>{
     return {  
-      totalIssuance:state.rMaticModule.totalIssuance,
-      stakerApr:state.rMaticModule.stakerApr,
-      tokenAmount:state.rMaticModule.tokenAmount,
+      totalIssuance:state.rMATICModule.totalIssuance,
+      stakerApr:state.rMATICModule.stakerApr,
+      tokenAmount:state.rMATICModule.tokenAmount,
     }
   })
   useEffect(()=>{
@@ -20,7 +20,7 @@ export default function Index(props:any){
   },[])
 
   if(tokenAmount!="--" && tokenAmount!=0){
-    return <Redirect to="/rMatic/staker/info" />
+    return <Redirect to="/rMATIC/staker/info" />
   }
   return <TypeCard 
       type="rMATIC"  
@@ -28,9 +28,9 @@ export default function Index(props:any){
       apr={stakerApr}
       onClick={(e:string)=>{
         if(e=="Staker"){
-          props.history.push("/rMatic/staker")
+          props.history.push("/rMATIC/staker")
         }else{
-          props.history.push("/rMatic/validator")
+          props.history.push("/rMATIC/validator")
         }
   }}/> 
 }

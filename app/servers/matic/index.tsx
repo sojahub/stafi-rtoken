@@ -116,7 +116,7 @@ export default class ExtensionDapp extends CosmosKeyring{
     return cosmosApi;
   }
   getTokenAddress() {
-    return config.rMaticTokenAddress();
+    return config.rMATICTokenAddress();
   }
   
   getTokenAbi(){ 

@@ -3,7 +3,7 @@ import {message,Spin} from 'antd';
 import {useSelector} from 'react-redux';
 import Content from '@components/content/redeemContent';  
 import {rSymbol} from '@keyring/defaults'
-import {rTokenRate,unbond,getUnbondCommission,query_rBalances_account,unbondFees} from '@features/rMaticClice';
+import {rTokenRate,unbond,getUnbondCommission,query_rBalances_account,unbondFees} from '@features/rMATICClice';
 import {checkEthAddress} from '@features/rETHClice'
 import {useDispatch} from 'react-redux';
 import UnbondModal from '@components/modal/unbondModal'
@@ -20,20 +20,20 @@ export default function Index(props:any){
  
   const {tokenAmount,unbondCommission,ratio,fisFee,address,unBondFees,willAmount,estimateUnBondTxFees,fisBalance} = useSelector((state:any)=>{ 
     let unbondCommission:any=0; 
-    let ratio=state.rMaticModule.ratio; 
-    let tokenAmount=state.rMaticModule.tokenAmount; 
+    let ratio=state.rMATICModule.ratio; 
+    let tokenAmount=state.rMATICModule.tokenAmount; 
      
-    if (state.rMaticModule.unbondCommission && amount) { 
-      unbondCommission = amount*state.rMaticModule.unbondCommission; 
+    if (state.rMATICModule.unbondCommission && amount) { 
+      unbondCommission = amount*state.rMATICModule.unbondCommission; 
     } 
     return { 
       ratio:ratio,
       tokenAmount:tokenAmount, 
       unbondCommission:unbondCommission,
-      fisFee:state.rMaticModule.unbondCommission,
-      address:state.rMaticModule.maticAccount.address,
-      unBondFees:state.rMaticModule.unBondFees,  
-      willAmount: commonClice.getWillAmount(ratio,state.rMaticModule.unbondCommission,amount),
+      fisFee:state.rMATICModule.unbondCommission,
+      address:state.rMATICModule.maticAccount.address,
+      unBondFees:state.rMATICModule.unBondFees,  
+      willAmount: commonClice.getWillAmount(ratio,state.rMATICModule.unbondCommission,amount),
       estimateUnBondTxFees: state.FISModule.estimateUnBondTxFees,
       fisBalance: state.FISModule.fisAccount.balance 
     }

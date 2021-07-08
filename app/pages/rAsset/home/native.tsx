@@ -14,7 +14,7 @@ import {rTokenRate as ksm_rTokenRate,query_rBalances_account,getUnbondCommission
 import {rTokenRate as dot_rTokenRate,query_rBalances_account as dot_query_rBalances_account,getUnbondCommission as dot_getUnbondCommission} from '@features/rDOTClice';
 import {rTokenRate as fis_rTokenRate,query_rBalances_account as fis_query_rBalances_account,getUnbondCommission as fis_getUnbondCommission} from '@features/FISClice';
 import {rTokenRate as atom_rTokenRate,query_rBalances_account as atom_query_rBalances_account,getUnbondCommission as atom_getUnbondCommission} from '@features/rATOMClice';
-import {rTokenRate as matic_rTokenRate,query_rBalances_account as matic_query_rBalances_account,getUnbondCommission as matic_getUnbondCommission} from '@features/rMaticClice';
+import {rTokenRate as matic_rTokenRate,query_rBalances_account as matic_query_rBalances_account,getUnbondCommission as matic_getUnbondCommission} from '@features/rMATICClice';
 import CommonClice from '@features/commonClice';
 import {Symbol,rSymbol} from '@keyring/defaults';
 import NumberUtil from '@util/numberUtil'
@@ -45,8 +45,8 @@ export default function Index(props:any){
       dotWillAmount:commonClice.getWillAmount(state.rDOTModule.ratio,state.rDOTModule.unbondCommission,state.rDOTModule.tokenAmount),
       atom_tokenAmount:state.rATOMModule.tokenAmount,
       atomWillAmount:commonClice.getWillAmount(state.rATOMModule.ratio,state.rATOMModule.unbondCommission,state.rATOMModule.tokenAmount),
-      matic_tokenAmount:state.rMaticModule.tokenAmount,
-      maticWillAmount:commonClice.getWillAmount(state.rMaticModule.ratio,state.rMaticModule.unbondCommission,state.rMaticModule.tokenAmount),
+      matic_tokenAmount:state.rMATICModule.tokenAmount,
+      maticWillAmount:commonClice.getWillAmount(state.rMATICModule.ratio,state.rMATICModule.unbondCommission,state.rMATICModule.tokenAmount),
     }
   });
 

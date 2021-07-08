@@ -40,7 +40,7 @@ import {
   rTokenRate as matic_rTokenRate,
   getUnbondCommission as matic_getUnbondCommission,
   query_rBalances_account as matic_query_rBalances_account
-} from '@features/rMaticClice'
+} from '@features/rMATICClice'
 import { useSelector,useDispatch } from 'react-redux';
 import NumberUtil from '@util/numberUtil';
 const datas=[{
@@ -125,7 +125,7 @@ export default function Index(props:any){
         rfis_balance:NumberUtil.handleFisAmountToFixed(state.FISModule.tokenAmount),
         rdot_balance:NumberUtil.handleFisAmountToFixed(state.rDOTModule.tokenAmount),
         ratom_balance:NumberUtil.handleFisAmountToFixed(state.rATOMModule.tokenAmount),
-        rmatic_balance:NumberUtil.handleFisAmountToFixed(state.rMaticModule.tokenAmount),
+        rmatic_balance:NumberUtil.handleFisAmountToFixed(state.rMATICModule.tokenAmount),
         fis_balance:state.FISModule.fisAccount ? state.FISModule.fisAccount.balance:"--",
 
         erc20EstimateFee:state.bridgeModule.erc20EstimateFee,

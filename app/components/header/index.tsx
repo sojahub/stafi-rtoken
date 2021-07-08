@@ -53,13 +53,13 @@ export default function Index(props:Props){
                 }
             } 
         }
-        if(location.pathname.includes("/rMatic")){ 
-            if(state.rMaticModule.maticAccount || state.FISModule.fisAccount){
+        if(location.pathname.includes("/rMATIC")){ 
+            if(state.rMATICModule.maticAccount || state.FISModule.fisAccount){
                 return {
-                    maticAccount:state.rMaticModule.maticAccount,
+                    maticAccount:state.rMATICModule.maticAccount,
                     fisAccount:state.FISModule.fisAccount,
                     noticeData:state.noticeModule.noticeData,
-                    type:"rMatic"
+                    type:"rMATIC"
                 }
             } 
         }

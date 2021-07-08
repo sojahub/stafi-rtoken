@@ -9,7 +9,7 @@ import {reStaking,reSending} from '@features/rDOTClice';
 import {reStaking as ksmReStaking,reSending as ksmReSending } from '@features/rKSMClice'; 
 import {reStaking as atomReStaking,reSending as atomReSending } from '@features/rATOMClice'; 
 
-import {reStaking as maticReStaking,reSending as maticReSending } from '@features/rMaticClice'; 
+import {reStaking as maticReStaking,reSending as maticReSending } from '@features/rMATICClice'; 
 import util from '@util/toolUtil'
 import {rSymbol} from '@keyring/defaults'
 

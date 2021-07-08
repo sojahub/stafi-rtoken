@@ -1,15 +1,11 @@
-import React, { useEffect, useState } from 'react'; 
-import {Modal} from 'antd';
+import React, { useEffect, useState } from 'react';  
 import {useDispatch,useSelector} from 'react-redux';
 import Content from '@components/content/stakeContent_DOT'; 
-import {transfer,rTokenLedger,rTokenRate,getBlock} from '@features/rMaticClice';  
+import {transfer,rTokenLedger,rTokenRate} from '@features/rMATICClice';  
 import {ratioToAmount} from '@util/common'
 import { message } from 'antd';
-import NumberUtil from '@util/numberUtil';
-import {setSessionStorageItem,getSessionStorageItem} from '@util/common'
+import NumberUtil from '@util/numberUtil'; 
 import { setProcessSlider } from '@features/globalClice'; 
-import stake_tips from '@images/atom_stake_tips.png'
-import Button from '@shared/components/button/button';
 import './index.scss';
 export default function Index(props:any){
 
@@ -22,15 +18,15 @@ export default function Index(props:any){
     dispatch(rTokenLedger());
   },[])
   const {transferrableAmount,ratio,stafiStakerApr,fisCompare,validPools,totalIssuance,bondFees}=useSelector((state:any)=>{ 
-    const fisCompare = NumberUtil.fisAmountToChain(state.FISModule.fisAccount.balance) < (state.rMaticModule.bondFees + state.FISModule.estimateBondTxFees);
+    const fisCompare = NumberUtil.fisAmountToChain(state.FISModule.fisAccount.balance) < (state.rMATICModule.bondFees + state.FISModule.estimateBondTxFees);
     return {
-      transferrableAmount:state.rMaticModule.transferrableAmountShow,
-      ratio:state.rMaticModule.ratio,
-      stafiStakerApr:state.rMaticModule.stakerApr,
+      transferrableAmount:state.rMATICModule.transferrableAmountShow,
+      ratio:state.rMATICModule.ratio,
+      stafiStakerApr:state.rMATICModule.stakerApr,
       fisCompare:fisCompare,
-      validPools:state.rMaticModule.validPools,
-      totalIssuance:state.rMaticModule.totalIssuance,
-      bondFees:state.rMaticModule.bondFees
+      validPools:state.rMATICModule.validPools,
+      totalIssuance:state.rMATICModule.totalIssuance,
+      bondFees:state.rMATICModule.bondFees
     }
   })
 
@@ -45,7 +41,7 @@ export default function Index(props:any){
       setAmount(value);   
   }}
   onRecovery={()=>{ 
-     props.history.push("/rMatic/search")
+     props.history.push("/rMATIC/search")
   }}
   validPools={validPools}  
   bondFees={NumberUtil.fisAmountToHuman(bondFees) || "--"}
@@ -59,12 +55,12 @@ export default function Index(props:any){
       
       dispatch(transfer(amount,()=>{
         dispatch(setProcessSlider(false));
-        props.history.push("/rMatic/staker/info")
+        props.history.push("/rMATIC/staker/info")
       }));
       // if(getSessionStorageItem("atom_stake_tips_modal")){
       //     dispatch(transfer(amount,()=>{
       //       dispatch(setProcessSlider(false));
-      //       props.history.push("/rMatic/staker/info")
+      //       props.history.push("/rMATIC/staker/info")
       //     }));
       // }else{
       //   setVisible(true)

@@ -5,7 +5,7 @@ import Input from '@shared/components/input/index';
 import Button from '@shared/components/button/button';
 import config from '@config/index';
 import leftArrowSvg from '@images/left_arrow.svg';
-import {onProceed} from '@features/rMaticClice';
+import {onProceed} from '@features/rMATICClice';
 import './index.scss';
 export default function Index(props:any){
   const [form] = Form.useForm();
@@ -16,7 +16,7 @@ export default function Index(props:any){
       return;
     } 
     dispatch(onProceed(values.txHash,()=>{
-      props.history.push("/rMatic/staker/info");
+      props.history.push("/rMATIC/staker/info");
     })) 
   };
   return <div className={"stafi_search_container stafi_search_matic_container"}>

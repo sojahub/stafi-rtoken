@@ -11,7 +11,7 @@ import { createSubstrate as fisCreateSubstrate, reloadData as fisReloadData } fr
 import { createSubstrate as atomCreateSubstrate, reloadData as atomReloadData } from './rATOMClice';
 import { createSubstrate as dotCreateSubstrate, reloadData as dotReloadData } from './rDOTClice';
 import { createSubstrate as ksmCreateSubstrate, reloadData as ksmReloadData } from './rKSMClice';
-import {  reloadData as maticReloadData } from './rMaticClice';
+import {  reloadData as maticReloadData } from './rMATICClice';
 export enum processStatus {
   default=0,
   success = 1,

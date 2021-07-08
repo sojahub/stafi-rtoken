@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'; 
 import {useSelector,useDispatch} from 'react-redux';  
-import {query_rBalances_account,accountUnbonds,setRatioShow,rTokenRate} from '@features/rMaticClice';
+import {query_rBalances_account,accountUnbonds,setRatioShow,rTokenRate} from '@features/rMATICClice';
 import NumberUtil from '@util/numberUtil'; 
 import Content from '@components/content/stakeInfoContent'; 
 
@@ -18,10 +18,10 @@ export default function Index(props:any){
   
   const {ratio,tokenAmount,ratioShow,totalUnbonding} = useSelector((state:any)=>{
     return {
-      ratio:state.rMaticModule.ratio,
-      tokenAmount:state.rMaticModule.tokenAmount,
-      ratioShow:state.rMaticModule.ratioShow,
-      totalUnbonding:state.rMaticModule.totalUnbonding
+      ratio:state.rMATICModule.ratio,
+      tokenAmount:state.rMATICModule.tokenAmount,
+      ratioShow:state.rMATICModule.ratioShow,
+      totalUnbonding:state.rMATICModule.totalUnbonding
     }
   })
 
@@ -49,10 +49,10 @@ export default function Index(props:any){
   tokenAmount={tokenAmount}
   totalUnbonding={totalUnbonding}
   onStakeClick={()=>{
-    props.history.push("/rMatic/staker/index")
+    props.history.push("/rMATIC/staker/index")
   }}
   onRdeemClick={()=>{
-    props.history.push("/rMatic/staker/redeem")
+    props.history.push("/rMATIC/staker/redeem")
   }}
   onUniswapClick={()=>{
     window.open("")
@@ -61,7 +61,7 @@ export default function Index(props:any){
     props.history.push({
       pathname:"/rAsset/swap/native",
       state:{ 
-        rSymbol:"rMatic", 
+        rSymbol:"rMATIC", 
       }
     })
   }}

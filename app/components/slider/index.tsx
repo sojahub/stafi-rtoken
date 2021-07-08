@@ -75,8 +75,8 @@ const siderData=[
         icon:rMatic_svg,
         selectedIcon:selected_rMatic_svg,
         text:"rMATIC", 
-        urlKeywords:'/rMatic',
-        url:"/rMatic/home"
+        urlKeywords:'/rMATIC',
+        url:"/rMATIC/home"
     }
 ]
 type Props={

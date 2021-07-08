@@ -128,7 +128,7 @@ export default {
       return '0xd363ed9ee73c8b6bd048ae188000be454f7b7925';
     }  
   },
-  rMaticTokenAddress:()=>{
+  rMATICTokenAddress:()=>{
     if(!isdev()){
       return '0x7D1AfA7B718fb893dB30A3aBc0Cfc608AaCfeBB0';
     }else{

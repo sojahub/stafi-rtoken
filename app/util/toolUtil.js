@@ -41,7 +41,7 @@ export default {
     if(location.pathname.includes("/rAsset")){
       return rSymbol.Asset
     }
-    if(location.pathname.includes("/rMatic")){
+    if(location.pathname.includes("/rMATIC")){
       return rSymbol.Matic
     }
     return rSymbol.Asset;

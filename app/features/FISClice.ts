@@ -327,7 +327,7 @@ export const bound = (address: string, txhash: string, blockhash: string, amount
       
       message.info("Sending succeeded, proceeding staking");
     }else if(type==rSymbol.Matic){ 
-      const ethAddress=getState().rMaticModule.maticAccount.address;
+      const ethAddress=getState().rMATICModule.maticAccount.address;
       const fisPubkey = u8aToHex(keyringInstance.decodeAddress(fisAddress));
 
       const msgHash = keccakFromHexString(fisPubkey);

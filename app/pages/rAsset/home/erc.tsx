@@ -48,7 +48,7 @@ export default function Index(props:any){
       fisWillAmount:commonClice.getWillAmount(state.FISModule.ratio,state.FISModule.unbondCommission,state.ETHModule.ercRFISBalance),
       dotWillAmount:commonClice.getWillAmount(state.rDOTModule.ratio,state.rDOTModule.unbondCommission,state.ETHModule.ercRDOTBalance),
       atomWillAmount:commonClice.getWillAmount(state.rATOMModule.ratio,state.rATOMModule.unbondCommission,state.ETHModule.ercRATOMBalance),
-      maticWillAmount:commonClice.getWillAmount(state.rMaticModule.ratio,state.rMaticModule.unbondCommission,state.ETHModule.ercRMaticBalance)
+      maticWillAmount:commonClice.getWillAmount(state.rMATICModule.ratio,state.rMATICModule.unbondCommission,state.ETHModule.ercRMaticBalance)
     }
   })
   const totalPrice=useMemo(()=>{

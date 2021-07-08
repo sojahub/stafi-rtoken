@@ -6,7 +6,7 @@ import {renderRoutes}  from 'react-router-config';
 import {getLocalStorageItem,Keys} from '@util/common'; 
 import {Symbol} from '@keyring/defaults'
 import {fetchStafiStakerApr,reloadData} from '@features/globalClice';
-import {continueProcess,monitoring_Method,getPools,bondFees,getTotalIssuance,query_rBalances_account} from '@features/rMaticClice'
+import {continueProcess,monitoring_Method,getPools,bondFees,getTotalIssuance,query_rBalances_account} from '@features/rMATICClice'
  
 import {bondSwitch} from '@features/FISClice'; 
 import '../template/index.scss'
@@ -48,7 +48,7 @@ export default function Index(props:any){
  
   const {maticAccount}=useSelector((state:any)=>{ 
     return { 
-      maticAccount:state.rMaticModule.maticAccount, 
+      maticAccount:state.rMATICModule.maticAccount, 
     }
   })
   useEffect(()=>{ 

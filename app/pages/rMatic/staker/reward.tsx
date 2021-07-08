@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import RewardContent from '@components/reward/index'
 import DataItem from '@components/reward/dataItem';
-import {getReward, getUnbondCommission} from '@features/rMaticClice';
+import {getReward, getUnbondCommission} from '@features/rMATICClice';
 import CommonClice from '@features/commonClice'
 import { useDispatch, useSelector } from 'react-redux';
 import NumberUtil from '@util/numberUtil'
@@ -16,9 +16,9 @@ export default function Index(){
     },[])
     const {rewardList,unbondCommission,rewardList_lastdata}=useSelector((state:RootState)=>{
         return {
-            rewardList:state.rMaticModule.rewardList,
-            unbondCommission:state.rMaticModule.unbondCommission,
-            rewardList_lastdata:state.rMaticModule.rewardList_lastdata
+            rewardList:state.rMATICModule.rewardList,
+            unbondCommission:state.rMATICModule.unbondCommission,
+            rewardList_lastdata:state.rMATICModule.rewardList_lastdata
         }
     }) 
     return <RewardContent  hours={24} rewardList={rewardList} getReward={getReward} type="MATIC">
