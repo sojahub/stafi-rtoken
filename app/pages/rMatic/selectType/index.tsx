@@ -23,7 +23,7 @@ export default function Index(props:any){
     return <Redirect to="/rMatic/staker/info" />
   }
   return <TypeCard 
-      type="rMatic"  
+      type="rMATIC"  
       total={totalIssuance}
       apr={stakerApr}
       onClick={(e:string)=>{

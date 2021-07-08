@@ -13,7 +13,7 @@ import './index.scss';
 import { useSelector } from 'react-redux';
 
 type Props={
-  type:"rDOT"|"rETH"|"rFIS"|"rKSM"|"rATOM"|"rMatic",
+  type:"rDOT"|"rETH"|"rFIS"|"rKSM"|"rATOM"|"rMATIC",
   onClick:Function,
   total?:any,
   apr?:any
@@ -45,7 +45,7 @@ export default function Index(props:Props){
             {props.type=="rATOM" && "Delegate your MATIC, get rMATIC"}
             {props.type=="rETH" && "Delegate your ETH"}
             {props.type=="rFIS" && "Delegate your FIS, get rFIS"}
-            {props.type=="rMatic" && "Delegate your MATIC, get rMATIC"}
+            {props.type=="rMATIC" && "Delegate your MATIC, get rMATIC"}
           </div>
           <div className="apr_panel">
               <img src={apr_svg} /> 
@@ -57,7 +57,7 @@ export default function Index(props:Props){
             {props.type=="rFIS" && <img src={rFIS_svg} />}
             {props.type=="rATOM" && <img src={rATOM_svg} />}
             {props.type=="rETH" && <img src={reth_staker} />}
-            {props.type=="rMatic" && <img src={rMatic_svg} />}
+            {props.type=="rMATIC" && <img src={rMatic_svg} />}
             <div>
                 {props.type=="rETH"?"Staked":props.type} 
               </div>
