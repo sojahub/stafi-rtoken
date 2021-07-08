@@ -40,6 +40,11 @@ export default function Index(props:Props){
       if(item.rSymbol==Symbol.Ksm && !hasGo_KSM){ 
         props.history && props.history.push("/rATOM/home");
       }
+
+      const hasGo_rMatic=location.pathname.includes("/rMatic")
+      if(item.rSymbol==Symbol.Matic && !hasGo_rMatic){ 
+        props.history && props.history.push("/rMatic/home");
+      }
     }}/>
   })}
  

@@ -8,6 +8,7 @@ import { AppThunk } from '../store';
 import { bondStates, getMinting } from './FISClice';
 import { initProcess, processStatus, setProcessSending, setProcessSlider, setProcessStaking } from './globalClice';
 import { setProcessParameter as atomSetProcessParameter } from './rATOMClice';
+import { setProcessParameter as maticSetProcessParameter } from './rATOMClice';
 import { setProcessParameter } from './rDOTClice';
 import { setProcessParameter as krmSetProcessParameter } from './rKSMClice';
 export enum noticeStatus{
@@ -173,7 +174,9 @@ export const setProcess=(item:any,list:any,cb?:Function):AppThunk=>async (dispat
       if(item.subData.process.rSymbol==rSymbol.Atom){
         dispatch(atomSetProcessParameter(item.subData.processParameter));
       }
-      
+      if(item.subData.process.rSymbol==rSymbol.Matic){
+        dispatch(maticSetProcessParameter(item.subData.processParameter));
+      }
     }
   }
 }
