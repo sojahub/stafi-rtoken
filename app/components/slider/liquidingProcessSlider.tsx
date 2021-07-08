@@ -8,6 +8,8 @@ import {setProcessSlider} from '@features/globalClice';
 import {reStaking,reSending} from '@features/rDOTClice'; 
 import {reStaking as ksmReStaking,reSending as ksmReSending } from '@features/rKSMClice'; 
 import {reStaking as atomReStaking,reSending as atomReSending } from '@features/rATOMClice'; 
+
+import {reStaking as maticReStaking,reSending as maticReSending } from '@features/rMaticClice'; 
 import util from '@util/toolUtil'
 import {rSymbol} from '@keyring/defaults'
 
@@ -42,6 +44,12 @@ export default function Index(props:Props){
         href && props.history.push(href)
       }));
     }
+
+    if(util.pageType()==rSymbol.Matic){
+      dispatch(maticReSending((href:any)=>{
+        href && props.history.push(href)
+      }));
+    }
   }
   const reStakingClick=()=>{ 
     if(util.pageType()==rSymbol.Dot){
@@ -56,6 +64,11 @@ export default function Index(props:Props){
     }
     if(util.pageType()==rSymbol.Atom){
       dispatch(atomReStaking((href:any)=>{
+        href && props.history.push(href)
+      }));
+    }
+    if(util.pageType()==rSymbol.Matic){
+      dispatch(maticReStaking((href:any)=>{
         href && props.history.push(href)
       }));
     }

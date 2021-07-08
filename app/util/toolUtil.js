@@ -41,7 +41,9 @@ export default {
     if(location.pathname.includes("/rAsset")){
       return rSymbol.Asset
     }
-   
+    if(location.pathname.includes("/rMatic")){
+      return rSymbol.Matic
+    }
     return rSymbol.Asset;
   },
   getTokenTypeBySymbol(symbol) {
