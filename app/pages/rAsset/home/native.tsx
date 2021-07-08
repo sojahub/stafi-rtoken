@@ -1,30 +1,30 @@
-import React, { useEffect, useState,useMemo } from 'react'; 
-import {useDispatch,useSelector} from 'react-redux'; 
+import { getRtokenPriceList } from '@features/bridgeClice';
+import CommonClice from '@features/commonClice';
+import { getUnbondCommission as fis_getUnbondCommission, query_rBalances_account as fis_query_rBalances_account, rTokenRate as fis_rTokenRate } from '@features/FISClice';
+import { connectPolkadotjs, reloadData } from '@features/globalClice';
+import { getUnbondCommission as atom_getUnbondCommission, query_rBalances_account as atom_query_rBalances_account, rTokenRate as atom_rTokenRate } from '@features/rATOMClice';
+import { getUnbondCommission as dot_getUnbondCommission, query_rBalances_account as dot_query_rBalances_account, rTokenRate as dot_rTokenRate } from '@features/rDOTClice';
+import { getUnbondCommission, query_rBalances_account, rTokenRate as ksm_rTokenRate } from '@features/rKSMClice';
+import rDOT_svg from '@images/rDOT.svg';
+import rasset_fis_svg from '@images/rFIS.svg';
+import rasset_ratom_svg from '@images/r_atom.svg';
+import rasset_rdot_svg from '@images/r_dot.svg';
+import rasset_rfis_svg from '@images/r_fis.svg';
+import rasset_rksm_svg from '@images/r_ksm.svg';
+import { Symbol } from '@keyring/defaults';
 import Button from '@shared/components/button/connect_button';
-import DataList from './components/list';
-import DataItem from './components/list/item'
-import Tag from './components/carTag/index';
-import CountAmount from './components/countAmount'
-import rDOT_svg from '@images/rDOT.svg'
 import Content from '@shared/components/content';
 import Modal from '@shared/components/modal/connectModal';
+import NumberUtil from '@util/numberUtil';
+import React, { useEffect, useMemo, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import Page_FIS from '../../rDOT/selectWallet_rFIS/index';
-import {connectPolkadotjs,reloadData} from '@features/globalClice';
-import {rTokenRate as ksm_rTokenRate,query_rBalances_account,getUnbondCommission} from '@features/rKSMClice';
-import {rTokenRate as dot_rTokenRate,query_rBalances_account as dot_query_rBalances_account,getUnbondCommission as dot_getUnbondCommission} from '@features/rDOTClice';
-import {rTokenRate as fis_rTokenRate,query_rBalances_account as fis_query_rBalances_account,getUnbondCommission as fis_getUnbondCommission} from '@features/FISClice';
-import {rTokenRate as atom_rTokenRate,query_rBalances_account as atom_query_rBalances_account,getUnbondCommission as atom_getUnbondCommission} from '@features/rATOMClice';
-import CommonClice from '@features/commonClice';
-import {Symbol,rSymbol} from '@keyring/defaults';
-import NumberUtil from '@util/numberUtil'
-import rasset_fis_svg from '@images/rFIS.svg';
-import rasset_rfis_svg from '@images/r_fis.svg';  
-import rasset_rksm_svg from '@images/r_ksm.svg'; 
-import rasset_rdot_svg from '@images/r_dot.svg'; 
-import rasset_ratom_svg from '@images/r_atom.svg'; 
-import {getRtokenPriceList} from '@features/bridgeClice'
+import Tag from './components/carTag/index';
+import CountAmount from './components/countAmount';
+import DataList from './components/list';
+import DataItem from './components/list/item';
+import './page.scss';
 
-import './page.scss'
 
 const commonClice=new CommonClice();
 export default function Index(props:any){ 
@@ -91,8 +91,8 @@ export default function Index(props:any){
     }
   },[fisAccount])
   return  <Content>
-    <Tag type="native" onClick={()=>{
-      props.history.push("/rAsset/erc")
+    <Tag type="native" onClick={(type:string)=>{
+      props.history.push(`/rAsset/${type}`)
     }}/>
  
     {fisAccount?<><DataList >

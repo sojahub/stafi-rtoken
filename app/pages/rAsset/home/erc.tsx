@@ -1,29 +1,29 @@
-import React, { useEffect, useState,useMemo } from 'react'; 
-import {useDispatch,useSelector} from 'react-redux'; 
-import metamask from '@images/metamask.png'
-import Button from '@shared/components/button/connect_button';
-import Tag from './components/carTag/index'
-import DataList from './components/list'
-import Content from '@shared/components/content';
-import {connectMetamask,monitoring_Method,handleEthAccount} from '@features/rETHClice';
-import {getAssetBalanceAll} from '@features/ETHClice';
-import {rTokenRate as ksm_rTokenRate,getUnbondCommission as ksm_getUnbondCommission} from '@features/rKSMClice';
-import {rTokenRate as dot_rTokenRate,getUnbondCommission as dot_getUnbondCommission} from '@features/rDOTClice'
-import {rTokenRate as fis_rTokenRate,getUnbondCommission as fis_getUnbondCommission} from '@features/FISClice';
-import {rTokenRate as atom_rTokenRate,getUnbondCommission as atom_getUnbondCommission} from '@features/rATOMClice'
+import config from '@config/index';
+import { getRtokenPriceList } from '@features/bridgeClice';
 import CommonClice from '@features/commonClice';
-import CountAmount from './components/countAmount'; 
-import DataItem from './components/list/item';
-import NumberUtil from '@util/numberUtil';
-import config from '@config/index'
+import { getAssetBalanceAll } from '@features/ETHClice';
+import { getUnbondCommission as fis_getUnbondCommission, rTokenRate as fis_rTokenRate } from '@features/FISClice';
+import { getUnbondCommission as atom_getUnbondCommission, rTokenRate as atom_rTokenRate } from '@features/rATOMClice';
+import { getUnbondCommission as dot_getUnbondCommission, rTokenRate as dot_rTokenRate } from '@features/rDOTClice';
+import { connectMetamask, handleEthAccount, monitoring_Method } from '@features/rETHClice';
+import { getUnbondCommission as ksm_getUnbondCommission, rTokenRate as ksm_rTokenRate } from '@features/rKSMClice';
+import metamask from '@images/metamask.png';
 import rasset_fis_svg from '@images/rFIS.svg';
-import rasset_rfis_svg from '@images/r_fis.svg'; 
-import rasset_reth_svg from '@images/r_eth.svg'; 
-import rasset_rksm_svg from '@images/r_ksm.svg'; 
-import rasset_rdot_svg from '@images/r_dot.svg'; 
-import rasset_ratom_svg from '@images/r_atom.svg'; 
-import {getRtokenPriceList} from '@features/bridgeClice'
-import './page.scss'
+import rasset_ratom_svg from '@images/r_atom.svg';
+import rasset_rdot_svg from '@images/r_dot.svg';
+import rasset_reth_svg from '@images/r_eth.svg';
+import rasset_rfis_svg from '@images/r_fis.svg';
+import rasset_rksm_svg from '@images/r_ksm.svg';
+import Button from '@shared/components/button/connect_button';
+import Content from '@shared/components/content';
+import NumberUtil from '@util/numberUtil';
+import React, { useEffect, useMemo } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import Tag from './components/carTag/index';
+import CountAmount from './components/countAmount';
+import DataList from './components/list';
+import DataItem from './components/list/item';
+import './page.scss';
 
 const commonClice=new CommonClice();
 export default function Index(props:any){ 
@@ -90,9 +90,19 @@ export default function Index(props:any){
     dispatch(getRtokenPriceList());
     dispatch(monitoring_Method());
   },[])
+
+  const toSwap = (tokenSymbol: string) => {
+    props.history.push({
+      pathname: "/rAsset/swap/erc20",
+      state: {
+        rSymbol: tokenSymbol,
+      },
+    });
+  };
+
   return  <Content>
-    <Tag type="erc" onClick={()=>{
-      props.history.push("/rAsset/native")
+    <Tag type="erc" onClick={(type:string)=>{
+      props.history.push(`/rAsset/${type}`)
     }}/>
      {ethAccount?<><DataList >
       <DataItem 
@@ -104,15 +114,7 @@ export default function Index(props:any){
           unit="FIS"
           trade={config.uniswap.fisURL}
           operationType="erc20"
-          onSwapClick={()=>{
-            props.history.push({
-              pathname:"/rAsset/swap/erc20",
-              state:{
-                type:"erc20",
-                rSymbol:"FIS"
-              }
-            })
-          }}
+          onSwapClick={()=>toSwap('FIS')}
         />
 
         <DataItem 
@@ -124,14 +126,7 @@ export default function Index(props:any){
           unit="FIS"
           trade={config.uniswap.rfisURL}
           operationType="erc20"
-          onSwapClick={()=>{
-            props.history.push({
-              pathname:"/rAsset/swap/erc20",
-              state:{ 
-                rSymbol:"rFIS"
-              }
-            })
-          }}
+          onSwapClick={()=>toSwap('rFIS')}
         />
       <DataItem 
           rSymbol="rETH"
@@ -142,14 +137,7 @@ export default function Index(props:any){
           unit="ETH"
           operationType="erc20"
           trade={config.uniswap.rethURL}
-          onSwapClick={()=>{
-            props.history.push({
-              pathname:"/rAsset/swap/native/erc20",
-              state:{ 
-                rSymbol:"rETH"
-              }
-            })
-          }}
+          onSwapClick={()=>{}}
         />
         <DataItem 
           rSymbol="rDOT"
@@ -160,14 +148,7 @@ export default function Index(props:any){
           unit="DOT"
           trade={config.uniswap.rdotURL}
           operationType="erc20"
-          onSwapClick={()=>{
-            props.history.push({
-              pathname:"/rAsset/swap/erc20",
-              state:{ 
-                rSymbol:"rDOT"
-              }
-            })
-          }}
+          onSwapClick={()=>toSwap('rDOT')}
         />
         
         <DataItem 
@@ -179,14 +160,7 @@ export default function Index(props:any){
           unit="KSM"
           trade={config.uniswap.rksmURL}
           operationType="erc20"
-          onSwapClick={()=>{
-            props.history.push({
-              pathname:"/rAsset/swap/erc20",
-              state:{ 
-                rSymbol:"rKSM"
-              }
-            })
-          }}
+          onSwapClick={()=>toSwap('rKSM')}
         />
          <DataItem 
           rSymbol="rATOM"
@@ -197,14 +171,7 @@ export default function Index(props:any){
           unit="ATOM"
           trade={config.uniswap.ratomURL}
           operationType="erc20"
-          onSwapClick={()=>{
-            props.history.push({
-              pathname:"/rAsset/swap/erc20",
-              state:{ 
-                rSymbol:"rATOM"
-              }
-            })
-          }}
+          onSwapClick={()=>toSwap('rATOM')}
         />
        </DataList> <CountAmount totalValue={totalPrice} /></> : <div className="rAsset_content"> 
      <Button icon={metamask} onClick={()=>{

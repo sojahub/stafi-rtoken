@@ -1,82 +1,80 @@
+import authorizedRoute from '@components/route/authorizedRoute';
+import { rSymbol, Symbol } from '@keyring/defaults';
 import React from 'react';
 import { renderRoutes } from 'react-router-config';
-import { Switch, BrowserRouter, Redirect } from 'react-router-dom';
-import authorizedRoute from '@components/route/authorizedRoute';
-import {Symbol} from '@keyring/defaults'
-
-import HomeTemplate from './pages/template/homeTemplate'
-
-import ETHHomeTemplate from './pages/rETH/template';
-import RETHHome from './pages/rETH/home' 
-import RETHStaker from './pages/rETH/staker';
-import RETHValidator from './pages/rETH/validator';
-import RETHValidatorHome from './pages/rETH/validator/home/validatorContent'
-import RETHValidatorDeposit from './pages/rETH/validator/deposit';
-import RETHValidatorStake from './pages/rETH/validator/stake';
-import RETHValidatorStatus from './pages/rETH/validator/status';
-import RETHPoolContract from './pages/rETH/validator/poolContract'
-import RETHStakerIndex from './pages/rETH/staker/home';
-import RETHStakerInfo from './pages/rETH/staker/info';
-// import RETHStakerRedeem from './pages/rETH/staker/redeem';
-import RETHSeach from './pages/rETH/search';
-import RETHPoolStatus from './pages/rETH/poolStatus';
-import RETHType from './pages/rETH/selectType';
-import RETHLiquefy from './pages/rETH/liquefy'
-
-import DOTHomeTemplate from './pages/rDOT/template';
-import RDOTHome from './pages/rDOT/home'
-import RDOTWallet from './pages/rDOT/selectWallet';
-import RDOTWalletFIS from './pages/rDOT/selectWallet_rFIS';
-import RDOTStaker from './pages/rDOT/staker';
-import RDOTValidator from './pages/rDOT/validator';
-import RDOTStakerIndex from './pages/rDOT/staker/home';
-import RDOTStakerInfo from './pages/rDOT/staker/info';
-import RDOTStakerRedeem from './pages/rDOT/staker/redeem';
-import RDOTSeach from './pages/rDOT/search';
-import RDOTType from './pages/rDOT/selectType'; 
-import RDOTStakerReward from './pages/rDOT/staker/reward'
-
-import RKSMHomeTemplate from './pages/rKSM/template';
-import RKSMHome from './pages/rKSM/home'
-import RKSMWallet from './pages/rKSM/selectWallet';
-import RKSMWalletFIS from './pages/rKSM/selectWallet_rFIS';
-import RKSMStaker from './pages/rKSM/staker';
-import RKSMValidator from './pages/rKSM/validator';
-import RKSMStakerIndex from './pages/rKSM/staker/home';
-import RKSMStakerInfo from './pages/rKSM/staker/info';
-import RKSMStakerRedeem from './pages/rKSM/staker/redeem';
-import RKSMSeach from './pages/rKSM/search';
-import RKSMType from './pages/rKSM/selectType'; 
-import RKSMStakerReward from './pages/rKSM/staker/reward';
-
-
-import RATOMHomeTemplate from './pages/rATOM/template';
-import RATOMHome from './pages/rATOM/home'
+import { Redirect } from 'react-router-dom';
+import RAssetBep from './pages/rAsset/home/bep';
+import RAssetErc from './pages/rAsset/home/erc';
+import RAssetNative from './pages/rAsset/home/native';
+import RAssetSwap from './pages/rAsset/swap';
+import RAssetTemplate from './pages/rAsset/template';
+import RATOMHome from './pages/rATOM/home';
+import RATOMSeach from './pages/rATOM/search';
+import RATOMType from './pages/rATOM/selectType';
 import RATOMWallet from './pages/rATOM/selectWallet';
 import RATOMWalletFIS from './pages/rATOM/selectWallet_rFIS';
 import RATOMStaker from './pages/rATOM/staker';
-import RATOMValidator from './pages/rATOM/validator';
 import RATOMStakerIndex from './pages/rATOM/staker/home';
 import RATOMStakerInfo from './pages/rATOM/staker/info';
 import RATOMStakerRedeem from './pages/rATOM/staker/redeem';
-import RATOMSeach from './pages/rATOM/search';
-import RATOMType from './pages/rATOM/selectType'; 
 import RATOMStakerReward from './pages/rATOM/staker/reward';
-
-import RAssetTemplate from './pages/rAsset/template';
-import RAssetNative from './pages/rAsset/home/native';
-import RAssetErc from './pages/rAsset/home/erc';
-import RAssetSwap from './pages/rAsset/swap';
-
-import RPoolHomeTemplate from './pages/rPool/template';
-import RPoolHome from './pages/rPool/home'
+import RATOMHomeTemplate from './pages/rATOM/template';
+import RATOMValidator from './pages/rATOM/validator';
+import RDOTHome from './pages/rDOT/home';
+import RDOTSeach from './pages/rDOT/search';
+import RDOTType from './pages/rDOT/selectType';
+import RDOTWallet from './pages/rDOT/selectWallet';
+import RDOTWalletFIS from './pages/rDOT/selectWallet_rFIS';
+import RDOTStaker from './pages/rDOT/staker';
+import RDOTStakerIndex from './pages/rDOT/staker/home';
+import RDOTStakerInfo from './pages/rDOT/staker/info';
+import RDOTStakerRedeem from './pages/rDOT/staker/redeem';
+import RDOTStakerReward from './pages/rDOT/staker/reward';
+import DOTHomeTemplate from './pages/rDOT/template';
+import RDOTValidator from './pages/rDOT/validator';
+import RETHHome from './pages/rETH/home';
+import RETHLiquefy from './pages/rETH/liquefy';
+import RETHPoolStatus from './pages/rETH/poolStatus';
+import RETHType from './pages/rETH/selectType';
+import RETHStaker from './pages/rETH/staker';
+import RETHStakerIndex from './pages/rETH/staker/home';
+import RETHStakerInfo from './pages/rETH/staker/info';
+import ETHHomeTemplate from './pages/rETH/template';
+import RETHValidator from './pages/rETH/validator';
+import RETHValidatorDeposit from './pages/rETH/validator/deposit';
+import RETHValidatorHome from './pages/rETH/validator/home/validatorContent';
+import RETHPoolContract from './pages/rETH/validator/poolContract';
+import RETHValidatorStake from './pages/rETH/validator/stake';
+import RETHValidatorStatus from './pages/rETH/validator/status';
+import RKSMHome from './pages/rKSM/home';
+import RKSMSeach from './pages/rKSM/search';
+import RKSMType from './pages/rKSM/selectType';
+import RKSMWallet from './pages/rKSM/selectWallet';
+import RKSMWalletFIS from './pages/rKSM/selectWallet_rFIS';
+import RKSMStaker from './pages/rKSM/staker';
+import RKSMStakerIndex from './pages/rKSM/staker/home';
+import RKSMStakerInfo from './pages/rKSM/staker/info';
+import RKSMStakerRedeem from './pages/rKSM/staker/redeem';
+import RKSMStakerReward from './pages/rKSM/staker/reward';
+import RKSMHomeTemplate from './pages/rKSM/template';
+import RKSMValidator from './pages/rKSM/validator';
+import RPoolHome from './pages/rPool/home';
 import RPoolStaker from './pages/rPool/staker';
-import RPoolStakerReward from './pages/rPool/staker/reward';
 import RPoolStakerInsurance from './pages/rPool/staker/insurance';
+import RPoolStakerReward from './pages/rPool/staker/reward';
 import RPoolStakerStatus from './pages/rPool/staker/status';
-import RPoolStakerStatusNative from './pages/rPool/staker/status/native';
 import RPoolStakerStatusNativeErc20 from './pages/rPool/staker/status/erc20';
-import {rSymbol} from '@keyring/defaults'
+import RPoolStakerStatusNative from './pages/rPool/staker/status/native';
+import RPoolHomeTemplate from './pages/rPool/template';
+import HomeTemplate from './pages/template/homeTemplate';
+
+
+
+
+
+
+
+
   
 const routesFactory=(role?:any)=>{ 
   const routes=[
@@ -428,8 +426,12 @@ const routesFactory=(role?:any)=>{
           path:"/rAsset/erc",
           component:RAssetErc
         },{
+          id:"rAssect_bep",
+          path:"/rAsset/bep",
+          component:RAssetBep
+        },{
           id:"rAssect_swap",
-          path:"/rAsset/swap/:type",
+          path:"/rAsset/swap/:fromType",
           component:RAssetSwap
         },{
           path: '*',

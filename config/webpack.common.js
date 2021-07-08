@@ -38,6 +38,7 @@ function webpackCommonConfigCreator(options){
                path:false,
                 crypto: 'crypto-browserify',   
                 '@components': resolve('../app/components'), 
+                '@hooks': resolve('../app/hooks'), 
                 '@images': resolve('../app/assets/images'), 
                 "@features": resolve('../app/features'),
                 "@servers": resolve('../app/servers'),

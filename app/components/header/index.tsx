@@ -1,19 +1,19 @@
-import React, { useState } from 'react';
-import {useSelector,useDispatch} from 'react-redux';
-import Modal from '@shared/components/modal/connectModal';
+import { connectAtomjs, connectPolkadot, connectPolkadotjs, connectPolkadot_ksm } from '@features/globalClice';
+import { query_rBalances_account as dotquery_rBalances_account, reloadData as dotReloadData } from '@features/rDOTClice';
+import { query_rBalances_account as ksmquery_rBalances_account, reloadData as ksmReloadData } from '@features/rKSMClice';
 import notice from '@images/notice.svg';
+import report_icon from '@images/report_icon.svg';
+import { rSymbol, Symbol } from '@keyring/defaults';
+import Modal from '@shared/components/modal/connectModal';
 import StringUtil from '@util/stringUtil';
-import Popover from './popover';
-import {connectPolkadot,connectPolkadot_ksm,connectPolkadotjs,connectAtomjs} from '@features/globalClice';
-import {reloadData as dotReloadData,query_rBalances_account as dotquery_rBalances_account} from '@features/rDOTClice';
-import {reloadData as ksmReloadData,query_rBalances_account as ksmquery_rBalances_account} from '@features/rKSMClice';
+import Tool from '@util/toolUtil';
+import React, { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import Page from '../../pages/rDOT/selectWallet/index';
-import Page_FIS from '../../pages/rDOT/selectWallet_rFIS/index'
+import Page_FIS from '../../pages/rDOT/selectWallet_rFIS/index';
 import Page_Ksm from '../../pages/rKSM/selectWallet/index';
-import {rSymbol,Symbol} from '@keyring/defaults'
-import report_icon from '@images/report_icon.svg'
-import Tool from '@util/toolUtil'
 import './index.scss';
+import Popover from './popover';
   
 type Props={
     route:any,
@@ -53,18 +53,24 @@ export default function Index(props:Props){
             } 
         }
         if(location.pathname.includes("/rAsset")){
-            
-            if(location.pathname.includes("/rAsset/native") || location.pathname.includes("/rAsset/swap/native")){
+            if(location.pathname.includes("/rAsset/native")||location.pathname.includes("/rAsset/swap/native")){
                 if(state.FISModule.fisAccount){
                     return { 
                         fisAccount:state.FISModule.fisAccount,
                     }
                 }
             }
-            if(location.pathname.includes("/rAsset/erc") ||location.pathname.includes("/rAsset/swap/erc20") ){
+            if(location.pathname.includes("/rAsset/erc") ||location.pathname.includes("/rAsset/swap/erc20")){
                 if(state.rETHModule.ethAccount){
                     return { 
                         ethAccount:state.rETHModule.ethAccount,
+                    }
+                }
+            } 
+            if(location.pathname.includes("/rAsset/bep")||location.pathname.includes("/rAsset/swap/bep20") ){
+                if(state.BSCModule.bscAccount){
+                    return { 
+                        bscAccount:state.BSCModule.bscAccount,
                     }
                 }
             } 
@@ -160,6 +166,10 @@ export default function Index(props:Props){
                 {account.ethAccount && <div  className="header_tool account">
                     <div>{account.ethAccount.balance} ETH</div>
                     <div>{StringUtil.replacePkh(account.ethAccount.address,4,38)}</div>
+                </div>} 
+                {account.bscAccount && <div  className="header_tool account">
+                    <div>{account.bscAccount.balance} BNB</div>
+                    <div>{StringUtil.replacePkh(account.bscAccount.address,4,38)}</div>
                 </div>} 
             </div>}
             <div className="report_icon"><a  target="_blank" href="https://info.stafi.io/"><img src={report_icon} /></a></div>

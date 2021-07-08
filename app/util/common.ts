@@ -1,5 +1,5 @@
  
-import NumberUtil from './numberUtil'
+import NumberUtil from './numberUtil';
 export enum Keys {
   FisAccountKey = 'stafi_fis_account', 
   FisProcessParameter = 'stafi_fis_processParameter', 
@@ -20,7 +20,9 @@ export enum Keys {
   StafiNoticeKey="stafi_notice",
 
   rEthCurrentPoolPrefix = 'current:pool:',
-  poolPubKeyPrefix = 'poolpubkey:'
+  poolPubKeyPrefix = 'poolpubkey:',
+
+  BscAccountKey = 'stafi_bsc_account', 
 }
 
 export const setSessionStorageItem = (key:string, val:any) => {
