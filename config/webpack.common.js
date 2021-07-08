@@ -135,11 +135,6 @@ function webpackCommonConfigCreator(options){
                     loader: 'ts-loader',
                   },
                 ],
-              },
-              {
-                test: /\.js$/,
-                use: ["source-map-loader"],
-                enforce: "pre"
               }
             ],
               
