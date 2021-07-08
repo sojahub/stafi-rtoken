@@ -326,7 +326,7 @@ export const bound = (address: string, txhash: string, blockhash: string, amount
       blockhash = "0x" + blockhash;
       
       message.info("Sending succeeded, proceeding staking");
-    }if(type==rSymbol.Matic){ 
+    }else if(type==rSymbol.Matic){ 
       const ethAddress=getState().rETHModule.ethAccount.address;
       const fisPubkey = u8aToHex(keyringInstance.decodeAddress(fisAddress));
 
