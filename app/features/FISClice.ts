@@ -331,7 +331,7 @@ export const bound = (address: string, txhash: string, blockhash: string, amount
       const fisPubkey = u8aToHex(keyringInstance.decodeAddress(fisAddress));
 
       const msgHash = keccakFromHexString(fisPubkey);
-      pubkey = u8aToHex(keyringInstance.decodeAddress(address));
+      pubkey = address;
       signature=await ethereum.request({
         method: 'eth_sign',
         params: [ethAddress, u8aToHex(msgHash)],
