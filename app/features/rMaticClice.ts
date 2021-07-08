@@ -1,26 +1,25 @@
-import config from '@config/index'; 
+import config, { isdev } from '@config/index';
 import { rSymbol, Symbol } from '@keyring/defaults';
 import { u8aToHex } from '@polkadot/util';
 import { createSlice } from '@reduxjs/toolkit';
-import MaticServer from '@servers/matic/index';
+import EthServer from '@servers/eth/index';
 import keyring from '@servers/index';
+import MaticServer from '@servers/matic/index';
+import RpcServer, { pageCount } from '@servers/rpc/index';
 import Stafi from '@servers/stafi/index';
 import { getLocalStorageItem, Keys, removeLocalStorageItem, setLocalStorageItem, stafi_uuid } from '@util/common';
 import NumberUtil from '@util/numberUtil';
 import { message } from 'antd';
+import InputDataDecoder from 'ethereum-input-data-decoder';
 import _m0 from "protobufjs/minimal";
+import Web3Utils from 'web3-utils';
 import { AppThunk } from '../store';
 import CommonClice from './commonClice';
+import { getAssetBalance } from './ETHClice';
 import { bondStates, bound, fisUnbond, rTokenSeries_bondStates } from './FISClice';
 import { initProcess, processStatus, setProcessSending, setProcessSlider, setProcessType } from './globalClice';
 import { add_Notice, findUuid, noticeStatus, noticesubType, noticeType } from './noticeClice';
-import RpcServer,{pageCount} from '@servers/rpc/index';
-import {setIsloadMonitoring} from './rETHClice';
-import EthServer from '@servers/eth/index'; 
-import {isdev} from '@config/index';
-import Web3Utils from 'web3-utils';
-import {getAssetBalance} from './ETHClice';
-import InputDataDecoder from 'ethereum-input-data-decoder';
+import { setIsloadMonitoring } from './rETHClice';
 
 
 const commonClice=new CommonClice();
@@ -308,7 +307,6 @@ export const transfer = (amountparam: string, cb?: Function): AppThunk => async 
     dispatch(setProcessType(rSymbol.Matic));
     dispatch(setProcessSlider(true)); 
     const sendTokens:any= await contract.methods.transfer(selectedPool.address, amount).send() 
-    console.log(sendTokens,"=======sendTokens")
     if (sendTokens && sendTokens.status) { 
 
       const blockHash = sendTokens.blockHash;
@@ -493,13 +491,8 @@ export const unbond = (amount: string,recipient:string,willAmount:any, cb?: Func
 export const continueProcess = (): AppThunk => async (dispatch, getState) => {
   const stakeHash = getState().rMaticModule.stakeHash;
   if (stakeHash && stakeHash.blockHash && stakeHash.txHash) { 
-    // let bondSuccessParamArr:any[] = [];
-    // bondSuccessParamArr.push("0x" + stakeHash.blockHash);
-    // bondSuccessParamArr.push("0x" + stakeHash.txHash);
-    // let statusObj={
-    //   num:0
-    // }
-    dispatch(bondStates(rSymbol.Matic,"0x" + stakeHash.txHash,"0x" + stakeHash.blockHash,(e:string)=>{
+ 
+    dispatch(bondStates(rSymbol.Matic,stakeHash.txHash,stakeHash.blockHash,(e:string)=>{
       if(e=="successful"){
         message.success("minting succeeded",3,()=>{ 
           dispatch(setStakeHash(null));
@@ -524,8 +517,8 @@ export const onProceed = (txHash: string, cb?: Function): AppThunk => async (dis
       return;
     }
     const blockHash=result.blockHash;
-    const noticeData = findUuid(getstate().noticeModule.noticeData,txHash,blockHash)
-  
+    const noticeData = findUuid(getstate().noticeModule.noticeData,txHash,blockHash,dispatch)
+    
     let bondSuccessParamArr:any[] = [];
     bondSuccessParamArr.push(blockHash);
     bondSuccessParamArr.push(txHash);
@@ -597,7 +590,7 @@ export const getBlock = (blockHash: string, txHash: string, uuid?:string, cb?: F
       return;
     }
      
-    let poolPubkey =result2.inputs[0];
+    let poolPubkey ="0x"+result2.inputs[0];
 
     const poolData = validPools.find((item: any) => {
       if (item.poolPubkey == poolPubkey) {

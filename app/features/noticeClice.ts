@@ -220,16 +220,28 @@ const re_Minting=(item:any,):AppThunk=>(dispatch,getState)=>{
 }
 
 
-export const findUuid=(datas:any,txHash:string,blockHash:string)=>{  
+export const findUuid=(datas:any,txHash:string,blockHash:string,dispatch:any)=>{  
   if(datas){
     const data = datas.datas.find((item:any)=>{
-      if(item && item.subData && item.subData.processParameter && item.subData.processParameter.sending.txHash==txHash && item.subData.processParameter.sending.blockHash==blockHash){
+      if(item && item.subData && item.subData.processParameter && item.subData.processParameter.sending && item.subData.processParameter.sending.txHash==txHash && item.subData.processParameter.sending.blockHash==blockHash){
         return true;
       }else{
         return false;
       }
     })
     if(data && data.status!=noticeStatus.Confirmed){
+      if(data.subData.process.rSymbol==rSymbol.Ksm){
+        dispatch && dispatch(krmSetProcessParameter(data.subData.processParameter));
+      }
+      if(data.subData.process.rSymbol==rSymbol.Dot){
+        dispatch && dispatch(setProcessParameter(data.subData.processParameter));
+      }
+      if(data.subData.process.rSymbol==rSymbol.Atom){
+        dispatch && dispatch(atomSetProcessParameter(data.subData.processParameter));
+      }
+      if(data.subData.process.rSymbol==rSymbol.Matic){
+        dispatch && dispatch(maticSetProcessParameter(data.subData.processParameter));
+      }
       return {
         uuid:data.uuid,
         amount:data.subData.processParameter.sending.amount

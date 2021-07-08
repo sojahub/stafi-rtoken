@@ -430,7 +430,7 @@ export const onProceed = (txHash: string, cb?: Function): AppThunk => async (dis
   const block = await client.getBlock(indexedTx.height);
   const blockHash = block.id;
   
-  const noticeData = findUuid(getstate().noticeModule.noticeData,txHash,blockHash)
+  const noticeData = findUuid(getstate().noticeModule.noticeData,txHash,blockHash,dispatch)
   
   let bondSuccessParamArr:any[] = [];
   bondSuccessParamArr.push("0x" + blockHash);

@@ -463,7 +463,7 @@ export const continueProcess = (): AppThunk => async (dispatch, getState) => {
 }
 
 export const onProceed=(blockHash: string, txHash: string,cb?:Function):AppThunk => async (dispatch,getstate)=>{
-  const noticeData=findUuid(getstate().noticeModule.noticeData,txHash,blockHash)
+  const noticeData=findUuid(getstate().noticeModule.noticeData,txHash,blockHash,dispatch)
   
   let bondSuccessParamArr:any[] = [];
   bondSuccessParamArr.push(blockHash);
