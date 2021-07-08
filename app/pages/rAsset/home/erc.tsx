@@ -10,7 +10,8 @@ import {getAssetBalanceAll} from '@features/ETHClice';
 import {rTokenRate as ksm_rTokenRate,getUnbondCommission as ksm_getUnbondCommission} from '@features/rKSMClice';
 import {rTokenRate as dot_rTokenRate,getUnbondCommission as dot_getUnbondCommission} from '@features/rDOTClice'
 import {rTokenRate as fis_rTokenRate,getUnbondCommission as fis_getUnbondCommission} from '@features/FISClice';
-import {rTokenRate as atom_rTokenRate,getUnbondCommission as atom_getUnbondCommission} from '@features/rATOMClice'
+import {rTokenRate as atom_rTokenRate,getUnbondCommission as atom_getUnbondCommission} from '@features/rATOMClice';
+import {rTokenRate as matic_rTokenRate,getUnbondCommission as matic_getUnbondCommission} from '@features/rATOMClice'
 import CommonClice from '@features/commonClice';
 import CountAmount from './components/countAmount'; 
 import DataItem from './components/list/item';
@@ -22,6 +23,7 @@ import rasset_reth_svg from '@images/r_eth.svg';
 import rasset_rksm_svg from '@images/r_ksm.svg'; 
 import rasset_rdot_svg from '@images/r_dot.svg'; 
 import rasset_ratom_svg from '@images/r_atom.svg'; 
+import rasset_rmatic_svg from '@images/r_matic.svg'; 
 import {getRtokenPriceList} from '@features/bridgeClice'
 import './page.scss'
 
@@ -31,7 +33,7 @@ export default function Index(props:any){
   const dispatch=useDispatch();
 
   const {ethAccount,ksm_ercBalance,fis_ercBalance,eth_ercBalance,rfis_ercBalance,dot_ercBalance,atom_ercBalance,
-    ksmWillAmount,fisWillAmount,dotWillAmount,unitPriceList,atomWillAmount}=useSelector((state:any)=>{ 
+    ksmWillAmount,fisWillAmount,dotWillAmount,unitPriceList,atomWillAmount,matic_ercBalance,maticWillAmount}=useSelector((state:any)=>{ 
     return {
       unitPriceList:state.bridgeModule.priceList,
       ethAccount:state.rETHModule.ethAccount,
@@ -41,10 +43,12 @@ export default function Index(props:any){
       eth_ercBalance:state.ETHModule.ercETHBalance,
       dot_ercBalance:state.ETHModule.ercRDOTBalance,
       atom_ercBalance:state.ETHModule.ercRATOMBalance,
+      matic_ercBalance:state.ETHModule.ercRMaticBalance,
       ksmWillAmount:commonClice.getWillAmount(state.rKSMModule.ratio,state.rKSMModule.unbondCommission,state.ETHModule.ercRKSMBalance),
       fisWillAmount:commonClice.getWillAmount(state.FISModule.ratio,state.FISModule.unbondCommission,state.ETHModule.ercRFISBalance),
       dotWillAmount:commonClice.getWillAmount(state.rDOTModule.ratio,state.rDOTModule.unbondCommission,state.ETHModule.ercRDOTBalance),
-      atomWillAmount:commonClice.getWillAmount(state.rATOMModule.ratio,state.rATOMModule.unbondCommission,state.ETHModule.ercRATOMBalance)
+      atomWillAmount:commonClice.getWillAmount(state.rATOMModule.ratio,state.rATOMModule.unbondCommission,state.ETHModule.ercRATOMBalance),
+      maticWillAmount:commonClice.getWillAmount(state.rMaticModule.ratio,state.rMaticModule.unbondCommission,state.ETHModule.ercRMaticBalance)
     }
   })
   const totalPrice=useMemo(()=>{
@@ -65,6 +69,8 @@ export default function Index(props:any){
         count=count+(item.price*eth_ercBalance);
       }else if(item.symbol=="rATOM" && atom_ercBalance && atom_ercBalance!="--"){
         count=count+(item.price*atom_ercBalance);
+      }else if(item.symbol=="rMATIC" && matic_ercBalance && matic_ercBalance!="--"){
+        count=count+(item.price*matic_ercBalance);
       }
     });
     return count
@@ -79,10 +85,12 @@ export default function Index(props:any){
       dispatch(fis_rTokenRate() );
       dispatch(dot_rTokenRate() );
       dispatch(atom_rTokenRate() );
+      dispatch(matic_rTokenRate() );
       dispatch(ksm_getUnbondCommission());
       dispatch(fis_getUnbondCommission());
       dispatch(dot_getUnbondCommission());
       dispatch(atom_getUnbondCommission());
+      dispatch(matic_getUnbondCommission());
     }
 
   },[ethAccount && ethAccount.address])
@@ -202,6 +210,24 @@ export default function Index(props:any){
               pathname:"/rAsset/swap/erc20",
               state:{ 
                 rSymbol:"rATOM"
+              }
+            })
+          }}
+        />
+        <DataItem 
+          rSymbol="rMATIC"
+          icon={rasset_rmatic_svg}
+          fullName="Matic"
+          balance={matic_ercBalance=="--" ?"--":NumberUtil.handleFisAmountToFixed(matic_ercBalance)}
+          willGetBalance={maticWillAmount}
+          unit="MATIC"
+          trade={config.uniswap.ratomURL}
+          operationType="erc20"
+          onSwapClick={()=>{
+            props.history.push({
+              pathname:"/rAsset/swap/erc20",
+              state:{ 
+                rSymbol:"rMATIC"
               }
             })
           }}

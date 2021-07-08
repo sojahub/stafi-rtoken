@@ -10,15 +10,15 @@ type Props={
 }
 export default function Index(props:Props){
     return <LeftContent className="stafi_validator_context">
-        <label className="title">Register as a OV on MATIC </label>
+        <label className="title">Register as a OV on Matic </label>
         <div className="describe">
-        OV(Original Validator) is a block producer of MATIC  chain which can receive delegated MATIC on chain and get incentive reward from joining consensus.
+        OV(Original Validator) is a block producer of Matic  chain which can receive delegated MATIC on chain and get incentive reward from joining consensus.
         </div>
         <div className="sub_title">
             Prerequisites
         </div>
         <div className="describe">
-        1. You have registered as a validator on MATIC  Chain <br/>
+        1. You have registered as a validator on Matic  Chain <br/>
         2. You meet the current criteria for screening OV<br/>
         3. You know the penalty and risk of being a OV <br/>
         4. You know the nominate rules of a OV

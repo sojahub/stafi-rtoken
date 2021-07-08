@@ -29,7 +29,8 @@ const ETHClice = createSlice({
     RFISErc20Allowance:"--",
     RKSMErc20Allowance:"--",
     RDOTErc20Allowance:"--",
-    RATOMErc20Allowance:"--"
+    RATOMErc20Allowance:"--",
+    RMaticErc20Allowance:"--",
   },
   reducers: {   
     setErcETHBalance(state,{payload}){
@@ -68,6 +69,9 @@ const ETHClice = createSlice({
     setRATOMErc20Allowance(state,{payload}){
       state.RATOMErc20Allowance=payload;
     },
+    setRMaticErc20Allowance(state,{payload}){
+      state.RMaticErc20Allowance=payload;
+    },
   },
 });
 
@@ -83,8 +87,8 @@ export const {
     setRFISErc20Allowance,
     setRKSMErc20Allowance,
     setRDOTErc20Allowance,
-    setRATOMErc20Allowance
-    
+    setRATOMErc20Allowance,
+    setRMaticErc20Allowance
 }=ETHClice.actions
 
 export const getAssetBalanceAll=():AppThunk=>(dispatch,getState)=>{ 
@@ -94,6 +98,7 @@ export const getAssetBalanceAll=():AppThunk=>(dispatch,getState)=>{
     dispatch(getRKSMAssetBalance());
     dispatch(getRDOTAssetBalance());
     dispatch(getRATOMAssetBalance());
+    dispatch(getRMaticAssetBalance());
 }
 export const getErc20Allowances=():AppThunk=>(dispatch,getState)=>{ 
     dispatch(getFISErc20Allowance());
@@ -101,6 +106,7 @@ export const getErc20Allowances=():AppThunk=>(dispatch,getState)=>{
     dispatch(getRKSMErc20Allowance()); 
     dispatch(getRDOTErc20Allowance());
     dispatch(getRATOMErc20Allowance());
+    dispatch(getRMaticErc20Allowance());
 }
 export const getETHAssetBalance=():AppThunk=>(dispatch,getState)=>{  
   if(getState().rETHModule.ethAccount){ 
@@ -217,6 +223,14 @@ export const getFISErc20Allowance=():AppThunk=>(dispatch,getState)=>{
       const address=getState().rETHModule.ethAccount.address;  
       getErc20Allowance(address,atomServer.getTokenAbi(), atomServer.getRATOMTokenAddress(),(v:any)=>{
         dispatch(setRATOMErc20Allowance(v))
+      })
+    }
+  }
+  export const getRMaticErc20Allowance=():AppThunk=>(dispatch,getState)=>{
+    if(getState().rETHModule.ethAccount){ 
+      const address=getState().rETHModule.ethAccount.address;  
+      getErc20Allowance(address,maticServer.getTokenAbi(), maticServer.getTokenAddress(),(v:any)=>{
+        dispatch(setRMaticErc20Allowance(v))
       })
     }
   }
