@@ -336,7 +336,7 @@ export const bound = (address: string, txhash: string, blockhash: string, amount
         method: 'eth_sign',
         params: [ethAddress, u8aToHex(msgHash)],
       })
-     
+      message.info("Sending succeeded, proceeding staking");
     } else{
       signature = await stakingSignature(address, u8aToHex(keyringInstance.decodeAddress(fisAddress)));
       pubkey = u8aToHex(keyringInstance.decodeAddress(address));
