@@ -14,7 +14,7 @@ export default function index(props: Props) {
           props.onClick && props.type != "native" && props.onClick('native');
         }}
       >
-        Native<label>/StaFi</label>
+        Native<label>/ StaFi</label>
       </div>
       <div
         className={`${props.type == "erc" && "tag_active"}`}
@@ -22,7 +22,7 @@ export default function index(props: Props) {
           props.onClick && props.type != "erc" && props.onClick('erc');
         }}
       >
-        ERC20<label>/Ethereum</label>
+        ERC20<label>/ Ethereum</label>
       </div>
       <div
         className={`${props.type == "bep" && "tag_active"}`}
@@ -30,7 +30,7 @@ export default function index(props: Props) {
           props.onClick && props.type != "bep" && props.onClick('bep');
         }}
       >
-        BEP20<label>/BSC</label>
+        BEP20<label>/ BSC</label>
       </div>
     </div>
   );

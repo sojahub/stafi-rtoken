@@ -147,7 +147,7 @@ const tokenDatas = [
 const assetDatas = [
   {
     icon: stafi_white,
-    title: "Stafi Chain",
+    title: "StaFi Chain",
     content: "Native",
     type: "native",
   },
@@ -396,6 +396,7 @@ export default function Index(props: any) {
         props.history.push({
           pathname: `/rAsset/swap/${fromTypeData.type}`,
           state: {
+            destType: destTypeData && destTypeData.type,
             rSymbol: tokenType && tokenType.title,
           },
         });
@@ -427,9 +428,37 @@ export default function Index(props: any) {
     setAddress("");
   };
 
+  if (
+    fromTypeData &&
+    fromTypeData.type == "native" &&
+    (!fisAccount || !fisAccount.address)
+  ) {
+    props.history.push("/rAsset/native");
+    return null;
+  }
+
+  if (
+    fromTypeData &&
+    fromTypeData.type == "erc20" &&
+    (!ethAccount || !ethAccount.address)
+  ) {
+    props.history.push("/rAsset/eth");
+    return null;
+  }
+
+  if (
+    fromTypeData &&
+    fromTypeData.type == "bep20" &&
+    (!bscAccount || !bscAccount.address)
+  ) {
+    props.history.push("/rAsset/bep");
+    return null;
+  }
+
   const checkAddress = (address: string) => {
     return fis_checkAddress(address);
   };
+
   return (
     <Content className="stafi_rasset_swap ">
       <Back
@@ -502,7 +531,7 @@ export default function Index(props: any) {
             />
           </div>
 
-          <div className={"input_container"} style={{ marginTop: "25px" }}>
+          <div className={"input_container"} style={{ marginTop: "20px" }}>
             <div className={"title"}>Swap Amount</div>
             <AmountInputEmbed
               maxInput={tokenType.content}
@@ -528,7 +557,7 @@ export default function Index(props: any) {
 
         <div
           className={`row last link_container ${address && "show_tip"}`}
-          style={{ marginBottom: "4px" }}
+          style={{ marginBottom: "4px", marginTop: "4px" }}
         >
           {address && destTypeData && destTypeData.type == "native" && (
             <div className="tip">
@@ -592,7 +621,10 @@ export default function Index(props: any) {
             disabled={!(fromAoumt && address)}
             onClick={() => {
               if (fromTypeData && fromTypeData.type === "erc20") {
-                if (Number(ethAccount.balance) <= Number(estimateEthFee)) {
+                if (
+                  !ethAccount ||
+                  Number(ethAccount.balance) <= Number(estimateEthFee)
+                ) {
                   message.error(`No enough ETH to pay for the fee`);
                   return;
                 }
@@ -602,7 +634,10 @@ export default function Index(props: any) {
                 }
               }
               if (fromTypeData && fromTypeData.type === "bep20") {
-                if (Number(bscAccount.balance) <= Number(estimateBscFee)) {
+                if (
+                  !bscAccount ||
+                  Number(bscAccount.balance) <= Number(estimateBscFee)
+                ) {
                   message.error(`No enough BNB to pay for the fee`);
                   return;
                 }
@@ -698,9 +733,7 @@ export default function Index(props: any) {
                             fromTypeData && fromTypeData.content
                           }`
                         );
-                        setViewTxUrl(
-                          config.stafiScanUrl(address)
-                        );
+                        setViewTxUrl(config.stafiScanUrl(address));
                         setFormAmount("");
                         setAddress("");
                         setReloadFlag(reloadFlag + 1);
