@@ -155,9 +155,11 @@ export default {
      case rSymbol.Fis:
         return amount / 1000000000000;
      case rSymbol.Ksm:
-        return amount / 1000000000000;
+        return amount / 1000000000000; 
     case rSymbol.Matic:
-      return amount / 1000000000000000000;
+      return amount / 1000000000000000000; 
+     case rSymbol.Eth:
+        return amount / 1000000000000000000; 
      default:
         return amount / 1000000000000;
    } 
@@ -171,8 +173,10 @@ export default {
       case rSymbol.Fis:
         return Math.round(Number(amount) * 1000000000000);
       case rSymbol.Ksm:
-        return Math.round(Number(amount) * 1000000000000);
+        return Math.round(Number(amount) * 1000000000000); 
       case rSymbol.Matic:
+        return Math.round(Number(amount) * 1000000000000000000);
+      case rSymbol.Eth:
         return Math.round(Number(amount) * 1000000000000000000);
       default:
         return Math.round(Number(amount) * 1000000000000);
