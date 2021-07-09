@@ -388,7 +388,7 @@ export const bound =
 
         message.info('Sending succeeded, proceeding staking');
       }else if(type==rSymbol.Matic){ 
-        await timeout(5000);
+        await timeout(3000);
         const ethAddress=getState().rMATICModule.maticAccount.address;
         const fisPubkey = u8aToHex(keyringInstance.decodeAddress(fisAddress));
         const msgHash = keccakFromHexString(fisPubkey);
