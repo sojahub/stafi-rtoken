@@ -388,15 +388,15 @@ export const bound =
 
         message.info('Sending succeeded, proceeding staking');
       }else if(type==rSymbol.Matic){ 
+        await timeout(5000);
         const ethAddress=getState().rMATICModule.maticAccount.address;
         const fisPubkey = u8aToHex(keyringInstance.decodeAddress(fisAddress));
-  
         const msgHash = keccakFromHexString(fisPubkey);
         pubkey = address;
         signature=await ethereum.request({
           method: 'eth_sign',
           params: [ethAddress, u8aToHex(msgHash)],
-        })
+        }) 
         message.info("Sending succeeded, proceeding staking");
       }  else if (type == rSymbol.Sol) {
         signature = await solSignature(address, fisAddress);
@@ -418,16 +418,7 @@ export const bound =
 
       web3Enable(stafiServer.getWeb3EnalbeName());
       const injector = await web3FromSource(stafiServer.getPolkadotJsSource());
-
-      console.log('pubkey: ', pubkey);
-      console.log('signature: ', signature);
-      console.log('poolPubkey: ', poolPubkey);
-      console.log('blockhash: ', blockhash);
-      console.log('txhash: ', txhash);
-      console.log('amount: ', amount.toString());
-      console.log('type: ', type);
-      console.log('fisAddress: ', fisAddress);
-
+ 
       const bondResult = await stafiApi.tx.rTokenSeries.liquidityBond(
         pubkey,
         signature,
