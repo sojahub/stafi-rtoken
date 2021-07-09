@@ -18,8 +18,9 @@ enum rSymbol {
   Fis = 0,
   Dot = 1,
   Ksm = 2,
-  Atom = 3,
-  Sol = 4,
+  Atom = 3, 
+  Sol = 4,  
+  Matic=5, 
 }
 
 const ACCOUNT_PREFIX = 'account:';

@@ -1,3 +1,4 @@
+ 
 import Understood from '@components/modal/understood';
 import { bridgeCommon_ChainFees, erc20ToNativeSwap, getBridgeEstimateEthFee, nativeToErc20Swap } from '@features/bridgeClice';
 import { clickSwapToErc20Link, clickSwapToNativeLink, getAssetBalanceAll, getErc20Allowances } from '@features/ETHClice';
@@ -15,6 +16,11 @@ import {
 import { checkEthAddress } from '@features/rETHClice';
 import { getUnbondCommission, query_rBalances_account, reloadData as ksmReloadData, rTokenRate as ksm_rTokenRate } from '@features/rKSMClice';
 import {
+  getUnbondCommission as matic_getUnbondCommission,
+  query_rBalances_account as matic_query_rBalances_account, reloadData as maticReloadData,
+  rTokenRate as matic_rTokenRate
+} from '@features/rMATICClice';
+import {
   getUnbondCommission as sol_getUnbondCommission,
   query_rBalances_account as sol_query_rBalances_account,
   reloadData as solReloadData,
@@ -27,6 +33,7 @@ import rasset_ratom_svg from '@images/r_atom.svg';
 import rasset_rdot_svg from '@images/r_dot.svg';
 import rasset_rfis_svg from '@images/r_fis.svg';
 import rasset_rksm_svg from '@images/r_ksm.svg';
+import rasset_rmatic_svg from '@images/r_matic.svg';
 import selected_rETH from '@images/selected_rETH.svg';
 import selected_rFIS from '@images/selected_rFIS.svg';
 import Back from '@shared/components/backIcon';
@@ -77,9 +84,15 @@ const datas = [
     title: 'rSOL',
     amount: '--',
     type: 'rsol',
-  },
+  },{
+    icon:rasset_rmatic_svg, 
+    title:"rMATIC",
+    amount:"--",
+    type:'rmatic'
+  }
 ];
 
+ 
 export default function Index(props:any){  
   const dispatch =useDispatch();
   const [fromAoumt,setFormAmount]=useState<any>();
@@ -107,7 +120,7 @@ export default function Index(props:any){
       dispatch(bridgeCommon_ChainFees());
       dispatch(getBridgeEstimateEthFee());
   },[])
- 
+  
   const {
     fisAccount,
     ethAccount,
@@ -119,6 +132,7 @@ export default function Index(props:any){
     rdot_balance,
     ratom_balance,
     rsol_balance,
+    rmatic_balance
   } = useSelector((state: any) => {
     if (operationType == 'erc20') {
       return {
@@ -128,6 +142,7 @@ export default function Index(props:any){
         rdot_balance: NumberUtil.handleFisAmountToFixed(state.ETHModule.ercRDOTBalance),
         ratom_balance: NumberUtil.handleFisAmountToFixed(state.ETHModule.ercRATOMBalance),
         rsol_balance: NumberUtil.handleFisAmountToFixed(state.ETHModule.ercRSOLBalance),
+        rmatic_balance:NumberUtil.handleFisAmountToFixed(state.ETHModule.ercRMaticBalance),
         erc20EstimateFee: state.bridgeModule.erc20EstimateFee,
         estimateEthFee: state.bridgeModule.estimateEthFee,
         fisAccount: state.FISModule.fisAccount,
@@ -141,11 +156,13 @@ export default function Index(props:any){
         rdot_balance: NumberUtil.handleFisAmountToFixed(state.rDOTModule.tokenAmount),
         ratom_balance: NumberUtil.handleFisAmountToFixed(state.rATOMModule.tokenAmount),
         rsol_balance: NumberUtil.handleFisAmountToFixed(state.rSOLModule.tokenAmount),
+        rmatic_balance:NumberUtil.handleFisAmountToFixed(state.rMATICModule.tokenAmount),
         erc20EstimateFee: state.bridgeModule.erc20EstimateFee,
         estimateEthFee: state.bridgeModule.estimateEthFee,
         fisAccount: state.FISModule.fisAccount,
         ethAccount: state.rETHModule.ethAccount,
       };
+
     }
   });
 
@@ -154,19 +171,22 @@ export default function Index(props:any){
     if(fisAccount && operationType=="native"){
       dispatch(query_rBalances_account());
       dispatch(fis_query_rBalances_account());
-      dispatch(dot_query_rBalances_account());
+      dispatch(dot_query_rBalances_account()); 
       dispatch(atom_query_rBalances_account())
-      dispatch(sol_query_rBalances_account())
+      dispatch(sol_query_rBalances_account()) 
+      dispatch(matic_query_rBalances_account()) 
       dispatch(ksm_rTokenRate());
       dispatch(fis_rTokenRate() );
       dispatch(dot_rTokenRate());
-      dispatch(atom_rTokenRate());
-      dispatch(sol_rTokenRate());
+      dispatch(atom_rTokenRate()); 
+      dispatch(sol_rTokenRate()); 
+      dispatch(matic_rTokenRate()); 
       dispatch(getUnbondCommission());
       dispatch(fis_getUnbondCommission());
       dispatch(dot_getUnbondCommission());
-      dispatch(atom_getUnbondCommission());
-      dispatch(sol_getUnbondCommission());
+      dispatch(atom_getUnbondCommission()); 
+      dispatch(sol_getUnbondCommission()); 
+      dispatch(matic_getUnbondCommission()); 
     }
   },[fisAccount,operationType])
   useEffect(()=>{ 
@@ -182,25 +202,29 @@ export default function Index(props:any){
     selectDataSource[1].amount=rfis_balance
     selectDataSource[2].amount=rdot_balance
     selectDataSource[3].amount=rksm_balance
-    selectDataSource[4].amount=ratom_balance
-    selectDataSource[5].amount=rsol_balance
+    selectDataSource[4].amount=ratom_balance 
+    selectDataSource[5].amount=rsol_balance 
+    selectDataSource[6].amount=rmatic_balance 
     setSelectDataSource([...selectDataSource]);
    
-      if(fromType.title="FIS"){
-        fromType.amount=fis_balance;
-      }else  if(fromType.title="rFIS"){
-        fromType.amount=rfis_balance;
-      }else if(fromType.title="rKSM"){
-        fromType.amount=rksm_balance;
-      }else if(fromType.title="rDOT"){
-        fromType.amount=rdot_balance;
-      }else if(fromType.title="rATOM"){
-        fromType.amount=ratom_balance;
-      }else if(fromType.title="rSOL"){
-        fromType.amount=rsol_balance;
-      }
-      setFormType({...fromType}); 
-  },[rksm_balance,rfis_balance,fis_balance,rdot_balance,ratom_balance,rsol_balance])
+    if(fromType.title="FIS"){
+      fromType.amount=fis_balance;
+    }else  if(fromType.title="rFIS"){
+      fromType.amount=rfis_balance;
+    }else if(fromType.title="rKSM"){
+      fromType.amount=rksm_balance;
+    }else if(fromType.title="rDOT"){
+      fromType.amount=rdot_balance;
+    }else if(fromType.title="rATOM"){
+      fromType.amount=ratom_balance; 
+    }else if(fromType.title="rSOL"){
+      fromType.amount=rsol_balance;
+    } else if(fromType.title="rMATIC"){
+      fromType.amount=rmatic_balance;
+    }
+    setFormType({...fromType}); 
+  },[rksm_balance,rfis_balance,fis_balance,rdot_balance,ratom_balance,rsol_balance,rmatic_balance])
+ 
   
 
   const checkAddress=(address:string)=>{
@@ -324,9 +348,12 @@ export default function Index(props:any){
           }
           if(fromType.title=="rATOM"){
             dispatch(atomReloadData());
-          }
+          } 
           if(fromType.title=="rSOL"){
             dispatch(solReloadData());
+          }
+          if(fromType.title=="rMATIC"){
+            dispatch(maticReloadData()); 
           }
         }else{
           dispatch(getAssetBalanceAll()); 

@@ -8,6 +8,7 @@ import { AppThunk } from '../store';
 import { bondStates, getMinting } from './FISClice';
 import { initProcess, processStatus, setProcessSending, setProcessSlider, setProcessStaking } from './globalClice';
 import { setProcessParameter as atomSetProcessParameter } from './rATOMClice';
+import { setProcessParameter as maticSetProcessParameter } from './rATOMClice';
 import { setProcessParameter } from './rDOTClice';
 import { setProcessParameter as krmSetProcessParameter } from './rKSMClice';
 import { setProcessParameter as solSetProcessParameter } from './rSOLClice';
@@ -174,11 +175,13 @@ export const setProcess=(item:any,list:any,cb?:Function):AppThunk=>async (dispat
       }
       if(item.subData.process.rSymbol==rSymbol.Atom){
         dispatch(atomSetProcessParameter(item.subData.processParameter));
-      }
+      } 
       if(item.subData.process.rSymbol==rSymbol.Sol){
         dispatch(solSetProcessParameter(item.subData.processParameter));
-      }
-      
+      } 
+      if(item.subData.process.rSymbol==rSymbol.Matic){
+        dispatch(maticSetProcessParameter(item.subData.processParameter));
+      } 
     }
   }
 }
@@ -222,16 +225,31 @@ const re_Minting=(item:any,):AppThunk=>(dispatch,getState)=>{
 }
 
 
-export const findUuid=(datas:any,txHash:string,blockHash:string)=>{  
+export const findUuid=(datas:any,txHash:string,blockHash:string,dispatch:any)=>{  
   if(datas){
     const data = datas.datas.find((item:any)=>{
-      if(item && item.subData && item.subData.processParameter && item.subData.processParameter.sending.txHash==txHash && item.subData.processParameter.sending && item.subData.processParameter.sending.blockHash==blockHash){
+      if(item && item.subData && item.subData.processParameter && item.subData.processParameter.sending && item.subData.processParameter.sending.txHash==txHash && item.subData.processParameter.sending.blockHash==blockHash){
         return true;
       }else{
         return false;
       }
     })
     if(data && data.status!=noticeStatus.Confirmed){
+      if(data.subData.process.rSymbol==rSymbol.Ksm){
+        dispatch && dispatch(krmSetProcessParameter(data.subData.processParameter));
+      }
+      if(data.subData.process.rSymbol==rSymbol.Dot){
+        dispatch && dispatch(setProcessParameter(data.subData.processParameter));
+      }
+      if(data.subData.process.rSymbol==rSymbol.Atom){
+        dispatch && dispatch(atomSetProcessParameter(data.subData.processParameter));
+      }
+      if(data.subData.process.rSymbol==rSymbol.Matic){
+        dispatch && dispatch(maticSetProcessParameter(data.subData.processParameter));
+      }
+      if(data.subData.process.rSymbol==rSymbol.Sol){
+        dispatch && dispatch(solSetProcessParameter(data.subData.processParameter));
+      }
       return {
         uuid:data.uuid,
         amount:data.subData.processParameter.sending.amount

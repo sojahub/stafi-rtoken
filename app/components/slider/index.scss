@@ -1,7 +1,10 @@
 .stafi_left_master_sider{ 
     background: linear-gradient(to bottom,#2B3239,#292F38) ;
-   min-height: 700px;
-    position: relative;
+    min-height: 700px;
+    position: relative; 
+    padding-bottom: 80px;
+    height: fit-content;
+
     .logo_panel{
         display: flex;
         align-items: center;
@@ -13,7 +16,7 @@
     }
     .network{
         position: absolute;
-        top: 676px; 
+        bottom: 20px; 
         left:50px;
         display: flex;
         align-items: center;;

@@ -1039,14 +1039,14 @@ export const rewardDetails= [
 
 
 export const getReward=(pageIndex:Number,cb:Function):AppThunk=>async (dispatch, getState)=>{
-  const source=getState().FISModule.fisAccount.address; //"36NQ98C5uri7ruBKvdzWFeEJQEhGpzCvJVbMHkbTu2mCgMRo"
+  const source=getState().rETHModule.ethAccount.address; 
   const result=await rpcServer.getReward(source,-1,pageIndex); 
   if(result.status==80000){ 
     const rewardList=getState().rETHModule.rewardList; 
     if(result.data.rewardList.length>0){
       const list=result.data.rewardList.map((item:any)=>{
         const rate=NumberUtil.rTokenRateToHuman(item.rate);
-        const rbalance=NumberUtil.handleEthAmountToFixed(item.rbalance);
+        const rbalance=NumberUtil.tokenAmountToChain(item.rbalance,rSymbol.Eth);
         return {
           ...item,
           rbalance:rbalance,

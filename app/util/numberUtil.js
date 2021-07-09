@@ -147,7 +147,7 @@ export default {
   handleAtomRoundToFixed(amount) {
     if (amount == '--') {
       return '--';
-    }
+    } 
     return (Math.round(amount * 1000000) / 1000000).toFixed(4) || '--';
   },
 
@@ -169,6 +169,12 @@ export default {
       case rSymbol.Sol:
         factor = 1000000000;
         break;
+      case rSymbol.Eth:
+        factor = 1000000000000000000;
+        break;
+      case rSymbol.Matic:
+        factor = 1000000000000000000;
+        break;
       default:
         factor = 1000000000000;
         break;
@@ -178,17 +184,21 @@ export default {
     return divide(amount, factor);
   },
   tokenAmountToChain(amount, symbol) {
-    switch (symbol) {
+    switch (symbol) { 
       case rSymbol.Dot:
         return Math.round(Number(amount) * 10000000000);
       case rSymbol.Atom:
         return Math.round(Number(amount) * 1000000);
       case rSymbol.Fis:
         return Math.round(Number(amount) * 1000000000000);
-      case rSymbol.Ksm:
+      case rSymbol.Ksm: 
         return Math.round(Number(amount) * 1000000000000);
       case rSymbol.Sol:
-        return Math.round(Number(amount) * 1000000000);
+        return Math.round(Number(amount) * 1000000000); 
+      case rSymbol.Matic:
+        return Math.round(Number(amount) * 1000000000000000000);
+      case rSymbol.Eth:
+        return Math.round(Number(amount) * 1000000000000000000); 
       default:
         return Math.round(Number(amount) * 1000000000000);
     }

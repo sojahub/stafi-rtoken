@@ -1,8 +1,9 @@
 import leftArrowSvg from '@images/left_arrow.svg';
 import rATOM from '@images/selected_rATOM.svg';
 import rDOT from '@images/selected_rDOT.svg';
-import rKSM from '@images/selected_rKSM.svg';
+import rKSM from '@images/selected_rKSM.svg'; 
 import rSOL from '@images/selected_r_sol.svg';
+import rMATIC from '@images/selected_rMatic.svg';
 import Button from '@shared/components/button/button';
 import Input from '@shared/components/input/amountInput';
 import EditInput from '@shared/components/input/editAddresInput';
@@ -19,7 +20,7 @@ type Props = {
   address?: string;
   onInputChange?: Function;
   onInputConfirm?: Function;
-  type: 'rDOT' | 'rETH' | 'rFIS' | 'rKSM' | 'rATOM' | 'rSOL';
+  type: 'rDOT' | 'rETH' | 'rFIS' | 'rKSM' | 'rATOM' | 'rSOL' | "rMATIC";
 };
 export default function Index(props: Props) {
   const [inputEdit, setInputEdit] = useState(false);
@@ -33,6 +34,8 @@ export default function Index(props: Props) {
       return rATOM;
     } else if (props.type == 'rSOL') {
       return rSOL;
+    } else if (props.type == 'rMATIC') {
+      return rMATIC;
     }
   };
 
@@ -50,6 +53,7 @@ export default function Index(props: Props) {
         {props.type == 'rKSM' && ' Redeem KSM'}
         {props.type == 'rATOM' && ' Redeem ATOM'}
         {props.type == 'rSOL' && ' Redeem SOL'}
+        {props.type == 'rMATIC' && ' Redeem MATIC'}
       </div>
       <div className='subTitle'>
         <div className='label'>
@@ -57,6 +61,7 @@ export default function Index(props: Props) {
           {props.type == 'rKSM' && '1. Unbond KSM'}
           {props.type == 'rATOM' && '1. Unbond ATOM'}
           {props.type == 'rSOL' && '1. Unbond SOL'}
+          {props.type == 'rMATIC' && '1. Unbond MATIC'}
         </div>
         <div className='balance'></div>
       </div>

@@ -8,6 +8,7 @@ import { getUnbondCommission as dot_getUnbondCommission, rTokenRate as dot_rToke
 import { connectMetamask, handleEthAccount, monitoring_Method } from '@features/rETHClice';
 import { getUnbondCommission as ksm_getUnbondCommission, rTokenRate as ksm_rTokenRate } from '@features/rKSMClice';
 import { getUnbondCommission as sol_getUnbondCommission, rTokenRate as sol_rTokenRate } from '@features/rSOLClice';
+import {rTokenRate as matic_rTokenRate,getUnbondCommission as matic_getUnbondCommission} from '@features/rATOMClice'
 import metamask from '@images/metamask.png';
 import rasset_fis_svg from '@images/rFIS.svg';
 import rasset_rsol_svg from '@images/rSOL.svg';
@@ -16,8 +17,9 @@ import rasset_rdot_svg from '@images/r_dot.svg';
 import rasset_reth_svg from '@images/r_eth.svg';
 import rasset_rfis_svg from '@images/r_fis.svg';
 import rasset_rksm_svg from '@images/r_ksm.svg';
+import rasset_rmatic_svg from '@images/r_matic.svg'; 
 import Button from '@shared/components/button/connect_button';
-import Content from '@shared/components/content';
+import Content from '@shared/components/content'; 
 import NumberUtil from '@util/numberUtil';
 import React, { useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -25,13 +27,15 @@ import Tag from './components/carTag/index';
 import CountAmount from './components/countAmount';
 import DataList from './components/list';
 import DataItem from './components/list/item';
-import './page.scss';
+import './page.scss'; 
+
+ 
 
 const commonClice=new CommonClice();
 export default function Index(props:any){ 
  
   const dispatch=useDispatch();
-
+ 
   const {
     ethAccount,
     ksm_ercBalance,
@@ -47,7 +51,9 @@ export default function Index(props:any){
     unitPriceList,
     atomWillAmount,
     solWillAmount,
-  } = useSelector((state: any) => {
+    matic_ercBalance,
+    maticWillAmount
+  } = useSelector((state: any) => {  
     return {
       unitPriceList: state.bridgeModule.priceList,
       ethAccount: state.rETHModule.ethAccount,
@@ -58,6 +64,7 @@ export default function Index(props:any){
       dot_ercBalance: state.ETHModule.ercRDOTBalance,
       atom_ercBalance: state.ETHModule.ercRATOMBalance,
       sol_ercBalance: state.ETHModule.ercRSOLBalance,
+      matic_ercBalance: state.ETHModule.ercRMaticBalance,
       ksmWillAmount: commonClice.getWillAmount(
         state.rKSMModule.ratio,
         state.rKSMModule.unbondCommission,
@@ -83,6 +90,11 @@ export default function Index(props:any){
         state.rSOLModule.unbondCommission,
         state.ETHModule.ercRSOLBalance,
       ),
+      maticWillAmount: commonClice.getWillAmount(
+        state.rMATICModule.ratio,
+        state.rMATICModule.unbondCommission,
+        state.ETHModule.ercRMaticBalance,
+      ),
     };
   });
   const totalPrice = useMemo(() => {
@@ -105,13 +117,15 @@ export default function Index(props:any){
         count = count + item.price * atom_ercBalance;
       } else if (item.symbol == 'rSOL' && sol_ercBalance && sol_ercBalance != '--') {
         count = count + item.price * sol_ercBalance;
+      }else if(item.symbol=="rMATIC" && matic_ercBalance && matic_ercBalance!="--"){
+        count=count+(item.price*matic_ercBalance);
       }
     });
     return count;
   }, [unitPriceList, ksm_ercBalance, fis_ercBalance, rfis_ercBalance, eth_ercBalance, dot_ercBalance, atom_ercBalance, sol_ercBalance]);
 
   let time: any;
-
+  console.log(matic_ercBalance,"======matic_ercBalance")
   useEffect(() => {
     updateData();
     time = setInterval(updateData, 30000);
@@ -133,16 +147,18 @@ export default function Index(props:any){
 
       dispatch(getAssetBalanceAll());
 
-      dispatch(ksm_rTokenRate());
+      dispatch(ksm_rTokenRate()); 
       dispatch(fis_rTokenRate());
       dispatch(dot_rTokenRate());
       dispatch(atom_rTokenRate());
-      dispatch(sol_rTokenRate());
+      dispatch(sol_rTokenRate()); 
+      dispatch(matic_rTokenRate() ); 
       dispatch(ksm_getUnbondCommission());
       dispatch(fis_getUnbondCommission());
       dispatch(dot_getUnbondCommission());
-      dispatch(atom_getUnbondCommission());
-      dispatch(sol_getUnbondCommission());
+      dispatch(atom_getUnbondCommission()); 
+      dispatch(sol_getUnbondCommission()); 
+      dispatch(matic_getUnbondCommission()); 
     }
   };
 
@@ -261,7 +277,7 @@ export default function Index(props:any){
               }
             })
           }}
-        />
+        /> 
          <DataItem 
           rSymbol="rSOL"
           icon={rasset_rsol_svg}
@@ -269,13 +285,33 @@ export default function Index(props:any){
           balance={sol_ercBalance=="--" ?"--":NumberUtil.handleFisAmountToFixed(sol_ercBalance)}
           willGetBalance={solWillAmount}
           unit="SOL"
-          trade={config.uniswap.rsolURL}
+          trade={config.uniswap.rsolURL} 
           operationType="erc20"
           onSwapClick={()=>{
             props.history.push({
               pathname:"/rAsset/swap/erc20",
-              state:{ 
-                rSymbol:"rSOL"
+              state:{  
+                rSymbol:"rSOL" 
+              }
+            })
+          }}
+        />
+
+        
+        <DataItem 
+          rSymbol="rMATIC"
+          icon={rasset_rmatic_svg}
+          fullName="Matic"
+          balance={matic_ercBalance=="--" ?"--":NumberUtil.handleFisAmountToFixed(matic_ercBalance)}
+          willGetBalance={maticWillAmount}
+          unit="MATIC"
+          trade={config.uniswap.ratomURL} 
+          operationType="erc20"
+          onSwapClick={()=>{
+            props.history.push({
+              pathname:"/rAsset/swap/erc20",
+              state:{  
+                rSymbol:"rMATIC" 
               }
             })
           }}

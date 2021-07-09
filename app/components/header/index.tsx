@@ -19,6 +19,7 @@ import { rSymbol, Symbol } from '@keyring/defaults';
 import Modal from '@shared/components/modal/connectModal';
 import StringUtil from '@util/stringUtil';
 import Tool from '@util/toolUtil';
+import NumberUtil from '@util/numberUtil'
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Page from '../../pages/rDOT/selectWallet/index';
@@ -69,7 +70,7 @@ export default function Index(props: Props) {
         if (state.FISModule.fisAccount) {
           return {
             fisAccount: state.FISModule.fisAccount,
-          };
+          }; 
         }
       }
       if (location.pathname.includes('/rAsset/erc') || location.pathname.includes('/rAsset/swap/erc20')) {
@@ -97,6 +98,16 @@ export default function Index(props: Props) {
         };
       }
     }
+    if(location.pathname.includes("/rMATIC")){ 
+      if(state.rMATICModule.maticAccount || state.FISModule.fisAccount){
+          return {
+              maticAccount:state.rMATICModule.maticAccount,
+              fisAccount:state.FISModule.fisAccount,
+              noticeData:state.noticeModule.noticeData,
+              type:"rMATIC"
+          }
+      } 
+    }
     return null
   })
   const {noticeData}=useSelector((state:any)=>{  
@@ -108,6 +119,7 @@ export default function Index(props: Props) {
         return <></>
     }
     return <div className="stafi_header">
+ 
     <Modal visible={visible}>
         {(modalType=="dot") && <Page location={{}} type="header"  onClose={()=>{
             setVisible(false);
@@ -153,6 +165,7 @@ export default function Index(props: Props) {
             }} className="header_tool account fis">
                 <div>{account.fisAccount.balance} FIS</div>
                 <div>{StringUtil.replacePkh(account.fisAccount.address,6,44)}</div>
+
             </div>}
             {account.dotAccount && <div onClick={()=>{
                 setModalType("dot");
@@ -201,6 +214,10 @@ export default function Index(props: Props) {
                 <div>{account.ethAccount.balance} ETH</div>
                 <div>{StringUtil.replacePkh(account.ethAccount.address,4,38)}</div>
             </div>} 
+            {account.maticAccount && <div  className="header_tool account">
+                    <div>{NumberUtil.handleFisAmountToFixed(account.maticAccount.balance)} MATIC</div>
+                    <div>{StringUtil.replacePkh(account.maticAccount.address,4,38)}</div>
+                </div>} 
         </div>}
         <div className="report_icon"><a  target="_blank" href="https://info.stafi.io/"><img src={report_icon} /></a></div>
    </div>

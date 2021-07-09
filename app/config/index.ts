@@ -148,6 +148,7 @@ export default {
       return '0xd363ed9ee73c8b6bd048ae188000be454f7b7925';
     }
   },
+ 
   rSOLTokenAddress: () => {
     if (!isdev()) {
       return '0x08841b9cba30e80a0e51df13b174f362f90e3df1';
@@ -159,9 +160,17 @@ export default {
     if (!isdev()) {
       return '0x2b6b6fce3af32efe4430e446717bda72b95ebb9a';
     } else {
+
       return '0x05da428a68da64a2b085a4d2d4279d952d7b647a';
     }
-  },
+  }, 
+  rMATICTokenAddress:()=>{
+    if(!isdev()){
+      return '0x7D1AfA7B718fb893dB30A3aBc0Cfc608AaCfeBB0';
+    }else{
+      return '0x499d11e0b6eac7c0593d8fb292dcbbf815fb29ae';
+    }  
+  }, 
   bridgeAddress: () => {
     if (!isdev()) {
       return '0xc0609ea6e4345555276fac1636b5c27ebc17d817';
@@ -218,15 +227,17 @@ export default {
     } else if (type == Symbol.Ksm) {
       return 8;
     } else if (type == Symbol.Atom) {
+      return 22; 
+    }else if(type==Symbol.Matic){
       return 22;
-    } else if (type == Symbol.Fis) {
+    }else if(type==Symbol.Fis){ 
       return 29;
     } else if (type == Symbol.Sol) {
       return 10;
     } else {
       return 0;
     }
-  },
+  }, 
   curve: {
     rethURL: 'https://curve.fi/reth',
   },
@@ -253,3 +264,4 @@ export default {
     return JSON.parse(abi);
   },
 };
+ 

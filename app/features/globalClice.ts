@@ -11,9 +11,9 @@ import { AppThunk } from '../store';
 import { createSubstrate as fisCreateSubstrate, reloadData as fisReloadData } from './FISClice';
 import { createSubstrate as atomCreateSubstrate, reloadData as atomReloadData } from './rATOMClice';
 import { createSubstrate as dotCreateSubstrate, reloadData as dotReloadData } from './rDOTClice';
-import { createSubstrate as ksmCreateSubstrate, reloadData as ksmReloadData } from './rKSMClice';
-import { createSubstrate as solCreateSubstrate, reloadData as solReloadData } from './rSOLClice';
-
+import { createSubstrate as ksmCreateSubstrate, reloadData as ksmReloadData } from './rKSMClice'; 
+import { createSubstrate as solCreateSubstrate, reloadData as solReloadData } from './rSOLClice'; 
+import {  reloadData as maticReloadData } from './rMATICClice'; 
 export enum processStatus {
   default = 0,
   success = 1,
@@ -110,7 +110,7 @@ export const {
   initProcess,
   setLoading,
 } = globalClice.actions;
-
+ 
 export const connectPolkadotjs =
   (type: Symbol, cb?: Function): AppThunk =>
   async (dispatch, getState) => {
@@ -120,6 +120,7 @@ export const connectPolkadotjs =
       const dotKeyringInstance = keyring.init(type);
       const accountsList = accounts.map((element: any) => {
         const address = dotKeyringInstance.encodeAddress(dotKeyringInstance.decodeAddress(element.address));
+
         return {
           name: element.meta.name,
           address: address,
@@ -200,6 +201,10 @@ export const clice = (symbol: string) => {
       return {
         createSubstrate: atomCreateSubstrate,
         reloadData: atomReloadData,
+      };
+    case Symbol.Matic: 
+      return { 
+        reloadData:maticReloadData
       };
     case Symbol.Kava:
     case Symbol.One:

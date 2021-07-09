@@ -21,8 +21,10 @@ const config = {
   },
 };
 
-const options = {
-  mode: 'development',
-};
+ 
+const options={ 
+    mode:"development",
+    devtool: "inline-source-map"
+} 
 
 module.exports = { ...webpackConfigCreator(options), ...config };

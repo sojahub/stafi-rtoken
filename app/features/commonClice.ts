@@ -41,21 +41,22 @@ export default class CommonClice {
           .bondPipelines(type, poolPubkey)
           .then((bondedData: any) => {
             // console.log('bondedData: ', bondedData.toJSON());
+
             let active = 0;
             let bonded = bondedData.toJSON();
             if (bonded) {
               active = bonded.active;
             }
             const keyringInstance = keyring.init(symbol);
+ 
             let poolAddress;
-            if (symbol == Symbol.Atom) {
+            if(symbol==Symbol.Matic){
+              poolAddress=poolPubkey;
+            }else if (symbol == Symbol.Atom) {
               poolAddress = keyringInstance.encodeAddress(hexToU8a(poolPubkey));
             } else {
               poolAddress = keyringInstance.encodeAddress(poolPubkey);
-            }
-            console.log('poolAddress: ', poolAddress);
-
-            // dispatch(setValidPools());
+            } 
             cb &&
               cb({
                 address: poolAddress,
@@ -67,6 +68,7 @@ export default class CommonClice {
             console.log('getPools error: ', error);
           });
       });
+
     }
   }
   async poolBalanceLimit(type: rSymbol) {

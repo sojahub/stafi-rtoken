@@ -40,11 +40,13 @@ export default {
     }
     if (location.pathname.includes('/rAsset')) {
       return rSymbol.Asset;
-    }
+    } 
     if (location.pathname.includes('/rSOL')) {
       return rSymbol.Sol;
-    }
-
+    } 
+    if(location.pathname.includes("/rMATIC")){
+      return rSymbol.Matic
+    } 
     return rSymbol.Asset;
   },
   getTokenTypeBySymbol(symbol) {

@@ -6,6 +6,7 @@ import KsmServer from '@servers/ksm';
 import DotServer from '@servers/polkadot';
 import SolServer from '@servers/sol';
 import FisServer from '@servers/stafi';
+import MaticServer from '@servers/matic';
 import { AppThunk } from '../store';
 
 const ethServer =new EthServer();
@@ -13,8 +14,9 @@ const fisServer =new FisServer();
 const ksmServer=new KsmServer();
 const bridgeServer=new BridgeServer();
 const dotServer =new DotServer();
-const atomServer=new AtomServer();
-const solServer=new SolServer();
+const atomServer=new AtomServer(); 
+const solServer=new SolServer(); 
+const maticServer=new MaticServer(); 
 const ETHClice = createSlice({
   name: 'ETHModule',
   initialState: {   
@@ -23,14 +25,16 @@ const ETHClice = createSlice({
     ercRFISBalance:"--",
     ercRKSMBalance:"--",
     ercRDOTBalance:"--",
-    ercRATOMBalance:"--",
-    ercRSOLBalance:"--",
+    ercRATOMBalance:"--", 
+    ercRSOLBalance:"--", 
+    ercRMaticBalance:"--", 
     FISErc20Allowance:"--",
     RFISErc20Allowance:"--",
     RKSMErc20Allowance:"--",
     RDOTErc20Allowance:"--",
-    RATOMErc20Allowance:"--",
-    RSOLErc20Allowance:"--",
+    RATOMErc20Allowance:"--", 
+    RSOLErc20Allowance:"--", 
+    RMaticErc20Allowance:"--", 
   },
   reducers: {   
     setErcETHBalance(state,{payload}){
@@ -50,9 +54,12 @@ const ETHClice = createSlice({
     },
     setErcRATOMBalance(state,{payload}){
       state.ercRATOMBalance=payload;
-    },
+    }, 
     setErcRSOLBalance(state,{payload}){
       state.ercRSOLBalance=payload;
+    },
+    setErcRMaticBalance(state,{payload}){
+      state.ercRMaticBalance=payload; 
     },
     setFISErc20Allowance(state,{payload}){
         state.FISErc20Allowance=payload;
@@ -68,9 +75,12 @@ const ETHClice = createSlice({
     },
     setRATOMErc20Allowance(state,{payload}){
       state.RATOMErc20Allowance=payload;
-    },
+    }, 
     setRSOLErc20Allowance(state,{payload}){
       state.RSOLErc20Allowance=payload;
+    },
+    setRMaticErc20Allowance(state,{payload}){
+      state.RMaticErc20Allowance=payload; 
     },
   },
 });
@@ -81,14 +91,16 @@ export const {
     setErcRFISBalance,
     setErcRKSMBalance,
     setErcRDOTBalance,
-    setErcRATOMBalance,
-    setErcRSOLBalance,
+    setErcRATOMBalance, 
+    setErcRSOLBalance, 
+    setErcRMaticBalance, 
     setFISErc20Allowance,
     setRFISErc20Allowance,
     setRKSMErc20Allowance,
     setRDOTErc20Allowance,
-    setRATOMErc20Allowance,
-    setRSOLErc20Allowance,
+    setRATOMErc20Allowance, 
+    setRSOLErc20Allowance, 
+    setRMaticErc20Allowance 
 }=ETHClice.actions
 
 export const getAssetBalanceAll=():AppThunk=>(dispatch,getState)=>{ 
@@ -97,16 +109,18 @@ export const getAssetBalanceAll=():AppThunk=>(dispatch,getState)=>{
     dispatch(getRFISAssetBalance());
     dispatch(getRKSMAssetBalance());
     dispatch(getRDOTAssetBalance());
-    dispatch(getRATOMAssetBalance());
-    dispatch(getRSOLAssetBalance());
+    dispatch(getRATOMAssetBalance()); 
+    dispatch(getRSOLAssetBalance()); 
+    dispatch(getRMaticAssetBalance()); 
 }
 export const getErc20Allowances=():AppThunk=>(dispatch,getState)=>{ 
     dispatch(getFISErc20Allowance());
     dispatch(getRFISErc20Allowance());
     dispatch(getRKSMErc20Allowance()); 
     dispatch(getRDOTErc20Allowance());
-    dispatch(getRATOMErc20Allowance());
-    dispatch(getRSOLErc20Allowance());
+    dispatch(getRATOMErc20Allowance()); 
+    dispatch(getRSOLErc20Allowance()); 
+    dispatch(getRMaticErc20Allowance()); 
 }
 export const getETHAssetBalance=():AppThunk=>(dispatch,getState)=>{  
   if(getState().rETHModule.ethAccount){ 
@@ -157,12 +171,25 @@ export const getFISAssetBalance=():AppThunk=>(dispatch,getState)=>{
         dispatch(setErcRATOMBalance(v))
       })
     }
-  }
+  } 
   export const getRSOLAssetBalance=():AppThunk=>(dispatch,getState)=>{  
     if(getState().rETHModule.ethAccount){ 
       const address=getState().rETHModule.ethAccount.address;   
       getAssetBalance(address,solServer.getTokenAbi(), solServer.getRSOLTokenAddress(),(v:any)=>{
         dispatch(setErcRSOLBalance(v))
+ 
+      })
+    }
+  }
+ 
+  export const getRMaticAssetBalance=():AppThunk=>(dispatch,getState)=>{  
+    if(getState().rETHModule.ethAccount){ 
+      const address=getState().rETHModule.ethAccount.address; 
+      console.log(address,"========address")  
+      getAssetBalance(address,maticServer.getTokenAbi(), maticServer.getTokenAddress(),(v:any)=>{
+        console.log(v,"========vvvvvv")
+         dispatch(setErcRMaticBalance(v));
+
       })
     }
   }
@@ -225,12 +252,21 @@ export const getFISErc20Allowance=():AppThunk=>(dispatch,getState)=>{
         dispatch(setRATOMErc20Allowance(v))
       })
     }
-  }
+  } 
   export const getRSOLErc20Allowance=():AppThunk=>(dispatch,getState)=>{
     if(getState().rETHModule.ethAccount){ 
       const address=getState().rETHModule.ethAccount.address;  
       getErc20Allowance(address,solServer.getTokenAbi(), solServer.getRSOLTokenAddress(),(v:any)=>{
         dispatch(setRSOLErc20Allowance(v))
+      })
+    }
+  }
+ 
+  export const getRMaticErc20Allowance=():AppThunk=>(dispatch,getState)=>{
+    if(getState().rETHModule.ethAccount){ 
+      const address=getState().rETHModule.ethAccount.address;  
+      getErc20Allowance(address,maticServer.getTokenAbi(), maticServer.getTokenAddress(),(v:any)=>{
+        dispatch(setRMaticErc20Allowance(v)) 
       })
     }
   }

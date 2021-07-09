@@ -451,7 +451,7 @@ export const continueProcess = (): AppThunk => async (dispatch, getState) => {
         }
       }),
     );
-  }
+  } 
 };
 
 export const onProceed =
@@ -464,6 +464,7 @@ export const onProceed =
     } catch (error) {
       message.error('Please input the right TxHash');
       return;
+
     }
     if (!indexedTx) {
       message.error('Please input the right TxHash');
@@ -473,7 +474,7 @@ export const onProceed =
     const block = await client.getBlock(indexedTx.height);
     const blockHash = block.id;
 
-    const noticeData = findUuid(getstate().noticeModule.noticeData, txHash, blockHash);
+    const noticeData = findUuid(getstate().noticeModule.noticeData, txHash, blockHash, dispatch);
 
     let bondSuccessParamArr: any[] = [];
     bondSuccessParamArr.push('0x' + blockHash);

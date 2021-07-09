@@ -27,15 +27,17 @@ function webpackCommonConfigCreator(options){
             fallback: {
                 crypto: require.resolve('crypto-browserify'), 
                 buffer: require.resolve('buffer/'), 
-                stream: require.resolve('stream-browserify'),
+                stream: require.resolve('stream-browserify'), 
+                fs:false,
                 http: false,
                 https:false,
                 path:false
             },
              
             alias: {
-               stream: "stream-browserify",
+               stream: "stream-browserify", 
                path:false,
+               fs:false,
                 crypto: 'crypto-browserify',   
                 '@components': resolve('../app/components'), 
                 '@images': resolve('../app/assets/images'), 
@@ -57,7 +59,7 @@ function webpackCommonConfigCreator(options){
             path:path.resolve(__dirname,"../build"),
             assetModuleFilename: 'assets/[hash][ext][query]',
             publicPath:"/"
-        }, 
+        },
         module:{
             rules:[
               {
@@ -133,11 +135,6 @@ function webpackCommonConfigCreator(options){
                     loader: 'ts-loader',
                   },
                 ],
-              },
-              {
-                test: /\.js$/,
-                use: ["source-map-loader"],
-                enforce: "pre"
               }
             ],
               
@@ -171,9 +168,10 @@ function webpackCommonConfigCreator(options){
             new webpack.ProvidePlugin({
                 Buffer: ["buffer", "Buffer"],
                 process:'process',
-                stream: 'stream',
+                stream: 'stream', 
                 // crypto:'crypto',
-                path:'path'
+                path:'path',
+                fs:'fs'
               }), 
               new webpack.DllReferencePlugin({
                 context: path.join(__dirname, '..'),

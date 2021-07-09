@@ -1,11 +1,13 @@
 import logo from '@images/logo2.png';
 import rAsset_svg from '@images/rAsset.svg';
 import rSOL_svg from '@images/rSOL.svg';
-import rATOM_svg from '@images/r_atom.svg';
+import rATOM_svg from '@images/r_atom.svg'; 
 import rDOT_svg from '@images/r_dot.svg';
 import rETH_svg from '@images/r_eth.svg';
 import rFIS_svg from '@images/r_fis.svg';
-import rKSM_svg from '@images/r_ksm.svg';
+import rKSM_svg from '@images/r_ksm.svg';  
+import rMatic_svg from '@images/r_matic.svg';
+import selected_rMatic_svg from '@images/selected_r_matic.svg' 
 import rPool_svg from '@images/r_pool.svg';
 import selected_rAsset_svg from '@images/selected_rAssets.svg';
 import selected_rATOM_svg from '@images/selected_r_atom.svg';
@@ -19,7 +21,7 @@ import React from 'react';
 import { isdev } from '../../config/index';
 import './index.scss';
 import Item from './item';
-
+ 
 const siderData = [
   {
     icon: rAsset_svg,
@@ -77,6 +79,13 @@ const siderData = [
     urlKeywords: '/rSOL',
     url: '/rSOL/home',
   },
+  {
+      icon:rMatic_svg,
+      selectedIcon:selected_rMatic_svg,
+      text:"rMATIC", 
+      urlKeywords:'/rMATIC',
+      url:"/rMATIC/home"
+  }
 ];
 type Props = {
   route: any;
@@ -111,4 +120,5 @@ export default function Index(props: Props) {
       </div>
     </div>
   );
+ 
 }

@@ -44,6 +44,11 @@ const account = (type: string) => {
         return '/rSOL/home';
       }
       return true;
+    case Symbol.Matic:
+      if(getLocalStorageItem(Keys.MaticAccountKey)==null || getLocalStorageItem(Keys.FisAccountKey)==null){
+        return '/rMATIC/home'  
+      }
+      return true;
     default:
       return '/rKSM/home';
   }

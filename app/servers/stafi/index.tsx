@@ -41,7 +41,8 @@ export default class Index extends SubstrateKeyring{
           'RDOT',
           'RKSM',
           'RATOM',
-          'RSOL'
+          'RSOL',
+          'RMATIC'
         ]
       },
       AccountXData: {

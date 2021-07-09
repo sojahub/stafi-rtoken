@@ -7,7 +7,7 @@ import NumberUtil from '@util/numberUtil';
 import { Modal, Tooltip } from 'antd';
 import React from 'react';
 import './unbondModal.scss';
-
+ 
 type Props = {
   visible: boolean;
   unbondAmount: any;
@@ -16,7 +16,7 @@ type Props = {
   onOk?: Function;
   onCancel?: Function;
   bondFees?: any;
-  type: 'rDOT' | 'rETH' | 'rFIS' | 'rKSM' | 'rATOM' | 'rSOL';
+  type: 'rDOT' | 'rETH' | 'rFIS' | 'rKSM' | 'rATOM' | 'rSOL' | 'rMATIC';
 };
 export default function Index(props: Props) {
   return (
@@ -54,6 +54,7 @@ export default function Index(props: Props) {
           {props.type == 'rKSM' && `—Period: around ${config.unboundAroundDays(Symbol.Ksm)} days`}
           {props.type == 'rATOM' && `—Period: around ${config.unboundAroundDays(Symbol.Atom)} days`}
           {props.type == 'rSOL' && `—Period: around ${config.unboundAroundDays(Symbol.Sol)} days`}
+          {props.type=="rMATIC" && `—Period: around ${config.unboundAroundDays(Symbol.Matic)} days`}
           <div className='doubt'>
             <Tooltip
               overlayClassName='modal_doubt_overlay'
@@ -69,7 +70,9 @@ export default function Index(props: Props) {
           {props.type == 'rKSM' && `You will get ${props.getAmount} KSM`}
           {props.type == 'rATOM' && `You will get ${props.getAmount} ATOM`}
           {props.type == 'rSOL' && `You will get ${props.getAmount} SOL`}
+          {props.type=="rMATIC" && `You will get ${props.getAmount} MATIC`}
         </div>
+
 
         <div className='btns'>
           <A

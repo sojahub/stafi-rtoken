@@ -10,9 +10,10 @@ import rAssetReducer from './rAssetClice';
 import rPoolReducer from './rPoolClice'; 
 import rATOMReducer from './rATOMClice';
 import rDOTReducer from './rDOTClice';
-import rETHReducer from './rETHClice';
+import rETHReducer from './rETHClice'; 
 import rKSMReducer from './rKSMClice';
 import rSOLReducer from './rSOLClice';
+import rMATICReducer from './rMATICClice'
 
 export default function createRootReducer(history?: History) {
   return combineReducers({
@@ -28,6 +29,7 @@ export default function createRootReducer(history?: History) {
     bridgeModule: bridgeReducer,
     ETHModule: ETHReducer,
     rATOMModule: rATOMReducer,
-    rPoolModule:rPoolReducer
+    rPoolModule:rPoolReducer,
+    rMATICModule:rMATICReducer
   });
 }

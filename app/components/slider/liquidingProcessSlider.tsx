@@ -3,13 +3,14 @@ import { reSending as atomReSending, reStaking as atomReStaking } from '@feature
 import { reSending, reStaking } from '@features/rDOTClice';
 import { reSending as ksmReSending, reStaking as ksmReStaking } from '@features/rKSMClice';
 import { reSending as solReSending, reStaking as solReStaking } from '@features/rSOLClice';
-import close_svg from '@images/close.svg';
+import {reStaking as maticReStaking,reSending as maticReSending } from '@features/rMATICClice'; 
+import close_svg from '@images/close.svg'; 
 import Liquiding_heard from '@images/liquiding_heard.svg';
 import { rSymbol } from '@keyring/defaults';
 import SolServer from '@servers/sol/index';
 import util from '@util/toolUtil';
 import React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';  
 import './liquidingProcessSlider.scss';
 import Item from './liquidingProcessSliderItem';
 
@@ -58,6 +59,11 @@ export default function Index(props: Props) {
         }),
       );
     }
+    if(util.pageType()==rSymbol.Matic){
+      dispatch(maticReSending((href:any)=>{
+        href && props.history.push(href)
+      }));
+    }
   };
   const reStakingClick = () => {
     if (util.pageType() == rSymbol.Dot) {
@@ -80,7 +86,7 @@ export default function Index(props: Props) {
           href && props.history.push(href);
         }),
       );
-    }
+    } 
     if (util.pageType() == rSymbol.Sol) {
       const wallet = solServer.getWallet();
       if (!wallet.connected) {
@@ -93,6 +99,11 @@ export default function Index(props: Props) {
         reStakeSol();
       }
     }
+    if(util.pageType()==rSymbol.Matic){
+      dispatch(maticReStaking((href:any)=>{
+        href && props.history.push(href)
+      }));
+    }
   };
 
   const reStakeSol = () => {
@@ -103,7 +114,7 @@ export default function Index(props: Props) {
     );
   };
 
-  if (!show) {
+  if (!show) { 
     return null;
   }
   return (

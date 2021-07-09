@@ -31,11 +31,13 @@ function webpackCommonConfigCreator(options) {
         http: false,
         https: false,
         path: false,
+        fs:false,
       },
 
       alias: {
         stream: 'stream-browserify',
         path: false,
+        fs:false,
         crypto: 'crypto-browserify',
         '@components': resolve('../app/components'),
         '@images': resolve('../app/assets/images'),
@@ -127,13 +129,7 @@ function webpackCommonConfigCreator(options) {
               loader: 'ts-loader',
             },
           ],
-        },
-        {
-          test: /\.js$/,
-          use: ['source-map-loader'],
-          enforce: 'pre',
-          exclude: /node_modules/,
-        },
+        }
       ],
     },
     plugins: [
@@ -168,6 +164,7 @@ function webpackCommonConfigCreator(options) {
         stream: 'stream',
         // crypto:'crypto',
         path: 'path',
+        fs:'fs'
       }),
       // new webpack.DllReferencePlugin({
       //   context: path.join(__dirname, '..'),

@@ -6,6 +6,8 @@ import { getUnbondCommission as atom_getUnbondCommission, query_rBalances_accoun
 import { getUnbondCommission as dot_getUnbondCommission, query_rBalances_account as dot_query_rBalances_account, rTokenRate as dot_rTokenRate } from '@features/rDOTClice';
 import { getUnbondCommission, query_rBalances_account, rTokenRate as ksm_rTokenRate } from '@features/rKSMClice';
 import { getUnbondCommission as sol_getUnbondCommission, query_rBalances_account as sol_query_rBalances_account, rTokenRate as sol_rTokenRate } from '@features/rSOLClice';
+import {rTokenRate as matic_rTokenRate,query_rBalances_account as matic_query_rBalances_account,getUnbondCommission as matic_getUnbondCommission} from '@features/rMATICClice'; 
+import rasset_rmatic_svg from '@images/r_matic.svg'; 
 import rDOT_svg from '@images/rDOT.svg';
 import rasset_fis_svg from '@images/rFIS.svg';
 import rasset_rsol_svg from '@images/rSOL.svg';
@@ -21,18 +23,23 @@ import NumberUtil from '@util/numberUtil';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Page_FIS from '../../rDOT/selectWallet_rFIS/index';
+ 
 import Tag from './components/carTag/index';
 import CountAmount from './components/countAmount';
 import DataList from './components/list';
 import DataItem from './components/list/item';
-import './page.scss';
+import './page.scss'; 
+ 
+ 
 
 
 const commonClice=new CommonClice();
 export default function Index(props:any){ 
   const dispatch=useDispatch();
   const {fisAccount,tokenAmount,ksmWillAmount,fis_tokenAmount,fisWillAmount,dot_tokenAmount,
-    dotWillAmount,unitPriceList,atom_tokenAmount,atomWillAmount,sol_tokenAmount,solWillAmount}=useSelector((state:any)=>{ 
+
+    dotWillAmount,unitPriceList,atom_tokenAmount,atomWillAmount,sol_tokenAmount,solWillAmount,matic_tokenAmount,maticWillAmount}=useSelector((state:any)=>{ 
+
  
     return {
       unitPriceList:state.bridgeModule.priceList,
@@ -47,6 +54,8 @@ export default function Index(props:any){
       atomWillAmount:commonClice.getWillAmount(state.rATOMModule.ratio,state.rATOMModule.unbondCommission,state.rATOMModule.tokenAmount),
       sol_tokenAmount:state.rSOLModule.tokenAmount,
       solWillAmount:commonClice.getWillAmount(state.rSOLModule.ratio,state.rSOLModule.unbondCommission,state.rSOLModule.tokenAmount),
+      matic_tokenAmount:state.rMATICModule.tokenAmount,
+      maticWillAmount:commonClice.getWillAmount(state.rMATICModule.ratio,state.rMATICModule.unbondCommission,state.rMATICModule.tokenAmount), 
     }
   });
 
@@ -68,6 +77,8 @@ export default function Index(props:any){
         count=count+(item.price*atom_tokenAmount);
       }else if(item.symbol=="rSOL" && sol_tokenAmount && sol_tokenAmount!="--"){
         count=count+(item.price*sol_tokenAmount);
+      }else if(item.symbol=="rMATIC" && matic_tokenAmount && matic_tokenAmount!="--"){
+        count=count+(item.price*matic_tokenAmount); 
       }
     });
     return count
@@ -86,17 +97,20 @@ export default function Index(props:any){
       dispatch(fis_query_rBalances_account());
       dispatch(dot_query_rBalances_account()); 
       dispatch(atom_query_rBalances_account())
-      dispatch(sol_query_rBalances_account())
+      dispatch(sol_query_rBalances_account())  
+      dispatch(matic_query_rBalances_account()) 
       dispatch(ksm_rTokenRate());
       dispatch(fis_rTokenRate() );
       dispatch(dot_rTokenRate() );
-      dispatch(atom_rTokenRate() );
-      dispatch(sol_rTokenRate() );
+      dispatch(atom_rTokenRate() ); 
+      dispatch(sol_rTokenRate() ); 
+      dispatch(matic_rTokenRate() ); 
       dispatch(getUnbondCommission());
       dispatch(fis_getUnbondCommission());
       dispatch(dot_getUnbondCommission());
-      dispatch(atom_getUnbondCommission());
-      dispatch(sol_getUnbondCommission());
+      dispatch(atom_getUnbondCommission()); 
+      dispatch(sol_getUnbondCommission()); 
+      dispatch(matic_getUnbondCommission()); 
     }
   },[fisAccount])
   return  <Content>
@@ -190,7 +204,7 @@ export default function Index(props:any){
             })
           }}
         />
-        <DataItem 
+        <DataItem  
           rSymbol="rSOL"
           icon={rasset_rsol_svg}
           fullName="Solana"
@@ -207,6 +221,23 @@ export default function Index(props:any){
             })
           }}
         />
+      <DataItem 
+        rSymbol="rMATIC"
+        icon={rasset_rmatic_svg}
+        fullName="Matic"
+        balance={matic_tokenAmount=="--" ?"--":NumberUtil.handleFisAmountToFixed(matic_tokenAmount)}
+        willGetBalance={maticWillAmount}
+        unit="MATIC"
+        operationType="native"
+        onSwapClick={()=>{
+          props.history.push({
+            pathname:"/rAsset/swap/native",
+            state:{ 
+              rSymbol:"rMATIC"
+            }
+          })
+        }}
+      /> 
       </DataList><CountAmount totalValue={totalPrice} /> </>:<div className="rAsset_content">
       <Button icon={rDOT_svg} onClick={()=>{
            dispatch(connectPolkadotjs(Symbol.Fis)); 

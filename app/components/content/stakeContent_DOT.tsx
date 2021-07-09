@@ -1,15 +1,17 @@
 import doubt from "@images/doubt.svg";
 import rATOM from '@images/selected_rATOM.svg';
 import rDOT from '@images/selected_rDOT.svg';
-import rKSM from '@images/selected_rKSM.svg';
+import rKSM from '@images/selected_rKSM.svg'; 
 import rSOL from '@images/solana.svg';
+import rMATIC from '@images/selected_rMatic.svg' 
 import Button from '@shared/components/button/button';
 import Input from '@shared/components/input/amountInput';
 import { Tooltip } from 'antd';
 import React, { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import './index.scss';
-import LeftContent from './leftContent';
+import LeftContent from './leftContent';  
+
 
 type Props={
     onRecovery:Function,
@@ -22,8 +24,8 @@ type Props={
     apr?:string,
     validPools?:any[],
     totalStakedToken?:any,
-    bondFees?:any
-    type:"rDOT"|"rFIS"|"rKSM"|"rATOM"| 'rSOL',
+    bondFees?:any 
+    type:"rDOT"|"rFIS"|"rKSM"|"rATOM"| 'rSOL' | "rMATIC", 
     histroy?:any, 
 }
 export default function Index(props:Props){
@@ -40,10 +42,12 @@ export default function Index(props:Props){
           }else if( props.type=="rDOT"){
               return rDOT;
           }else if(props.type=="rATOM"){
-              return rATOM;
+              return rATOM; 
           } else if (props.type == 'rSOL') {
             return rSOL;
-          }
+          }else if(props.type=="rMATIC"){
+            return rMATIC;
+          } 
       }
       const haswarn=useMemo(()=>{
         return !bondSwitch || !(props.validPools && props.validPools.length>0)
@@ -52,8 +56,9 @@ export default function Index(props:Props){
         <label className="title"> 
             {props.type=="rKSM" && `Stake KSM`}
             {props.type=="rDOT" && `Stake DOT`}
-            {props.type=="rATOM" && `Stake ATOM`}
-            {props.type == 'rSOL' && `Stake SOL`}
+            {props.type=="rATOM" && `Stake ATOM`} 
+            {props.type == 'rSOL' && `Stake SOL`} 
+            {props.type=="rMATIC" && `Stake MATIC`} 
         </label>
         {haswarn && <div className="warn">Unable to stake, system is waiting for matching validators</div>}
         <div className={`input_panel dot_input_panel ${haswarn && 'showWarn'}`}>
@@ -71,7 +76,8 @@ export default function Index(props:Props){
                 {props.type=="rDOT" && `${isNaN(props.totalStakedToken)?"--":props.totalStakedToken} DOT is staked via rDOT `}
                 {props.type=="rATOM" && `${isNaN(props.totalStakedToken)?"--":props.totalStakedToken} ATOM is staked via rATOM `}
                 {props.type == 'rSOL' && `${isNaN(props.totalStakedToken) ? '--' : props.totalStakedToken} SOL is staked via rSOL `}
-         
+
+                {props.type=="rMATIC" && `${isNaN(props.totalStakedToken)?"--":props.totalStakedToken} MATIC is staked via rMATIC `}
                 {/* <A>stats</A> */}
             </div>
         </div>

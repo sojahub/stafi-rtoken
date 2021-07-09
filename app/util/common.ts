@@ -24,6 +24,10 @@ export enum Keys {
 
   rEthCurrentPoolPrefix = 'current:pool:',
   poolPubKeyPrefix = 'poolpubkey:',
+ 
+  MaticAccountKey = 'stafi_matic_account', 
+  MaticProcessParameter = 'stafi_matic_processParameter', 
+  MaticStakeHash='stafi_matic_stakeHash',  
 }
 
 export const setSessionStorageItem = (key: string, val: any) => {

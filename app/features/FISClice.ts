@@ -12,6 +12,7 @@ import NumberUtil from '@util/numberUtil';
 import { message as M, message } from 'antd';
 import { AppThunk } from '../store';
 import CommonClice from './commonClice';
+import { keccakFromHexString } from 'ethereumjs-util';
 import {
   gClearTimeOut,
   gSetTimeOut,
@@ -25,6 +26,7 @@ import {
   setProcessType
 } from './globalClice';
 
+declare const ethereum: any; 
 const FISClice = createSlice({
   name: 'FISModule',
   initialState: {
@@ -330,8 +332,7 @@ export const stakingSignature = async (address: any, txHash: string) => {
     address: address,
     data: txHash,
     type: 'bytes',
-  });
-
+  }); 
   return signature;
 };
 
@@ -386,7 +387,18 @@ export const bound =
         blockhash = '0x' + blockhash;
 
         message.info('Sending succeeded, proceeding staking');
-      } else if (type == rSymbol.Sol) {
+      }else if(type==rSymbol.Matic){ 
+        const ethAddress=getState().rMATICModule.maticAccount.address;
+        const fisPubkey = u8aToHex(keyringInstance.decodeAddress(fisAddress));
+  
+        const msgHash = keccakFromHexString(fisPubkey);
+        pubkey = address;
+        signature=await ethereum.request({
+          method: 'eth_sign',
+          params: [ethAddress, u8aToHex(msgHash)],
+        })
+        message.info("Sending succeeded, proceeding staking");
+      }  else if (type == rSymbol.Sol) {
         signature = await solSignature(address, fisAddress);
         const solKeyring = keyring.init(Symbol.Sol);
         pubkey = u8aToHex(new PublicKey(getState().rSOLModule.solAccount.address).toBytes());
