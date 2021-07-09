@@ -398,7 +398,7 @@ export const bound =
           method: 'eth_sign',
           params: [ethAddress, u8aToHex(msgHash)],
         }) 
-        message.info("Sending succeeded, proceeding staking");
+        message.info('Signature succeeded, proceeding staking');
       }  else if (type == rSymbol.Sol) {
         signature = await solSignature(address, fisAddress);
         const solKeyring = keyring.init(Symbol.Sol);
