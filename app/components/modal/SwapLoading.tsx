@@ -17,7 +17,7 @@ type Props = {
   onClose: Function;
 };
 
-const waitingTime = 10;
+const waitingTime = 120;
 
 export default function SwapLoading(props: Props) {
   const [timeLeft, setTimeLeft] = useState(waitingTime);
