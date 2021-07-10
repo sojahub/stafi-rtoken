@@ -1,24 +1,18 @@
 import config from '@config/index';
 import { getRtokenPriceList } from '@features/bridgeClice';
+import { connectMetamask, getAssetBalanceAll, handleBscAccount, monitoring_Method } from '@features/BSCClice';
 import CommonClice from '@features/commonClice';
-import { getAssetBalanceAll } from '@features/ETHClice';
 import { getUnbondCommission as fis_getUnbondCommission, rTokenRate as fis_rTokenRate } from '@features/FISClice';
-import {
-  getUnbondCommission as atom_getUnbondCommission,
-  getUnbondCommission as matic_getUnbondCommission,
-  rTokenRate as atom_rTokenRate,
-  rTokenRate as matic_rTokenRate
-} from '@features/rATOMClice';
+import { getUnbondCommission as atom_getUnbondCommission, rTokenRate as atom_rTokenRate } from '@features/rATOMClice';
 import { getUnbondCommission as dot_getUnbondCommission, rTokenRate as dot_rTokenRate } from '@features/rDOTClice';
-import { connectMetamask, handleEthAccount, monitoring_Method } from '@features/rETHClice';
 import { getUnbondCommission as ksm_getUnbondCommission, rTokenRate as ksm_rTokenRate } from '@features/rKSMClice';
+import { getUnbondCommission as matic_getUnbondCommission, rTokenRate as matic_rTokenRate } from '@features/rMATICClice';
 import { getUnbondCommission as sol_getUnbondCommission, rTokenRate as sol_rTokenRate } from '@features/rSOLClice';
 import metamask from '@images/metamask.png';
 import rasset_fis_svg from '@images/rFIS.svg';
 import rasset_rsol_svg from '@images/rSOL.svg';
 import rasset_ratom_svg from '@images/r_atom.svg';
 import rasset_rdot_svg from '@images/r_dot.svg';
-import rasset_reth_svg from '@images/r_eth.svg';
 import rasset_rfis_svg from '@images/r_fis.svg';
 import rasset_rksm_svg from '@images/r_ksm.svg';
 import rasset_rmatic_svg from '@images/r_matic.svg';
@@ -38,122 +32,90 @@ export default function Index(props: any) {
   const dispatch = useDispatch();
 
   const {
-    ethAccount,
-    ksm_ercBalance,
-    fis_ercBalance,
-    eth_ercBalance,
-    rfis_ercBalance,
-    dot_ercBalance,
-    atom_ercBalance,
-    sol_ercBalance,
+    bscAccount,
+    ksm_bepBalance,
+    fis_bepBalance,
+    rfis_bepBalance,
+    dot_bepBalance,
+    atom_bepBalance,
+    rsol_bepBalance,
+    rmatic_bepBalance,
     ksmWillAmount,
     fisWillAmount,
     dotWillAmount,
+    solWillAmount,
+    maticWillAmount,
     unitPriceList,
     atomWillAmount,
-    solWillAmount,
-    matic_ercBalance,
-    maticWillAmount,
   } = useSelector((state: any) => {
     return {
+      bscAccount: state.BSCModule.bscAccount,
       unitPriceList: state.bridgeModule.priceList,
-      ethAccount: state.rETHModule.ethAccount,
-      ksm_ercBalance: state.ETHModule.ercRKSMBalance,
-      fis_ercBalance: state.ETHModule.ercFISBalance,
-      rfis_ercBalance: state.ETHModule.ercRFISBalance,
-      eth_ercBalance: state.ETHModule.ercETHBalance,
-      dot_ercBalance: state.ETHModule.ercRDOTBalance,
-      atom_ercBalance: state.ETHModule.ercRATOMBalance,
-      sol_ercBalance: state.ETHModule.ercRSOLBalance,
-      matic_ercBalance: state.ETHModule.ercRMaticBalance,
+      ksm_bepBalance: state.BSCModule.bepRKSMBalance,
+      fis_bepBalance: state.BSCModule.bepFISBalance,
+      rfis_bepBalance: state.BSCModule.bepRFISBalance,
+      dot_bepBalance: state.BSCModule.bepRDOTBalance,
+      atom_bepBalance: state.BSCModule.bepRATOMBalance,
+      rsol_bepBalance: state.BSCModule.bepRSOLBalance,
+      rmatic_bepBalance: state.BSCModule.bepRMATICBalance,
       ksmWillAmount: commonClice.getWillAmount(
         state.rKSMModule.ratio,
         state.rKSMModule.unbondCommission,
-        state.ETHModule.ercRKSMBalance,
+        state.BSCModule.bepRKSMBalance,
       ),
       fisWillAmount: commonClice.getWillAmount(
         state.FISModule.ratio,
         state.FISModule.unbondCommission,
-        state.ETHModule.ercRFISBalance,
+        state.BSCModule.bepRFISBalance,
       ),
       dotWillAmount: commonClice.getWillAmount(
         state.rDOTModule.ratio,
         state.rDOTModule.unbondCommission,
-        state.ETHModule.ercRDOTBalance,
+        state.BSCModule.bepRDOTBalance,
       ),
       atomWillAmount: commonClice.getWillAmount(
         state.rATOMModule.ratio,
         state.rATOMModule.unbondCommission,
-        state.ETHModule.ercRATOMBalance,
+        state.BSCModule.bepRATOMBalance,
       ),
       solWillAmount: commonClice.getWillAmount(
         state.rSOLModule.ratio,
         state.rSOLModule.unbondCommission,
-        state.ETHModule.ercRSOLBalance,
+        state.BSCModule.bepRSOLBalance,
       ),
       maticWillAmount: commonClice.getWillAmount(
         state.rMATICModule.ratio,
         state.rMATICModule.unbondCommission,
-        state.ETHModule.ercRMaticBalance,
+        state.BSCModule.bepRMATICBalance,
       ),
     };
   });
+
+
   const totalPrice = useMemo(() => {
     let count: any = '--';
     unitPriceList.forEach((item: any) => {
       if (count == '--') {
         count = 0;
       }
-      if (item.symbol == 'rFIS' && rfis_ercBalance && rfis_ercBalance != '--') {
-        count = count + item.price * rfis_ercBalance;
-      } else if (item.symbol == 'FIS' && fis_ercBalance && fis_ercBalance != '--') {
-        count = count + item.price * fis_ercBalance;
-      } else if (item.symbol == 'rKSM' && ksm_ercBalance && ksm_ercBalance != '--') {
-        count = count + item.price * ksm_ercBalance;
-      } else if (item.symbol == 'rDOT' && dot_ercBalance && dot_ercBalance != '--') {
-        count = count + item.price * dot_ercBalance;
-      } else if (item.symbol == 'rETH' && eth_ercBalance && eth_ercBalance != '--') {
-        count = count + item.price * eth_ercBalance;
-      } else if (item.symbol == 'rATOM' && atom_ercBalance && atom_ercBalance != '--') {
-        count = count + item.price * atom_ercBalance;
-      } else if (item.symbol == 'rSOL' && sol_ercBalance && sol_ercBalance != '--') {
-        count = count + item.price * sol_ercBalance;
-      } else if (item.symbol == 'rMATIC' && matic_ercBalance && matic_ercBalance != '--') {
-        count = count + item.price * matic_ercBalance;
+      if (item.symbol == 'rFIS' && rfis_bepBalance && rfis_bepBalance != '--') {
+        count = count + item.price * rfis_bepBalance;
+      } else if (item.symbol == 'FIS' && fis_bepBalance && fis_bepBalance != '--') {
+        count = count + item.price * fis_bepBalance;
+      } else if (item.symbol == 'rKSM' && ksm_bepBalance && ksm_bepBalance != '--') {
+        count = count + item.price * ksm_bepBalance;
+      } else if (item.symbol == 'rDOT' && dot_bepBalance && dot_bepBalance != '--') {
+        count = count + item.price * dot_bepBalance;
+      } else if (item.symbol == 'rATOM' && atom_bepBalance && atom_bepBalance != '--') {
+        count = count + item.price * atom_bepBalance;
       }
     });
     return count;
-  }, [
-    unitPriceList,
-    ksm_ercBalance,
-    fis_ercBalance,
-    rfis_ercBalance,
-    eth_ercBalance,
-    dot_ercBalance,
-    atom_ercBalance,
-    sol_ercBalance,
-  ]);
-
-  let time: any;
-  console.log(matic_ercBalance, '======matic_ercBalance');
-  useEffect(() => {
-    updateData();
-    time = setInterval(updateData, 30000);
-    return () => {
-      if (time) {
-        clearInterval(time);
-      }
-    };
-  }, [ethAccount && ethAccount.address]);
+  }, [unitPriceList, ksm_bepBalance, fis_bepBalance, rfis_bepBalance, dot_bepBalance, atom_bepBalance]);
 
   useEffect(() => {
-    dispatch(getRtokenPriceList());
-    dispatch(monitoring_Method());
-  }, []);
-
-  const updateData = () => {
-    if (ethAccount && ethAccount.address) {
-      dispatch(handleEthAccount(ethAccount.address));
+    if (bscAccount && bscAccount.address) {
+      dispatch(handleBscAccount(bscAccount.address));
 
       dispatch(getAssetBalanceAll());
 
@@ -170,7 +132,7 @@ export default function Index(props: any) {
       dispatch(sol_getUnbondCommission());
       dispatch(matic_getUnbondCommission());
     }
-  };
+  }, [bscAccount && bscAccount.address]);
 
   useEffect(() => {
     dispatch(getRtokenPriceList());
@@ -179,7 +141,7 @@ export default function Index(props: any) {
 
   const toSwap = (tokenSymbol: string) => {
     props.history.push({
-      pathname: '/rAsset/swap/erc20/native',
+      pathname: '/rAsset/swap/bep20/native',
       state: {
         rSymbol: tokenSymbol,
       },
@@ -189,23 +151,23 @@ export default function Index(props: any) {
   return (
     <Content>
       <Tag
-        type='erc'
+        type='bep'
         onClick={(type: string) => {
           props.history.push(`/rAsset/${type}`);
         }}
       />
-      {ethAccount ? (
+      {bscAccount ? (
         <>
           <DataList>
             <DataItem
               rSymbol='FIS'
               icon={rasset_fis_svg}
               fullName='StaFi'
-              balance={fis_ercBalance == '--' ? '--' : NumberUtil.handleFisAmountToFixed(fis_ercBalance)}
+              balance={fis_bepBalance == '--' ? '--' : NumberUtil.handleFisAmountToFixed(fis_bepBalance)}
               willGetBalance={0}
               unit='FIS'
-              trade={config.uniswap.fisURL}
-              operationType='erc20'
+              trade={config.uniswapUrl('0xB8c77482e45F1F44dE1745F52C74426C631bDD52', config.FISBep20TokenAddress())}
+              operationType='bep20'
               onSwapClick={() => toSwap('FIS')}
             />
 
@@ -213,33 +175,22 @@ export default function Index(props: any) {
               rSymbol='rFIS'
               icon={rasset_rfis_svg}
               fullName='StaFi'
-              balance={rfis_ercBalance == '--' ? '--' : NumberUtil.handleFisAmountToFixed(rfis_ercBalance)}
+              balance={rfis_bepBalance == '--' ? '--' : NumberUtil.handleFisAmountToFixed(rfis_bepBalance)}
               willGetBalance={fisWillAmount}
               unit='FIS'
-              trade={config.uniswap.rfisURL}
-              operationType='erc20'
+              trade={config.uniswapUrl('0xB8c77482e45F1F44dE1745F52C74426C631bDD52', config.rFISBep20TokenAddress())}
+              operationType='bep20'
               onSwapClick={() => toSwap('rFIS')}
-            />
-            <DataItem
-              rSymbol='rETH'
-              icon={rasset_reth_svg}
-              fullName='Ethereum'
-              balance={eth_ercBalance == '--' ? '--' : NumberUtil.handleFisAmountToFixed(eth_ercBalance)}
-              willGetBalance={'0.000000'}
-              unit='ETH'
-              operationType='erc20'
-              trade={config.uniswap.rethURL}
-              onSwapClick={() => {}}
             />
             <DataItem
               rSymbol='rDOT'
               icon={rasset_rdot_svg}
               fullName='Polkadot'
-              balance={dot_ercBalance == '--' ? '--' : NumberUtil.handleFisAmountToFixed(dot_ercBalance)}
+              balance={dot_bepBalance == '--' ? '--' : NumberUtil.handleFisAmountToFixed(dot_bepBalance)}
               willGetBalance={dotWillAmount}
               unit='DOT'
-              trade={config.uniswap.rdotURL}
-              operationType='erc20'
+              trade={config.uniswapUrl('0xB8c77482e45F1F44dE1745F52C74426C631bDD52', config.rDOTBep20TokenAddress())}
+              operationType='bep20'
               onSwapClick={() => toSwap('rDOT')}
             />
 
@@ -247,23 +198,22 @@ export default function Index(props: any) {
               rSymbol='rKSM'
               icon={rasset_rksm_svg}
               fullName='Kusama'
-              balance={ksm_ercBalance == '--' ? '--' : NumberUtil.handleFisAmountToFixed(ksm_ercBalance)}
+              balance={ksm_bepBalance == '--' ? '--' : NumberUtil.handleFisAmountToFixed(ksm_bepBalance)}
               willGetBalance={ksmWillAmount}
               unit='KSM'
-              trade={config.uniswap.rksmURL}
-              operationType='erc20'
+              trade={config.uniswapUrl('0xB8c77482e45F1F44dE1745F52C74426C631bDD52', config.rKSMBep20TokenAddress())}
+              operationType='bep20'
               onSwapClick={() => toSwap('rKSM')}
             />
-
             <DataItem
               rSymbol='rATOM'
               icon={rasset_ratom_svg}
               fullName='Cosmos'
-              balance={atom_ercBalance == '--' ? '--' : NumberUtil.handleFisAmountToFixed(atom_ercBalance)}
+              balance={atom_bepBalance == '--' ? '--' : NumberUtil.handleFisAmountToFixed(atom_bepBalance)}
               willGetBalance={atomWillAmount}
               unit='ATOM'
-              trade={config.uniswap.ratomURL}
-              operationType='erc20'
+              trade={config.uniswapUrl('0xB8c77482e45F1F44dE1745F52C74426C631bDD52', config.rATOMBep20TokenAddress())}
+              operationType='bep20'
               onSwapClick={() => toSwap('rATOM')}
             />
 
@@ -271,11 +221,11 @@ export default function Index(props: any) {
               rSymbol='rSOL'
               icon={rasset_rsol_svg}
               fullName='Solana'
-              balance={sol_ercBalance == '--' ? '--' : NumberUtil.handleFisAmountToFixed(sol_ercBalance)}
+              balance={rsol_bepBalance == '--' ? '--' : NumberUtil.handleFisAmountToFixed(rsol_bepBalance)}
               willGetBalance={solWillAmount}
               unit='SOL'
               trade={config.uniswap.rsolURL}
-              operationType='erc20'
+              operationType='bep20'
               onSwapClick={() => toSwap('rSOL')}
             />
 
@@ -283,11 +233,11 @@ export default function Index(props: any) {
               rSymbol='rMATIC'
               icon={rasset_rmatic_svg}
               fullName='Matic'
-              balance={matic_ercBalance == '--' ? '--' : NumberUtil.handleFisAmountToFixed(matic_ercBalance)}
+              balance={rmatic_bepBalance == '--' ? '--' : NumberUtil.handleFisAmountToFixed(rmatic_bepBalance)}
               willGetBalance={maticWillAmount}
               unit='MATIC'
               trade={config.uniswap.ratomURL}
-              operationType='erc20'
+              operationType='bep20'
               onSwapClick={() => toSwap('rMATIC')}
             />
           </DataList>{' '}
@@ -298,7 +248,7 @@ export default function Index(props: any) {
           <Button
             icon={metamask}
             onClick={() => {
-              dispatch(connectMetamask('0x3'));
+              dispatch(connectMetamask('0x61'));
               dispatch(monitoring_Method());
             }}>
             Connect to Metamask

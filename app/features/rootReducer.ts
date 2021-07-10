@@ -2,18 +2,19 @@ import { connectRouter } from 'connected-react-router';
 import { History } from 'history';
 import { combineReducers } from 'redux';
 import bridgeReducer from './bridgeClice';
+import BSCReducer from "./BSCClice";
 import ETHReducer from './ETHClice';
 import FISReducer from './FISClice';
 import globalReducer from './globalClice';
 import noticeReducer from './noticeClice';
 import rAssetReducer from './rAssetClice';
-import rPoolReducer from './rPoolClice'; 
 import rATOMReducer from './rATOMClice';
 import rDOTReducer from './rDOTClice';
-import rETHReducer from './rETHClice'; 
+import rETHReducer from './rETHClice';
 import rKSMReducer from './rKSMClice';
+import rMATICReducer from './rMATICClice';
+import rPoolReducer from './rPoolClice';
 import rSOLReducer from './rSOLClice';
-import rMATICReducer from './rMATICClice'
 
 export default function createRootReducer(history?: History) {
   return combineReducers({
@@ -30,6 +31,7 @@ export default function createRootReducer(history?: History) {
     ETHModule: ETHReducer,
     rATOMModule: rATOMReducer,
     rPoolModule:rPoolReducer,
-    rMATICModule:rMATICReducer
+    rMATICModule:rMATICReducer,
+    BSCModule: BSCReducer,
   });
 }

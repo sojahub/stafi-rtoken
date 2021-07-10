@@ -11,9 +11,9 @@ import { AppThunk } from '../store';
 import { createSubstrate as fisCreateSubstrate, reloadData as fisReloadData } from './FISClice';
 import { createSubstrate as atomCreateSubstrate, reloadData as atomReloadData } from './rATOMClice';
 import { createSubstrate as dotCreateSubstrate, reloadData as dotReloadData } from './rDOTClice';
-import { createSubstrate as ksmCreateSubstrate, reloadData as ksmReloadData } from './rKSMClice'; 
-import { createSubstrate as solCreateSubstrate, reloadData as solReloadData } from './rSOLClice'; 
-import {  reloadData as maticReloadData } from './rMATICClice'; 
+import { createSubstrate as ksmCreateSubstrate, reloadData as ksmReloadData } from './rKSMClice';
+import { reloadData as maticReloadData } from './rMATICClice';
+import { createSubstrate as solCreateSubstrate, reloadData as solReloadData } from './rSOLClice';
 export enum processStatus {
   default = 0,
   success = 1,
@@ -55,6 +55,8 @@ const globalClice = createSlice({
     timeOutFunc: null,
 
     loading: false,
+    metaMaskNetworkId:null,
+    isload_monitoring:false,
   },
   reducers: {
     setProcessSlider(state, { payload }) {
@@ -96,6 +98,12 @@ const globalClice = createSlice({
     setLoading(state, { payload }) {
       state.loading = payload;
     },
+    setMetaMaskNetworkId(state,{payload}){
+      state.metaMaskNetworkId=payload;
+    },
+    setIsloadMonitoring(state,{payload}){
+      state.isload_monitoring=payload;
+    }
   },
 });
 export const {
@@ -108,38 +116,63 @@ export const {
   setProcessType,
   setTimeOutFunc,
   initProcess,
+  setMetaMaskNetworkId,
   setLoading,
-} = globalClice.actions;
- 
-export const connectPolkadotjs =
-  (type: Symbol, cb?: Function): AppThunk =>
-  async (dispatch, getState) => {
-    const accounts: any = await polkadotServer.connectPolkadotjs();
-    if (accounts) {
-      //  dispatch(setAccounts(accounts));
-      const dotKeyringInstance = keyring.init(type);
-      const accountsList = accounts.map((element: any) => {
-        const address = dotKeyringInstance.encodeAddress(dotKeyringInstance.decodeAddress(element.address));
+  setIsloadMonitoring
+ } = globalClice.actions;
 
-        return {
-          name: element.meta.name,
-          address: address,
-          balance: '--',
-        };
-      });
-      accountsList.forEach((account: any) => {
-        dispatch(clice(type).createSubstrate(account));
-      });
-      cb && cb();
-    }
-  };
-export const keplr_keystorechange =
-  (cb?: Function): AppThunk =>
-  async (dispatch, getState) => {
-    window.addEventListener('keplr_keystorechange', () => {
-      dispatch(connectAtomjs());
-    });
-  };
+declare const window: any;
+declare const ethereum: any;
+
+export const connectPolkadotjs = (type:Symbol,cb?:Function): AppThunk=>async (dispatch, getState)=>{ 
+  const accounts:any =await polkadotServer.connectPolkadotjs()   
+  if(accounts){
+  //  dispatch(setAccounts(accounts)); 
+   const dotKeyringInstance=keyring.init(type);
+   const accountsList=accounts.map((element:any)=>{  
+     const address= dotKeyringInstance.encodeAddress(dotKeyringInstance.decodeAddress(element.address)); 
+     return {  
+       name: element.meta.name,
+       address: address,
+       balance: '--'
+     }
+   })     
+  accountsList.forEach((account:any) => {    
+    dispatch(clice(type).createSubstrate(account));
+  });
+  cb && cb();
+ }
+}
+
+export const checkMetaMaskNetworkId = (): AppThunk => (dispatch, getState) => {
+  if (typeof window.ethereum !== "undefined" && ethereum.isMetaMask) {
+    ethereum.request({ method: 'eth_chainId' }).then((chainId:any) => { 
+      dispatch(setMetaMaskNetworkId(chainId));
+    })
+  }
+  dispatch(setMetaMaskNetworkId(null));
+ };
+
+ export const monitorMetaMaskChainChange=():AppThunk=>(dispatch,getState)=> { 
+  const isload_monitoring =getState().globalModule.isload_monitoring;
+  if(isload_monitoring){
+    return;
+  } 
+  if (typeof window.ethereum !== 'undefined' && ethereum.isMetaMask) {
+    dispatch(setIsloadMonitoring(true));
+    ethereum.autoRefreshOnNetworkChange = false; 
+
+    ethereum.on('chainChanged', (chainId:any) => {
+      dispatch(setMetaMaskNetworkId(chainId));
+    }); 
+  }
+}
+
+export const keplr_keystorechange=(cb?:Function):AppThunk=>async (dispatch, getState)=>{ 
+  window.addEventListener("keplr_keystorechange", () => {
+    dispatch(connectAtomjs());
+  })
+}
 
 export const connectAtomjs =
   (cb?: Function): AppThunk =>

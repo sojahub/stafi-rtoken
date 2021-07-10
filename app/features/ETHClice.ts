@@ -1,3 +1,4 @@
+import config from '@config/index';
 import { createSlice } from '@reduxjs/toolkit';
 import AtomServer from '@servers/atom';
 import BridgeServer from '@servers/bridge';
@@ -205,6 +206,7 @@ export const getAssetBalance=(ethAddress:string,getTokenAbi:string,getTokenAddre
         cb && cb(rbalance);
       }).catch((e:any)=>{
         console.error(e)
+        cb && cb('--');
       });
     }catch(e:any){
       console.error(e)
@@ -280,6 +282,7 @@ const getErc20Allowance=async (ethAddress:string,getTokenAbi:string,getTokenAddr
        cb && cb(allowance);
     }catch(e:any){
       console.error(e) 
+      cb && cb('--')
     }
   }
 
@@ -301,7 +304,7 @@ const getErc20Allowance=async (ethAddress:string,getTokenAbi:string,getTokenAddr
   } else if (selectedToken == 'rATOM') {
     tokenAddress = atomServer.getRATOMTokenAddress();
   }
-  return 'https://etherscan.io/token/' + tokenAddress + '?a=' + ethAddress;
+  return config.etherScanTokenUrl(tokenAddress,ethAddress);
 }
 export const clickSwapToNativeLink=(stafiAddress:string) =>{
   return 'https://stafi.subscan.io/account/' +stafiAddress; 

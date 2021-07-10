@@ -1,9 +1,9 @@
-import React from 'react';
-import GhostButton from '@shared/components/button/ghostButton'  
-import { message } from 'antd';
 import TradePopover from '@components/tradePopover';
+import config from '@config/index';
 import dow_svg from '@images/dow_green.svg';
-import config from '@config/index'
+import GhostButton from '@shared/components/button/ghostButton';
+import { message } from 'antd';
+import React from 'react';
 
 type Props={
   rSymbol:string
@@ -14,7 +14,7 @@ type Props={
   unit:string,
   onSwapClick?:Function,
   trade?:string,
-  operationType?:'erc20' |"native"
+  operationType?:'erc20' |'bep20'|"native"
 }
 export default function Index(props:Props){
   return <div className="list_item">

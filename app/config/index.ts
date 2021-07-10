@@ -49,17 +49,17 @@ export default {
   solWalletProviderUrl: () => {
     return 'https://www.sollet.io';
   },
-  api: ()=>{
-    if(!isdev()){
-      return 'https://rtoken-api.stafi.io'; 
-    }else{
-      return 'https://rtoken-api.stafi.io'; 
-    }  
+  api: () => {
+    if (!isdev()) {
+      return 'https://rtoken-api.stafi.io';
+    } else {
+      return 'https://rtoken-api.stafi.io';
+    }
   },
-  api2: ()=>{
-    if(!isdev()){
-      return 'https://rtoken-api2.stafi.io'; 
-    }else{
+  api2: () => {
+    if (!isdev()) {
+      return 'https://rtoken-api2.stafi.io';
+    } else {
       return 'https://test-rtoken-api2.stafi.io';
     }
   },
@@ -78,10 +78,10 @@ export default {
       return '0x6b3d7a220b96f3be9ff48e6be36a7e16f46b1393';
     }
   },
-  stafiNodeDepositAddress:() => { 
-    if(!isdev()){
+  stafiNodeDepositAddress: () => {
+    if (!isdev()) {
       return '0xafcf0e333614286d8e20000781121adb28cef33d';
-    }else{
+    } else {
       return '0xf072c7e6e36639870c3986196237a97fcccb0331';
     }
   },
@@ -92,17 +92,17 @@ export default {
       return '0x68b749894c5484687916d57616b5214cf9fc63cb';
     }
   },
-  stafiStakingPoolManagerAddress:()=> {
-    if(!isdev()){
+  stafiStakingPoolManagerAddress: () => {
+    if (!isdev()) {
       return '0x7acd9bf3728f4223bf504b1a652cef5ad2e6420b';
-    }else{
+    } else {
       return '0x3f1ea0333e9e1caba4ff3f4d44c0808a2eaa8468';
     }
   },
-  stafiStakingPoolQueueAddress:()=> { 
-    if(!isdev()){
+  stafiStakingPoolQueueAddress: () => {
+    if (!isdev()) {
       return '0xeba81e821c8990e92f85d26aa428e45a8d26d1ab';
-    }else{
+    } else {
       return '0x40a0f8f23dbc635b8e54c8b785c62269cad8ebf8';
     }
   },
@@ -120,11 +120,25 @@ export default {
       return '0xc372e985fda306cfe0e903657de808cf757f536f';
     }
   },
+  rFISBep20TokenAddress: () => {
+    if (!isdev()) {
+      return '0x2ed2c9f3cc1c69c82be35449d7c285dc30b97b5e';
+    } else {
+      return '0x2ed2c9f3cc1c69c82be35449d7c285dc30b97b5e';
+    }
+  },
   FISTokenAddress: () => {
     if (!isdev()) {
       return '0xef3a930e1ffffacd2fc13434ac81bd278b0ecc8d';
     } else {
       return '0x64591e3f2dbf46cdfb398a0d9ba81f41b7cbd449';
+    }
+  },
+  FISBep20TokenAddress: () => {
+    if (!isdev()) {
+      return '0x3dabfb5b0ca8c416684e2a26c1ebc4039627c94a';
+    } else {
+      return '0x3dabfb5b0ca8c416684e2a26c1ebc4039627c94a';
     }
   },
   rKSMTokenAddress: () => {
@@ -134,11 +148,25 @@ export default {
       return '0xd1d458c1c3579033a65db4ca2f06c12573aa5e27';
     }
   },
+  rKSMBep20TokenAddress: () => {
+    if (!isdev()) {
+      return '0xe2bcc4e638ecaa2f1f257054afcc5a4fd37ed027';
+    } else {
+      return '0xe2bcc4e638ecaa2f1f257054afcc5a4fd37ed027';
+    }
+  },
   rDOTTokenAddress: () => {
     if (!isdev()) {
       return '0x505f5a4ff10985fe9f93f2ae3501da5fe665f08a';
     } else {
       return '0x6aef17cea6e6841f1957f9fde6538ac391d55636';
+    }
+  },
+  rDOTBep20TokenAddress: () => {
+    if (!isdev()) {
+      return '0x690c309f48843b37697d98d66b410adc45265efd';
+    } else {
+      return '0x690c309f48843b37697d98d66b410adc45265efd';
     }
   },
   rATOMTokenAddress: () => {
@@ -148,7 +176,13 @@ export default {
       return '0xd363ed9ee73c8b6bd048ae188000be454f7b7925';
     }
   },
- 
+  rATOMBep20TokenAddress: () => {
+    if (!isdev()) {
+      return '0x5ffb6c41296b46fa365215358e261319fff347fb';
+    } else {
+      return '0x5ffb6c41296b46fa365215358e261319fff347fb';
+    }
+  },
   rSOLTokenAddress: () => {
     if (!isdev()) {
       return '0x08841b9cba30e80a0e51df13b174f362f90e3df1';
@@ -156,26 +190,53 @@ export default {
       return '0x08841b9cba30e80a0e51df13b174f362f90e3df1';
     }
   },
+  rSOLBep20TokenAddress: () => {
+    if (!isdev()) {
+      return '0x22e7b055a0c756067e33c9acc1c3ca789dec6eba';
+    } else {
+      return '0x22e7b055a0c756067e33c9acc1c3ca789dec6eba';
+    }
+  },
+  rMATICTokenAddress: () => {
+    if (!isdev()) {
+      return '0x7D1AfA7B718fb893dB30A3aBc0Cfc608AaCfeBB0';
+    } else {
+      return '0x499d11e0b6eac7c0593d8fb292dcbbf815fb29ae';
+    }
+  },
+  rMATICBep20TokenAddress: () => {
+    if (!isdev()) {
+      return '0xbc45fda97bb810cec5fb888a355e7252c8ceca83';
+    } else {
+      return '0xbc45fda97bb810cec5fb888a355e7252c8ceca83';
+    }
+  },
   erc20HandlerAddress: () => {
     if (!isdev()) {
       return '0x2b6b6fce3af32efe4430e446717bda72b95ebb9a';
     } else {
-
       return '0x05da428a68da64a2b085a4d2d4279d952d7b647a';
     }
-  }, 
-  rMATICTokenAddress:()=>{
-    if(!isdev()){
-      return '0x7D1AfA7B718fb893dB30A3aBc0Cfc608AaCfeBB0';
-    }else{
-      return '0x499d11e0b6eac7c0593d8fb292dcbbf815fb29ae';
-    }  
-  }, 
+  },
+  bep20HandlerAddress: () => {
+    if (!isdev()) {
+      return '0xf341278f930c81719aad507b8796af353959e876';
+    } else {
+      return '0xf341278f930c81719aad507b8796af353959e876';
+    }
+  },
   bridgeAddress: () => {
     if (!isdev()) {
       return '0xc0609ea6e4345555276fac1636b5c27ebc17d817';
     } else {
       return '0xc3ce28a291def0f5762c545431036a6819b8d6d2';
+    }
+  },
+  bep20BridgeAddress: () => {
+    if (!isdev()) {
+      return '0x50ba879767654756458dbb29674a8545de83e096';
+    } else {
+      return '0x50ba879767654756458dbb29674a8545de83e096';
     }
   },
   txHashAndBlockhashURl: {
@@ -227,17 +288,17 @@ export default {
     } else if (type == Symbol.Ksm) {
       return 8;
     } else if (type == Symbol.Atom) {
-      return 22; 
-    }else if(type==Symbol.Matic){
       return 22;
-    }else if(type==Symbol.Fis){ 
+    } else if (type == Symbol.Matic) {
+      return 22;
+    } else if (type == Symbol.Fis) {
       return 29;
     } else if (type == Symbol.Sol) {
       return 10;
     } else {
       return 0;
     }
-  }, 
+  },
   curve: {
     rethURL: 'https://curve.fi/reth',
   },
@@ -263,5 +324,59 @@ export default {
       '[{"inputs":[],"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"owner","type":"address"},{"indexed":true,"internalType":"address","name":"spender","type":"address"},{"indexed":false,"internalType":"uint256","name":"value","type":"uint256"}],"name":"Approval","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"address","name":"account","type":"address"}],"name":"Paused","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"bytes32","name":"role","type":"bytes32"},{"indexed":true,"internalType":"bytes32","name":"previousAdminRole","type":"bytes32"},{"indexed":true,"internalType":"bytes32","name":"newAdminRole","type":"bytes32"}],"name":"RoleAdminChanged","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"bytes32","name":"role","type":"bytes32"},{"indexed":true,"internalType":"address","name":"account","type":"address"},{"indexed":true,"internalType":"address","name":"sender","type":"address"}],"name":"RoleGranted","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"bytes32","name":"role","type":"bytes32"},{"indexed":true,"internalType":"address","name":"account","type":"address"},{"indexed":true,"internalType":"address","name":"sender","type":"address"}],"name":"RoleRevoked","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"from","type":"address"},{"indexed":true,"internalType":"address","name":"to","type":"address"},{"indexed":false,"internalType":"uint256","name":"value","type":"uint256"}],"name":"Transfer","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"address","name":"account","type":"address"}],"name":"Unpaused","type":"event"},{"inputs":[],"name":"DEFAULT_ADMIN_ROLE","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"MINTER_ROLE","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"PAUSER_ROLE","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"owner","type":"address"},{"internalType":"address","name":"spender","type":"address"}],"name":"allowance","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"spender","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"approve","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"account","type":"address"}],"name":"balanceOf","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"burn","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"account","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"burnFrom","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"decimals","outputs":[{"internalType":"uint8","name":"","type":"uint8"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"spender","type":"address"},{"internalType":"uint256","name":"subtractedValue","type":"uint256"}],"name":"decreaseAllowance","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bytes32","name":"role","type":"bytes32"}],"name":"getRoleAdmin","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"bytes32","name":"role","type":"bytes32"},{"internalType":"uint256","name":"index","type":"uint256"}],"name":"getRoleMember","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"bytes32","name":"role","type":"bytes32"}],"name":"getRoleMemberCount","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"bytes32","name":"role","type":"bytes32"},{"internalType":"address","name":"account","type":"address"}],"name":"grantRole","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bytes32","name":"role","type":"bytes32"},{"internalType":"address","name":"account","type":"address"}],"name":"hasRole","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"spender","type":"address"},{"internalType":"uint256","name":"addedValue","type":"uint256"}],"name":"increaseAllowance","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"mint","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"name","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"pause","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"paused","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"bytes32","name":"role","type":"bytes32"},{"internalType":"address","name":"account","type":"address"}],"name":"renounceRole","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bytes32","name":"role","type":"bytes32"},{"internalType":"address","name":"account","type":"address"}],"name":"revokeRole","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"symbol","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"totalSupply","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"recipient","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"transfer","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"sender","type":"address"},{"internalType":"address","name":"recipient","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"transferFrom","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"unpause","outputs":[],"stateMutability":"nonpayable","type":"function"}]';
     return JSON.parse(abi);
   },
+
+  uniswapUrl: (inputCurrency: string, outputCurrency: any) => {
+    return `https://app.uniswap.org/#/swap?inputCurrency=${inputCurrency}&outputCurrency=${outputCurrency}`;
+  },
+  bscScannerUrl: () => {
+    if (!isdev()) {
+      return 'https://bscscan.com';
+    }
+    return 'https://testnet.bscscan.com';
+  },
+  etherScanErc20TxInAddressUrl: (address: any) => {
+    if (!isdev()) {
+      return `https://etherscan.io/address/${address}#tokentxns`;
+    }
+    return `https://ropsten.etherscan.io/address/${address}#tokentxns`;
+  },
+  bscScanBep20TxInAddressUrl: (address: any) => {
+    if (!isdev()) {
+      return `https://bscscan.com/address/${address}#tokentxns`;
+    }
+    return `https://testnet.bscscan.com/address/${address}#tokentxns`;
+  },
+  etherScanTokenUrl: (tokenAddress: any, userAddress: any) => {
+    if (!isdev()) {
+      return `https://etherscan.io/token/${tokenAddress}?a=${userAddress}`;
+    }
+    return `https://ropsten.etherscan.io/token/${tokenAddress}?a=${userAddress}`;
+  },
+  bscScanTokenUrl: (tokenAddress: any, userAddress: any) => {
+    if (!isdev()) {
+      return `https://bscscan.com/token/${tokenAddress}?a=${userAddress}`;
+    }
+    return `https://testnet.bscscan.com/token/${tokenAddress}?a=${userAddress}`;
+  },
+  stafiScanUrl: (address: any) => {
+    return `https://stafi.subscan.io/account/${address}`;
+  },
+  bscChainId: () => {
+    if (!isdev()) {
+      return 0x61;
+    }
+    return 0x61;
+  },
+  metaMaskNetworkIsEth: (networkChainId: any) => {
+    if (!isdev()) {
+      return networkChainId === '0x1';
+    }
+    return networkChainId === '0x3';
+  },
+  metaMaskNetworkIsBsc: (networkChainId: any) => {
+    if (!isdev()) {
+      return networkChainId === '0x61';
+    }
+    return networkChainId === '0x61';
+  },
 };
- 

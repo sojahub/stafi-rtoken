@@ -5,9 +5,8 @@ import { connectPolkadotjs, reloadData } from '@features/globalClice';
 import { getUnbondCommission as atom_getUnbondCommission, query_rBalances_account as atom_query_rBalances_account, rTokenRate as atom_rTokenRate } from '@features/rATOMClice';
 import { getUnbondCommission as dot_getUnbondCommission, query_rBalances_account as dot_query_rBalances_account, rTokenRate as dot_rTokenRate } from '@features/rDOTClice';
 import { getUnbondCommission, query_rBalances_account, rTokenRate as ksm_rTokenRate } from '@features/rKSMClice';
+import { getUnbondCommission as matic_getUnbondCommission, query_rBalances_account as matic_query_rBalances_account, rTokenRate as matic_rTokenRate } from '@features/rMATICClice';
 import { getUnbondCommission as sol_getUnbondCommission, query_rBalances_account as sol_query_rBalances_account, rTokenRate as sol_rTokenRate } from '@features/rSOLClice';
-import {rTokenRate as matic_rTokenRate,query_rBalances_account as matic_query_rBalances_account,getUnbondCommission as matic_getUnbondCommission} from '@features/rMATICClice'; 
-import rasset_rmatic_svg from '@images/r_matic.svg'; 
 import rDOT_svg from '@images/rDOT.svg';
 import rasset_fis_svg from '@images/rFIS.svg';
 import rasset_rsol_svg from '@images/rSOL.svg';
@@ -15,6 +14,7 @@ import rasset_ratom_svg from '@images/r_atom.svg';
 import rasset_rdot_svg from '@images/r_dot.svg';
 import rasset_rfis_svg from '@images/r_fis.svg';
 import rasset_rksm_svg from '@images/r_ksm.svg';
+import rasset_rmatic_svg from '@images/r_matic.svg';
 import { Symbol } from '@keyring/defaults';
 import Button from '@shared/components/button/connect_button';
 import Content from '@shared/components/content';
@@ -23,14 +23,11 @@ import NumberUtil from '@util/numberUtil';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Page_FIS from '../../rDOT/selectWallet_rFIS/index';
- 
 import Tag from './components/carTag/index';
 import CountAmount from './components/countAmount';
 import DataList from './components/list';
 import DataItem from './components/list/item';
-import './page.scss'; 
- 
- 
+import './page.scss';
 
 
 const commonClice=new CommonClice();
@@ -114,8 +111,8 @@ export default function Index(props:any){
     }
   },[fisAccount])
   return  <Content>
-    <Tag type="native" onClick={()=>{
-      props.history.push("/rAsset/erc")
+    <Tag type="native" onClick={(type:string)=>{
+      props.history.push(`/rAsset/${type}`)
     }}/>
  
     {fisAccount?<><DataList >
@@ -129,7 +126,7 @@ export default function Index(props:any){
           operationType="native"
           onSwapClick={()=>{
             props.history.push({
-              pathname:"/rAsset/swap/native",
+              pathname:"/rAsset/swap/native/default",
               state:{ 
                 rSymbol:"FIS"
               }
@@ -146,7 +143,7 @@ export default function Index(props:any){
           operationType="native"
           onSwapClick={()=>{
             props.history.push({
-              pathname:"/rAsset/swap/native",
+              pathname:"/rAsset/swap/native/default",
               state:{ 
                 rSymbol:"rFIS", 
               }
@@ -163,7 +160,7 @@ export default function Index(props:any){
           operationType="native"
           onSwapClick={()=>{
             props.history.push({
-              pathname:"/rAsset/swap/native",
+              pathname:"/rAsset/swap/native/default",
               state:{ 
                 rSymbol:"rDOT"
               }
@@ -180,7 +177,7 @@ export default function Index(props:any){
           operationType="native"
           onSwapClick={()=>{
             props.history.push({
-              pathname:"/rAsset/swap/native",
+              pathname:"/rAsset/swap/native/default",
               state:{ 
                 rSymbol:"rKSM"
               }
@@ -197,7 +194,7 @@ export default function Index(props:any){
           operationType="native"
           onSwapClick={()=>{
             props.history.push({
-              pathname:"/rAsset/swap/native",
+              pathname:"/rAsset/swap/native/default",
               state:{ 
                 rSymbol:"rATOM"
               }

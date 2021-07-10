@@ -1,75 +1,87 @@
 .stafi_header {
-    width:100%;
-    height:70px;
-    padding:20px 20px 20px 40px;
+  width: 100%;
+  height: 110px;
+  padding: 20px 20px 0px 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  .header_logo {
+    height: 30px;
+  }
+  .info_span {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    .header_logo{
-        height:30px;
-    }
-    .info_span{
-        display: flex;
-        align-items: center;
-        .report_icon{
-            img{
-                cursor: pointer;
-            }
-        }
-    }
-    .header_tool{
-        padding:6px;
-        background-color: #343B43;
-        border-radius: 3px;
-        font-size: 14px;
-        margin-right: 20px;
+    align-items: flex-start;
+    .report_icon {
+      padding-top: 10px;
+      padding-left: 10px;
+      img {
         cursor: pointer;
+      }
     }
-    .header_tools{
-        display: flex;
-        .header_tool{
-            margin-right: 20px;
-            cursor: pointer;
-        }
-        .header_tool.account{
-            padding:3px 10px;
-            border-radius: 3px;
-            // border:1px solid  #979797;
-            background-color: #343B43;
-            color:#979797;
-            text-align: center;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            >div:first-child{
-                font-size: 14px;
-                font-weight: bold; 
-            }
-            >div:last-child{
-                font-size: 10px;
-            }
-        }
-        .header_tool.account.fis{
-            background-image: linear-gradient(to right, #3DDDC4 , #37BFA5,#00EBA2);
-            color:#fff;
-        }
-        .header_tool.notice{
-            background-color:transparent;
-            position: relative;
-        }
-        .header_tool.new::after{
-            content: "";
-            display: block;
-            position: absolute;
-            width:4px;
-            height:4px;
-            border-radius: 50%;
-            background-color: #FF6464;
-            top: 10px;
-            left: 3px;
-        }
-
+  }
+  .header_tool {
+    padding: 6px;
+    background-color: #343b43;
+    border-radius: 3px;
+    font-size: 14px;
+    margin-right: 20px;
+    cursor: pointer;
+  }
+  .header_tools {
+    display: flex;
+    align-items: flex-start;
+    .header_tool {
+      margin-right: 20px;
+      cursor: pointer;
     }
-    
+    .header_tool.account {
+      padding: 6px 8px;
+      margin-left: 10px;
+      margin-right: 0px;
+      border-radius: 3px;
+      // border:1px solid  #979797;
+      background-color: #343b43;
+      color: #979797;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      > div:first-child {
+        font-size: 14px;
+        line-height: 14px;
+        font-weight: bold;
+      }
+      > div:last-child {
+        font-size: 10px;
+        line-height: 10px;
+        margin-top: 6px;
+      }
+    }
+    .wrong_network {
+      align-self: stretch;
+      margin-top: 4px;
+      margin-left: 10px;
+    }
+    .header_tool.account.fis {
+      background-image: linear-gradient(to right, #3dddc4, #37bfa5, #00eba2);
+      color: #fff;
+    }
+    .header_tool.notice {
+      padding: 10px 0px 0px 0px;
+      background-color: transparent;
+      position: relative;
+      margin-right: 0;
+    }
+    .header_tool.new::after {
+      content: "";
+      display: block;
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background-color: #ff6464;
+      top: 10px;
+      left: 3px;
+    }
+  }
 }
-

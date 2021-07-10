@@ -28,6 +28,8 @@ export enum Keys {
   MaticAccountKey = 'stafi_matic_account', 
   MaticProcessParameter = 'stafi_matic_processParameter', 
   MaticStakeHash='stafi_matic_stakeHash',  
+
+  BscAccountKey = 'stafi_bsc_account', 
 }
 
 export const setSessionStorageItem = (key: string, val: any) => {
