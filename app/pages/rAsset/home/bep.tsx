@@ -3,7 +3,8 @@ import { getRtokenPriceList } from "@features/bridgeClice";
 import {
   connectMetamask,
   getAssetBalanceAll,
-  handleBscAccount
+  handleBscAccount,
+  monitoring_Method
 } from "@features/BSCClice";
 import CommonClice from "@features/commonClice";
 import {
@@ -18,7 +19,6 @@ import {
   getUnbondCommission as dot_getUnbondCommission,
   rTokenRate as dot_rTokenRate
 } from "@features/rDOTClice";
-import { monitoring_Method } from "@features/rETHClice";
 import {
   getUnbondCommission as ksm_getUnbondCommission,
   rTokenRate as ksm_rTokenRate
@@ -155,7 +155,7 @@ export default function Index(props: any) {
 
   const toSwap = (tokenSymbol: string) => {
     props.history.push({
-      pathname: "/rAsset/swap/bep20",
+      pathname: "/rAsset/swap/bep20/native",
       state: {
         rSymbol: tokenSymbol,
       },

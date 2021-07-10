@@ -96,7 +96,9 @@ function Select(props: SelectProps) {
           return (
             <div
               className={`item ${
-                props.selectedData.title == item.title ? "active" : ""
+                props.selectedData && props.selectedData.title == item.title
+                  ? "active"
+                  : ""
               }`}
               onClick={() => {
                 props.onSelectChange && props.onSelectChange(item);

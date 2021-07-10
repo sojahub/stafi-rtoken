@@ -50,8 +50,10 @@ const globalClice = createSlice({
     stafiStakerApr:'',
     process:process,  
     timeOutFunc:null,
+    metaMaskNetworkId:null,
 
     loading:false,
+    isload_monitoring:false,
   },
   reducers: {  
     setProcessSlider(state,{payload}){
@@ -90,8 +92,14 @@ const globalClice = createSlice({
     setTimeOutFunc(state,{payload}){
       state.timeOutFunc=payload;
     },
+    setMetaMaskNetworkId(state,{payload}){
+      state.metaMaskNetworkId=payload;
+    },
     setLoading(state,{payload}){
       state.loading=payload;
+    },
+    setIsloadMonitoring(state,{payload}){
+      state.isload_monitoring=payload;
     }
   },
 });
@@ -103,9 +111,14 @@ export const {
   setProcessType,
   setTimeOutFunc,
   initProcess,
-  setLoading
+  setMetaMaskNetworkId,
+  setLoading,
+  setIsloadMonitoring
  } = globalClice.actions;
- 
+
+declare const window: any;
+declare const ethereum: any;
+
 export const connectPolkadotjs = (type:Symbol,cb?:Function): AppThunk=>async (dispatch, getState)=>{ 
   const accounts:any =await polkadotServer.connectPolkadotjs()   
   if(accounts){
@@ -125,6 +138,31 @@ export const connectPolkadotjs = (type:Symbol,cb?:Function): AppThunk=>async (di
   cb && cb();
  }
 }
+
+export const checkMetaMaskNetworkId = (): AppThunk => (dispatch, getState) => {
+  if (typeof window.ethereum !== "undefined" && ethereum.isMetaMask) {
+    ethereum.request({ method: 'eth_chainId' }).then((chainId:any) => { 
+      dispatch(setMetaMaskNetworkId(chainId));
+    })
+  }
+  dispatch(setMetaMaskNetworkId(null));
+ };
+
+ export const monitorMetaMaskChainChange=():AppThunk=>(dispatch,getState)=> { 
+  const isload_monitoring =getState().globalModule.isload_monitoring;
+  if(isload_monitoring){
+    return;
+  } 
+  if (typeof window.ethereum !== 'undefined' && ethereum.isMetaMask) {
+    dispatch(setIsloadMonitoring(true));
+    ethereum.autoRefreshOnNetworkChange = false; 
+
+    ethereum.on('chainChanged', (chainId:any) => {
+      dispatch(setMetaMaskNetworkId(chainId));
+    }); 
+  }
+}
+
 export const keplr_keystorechange=(cb?:Function):AppThunk=>async (dispatch, getState)=>{ 
   window.addEventListener("keplr_keystorechange", () => {
     dispatch(connectAtomjs());

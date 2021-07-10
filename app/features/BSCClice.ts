@@ -31,6 +31,7 @@ const BSCClice = createSlice({
     RKSMBep20Allowance: "--",
     RDOTBep20Allowance: "--",
     RATOMBep20Allowance: "--",
+    isload_monitoring: false,
   },
   reducers: {
     setBscAccount(state, { payload }) {
@@ -80,6 +81,9 @@ const BSCClice = createSlice({
     setRATOMBep20Allowance(state, { payload }) {
       state.RATOMBep20Allowance = payload;
     },
+    setIsloadMonitoring(state, { payload }) {
+      state.isload_monitoring = payload;
+    },
   },
 });
 
@@ -96,6 +100,7 @@ export const {
   setRKSMBep20Allowance,
   setRDOTBep20Allowance,
   setRATOMBep20Allowance,
+  setIsloadMonitoring,
 } = BSCClice.actions;
 
 declare const window: any;
@@ -137,6 +142,54 @@ export const connectMetamask =
       message.warning("Please install MetaMask!");
     }
   };
+
+export const monitoring_Method = (): AppThunk => (dispatch, getState) => {
+  const isload_monitoring = getState().BSCModule.isload_monitoring;
+
+  if (isload_monitoring) {
+    return;
+  }
+  if (typeof window.ethereum !== "undefined" && ethereum.isMetaMask) {
+    dispatch(setIsloadMonitoring(true));
+    ethereum.autoRefreshOnNetworkChange = false;
+    ethereum.on("accountsChanged", (accounts: any) => {
+      if (accounts.length > 0) {
+        dispatch(handleBscAccount(accounts[0]));
+
+        setTimeout(() => {
+          dispatch(getAssetBalanceAll());
+          dispatch(getBep20Allowances());
+          // dispatch(reloadData());
+        }, 20);
+      } else {
+        dispatch(handleBscAccount(null));
+      }
+    });
+
+    ethereum.on("chainChanged", (chainId: any) => {
+      if (isdev()) {
+        if (
+          ethereum.chainId != config.bscChainId() &&
+          location.pathname.includes("/rAsset/bep")
+        ) {
+          message.warning("Please connect to Binance Smart Chain!");
+          dispatch(setBscAccount(null));
+        }
+        if (
+          ethereum.chainId != config.bscChainId() &&
+          (location.pathname.includes("/swap/bep20") ||
+            location.pathname.includes("/swap/native/bep20"))
+        ) {
+          message.warning("Please connect to Binance Smart Chain!");
+          // dispatch(setBscAccount(null));
+        }
+      } else if (ethereum.chainId != config.bscChainId()) {
+        // message.warning("Please connect to Binance Smart Chain!");
+        dispatch(setBscAccount(null));
+      }
+    });
+  }
+};
 
 export const handleBscAccount =
   (address: string): AppThunk =>
@@ -258,6 +311,7 @@ export const getAssetBalance = (
       })
       .catch((e: any) => {
         console.error(e);
+        cb && cb('--');
       });
   } catch (e: any) {
     console.error(e);
@@ -347,6 +401,7 @@ const getBep20Allowance = async (
     cb && cb(allowance);
   } catch (e: any) {
     console.error(e);
+    cb && cb('--');
   }
 };
 

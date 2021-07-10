@@ -106,7 +106,7 @@ export default function Index(props:any){
           operationType="native"
           onSwapClick={()=>{
             props.history.push({
-              pathname:"/rAsset/swap/native",
+              pathname:"/rAsset/swap/native/default",
               state:{ 
                 rSymbol:"FIS"
               }
@@ -123,7 +123,7 @@ export default function Index(props:any){
           operationType="native"
           onSwapClick={()=>{
             props.history.push({
-              pathname:"/rAsset/swap/native",
+              pathname:"/rAsset/swap/native/default",
               state:{ 
                 rSymbol:"rFIS", 
               }
@@ -140,7 +140,7 @@ export default function Index(props:any){
           operationType="native"
           onSwapClick={()=>{
             props.history.push({
-              pathname:"/rAsset/swap/native",
+              pathname:"/rAsset/swap/native/default",
               state:{ 
                 rSymbol:"rDOT"
               }
@@ -157,7 +157,7 @@ export default function Index(props:any){
           operationType="native"
           onSwapClick={()=>{
             props.history.push({
-              pathname:"/rAsset/swap/native",
+              pathname:"/rAsset/swap/native/default",
               state:{ 
                 rSymbol:"rKSM"
               }
@@ -174,7 +174,7 @@ export default function Index(props:any){
           operationType="native"
           onSwapClick={()=>{
             props.history.push({
-              pathname:"/rAsset/swap/native",
+              pathname:"/rAsset/swap/native/default",
               state:{ 
                 rSymbol:"rATOM"
               }

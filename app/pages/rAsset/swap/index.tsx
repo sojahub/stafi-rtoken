@@ -15,7 +15,8 @@ import {
   clickSwapToNativeLink,
   getAssetBalanceAll as getBep20AssetBalanceAll,
   getBep20Allowances,
-  handleBscAccount
+  handleBscAccount,
+  monitoring_Method as bsc_Monitoring_Method
 } from "@features/BSCClice";
 import {
   clickSwapToErc20Link,
@@ -42,7 +43,11 @@ import {
   reloadData as dotReloadData,
   rTokenRate as dot_rTokenRate
 } from "@features/rDOTClice";
-import { checkEthAddress, handleEthAccount } from "@features/rETHClice";
+import {
+  checkEthAddress,
+  handleEthAccount,
+  monitoring_Method as eth_Monitoring_Method
+} from "@features/rETHClice";
 import {
   getUnbondCommission,
   query_rBalances_account,
@@ -188,9 +193,6 @@ export default function Index(props: any) {
   const [viewTxUrl, setViewTxUrl] = useState("");
 
   const {
-    fisAccount,
-    ethAccount,
-    bscAccount,
     erc20EstimateFee,
     bep20EstimateFee,
     estimateEthFee,
@@ -270,13 +272,98 @@ export default function Index(props: any) {
     }
   });
 
+  const { fisAccount, ethAccount, bscAccount } = useSelector((state: any) => {
+    if (
+      (fromTypeData && fromTypeData.type === "erc20") ||
+      (destTypeData && destTypeData.type === "erc20")
+    ) {
+      return {
+        fisAccount: state.FISModule.fisAccount,
+        ethAccount: state.rETHModule.ethAccount,
+      };
+    } else if (
+      (fromTypeData && fromTypeData.type === "bep20") ||
+      (destTypeData && destTypeData.type === "bep20")
+    ) {
+      return {
+        fisAccount: state.FISModule.fisAccount,
+        bscAccount: state.BSCModule.bscAccount,
+      };
+    } else {
+      return {
+        fisAccount: state.FISModule.fisAccount,
+      };
+    }
+  });
+
+  const { metaMaskNetworkId } = useSelector((state: any) => {
+    return {
+      metaMaskNetworkId: state.globalModule.metaMaskNetworkId,
+    };
+  });
+
+  useEffect(() => {
+    if (
+      props.match.params &&
+      props.match.params.fromType &&
+      props.match.params.destType
+    ) {
+      if (
+        props.match.params.fromType !== "native" &&
+        props.match.params.fromType !== "erc20" &&
+        props.match.params.fromType !== "bep20" &&
+        props.match.params.fromType !== "default"
+      ) {
+        returnToAsset();
+        return;
+      }
+      if (
+        props.match.params.destType !== "native" &&
+        props.match.params.destType !== "erc20" &&
+        props.match.params.destType !== "bep20" &&
+        props.match.params.destType !== "default"
+      ) {
+        returnToAsset();
+        return;
+      }
+      if (props.match.params.fromType === props.match.params.destType) {
+        returnToAsset();
+        return;
+      }
+      if (
+        (props.match.params.fromType === "erc20" &&
+          props.match.params.destType === "bep20") ||
+        (props.match.params.fromType === "bep20" &&
+          props.match.params.destType === "erc20")
+      ) {
+        returnToAsset();
+        return;
+      }
+
+      const fromData = assetDatas.find(
+        (item) => item.type == props.match.params.fromType
+      );
+      setFromTypeData(fromData);
+      const destData = assetDatas.find(
+        (item) => item.type == props.match.params.destType
+      );
+      setDestTypeData(destData);
+    } else {
+      returnToAsset();
+    }
+  }, [
+    props.match.params &&
+      props.match.params.fromType &&
+      props.match.params.destType,
+  ]);
+
   useEffect(() => {
     dispatch(bridgeCommon_ChainFees());
     dispatch(getBridgeEstimateEthFee());
   }, []);
 
   useEffect(() => {
-    if (fisAccount && fromTypeData && fromTypeData.type == "native") {
+    if (fisAccount && fisAccount.address) {
       dispatch(reloadData());
       dispatch(query_rBalances_account());
       dispatch(fis_query_rBalances_account());
@@ -291,36 +378,40 @@ export default function Index(props: any) {
       dispatch(dot_getUnbondCommission());
       dispatch(atom_getUnbondCommission());
     }
-  }, [
-    reloadFlag,
-    fisAccount && fisAccount.address,
-    fromTypeData && fromTypeData.type,
-  ]);
+  }, [reloadFlag, fisAccount && fisAccount.address]);
 
   useEffect(() => {
+    console.log(props.match.params.fromType);
+    console.log(props.match.params.destType);
     if (
       props.match.params &&
-      props.match.params.fromType == "erc20" &&
+      (props.match.params.fromType == "erc20" ||
+        props.match.params.destType == "erc20") &&
       ethAccount &&
       ethAccount.address
     ) {
       dispatch(handleEthAccount(ethAccount.address));
       dispatch(getErc20Allowances());
       dispatch(getAssetBalanceAll());
+      dispatch(eth_Monitoring_Method());
     }
     if (
       props.match.params &&
-      props.match.params.fromType == "bep20" &&
+      (props.match.params.fromType == "bep20" ||
+        props.match.params.destType == "bep20") &&
       bscAccount &&
       bscAccount.address
     ) {
       dispatch(handleBscAccount(bscAccount.address));
       dispatch(getBep20Allowances());
       dispatch(getBep20AssetBalanceAll());
+      dispatch(bsc_Monitoring_Method());
     }
   }, [
     reloadFlag,
+    metaMaskNetworkId,
     props.match.params && props.match.params.fromType,
+    props.match.params && props.match.params.destType,
     ethAccount && ethAccount.address,
     bscAccount && bscAccount.address,
   ]);
@@ -337,33 +428,6 @@ export default function Index(props: any) {
       setTokenType(selectDataSource[0]);
     }
   }, [props.location.state, selectDataSource]);
-
-  useEffect(() => {
-    if (props.match.params && props.match.params.fromType) {
-      const data = assetDatas.find(
-        (item) => item.type == props.match.params.fromType
-      );
-      setFromTypeData(data);
-      if (props.location.state && props.location.state.destType) {
-        const destTypeData = assetDatas.find(
-          (item) => item.type == props.location.state.destType
-        );
-        setDestTypeData(destTypeData);
-      } else {
-        if (props.match.params.fromType === "native") {
-          setDestTypeData(assetDatas[1]);
-        } else {
-          setDestTypeData(assetDatas[0]);
-        }
-      }
-    } else {
-      setFromTypeData(assetDatas[0]);
-      setDestTypeData(assetDatas[1]);
-    }
-  }, [
-    props.match.params && props.match.params.fromType,
-    props.location.state && props.location.state.destType,
-  ]);
 
   useEffect(() => {
     selectDataSource[0].content = fis_balance;
@@ -393,32 +457,47 @@ export default function Index(props: any) {
         props.match.params &&
         props.match.params.fromType !== fromTypeData.type
       ) {
+        const destType = destTypeData ? destTypeData.type : "default";
         props.history.push({
-          pathname: `/rAsset/swap/${fromTypeData.type}`,
+          pathname: `/rAsset/swap/${fromTypeData.type}/${destType}`,
           state: {
-            destType: destTypeData && destTypeData.type,
             rSymbol: tokenType && tokenType.title,
           },
         });
       }
-
-      if (fromTypeData.type == "native") {
+      if (fromTypeData.type === "native") {
         setFromTypeSelections([assetDatas[0]]);
       } else {
         setFromTypeSelections([assetDatas[1], assetDatas[2]]);
       }
+    } else {
+      setFromTypeSelections([assetDatas[1], assetDatas[2]]);
     }
-  }, [fromTypeData && fromTypeData.type]);
 
-  useEffect(() => {
     if (destTypeData) {
-      if (destTypeData.type == "native") {
+      if (
+        props.match.params &&
+        props.match.params.destType !== destTypeData.type
+      ) {
+        const fromType = fromTypeData ? fromTypeData.type : "default";
+        props.history.push({
+          pathname: `/rAsset/swap/${fromType}/${destTypeData.type}`,
+          state: {
+            rSymbol: tokenType && tokenType.title,
+          },
+        });
+      }
+      if (destTypeData.type === "native") {
         setDestTypeSelections([assetDatas[0]]);
       } else {
         setDestTypeSelections([assetDatas[1], assetDatas[2]]);
       }
+    } else {
+      setDestTypeSelections([assetDatas[1], assetDatas[2]]);
     }
-  }, [destTypeData && destTypeData.type]);
+  }, [fromTypeData && fromTypeData.type, destTypeData && destTypeData.type]);
+
+  useEffect(() => {}, [destTypeData && destTypeData.type]);
 
   const reverseExchangeType = () => {
     const oldFromTypeData = fromTypeData;
@@ -459,6 +538,10 @@ export default function Index(props: any) {
     return fis_checkAddress(address);
   };
 
+  const returnToAsset = () => {
+    props.history.push("/rAsset/native");
+  };
+
   return (
     <Content className="stafi_rasset_swap ">
       <Back
@@ -481,7 +564,9 @@ export default function Index(props: any) {
                 selectDataSource={fromTypeSelections}
                 selectedData={fromTypeData}
                 selectedTitle={fromTypeData ? fromTypeData.content : ""}
-                selectedDescription={fromTypeData ? fromTypeData.title : ""}
+                selectedDescription={
+                  fromTypeData ? fromTypeData.title : "Choose a token standard"
+                }
                 onSelectChange={(e: SelectorType) => {
                   setFormAmount("");
                   setAddress("");
@@ -505,7 +590,9 @@ export default function Index(props: any) {
                 selectDataSource={destTypeSelections}
                 selectedData={destTypeData}
                 selectedTitle={destTypeData ? destTypeData.content : ""}
-                selectedDescription={destTypeData ? destTypeData.title : ""}
+                selectedDescription={
+                  destTypeData ? destTypeData.title : "Choose a token standard"
+                }
                 onSelectChange={(e: SelectorType) => {
                   setFormAmount("");
                   setAddress("");
@@ -534,7 +621,7 @@ export default function Index(props: any) {
           <div className={"input_container"} style={{ marginTop: "20px" }}>
             <div className={"title"}>Swap Amount</div>
             <AmountInputEmbed
-              maxInput={tokenType.content}
+              maxInput={tokenType.content !== "--" ? tokenType.content : 0}
               placeholder="0.0"
               value={fromAoumt}
               onChange={(value: any) => {
@@ -618,7 +705,19 @@ export default function Index(props: any) {
 
         <div className="btns">
           <Button
-            disabled={!(fromAoumt && address)}
+            disabled={
+              !(
+                fromAoumt &&
+                address &&
+                fromTypeData &&
+                destTypeData &&
+                (fromTypeData.type === "native" ||
+                  (fromTypeData.type === "erc20" &&
+                    config.metaMaskNetworkIsEth(metaMaskNetworkId)) ||
+                  (fromTypeData.type === "bep20" &&
+                    config.metaMaskNetworkIsBsc(metaMaskNetworkId)))
+              )
+            }
             onClick={() => {
               if (fromTypeData && fromTypeData.type === "erc20") {
                 if (

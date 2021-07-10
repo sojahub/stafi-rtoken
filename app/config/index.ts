@@ -292,4 +292,22 @@ export default {
   stafiScanUrl: (address: any) => {
     return `https://stafi.subscan.io/account/${address}`;
   },
+  bscChainId: () => {
+    if (!isdev()) {
+      return 0x61;
+    }
+    return 0x61;
+  },
+  metaMaskNetworkIsEth: (networkChainId: any) => {
+    if (!isdev()) {
+      return networkChainId === '0x1';
+    }
+    return networkChainId === '0x3';
+  },
+  metaMaskNetworkIsBsc: (networkChainId: any) => {
+    if (!isdev()) {
+      return networkChainId === '0x61';
+    }
+    return networkChainId === '0x61';
+  },
 };

@@ -93,7 +93,7 @@ export default function Index(props:any){
 
   const toSwap = (tokenSymbol: string) => {
     props.history.push({
-      pathname: "/rAsset/swap/erc20",
+      pathname: "/rAsset/swap/erc20/native",
       state: {
         rSymbol: tokenSymbol,
       },

@@ -154,7 +154,7 @@ export const nativeToOtherSwap=(chainId:any,tokenStr:string,tokenType:string, to
                     } else if (method === 'ExtrinsicSuccess') {
                         console.log('sign and send result: ',JSON.stringify(result));
                         dispatch(setLoading(false)); 
-                        dispatch(add_Swap_Notice(tokenStr,tokenAmount,noticeStatus.Empty,{swapType:"native"}))
+                        dispatch(add_Swap_Notice(tokenStr,tokenAmount,noticeStatus.Empty,{swapType:"native",destSwapType:chainId===BSC_CHAIN_ID?'bep20':'erc20'}))
                         cb && cb() 
                     }
                 });

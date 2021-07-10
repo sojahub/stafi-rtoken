@@ -431,7 +431,7 @@ const routesFactory=(role?:any)=>{
           component:RAssetBep
         },{
           id:"rAssect_swap",
-          path:"/rAsset/swap/:fromType",
+          path:"/rAsset/swap/:fromType/:destType",
           component:RAssetSwap
         },{
           path: '*',
