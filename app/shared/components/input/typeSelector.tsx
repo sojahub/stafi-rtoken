@@ -1,8 +1,8 @@
-import black_close from "@images/black_close.svg";
-import downArrowSvg from "@images/ic_arrow_down.svg";
-import { Popover } from "antd";
-import React, { useState } from "react";
-import "./index.scss";
+import black_close from '@images/black_close.svg';
+import downArrowSvg from '@images/ic_arrow_down.svg';
+import { Popover } from 'antd';
+import React, { useState } from 'react';
+import './index.scss';
 
 type Props = {
   selectedTitle: string;
@@ -16,22 +16,21 @@ type Props = {
 export default function Index(props: Props) {
   const [showSelect, setShowSelect] = useState(false);
   return (
-    <div className="type_selector_container">
+    <div className='type_selector_container'>
       <div
-        className="left_container"
+        className='left_container'
         onClick={() => {
           setShowSelect(true);
-        }}
-      >
-        <div className="title">{props.selectedTitle}</div>
-        <div className="description">{props.selectedDescription}</div>
+        }}>
+        <div className='title'>{props.selectedTitle}</div>
+        <div className='description'>{props.selectedDescription}</div>
       </div>
 
       <div>
         <Popover
           visible={showSelect}
-          placement="bottomRight"
-          overlayClassName="stafi_type_input_select"
+          placement='bottomRight'
+          overlayClassName='stafi_type_input_select'
           title={
             <SelectTitle
               title={props.popTitle}
@@ -49,14 +48,12 @@ export default function Index(props: Props) {
                 setShowSelect(false);
               }}
             />
-          }
-        >
+          }>
           <a
             onClick={() => {
               setShowSelect(true);
-            }}
-          >
-            <img className="icon_last" src={downArrowSvg} />
+            }}>
+            <img className='icon_last' src={downArrowSvg} />
           </a>
         </Popover>
       </div>
@@ -70,8 +67,8 @@ type SelectTitleProps = {
 };
 function SelectTitle(props: SelectTitleProps) {
   return (
-    <div className="title">
-      <label>{props.title ? props.title : "Select a token"}</label>
+    <div className='title'>
+      <label>{props.title ? props.title : 'Select a token'}</label>
       <img
         src={black_close}
         onClick={() => {
@@ -90,27 +87,23 @@ type SelectProps = {
 
 function Select(props: SelectProps) {
   return (
-    <div className="content">
+    <div className='content'>
       {props.selectDataSource &&
-        props.selectDataSource.map((item) => {
+        props.selectDataSource.map((item, index) => {
           return (
             <div
-              className={`item ${
-                props.selectedData && props.selectedData.title == item.title
-                  ? "active"
-                  : ""
-              }`}
+              key={index}
+              className={`item ${props.selectedData && props.selectedData.title == item.title ? 'active' : ''}`}
               onClick={() => {
                 props.onSelectChange && props.onSelectChange(item);
-              }}
-            >
-              <div className="title">
+              }}>
+              <div className='title'>
                 <div>
                   <img src={item.icon} />
                 </div>
                 {item.title}
               </div>
-              <label className="amount">{item.content}</label>
+              <label className='amount'>{item.content}</label>
             </div>
           );
         })}

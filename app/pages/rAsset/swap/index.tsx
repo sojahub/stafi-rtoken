@@ -537,7 +537,11 @@ export default function Index(props: any) {
           </div>
 
           <div className={'input_container'} style={{ marginTop: '20px' }}>
-            <div className={'title'}>Swap Amount</div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div className={'title'}>Swap Amount</div>
+              <div className={'balance_amount'}>Balance: {tokenType.content !== '--' ? tokenType.content : '--'}</div>
+            </div>
+
             <AmountInputEmbed
               maxInput={tokenType.content !== '--' ? tokenType.content : 0}
               placeholder='0.0'
