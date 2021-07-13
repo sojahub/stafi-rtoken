@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react'; 
 import {useDispatch,useSelector} from 'react-redux';
 import Content from '@components/content/stakeContent_DOT'; 
-import {transfer,balancesAll,rTokenLedger} from '@features/rDOTClice'; 
-import { rTokenRate } from '@features/rDOTClice';
+import {transfer,balancesAll,rTokenLedger} from '@features/FISClice'; 
+import { rTokenRate } from '@features/FISClice';
 import {ratioToAmount} from '@util/common'
 import { message } from 'antd';
 import NumberUtil from '@util/numberUtil';
 import { setProcessSlider } from '@features/globalClice'; 
+import { RootState } from 'app/store';
 
 export default function Index(props:any){
 
@@ -19,22 +20,22 @@ export default function Index(props:any){
     dispatch(rTokenLedger())
   },[])
  
-  const {transferrableAmount,ratio,stafiStakerApr,fisCompare,validPools,totalIssuance,bondFees}=useSelector((state:any)=>{ 
-    const fisCompare = NumberUtil.fisAmountToChain(state.FISModule.fisAccount.balance) < (state.rDOTModule.bondFees + state.FISModule.estimateBondTxFees);
+  const {transferrableAmount,ratio,stafiStakerApr,fisCompare,validPools,totalIssuance,bondFees}=useSelector((state:RootState)=>{ 
+    const fisCompare = Number(NumberUtil.fisAmountToChain(state.FISModule.fisAccount.balance)) < Number(state.FISModule.bondFees + state.FISModule.estimateBondTxFees);
     return {
-      transferrableAmount:state.rDOTModule.transferrableAmountShow,
-      ratio:state.rDOTModule.ratio,
-      stafiStakerApr:state.rDOTModule.stakerApr,
+      transferrableAmount:state.FISModule.transferrableAmountShow,
+      ratio:state.FISModule.ratio,
+      stafiStakerApr:state.FISModule.stakerApr,
       fisCompare:fisCompare,
-      validPools:state.rDOTModule.validPools,
-      totalIssuance:state.rDOTModule.totalIssuance,
-      bondFees:state.rDOTModule.bondFees
+      validPools:state.FISModule.validPools,
+      totalIssuance:state.FISModule.totalIssuance,
+      bondFees:state.FISModule.bondFees
     }
   })
  
   return  <Content
   amount={amount}
-  willAmount={ratio=='--'?"--":ratioToAmount(amount,ratio)}
+  willAmount={ratio=='--'?"--":ratioToAmount(amount,Number(ratio))}
   unit={"FIS"}
   transferrableAmount={transferrableAmount}
   apr={stafiStakerApr} 
@@ -46,7 +47,7 @@ export default function Index(props:any){
      props.history.push("/rFIS/search")
   }}
   validPools={validPools} 
-  totalStakedToken={ NumberUtil.handleFisAmountToFixed((totalIssuance*ratio)) || "--"}
+  totalStakedToken={ NumberUtil.handleFisAmountToFixed((Number(totalIssuance)*Number(ratio))) || "--"}
   onStakeClick={()=>{
     
     if (amount) {

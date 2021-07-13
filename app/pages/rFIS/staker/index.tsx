@@ -1,7 +1,6 @@
 import React from 'react'; 
 import Card from '@components/card/stakeCard';
-import Slider from '@components/slider/stakeSlider';
-import Content from '@components/content/stakeContent_DOT';
+import Slider from '@components/slider/stakeSlider'; 
 import {renderRoutes}  from 'react-router-config';
 import {rFIS_data} from '../systemData';
 

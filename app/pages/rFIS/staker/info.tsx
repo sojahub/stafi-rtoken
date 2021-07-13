@@ -1,10 +1,8 @@
 import React, { useEffect, useState } from 'react'; 
-import {useSelector,useDispatch} from 'react-redux'; 
-import { rTokenRate } from '@features/rDOTClice';
-import {query_rBalances_account,accountUnbonds,setRatioShow} from '@features/rDOTClice'
-import {rSymbol} from '@keyring/defaults'
+import {useSelector,useDispatch} from 'react-redux';  
+import {query_rBalances_account,accountUnbonds,setRatioShow,rTokenRate} from '@features/FISClice'
 import Content from '@components/content/stakeInfoContent'; 
-import NumberUtil from '@util/numberUtil';
+import NumberUtil from '@util/numberUtil'; 
 
 
 export default function Index(props:any){ 
@@ -19,10 +17,10 @@ export default function Index(props:any){
 
   const {ratio,tokenAmount,ratioShow,totalUnbonding} = useSelector((state:any)=>{
     return {
-      ratio:state.rDOTModule.ratio,
-      tokenAmount:state.rDOTModule.tokenAmount,
-      ratioShow:state.rDOTModule.ratioShow,
-      totalUnbonding:state.rDOTModule.totalUnbonding
+      ratio:state.FISModule.ratio,
+      tokenAmount:state.FISModule.tokenAmount,
+      ratioShow:state.FISModule.ratioShow,
+      totalUnbonding:state.FISModule.totalUnbonding
     }
   }) 
 
