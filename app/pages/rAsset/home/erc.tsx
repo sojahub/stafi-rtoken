@@ -98,6 +98,12 @@ export default function Index(props: any) {
       ),
     };
   });
+  const { metaMaskNetworkId } = useSelector((state: any) => {
+    return {
+      metaMaskNetworkId: state.globalModule.metaMaskNetworkId,
+    };
+  });
+
   const totalPrice = useMemo(() => {
     let count: any = '--';
     unitPriceList.forEach((item: any) => {
@@ -135,16 +141,18 @@ export default function Index(props: any) {
   ]);
 
   let time: any;
-  console.log(matic_ercBalance, '======matic_ercBalance');
   useEffect(() => {
     updateData();
+    if (time) {
+      clearInterval(time);
+    }
     time = setInterval(updateData, 30000);
     return () => {
       if (time) {
         clearInterval(time);
       }
     };
-  }, [ethAccount && ethAccount.address]);
+  }, [metaMaskNetworkId, ethAccount && ethAccount.address]);
 
   useEffect(() => {
     dispatch(getRtokenPriceList());

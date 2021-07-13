@@ -70,6 +70,7 @@ import AddressInputEmbed from '@shared/components/input/addressInputEmbed';
 import AmountInputEmbed from '@shared/components/input/amountInputEmbed';
 import TypeSelector from '@shared/components/input/typeSelector';
 import NumberUtil from '@util/numberUtil';
+import { useInterval } from '@util/utils';
 import { message } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -149,6 +150,7 @@ const assetDatas = [
 ];
 
 export default function Index(props: any) {
+  let time: any;
   const dispatch = useDispatch();
   const [fromAoumt, setFormAmount] = useState<any>();
   const [selectDataSource, setSelectDataSource] = useState(tokenDatas);
@@ -165,7 +167,7 @@ export default function Index(props: any) {
   const [destTypeData, setDestTypeData] = useState<undefined | SelectorType>();
   const [destTypeSelections, setDestTypeSelections] = useState(assetDatas);
 
-  const [reloadFlag, setReloadFlag] = useState(0);
+  const [delayReloadFlag, setDelayReloadFlag] = useState(0);
   const [transferDetail, setTransferDetail] = useState('');
   const [viewTxUrl, setViewTxUrl] = useState('');
 
@@ -297,56 +299,12 @@ export default function Index(props: any) {
   }, []);
 
   useEffect(() => {
-    if (fisAccount && fisAccount.address) {
-      dispatch(reloadData());
-      dispatch(query_rBalances_account());
-      dispatch(fis_query_rBalances_account());
-      dispatch(dot_query_rBalances_account());
-      dispatch(atom_query_rBalances_account());
-      dispatch(sol_query_rBalances_account());
-      dispatch(matic_query_rBalances_account());
-      dispatch(ksm_rTokenRate());
-      dispatch(fis_rTokenRate());
-      dispatch(dot_rTokenRate());
-      dispatch(atom_rTokenRate());
-      dispatch(sol_rTokenRate());
-      dispatch(matic_rTokenRate());
-      dispatch(getUnbondCommission());
-      dispatch(fis_getUnbondCommission());
-      dispatch(dot_getUnbondCommission());
-      dispatch(atom_getUnbondCommission());
-      dispatch(sol_getUnbondCommission());
-      dispatch(matic_getUnbondCommission());
-    }
-  }, [reloadFlag, fisAccount && fisAccount.address]);
+    updateFisData();
+  }, [fisAccount && fisAccount.address]);
 
   useEffect(() => {
-    console.log(props.match.params.fromType);
-    console.log(props.match.params.destType);
-    if (
-      props.match.params &&
-      (props.match.params.fromType == 'erc20' || props.match.params.destType == 'erc20') &&
-      ethAccount &&
-      ethAccount.address
-    ) {
-      dispatch(handleEthAccount(ethAccount.address));
-      dispatch(getErc20Allowances());
-      dispatch(getAssetBalanceAll());
-      dispatch(eth_Monitoring_Method());
-    }
-    if (
-      props.match.params &&
-      (props.match.params.fromType == 'bep20' || props.match.params.destType == 'bep20') &&
-      bscAccount &&
-      bscAccount.address
-    ) {
-      dispatch(handleBscAccount(bscAccount.address));
-      dispatch(getBep20Allowances());
-      dispatch(getBep20AssetBalanceAll());
-      dispatch(bsc_Monitoring_Method());
-    }
+    updateErcBepData();
   }, [
-    reloadFlag,
     metaMaskNetworkId,
     props.match.params && props.match.params.fromType,
     props.match.params && props.match.params.destType,
@@ -391,7 +349,7 @@ export default function Index(props: any) {
       tokenType.content = rmatic_balance;
     }
     setTokenType({ ...tokenType });
-  }, [rksm_balance, rfis_balance, fis_balance, rdot_balance, ratom_balance]);
+  }, [rksm_balance, rfis_balance, fis_balance, rdot_balance, ratom_balance, rsol_balance, rmatic_balance]);
 
   useEffect(() => {
     if (fromTypeData) {
@@ -431,9 +389,68 @@ export default function Index(props: any) {
     } else {
       setDestTypeSelections([assetDatas[1], assetDatas[2]]);
     }
+
+    if (time) {
+      clearInterval(time);
+    }
   }, [fromTypeData && fromTypeData.type, destTypeData && destTypeData.type]);
 
-  useEffect(() => {}, [destTypeData && destTypeData.type]);
+  useInterval(() => {
+    if (fromTypeData && fromTypeData.type === 'native') {
+      updateFisData();
+    } else {
+      updateErcBepData();
+    }
+  }, 30000);
+
+  const updateFisData = () => {
+    if (fisAccount && fisAccount.address) {
+      dispatch(reloadData());
+      dispatch(query_rBalances_account());
+      dispatch(fis_query_rBalances_account());
+      dispatch(dot_query_rBalances_account());
+      dispatch(atom_query_rBalances_account());
+      dispatch(sol_query_rBalances_account());
+      dispatch(matic_query_rBalances_account());
+      dispatch(ksm_rTokenRate());
+      dispatch(fis_rTokenRate());
+      dispatch(dot_rTokenRate());
+      dispatch(atom_rTokenRate());
+      dispatch(sol_rTokenRate());
+      dispatch(matic_rTokenRate());
+      dispatch(getUnbondCommission());
+      dispatch(fis_getUnbondCommission());
+      dispatch(dot_getUnbondCommission());
+      dispatch(atom_getUnbondCommission());
+      dispatch(sol_getUnbondCommission());
+      dispatch(matic_getUnbondCommission());
+    }
+  };
+
+  const updateErcBepData = () => {
+    if (
+      props.match.params &&
+      (props.match.params.fromType == 'erc20' || props.match.params.destType == 'erc20') &&
+      ethAccount &&
+      ethAccount.address
+    ) {
+      dispatch(handleEthAccount(ethAccount.address));
+      dispatch(getErc20Allowances());
+      dispatch(getAssetBalanceAll());
+      dispatch(eth_Monitoring_Method());
+    }
+    if (
+      props.match.params &&
+      (props.match.params.fromType == 'bep20' || props.match.params.destType == 'bep20') &&
+      bscAccount &&
+      bscAccount.address
+    ) {
+      dispatch(handleBscAccount(bscAccount.address));
+      dispatch(getBep20Allowances());
+      dispatch(getBep20AssetBalanceAll());
+      dispatch(bsc_Monitoring_Method());
+    }
+  };
 
   const reverseExchangeType = () => {
     const oldFromTypeData = fromTypeData;
@@ -687,7 +704,7 @@ export default function Index(props: any) {
 
                     setFormAmount('');
                     setAddress('');
-                    setReloadFlag(reloadFlag + 1);
+                    setDelayReloadFlag(delayReloadFlag + 1);
                     setTransferringModalVisible(true);
                   }),
                 );
@@ -708,7 +725,7 @@ export default function Index(props: any) {
                       setViewTxUrl(config.stafiScanUrl(address));
                       setFormAmount('');
                       setAddress('');
-                      setReloadFlag(reloadFlag + 1);
+                      setDelayReloadFlag(delayReloadFlag + 1);
                       setTransferringModalVisible(true);
                     }),
                   );

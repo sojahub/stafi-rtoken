@@ -148,7 +148,7 @@ export const nativeToOtherSwap =
                   }
                 }
               } else if (method === 'ExtrinsicSuccess') {
-                console.log('sign and send result: ', JSON.stringify(result));
+                // console.log('sign and send result: ', JSON.stringify(result));
                 dispatch(setLoading(false));
                 dispatch(
                   add_Swap_Notice(tokenStr, tokenAmount, noticeStatus.Empty, {

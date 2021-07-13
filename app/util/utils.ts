@@ -1,3 +1,5 @@
+import { useEffect, useRef } from 'react';
+
 export const regular = {
   urlParameterReg: /([^?&=]+)=([^&]+)/g,
   phoneNumberReg: /^\d+$/,
@@ -8,17 +10,36 @@ export const regular = {
   integer: /^([0-9]+|0)$/,
   positiveInteger: /^[1-9]\d*$/,
   emailReg: /^[A-Za-z0-9\u4e00-\u9fa5]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/,
-  number2:/^\d+(\.)?(\d+)?$/
-}
+  number2: /^\d+(\.)?(\d+)?$/,
+};
 
 // Limit only 0~9 and . can be input
-export const parseNumber = (value:any) => {
+export const parseNumber = (value: any) => {
   if (!value && value !== 0) return;
   return value.replace(regular.nonNumber, '');
 };
 
 // Limit only number can be input
-export const parseInterge = (value:any) => {
+export const parseInterge = (value: any) => {
   if (!value && value !== 0) return;
   return value.replace(regular.nonInteger, '');
 };
+
+export function useInterval(callback: any, delay: number) {
+  const savedCallback = useRef<Function>();
+
+  useEffect(() => {
+    savedCallback.current = callback;
+  });
+
+  useEffect(() => {
+    function tick() {
+      if (savedCallback && savedCallback.current) {
+        savedCallback.current();
+      }
+    }
+
+    let id = setInterval(tick, delay);
+    return () => clearInterval(id);
+  }, [delay]);
+}

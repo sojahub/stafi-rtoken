@@ -6,7 +6,10 @@ import { getUnbondCommission as fis_getUnbondCommission, rTokenRate as fis_rToke
 import { getUnbondCommission as atom_getUnbondCommission, rTokenRate as atom_rTokenRate } from '@features/rATOMClice';
 import { getUnbondCommission as dot_getUnbondCommission, rTokenRate as dot_rTokenRate } from '@features/rDOTClice';
 import { getUnbondCommission as ksm_getUnbondCommission, rTokenRate as ksm_rTokenRate } from '@features/rKSMClice';
-import { getUnbondCommission as matic_getUnbondCommission, rTokenRate as matic_rTokenRate } from '@features/rMATICClice';
+import {
+  getUnbondCommission as matic_getUnbondCommission,
+  rTokenRate as matic_rTokenRate
+} from '@features/rMATICClice';
 import { getUnbondCommission as sol_getUnbondCommission, rTokenRate as sol_rTokenRate } from '@features/rSOLClice';
 import metamask from '@images/metamask.png';
 import rasset_fis_svg from '@images/rFIS.svg';
@@ -91,6 +94,11 @@ export default function Index(props: any) {
     };
   });
 
+  const { metaMaskNetworkId } = useSelector((state: any) => {
+    return {
+      metaMaskNetworkId: state.globalModule.metaMaskNetworkId,
+    };
+  });
 
   const totalPrice = useMemo(() => {
     let count: any = '--';
@@ -113,7 +121,26 @@ export default function Index(props: any) {
     return count;
   }, [unitPriceList, ksm_bepBalance, fis_bepBalance, rfis_bepBalance, dot_bepBalance, atom_bepBalance]);
 
+  let time: any;
   useEffect(() => {
+    updateData();
+    if (time) {
+      clearInterval(time);
+    }
+    time = setInterval(updateData, 30000);
+    return () => {
+      if (time) {
+        clearInterval(time);
+      }
+    };
+  }, [metaMaskNetworkId, bscAccount && bscAccount.address]);
+
+  useEffect(() => {
+    dispatch(getRtokenPriceList());
+    dispatch(monitoring_Method());
+  }, []);
+
+  const updateData = () => {
     if (bscAccount && bscAccount.address) {
       dispatch(handleBscAccount(bscAccount.address));
 
@@ -132,12 +159,7 @@ export default function Index(props: any) {
       dispatch(sol_getUnbondCommission());
       dispatch(matic_getUnbondCommission());
     }
-  }, [bscAccount && bscAccount.address]);
-
-  useEffect(() => {
-    dispatch(getRtokenPriceList());
-    dispatch(monitoring_Method());
-  }, []);
+  };
 
   const toSwap = (tokenSymbol: string) => {
     props.history.push({
