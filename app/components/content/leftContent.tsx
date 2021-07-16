@@ -5,7 +5,7 @@ type Props={
     className?:string
 }
 export default function Index(props:Props){
-    return <div className={`stafi_left_context ${props.className}`}>
+    return <div className={`stafi_left_context ${props.className || ''}`}>
         {props.children}
     </div>
 }

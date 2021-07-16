@@ -7,6 +7,10 @@ export const rDOT_data=[{
       url:"/rDOT/staker/info"
     },
     {
+      text:'-Reward',
+      url:"/rDOT/staker/reward"
+    },
+    {
       text:'-Recovery',
       url:"/rDOT/search"
     }

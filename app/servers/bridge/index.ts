@@ -1,10 +1,13 @@
-import config, { isdev } from '@config/index'
-import {rSymbol} from '@keyring/defaults'
+import config, { isdev } from '@config/index';
+import { rSymbol } from '@keyring/defaults';
 
 export default class Index{
     getBridgeErc20HandlerAddress(){
         return config.erc20HandlerAddress();
     }
+    getBridgeBep20HandlerAddress(){
+      return config.bep20HandlerAddress();
+  }
     getResourceId(tokenType: string){
       if (tokenType == 'fis') {
         return '0x000000000000000000000000000000a9e0095b8965c01e6a09c97938f3860901';
@@ -20,6 +23,8 @@ export default class Index{
         return '0x000000000000000000000000000000bada4d69537ffd62dbcde10ddda21b2001';
       } else if (tokenType == 'ratom') {
         return '0x0000000000000000000000000000006e15faef60f5e197166fe64110456a8601';
+      } else if (tokenType == 'rsol') {
+        return '0x000000000000000000000000000000659b930f8568952cb7b0c8b7eda3060b01';
       }
     }
     getRsymbolByTokenType(tokenType: string) {
@@ -32,11 +37,20 @@ export default class Index{
           return rSymbol.Ksm;
         case 'ratom':
           return rSymbol.Atom;
+        case 'rsol':
+          return rSymbol.Sol;
         default:
           return rSymbol.Fis;
       }
     }
     getBridgeEstimateEthFee(){
+      if (isdev()) {
+        return '0.001000';
+      } else {
+        return '0.000020';
+      }
+    }
+    getBridgeEstimateBscFee(){
       if (isdev()) {
         return '0.001000';
       } else {
@@ -50,4 +64,7 @@ export default class Index{
     getBridgeAddress () {
         return config.bridgeAddress();
     }
+    getBep20BridgeAddress () {
+      return config.bep20BridgeAddress();
+  }
 }

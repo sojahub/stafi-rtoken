@@ -1,12 +1,24 @@
-import React from 'react';
-import leftArrowSvg from '@images/left_arrow.svg';
+import leftArrowSvg from "@images/left_arrow.svg";
+import React from "react";
+import "./index.scss";
 
-import './index.scss';
-type Props={
-  onClick?:Function
-}
-export default function Index(props:Props){
-  return <img className="stafi_card_back" src={leftArrowSvg} onClick={()=>{
-      props.onClick && props.onClick()
-  }}/>
+type Props = {
+  onClick?: Function;
+  top?: any;
+  left?: any;
+};
+export default function Index(props: Props) {
+  return (
+    <img
+      className="stafi_card_back"
+      style={{
+        left: props.left ? props.left : "60px",
+        top: props.top ? props.top : "50px",
+      }}
+      src={leftArrowSvg}
+      onClick={() => {
+        props.onClick && props.onClick();
+      }}
+    />
+  );
 }

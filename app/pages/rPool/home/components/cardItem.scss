@@ -1,0 +1,19 @@
+.rpool_card_item{
+    width:217px;
+    height:80px;
+    background-color: #293038;
+    margin-right: 30px;
+    border-radius: 3px;
+    .label{
+        margin:15px 20px 0px 20px;
+        font-size: 12px;
+    }
+    .value{
+        width:100%;
+        font-size: 20px;
+        font-weight: bold; 
+        margin-top: 10px;
+        padding-right: 20px;
+        text-align: right; 
+    }
+}

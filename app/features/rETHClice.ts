@@ -1,5 +1,5 @@
-import { isdev } from '@config/index';
-import { Symbol } from '@keyring/defaults';
+import { isdev } from '@config/index'; 
+import { rSymbol, Symbol } from '@keyring/defaults';
 import { keccakAsHex } from '@polkadot/util-crypto';
 import { createSlice } from '@reduxjs/toolkit';
 import EthServer from '@servers/eth/index';
@@ -12,8 +12,10 @@ import { AppThunk } from '../store';
 import { getAssetBalance, getAssetBalanceAll } from './ETHClice';
 import { setLoading } from './globalClice';
 import { add_Notice, noticeStatus, noticesubType, noticeType } from './noticeClice';
+import RpcServer,{pageCount} from '@servers/rpc/index';
 
 const ethServer=new EthServer();
+const rpcServer=new RpcServer();
 const rETHClice = createSlice({
   name: 'rETHModule',
   initialState: {  
@@ -50,6 +52,8 @@ const rETHClice = createSlice({
     stakingPoolDetail:null,
     runCount:0,
     ethAmount:4,
+    rewardList:[],
+    rewardList_lastdata:null
   },
   reducers: {  
      setEthAccount(state,{payload}){ 
@@ -158,7 +162,13 @@ const rETHClice = createSlice({
      },
      setEthAmount(state,{payload}){
        state.ethAmount=payload
-     }
+     },
+     setRewardList(state,{payload}){
+      state.rewardList=payload
+    },
+    setRewardList_lastdata(state,{payload}){
+      state.rewardList_lastdata=payload
+    }
   },
 });
 
@@ -193,7 +203,9 @@ export const {setEthAccount,
   setPoolStatusUnmatchedETH,
   setStakingPoolDetail,
   setRunCount,
-  setEthAmount
+  setEthAmount,
+  setRewardList,
+  setRewardList_lastdata
 }=rETHClice.actions
 
 declare const window: any;
@@ -1026,7 +1038,38 @@ export const rewardDetails= [
 ] 
 
 
-
+export const getReward=(pageIndex:Number,cb:Function):AppThunk=>async (dispatch, getState)=>{
+  const source=getState().rETHModule.ethAccount.address; 
+  const result=await rpcServer.getReward(source,-1,pageIndex); 
+  if(result.status==80000){ 
+    const rewardList=getState().rETHModule.rewardList; 
+    if(result.data.rewardList.length>0){
+      const list=result.data.rewardList.map((item:any)=>{
+        const rate=NumberUtil.rTokenRateToHuman(item.rate);
+        const rbalance=NumberUtil.tokenAmountToChain(item.rbalance,rSymbol.Eth);
+        return {
+          ...item,
+          rbalance:rbalance,
+          rate:rate
+        }
+      })
+      if(result.data.rewardList.length<=pageCount){
+        dispatch(setRewardList_lastdata(null))
+      }else{
+        dispatch(setRewardList_lastdata(list[list.length-1]));
+        list.pop()
+      } 
+      dispatch(setRewardList([...rewardList,...list])); 
+      if(result.data.rewardList.length<=pageCount){
+        cb && cb(false)
+      }else{
+        cb && cb(true)
+      }
+    }else{
+      cb && cb(false)
+    }
+  }
+}
 //validator-Deposit
 
 const add_ETH_Staker_stake_Notice=(uuid:string,amount:string,status:string,subData?:any):AppThunk=>async (dispatch,getState)=>{

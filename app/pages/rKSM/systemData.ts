@@ -7,6 +7,10 @@ export const rKSM_data=[{
       url:"/rKSM/staker/info"
     },
     {
+      text:'-Reward',
+      url:"/rKSM/staker/reward"
+    },
+    {
       text:'-Recovery',
       url:"/rKSM/search"
     }

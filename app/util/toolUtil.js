@@ -1,4 +1,4 @@
-import { Symbol,rSymbol } from '../keyring/defaults'
+import { rSymbol, Symbol } from '../keyring/defaults';
 
 export default {
   getSymbolByTokenType(tokenType) {
@@ -28,20 +28,25 @@ export default {
         return Symbol.Xtz;
     }
   },
-  pageType(){
-    if(location.pathname.includes("/rDOT")){
-      return rSymbol.Dot
+  pageType() {
+    if (location.pathname.includes('/rDOT')) {
+      return rSymbol.Dot;
     }
-    if(location.pathname.includes("/rKSM")){
-      return rSymbol.Ksm
+    if (location.pathname.includes('/rKSM')) {
+      return rSymbol.Ksm;
     }
-    if(location.pathname.includes("/rATOM")){
-      return rSymbol.Atom
+    if (location.pathname.includes('/rATOM')) {
+      return rSymbol.Atom;
     }
-    if(location.pathname.includes("/rAsset")){
-      return rSymbol.Asset
-    }
-   
+    if (location.pathname.includes('/rAsset')) {
+      return rSymbol.Asset;
+    } 
+    if (location.pathname.includes('/rSOL')) {
+      return rSymbol.Sol;
+    } 
+    if(location.pathname.includes("/rMATIC")){
+      return rSymbol.Matic
+    } 
     return rSymbol.Asset;
   },
   getTokenTypeBySymbol(symbol) {
@@ -80,13 +85,12 @@ export default {
       case Symbol.Matic:
         return 'MATIC';
       case Symbol.One:
-        return 'ONE'
+        return 'ONE';
       default:
         return 'XTZ';
     }
   },
 
-  
   formatDateTime(timeStamp) {
     let date = new Date();
     date.setTime(timeStamp * 1000);
@@ -116,5 +120,5 @@ export default {
       default:
         return 'rFIS';
     }
-  }
+  },
 };

@@ -3,7 +3,7 @@ import Sider from '@components/slider';
 import Header from '@components/header';
 import {renderRoutes}  from 'react-router-config';
 import LiquidingProcesSlider from '@components/slider/liquidingProcessSlider'; 
-export default function index(props:any){ 
+export default function index(props:any){  
   return <div className="stafi_layout" style={{height:"100%"}}>
        <Sider route={props.route} history={props.history}/> 
        <LiquidingProcesSlider route={props.route}  history={props.history}/>

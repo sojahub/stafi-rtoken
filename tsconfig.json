@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
       "outDir": "./build/",
-      "sourceMap": true,
+      "sourceMap": false,
       "noImplicitAny": true,
       "module": "commonjs",
       "target": "es5",
@@ -20,6 +20,7 @@
         "@keyring/*": ["app/keyring/*"],
         "@config/*": ["app/config/*"],
         "@shared/*": ["app/shared/*"],
+        "@hooks/*": ["app/hooks/*"],
       },
       "allowSyntheticDefaultImports": true,
   },
@@ -31,5 +32,4 @@
     "build",
     "node_modules"
   ], 
-  
 }

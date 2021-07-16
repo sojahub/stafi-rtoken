@@ -1,0 +1,120 @@
+.rpool_staker_status_content{
+    .type_panel{
+        padding:0px 30px;
+        .type_select{
+            background-color: #ffffff;
+            border-radius: 7px;
+            font-size: 8px;
+            color:#2B3239;
+            width:54px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            img{
+                width: 8px;
+                margin-left: 5px;
+            }
+        }
+    }
+    .top_panel{
+        padding:0px 30px;
+        border-bottom: 1px solid #3B3B3B;
+       
+        .token_row{
+            display: flex;
+            justify-content: space-between;
+            margin-top:20px;
+            .left{
+                font-size: 30px;
+                font-weight: bold;
+                line-height: 30px;
+            }
+            .right{ 
+                .data{
+                    color:#00F3AB;
+                    font-size: 30px;
+                    font-weight: bold;
+                    line-height: 30px;
+                    text-align: right;
+                }
+                .redeemable{
+                    font-size: 12px;
+                    color:#C4C4C4;
+                }
+            }
+        }
+        .car_list{
+            display: flex;
+            justify-content: space-between;
+            margin-top:40px;
+            .car_item{ 
+                border-radius: 5px;
+                border:1px solid #979797;
+                padding:5px;
+                width:143px; 
+                .title{
+                    font-size: 8px;
+                    display: flex;
+                    justify-content: space-between;
+                    color:#C4C4C4;
+                    a{
+                        color:#C4C4C4;
+                    }
+                }
+                .data{
+                    color:#00F3AB;
+                    font-size: 16px;
+                    font-weight: bold;
+                    margin-top: 10px;
+                }
+            }
+        }
+        .btns{
+            margin-top: 50px;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: flex-end;
+            button{
+                margin-left:10px;
+                img{
+                    width:8px;
+                    margin-left:2px;
+                }
+            }
+        }
+    }
+
+    .bottom_panel{
+        padding:0px 30px;
+        .token_row{
+            display: flex;
+            justify-content: space-between;
+            height: 108px;
+            align-items: center;
+            .left{
+                font-size: 30px;
+                font-weight: bold;
+                line-height: 30px;
+            }
+            .right{ 
+                color:#00F3AB;
+                font-size: 30px;
+                font-weight: bold;
+                line-height: 30px; 
+            }
+
+        }
+        .hours{
+            color:#C4C4C4;
+            font-size: 12px;
+        }
+    }
+
+    .connect_btns{
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+}

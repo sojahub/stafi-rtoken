@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg width="36px" height="36px" viewBox="0 0 36 36" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg">
+  <g id="Group-2-Copy-59">
+    <path d="M17.8651 36C27.7318 36 35.7303 27.9411 35.7303 18C35.7303 8.05887 27.7318 0 17.8651 0C7.9985 0 0 8.05887 0 18C0 27.9411 7.9985 36 17.8651 36Z" id="Oval-5-Copy-2" fill="#FFFFFF" fill-rule="evenodd" stroke="#EEEEEE" stroke-width="0.76" />
+    <g id="Group-2-Copy-59" transform="translate(11.086914 5.2528687)">
+      <g id="Group-25">
+        <path d="M6.61765 0L13.2353 12.0259L6.61765 16.4118L0 12.1673L6.61765 0Z" id="Rectangle-14" fill="#23292F" fill-rule="evenodd" stroke="none" />
+        <path d="M6.88235 0L6.88235 9.19625L6.88235 16.4118L0 12.1673L6.88235 0Z" id="Rectangle-14-Copy" fill="#23292F" fill-rule="evenodd" stroke="none" />
+        <path d="M6.61765 0L13.2353 2.77941L6.61765 6.88235L0 2.91176L6.61765 0Z" transform="translate(0 9.529419)" id="Rectangle-18" fill="#23292F" fill-rule="evenodd" stroke="none" />
+        <path d="M6.88235 0L6.88235 2.77941L6.88235 6.88235L0 2.91176L6.88235 0Z" transform="translate(0 9.529419)" id="Rectangle-18-Copy" fill="#23292F" fill-rule="evenodd" stroke="none" />
+        <path d="M0 0L6.61765 4.19118L13.2353 0L6.61765 10.0588L0 0Z" transform="translate(0 13.235291)" id="Rectangle-28" fill="#23292F" fill-rule="evenodd" stroke="none" />
+        <path d="M0 0L6.88235 4.19118L6.88235 10.0588L0 0Z" transform="translate(0 13.235291)" id="Rectangle-28-Copy" fill="#23292F" fill-rule="evenodd" stroke="none" />
+      </g>
+    </g>
+  </g>
+</svg>

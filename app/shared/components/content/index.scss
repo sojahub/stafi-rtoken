@@ -5,7 +5,12 @@
   border-radius: 19px;
   position: relative;
 }
-
+.stafi_content_full{
+  width:993px;
+  height: initial;
+  min-height: 535px;
+  background-color: #23292F; 
+}
 .stafi_content_notice::after{
   content: "Notice: Please DO NOT use your Ledger account, otherwise your assets will be lost.";
   position: absolute;

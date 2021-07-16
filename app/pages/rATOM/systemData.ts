@@ -7,6 +7,10 @@ export const rATOM_data=[{
       url:"/rATOM/staker/info"
     },
     {
+      text:'-Reward',
+      url:"/rATOM/staker/reward"
+    },
+    {
       text:'-Recovery',
       url:"/rATOM/search"
     }

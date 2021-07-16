@@ -1,17 +1,18 @@
-import React, { useMemo } from 'react';
-import {useSelector} from 'react-redux';
-import {Tooltip} from 'antd'
-import Input from '@shared/components/input/amountInput';
-import LeftContent from './leftContent'
-import Button from '@shared/components/button/button'
-import A from '@shared/components/button/a'
-import rDOT from '@images/selected_rDOT.svg';
-import rKSM from '@images/selected_rKSM.svg';
+import doubt from "@images/doubt.svg";
 import rATOM from '@images/selected_rATOM.svg';
+import rDOT from '@images/selected_rDOT.svg';
 import rFIS from '@images/selected_rFIS.svg';
-import doubt from "@images/doubt.svg"; 
+import rKSM from '@images/selected_rKSM.svg';
+import rMATIC from '@images/selected_rMatic.svg';
+import rSOL from '@images/solana.svg';
+import Button from '@shared/components/button/button';
+import Input from '@shared/components/input/amountInput';
+import { Tooltip } from 'antd';
+import React, { useMemo } from 'react';
+import { useSelector } from 'react-redux';
+import './index.scss';
+import LeftContent from './leftContent';
 
-import './index.scss'; 
 type Props={
     onRecovery:Function,
     onStakeClick:Function,
@@ -23,8 +24,8 @@ type Props={
     apr?:string,
     validPools?:any[],
     totalStakedToken?:any,
-    bondFees?:any
-    type:"rDOT"|"rFIS"|"rKSM"|"rATOM",
+    bondFees?:any 
+    type:"rDOT"|"rFIS"|"rKSM"|"rATOM"| 'rSOL' | "rMATIC", 
     histroy?:any, 
 }
 export default function Index(props:Props){
@@ -41,8 +42,12 @@ export default function Index(props:Props){
           }else if( props.type=="rDOT"){
               return rDOT;
           }else if(props.type=="rATOM"){
-              return rATOM;
-          }else if(props.type=="rFIS"){
+              return rATOM; 
+          } else if (props.type == 'rSOL') {
+            return rSOL;
+          }else if(props.type=="rMATIC"){
+            return rMATIC;
+        }else if(props.type=="rFIS"){
             return rFIS;
         }
       }
@@ -52,9 +57,13 @@ export default function Index(props:Props){
     return <LeftContent className="stafi_stake_context">
         <label className="title"> 
             {props.type=="rKSM" && `Stake KSM`}
-            {props.type=="rDOT" && `Stake DOT`}
+            {props.type=="rDOT" && `Stake DOT`} 
             {props.type=="rATOM" && `Stake ATOM`}
-            {props.type=="rFIS" && `Stake FIS`}
+            {props.type=="rFIS" && `Stake FIS`} 
+            {props.type=="rATOM" && `Stake ATOM`} 
+            {props.type == 'rSOL' && `Stake SOL`} 
+            {props.type=="rMATIC" && `Stake MATIC`} 
+            {props.type=="rFIS" && `Stake FIS`} 
         </label>
         {haswarn && <div className="warn">Unable to stake, system is waiting for matching validators</div>}
         <div className={`input_panel dot_input_panel ${haswarn && 'showWarn'}`}>
@@ -65,13 +74,15 @@ export default function Index(props:Props){
                 props.onChange && props.onChange(e); 
             }}  icon={getIcon()}/>
 
-{/* selected_rKSM */}
-            {/* unit={"Max"} */}
+            {/* selected_rKSM */}
+            {/* unit={"Max"} */}        
             <div  className="pool">  
                 {props.type=="rKSM" && `${isNaN(props.totalStakedToken)?"--":props.totalStakedToken} KSM is staked via rKSM `}
                 {props.type=="rDOT" && `${isNaN(props.totalStakedToken)?"--":props.totalStakedToken} DOT is staked via rDOT `}
                 {props.type=="rATOM" && `${isNaN(props.totalStakedToken)?"--":props.totalStakedToken} ATOM is staked via rATOM `}
                 {props.type=="rFIS" && `${isNaN(props.totalStakedToken)?"--":props.totalStakedToken} FIS is staked via rFIS `}
+                {props.type == 'rSOL' && `${isNaN(props.totalStakedToken) ? '--' : props.totalStakedToken} SOL is staked via rSOL `}
+                {props.type=="rMATIC" && `${isNaN(props.totalStakedToken)?"--":props.totalStakedToken} MATIC is staked via rMATIC `} 
                 {/* <A>stats</A> */}
             </div>
         </div>
