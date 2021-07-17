@@ -1,5 +1,6 @@
 import React from 'react';
 import {Empty} from 'antd'; 
+import {Symbol} from '@keyring/defaults'
 import { noticesubType,noticeType,notice_text } from '@features/noticeClice'; 
 type Props={ 
   data?:any,
@@ -26,7 +27,7 @@ export default function Index(props:Props){
     </div>
     <a className={`${props.data.status} ${props.data.rSymbol!="eth" && props.data.subType}`} onClick={()=>{ 
       
-      if(props.data.rSymbol!="eth" && props.data.type==noticeType.Staker && props.data.subType==noticesubType.Stake) {
+      if(!(props.data.rSymbol==Symbol.Eth || props.data.rSymbol==Symbol.Fis) && props.data.type==noticeType.Staker && props.data.subType==noticesubType.Stake) {
         props.onClick && props.onClick();
       }
     }}>

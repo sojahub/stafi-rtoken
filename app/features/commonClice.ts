@@ -71,9 +71,34 @@ export default class CommonClice {
 
     }
   }
+  async getFisPools(poolLimit:any,cb?:Function) {
+    const stafiApi = await stafiServer.createStafiApi();
+    const poolsData = await stafiApi.query.rFis.pools();
+    let pools = poolsData.toJSON(); 
+    if (pools && pools.length > 0) {
+      pools.forEach((pool: any) => {
+        stafiApi.query.staking.ledger(pool).then((ledgerData: any) => {
+              let ledger = ledgerData.toJSON();
+              cb && cb({
+                address: pool,
+                active: ledger.active
+              })
+          })
+          .catch((error: any) => {
+            console.log('getPools error: ', error);
+          });
+      });
+
+    }
+  }
   async poolBalanceLimit(type: rSymbol) {
     const stafiApi = await stafiServer.createStafiApi();
     const result = await stafiApi.query.rTokenSeries.poolBalanceLimit(type);
+    return result.toJSON();
+  }
+  async fis_poolBalanceLimit() {
+    const stafiApi = await stafiServer.createStafiApi();
+    const result = await stafiApi.query.rFis.poolBalanceLimit();
     return result.toJSON();
   }
   async rTokenRate(type: rSymbol) {
@@ -132,7 +157,7 @@ export default class CommonClice {
     const unbondCommission = NumberUtil.fisFeeToHuman(result.toJSON());
     return unbondCommission;
   }
-  getPool(tokenAmount: any, validPools: any, poolLimit: any) {
+  getPool(tokenAmount: any, validPools: any, poolLimit: any,errorMessage?:string) {
     const data = validPools.find((item: any) => {
       if (poolLimit == 0 || Number(item.active) + Number(tokenAmount) <= Number(poolLimit)) {
         return true;
@@ -141,7 +166,20 @@ export default class CommonClice {
     if (data) {
       return data;
     } else {
-      message.error('There is no matching pool, please try again later.');
+      message.error(errorMessage?errorMessage:'There is no matching pool, please try again later.');
+      return null;
+    }
+  }
+  getFisPool(tokenAmount: any, validPools: any, poolLimit: any,errorMessage?:string) {
+    const data = validPools.find((item: any) => {
+      if (Number(item.active) + Number(tokenAmount) <= Number(poolLimit)) {
+        return true;
+      }
+    });
+    if (data) {
+      return data;
+    } else {
+      message.error(errorMessage?errorMessage:'There is no matching pool, please try again later.');
       return null;
     }
   }

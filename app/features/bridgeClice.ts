@@ -123,8 +123,7 @@ export const nativeToOtherSwap =
                     const mod = dispatchError.asModule;
                     const error = data.registry.findMetaError(
                       new Uint8Array([mod.index.toNumber(), mod.error.toNumber()]),
-                    );
-                    console.log('error: ', JSON.stringify(error));
+                    ); 
                     let message_str = 'Something is wrong, please make sure you have enough FIS balance';
                     if (tokenType == 'rfis') {
                       message_str = 'Something is wrong, please make sure you have enough FIS and rFIS balance';

@@ -185,10 +185,8 @@ export const getFISAssetBalance=():AppThunk=>(dispatch,getState)=>{
  
   export const getRMaticAssetBalance=():AppThunk=>(dispatch,getState)=>{  
     if(getState().rETHModule.ethAccount){ 
-      const address=getState().rETHModule.ethAccount.address; 
-      console.log(address,"========address")  
+      const address=getState().rETHModule.ethAccount.address;   
       getAssetBalance(address,maticServer.getTokenAbi(), maticServer.getTokenAddress(),(v:any)=>{
-        console.log(v,"========vvvvvv")
          dispatch(setErcRMaticBalance(v));
 
       })

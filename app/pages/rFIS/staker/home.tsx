@@ -55,8 +55,7 @@ export default function Index(props:any){
         message.error("No enough FIS to pay for the fee");
         return;
       }
-      dispatch(transfer(amount,()=>{
-        dispatch(setProcessSlider(false));
+      dispatch(transfer(amount,()=>{ 
         props.history.push("/rFIS/staker/info")
       }));
     }else{

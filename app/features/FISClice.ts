@@ -26,7 +26,7 @@ import {
   setProcessType
 } from './globalClice';
 import { add_Notice, findUuid, noticeStatus, noticesubType, noticeType } from './noticeClice';
-
+ 
 declare const ethereum: any; 
 const FISClice = createSlice({
   name: 'FISModule',
@@ -199,151 +199,79 @@ const queryBalance = async (account: any, dispatch: any, getState: any) => {
 export const transfer =
   (amountparam: number, cb?: Function): AppThunk =>
   async (dispatch, getState) => {
-    dispatch(
-      setProcessSending({
-        brocasting: processStatus.loading,
-        packing: processStatus.default,
-        finalizing: processStatus.default,
-      }),
-    );
-    dispatch(setProcessSlider(true));
-    const validPools = getState().FISModule.validPools;
-    const poolLimit = getState().FISModule.poolLimit;
-    const address = getState().FISModule.fisAccount.address;
     const amount = NumberUtil.fisAmountToChain(amountparam);
-    web3Enable(stafiServer.getWeb3EnalbeName());
-    const injector = await web3FromSource(stafiServer.getPolkadotJsSource());
-
-    const stafiApi = await stafiServer.createStafiApi();
-
-    const selectedPool = commonClice.getPool(amountparam, validPools, poolLimit);
-    if (selectedPool == null) {
+    const poolLimit=getState().FISModule.poolLimit;
+    const validPools=getState().FISModule.validPools;  
+    const selectedPool =commonClice.getFisPool(amount, validPools, poolLimit,"The cumulative FIS amount exceeds the pool limit, please try again later!");
+    if (selectedPool == null) {  
       return;
-    }
-    const ex = stafiApi.tx.balances.transferKeepAlive(selectedPool.address, amount);
+    } 
 
-    ex.signAndSend(address, { signer: injector.signer }, (result: any) => {
-      const tx = ex.hash.toHex();
-      try {
-        let asInBlock = '';
-        try {
-          asInBlock = '' + result.status.asInBlock;
-        } catch (e) {
-          // do nothing
-        }
-        if (asInBlock) {
-          dispatch(
-            setProcessParameter({
-              sending: {
-                amount: amount,
-                txHash: tx,
-                blockHash: asInBlock,
-                address,
-              },
-              href: cb ? '/rDOT/staker/info' : null,
-            }),
-          );
-          dispatch(
-            setStakeHash({
-              txHash: tx,
-              blockHash: asInBlock,
-            }),
-          );
-        }
-        if (result.status.isInBlock) {
-          dispatch(
-            setProcessSending({
-              brocasting: processStatus.success,
-              packing: processStatus.loading,
-            }),
-          );
+    try{
+    dispatch(setLoading(true))
+    web3Enable(stafiServer.getWeb3EnalbeName());
+    const injector=await web3FromSource(stafiServer.getPolkadotJsSource());
+    const stafiApi = await stafiServer.createStafiApi();
+    let currentAccount = getState().FISModule.fisAccount.address;  
+    stafiApi.tx.rFis.liquidityBond(selectedPool.address, amount.toString())
+    .signAndSend(currentAccount, { signer: injector.signer }, (result:any) => { 
+      if (result.status.isInBlock) {
+        dispatch(setLoading(false)) 
+        result.events
+        .filter((result2:any) => ()=>{ 
+          const section=result2.event.section;
+          return section === 'system';
+        })
+        .forEach((result3:any) => { 
+          const data=result3.event.data;
+          const method=result3.event.method;
+          if (method === 'ExtrinsicFailed') { 
+            const [dispatchError] = data
+            if (dispatchError.isModule) {
+              try {
+                const mod = dispatchError.asModule;
+                const error = data.registry.findMetaError(new Uint8Array([mod.index.toNumber(), mod.error.toNumber()]));
 
-          result.events
-            .filter((e: any) => {
-              return e.event.section == 'system';
-            })
-            .forEach((data: any) => {
-              if (data.event.method === 'ExtrinsicFailed') {
-                const [dispatchError] = data.event.data;
-                if (dispatchError.isModule) {
-                  try {
-                    const mod = dispatchError.asModule;
-                    const error = data.registry.findMetaError(
-                      new Uint8Array([mod.index.toNumber(), mod.error.toNumber()]),
-                    );
-
-                    let message: string = 'Something is wrong, please try again later!';
-                    if (error.name == '') {
-                      message = '';
-                    }
-                    message && M.info(message);
-                  } catch (error) {
-                    M.error(error.message);
-                  }
+                let messageStr = 'Something is wrong, please try again later!';
+                if (error.name == 'NominateSwitchClosed') {
+                  messageStr = 'Unable to stake, system is waiting for matching validators';
+                } else if (error.name == 'LiquidityBondZero') {
+                  messageStr = 'The amount should be larger than 0';
+                } else if (error.name == 'PoolLimitReached') {
+                  messageStr = 'The cumulative FIS amount exceeds the pool limit, please try again later!';
                 }
-                dispatch(
-                  setProcessSending({
-                    packing: processStatus.failure,
-                  }),
-                );
-                dispatch(reloadData());
-              } else if (data.event.method === 'ExtrinsicSuccess') {
-                dispatch(
-                  setProcessSending({
-                    packing: processStatus.success,
-                    finalizing: processStatus.loading,
-                  }),
-                );
-                dispatch(reloadData());
-                dispatch(
-                  setProcessParameter({
-                    staking: {
-                      amount: amount,
-                      txHash: tx,
-                      blockHash: asInBlock,
-                      address,
-                      type: rSymbol.Fis,
-                      selectedPool: selectedPool.poolPubkey,
-                    },
-                  }),
-                );
-                asInBlock &&
-                  dispatch(
-                    bound(address, tx, asInBlock, amount, selectedPool.poolPubkey, rSymbol.Fis, (r: any) => {
-                      dispatch(setStakeHash(null));
-                      if (r != 'failure') {
-                        cb && cb();
-                      }
-                    }),
-                  );
-                // Wait ten minutes
-                dispatch(
-                  gSetTimeOut(() => {
-                    dispatch(
-                      setProcessSending({
-                        finalizing: processStatus.failure,
-                      }),
-                    );
-                  }, 10 * 60 * 1000),
-                );
+                message.error(message);
+              } catch (error) {
+                message.error(error.message);
               }
-            });
-        } else if (result.isError) {
-          M.error(result.toHuman());
-        }
-        if (result.status.isFinalized) {
-          dispatch(
-            setProcessSending({
-              finalizing: processStatus.success,
-            }),
-          );
-          // clear
-          gClearTimeOut();
-        }
-      } catch (e: any) {
-        M.error(e.message);
+            }
+          } else if (method === 'ExtrinsicSuccess') { 
+             message.success('Stake successfully');
+             dispatch(reloadData());
+             dispatch(add_FIS_stake_Notice(stafi_uuid(),amountparam.toString(),noticeStatus.Confirmed))
+             cb && cb();
+          }
+        });
+
+      } else if (result.isError) {
+        dispatch(setLoading(false)); 
+        message.error(result.toHuman())
       }
+
+    }).catch((error:any) => {
+      dispatch(setLoading(false)) 
+      message.error(error.message) 
+      if(error.message=="Error: Cancelled"){
+        message.error("Cancelled");  
+      }else{
+        console.error(error.message);
+      } 
     });
+
+  }catch(e:any){ 
+  }
+
+
   };
 
 export const stakingSignature = async (address: any, txHash: string) => {
@@ -453,9 +381,7 @@ export const bound =
         amount.toString(),
         type,
       );
-
-      console.log('bondResult: ', bondResult);
-
+ 
       try {
         let index = 0;
         bondResult
@@ -472,8 +398,7 @@ export const bound =
               index = index + 1;
             }
             const tx = bondResult.hash.toHex();
-            try {
-              console.log('signAndSend resut: ', JSON.stringify(result));
+            try { 
               if (result.status.isInBlock) {
                 dispatch(
                   setProcessStaking({
@@ -488,13 +413,11 @@ export const bound =
                     return e.event.section == 'system';
                   })
                   .forEach((data: any) => {
-                    if (data.event.method === 'ExtrinsicFailed') {
-                      console.log('ExtrinsicFailed');
+                    if (data.event.method === 'ExtrinsicFailed') { 
                       const [dispatchError] = data.event.data;
                       if (dispatchError.isModule) {
                         try {
-                          const mod = dispatchError.asModule;
-                          console.log('mod error: ', mod);
+                          const mod = dispatchError.asModule; 
                           const error = data.registry.findMetaError(
                             new Uint8Array([mod.index.toNumber(), mod.error.toNumber()]),
                           );
@@ -587,10 +510,8 @@ export const balancesAll = (): AppThunk => async (dispatch, getState) => {
   const address = getState().FISModule.fisAccount.address;
   const result = await api.derive.balances.all(address); 
   if (result) { 
-    const transferrableAmount = NumberUtil.tokenAmountToHuman(result.availableBalance, rSymbol.Fis); 
-    let stakableAmount = Number(transferrableAmount) - 1.02;
-    let transferrableAmountShow:any = NumberUtil.handleFisAmountToFixed(stakableAmount <= 0 ? 0 : stakableAmount);
-    dispatch(setTransferrableAmountShow(transferrableAmountShow));
+    const transferrableAmount = NumberUtil.tokenAmountToHuman(result.availableBalance, rSymbol.Fis);  
+    dispatch(setTransferrableAmountShow(NumberUtil.handleFisAmountToFixed(transferrableAmount)));
   }
 };
 
@@ -760,15 +681,15 @@ export const query_rBalances_account = (): AppThunk => async (dispatch, getState
 
 export const unbond = (amount: string,recipient:string,willAmount:any, cb?: Function): AppThunk => async (dispatch, getState) => {
   try{
-    const validPools = getState().rDOTModule.validPools; 
-    let selectedPool=commonClice.getPoolForUnbond(amount, validPools,rSymbol.Dot);
+    const validPools = getState().FISModule.validPools; 
+    let selectedPool=commonClice.getPoolForUnbond(amount, validPools,rSymbol.Fis);
     if (selectedPool == null) { 
       cb && cb();
       return;
     } 
-    const keyringInstance = keyring.init(Symbol.Dot);
+    const keyringInstance = keyring.init(Symbol.Fis);
     
-    dispatch(fisUnbond(amount, rSymbol.Dot, u8aToHex(keyringInstance.decodeAddress(recipient)), selectedPool.poolPubkey,"Unbond succeeded, unbonding period is around "+config.unboundAroundDays(Symbol.Dot)+" days", (r?:string) => {
+    dispatch(fisUnbond(amount, rSymbol.Fis, u8aToHex(keyringInstance.decodeAddress(recipient)), selectedPool.poolPubkey,"Unbond succeeded, unbonding period is around "+config.unboundAroundDays(Symbol.Fis)+" days", (r?:string) => {
       dispatch(reloadData()); 
      
       if(r == "Success"){  
@@ -796,7 +717,7 @@ export const fisUnbond =
 
       const injector = await web3FromSource(stafiServer.getPolkadotJsSource());
 
-      console.log(`unbond recipient: ${recipient}`);
+ 
 
       const api = await stafiApi.tx.rTokenSeries.liquidityUnbond(
         rSymbol,
@@ -849,6 +770,14 @@ export const bondSwitch = (): AppThunk => async (dispatch, getState) => {
   const result = await stafiApi.query.rTokenSeries.bondSwitch();
   dispatch(setBondSwitch(result.toJSON()));
 };
+
+export const fis_bondSwitch = (): AppThunk => async (dispatch, getState) => {
+  const stafiApi = await stafiServer.createStafiApi();
+  const result = await stafiApi.query.rFis.nominateSwitch();
+  dispatch(setBondSwitch(result.toJSON()));
+};
+
+
 export const getUnbondCommission = (): AppThunk => async (dispatch, getState) => {
   const stafiApi = await stafiServer.createStafiApi();
   const result = await stafiApi.query.rTokenSeries.unbondCommission();
@@ -908,13 +837,21 @@ export const unbondFees=():AppThunk=>async (dispatch, getState)=>{
   const result=await commonClice.unbondFees(rSymbol.Fis)
   dispatch(setUnBondFees(result));
 }
+ 
 
-const add_DOT_stake_Notice=(uuid:string,amount:string,status:string,subData?:any):AppThunk=>async (dispatch,getState)=>{
-  setTimeout(()=>{
-    dispatch(add_FIS_Notice(uuid,noticeType.Staker,noticesubType.Stake,amount,status,{
-    process:getState().globalModule.process,
-    processParameter:getState().rDOTModule.processParameter}))
-  },10);
+export const getPools =(cb?: Function): AppThunk=>async (dispatch,getState)=>{
+  dispatch(setValidPools(null));
+  const data = await commonClice.fis_poolBalanceLimit();
+  dispatch(setPoolLimit(data));
+ 
+  commonClice.getFisPools(data, (poolData: any) => { 
+    dispatch(setValidPools(poolData));
+    cb && cb();
+  });
+}
+  
+const add_FIS_stake_Notice=(uuid:string,amount:string,status:string,subData?:any):AppThunk=>async (dispatch,getState)=>{
+  dispatch(add_FIS_Notice(uuid,noticeType.Staker,noticesubType.Stake,amount,status))
 }
 const add_FIS_unbond_Notice=(uuid:string,amount:string,status:string,subData?:any):AppThunk=>async (dispatch,getState)=>{
   dispatch(add_FIS_Notice(uuid,noticeType.Staker,noticesubType.Unbond,amount,status,subData))

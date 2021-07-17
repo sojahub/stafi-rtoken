@@ -119,7 +119,6 @@ export const add_Notice=(uuid:string,rSymbol:string,type:string,subType:string,a
 }
 
 export const update_Notice=(uuid:string,rSymbol:string,type:string,subType:string,amount:string,status:string,subData?:any):AppThunk=>async (dispatch,getState)=>{
-  console.log('update notice');
   dispatch(addNoticeModal({
     data:{
       uuid:uuid,   //信息唯一标识

@@ -4,7 +4,7 @@ import {useDispatch,useSelector} from 'react-redux';
 import Content from '@shared/components/content';
 import {renderRoutes}  from 'react-router-config';
 import {getLocalStorageItem,Keys} from '@util/common';
-
+import {fis_bondSwitch,getPools} from '@features/FISClice'
 import {Symbol} from '@keyring/defaults'
 import {reloadData} from '@features/globalClice'; 
 import '../template/index.scss'
@@ -18,6 +18,8 @@ export default function Index(props:any){
   })
    
   useEffect(()=>{ 
+    dispatch(fis_bondSwitch());
+    dispatch(getPools());
     if(getLocalStorageItem(Keys.FisAccountKey)){
       dispatch(reloadData(Symbol.Fis)); 
     }
