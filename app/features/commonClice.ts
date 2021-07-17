@@ -71,7 +71,7 @@ export default class CommonClice {
 
     }
   }
-  async getFisPools(poolLimit:any,cb?:Function) {
+  async getFisPools(cb?:Function) {
     const stafiApi = await stafiServer.createStafiApi();
     const poolsData = await stafiApi.query.rFis.pools();
     let pools = poolsData.toJSON(); 
@@ -79,10 +79,12 @@ export default class CommonClice {
       pools.forEach((pool: any) => {
         stafiApi.query.staking.ledger(pool).then((ledgerData: any) => {
               let ledger = ledgerData.toJSON();
-              cb && cb({
-                address: pool,
-                active: ledger.active
-              })
+              if(ledger){
+                cb && cb({
+                  address: pool,
+                  active: ledger.active
+                })
+              }
           })
           .catch((error: any) => {
             console.log('getPools error: ', error);
@@ -150,7 +152,7 @@ export default class CommonClice {
     } else {
       cb && cb(0);
     }
-  }
+  } 
   async getUnbondCommission() {
     const stafiApi = await stafiServer.createStafiApi();
     const result = await stafiApi.query.rTokenSeries.unbondCommission();

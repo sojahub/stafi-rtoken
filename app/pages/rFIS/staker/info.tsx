@@ -23,7 +23,7 @@ export default function Index(props:any){
       totalUnbonding:state.FISModule.totalUnbonding
     }
   }) 
-
+  console.log(totalUnbonding,"========totalUnbonding")
   useEffect(()=>{
     
     let count = 0;
@@ -65,6 +65,6 @@ export default function Index(props:any){
       }
     })
   }}
-  hours={24}
+  hours={6}
   type="rFIS"></Content>
 }

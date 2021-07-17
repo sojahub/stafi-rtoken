@@ -52,7 +52,7 @@ const FISClice = createSlice({
 
     stakerApr:"--",
     bondFees:"--",
-    totalUnbonding:"--",
+    totalUnbonding:"--", 
     unBondFees:"--" 
   },
   reducers: {
@@ -780,7 +780,7 @@ export const fis_bondSwitch = (): AppThunk => async (dispatch, getState) => {
 
 export const getUnbondCommission = (): AppThunk => async (dispatch, getState) => {
   const stafiApi = await stafiServer.createStafiApi();
-  const result = await stafiApi.query.rTokenSeries.unbondCommission();
+  const result = await stafiApi.query.rFis.unbondCommission();
   const unbondCommission = NumberUtil.fisFeeToHuman(result.toJSON());
 
   dispatch(setUnbondCommission(unbondCommission));
@@ -829,10 +829,41 @@ const handleStakerApr = (currentRate?: any, lastRate?: any): AppThunk => async (
 
   export const accountUnbonds=():AppThunk=>async (dispatch, getState)=>{ 
     let fisAddress = getState().FISModule.fisAccount.address;
-    commonClice.getTotalUnbonding(fisAddress,rSymbol.Fis,(total:any)=>{ 
-      dispatch(setTotalUnbonding(total));
-    })
+    const validPools=getState().FISModule.validPools;
+    // await getTotalUnbonding(fisAddress,validPools,(total:any)=>{ 
+    //   dispatch(setTotalUnbonding(total));
+    // })
+    dispatch(getTotalUnbonding(fisAddress,validPools))
 }
+
+
+const getTotalUnbonding=(fisAddress: string, pools:any):AppThunk=>async (dispatch, getState)=>{
+  // let fisAddress = getState().FISModule.fisAccount.address;
+
+  const stafiApi = await stafiServer.createStafiApi();
+  const eraResult = await stafiApi.query.staking.currentEra();
+  let currentEra = eraResult.toJSON();
+  console.log(currentEra,pools,"=======unbondingToken");
+  if (pools && pools.length > 0) {
+    let unbondingToken = 0;
+
+    pools.forEach(async (pool:any) => {
+      const unbondingData = await stafiApi.query.rFis.unbonding(fisAddress, pool);
+        let unbondings = unbondingData.toJSON();
+        if (unbondings && unbondings.length > 0) {
+          unbondings.forEach((unbonding:any) => {
+            if (currentEra < unbonding.era) {
+              unbondingToken += Number(unbonding.value);
+            }
+          });
+        }
+         console.log(unbondingToken,"=======unbondingToken");
+        dispatch(setTotalUnbonding(unbondingToken));
+
+    })
+  }
+}
+
 export const unbondFees=():AppThunk=>async (dispatch, getState)=>{ 
   const result=await commonClice.unbondFees(rSymbol.Fis)
   dispatch(setUnBondFees(result));
@@ -844,7 +875,7 @@ export const getPools =(cb?: Function): AppThunk=>async (dispatch,getState)=>{
   const data = await commonClice.fis_poolBalanceLimit();
   dispatch(setPoolLimit(data));
  
-  commonClice.getFisPools(data, (poolData: any) => { 
+  commonClice.getFisPools((poolData: any) => { 
     dispatch(setValidPools(poolData));
     cb && cb();
   });

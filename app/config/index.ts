@@ -292,7 +292,7 @@ export default {
     } else if (type == Symbol.Matic) {
       return 22;
     } else if (type == Symbol.Fis) {
-      return 29;
+      return 6;
     } else if (type == Symbol.Sol) {
       return 10;
     } else {
