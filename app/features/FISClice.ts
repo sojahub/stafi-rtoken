@@ -5,27 +5,23 @@ import { u8aToHex } from '@polkadot/util';
 import { createSlice } from '@reduxjs/toolkit';
 import { default as keyring, default as keyringInstance } from '@servers/index';
 import SolServer from '@servers/sol/index';
-import Stafi from '@servers/stafi/index'; 
-import { getLocalStorageItem, Keys, removeLocalStorageItem, setLocalStorageItem, timeout , stafi_uuid} from '@util/common';
-import { PublicKey } from '@solana/web3.js'; 
+import Stafi from '@servers/stafi/index';
+import { PublicKey } from '@solana/web3.js';
+import { getLocalStorageItem, Keys, removeLocalStorageItem, setLocalStorageItem, stafi_uuid, timeout } from '@util/common';
 import NumberUtil from '@util/numberUtil';
 import { message as M, message } from 'antd';
+import { keccakFromHexString } from 'ethereumjs-util';
 import { AppThunk } from '../store';
 import CommonClice from './commonClice';
-import { keccakFromHexString } from 'ethereumjs-util';
 import {
-  gClearTimeOut,
-  gSetTimeOut,
   initProcess,
   processStatus,
   setLoading,
-  setProcessMinting,
-  setProcessSending,
-  setProcessSlider,
+  setProcessMinting, setProcessSlider,
   setProcessStaking,
   setProcessType
 } from './globalClice';
-import { add_Notice, findUuid, noticeStatus, noticesubType, noticeType } from './noticeClice';
+import { add_Notice, noticeStatus, noticesubType, noticeType } from './noticeClice';
  
 declare const ethereum: any; 
 const FISClice = createSlice({
@@ -53,7 +49,13 @@ const FISClice = createSlice({
     stakerApr:"--",
     bondFees:"--",
     totalUnbonding:"--", 
-    unBondFees:"--" 
+    unBondFees:"--",
+    withdrawToken:"--",
+    unbondingToken:"--",
+    leftDays:"--",
+    unbondings:[],
+
+    unbondWarn:false
   },
   reducers: {
     setFisAccounts(state, { payload }) {
@@ -106,12 +108,10 @@ const FISClice = createSlice({
       }
     },
     setProcessParameter(state, { payload }) {
-      if (payload == null) {
-        // removeLocalStorageItem(Keys.DotProcessParameter)
+      if (payload == null) { 
         state.processParameter = payload;
       } else {
-        let param = { ...state.processParameter, ...payload };
-        // setLocalStorageItem(Keys.DotProcessParameter,param),
+        let param = { ...state.processParameter, ...payload }; 
         state.processParameter = param;
       }
     },
@@ -137,7 +137,23 @@ const FISClice = createSlice({
     },
     setUnBondFees(state,{payload}){
       state.unBondFees=payload
-    } 
+    },
+    setWithdrawToken(state,{payload}){
+      state.withdrawToken=payload;
+    },
+    setUnbondingToken(state,{payload}){
+      state.unbondingToken=payload;
+    },
+    setLeftDays(state,{payload}){
+      state.leftDays=payload;
+    },
+    setUnbondings(state,{payload}){
+      state.unbondings=payload;
+    },
+    setUnbondWarn(state,{payload}){
+      state.unbondWarn=payload;
+    }
+
   },
 });
 
@@ -160,7 +176,12 @@ export const {
   setStakerApr,
   setBondFees,
   setTotalUnbonding,
-  setUnBondFees
+  setUnBondFees,
+  setWithdrawToken,
+  setUnbondingToken,
+  setLeftDays,
+  setUnbondings,
+  setUnbondWarn
  } = FISClice.actions;
  
 
@@ -168,8 +189,7 @@ export const reloadData = (): AppThunk => async (dispatch, getState) => {
   const account = getState().FISModule.fisAccount;
   if (account) {
     dispatch(createSubstrate(account));
-  }
-  // Update Transferable DOT/FIS
+  } 
   dispatch(query_rBalances_account());
   dispatch(balancesAll());
   dispatch(getTotalIssuance());
@@ -679,29 +699,78 @@ export const query_rBalances_account = (): AppThunk => async (dispatch, getState
   });
 };
 
-export const unbond = (amount: string,recipient:string,willAmount:any, cb?: Function): AppThunk => async (dispatch, getState) => {
+export const unbond = (amount: string,willAmount:any, cb?: Function): AppThunk => async (dispatch, getState) => {
+  
   try{
+    dispatch(setLoading(true));
     const validPools = getState().FISModule.validPools; 
-    let selectedPool=commonClice.getPoolForUnbond(amount, validPools,rSymbol.Fis);
+    let selectedPool=commonClice.getPoolForUnbond(amount, validPools,rSymbol.Fis,"'No pool available, please try again later!"); 
     if (selectedPool == null) { 
-      cb && cb();
+      dispatch(setLoading(false));
       return;
-    } 
-    const keyringInstance = keyring.init(Symbol.Fis);
-    
-    dispatch(fisUnbond(amount, rSymbol.Fis, u8aToHex(keyringInstance.decodeAddress(recipient)), selectedPool.poolPubkey,"Unbond succeeded, unbonding period is around "+config.unboundAroundDays(Symbol.Fis)+" days", (r?:string) => {
-      dispatch(reloadData()); 
-     
-      if(r == "Success"){  
-        dispatch(add_FIS_unbond_Notice(stafi_uuid(),willAmount,noticeStatus.Confirmed));
-      }
-      if(r == "Failed"){ 
-        dispatch(add_FIS_unbond_Notice(stafi_uuid(),willAmount,noticeStatus.Error));
+    }   
+    let address = getState().FISModule.fisAccount.address
+
+    const stafiApi = await stafiServer.createStafiApi();
+
+    web3Enable(stafiServer.getWeb3EnalbeName()); 
+    const injector = await web3FromSource(stafiServer.getPolkadotJsSource());
+ 
+    const api =await stafiApi.tx.rFis.liquidityUnbond(selectedPool.address,  NumberUtil.tokenAmountToChain(amount, rSymbol.Fis).toString())
+
+    api.signAndSend(address, { signer: injector.signer }, (result:any) => { 
+      if (result.status.isInBlock) {
+        dispatch(setLoading(false)); 
+        result.events
+          .filter((data:any) => {
+            let section=data.event.section;
+            return section === 'system';
+          })
+          .forEach((item:any) => {
+            let data=item.event.data;
+            let method=item.event.method;
+            if (method === 'ExtrinsicFailed') {
+              const [dispatchError] = data;
+              if (dispatchError.isModule) {
+               
+                try {
+                  const mod = dispatchError.asModule;
+                  const error = data.registry.findMetaError(new Uint8Array([mod.index.toNumber(), mod.error.toNumber()]));
+
+                  let messageStr = 'Something is wrong, please try again later!';
+                  if (error.name == 'LiquidityUnbondZero') {
+                    messageStr = 'The input amount should be larger than 0';
+                  } else if (error.name == 'InsufficientBalance') {
+                    messageStr = 'Insufficient balance!';
+                  }
+                  message.error(messageStr);
+                } catch (error) { 
+                  message.error(error.message); 
+                }
+                dispatch(add_FIS_unbond_Notice(stafi_uuid(),willAmount,noticeStatus.Error));
+              }
+            } else if (method === 'ExtrinsicSuccess') { 
+              dispatch(reloadData());
+              message.success("Unbond successfully, you can withdraw your unbonded FIS 14 days later");
+              dispatch(add_FIS_unbond_Notice(stafi_uuid(),willAmount,noticeStatus.Confirmed));
+              cb && cb();
+            }  
+          });
+      } else if (result.isError) {
+        dispatch(setLoading(false));
+        message.error(result.toHuman());
       } 
-      cb && cb(); 
-    }))
+    }).catch((e: any) => {
+      dispatch(setLoading(false));
+      if (e == 'Error: Cancelled') {
+        message.error('Cancelled');
+        cb && cb();
+      } else {
+        console.error(e);
+      }
+    });; 
   }catch(e){
-    cb && cb();
+    dispatch(setLoading(false));
   }
 }
 
@@ -798,7 +867,6 @@ export const checkAddress = (stafiAddress: string) => {
   return keyringInstance.checkAddress(stafiAddress); 
 }
 
-
 export const rTokenLedger=():AppThunk=>async (dispatch, getState)=>{
   const stafiApi = await stafiServer.createStafiApi();
   const eraResult = await stafiApi.query.rTokenLedger.chainEras(rSymbol.Fis);
@@ -842,8 +910,7 @@ const getTotalUnbonding=(fisAddress: string, pools:any):AppThunk=>async (dispatc
 
   const stafiApi = await stafiServer.createStafiApi();
   const eraResult = await stafiApi.query.staking.currentEra();
-  let currentEra = eraResult.toJSON();
-  console.log(currentEra,pools,"=======unbondingToken");
+  let currentEra = eraResult.toJSON(); 
   if (pools && pools.length > 0) {
     let unbondingToken = 0;
 
@@ -856,8 +923,7 @@ const getTotalUnbonding=(fisAddress: string, pools:any):AppThunk=>async (dispatc
               unbondingToken += Number(unbonding.value);
             }
           });
-        }
-         console.log(unbondingToken,"=======unbondingToken");
+        } 
         dispatch(setTotalUnbonding(unbondingToken));
 
     })
@@ -880,6 +946,159 @@ export const getPools =(cb?: Function): AppThunk=>async (dispatch,getState)=>{
     cb && cb();
   });
 }
+
+
+export const RefreshUnbonding=():AppThunk=>async (dispatch, getState)=>{
+  let currentAccount = getState().FISModule.fisAccount.address;
+  const api = await stafiServer.createStafiApi();
+  const eraResult = await api.query.staking.currentEra();
+  let validPools:any[]=[];
+  dispatch(setUnbondWarn(false))
+  let currentEra = eraResult.toJSON();
+   
+    const poolsData=await api.query.rFis.pools();
+    let pools = poolsData.toJSON(); 
+      if (pools && pools.length > 0) {
+        let unbondingToken = 0;
+        let withdrawToken = 0;
+        let eras:any[] = [];
+        let unbondings_g:any[]=[];
+        pools.forEach((pool:any) => { 
+         api.query.rFis.unbonding(currentAccount, pool).then((unbondingData:any) => {
+            let unbondings = unbondingData.toJSON();
+            if (unbondings && unbondings.length > 0) {
+              unbondings_g.push({
+                pool: pool,
+                unlocks: unbondings
+              });
+              dispatch(setUnbondings(unbondings_g));
+              unbondings.forEach((unbonding:any) => {
+                if (currentEra >= unbonding.era) {
+                  withdrawToken += Number(unbonding.value);
+                } else {
+                  unbondingToken += Number(unbonding.value);
+                  eras.push(unbonding.era);
+                }
+              });
+            }
+
+            if (eras.length > 0) {
+              let minEra = Math.min.apply(null, eras);
+              const leftDays = (minEra - currentEra) * 6 / 24; 
+              dispatch(setLeftDays(leftDays))
+            } else {
+              dispatch(setLeftDays("--"))
+            } 
+            dispatch(setWithdrawToken(NumberUtil.handleFisAmountToFixed(NumberUtil.fisAmountToHuman(withdrawToken))))
+            // this.withdrawToken = NumberUtil.handleFisAmountToFixed(NumberUtil.fisAmountToHuman(withdrawToken));
+            dispatch(setUnbondingToken(NumberUtil.handleFisAmountToFixed(NumberUtil.fisAmountToHuman(unbondingToken))));
+          });
+
+          let count = 0;
+          api.query.staking.ledger(pool).then((ledgerData:any) => {
+            count++;
+            let ledger = ledgerData.toJSON();
+            if (ledger && ledger.active > 0) {
+              validPools.push({
+                address: pool,
+                active: ledger.active
+              });
+            }
+            if (count >= pools.length) {
+              if (validPools.length <= 0) { 
+                dispatch(setUnbondWarn(true))
+              }
+            }
+          }).catch((error:any) => {});
+
+        });
+      }
+    // }).catch((error) => {}); 
+
+}
+
+export const withdraw=():AppThunk=>async (dispatch, getState)=>{
+  
+  dispatch(setLoading(true));
+  try {
+    
+   const unbondings=getState().FISModule.unbondings;
+    web3Enable(stafiServer.getWeb3EnalbeName());
+    const injector = await web3FromSource(stafiServer.getPolkadotJsSource());
+  
+    const api = await stafiServer.createStafiApi();
+
+    const eraResult = await api.query.staking.currentEra();
+    let currentEra = eraResult.toJSON();
+
+    let currentAccount = getState().FISModule.fisAccount.address;
+
+    let txs:any[] = [];
+
+    unbondings.forEach(unbondingData => {
+      unbondingData.unlocks.some((unlock:any) => {
+        if (currentEra >= unlock.era) {
+          txs.push(api.tx.rFis.liquidityWithdrawUnbond(unbondingData.pool));
+          return true;
+        }
+      });
+    });
+
+    if (txs.length <= 0) {
+      dispatch(setLoading(false));
+      message.error('Nothing to withdraw, please try again later!')
+      return;
+    }
+
+    api.tx.utility
+        .batch(txs)
+        .signAndSend(currentAccount, { signer: injector.signer }, (result:any) => {
+      
+      if (result.status.isInBlock) {
+        
+        dispatch(setLoading(false));
+
+        result.events
+          .filter((data:any) => { 
+            const section=data.event.section;
+            return section === 'system'
+          })
+          .forEach((item:any) => { 
+            const {data,method}=item.event;
+            if (method === 'ExtrinsicFailed') {
+              const [dispatchError] = data
+              if (dispatchError.isModule) {
+                try {
+                  const mod = dispatchError.asModule;
+                  const error = data.registry.findMetaError(new Uint8Array([mod.index.toNumber(), mod.error.toNumber()]));
+
+                  let messageStr = 'Something is wrong, please try again later!';
+                   message.error(messageStr)
+                } catch (error) {
+                  message.error(error.message)
+                }
+              }
+            } else if (method === 'ExtrinsicSuccess') {
+              dispatch(reloadData());
+              message.success('Withdraw successfully')
+            }
+          });
+      } else if (result.isError) {
+        dispatch(setLoading(false))
+        message.error(result.toHuman())
+      }
+
+    }).catch((error:any) => {
+      dispatch(setLoading(false))
+      message.error(error.message);
+    }); 
+  } catch (error) { 
+      dispatch(setLoading(false))
+      message.error(error.message)
+  }
+
+}
+ 
   
 const add_FIS_stake_Notice=(uuid:string,amount:string,status:string,subData?:any):AppThunk=>async (dispatch,getState)=>{
   dispatch(add_FIS_Notice(uuid,noticeType.Staker,noticesubType.Stake,amount,status))

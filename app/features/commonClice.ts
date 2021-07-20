@@ -185,9 +185,9 @@ export default class CommonClice {
       return null;
     }
   }
-  getPoolForUnbond(tokenAmount: any, validPools: any, type: rSymbol) {
+  getPoolForUnbond(tokenAmount: any, validPools: any, type: rSymbol,messageStr?:string) {
     const amount = NumberUtil.tokenAmountToChain(tokenAmount.toString(), type);
-    const data = validPools.find((item: any) => {
+    const data = validPools.find((item: any) => { 
       if (Number(item.active) >= amount) {
         return true;
       }
@@ -195,7 +195,7 @@ export default class CommonClice {
     if (data) {
       return data;
     } else {
-      message.error('There is no matching pool, please try again later.');
+      message.error(messageStr || 'There is no matching pool, please try again later.');
       return null;
     }
   }

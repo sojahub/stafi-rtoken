@@ -6,7 +6,7 @@ import rFIS from '@images/selected_rFIS.svg';
 import leftArrowSvg from '@images/left_arrow.svg'
 import NumberUtil from '@util/numberUtil'
 import Button from '@shared/components/button/button';
-import EditInput from '@shared/components/input/editAddresInput' 
+
 type Props={
      onRdeemClick?:Function,
      amount?:string,
@@ -16,10 +16,14 @@ type Props={
      fisFee?:any,
      address?:string,
      onInputChange?:Function,
-     onInputConfirm?:Function
+     onInputConfirm?:Function,
+     leftDays?:any,
+     unbondingToken?:any,
+     withdrawToken?:any,
+     validPools?:any,
+     unbondWarn?:boolean
 }
-export default function Index(props:Props){
-    const [inputEdit,setInputEdit]=useState(false);
+export default function Index(props:Props){ 
 
  
   
@@ -36,7 +40,7 @@ export default function Index(props:Props){
                </div> 
         </div>
         <div className="input_panel"> 
-            <Input placeholder={"AMOUNT"} maxInput={props.tokenAmount} value={props.amount}  onChange={(e:string)=>{
+            <Input disabled={props.unbondWarn} placeholder={"AMOUNT"} maxInput={props.tokenAmount} value={props.amount}  onChange={(e:string)=>{
                 props.onAmountChange && props.onAmountChange(e)
             }}  icon={rFIS}/>
             <div className="balance"> 
@@ -44,7 +48,11 @@ export default function Index(props:Props){
             </div>
         </div> 
         <div className="fis_unbond_info">
-            <Button size="small" btnType="ellipse">Unbond</Button><label>Unbond will take 14 days and 0.2% fee</label>
+            <Button size="small" btnType="ellipse"
+            disabled={!props.amount || props.amount == '0' || props.validPools.length<=0}
+            onClick={() => {
+                props.onRdeemClick && props.onRdeemClick();
+              }}>Unbond</Button><label>Unbond will take 14 days and {props.fisFee!="--"?`${(props.fisFee*100)}%`:"--"} fee</label>
         </div> 
          <div className="subTitle">
                <div className="label"> 
@@ -52,10 +60,10 @@ export default function Index(props:Props){
                </div> 
         </div>
         <div className="fis_withdraw">
-            <label className="value">1.0323</label><label className="info">Unbonding: 12.34 ( 23 days left)</label>
+            <label className="value">{props.withdrawToken}</label><label className="info">Unbonding: {props.unbondingToken} ( {props.leftDays} days left)</label>
         </div>
         <div className="fis_withdraw_info">
-            <Button size="small" btnType="ellipse">Withdraw</Button>
+            <Button size="small" disabled={props.withdrawToken<=0} btnType="ellipse">Withdraw</Button>
         </div> 
     </LeftContent>
 }

@@ -1,20 +1,17 @@
 import React, { useEffect, useState } from 'react'; 
 import {useSelector} from 'react-redux';
 import Content from '@components/content/redeemContent_FIS';   
-import {rTokenRate,unbond,getUnbondCommission,query_rBalances_account,checkAddress,unbondFees} from '@features/FISClice';
+import {rTokenRate,unbond,getUnbondCommission,query_rBalances_account,checkAddress,unbondFees,RefreshUnbonding} from '@features/FISClice';
 import {setLoading} from '@features/globalClice'
-import {useDispatch} from 'react-redux';
-import UnbondModal from '@components/modal/unbondModal'
-import NumberUtil from '@util/numberUtil'
-import { message,Spin } from 'antd';
+import {useDispatch} from 'react-redux'; 
+import NumberUtil from '@util/numberUtil' 
 
 export default function Index(props:any){ 
   const dispatch=useDispatch();
   const [recipient,setRecipient]=useState<string>();
-  const [amount,setAmount]=useState<any>();
-  const [visible,setVisible]=useState(false);
+  const [amount,setAmount]=useState<any>(); 
 
-  const {tokenAmount,unbondCommission,ratio,fisFee,address,unBondFees,willAmount,estimateUnBondTxFees,fisBalance} = useSelector((state:any)=>{ 
+  const {tokenAmount,unbondCommission,ratio,withdrawToken,fisFee,address,willAmount,estimateUnBondTxFees,fisBalance,validPools,leftDays,unbondingToken,unbondWarn} = useSelector((state:any)=>{ 
     let willAmount:any=0;
     let unbondCommission:any=0;
     let ratio=state.FISModule.ratio;
@@ -31,11 +28,15 @@ export default function Index(props:any){
       tokenAmount:tokenAmount, 
       unbondCommission:unbondCommission,
       fisFee:state.FISModule.unbondCommission,
-      address:state.FISModule.fisAccount.address,
-      unBondFees:state.FISModule.unBondFees,
+      address:state.FISModule.fisAccount.address, 
       willAmount: willAmount,
       estimateUnBondTxFees: state.FISModule.estimateUnBondTxFees,
-      fisBalance: state.FISModule.fisAccount.balance
+      fisBalance: state.FISModule.fisAccount.balance,
+      leftDays:state.FISModule.leftDays,
+      unbondingToken:state.FISModule.unbondingToken,
+      withdrawToken:state.FISModule.withdrawToken,
+      validPools:state.FISModule.validPools,
+      unbondWarn:state.FISModule.unbondWarn
     }
   }) 
   useEffect(()=>{
@@ -46,7 +47,7 @@ export default function Index(props:any){
     dispatch(getUnbondCommission());
     dispatch(rTokenRate());
     dispatch(unbondFees());
-
+    dispatch(RefreshUnbonding());
     return ()=>{
       dispatch(setLoading(false));
     }
@@ -58,49 +59,18 @@ export default function Index(props:any){
     onAmountChange={(e:string)=>{
       setAmount(e)
     }}
-    fisFee={fisFee}
-    address={recipient}
-    onInputConfirm={(e:boolean)=>{
-      if(!e){
-        if(!checkAddress(recipient)){ 
-          message.error("address input error");
-          return false;
-        } 
-      }
-      return true;
-    }}
-    onInputChange={(e:string)=>{ 
-      setRecipient(e)
-    }}
+    fisFee={fisFee} 
+    leftDays={leftDays}
+    unbondingToken={unbondingToken}
+    withdrawToken={withdrawToken}
+    validPools={validPools}
+    unbondWarn={unbondWarn}
     onRdeemClick={()=>{ 
-      if(checkAddress(recipient)){  
-          setVisible(true);
-      }else{
-        message.error("address input error");
-      } 
+      dispatch(unbond(amount,willAmount,()=>{  
+        setAmount(undefined)
+      })) 
     }} 
   />
-  <UnbondModal visible={visible} 
-    unbondAmount={amount}
-    commission={unbondCommission}
-    getAmount={willAmount}
-    bondFees={NumberUtil.fisAmountToHuman(unBondFees) || "--"}
-    onCancel={()=>{
-      setVisible(false)
-    }}
-    onOk={()=>{
-      if(NumberUtil.fisAmountToChain(fisBalance) <= (unBondFees + estimateUnBondTxFees)){
-        message.error("No enough FIS to pay for the fee");
-        return;
-      }
-      setAmount('');
-      dispatch(setLoading(true));
-      setVisible(false)
-      dispatch(unbond(amount,recipient,willAmount,()=>{ 
-        dispatch(setLoading(false));
-      })) 
-    }}
-    type="rFIS"
-  />
+   
   </>
 }
