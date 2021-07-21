@@ -5,6 +5,14 @@
             justify-content: space-between;
             align-items: center;
             margin-top: 15px;
+            label{
+                color:#00F3AB;
+                font-size: 12px;
+                font-weight: bold;
+            }
+            label.waiting{
+                color:#FF6464;
+            }
         }
     }
     .item.first{
