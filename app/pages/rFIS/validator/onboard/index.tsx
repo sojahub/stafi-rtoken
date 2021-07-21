@@ -9,7 +9,7 @@ export default function Index(props:any){
   const dispatch=useDispatch();
   useEffect(()=>{
     dispatch(getCurrentLedgerData())
-  })
+  },[])
   const {currentLedgerData}=useSelector((state:RootState)=>{
     return {
       currentLedgerData:state.FISModule.currentLedgerData
