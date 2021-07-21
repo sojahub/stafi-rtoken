@@ -14,6 +14,7 @@ import { message as M, message } from 'antd';
 import { keccakFromHexString } from 'ethereumjs-util';
 import { AppThunk } from '../store';
 import CommonClice from './commonClice';
+import RpcServer,{pageCount} from '@servers/rpc/index';
 import {
   initProcess,
   processStatus,
@@ -65,7 +66,10 @@ const FISClice = createSlice({
     lastReward: "--",
     currentCommission: "--",
     exposure: null,
-    validatorAddressItems: []
+    validatorAddressItems: [],
+
+    rewardList:[],
+    rewardList_lastdata:null
   },
   reducers: {
     setFisAccounts(state, { payload }) {
@@ -182,11 +186,21 @@ const FISClice = createSlice({
     },
     setValidatorAddressItems(state, { payload }) {
       state.validatorAddressItems = payload
+    },
+
+    setRewardList(state,{payload}){
+      state.rewardList=payload;
+    },
+
+    setRewardList_lastdata(state,{payload}){
+      state.rewardList_lastdata=payload;
     }
   },
 });
 
 const stafiServer = new Stafi();
+
+const rpcServer = new RpcServer();
 const commonClice = new CommonClice();
 export const {
   setTokenAmount,
@@ -217,7 +231,11 @@ export const {
   setLastReward,
   setCurrentCommission,
   setExposure,
-  setValidatorAddressItems
+  setValidatorAddressItems,
+
+
+  setRewardList,
+  setRewardList_lastdata
 } = FISClice.actions;
 
 
@@ -1381,4 +1399,38 @@ const add_FIS_Swap_Notice = (uuid: string, amount: string, status: string, subDa
 }
 const add_FIS_Notice = (uuid: string, type: string, subType: string, content: string, status: string, subData?: any): AppThunk => async (dispatch, getState) => {
   dispatch(add_Notice(uuid, Symbol.Fis, type, subType, content, status, subData))
+}
+
+
+export const getReward=(pageIndex:Number,cb:Function):AppThunk=>async (dispatch, getState)=>{
+  const source=getState().FISModule.fisAccount.address; //"36NQ98C5uri7ruBKvdzWFeEJQEhGpzCvJVbMHkbTu2mCgMRo"
+  const result=await rpcServer.getReward(source,rSymbol.Fis,pageIndex); 
+  if(result.status==80000){ 
+    const rewardList=getState().FISModule.rewardList; 
+    if(result.data.rewardList.length>0){
+      const list=result.data.rewardList.map((item:any)=>{
+        const rate=NumberUtil.rTokenRateToHuman(item.rate);
+        const rbalance=NumberUtil.tokenAmountToHuman(item.rbalance,rSymbol.Fis);
+        return {
+          ...item,
+          rbalance:rbalance,
+          rate:rate
+        }
+      })
+      if(result.data.rewardList.length<=pageCount){
+        dispatch(setRewardList_lastdata(null))
+      }else{
+        dispatch(setRewardList_lastdata(list[list.length-1]));
+        list.pop()
+      } 
+      dispatch(setRewardList([...rewardList,...list])); 
+      if(result.data.rewardList.length<=pageCount){
+        cb && cb(false)
+      }else{
+        cb && cb(true)
+      }
+    }else{
+      cb && cb(false)
+    }
+  }
 }

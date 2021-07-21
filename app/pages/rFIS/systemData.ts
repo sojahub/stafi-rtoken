@@ -5,6 +5,10 @@ export const rFIS_data=[{
     {
       text:'-Status',
       url:"/rFIS/staker/info"
+    },
+    {
+      text:'-reward',
+      url:"/rFIS/staker/reward"
     }
   ]
 },{

@@ -54,6 +54,7 @@ import RFISStaker from './pages/rFIS/staker';
 import RFISStakerIndex from './pages/rFIS/staker/home';
 import RFISStakerInfo from './pages/rFIS/staker/info';
 import RFISStakerRedeem from './pages/rFIS/staker/redeem';
+import RFISStakerReward from './pages/rFIS/staker/reward';
 import RFISHomeTemplate from './pages/rFIS/template';
 import RFISValidator from './pages/rFIS/validator';
 import RFISValidatorOffboard from './pages/rFIS/validator/offboard';
@@ -826,6 +827,12 @@ const routesFactory=(role?:any)=>{
                 type:"Staker",
                 rSymbol:rSymbol.Fis,
                 component:RFISStakerRedeem
+              },{
+                id:"RFIS_staker_index_redeem",
+                path:"/rFIS/staker/reward",
+                type:"Staker",
+                rSymbol:rSymbol.Fis,
+                component:RFISStakerReward
               },{
                 path: '*',
                 component: () => <Redirect to="/rFIS/staker/index"/>
