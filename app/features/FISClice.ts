@@ -67,6 +67,7 @@ const FISClice = createSlice({
     currentCommission: "--",
     exposure: null,
     validatorAddressItems: [],
+    showValidatorStatus:false,
 
     rewardList:[],
     rewardList_lastdata:null
@@ -187,6 +188,9 @@ const FISClice = createSlice({
     setValidatorAddressItems(state, { payload }) {
       state.validatorAddressItems = payload
     },
+    setShowValidatorStatus(state,{payload}){
+      state.showValidatorStatus=payload;
+    },
 
     setRewardList(state,{payload}){
       state.rewardList=payload;
@@ -232,7 +236,7 @@ export const {
   setCurrentCommission,
   setExposure,
   setValidatorAddressItems,
-
+  setShowValidatorStatus,
 
   setRewardList,
   setRewardList_lastdata
@@ -1383,6 +1387,29 @@ export const handleOffboard=(cb?:Function):AppThunk=>async (dispatch, getState)=
       dispatch(setLoading(false));
       message.error(error.message)
     });  
+}
+
+export const onboardValidators=(cb?:Function):AppThunk=>async (dispatch, getState)=>{
+  try {
+  
+    const api = await stafiServer.createStafiApi();
+    const currentAddress=getState().FISModule.fisAccount.address;
+    const result =await api.query.rFis.onboardValidators() 
+    let validators = result.toJSON();
+    if (validators && validators.length > 0) {
+      const ledgerData =await api.query.staking.ledger(currentAddress)
+      let ledger = ledgerData.toJSON();
+      if (ledger) {
+          if (validators.indexOf(ledger.stash) != -1) {
+              dispatch(setShowValidatorStatus(true));
+              cb && cb();
+          }
+      } 
+    } 
+      
+  } catch (error) {
+      
+  }
 }
 
 const add_FIS_stake_Notice = (uuid: string, amount: string, status: string, subData?: any): AppThunk => async (dispatch, getState) => {

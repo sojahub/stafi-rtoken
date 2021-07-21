@@ -1,5 +1,4 @@
-import React, { useEffect } from 'react'; 
-import Content from '../components/validatorContent';  
+import React, { useEffect, useState } from 'react';  
 import LeftContent from '@components/content/leftContent';
 import rFIS_stafi_svg from '@images/selected_r_fis.svg';
 import rFIS_detail_svg from '@images/rfis_detail.svg';
@@ -10,22 +9,32 @@ import A from '@shared/components/button/a';
 import './index.scss';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'app/store';
-import {initValidatorStatus,handleOffboard} from '@features/FISClice'
+import {initValidatorStatus,handleOffboard} from '@features/FISClice';
+import Modal from '@components/modal/boardModal';
+import {Redirect} from 'react-router';
 
 export default function Index(props:any){
   const dispatch  =useDispatch();
+  const [visible,setVisible]=useState(false)
   useEffect(()=>{
     dispatch(initValidatorStatus());
   },[])
-  const {exposure,nominateStatus,lastReward,currentCommission,validatorAddressItems} = useSelector((state:RootState)=>{
+
+
+  const {exposure,nominateStatus,lastReward,currentCommission,validatorAddressItems,showValidatorStatus} = useSelector((state:RootState)=>{
     return {
       exposure:state.FISModule.exposure,
       nominateStatus:state.FISModule.nominateStatus,
       lastReward:state.FISModule.lastReward,
       currentCommission:state.FISModule.currentCommission,
       validatorAddressItems:state.FISModule.validatorAddressItems,
+      showValidatorStatus:state.FISModule.showValidatorStatus,
     }
   })
+
+  if(!showValidatorStatus){
+    return <Redirect to="/rFIS/validator/onboard" />
+  }
   return <LeftContent className="stafi_validator_context rfis_offboard_context">
       <div className="item first">
           <div className="title">
@@ -80,9 +89,24 @@ export default function Index(props:any){
            
           <div className="btns">
             <Button size="small" btnType="ellipse" onClick={()=>{
-              dispatch(handleOffboard())
+              setVisible(true)
             }}>Offboard</Button>
           </div>
       </div>
+
+      <Modal visible={visible} 
+        title="Confirm to offboard"
+        content="Make sure your current FIS account is your Controller account"
+        OKText="Cancel"
+        CancelText="Offboard"
+        onClose={()=>{
+          setVisible(false);
+          dispatch(handleOffboard());
+        }}
+        onOK={()=>{
+          setVisible(false)
+          
+        }}
+      />
     </LeftContent>
 }
