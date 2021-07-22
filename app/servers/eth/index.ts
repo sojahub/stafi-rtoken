@@ -1,7 +1,7 @@
 
+import config from '@config/index';
+import { api } from '@util/http';
 import Web3 from 'web3';
-import config from '@config/index'
-import {api} from '@util/http';
 
 declare const window: any;
 declare const ethereum: any;
@@ -26,7 +26,7 @@ export default class Index{
     return web3Instance;
   }
   getRETHTokenAddress(){
-    return config.rETHTokenAddress();
+    return config.rETHTokenAddress2();
   }
   
   getRETHTokenAbi(){

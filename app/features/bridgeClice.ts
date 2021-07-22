@@ -173,8 +173,15 @@ export const nativeToOtherSwap =
     }
   };
 
-export const erc20ToNativeSwap =
-  (tokenStr: string, tokenType: string, tokenAmount: any, stafiAddress: string, cb?: Function): AppThunk =>
+export const erc20ToOtherSwap =
+  (
+    destChainId: number,
+    tokenStr: string,
+    tokenType: string,
+    tokenAmount: any,
+    address: string,
+    cb?: Function,
+  ): AppThunk =>
   async (dispatch, getState) => {
     dispatch(setLoading(true));
     let web3 = ethServer.getWeb3();
@@ -217,6 +224,11 @@ export const erc20ToNativeSwap =
         from: ethAddress,
       });
       allowance = getState().ETHModule.RMaticErc20Allowance;
+    } else if (tokenType == 'reth') {
+      tokenContract = new web3.eth.Contract(ethServer.getRETHTokenAbi(), ethServer.getRETHTokenAddress(), {
+        from: ethAddress,
+      });
+      allowance = getState().ETHModule.RETHErc20Allowance;
     }
     if (!tokenContract) {
       dispatch(setLoading(false));
@@ -236,18 +248,31 @@ export const erc20ToNativeSwap =
           const sendAmount = web3.utils.toWei(getState().bridgeModule.estimateEthFee);
 
           let amountHex = web3.eth.abi.encodeParameter('uint256', amount);
-          let lenHex = web3.eth.abi.encodeParameter('uint256', '32');
-          const keyringInstance = keyring.init('fis');
-          let rAddressHex = u8aToHex(keyringInstance.decodeAddress(stafiAddress));
+          let len;
+          let rAddressHex;
+          if (destChainId === STAFI_CHAIN_ID) {
+            len = '32';
+            const keyringInstance = keyring.init('fis');
+            rAddressHex = u8aToHex(keyringInstance.decodeAddress(address));
+          } else {
+            len = '20';
+            rAddressHex = address;
+          }
+          let lenHex = web3.eth.abi.encodeParameter('uint256', len);
 
           let data = amountHex + lenHex.slice(2) + rAddressHex.slice(2);
 
           const result = await bridgeContract.methods
-            .deposit(STAFI_CHAIN_ID, bridgeServer.getResourceId(tokenType), data)
+            .deposit(destChainId, bridgeServer.getResourceId(tokenType), data)
             .send({ value: sendAmount });
 
           if (result && result.status) {
-            dispatch(add_Swap_Notice(tokenStr, tokenAmount, noticeStatus.Empty, { swapType: 'erc20' }));
+            dispatch(
+              add_Swap_Notice(tokenStr, tokenAmount, noticeStatus.Empty, {
+                swapType: 'erc20',
+                destSwapType: destChainId === STAFI_CHAIN_ID ? 'native' : 'bep20',
+              }),
+            );
             cb && cb({ txHash: result.transactionHash });
           } else {
             message.error('Error! Please try again');
@@ -262,31 +287,52 @@ export const erc20ToNativeSwap =
         const sendAmount = web3.utils.toWei(getState().bridgeModule.estimateEthFee);
 
         let amountHex = web3.eth.abi.encodeParameter('uint256', amount);
-        let lenHex = web3.eth.abi.encodeParameter('uint256', '32');
-        const keyringInstance = keyring.init('fis');
-        let rAddressHex = u8aToHex(keyringInstance.decodeAddress(stafiAddress));
+        let len;
+        let rAddressHex;
+        if (destChainId === STAFI_CHAIN_ID) {
+          len = '32';
+          const keyringInstance = keyring.init('fis');
+          rAddressHex = u8aToHex(keyringInstance.decodeAddress(address));
+        } else {
+          len = '20';
+          rAddressHex = address;
+        }
+        let lenHex = web3.eth.abi.encodeParameter('uint256', len);
 
         let data = amountHex + lenHex.slice(2) + rAddressHex.slice(2);
 
         const result = await bridgeContract.methods
-          .deposit(STAFI_CHAIN_ID, bridgeServer.getResourceId(tokenType), data)
+          .deposit(destChainId, bridgeServer.getResourceId(tokenType), data)
           .send({ value: sendAmount });
 
         if (result && result.status && result.transactionHash) {
-          dispatch(add_Swap_Notice(tokenStr, tokenAmount, noticeStatus.Empty, { swapType: 'erc20' }));
+          dispatch(
+            add_Swap_Notice(tokenStr, tokenAmount, noticeStatus.Empty, {
+              swapType: 'erc20',
+              destSwapType: destChainId === STAFI_CHAIN_ID ? 'native' : 'bep20',
+            }),
+          );
           cb && cb({ txHash: result.transactionHash });
         } else {
           message.error('Error! Please try again');
         }
       }
     } catch (error) {
+      console.log('xxxxxxxxxxxxxxxxx', error);
       message.error(error.message);
     }
     dispatch(setLoading(false));
   };
 
-export const bep20ToNativeSwap =
-  (tokenStr: string, tokenType: string, tokenAmount: any, stafiAddress: string, cb?: Function): AppThunk =>
+export const bep20ToOtherSwap =
+  (
+    destChainId: number,
+    tokenStr: string,
+    tokenType: string,
+    tokenAmount: any,
+    address: string,
+    cb?: Function,
+  ): AppThunk =>
   async (dispatch, getState) => {
     dispatch(setLoading(true));
     let web3 = ethServer.getWeb3();
@@ -329,6 +375,11 @@ export const bep20ToNativeSwap =
         from: bscAddress,
       });
       allowance = getState().BSCModule.RMATICBep20Allowance;
+    } else if (tokenType == 'reth') {
+      tokenContract = new web3.eth.Contract(bscServer.getRETHTokenAbi(), bscServer.getRETHTokenAddress(), {
+        from: bscAddress,
+      });
+      allowance = getState().BSCModule.RETHBep20Allowance;
     }
     if (!tokenContract) {
       dispatch(setLoading(false));
@@ -352,18 +403,31 @@ export const bep20ToNativeSwap =
           const sendAmount = web3.utils.toWei(getState().bridgeModule.estimateBscFee);
 
           let amountHex = web3.eth.abi.encodeParameter('uint256', amount);
-          let lenHex = web3.eth.abi.encodeParameter('uint256', '32');
-          const keyringInstance = keyring.init('fis');
-          let rAddressHex = u8aToHex(keyringInstance.decodeAddress(stafiAddress));
+          let len;
+          let rAddressHex;
+          if (destChainId === STAFI_CHAIN_ID) {
+            len = '32';
+            const keyringInstance = keyring.init('fis');
+            rAddressHex = u8aToHex(keyringInstance.decodeAddress(address));
+          } else {
+            len = '20';
+            rAddressHex = address;
+          }
+          let lenHex = web3.eth.abi.encodeParameter('uint256', len);
 
           let data = amountHex + lenHex.slice(2) + rAddressHex.slice(2);
 
           const result = await bridgeContract.methods
-            .deposit(STAFI_CHAIN_ID, bridgeServer.getResourceId(tokenType), data)
+            .deposit(destChainId, bridgeServer.getResourceId(tokenType), data)
             .send({ value: sendAmount });
 
           if (result && result.status && result.transactionHash) {
-            dispatch(add_Swap_Notice(tokenStr, tokenAmount, noticeStatus.Empty, { swapType: 'bep20' }));
+            dispatch(
+              add_Swap_Notice(tokenStr, tokenAmount, noticeStatus.Empty, {
+                swapType: 'bep20',
+                destSwapType: destChainId === STAFI_CHAIN_ID ? 'native' : 'erc20',
+              }),
+            );
             cb && cb({ txHash: result.transactionHash });
           } else {
             message.error('Error! Please try again');
@@ -378,18 +442,31 @@ export const bep20ToNativeSwap =
         const sendAmount = web3.utils.toWei(getState().bridgeModule.estimateBscFee);
 
         let amountHex = web3.eth.abi.encodeParameter('uint256', amount);
-        let lenHex = web3.eth.abi.encodeParameter('uint256', '32');
-        const keyringInstance = keyring.init('fis');
-        let rAddressHex = u8aToHex(keyringInstance.decodeAddress(stafiAddress));
+        let len;
+        let rAddressHex;
+        if (destChainId === STAFI_CHAIN_ID) {
+          len = '32';
+          const keyringInstance = keyring.init('fis');
+          rAddressHex = u8aToHex(keyringInstance.decodeAddress(address));
+        } else {
+          len = '20';
+          rAddressHex = address;
+        }
+        let lenHex = web3.eth.abi.encodeParameter('uint256', len);
 
         let data = amountHex + lenHex.slice(2) + rAddressHex.slice(2);
 
         const result = await bridgeContract.methods
-          .deposit(STAFI_CHAIN_ID, bridgeServer.getResourceId(tokenType), data)
+          .deposit(destChainId, bridgeServer.getResourceId(tokenType), data)
           .send({ value: sendAmount });
 
         if (result && result.status && result.transactionHash) {
-          dispatch(add_Swap_Notice(tokenStr, tokenAmount, noticeStatus.Empty, { swapType: 'bep20' }));
+          dispatch(
+            add_Swap_Notice(tokenStr, tokenAmount, noticeStatus.Empty, {
+              swapType: 'bep20',
+              destSwapType: destChainId === STAFI_CHAIN_ID ? 'native' : 'erc20',
+            }),
+          );
           cb && cb({ txHash: result.transactionHash });
         } else {
           message.error('Error! Please try again');

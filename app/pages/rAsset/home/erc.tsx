@@ -194,6 +194,15 @@ export default function Index(props: any) {
     });
   };
 
+  const toSwapBep20 = (tokenSymbol: string) => {
+    props.history.push({
+      pathname: '/rAsset/swap/erc20/bep20',
+      state: {
+        rSymbol: tokenSymbol,
+      },
+    });
+  };
+
   return (
     <Content>
       <Tag
@@ -240,7 +249,7 @@ export default function Index(props: any) {
               unit='ETH'
               operationType='erc20'
               trade={config.uniswap.rethURL}
-              onSwapClick={() => {}}
+              onSwapClick={() => toSwapBep20('rETH')}
             />
             <DataItem
               disabled={!config.metaMaskNetworkIsEth(metaMaskNetworkId)}

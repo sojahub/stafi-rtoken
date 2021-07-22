@@ -53,15 +53,13 @@ export default function Index(props: Props) {
             </GhostButton>
           </TradePopover>
         )}
-        {!(props.operationType == 'erc20' && props.rSymbol == 'rETH') && (
-          <GhostButton
-            disabled={props.disabled}
-            onClick={() => {
-              props.onSwapClick && props.onSwapClick();
-            }}>
-            Swap
-          </GhostButton>
-        )}
+        <GhostButton
+          disabled={props.disabled}
+          onClick={() => {
+            props.onSwapClick && props.onSwapClick();
+          }}>
+          Swap
+        </GhostButton>
       </div>
     </div>
   );

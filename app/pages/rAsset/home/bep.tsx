@@ -16,6 +16,7 @@ import rasset_fis_svg from '@images/rFIS.svg';
 import rasset_rsol_svg from '@images/rSOL.svg';
 import rasset_ratom_svg from '@images/r_atom.svg';
 import rasset_rdot_svg from '@images/r_dot.svg';
+import rasset_reth_svg from '@images/r_eth.svg';
 import rasset_rfis_svg from '@images/r_fis.svg';
 import rasset_rksm_svg from '@images/r_ksm.svg';
 import rasset_rmatic_svg from '@images/r_matic.svg';
@@ -43,13 +44,14 @@ export default function Index(props: any) {
     atom_bepBalance,
     rsol_bepBalance,
     rmatic_bepBalance,
+    reth_bepBalance,
     ksmWillAmount,
     fisWillAmount,
     dotWillAmount,
     solWillAmount,
     maticWillAmount,
-    unitPriceList,
     atomWillAmount,
+    unitPriceList,
   } = useSelector((state: any) => {
     return {
       bscAccount: state.BSCModule.bscAccount,
@@ -61,6 +63,7 @@ export default function Index(props: any) {
       atom_bepBalance: state.BSCModule.bepRATOMBalance,
       rsol_bepBalance: state.BSCModule.bepRSOLBalance,
       rmatic_bepBalance: state.BSCModule.bepRMATICBalance,
+      reth_bepBalance: state.BSCModule.bepRETHBalance,
       ksmWillAmount: commonClice.getWillAmount(
         state.rKSMModule.ratio,
         state.rKSMModule.unbondCommission,
@@ -116,10 +119,23 @@ export default function Index(props: any) {
         count = count + item.price * dot_bepBalance;
       } else if (item.symbol == 'rATOM' && atom_bepBalance && atom_bepBalance != '--') {
         count = count + item.price * atom_bepBalance;
+      } else if (item.symbol == 'rETH' && reth_bepBalance && reth_bepBalance != '--') {
+        count = count + item.price * reth_bepBalance;
+      } else if (item.symbol == 'rSOL' && rsol_bepBalance && rsol_bepBalance != '--') {
+        count = count + item.price * rsol_bepBalance;
       }
     });
     return count;
-  }, [unitPriceList, ksm_bepBalance, fis_bepBalance, rfis_bepBalance, dot_bepBalance, atom_bepBalance]);
+  }, [
+    unitPriceList,
+    ksm_bepBalance,
+    fis_bepBalance,
+    rfis_bepBalance,
+    dot_bepBalance,
+    atom_bepBalance,
+    reth_bepBalance,
+    rsol_bepBalance,
+  ]);
 
   let time: any;
   useEffect(() => {
@@ -170,6 +186,15 @@ export default function Index(props: any) {
     });
   };
 
+  const toSwapErc20 = (tokenSymbol: string) => {
+    props.history.push({
+      pathname: '/rAsset/swap/bep20/erc20',
+      state: {
+        rSymbol: tokenSymbol,
+      },
+    });
+  };
+
   return (
     <Content>
       <Tag
@@ -206,6 +231,22 @@ export default function Index(props: any) {
               operationType='bep20'
               onSwapClick={() => toSwap('rFIS')}
             />
+
+            <DataItem
+              disabled={!config.metaMaskNetworkIsBsc(metaMaskNetworkId)}
+              rSymbol='rETH'
+              icon={rasset_reth_svg}
+              fullName='Ethereum'
+              balance={reth_bepBalance == '--' ? '--' : NumberUtil.handleFisAmountToFixed(reth_bepBalance)}
+              willGetBalance={'0.000000'}
+              unit='ETH'
+              operationType='bep20'
+              trade={config.uniswap.rethURL}
+              onSwapClick={() => {
+                toSwapErc20('rETH');
+              }}
+            />
+
             <DataItem
               disabled={!config.metaMaskNetworkIsBsc(metaMaskNetworkId)}
               rSymbol='rDOT'
