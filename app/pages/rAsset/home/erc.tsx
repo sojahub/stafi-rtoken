@@ -206,6 +206,7 @@ export default function Index(props: any) {
         <>
           <DataList>
             <DataItem
+              disabled={!config.metaMaskNetworkIsEth(metaMaskNetworkId)}
               rSymbol='FIS'
               icon={rasset_fis_svg}
               fullName='StaFi'
@@ -218,6 +219,7 @@ export default function Index(props: any) {
             />
 
             <DataItem
+              disabled={!config.metaMaskNetworkIsEth(metaMaskNetworkId)}
               rSymbol='rFIS'
               icon={rasset_rfis_svg}
               fullName='StaFi'
@@ -229,6 +231,7 @@ export default function Index(props: any) {
               onSwapClick={() => toSwap('rFIS')}
             />
             <DataItem
+              disabled={!config.metaMaskNetworkIsEth(metaMaskNetworkId)}
               rSymbol='rETH'
               icon={rasset_reth_svg}
               fullName='Ethereum'
@@ -240,6 +243,7 @@ export default function Index(props: any) {
               onSwapClick={() => {}}
             />
             <DataItem
+              disabled={!config.metaMaskNetworkIsEth(metaMaskNetworkId)}
               rSymbol='rDOT'
               icon={rasset_rdot_svg}
               fullName='Polkadot'
@@ -252,6 +256,7 @@ export default function Index(props: any) {
             />
 
             <DataItem
+              disabled={!config.metaMaskNetworkIsEth(metaMaskNetworkId)}
               rSymbol='rKSM'
               icon={rasset_rksm_svg}
               fullName='Kusama'
@@ -264,6 +269,7 @@ export default function Index(props: any) {
             />
 
             <DataItem
+              disabled={!config.metaMaskNetworkIsEth(metaMaskNetworkId)}
               rSymbol='rATOM'
               icon={rasset_ratom_svg}
               fullName='Cosmos'
@@ -276,6 +282,7 @@ export default function Index(props: any) {
             />
 
             <DataItem
+              disabled={!config.metaMaskNetworkIsEth(metaMaskNetworkId)}
               rSymbol='rSOL'
               icon={rasset_rsol_svg}
               fullName='Solana'
@@ -288,6 +295,7 @@ export default function Index(props: any) {
             />
 
             <DataItem
+              disabled={!config.metaMaskNetworkIsEth(metaMaskNetworkId)}
               rSymbol='rMATIC'
               icon={rasset_rmatic_svg}
               fullName='Matic'

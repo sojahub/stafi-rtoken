@@ -453,9 +453,18 @@ export default function Index(props: any) {
   };
 
   const reverseExchangeType = () => {
-    const oldFromTypeData = fromTypeData;
-    setFromTypeData(destTypeData);
-    setDestTypeData(oldFromTypeData);
+    // const oldFromTypeData = fromTypeData;
+    // setFromTypeData(destTypeData);
+    // setDestTypeData(oldFromTypeData);
+    props.history.push({
+      pathname: `/rAsset/swap/${destTypeData ? destTypeData.type : 'default'}/${
+        fromTypeData ? fromTypeData.type : 'default'
+      }`,
+      state: {
+        rSymbol: tokenType && tokenType.title,
+      },
+    });
+
     setFormAmount('');
     setAddress('');
   };
@@ -572,7 +581,7 @@ export default function Index(props: any) {
           <div className={'input_container'} style={{ marginTop: '20px' }}>
             <div className={'title'}>Received Address</div>
             <AddressInputEmbed
-              placeholder='0x...'
+              placeholder={props.match.params && props.match.params.destType === 'native' ? '...' : '0x...'}
               value={address}
               onChange={(e: any) => {
                 setAddress(e.target.value);

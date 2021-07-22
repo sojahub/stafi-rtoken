@@ -359,7 +359,7 @@ export default {
     return `https://testnet.bscscan.com/token/${tokenAddress}?a=${userAddress}`;
   },
   stafiScanUrl: (address: any) => {
-    return `https://stafi.subscan.io/account/${address}`;
+    return `https://stafi.subscan.io/account/${address}?tab=transfer`;
   },
   bscChainId: () => {
     if (!isdev()) {

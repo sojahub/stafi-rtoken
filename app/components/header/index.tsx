@@ -94,14 +94,14 @@ export default function Index(props: Props) {
       }
       if (location.pathname.includes('/rAsset/swap')) {
         const returnValue: any = {};
-        if (location.pathname.includes('/native')) {
+        if (location.pathname.includes('/rAsset/swap/native')) {
           if (state.FISModule.fisAccount) {
             returnValue.fisAccount = state.FISModule.fisAccount;
           }
         }
 
         if (
-          location.pathname.includes('/rAsset/swap/native/erc20') ||
+          // location.pathname.includes('/rAsset/swap/native/erc20') ||
           location.pathname.includes('/rAsset/swap/erc20')
         ) {
           if (state.rETHModule.ethAccount) {
@@ -109,7 +109,7 @@ export default function Index(props: Props) {
           }
         }
         if (
-          location.pathname.includes('/rAsset/swap/native/bep20') ||
+          // location.pathname.includes('/rAsset/swap/native/bep20') ||
           location.pathname.includes('/rAsset/swap/bep20')
         ) {
           if (state.BSCModule.bscAccount) {

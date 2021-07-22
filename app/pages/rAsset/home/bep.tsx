@@ -182,6 +182,7 @@ export default function Index(props: any) {
         <>
           <DataList>
             <DataItem
+              disabled={!config.metaMaskNetworkIsBsc(metaMaskNetworkId)}
               rSymbol='FIS'
               icon={rasset_fis_svg}
               fullName='StaFi'
@@ -194,6 +195,7 @@ export default function Index(props: any) {
             />
 
             <DataItem
+              disabled={!config.metaMaskNetworkIsBsc(metaMaskNetworkId)}
               rSymbol='rFIS'
               icon={rasset_rfis_svg}
               fullName='StaFi'
@@ -205,6 +207,7 @@ export default function Index(props: any) {
               onSwapClick={() => toSwap('rFIS')}
             />
             <DataItem
+              disabled={!config.metaMaskNetworkIsBsc(metaMaskNetworkId)}
               rSymbol='rDOT'
               icon={rasset_rdot_svg}
               fullName='Polkadot'
@@ -217,6 +220,7 @@ export default function Index(props: any) {
             />
 
             <DataItem
+              disabled={!config.metaMaskNetworkIsBsc(metaMaskNetworkId)}
               rSymbol='rKSM'
               icon={rasset_rksm_svg}
               fullName='Kusama'
@@ -228,6 +232,7 @@ export default function Index(props: any) {
               onSwapClick={() => toSwap('rKSM')}
             />
             <DataItem
+              disabled={!config.metaMaskNetworkIsBsc(metaMaskNetworkId)}
               rSymbol='rATOM'
               icon={rasset_ratom_svg}
               fullName='Cosmos'
@@ -240,6 +245,7 @@ export default function Index(props: any) {
             />
 
             <DataItem
+              disabled={!config.metaMaskNetworkIsBsc(metaMaskNetworkId)}
               rSymbol='rSOL'
               icon={rasset_rsol_svg}
               fullName='Solana'
@@ -252,6 +258,7 @@ export default function Index(props: any) {
             />
 
             <DataItem
+              disabled={!config.metaMaskNetworkIsBsc(metaMaskNetworkId)}
               rSymbol='rMATIC'
               icon={rasset_rmatic_svg}
               fullName='Matic'

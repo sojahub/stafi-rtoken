@@ -77,8 +77,7 @@ export default function SwapLoading(props: Props) {
             <div className="title">Congratulations!</div>
 
             <div className="context">
-              You have successfully transferred your tokens.Please check your
-              wallet
+              You have successfully transferred your tokens.Please check your Polkadot.js wallet
             </div>
 
             <div className={"center_container"}>
@@ -99,7 +98,7 @@ export default function SwapLoading(props: Props) {
             <div className="title">Transferring</div>
 
             <div className="context">
-              We are tranferring your tokens to {props.destChainName}
+              We are transferring your tokens to {props.destChainName}
             </div>
 
             <div className="transfer_detail">{props.transferDetail}</div>
@@ -120,7 +119,7 @@ export default function SwapLoading(props: Props) {
               className="view_tx_text"
               onClick={() => props.viewTxUrl && window.open(props.viewTxUrl)}
             >
-              View on Etherscan
+              View your transaction
             </div>
           </>
         )}

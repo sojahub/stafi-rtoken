@@ -7,6 +7,7 @@
     padding-left: 0px;
     border-color: #23292F;
     box-shadow: none;
+    font-family: "Helvetica-Bold";
     input,
     .ant-input-disabled {
       background: #23292f;
@@ -32,6 +33,7 @@
     border-width: 0;
     color: #00f3ab;
     font-size: 26px;
+    font-family: "Helvetica-Bold";
     &::placeholder {
       color: rgba(0, 243, 171, 0.5);
     }
