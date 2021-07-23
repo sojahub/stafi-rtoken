@@ -7,7 +7,7 @@ export const rFIS_data=[{
       url:"/rFIS/staker/info"
     },
     {
-      text:'-reward',
+      text:'-Reward',
       url:"/rFIS/staker/reward"
     }
   ]
