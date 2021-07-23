@@ -826,8 +826,9 @@ const add_ATOM_stake_Notice =
   };
 
 export const getReward=(pageIndex:Number,cb:Function):AppThunk=>async (dispatch, getState)=>{
-  const source=getState().FISModule.fisAccount.address; //"36NQ98C5uri7ruBKvdzWFeEJQEhGpzCvJVbMHkbTu2mCgMRo"
-  const result=await rpcServer.getReward(source,3,pageIndex); 
+  const fisSource=getState().FISModule.fisAccount.address;
+  const ethAccount=getState().rETHModule.ethAccount; 
+  const result=await rpcServer.getReward(fisSource,ethAccount?ethAccount.address:"",rSymbol.Atom,pageIndex); 
   if(result.status==80000){ 
     const rewardList=getState().rATOMModule.rewardList; 
     if(result.data.rewardList.length>0){

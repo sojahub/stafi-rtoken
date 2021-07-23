@@ -1039,8 +1039,8 @@ export const rewardDetails= [
 
 
 export const getReward=(pageIndex:Number,cb:Function):AppThunk=>async (dispatch, getState)=>{
-  const source=getState().rETHModule.ethAccount.address; 
-  const result=await rpcServer.getReward(source,-1,pageIndex); 
+  const ethAccount=getState().rETHModule.ethAccount; 
+  const result=await rpcServer.getReward('',ethAccount.address,-1,pageIndex); 
   if(result.status==80000){ 
     const rewardList=getState().rETHModule.rewardList; 
     if(result.data.rewardList.length>0){
