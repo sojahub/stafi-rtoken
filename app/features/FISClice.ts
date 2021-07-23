@@ -972,8 +972,8 @@ const getTotalUnbonding = (fisAddress: string, pools: any): AppThunk => async (d
   if (pools && pools.length > 0) {
     let unbondingToken = 0;
 
-    pools.forEach(async (pool: any) => {
-      const unbondingData = await stafiApi.query.rFis.unbonding(fisAddress, pool);
+    pools.forEach(async (pool: any) => { 
+      const unbondingData = await stafiApi.query.rFis.unbonding(fisAddress, pool.address);
       let unbondings = unbondingData.toJSON();
       if (unbondings && unbondings.length > 0) {
         unbondings.forEach((unbonding: any) => {
