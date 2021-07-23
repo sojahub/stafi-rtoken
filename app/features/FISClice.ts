@@ -14,7 +14,7 @@ import { message as M, message } from 'antd';
 import { keccakFromHexString } from 'ethereumjs-util';
 import { AppThunk } from '../store';
 import CommonClice from './commonClice';
-import RpcServer,{pageCount} from '@servers/rpc/index';
+import RpcServer, { pageCount } from '@servers/rpc/index';
 import {
   initProcess,
   processStatus,
@@ -67,10 +67,10 @@ const FISClice = createSlice({
     currentCommission: "--",
     exposure: null,
     validatorAddressItems: [],
-    showValidatorStatus:false,
+    showValidatorStatus: false,
 
-    rewardList:[],
-    rewardList_lastdata:null
+    rewardList: [],
+    rewardList_lastdata: null
   },
   reducers: {
     setFisAccounts(state, { payload }) {
@@ -188,16 +188,16 @@ const FISClice = createSlice({
     setValidatorAddressItems(state, { payload }) {
       state.validatorAddressItems = payload
     },
-    setShowValidatorStatus(state,{payload}){
-      state.showValidatorStatus=payload;
+    setShowValidatorStatus(state, { payload }) {
+      state.showValidatorStatus = payload;
     },
 
-    setRewardList(state,{payload}){
-      state.rewardList=payload;
+    setRewardList(state, { payload }) {
+      state.rewardList = payload;
     },
 
-    setRewardList_lastdata(state,{payload}){
-      state.rewardList_lastdata=payload;
+    setRewardList_lastdata(state, { payload }) {
+      state.rewardList_lastdata = payload;
     }
   },
 });
@@ -953,40 +953,42 @@ export const bondFees = (): AppThunk => async (dispatch, getState) => {
   dispatch(setBondFees(result));
 }
 
-export const accountUnbonds = (): AppThunk => async (dispatch, getState) => {
-  let fisAddress = getState().FISModule.fisAccount.address;
-  const validPools = getState().FISModule.validPools;
-  // await getTotalUnbonding(fisAddress,validPools,(total:any)=>{ 
-  //   dispatch(setTotalUnbonding(total));
-  // })
-  dispatch(getTotalUnbonding(fisAddress, validPools))
-}
+// export const accountUnbonds = (): AppThunk => async (dispatch, getState) => {
+//   let fisAddress = getState().FISModule.fisAccount.address;
+
+//   dispatch(getTotalUnbonding(fisAddress))
+// }
 
 
-const getTotalUnbonding = (fisAddress: string, pools: any): AppThunk => async (dispatch, getState) => {
-  // let fisAddress = getState().FISModule.fisAccount.address;
+// const getTotalUnbonding = (fisAddress: string): AppThunk => async (dispatch, getState) => {
+//   // let fisAddress = getState().FISModule.fisAccount.address;
+//   try { 
+//     const stafiApi = await stafiServer.createStafiApi();
+//     const poolsData = await stafiApi.query.rFis.pools();
+//     let pools = poolsData.toJSON();
+//     const eraResult = await stafiApi.query.staking.currentEra();
+//     let currentEra = eraResult.toJSON();
+//     if (pools && pools.length > 0) {
+//       let unbondingToken = 0;
 
-  const stafiApi = await stafiServer.createStafiApi();
-  const eraResult = await stafiApi.query.staking.currentEra();
-  let currentEra = eraResult.toJSON();
-  if (pools && pools.length > 0) {
-    let unbondingToken = 0;
+//       pools.forEach(async (pool: any) => {
+//         const unbondingData = await stafiApi.query.rFis.unbonding(fisAddress, pool.address);
+//         let unbondings = unbondingData.toJSON();
+//         if (unbondings && unbondings.length > 0) {
+//           unbondings.forEach((unbonding: any) => {
+//             if (currentEra < unbonding.era) {
+//               unbondingToken += Number(unbonding.value);
+//             }
+//           });
+//         }
+//         dispatch(setTotalUnbonding(unbondingToken));
 
-    pools.forEach(async (pool: any) => { 
-      const unbondingData = await stafiApi.query.rFis.unbonding(fisAddress, pool.address);
-      let unbondings = unbondingData.toJSON();
-      if (unbondings && unbondings.length > 0) {
-        unbondings.forEach((unbonding: any) => {
-          if (currentEra < unbonding.era) {
-            unbondingToken += Number(unbonding.value);
-          }
-        });
-      }
-      dispatch(setTotalUnbonding(unbondingToken));
+//       })
+//     }
+//   } catch (error) {
 
-    })
-  }
-}
+//   }
+// }
 
 export const unbondFees = (): AppThunk => async (dispatch, getState) => {
   const result = await commonClice.unbondFees(rSymbol.Fis)
@@ -1255,7 +1257,7 @@ export const initValidatorStatus = (): AppThunk => async (dispatch, getState) =>
   let era = eraData.toJSON();
 
   const ledgerData = await api.query.staking.ledger(currentAddress)
-  let ledger = ledgerData.toJSON(); 
+  let ledger = ledgerData.toJSON();
   if (ledger) {
     const validatorsData = await api.query.session.validators()
     let validators = validatorsData.toJSON();
@@ -1325,28 +1327,28 @@ export const initValidatorStatus = (): AppThunk => async (dispatch, getState) =>
 
 
 
-export const handleOffboard=(cb?:Function):AppThunk=>async (dispatch, getState)=>{
+export const handleOffboard = (cb?: Function): AppThunk => async (dispatch, getState) => {
   dispatch(setLoading(true));
   web3Enable(stafiServer.getWeb3EnalbeName());
-  const injector=await web3FromSource(stafiServer.getPolkadotJsSource());
+  const injector = await web3FromSource(stafiServer.getPolkadotJsSource());
   const api = await stafiServer.createStafiApi();
 
-    let currentAccount = getState().FISModule.fisAccount.address;
+  let currentAccount = getState().FISModule.fisAccount.address;
 
-    api.tx.rFis
-        .offboard()
-        .signAndSend(currentAccount, { signer: injector.signer }, (result:any) => {
-      
+  api.tx.rFis
+    .offboard()
+    .signAndSend(currentAccount, { signer: injector.signer }, (result: any) => {
+
       if (result.status.isInBlock) {
         dispatch(setLoading(false));
 
         result.events
-          .filter((data:any) => { 
-            const section=data.event.section
+          .filter((data: any) => {
+            const section = data.event.section
             return section === 'system'
           })
-          .forEach((item:any) => {
-            const { data, method } =item.event
+          .forEach((item: any) => {
+            const { data, method } = item.event
             if (method === 'ExtrinsicFailed') {
               const [dispatchError] = data
               if (dispatchError.isModule) {
@@ -1359,7 +1361,7 @@ export const handleOffboard=(cb?:Function):AppThunk=>async (dispatch, getState)=
                     messageStr = 'Please use your controller account';
                   }
                   message.error(messageStr)
-                } catch (error) { 
+                } catch (error) {
                   message.error(error.message)
                 }
               }
@@ -1377,37 +1379,37 @@ export const handleOffboard=(cb?:Function):AppThunk=>async (dispatch, getState)=
               console.error(e);
             }
           });;
-      } else if (result.isError) { 
+      } else if (result.isError) {
         dispatch(setLoading(false));
         message.error(result.toHuman())
       }
 
-    }).catch((error:any) => {
+    }).catch((error: any) => {
       dispatch(setLoading(false));
       message.error(error.message)
-    });  
+    });
 }
 
-export const onboardValidators=(cb?:Function):AppThunk=>async (dispatch, getState)=>{
+export const onboardValidators = (cb?: Function): AppThunk => async (dispatch, getState) => {
   try {
-  
+
     const api = await stafiServer.createStafiApi();
-    const currentAddress=getState().FISModule.fisAccount.address;
-    const result =await api.query.rFis.onboardValidators() 
+    const currentAddress = getState().FISModule.fisAccount.address;
+    const result = await api.query.rFis.onboardValidators()
     let validators = result.toJSON();
     if (validators && validators.length > 0) {
-      const ledgerData =await api.query.staking.ledger(currentAddress)
+      const ledgerData = await api.query.staking.ledger(currentAddress)
       let ledger = ledgerData.toJSON();
       if (ledger) {
-          if (validators.indexOf(ledger.stash) != -1) {
-              dispatch(setShowValidatorStatus(true));
-              cb && cb();
-          }
-      } 
-    } 
-      
+        if (validators.indexOf(ledger.stash) != -1) {
+          dispatch(setShowValidatorStatus(true));
+          cb && cb();
+        }
+      }
+    }
+
   } catch (error) {
-      
+
   }
 }
 
@@ -1428,34 +1430,35 @@ const add_FIS_Notice = (uuid: string, type: string, subType: string, content: st
 }
 
 
-export const getReward=(pageIndex:Number,cb:Function):AppThunk=>async (dispatch, getState)=>{
-  const source=getState().FISModule.fisAccount.address; //"36NQ98C5uri7ruBKvdzWFeEJQEhGpzCvJVbMHkbTu2mCgMRo"
-  const result=await rpcServer.getReward(source,rSymbol.Fis,pageIndex); 
-  if(result.status==80000){ 
-    const rewardList=getState().FISModule.rewardList; 
-    if(result.data.rewardList.length>0){
-      const list=result.data.rewardList.map((item:any)=>{
-        const rate=NumberUtil.rTokenRateToHuman(item.rate);
-        const rbalance=NumberUtil.tokenAmountToHuman(item.rbalance,rSymbol.Fis);
+export const getReward = (pageIndex: Number, cb: Function): AppThunk => async (dispatch, getState) => {
+  const stafiSource = getState().FISModule.fisAccount.address; //"36NQ98C5uri7ruBKvdzWFeEJQEhGpzCvJVbMHkbTu2mCgMRo"
+  const ethSource = getState().rETHModule.ethAccount.address;
+  const result = await rpcServer.getReward(stafiSource, ethSource ? ethSource.address : "", rSymbol.Fis, pageIndex);
+  if (result.status == 80000) {
+    const rewardList = getState().FISModule.rewardList;
+    if (result.data.rewardList.length > 0) {
+      const list = result.data.rewardList.map((item: any) => {
+        const rate = NumberUtil.rTokenRateToHuman(item.rate);
+        const rbalance = NumberUtil.tokenAmountToHuman(item.rbalance, rSymbol.Fis);
         return {
           ...item,
-          rbalance:rbalance,
-          rate:rate
+          rbalance: rbalance,
+          rate: rate
         }
       })
-      if(result.data.rewardList.length<=pageCount){
+      if (result.data.rewardList.length <= pageCount) {
         dispatch(setRewardList_lastdata(null))
-      }else{
-        dispatch(setRewardList_lastdata(list[list.length-1]));
+      } else {
+        dispatch(setRewardList_lastdata(list[list.length - 1]));
         list.pop()
-      } 
-      dispatch(setRewardList([...rewardList,...list])); 
-      if(result.data.rewardList.length<=pageCount){
+      }
+      dispatch(setRewardList([...rewardList, ...list]));
+      if (result.data.rewardList.length <= pageCount) {
         cb && cb(false)
-      }else{
+      } else {
         cb && cb(true)
       }
-    }else{
+    } else {
       cb && cb(false)
     }
   }

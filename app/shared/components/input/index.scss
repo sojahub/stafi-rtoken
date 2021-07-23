@@ -47,7 +47,6 @@
   }
 }
 
-
 .type_input {
   .ant-input-suffix {
     div {
@@ -99,7 +98,7 @@
   }
   .ant-popover-inner-content {
     padding: 0px 0px 14px 0px;
-    height: 290px;
+    height: 310px;
     overflow: auto;
     .item {
       display: flex;
@@ -175,15 +174,16 @@
   justify-content: space-between;
 
   .left_container {
+    flex: 1;
     display: flex;
     flex-direction: row;
     align-items: flex-end;
     cursor: pointer;
-    height:20px;
+    height: 20px;
 
     .title {
       font-size: 20px;
-      font-family: "Helvetica-Bold";
+      font-family: 'Helvetica-Bold';
       line-height: 20px;
       color: white;
     }

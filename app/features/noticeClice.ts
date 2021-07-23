@@ -7,8 +7,7 @@ import moment from 'moment';
 import { AppThunk } from '../store';
 import { bondStates, getMinting } from './FISClice';
 import { initProcess, processStatus, setProcessSending, setProcessSlider, setProcessStaking } from './globalClice';
-import { setProcessParameter as atomSetProcessParameter } from './rATOMClice';
-import { setProcessParameter as maticSetProcessParameter } from './rATOMClice';
+import { setProcessParameter as atomSetProcessParameter, setProcessParameter as maticSetProcessParameter } from './rATOMClice';
 import { setProcessParameter } from './rDOTClice';
 import { setProcessParameter as krmSetProcessParameter } from './rKSMClice';
 import { setProcessParameter as solSetProcessParameter } from './rSOLClice';
@@ -409,9 +408,17 @@ export const notice_text=(item:any)=>{
       }
       return `Swap ${item.amount} Native ${item.rSymbol} to ERC20, it may take 2~10 minutes to arrive`
     }else if(item.subData.swapType == "bep20"){
-      return `Swap ${item.amount}  BEP20 ${item.rSymbol} to Native, it may take 2~10 minutes to arrive`
+      if(item.subData.destSwapType == "erc20"){
+        return `Swap ${item.amount}  BEP20 ${item.rSymbol} to ERC20, it may take 2~10 minutes to arrive`
+      }else{
+        return `Swap ${item.amount}  BEP20 ${item.rSymbol} to Native, it may take 2~10 minutes to arrive`
+      }
     } else{
-      return `Swap ${item.amount}  ERC20 ${item.rSymbol} to Native, it may take 2~10 minutes to arrive`
+      if(item.subData.destSwapType == "bep20"){
+        return `Swap ${item.amount}  ERC20 ${item.rSymbol} to BEP20, it may take 2~10 minutes to arrive`
+      }else{
+        return `Swap ${item.amount}  ERC20 ${item.rSymbol} to Native, it may take 2~10 minutes to arrive`
+      }
     } 
   }else if(item.subType==noticesubType.Deposit){
     return `Deposit ${item.amount} ETH to register as a validator`;

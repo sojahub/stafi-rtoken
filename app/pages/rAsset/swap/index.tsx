@@ -1,13 +1,14 @@
 import SwapLoading from '@components/modal/SwapLoading';
 import config from '@config/index';
 import {
-  bep20ToNativeSwap,
+  bep20ToOtherSwap,
   bridgeCommon_ChainFees,
   BSC_CHAIN_ID,
-  erc20ToNativeSwap,
+  erc20ToOtherSwap,
   ETH_CHAIN_ID,
   getBridgeEstimateEthFee,
-  nativeToOtherSwap
+  nativeToOtherSwap,
+  STAFI_CHAIN_ID
 } from '@features/bridgeClice';
 import {
   clickSwapToBep20Link,
@@ -39,7 +40,7 @@ import {
   query_rBalances_account as dot_query_rBalances_account,
   rTokenRate as dot_rTokenRate
 } from '@features/rDOTClice';
-import { checkEthAddress, handleEthAccount, monitoring_Method as eth_Monitoring_Method } from '@features/rETHClice';
+import { checkEthAddress, get_eth_getBalance, monitoring_Method as eth_Monitoring_Method } from '@features/rETHClice';
 import { getUnbondCommission, query_rBalances_account, rTokenRate as ksm_rTokenRate } from '@features/rKSMClice';
 import {
   getUnbondCommission as matic_getUnbondCommission,
@@ -58,6 +59,7 @@ import rasset_fis_svg from '@images/rFIS.svg';
 import rasset_rsol_svg from '@images/rSOL.svg';
 import rasset_ratom_svg from '@images/r_atom.svg';
 import rasset_rdot_svg from '@images/r_dot.svg';
+import rasset_reth_svg from '@images/r_eth.svg';
 import rasset_rfis_svg from '@images/r_fis.svg';
 import rasset_rksm_svg from '@images/r_ksm.svg';
 import rasset_rmatic_svg from '@images/r_matic.svg';
@@ -74,6 +76,7 @@ import { useInterval } from '@util/utils';
 import { message } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useHistory, useLocation, useParams } from 'react-router-dom';
 import './index.scss';
 
 type SelectorType = {
@@ -95,6 +98,57 @@ const tokenDatas = [
     title: 'rFIS',
     content: '--',
     type: 'rfis',
+  },
+  {
+    icon: rasset_rdot_svg,
+    title: 'rDOT',
+    content: '--',
+    type: 'rdot',
+  },
+  {
+    icon: rasset_rksm_svg,
+    title: 'rKSM',
+    content: '--',
+    type: 'rksm',
+  },
+  {
+    icon: rasset_ratom_svg,
+    title: 'rATOM',
+    content: '--',
+    type: 'ratom',
+  },
+  {
+    icon: rasset_rsol_svg,
+    title: 'rSOL',
+    content: '--',
+    type: 'rsol',
+  },
+  {
+    icon: rasset_rmatic_svg,
+    title: 'rMATIC',
+    content: '--',
+    type: 'rmatic',
+  },
+];
+
+const tokenDatasWithREth = [
+  {
+    icon: rasset_fis_svg,
+    title: 'FIS',
+    content: '--',
+    type: 'fis',
+  },
+  {
+    icon: rasset_rfis_svg,
+    title: 'rFIS',
+    content: '--',
+    type: 'rfis',
+  },
+  {
+    icon: rasset_reth_svg,
+    title: 'rETH',
+    content: '--',
+    type: 'reth',
   },
   {
     icon: rasset_rdot_svg,
@@ -152,6 +206,9 @@ const assetDatas = [
 export default function Index(props: any) {
   let time: any;
   const dispatch = useDispatch();
+  let { fromType, destType } = useParams<any>();
+  const history = useHistory();
+  const location = useLocation();
   const [fromAoumt, setFormAmount] = useState<any>();
   const [selectDataSource, setSelectDataSource] = useState(tokenDatas);
   const [tokenType, setTokenType] = useState(tokenDatas[0]);
@@ -183,6 +240,7 @@ export default function Index(props: any) {
     ratom_balance,
     rsol_balance,
     rmatic_balance,
+    reth_balance,
   } = useSelector((state: any) => {
     if (fromTypeData && fromTypeData.type === 'erc20') {
       return {
@@ -193,9 +251,8 @@ export default function Index(props: any) {
         ratom_balance: NumberUtil.handleFisAmountToFixed(state.ETHModule.ercRATOMBalance),
         rsol_balance: NumberUtil.handleFisAmountToFixed(state.ETHModule.ercRSOLBalance),
         rmatic_balance: NumberUtil.handleFisAmountToFixed(state.ETHModule.ercRMaticBalance),
+        reth_balance: NumberUtil.handleFisAmountToFixed(state.ETHModule.ercETHBalance),
         estimateEthFee: state.bridgeModule.estimateEthFee,
-        fisAccount: state.FISModule.fisAccount,
-        ethAccount: state.rETHModule.ethAccount,
       };
     } else if (fromTypeData && fromTypeData.type === 'bep20') {
       return {
@@ -206,10 +263,8 @@ export default function Index(props: any) {
         ratom_balance: NumberUtil.handleFisAmountToFixed(state.BSCModule.bepRATOMBalance),
         rsol_balance: NumberUtil.handleFisAmountToFixed(state.BSCModule.bepRSOLBalance),
         rmatic_balance: NumberUtil.handleFisAmountToFixed(state.BSCModule.bepRMATICBalance),
+        reth_balance: NumberUtil.handleFisAmountToFixed(state.BSCModule.bepRETHBalance),
         estimateBscFee: state.bridgeModule.estimateBscFee,
-        fisAccount: state.FISModule.fisAccount,
-        ethAccount: state.rETHModule.ethAccount,
-        bscAccount: state.BSCModule.bscAccount,
       };
     } else {
       return {
@@ -222,28 +277,16 @@ export default function Index(props: any) {
         rmatic_balance: NumberUtil.handleFisAmountToFixed(state.rMATICModule.tokenAmount),
         erc20EstimateFee: state.bridgeModule.erc20EstimateFee,
         bep20EstimateFee: state.bridgeModule.bep20EstimateFee,
-        fisAccount: state.FISModule.fisAccount,
-        ethAccount: state.rETHModule.ethAccount,
       };
     }
   });
 
   const { fisAccount, ethAccount, bscAccount } = useSelector((state: any) => {
-    if ((fromTypeData && fromTypeData.type === 'erc20') || (destTypeData && destTypeData.type === 'erc20')) {
-      return {
-        fisAccount: state.FISModule.fisAccount,
-        ethAccount: state.rETHModule.ethAccount,
-      };
-    } else if ((fromTypeData && fromTypeData.type === 'bep20') || (destTypeData && destTypeData.type === 'bep20')) {
-      return {
-        fisAccount: state.FISModule.fisAccount,
-        bscAccount: state.BSCModule.bscAccount,
-      };
-    } else {
-      return {
-        fisAccount: state.FISModule.fisAccount,
-      };
-    }
+    return {
+      fisAccount: state.FISModule.fisAccount,
+      ethAccount: state.rETHModule.ethAccount,
+      bscAccount: state.BSCModule.bscAccount,
+    };
   });
 
   const { metaMaskNetworkId } = useSelector((state: any) => {
@@ -253,45 +296,28 @@ export default function Index(props: any) {
   });
 
   useEffect(() => {
-    if (props.match.params && props.match.params.fromType && props.match.params.destType) {
-      if (
-        props.match.params.fromType !== 'native' &&
-        props.match.params.fromType !== 'erc20' &&
-        props.match.params.fromType !== 'bep20' &&
-        props.match.params.fromType !== 'default'
-      ) {
+    if (fromType && destType) {
+      if (fromType !== 'native' && fromType !== 'erc20' && fromType !== 'bep20' && fromType !== 'default') {
         returnToAsset();
         return;
       }
-      if (
-        props.match.params.destType !== 'native' &&
-        props.match.params.destType !== 'erc20' &&
-        props.match.params.destType !== 'bep20' &&
-        props.match.params.destType !== 'default'
-      ) {
+      if (destType !== 'native' && destType !== 'erc20' && destType !== 'bep20' && destType !== 'default') {
         returnToAsset();
         return;
       }
-      if (props.match.params.fromType === props.match.params.destType) {
-        returnToAsset();
-        return;
-      }
-      if (
-        (props.match.params.fromType === 'erc20' && props.match.params.destType === 'bep20') ||
-        (props.match.params.fromType === 'bep20' && props.match.params.destType === 'erc20')
-      ) {
+      if (fromType === destType) {
         returnToAsset();
         return;
       }
 
-      const fromData = assetDatas.find((item) => item.type == props.match.params.fromType);
+      const fromData = assetDatas.find((item) => item.type == fromType);
       setFromTypeData(fromData);
-      const destData = assetDatas.find((item) => item.type == props.match.params.destType);
+      const destData = assetDatas.find((item) => item.type == destType);
       setDestTypeData(destData);
     } else {
       returnToAsset();
     }
-  }, [props.match.params && props.match.params.fromType && props.match.params.destType]);
+  }, [fromType, destType]);
 
   useEffect(() => {
     dispatch(bridgeCommon_ChainFees());
@@ -304,92 +330,79 @@ export default function Index(props: any) {
 
   useEffect(() => {
     updateErcBepData();
+  }, [metaMaskNetworkId, fromType, destType, ethAccount && ethAccount.address, bscAccount && bscAccount.address]);
+
+  useEffect(() => {
+    if (location.state) {
+      if (selectDataSource.length > 0) {
+        const data = selectDataSource.find((item) => item.title == location.state.rSymbol);
+        if (data) {
+          setTokenType({ ...data });
+        } else {
+          setTokenType(null);
+        }
+      }
+    } else {
+      setTokenType(null);
+    }
+  }, [location.state && location.state.rSymbol, selectDataSource]);
+
+  useEffect(() => {
+    if ((fromType === 'erc20' && destType === 'bep20') || (fromType === 'bep20' && destType === 'erc20')) {
+      tokenDatasWithREth[0].content = fis_balance;
+      tokenDatasWithREth[1].content = rfis_balance;
+      tokenDatasWithREth[2].content = reth_balance;
+      tokenDatasWithREth[3].content = rdot_balance;
+      tokenDatasWithREth[4].content = rksm_balance;
+      tokenDatasWithREth[5].content = ratom_balance;
+      tokenDatasWithREth[6].content = rsol_balance;
+      tokenDatasWithREth[7].content = rmatic_balance;
+      setSelectDataSource([...tokenDatasWithREth]);
+    } else {
+      tokenDatas[0].content = fis_balance;
+      tokenDatas[1].content = rfis_balance;
+      tokenDatas[2].content = rdot_balance;
+      tokenDatas[3].content = rksm_balance;
+      tokenDatas[4].content = ratom_balance;
+      tokenDatas[5].content = rsol_balance;
+      tokenDatas[6].content = rmatic_balance;
+      setSelectDataSource([...tokenDatas]);
+    }
+
+    if (tokenType) {
+      if ((tokenType.title = 'FIS')) {
+        tokenType.content = fis_balance;
+      } else if ((tokenType.title = 'rFIS')) {
+        tokenType.content = rfis_balance;
+      } else if ((tokenType.title = 'rKSM')) {
+        tokenType.content = rksm_balance;
+      } else if ((tokenType.title = 'rDOT')) {
+        tokenType.content = rdot_balance;
+      } else if ((tokenType.title = 'rATOM')) {
+        tokenType.content = ratom_balance;
+      } else if ((tokenType.title = 'rSOL')) {
+        tokenType.content = rsol_balance;
+      } else if ((tokenType.title = 'rMATIC')) {
+        tokenType.content = rmatic_balance;
+      } else if ((tokenType.title = 'rETH')) {
+        tokenType.content = reth_balance;
+      }
+      setTokenType({ ...tokenType });
+    }
   }, [
-    metaMaskNetworkId,
-    props.match.params && props.match.params.fromType,
-    props.match.params && props.match.params.destType,
-    ethAccount && ethAccount.address,
-    bscAccount && bscAccount.address,
+    fromType,
+    destType,
+    rksm_balance,
+    rfis_balance,
+    fis_balance,
+    reth_balance,
+    rdot_balance,
+    ratom_balance,
+    rsol_balance,
+    rmatic_balance,
   ]);
 
   useEffect(() => {
-    if (props.location.state) {
-      if (selectDataSource.length > 0) {
-        const data = selectDataSource.find((item) => item.title == props.location.state.rSymbol);
-        setTokenType({ ...data });
-      }
-    } else {
-      setTokenType(selectDataSource[0]);
-    }
-  }, [props.location.state, selectDataSource]);
-
-  useEffect(() => {
-    selectDataSource[0].content = fis_balance;
-    selectDataSource[1].content = rfis_balance;
-    selectDataSource[2].content = rdot_balance;
-    selectDataSource[3].content = rksm_balance;
-    selectDataSource[4].content = ratom_balance;
-    selectDataSource[5].content = rsol_balance;
-    selectDataSource[6].content = rmatic_balance;
-    setSelectDataSource([...selectDataSource]);
-
-    if ((tokenType.title = 'FIS')) {
-      tokenType.content = fis_balance;
-    } else if ((tokenType.title = 'rFIS')) {
-      tokenType.content = rfis_balance;
-    } else if ((tokenType.title = 'rKSM')) {
-      tokenType.content = rksm_balance;
-    } else if ((tokenType.title = 'rDOT')) {
-      tokenType.content = rdot_balance;
-    } else if ((tokenType.title = 'rATOM')) {
-      tokenType.content = ratom_balance;
-    } else if ((tokenType.title = 'rSOL')) {
-      tokenType.content = rsol_balance;
-    } else if ((tokenType.title = 'rMATIC')) {
-      tokenType.content = rmatic_balance;
-    }
-    setTokenType({ ...tokenType });
-  }, [rksm_balance, rfis_balance, fis_balance, rdot_balance, ratom_balance, rsol_balance, rmatic_balance]);
-
-  useEffect(() => {
-    if (fromTypeData) {
-      if (props.match.params && props.match.params.fromType !== fromTypeData.type) {
-        const destType = destTypeData ? destTypeData.type : 'default';
-        props.history.push({
-          pathname: `/rAsset/swap/${fromTypeData.type}/${destType}`,
-          state: {
-            rSymbol: tokenType && tokenType.title,
-          },
-        });
-      }
-      if (fromTypeData.type === 'native') {
-        setFromTypeSelections([assetDatas[0]]);
-      } else {
-        setFromTypeSelections([assetDatas[1], assetDatas[2]]);
-      }
-    } else {
-      setFromTypeSelections([assetDatas[1], assetDatas[2]]);
-    }
-
-    if (destTypeData) {
-      if (props.match.params && props.match.params.destType !== destTypeData.type) {
-        const fromType = fromTypeData ? fromTypeData.type : 'default';
-        props.history.push({
-          pathname: `/rAsset/swap/${fromType}/${destTypeData.type}`,
-          state: {
-            rSymbol: tokenType && tokenType.title,
-          },
-        });
-      }
-      if (destTypeData.type === 'native') {
-        setDestTypeSelections([assetDatas[0]]);
-      } else {
-        setDestTypeSelections([assetDatas[1], assetDatas[2]]);
-      }
-    } else {
-      setDestTypeSelections([assetDatas[1], assetDatas[2]]);
-    }
-
     if (time) {
       clearInterval(time);
     }
@@ -428,23 +441,13 @@ export default function Index(props: any) {
   };
 
   const updateErcBepData = () => {
-    if (
-      props.match.params &&
-      (props.match.params.fromType == 'erc20' || props.match.params.destType == 'erc20') &&
-      ethAccount &&
-      ethAccount.address
-    ) {
-      dispatch(handleEthAccount(ethAccount.address));
+    if (fromType == 'erc20' && ethAccount && ethAccount.address) {
+      dispatch(get_eth_getBalance());
       dispatch(getErc20Allowances());
       dispatch(getAssetBalanceAll());
       dispatch(eth_Monitoring_Method());
     }
-    if (
-      props.match.params &&
-      (props.match.params.fromType == 'bep20' || props.match.params.destType == 'bep20') &&
-      bscAccount &&
-      bscAccount.address
-    ) {
+    if (fromType == 'bep20' && bscAccount && bscAccount.address) {
       dispatch(handleBscAccount(bscAccount.address));
       dispatch(getBep20Allowances());
       dispatch(getBep20AssetBalanceAll());
@@ -453,25 +456,32 @@ export default function Index(props: any) {
   };
 
   const reverseExchangeType = () => {
-    const oldFromTypeData = fromTypeData;
-    setFromTypeData(destTypeData);
-    setDestTypeData(oldFromTypeData);
+    history.push(
+      `/rAsset/swap/${destTypeData ? destTypeData.type : 'default'}/${fromTypeData ? fromTypeData.type : 'default'}`,
+      {
+        rSymbol: tokenType && tokenType.title,
+      },
+    );
+
     setFormAmount('');
     setAddress('');
   };
 
   if (fromTypeData && fromTypeData.type == 'native' && (!fisAccount || !fisAccount.address)) {
-    props.history.push('/rAsset/native');
+    console.log('return to native rAsset');
+    history.push('/rAsset/native');
     return null;
   }
 
   if (fromTypeData && fromTypeData.type == 'erc20' && (!ethAccount || !ethAccount.address)) {
-    props.history.push('/rAsset/eth');
+    console.log('return to eth rAsset');
+    history.push('/rAsset/eth');
     return null;
   }
 
   if (fromTypeData && fromTypeData.type == 'bep20' && (!bscAccount || !bscAccount.address)) {
-    props.history.push('/rAsset/bep');
+    console.log('return to bep rAsset');
+    history.push('/rAsset/bep');
     return null;
   }
 
@@ -480,7 +490,37 @@ export default function Index(props: any) {
   };
 
   const returnToAsset = () => {
-    props.history.push('/rAsset/native');
+    history.push('/rAsset/native');
+  };
+
+  const changeFromChain = (type: SelectorType) => {
+    if (!type) {
+      return;
+    }
+    if (destTypeData && type.type === destTypeData.type) {
+      reverseExchangeType();
+      return;
+    }
+    setFormAmount('');
+    setAddress('');
+    history.push(`/rAsset/swap/${type.type}/${destType}`, {
+      rSymbol: tokenType && tokenType.title,
+    });
+  };
+
+  const changeDestChain = (type: SelectorType) => {
+    if (!type) {
+      return;
+    }
+    if (fromTypeData && type.type === fromTypeData.type) {
+      reverseExchangeType();
+      return;
+    }
+    setFormAmount('');
+    setAddress('');
+    history.push(`/rAsset/swap/${fromType}/${type.type}`, {
+      rSymbol: tokenType && tokenType.title,
+    });
   };
 
   return (
@@ -489,7 +529,7 @@ export default function Index(props: any) {
         top={'40px'}
         left={'50px'}
         onClick={() => {
-          props.history && props.history.push('/rAsset/native');
+          history.push('/rAsset/native');
         }}
       />
       <div className={'title_container'}>
@@ -506,11 +546,7 @@ export default function Index(props: any) {
                 selectedData={fromTypeData}
                 selectedTitle={fromTypeData ? fromTypeData.content : ''}
                 selectedDescription={fromTypeData ? fromTypeData.title : 'Choose a token standard'}
-                onSelectChange={(e: SelectorType) => {
-                  setFormAmount('');
-                  setAddress('');
-                  setFromTypeData(e);
-                }}
+                onSelectChange={changeFromChain}
               />
             </div>
 
@@ -530,11 +566,7 @@ export default function Index(props: any) {
                 selectedData={destTypeData}
                 selectedTitle={destTypeData ? destTypeData.content : ''}
                 selectedDescription={destTypeData ? destTypeData.title : 'Choose a token standard'}
-                onSelectChange={(e: SelectorType) => {
-                  setFormAmount('');
-                  setAddress('');
-                  setDestTypeData(e);
-                }}
+                onSelectChange={changeDestChain}
               />
             </div>
           </div>
@@ -556,11 +588,13 @@ export default function Index(props: any) {
           <div className={'input_container'} style={{ marginTop: '20px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <div className={'title'}>Swap Amount</div>
-              <div className={'balance_amount'}>Balance: {tokenType.content !== '--' ? tokenType.content : '--'}</div>
+              <div className={'balance_amount'}>
+                Balance: {tokenType && tokenType.content !== '--' ? tokenType.content : '--'}
+              </div>
             </div>
 
             <AmountInputEmbed
-              maxInput={tokenType.content !== '--' ? tokenType.content : 0}
+              maxInput={tokenType && tokenType.content !== '--' ? tokenType.content : 0}
               placeholder='0.0'
               value={fromAoumt}
               onChange={(value: any) => {
@@ -572,7 +606,7 @@ export default function Index(props: any) {
           <div className={'input_container'} style={{ marginTop: '20px' }}>
             <div className={'title'}>Received Address</div>
             <AddressInputEmbed
-              placeholder='0x...'
+              placeholder={destType === 'native' ? '...' : '0x...'}
               value={address}
               onChange={(e: any) => {
                 setAddress(e.target.value);
@@ -645,13 +679,13 @@ export default function Index(props: any) {
               )
             }
             onClick={() => {
+              if (!fromTypeData || !destTypeData) {
+                message.error(`Please select chain to transfer`);
+                return;
+              }
               if (fromTypeData && fromTypeData.type === 'erc20') {
                 if (!ethAccount || Number(ethAccount.balance) <= Number(estimateEthFee)) {
                   message.error(`No enough ETH to pay for the fee`);
-                  return;
-                }
-                if (!checkAddress(address)) {
-                  message.error('Input address error');
                   return;
                 }
               }
@@ -660,27 +694,27 @@ export default function Index(props: any) {
                   message.error(`No enough BNB to pay for the fee`);
                   return;
                 }
-                if (!checkAddress(address)) {
-                  message.error('Input address error');
-                  return;
-                }
               }
-              if (fromTypeData && fromTypeData.type === 'native' && destTypeData && destTypeData.type === 'erc20') {
+              if (fromTypeData.type === 'native' && destTypeData && destTypeData.type === 'erc20') {
                 if (Number(fis_balance) <= Number(erc20EstimateFee)) {
                   message.error(`No enough FIS to pay for the fee`);
                   return;
                 }
+              }
+              if (fromTypeData.type === 'native' && destTypeData && destTypeData.type === 'bep20') {
+                if (Number(fis_balance) <= Number(bep20EstimateFee)) {
+                  message.error(`No enough FIS to pay for the fee`);
+                  return;
+                }
+              }
+              if (destTypeData.type === 'erc20' || destTypeData.type === 'bep20') {
                 if (!checkEthAddress(address)) {
                   message.error('Input address error');
                   return;
                 }
               }
-              if (fromTypeData && fromTypeData.type === 'native' && destTypeData && destTypeData.type === 'bep20') {
-                if (Number(fis_balance) <= Number(bep20EstimateFee)) {
-                  message.error(`No enough FIS to pay for the fee`);
-                  return;
-                }
-                if (!checkEthAddress(address)) {
+              if (destTypeData.type === 'native') {
+                if (!checkAddress(address)) {
                   message.error('Input address error');
                   return;
                 }
@@ -709,16 +743,24 @@ export default function Index(props: any) {
                   }),
                 );
               } else {
-                // bep20ToNativeSwap
                 let swapFun;
+                let destChainId;
                 if (fromTypeData && fromTypeData.type === 'erc20') {
-                  swapFun = erc20ToNativeSwap;
+                  swapFun = erc20ToOtherSwap;
                 } else if (fromTypeData && fromTypeData.type === 'bep20') {
-                  swapFun = bep20ToNativeSwap;
+                  swapFun = bep20ToOtherSwap;
                 }
+                if (destTypeData.type === 'erc20') {
+                  destChainId = ETH_CHAIN_ID;
+                } else if (destTypeData.type === 'bep20') {
+                  destChainId = BSC_CHAIN_ID;
+                } else {
+                  destChainId = STAFI_CHAIN_ID;
+                }
+
                 if (swapFun) {
                   dispatch(
-                    swapFun(tokenType.title, tokenType.type, fromAoumt, address, () => {
+                    swapFun(destChainId, tokenType.title, tokenType.type, fromAoumt, address, () => {
                       setTransferDetail(
                         `${fromAoumt} ${tokenType && tokenType.title} ${fromTypeData && fromTypeData.content}`,
                       );

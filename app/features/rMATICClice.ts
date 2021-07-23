@@ -791,8 +791,9 @@ const add_Matic_stake_Notice=(uuid:string,amount:string,status:string,subData?:a
 }
 
 export const getReward=(pageIndex:Number,cb:Function):AppThunk=>async (dispatch, getState)=>{
-  const source=getState().FISModule.fisAccount.address; //"36NQ98C5uri7ruBKvdzWFeEJQEhGpzCvJVbMHkbTu2mCgMRo"
-  const result=await rpcServer.getReward(source,rSymbol.Matic,pageIndex); 
+  const fisSource=getState().FISModule.fisAccount.address;
+  const ethAccount=getState().rETHModule.ethAccount; 
+  const result=await rpcServer.getReward(fisSource,ethAccount?ethAccount.address:"",rSymbol.Matic,pageIndex);
   if(result.status==80000){ 
     const rewardList=getState().rMATICModule.rewardList; 
     if(result.data.rewardList.length>0){

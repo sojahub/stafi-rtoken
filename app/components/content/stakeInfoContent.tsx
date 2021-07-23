@@ -71,6 +71,8 @@ export default function Index(props:Props){
                 : '--'
             }`}
 
+           
+
             {props.type == "rDOT" && props.totalUnbonding > 0 && `. Unbonding DOT is ${props.totalUnbonding}`}
             {props.type == "rFIS" && props.totalUnbonding > 0 && `. Unbonding FIS is ${props.totalUnbonding}`}
             {props.type=="rKSM" && props.totalUnbonding > 0 && `. Unbonding KSM is ${props.totalUnbonding}`}

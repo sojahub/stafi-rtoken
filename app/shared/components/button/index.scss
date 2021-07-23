@@ -2,83 +2,98 @@
 .stafi_connect_button[disabled],
 .stafi_connect_button[disabled]:hover,
 .stafi_connect_button:hover,
-.stafi_connect_button:focus, 
-.stafi_connect_button:active{
-    padding:10px 38px 10px 24px ;
-    height: fit-content ;
-    // background-color: #23292F ;
-    background-color: transparent ;
-    color:#fff ;
-    border-color:#BFBFBF ;
-    font-size: 18px;
-    img{
-        margin-right: 25px;
-        height:31px;
-        width:31px;
-    }
-}  
-.stafi_connect_button[disabled],.stafi_connect_button[disabled]:hover{
-    opacity: 0.5;
+.stafi_connect_button:focus,
+.stafi_connect_button:active {
+  padding: 10px 38px 10px 24px;
+  height: fit-content;
+  // background-color: #23292F ;
+  background-color: transparent;
+  color: #fff;
+  border-color: #bfbfbf;
+  font-size: 18px;
+  img {
+    margin-right: 25px;
+    height: 31px;
+    width: 31px;
+  }
+}
+.stafi_connect_button[disabled],
+.stafi_connect_button[disabled]:hover {
+  opacity: 0.5;
 }
 
-.stafi_button,.stafi_button:hover,.stafi_button:focus,.stafi_button:active{
-    padding:12px 23px;
-    font-size: 16px;
-    font-weight: bold;;
-    background-color: #00F3AB ;
-    color:#23292F ;
-    border: 0px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    line-height: 16px; 
-    height: 42px;
-    min-width: 110px;
-    // border-radius: 20px;
+.stafi_button,
+.stafi_button:hover,
+.stafi_button:focus,
+.stafi_button:active {
+  padding: 12px 23px;
+  font-size: 16px;
+  font-weight: bold;
+  background-color: #00f3ab;
+  color: #23292f;
+  border: 0px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  line-height: 16px;
+  height: 42px;
+  min-width: 110px;
+  // border-radius: 20px;
 }
-.stafi_button.small{
-    height: 28px;
-    font-size: 12px;
-    padding:7px 10px;
-    min-width: 70px;
+.stafi_button.small {
+  height: 28px;
+  font-size: 12px;
+  padding: 7px 10px;
+  min-width: 70px;
 }
-.stafi_button[disabled], .stafi_button[disabled]:hover, .stafi_button[disabled]:focus, .stafi_button[disabled]:active{
-    background-color: #00F3AB;
-    color:#23292F;
-    opacity: 0.4;
+.stafi_button[disabled],
+.stafi_button[disabled]:hover,
+.stafi_button[disabled]:focus,
+.stafi_button[disabled]:active {
+  background-color: #00f3ab;
+  color: #23292f;
+  opacity: 0.4;
 }
-.stafi_button.ellipse{
-    border-radius: 21px;
+.stafi_button.ellipse {
+  border-radius: 21px;
 }
-.stafi_button.square{
-    border-radius: 2.4px;
-    font-style:italic
-}
-
-
-.stafi_a,.stafi_a:hover{
-    color:#00F3AB;
-    font-size: 16px;
-  
-}
-.stafi_a.grey{
-    color:#C4C4C4;
-}
- 
-.stafi_a.bold{
-    font-weight: bold;
-}
-.stafi_a.underline{
-    text-decoration: underline;
+.stafi_button.square {
+  border-radius: 2.4px;
+  font-style: italic;
 }
 
+.stafi_a,
+.stafi_a:hover {
+  color: #00f3ab;
+  font-size: 16px;
+}
+.stafi_a.grey {
+  color: #c4c4c4;
+}
 
+.stafi_a.bold {
+  font-weight: bold;
+}
+.stafi_a.underline {
+  text-decoration: underline;
+}
 
-.stafi_ghost_button,.stafi_ghost_button:hover{
-    border-radius: 13.44px;
-    border-color: #00F3AB;
-    color: #00F3AB;
-    font-weight: bold;
-    font-size: 12px;
-    height: 28px;
+.stafi_ghost_button,
+.stafi_ghost_button:hover {
+  border-radius: 13.44px;
+  border-color: #00f3ab;
+  color: #00f3ab;
+  font-weight: bold;
+  font-size: 12px;
+  height: 28px;
+}
+.stafi_ghost_button:disabled,
+.stafi_ghost_button:disabled:hover {
+  border-radius: 13.44px;
+  border-color: #00f3ab;
+  color: #00f3ab;
+  font-weight: bold;
+  font-size: 12px;
+  height: 28px;
+  opacity: 0.5;
 }
