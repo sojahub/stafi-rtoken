@@ -21,7 +21,8 @@ type Props={
      unbondingToken?:any,
      withdrawToken?:any,
      validPools?:any,
-     unbondWarn?:boolean
+     unbondWarn?:boolean,
+     onWithdrawClick?:Function
 }
 export default function Index(props:Props){ 
 
@@ -63,7 +64,9 @@ export default function Index(props:Props){
             <label className="value">{props.withdrawToken}</label><label className="info">Unbonding: {props.unbondingToken} ( {props.leftDays} days left)</label>
         </div>
         <div className="fis_withdraw_info">
-            <Button size="small" disabled={props.withdrawToken<=0} btnType="ellipse">Withdraw</Button>
+            <Button onClick={()=>{
+                props.onWithdrawClick && props.onWithdrawClick();
+            }} size="small" disabled={props.withdrawToken=="--"  || props.withdrawToken<=0} btnType="ellipse">Withdraw</Button>
         </div> 
     </LeftContent>
 }

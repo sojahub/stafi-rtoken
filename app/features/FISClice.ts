@@ -1076,7 +1076,6 @@ export const RefreshUnbonding = (): AppThunk => async (dispatch, getState) => {
 }
 
 export const withdraw = (): AppThunk => async (dispatch, getState) => {
-
   dispatch(setLoading(true));
   try {
 
