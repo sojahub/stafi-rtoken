@@ -21,7 +21,7 @@ export default function Index(){
             rewardList_lastdata:state.FISModule.rewardList_lastdata
         }
     }) 
-    return <RewardContent  hours={24} rewardList={rewardList} getReward={getReward} type="FIS">
+    return <RewardContent  hours={6} rewardList={rewardList} getReward={getReward} type="FIS">
         {
             rewardList.map((item,index)=>{
                 let reward:any='--';
