@@ -48,6 +48,10 @@
         .no_details{
             height:107px;
             margin-left:46px;
+            margin-top:20px;
+        }
+        .btns{
+            margin-top:0px;
         }
     }
     .item.last{
@@ -56,6 +60,8 @@
             margin-left:46px;
         }
         .list{
+            min-height: 65px;
+            overflow: auto;
             .row{
                 border-bottom: 1px solid #474747;
                 padding-left:46px;
@@ -76,6 +82,7 @@
                 .col3{
                     flex:1;
                     text-align: right;
+                    font-weight: bold;
                 }
             }
         }

@@ -50,20 +50,20 @@ export default function Index(props:any){
 
           <div className="info">
             <div className="rfis_value">
-            {exposure ? NumberUtil.handleFisAmountToFixed(NumberUtil.fisAmountToHuman(exposure.total)):"--" }
+            {exposure ? NumberUtil.handleFisAmountToFixed(NumberUtil.fisAmountToHuman(exposure.total)):NumberUtil.handleFisAmountToFixed('0') }
             </div>
             <div className="rfis_info_item">
-              Self-bond: <label>{exposure? NumberUtil.handleFisAmountToFixed(NumberUtil.fisAmountToHuman(exposure.own)) :"--"}</label>
+              Self-bond: <label>{exposure? NumberUtil.handleFisAmountToFixed(NumberUtil.fisAmountToHuman(exposure.own)) :NumberUtil.handleFisAmountToFixed('0')}</label>
             </div>
             <div className="rfis_info_item">
-              Reward last 7-day: {lastReward} FIS
+              Reward last 7-day: <label>{lastReward} FIS</label>
             </div>
             <div className="rfis_info_item">
-              Commission: {currentCommission}
+              Commission: <label>{currentCommission}</label>
             </div>
           </div>
       </div>
-      <div className="item last nodata">
+      <div className={`item last ${(validatorAddressItems && validatorAddressItems.length>0)?'':'nodata'}`}>
           <div className="title">
               <div>
                   <img src={rFIS_detail_svg} />  Nominated Details
@@ -73,7 +73,7 @@ export default function Index(props:any){
                 {validatorAddressItems.map((item:any)=>{
                   return <div className="row">
                   <div className="col col1">
-                    Pool Address: <A onClick={()=>{
+                    Pool Address: <A underline={true} onClick={()=>{
                       window.open('https://stafi.subscan.io/account/' + item.address);
                     }}>{item.shortAddress}</A>
                   </div>
@@ -104,8 +104,7 @@ export default function Index(props:any){
           dispatch(handleOffboard());
         }}
         onOK={()=>{
-          setVisible(false)
-          
+          setVisible(false) 
         }}
       />
     </LeftContent>

@@ -33,8 +33,8 @@ export default function Index(props:any){
       <Modal visible={visible} 
         title="Confirm to onboard"
         content="Make sure your current FIS account is your Controller account"
-        OKText="Onboard"
-        CancelText="Cancel"
+        OKText="Cancel"
+        CancelText="Onboard"
         onClose={()=>{
           setVisible(false);
           dispatch(handleOnboard(()=>{

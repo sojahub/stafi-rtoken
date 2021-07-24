@@ -28,6 +28,7 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Page from '../../pages/rDOT/selectWallet/index';
 import Page_FIS from '../../pages/rDOT/selectWallet_rFIS/index';
+import Page_rFIS from '../../pages/rFIS/selectWallet_rFIS/index';
 import Page_Ksm from '../../pages/rKSM/selectWallet/index';
 import './index.scss';
 import Popover from './popover';
@@ -192,7 +193,8 @@ export default function Index(props: Props) {
             }}
           />
         )}
-        {modalType == 'fis' && (
+        
+        {(modalType == 'fis' && !location.pathname.includes("/rFIS")) && ( 
           <Page_FIS
             location={{}}
             type='header'
@@ -200,6 +202,15 @@ export default function Index(props: Props) {
               setVisible(false);
               dispatch(dotquery_rBalances_account());
               dispatch(ksmquery_rBalances_account());
+            }}
+          />
+        )}
+        {(modalType == 'fis' && location.pathname.includes("/rFIS")) && ( 
+          <Page_rFIS
+            location={{}}
+            type='header'
+            onClose={() => {
+              setVisible(false); 
             }}
           />
         )}

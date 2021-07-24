@@ -2,7 +2,7 @@ import React,{useState,useEffect,useMemo} from 'react';
 import {useSelector,useDispatch} from 'react-redux'
 import WalletCard from '@components/card/walletCard'
 import Item from '@components/card/walletCardItem';
-import {setFisAccount} from '@features/FISClice'; 
+import {setFisAccount,reloadData} from '@features/FISClice'; 
 import {connectPolkadotjs} from '@features/globalClice';
 import {Symbol} from '@keyring/defaults' 
 import {message,Modal} from 'antd';
@@ -47,7 +47,7 @@ export default function Index(props:any){
         onConfirm={()=>{
             if(account.address){
                 dispatch(setFisAccount(account)) 
-                
+                dispatch(reloadData());
                 props.onClose?props.onClose(): props.history.push("/rFIS/type"); 
             }else{
                 message.error("Please select the FIS wallet");

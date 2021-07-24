@@ -19,9 +19,9 @@ export default function Index(props: Props) {
         closable={false}
         title={false}
         className="stafi_offboard_modal"
-        onCancel={() => {
-            props.onClose && props.onClose();
-        }}
+        // onCancel={() => {
+        //     props.onClose && props.onClose();
+        // }}
         footer={<><div onClick={() => {
             props.onOK && props.onOK()
         }}>

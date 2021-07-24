@@ -251,6 +251,8 @@ export const reloadData = (): AppThunk => async (dispatch, getState) => {
   dispatch(query_rBalances_account());
   dispatch(balancesAll());
   dispatch(getTotalIssuance());
+  dispatch(initValidatorStatus());
+  dispatch(RefreshUnbonding());
 };
 export const createSubstrate =
   (account: any): AppThunk =>
@@ -269,7 +271,7 @@ const queryBalance = async (account: any, dispatch: any, getState: any) => {
   }
   const fisAccount = getState().FISModule.fisAccount;
   if (fisAccount && fisAccount.address == account2.address) {
-    dispatch(setFisAccount(account2));
+    dispatch(setFisAccount(account2)); 
   }
   dispatch(setFisAccounts(account2));
 };
@@ -1120,7 +1122,8 @@ export const withdraw = (cb?:Function): AppThunk => async (dispatch, getState) =
               } else if (method === 'ExtrinsicSuccess') {
                 dispatch(reloadData());
                 cb && cb();
-                message.success('Withdraw successfully')
+                message.success('Withdraw successfully');
+                dispatch(add_FIS_Withdraw_Notice(stafi_uuid(),config.unboundAroundDays(Symbol.Fis).toString(), noticeStatus.Confirmed));
               }
             });
         } else if (result.isError) {
@@ -1179,18 +1182,21 @@ export const handleOnboard = (cb?: Function): AppThunk => async (dispatch, getSt
                   try {
                     const mod = dispatchError.asModule;
                     const error = data.registry.findMetaError(new Uint8Array([mod.index.toNumber(), mod.error.toNumber()]));
-
-                    let messageStr = 'Something is wrong, please try again!';
-                    if (error.name == 'NotController') {
-                      messageStr = 'Please use your controller account';
-                    } else if (error.name == 'NoSessionKey') {
-                      messageStr = 'Please register your session key first';
-                    } else if (error.name == 'ValidatorLimitReached') {
-                      messageStr = 'The maximum number of onboarded validators has been reached';
-                    } else if (error.name == 'AlreadyOnboard') {
-                      messageStr = 'You are already onboard';
+                    if (error.name == 'AlreadyOnboard') {  
+                      message.info('You are already onboard');
+                      cb && cb();
+                    }else{ 
+                      let messageStr = 'Something is wrong, please try again!';
+                      if (error.name == 'NotController') {
+                        messageStr = 'Please use your controller account';
+                      } else if (error.name == 'NoSessionKey') {
+                        messageStr = 'Please register your session key first';
+                      } else if (error.name == 'ValidatorLimitReached') {
+                        messageStr = 'The maximum number of onboarded validators has been reached';
+                      } 
+                      message.error('You are already onboard');
                     }
-                    message.error(messageStr);
+                 
                   } catch (error) {
                     message.error(error.message);
                   }
@@ -1198,7 +1204,7 @@ export const handleOnboard = (cb?: Function): AppThunk => async (dispatch, getSt
               } else if (method === 'ExtrinsicSuccess') {
                 dispatch(reloadData());
                 cb && cb();
-                message.error('Onboard successfully');
+                message.success('Onboard successfully');
               }
             }).catch((e: any) => {
               dispatch(setLoading(false));
@@ -1298,8 +1304,8 @@ export const initValidatorStatus = (): AppThunk => async (dispatch, getState) =>
         let feeToHuman = NumberUtil.fisFeeToHuman(validatorPrefs.commission);
         dispatch(setCurrentCommission(NumberUtil.fisFeeToFixed(feeToHuman) + '%'));
       }
-    } catch (error) {
-
+    } catch (error:any) {
+      console.error(error.message);
     }
 
   }
@@ -1375,7 +1381,7 @@ export const onboardValidators = (cb?: Function): AppThunk => async (dispatch, g
   try {
 
     const api = await stafiServer.createStafiApi();
-    const currentAddress = getState().FISModule.fisAccount.address;
+    const currentAddress =getState().FISModule.fisAccount.address;
     const result = await api.query.rFis.onboardValidators()
     let validators = result.toJSON();
     if (validators && validators.length > 0) {

@@ -72,8 +72,7 @@ export default function Index(props:any){
       })) 
     }} 
     onWithdrawClick={()=>{
-      dispatch(withdraw(()=>{
-        dispatch(RefreshUnbonding());
+      dispatch(withdraw(()=>{ 
       }))
     }}
   />
