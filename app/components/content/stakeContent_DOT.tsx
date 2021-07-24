@@ -59,11 +59,9 @@ export default function Index(props:Props){
             {props.type=="rKSM" && `Stake KSM`}
             {props.type=="rDOT" && `Stake DOT`} 
             {props.type=="rATOM" && `Stake ATOM`}
-            {props.type=="rFIS" && `Stake FIS`} 
-            {props.type=="rATOM" && `Stake ATOM`} 
+            {props.type=="rFIS" && `Stake FIS`}  
             {props.type == 'rSOL' && `Stake SOL`} 
-            {props.type=="rMATIC" && `Stake MATIC`} 
-            {props.type=="rFIS" && `Stake FIS`} 
+            {props.type=="rMATIC" && `Stake MATIC`}  
         </label>
         {haswarn && <div className="warn">Unable to stake, system is waiting for matching validators</div>}
         <div className={`input_panel dot_input_panel ${haswarn && 'showWarn'}`}>
