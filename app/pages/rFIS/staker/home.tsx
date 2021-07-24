@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'; 
 import {useDispatch,useSelector} from 'react-redux';
 import Content from '@components/content/stakeContent_DOT'; 
-import {transfer,balancesAll,rTokenLedger} from '@features/FISClice'; 
+import {transfer,balancesAll} from '@features/FISClice'; 
 import { rTokenRate } from '@features/FISClice';
 import {ratioToAmount} from '@util/common'
 import { message } from 'antd';

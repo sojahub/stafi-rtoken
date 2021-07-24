@@ -925,28 +925,7 @@ export const checkAddress = (stafiAddress: string) => {
   return keyringInstance.checkAddress(stafiAddress);
 }
 
-export const rTokenLedger = (): AppThunk => async (dispatch, getState) => {
-  const stafiApi = await stafiServer.createStafiApi();
-  const eraResult = await stafiApi.query.rTokenLedger.chainEras(rSymbol.Fis);
-  let currentEra = eraResult.toJSON();
-  if (currentEra) {
-    let rateResult = await stafiApi.query.rTokenRate.eraRate(rSymbol.Fis, currentEra - 1)
-    const currentRate = rateResult.toJSON();
-    const rateResult2 = await stafiApi.query.rTokenRate.eraRate(rSymbol.Fis, currentEra - 8)
-    let lastRate = rateResult2.toJSON();
-    dispatch(handleStakerApr(currentRate, lastRate));
-  } else {
-    dispatch(handleStakerApr());
-  }
-}
-const handleStakerApr = (currentRate?: any, lastRate?: any): AppThunk => async (dispatch, getState) => {
-  if (currentRate && lastRate) {
-    const apr = NumberUtil.handleEthRoundToFixed((currentRate - lastRate) / 1000000000000 / 7 * 365.25 * 100) + '%';
-    dispatch(setStakerApr(apr));
-  } else {
-    dispatch(setStakerApr('14.9%'));
-  }
-}
+
  
 export const bondFees = (): AppThunk => async (dispatch, getState) => {
 

@@ -3,7 +3,8 @@ import {Redirect} from 'react-router'
 import {useDispatch, useSelector} from 'react-redux';
 import TypeCard from '@components/card/typeCard'; 
 import { RootState } from 'app/store';
-import {getTotalIssuance,rTokenLedger} from '@features/FISClice';
+import {getTotalIssuance} from '@features/FISClice';
+import { fetchStafiStakerApr } from '@features/globalClice'; 
 
 export default function Index(props:any){
 
@@ -11,14 +12,14 @@ export default function Index(props:any){
   const { totalIssuance,stakerApr,tokenAmount}=useSelector((state:RootState)=>{
     return {  
       totalIssuance:state.FISModule.totalIssuance,
-      stakerApr:state.FISModule.stakerApr,
+      stakerApr:state.globalModule.stafiStakerApr,
       tokenAmount:state.FISModule.tokenAmount
     }
   })
  
   useEffect(()=>{
     dispatch(getTotalIssuance());
-    dispatch(rTokenLedger())
+    dispatch(fetchStafiStakerApr())
   },[])
 
   if(tokenAmount!="--" && Number(tokenAmount)!=0){
