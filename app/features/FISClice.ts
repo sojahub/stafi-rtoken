@@ -1123,7 +1123,7 @@ export const withdraw = (cb?:Function): AppThunk => async (dispatch, getState) =
                 dispatch(reloadData());
                 cb && cb();
                 message.success('Withdraw successfully');
-                dispatch(add_FIS_Withdraw_Notice(stafi_uuid(),config.unboundAroundDays(Symbol.Fis).toString(), noticeStatus.Confirmed));
+                // dispatch(add_FIS_Withdraw_Notice(stafi_uuid(),, noticeStatus.Confirmed));
               }
             });
         } else if (result.isError) {
