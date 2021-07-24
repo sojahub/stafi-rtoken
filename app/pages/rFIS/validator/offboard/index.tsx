@@ -66,7 +66,7 @@ export default function Index(props:any){
       <div className={`item last ${(validatorAddressItems && validatorAddressItems.length>0)?'':'nodata'}`}>
           <div className="title">
               <div>
-                  <img src={rFIS_detail_svg} />  Nominated Details
+                  <img src={rFIS_detail_svg} />  {(validatorAddressItems && validatorAddressItems.length>0)?'Nominated Details':'No Details'}
               </div> 
           </div>
           {(validatorAddressItems && validatorAddressItems.length>0)?<div className="list">
