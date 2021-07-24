@@ -177,6 +177,7 @@ export const monitoring_Method = (): AppThunk => (dispatch, getState) => {
   if (typeof window.ethereum !== 'undefined' && ethereum.isMetaMask) {
     dispatch(setIsloadMonitoring(true));
     ethereum.autoRefreshOnNetworkChange = false;
+
     ethereum.on('accountsChanged', (accounts: any) => {
       if (accounts.length > 0) {
         dispatch(handleBscAccount(accounts[0]));

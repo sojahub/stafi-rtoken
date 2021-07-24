@@ -203,7 +203,7 @@ export default function Index(props: any) {
           props.history.push(`/rAsset/${type}`);
         }}
       />
-      {bscAccount ? (
+      {bscAccount && bscAccount.address ? (
         <>
           <DataList>
             <DataItem

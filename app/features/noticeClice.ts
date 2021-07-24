@@ -86,6 +86,28 @@ const noticeClice = createSlice({
       setLocalStorageItem(Keys.StafiNoticeKey,data)
       state.noticeData=data;
     },
+
+    updateNoticeModal(state,{payload}){ 
+      let data= getLocalStorageItem(Keys.StafiNoticeKey);
+     
+      if(!data){ 
+        data={};  
+        data.datas=[] 
+      } 
+      if(payload.showNew){
+        data.showNew=payload.showNew;
+      }
+      const m=data.datas.find((item:any)=>{
+        return item.uuid==payload.data.uuid
+      })
+      if(m){
+        data.datas=data.datas.map((item:any)=>{ 
+          return item.uuid==payload.data.uuid ? {...payload.data,dateTime:item.dateTime} :item;
+        })
+        setLocalStorageItem(Keys.StafiNoticeKey,data)
+        state.noticeData=data;
+      } 
+    },
     readNotice(state,{payload}){
       let data= getLocalStorageItem(Keys.StafiNoticeKey);
       if(data){
@@ -96,7 +118,7 @@ const noticeClice = createSlice({
     }
   },
 });
-export const {addNoticeModal,readNotice}=noticeClice.actions
+export const {addNoticeModal,readNotice,updateNoticeModal}=noticeClice.actions
 
 
 export const add_Notice=(uuid:string,rSymbol:string,type:string,subType:string,amount:string,status:string,subData?:any):AppThunk=>async (dispatch,getState)=>{
@@ -118,7 +140,7 @@ export const add_Notice=(uuid:string,rSymbol:string,type:string,subType:string,a
 }
 
 export const update_Notice=(uuid:string,rSymbol:string,type:string,subType:string,amount:string,status:string,subData?:any):AppThunk=>async (dispatch,getState)=>{
-  console.log('update notice');
+  // console.log('update notice');
   dispatch(addNoticeModal({
     data:{
       uuid:uuid,   //信息唯一标识
@@ -136,6 +158,23 @@ export const update_Notice=(uuid:string,rSymbol:string,type:string,subType:strin
   }))
 }
  
+export const update_NoticeNew=(uuid:string,rSymbol:string,type:string,subType:string,amount:string,status:string,subData?:any):AppThunk=>async (dispatch,getState)=>{
+  // console.log('update notice');
+  dispatch(updateNoticeModal({
+    data:{
+      uuid:uuid,   //信息唯一标识
+      title:subType,   
+      type:type,
+      subType:subType,
+      // content:content,
+      amount:amount,
+      status:status,
+      rSymbol:rSymbol,
+      subData:subData, 
+    },
+    showNew:false
+  }))
+}
 
 export const setProcess=(item:any,list:any,cb?:Function):AppThunk=>async (dispatch,getState)=>{
   if(list){
@@ -393,6 +432,26 @@ export const checkAll_minting=(list:any):AppThunk=>(dispatch,getState)=>{
     });
   }
 }
+
+export const check_swap_status = ():AppThunk=>(dispatch,getState)=>{
+  let data= getState().noticeModule.noticeData;
+     
+  if(!data ||!data.datas){ 
+    return;
+  } 
+  data.datas.forEach((item:any) => {
+    if(item.type == noticeType.Staker &&
+      item.subType == noticesubType.Swap) {
+        if(moment().isAfter(moment(item.dateTime,formatStr).add(120,'s'))){
+          dispatch(updateNoticeModal({
+            data:{...item,status:noticeStatus.Confirmed},
+            showNew:false
+          }))
+        }
+      }
+  });
+}
+
 export const notice_text=(item:any)=>{
   if(item.type==noticeType.Staker && item.subType==noticesubType.Stake){
     return `Staked ${item.amount} ${item.rSymbol.toUpperCase()} from your Wallet to StaFi Validator Pool Contract`

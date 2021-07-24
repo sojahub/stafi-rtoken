@@ -29,6 +29,8 @@ export default function Index(props: Props) {
       <div>
         <Popover
           visible={showSelect}
+          onVisibleChange={setShowSelect}
+          trigger="click"
           placement='bottomRight'
           overlayClassName='stafi_type_input_select'
           title={
