@@ -1064,6 +1064,7 @@ export const withdraw = (cb?:Function): AppThunk => async (dispatch, getState) =
   try {
 
     const unbondings = getState().FISModule.unbondings;
+    const withdrawToken=getState().FISModule.withdrawToken
     web3Enable(stafiServer.getWeb3EnalbeName());
     const injector = await web3FromSource(stafiServer.getPolkadotJsSource());
 
@@ -1123,7 +1124,7 @@ export const withdraw = (cb?:Function): AppThunk => async (dispatch, getState) =
                 dispatch(reloadData());
                 cb && cb();
                 message.success('Withdraw successfully');
-                // dispatch(add_FIS_Withdraw_Notice(stafi_uuid(),, noticeStatus.Confirmed));
+                dispatch(add_FIS_Withdraw_Notice(stafi_uuid(),withdrawToken, noticeStatus.Confirmed));
               }
             });
         } else if (result.isError) {
@@ -1418,8 +1419,9 @@ const add_FIS_Notice = (uuid: string, type: string, subType: string, content: st
 
 
 export const getReward = (pageIndex: Number, cb: Function): AppThunk => async (dispatch, getState) => {
-  const stafiSource = getState().FISModule.fisAccount.address; //"36NQ98C5uri7ruBKvdzWFeEJQEhGpzCvJVbMHkbTu2mCgMRo"
-  const ethSource = getState().rETHModule.ethAccount.address;
+  const stafiSource = getState().FISModule.fisAccount.address; 
+  const ethSource = getState().rETHModule.ethAccount;
+  console.log(stafiSource,ethSource,getState())
   const result = await rpcServer.getReward(stafiSource, ethSource ? ethSource.address : "", rSymbol.Fis, pageIndex);
   if (result.status == 80000) {
     const rewardList = getState().FISModule.rewardList;
