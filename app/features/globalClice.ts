@@ -50,7 +50,7 @@ const globalClice = createSlice({
     provinces: [],
     processSlider: false,
     accounts: [],
-    stafiStakerApr: '',
+    stafiStakerApr: '--',
     process: process,
     timeOutFunc: null,
 

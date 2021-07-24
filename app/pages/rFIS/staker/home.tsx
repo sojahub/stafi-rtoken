@@ -6,7 +6,7 @@ import { rTokenRate } from '@features/FISClice';
 import {ratioToAmount} from '@util/common'
 import { message } from 'antd';
 import NumberUtil from '@util/numberUtil';
-import { setProcessSlider } from '@features/globalClice'; 
+import { fetchStafiStakerApr } from '@features/globalClice'; 
 import { RootState } from 'app/store';
 
 export default function Index(props:any){
@@ -17,7 +17,7 @@ export default function Index(props:any){
   useEffect(()=>{
     dispatch(balancesAll());
     dispatch(rTokenRate());
-    dispatch(rTokenLedger())
+    dispatch(fetchStafiStakerApr())
   },[])
  
   const {transferrableAmount,ratio,stafiStakerApr,fisCompare,validPools,totalIssuance,bondFees}=useSelector((state:RootState)=>{ 
@@ -25,7 +25,7 @@ export default function Index(props:any){
     return {
       transferrableAmount:state.FISModule.transferrableAmountShow,
       ratio:state.FISModule.ratio,
-      stafiStakerApr:state.FISModule.stakerApr,
+      stafiStakerApr:state.globalModule.stafiStakerApr,
       fisCompare:fisCompare,
       validPools:state.FISModule.validPools,
       totalIssuance:state.FISModule.totalIssuance,

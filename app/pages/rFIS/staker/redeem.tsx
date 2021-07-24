@@ -65,13 +65,16 @@ export default function Index(props:any){
     withdrawToken={withdrawToken}
     validPools={validPools}
     unbondWarn={unbondWarn}
+    willAmount={willAmount}
     onRdeemClick={()=>{ 
       dispatch(unbond(amount,willAmount,()=>{  
         setAmount(undefined)
       })) 
     }} 
     onWithdrawClick={()=>{
-      dispatch(withdraw())
+      dispatch(withdraw(()=>{
+        dispatch(RefreshUnbonding());
+      }))
     }}
   />
    

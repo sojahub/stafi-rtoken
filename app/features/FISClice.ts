@@ -947,6 +947,7 @@ const handleStakerApr = (currentRate?: any, lastRate?: any): AppThunk => async (
     dispatch(setStakerApr('14.9%'));
   }
 }
+ 
 export const bondFees = (): AppThunk => async (dispatch, getState) => {
 
   const result = await commonClice.bondFees(rSymbol.Fis)
@@ -1077,7 +1078,7 @@ export const RefreshUnbonding = (): AppThunk => async (dispatch, getState) => {
 
 }
 
-export const withdraw = (): AppThunk => async (dispatch, getState) => {
+export const withdraw = (cb?:Function): AppThunk => async (dispatch, getState) => {
   dispatch(setLoading(true));
   try {
 
@@ -1139,6 +1140,7 @@ export const withdraw = (): AppThunk => async (dispatch, getState) => {
                 }
               } else if (method === 'ExtrinsicSuccess') {
                 dispatch(reloadData());
+                cb && cb();
                 message.success('Withdraw successfully')
               }
             });

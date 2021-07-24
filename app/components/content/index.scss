@@ -194,7 +194,8 @@
             font-size: 12px;
             text-align: right;
             color:#c4c4c4;
-            margin-top:10px
+            margin:5px 0px;
+            min-height: 18px;
         }
     }
     .btns{
@@ -230,7 +231,7 @@
         margin-top:22px;
         align-items: center;
         label{
-            color:#707070;
+            color:#c4c4c4;
             font-size: 12px;
             margin-left:11px;
         }
@@ -242,11 +243,14 @@
         .value{
             font-size:30px;
             color:#00F3AB;
-            font-weight: bold;
+            font-weight: bold; 
         }
         .info{
             margin-left:20px;
             font-size: 12px;
+            .withdraw_value{
+                font-weight: bold; 
+            }
         }
     }
 }
