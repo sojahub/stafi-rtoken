@@ -1,17 +1,16 @@
-import { LoadingOutlined } from "@ant-design/icons";
-import close_bold_svg from "@images/close_bold.svg";
-import complete_svg from "@images/complete.svg";
-import { Modal, Progress, Spin } from "antd";
-import React, { useEffect, useState } from "react";
-import "./SwapLoading.scss";
+import { LoadingOutlined } from '@ant-design/icons';
+import close_bold_svg from '@images/close_bold.svg';
+import complete_svg from '@images/complete.svg';
+import { Modal, Progress, Spin } from 'antd';
+import React, { useEffect, useState } from 'react';
+import './SwapLoading.scss';
 
-const antIcon = (
-  <LoadingOutlined style={{ fontSize: "60px", color: "#fff" }} spin />
-);
+const antIcon = <LoadingOutlined style={{ fontSize: '60px', color: '#fff' }} spin />;
 
 type Props = {
   visible: boolean;
   destChainName: string;
+  destChainType: string;
   transferDetail: string;
   viewTxUrl: string;
   onClose: Function;
@@ -50,75 +49,64 @@ export default function SwapLoading(props: Props) {
   return (
     <Modal
       visible={props.visible}
-      className="swap_loading_modal"
+      className='swap_loading_modal'
       destroyOnClose
       closable={false}
       footer={null}
       title={null}
       bodyStyle={{
-        backgroundColor: "#23292F",
+        backgroundColor: '#23292F',
       }}
       style={{
-        left: "88px",
-      }}
-    >
+        left: '88px',
+      }}>
       <div>
-        <div className={"icon_container_outer"}>
-          <a
-            className={"icon_container_inner"}
-            onClick={() => props.onClose && props.onClose()}
-          >
-            <img src={close_bold_svg} className={"close_icon"} />
+        <div className={'icon_container_outer'}>
+          <a className={'icon_container_inner'} onClick={() => props.onClose && props.onClose()}>
+            <img src={close_bold_svg} className={'close_icon'} />
           </a>
         </div>
 
         {success ? (
           <>
-            <div className="title">Congratulations!</div>
+            <div className='title'>Congratulations!</div>
 
-            <div className="context">
-              You have successfully transferred your tokens.Please check your Polkadot.js wallet
+            <div className='context'>
+              You have successfully transferred your tokens.Please check your{' '}
+              {props.destChainType === 'native' ? 'Polkadot.js wallet' : 'wallet'}
             </div>
 
-            <div className={"center_container"}>
-              <img src={complete_svg} className={"success_icon"} />
+            <div className={'center_container'}>
+              <img src={complete_svg} className={'success_icon'} />
             </div>
 
-            <div className={"center_container"}>
-              <div
-                className={"success_btn"}
-                onClick={() => props.viewTxUrl && window.open(props.viewTxUrl)}
-              >
-                VIEW YOUR TRANSACTIONS
+            <div className={'center_container'}>
+              <div className={'success_btn'} onClick={() => props.viewTxUrl && window.open(props.viewTxUrl)}>
+                VIEW YOUR TRANSACTION
               </div>
             </div>
           </>
         ) : (
           <>
-            <div className="title">Transferring</div>
+            <div className='title'>Transferring</div>
 
-            <div className="context">
-              We are transferring your tokens to {props.destChainName}
-            </div>
+            <div className='context'>We are transferring your tokens to {props.destChainName}</div>
 
-            <div className="transfer_detail">{props.transferDetail}</div>
+            <div className='transfer_detail'>{props.transferDetail}</div>
 
-            <div style={{ margin: "auto", marginTop: "20px", width: "594px" }}>
+            <div style={{ margin: 'auto', marginTop: '20px', width: '594px' }}>
               <Progress
                 percent={((waitingTime - timeLeft) * 100) / waitingTime}
                 showInfo={false}
-                strokeColor={"#00F3AB"}
+                strokeColor={'#00F3AB'}
               />
             </div>
 
-            <div className={"spin_container"}>
+            <div className={'spin_container'}>
               <Spin indicator={antIcon} />
             </div>
 
-            <div
-              className="view_tx_text"
-              onClick={() => props.viewTxUrl && window.open(props.viewTxUrl)}
-            >
+            <div className='view_tx_text' onClick={() => props.viewTxUrl && window.open(props.viewTxUrl)}>
               View your transaction
             </div>
           </>

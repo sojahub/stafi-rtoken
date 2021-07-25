@@ -211,7 +211,7 @@ export default function Index(props: any) {
           props.history.push(`/rAsset/${type}`);
         }}
       />
-      {ethAccount ? (
+      {ethAccount && ethAccount.address ? (
         <>
           <DataList>
             <DataItem

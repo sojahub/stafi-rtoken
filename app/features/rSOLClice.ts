@@ -80,8 +80,7 @@ const rSOLClice = createSlice({
     setRatioShow(state, { payload }) {
       state.ratioShow = payload;
     },
-    setTokenAmount(state, { payload }) {
-      // console.log('setTokenAmount sol: ', payload);
+    setTokenAmount(state, { payload }) { 
       state.tokenAmount = payload;
     },
     setProcessParameter(state, { payload }) {
@@ -155,8 +154,7 @@ export const {
 } = rSOLClice.actions;
 
 export const reloadData = (): AppThunk => async (dispatch, getState) => {
-  const account = getState().rSOLModule.solAccount;
-  console.log('reloadData for sol: ', account);
+  const account = getState().rSOLModule.solAccount; 
   if (account) {
     dispatch(createSubstrate(account));
   }
@@ -176,7 +174,6 @@ const queryBalance = async (account: any, dispatch: any, getState: any) => {
 
   const connection = new solanaWeb3.Connection(config.solRpcApi(), 'singleGossip');
   const balance = await connection.getBalance(new solanaWeb3.PublicKey(account2.address));
-  console.log('balance: ', balance);
 
   let solBalance = NumberUtil.tokenAmountToHuman(balance, rSymbol.Sol);
   account2.balance = solBalance ? NumberUtil.handleEthAmountRound(solBalance) : 0;
@@ -227,11 +224,9 @@ export const transfer =
       let result: any;
       result = await solServer.sendTransaction(amount, selectedPool.address).catch((error) => {
         throw error;
-      });
-      console.log('solana sendTransaction txhash: ', result.txHash);
+      }); 
 
-      if (result.blockHash && result.txHash) {
-        console.log(`solana tx complete: ${result.blockHash} ${result.txHash}`);
+      if (result.blockHash && result.txHash) { 
 
         const hexBlockHash = u8aToHex(base58.decode(result.blockHash));
         const hexTxHash = u8aToHex(base58.decode(result.txHash));
@@ -275,7 +270,6 @@ export const transfer =
           }),
         );
 
-        console.log('start dispatch bound');
         dispatch(
           bound(address, hexTxHash, hexBlockHash, amount, selectedPool.poolPubkey, rSymbol.Sol, (r: string) => {
             if (r == 'loading') {
@@ -348,9 +342,6 @@ export const reStaking =
   (cb?: Function): AppThunk =>
   async (dispatch, getState) => {
     const processParameter = getState().rSOLModule.processParameter;
-
-    console.log('processParameter: ', JSON.stringify(processParameter));
-    // return;
 
     if (processParameter) {
       const staking = processParameter.staking;
@@ -429,8 +420,7 @@ export const unbond =
 
 export const continueProcess = (): AppThunk => async (dispatch, getState) => {
   const stakeHash = getState().rSOLModule.stakeHash;
-  if (stakeHash && stakeHash.blockHash && stakeHash.txHash) {
-    // console.log('continueProcess------------------->');
+  if (stakeHash && stakeHash.blockHash && stakeHash.txHash) { 
     dispatch(
       bondStates(rSymbol.Sol, stakeHash.txHash, stakeHash.blockHash, (e: string) => {
         if (e == 'successful') {
@@ -449,8 +439,7 @@ export const onProceed =
   (txHash: string, cb?: Function): AppThunk =>
   async (dispatch, getstate) => {
     const noticeData = findUuidWithoutBlockhash(getstate().noticeModule.noticeData, txHash);
-
-    console.log('onProceed noticeData: ', JSON.stringify(noticeData));
+ 
     let blockhash: any;
     try {
       const result = await solServer.getTransactionDetail(getstate().rSOLModule.solAccount.address, txHash);
@@ -540,9 +529,7 @@ export const getBlock =
         getState().rSOLModule.solAccount.address,
         txHash,
       );
-
-      console.log(`transaction info: ${amount} ${poolAddress} ${blockhash}`);
-
+ 
       if (!amount || !poolAddress || !blockhash) {
         message.error('Transaction record not found!');
         return;
@@ -831,8 +818,7 @@ const add_DOT_Swap_Notice =
   };
 const add_SOL_Notice =
   (uuid: string, type: string, subType: string, content: string, status: string, subData?: any): AppThunk =>
-  async (dispatch, getState) => {
-    console.log(`add_SOL_Notice, ${type} ${subType} ${status} ${subData}`);
+  async (dispatch, getState) => { 
     dispatch(add_Notice(uuid, Symbol.Sol, type, subType, content, status, subData));
   };
 export default rSOLClice.reducer;

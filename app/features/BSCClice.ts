@@ -150,8 +150,7 @@ export const connectMetamask =
 
         ethereum
           .request({ method: 'eth_requestAccounts' })
-          .then((accounts: any) => {
-            console.log('accounts: ', JSON.stringify(accounts));
+          .then((accounts: any) => { 
             dispatch(handleBscAccount(accounts[0]));
           })
           .catch((error: any) => {
@@ -177,6 +176,7 @@ export const monitoring_Method = (): AppThunk => (dispatch, getState) => {
   if (typeof window.ethereum !== 'undefined' && ethereum.isMetaMask) {
     dispatch(setIsloadMonitoring(true));
     ethereum.autoRefreshOnNetworkChange = false;
+
     ethereum.on('accountsChanged', (accounts: any) => {
       if (accounts.length > 0) {
         dispatch(handleBscAccount(accounts[0]));
@@ -220,7 +220,6 @@ export const handleBscAccount =
       .request({ method: 'eth_getBalance', params: [address, 'latest'] })
       .then((result: any) => {
         const balance = numberUtil.handleEthAmountToFixed(Web3Utils.fromWei(result, 'ether'));
-        // console.log("bnb balance: ", balance);
         dispatch(setBscAccount({ address: address, balance: balance }));
       })
       .catch((error: any) => {

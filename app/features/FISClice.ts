@@ -10,7 +10,7 @@ import { PublicKey } from '@solana/web3.js';
 import { getLocalStorageItem, Keys, removeLocalStorageItem, setLocalStorageItem, stafi_uuid, timeout } from '@util/common';
 import NumberUtil from '@util/numberUtil';
 import StringUtil from '@util/stringUtil';
-import { message as M, message } from 'antd';
+import { message } from 'antd';
 import { keccakFromHexString } from 'ethereumjs-util';
 import { AppThunk } from '../store';
 import CommonClice from './commonClice';
@@ -379,8 +379,6 @@ export const solSignature = async (address: any, fisAddress: string) => {
   // fisAddress = '34bwmgT1NtcL8FayGiFSB9F1qZFGPjhbDfTaZRoM2AXgjrpo';
   // let { signature } = await solServer.getWallet().sign(new TextEncoder().encode(fisAddress), 'utf8');
   let { signature } = await solServer.getWallet().sign(fisKeyring.decodeAddress(fisAddress), 'utf8');
-  // return new TextDecoder().decode(signature);
-  console.log('signature: ', signature);
   if (!signature) {
     return null;
   }
@@ -437,8 +435,7 @@ export const bound =
           pubkey = u8aToHex(new PublicKey(getState().rSOLModule.solAccount.address).toBytes());
           // blockhash = u8aToHex(base58.decode(blockhash));
           // txhash = u8aToHex(base58.decode(txhash));
-
-          // console.log('solAccount: ', getState().rSOLModule.solAccount);
+ 
           message.info('Signature succeeded, proceeding staking');
         } else {
           signature = await stakingSignature(address, u8aToHex(keyringInstance.decodeAddress(fisAddress)));
@@ -502,14 +499,13 @@ export const bound =
                               new Uint8Array([mod.index.toNumber(), mod.error.toNumber()]),
                             );
 
-                            let message: string = 'Something is wrong, please try again later!';
+                            let messageStr: string = 'Something is wrong, please try again later!';
                             if (error.name == '') {
-                              message = '';
+                              messageStr = '';
                             }
-                            message && M.info(message);
-                          } catch (error) {
-                            console.log('catch error');
-                            M.error(error.message);
+                            messageStr && message.info(messageStr);
+                          } catch (error) { 
+                            message.error(error.message);
                           }
                         }
                         dispatch(
@@ -537,7 +533,7 @@ export const bound =
                       }
                     });
                 } else if (result.isError) {
-                  M.error(result.toHuman());
+                  message.error(result.toHuman());
                 }
                 if (result.status.isFinalized) {
                   dispatch(
@@ -549,7 +545,7 @@ export const bound =
                   // gClearTimeOut();
                 }
               } catch (e: any) {
-                M.error(e.message);
+                message.error(e.message);
               }
             })
             .catch((e: any) => {
@@ -696,9 +692,7 @@ export const bondStates =
       bondSuccessParamArr.push(blockHash);
       bondSuccessParamArr.push(txHash);
       const result = await stafiApi.query.rTokenSeries.bondStates(type, bondSuccessParamArr);
-      let bondState = result.toJSON();
-      console.log(`bondSuccessParamArr: ${type} ${JSON.stringify(bondSuccessParamArr)}`);
-      console.log('bondState result: ', bondState);
+      let bondState = result.toJSON(); 
       if (bondState == 'Success') {
         cb && cb('successful');
       } else if (bondState == 'Fail') {
@@ -715,8 +709,7 @@ export const rTokenSeries_bondStates =
       statusObj.num = statusObj.num + 1;
       const stafiApi = await stafiServer.createStafiApi();
       const result = await stafiApi.query.rTokenSeries.bondStates(type, bondSuccessParamArr);
-      console.log(`bondSuccessParamArr2: ${type} ${JSON.stringify(bondSuccessParamArr)}`);
-      console.log('bondState result2: ', JSON.stringify(result));
+       
       let bondState = result.toJSON();
       if (bondState == 'Success') {
         dispatch(
@@ -811,7 +804,7 @@ export const unbond = (amount: string, willAmount: any, cb?: Function): AppThunk
               }
             } else if (method === 'ExtrinsicSuccess') {
               dispatch(reloadData());
-              message.success("Unbond successfully, you can withdraw your unbonded FIS 14 days later");
+              message.success(`Unbond successfully, you can withdraw your unbonded FIS ${config.unboundAroundDays(Symbol.Fis)} days later`);
               dispatch(add_FIS_unbond_Notice(stafi_uuid(), willAmount, noticeStatus.Confirmed));
               cb && cb();
             }
@@ -1420,8 +1413,7 @@ const add_FIS_Notice = (uuid: string, type: string, subType: string, content: st
 
 export const getReward = (pageIndex: Number, cb: Function): AppThunk => async (dispatch, getState) => {
   const stafiSource = getState().FISModule.fisAccount.address; 
-  const ethSource = getState().rETHModule.ethAccount;
-  console.log(stafiSource,ethSource,getState())
+  const ethSource = getState().rETHModule.ethAccount; 
   const result = await rpcServer.getReward(stafiSource, ethSource ? ethSource.address : "", rSymbol.Fis, pageIndex);
   if (result.status == 80000) {
     const rewardList = getState().FISModule.rewardList;

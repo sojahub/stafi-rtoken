@@ -468,19 +468,16 @@ export default function Index(props: any) {
   };
 
   if (fromTypeData && fromTypeData.type == 'native' && (!fisAccount || !fisAccount.address)) {
-    console.log('return to native rAsset');
     history.push('/rAsset/native');
     return null;
   }
 
   if (fromTypeData && fromTypeData.type == 'erc20' && (!ethAccount || !ethAccount.address)) {
-    console.log('return to eth rAsset');
     history.push('/rAsset/eth');
     return null;
   }
 
   if (fromTypeData && fromTypeData.type == 'bep20' && (!bscAccount || !bscAccount.address)) {
-    console.log('return to bep rAsset');
     history.push('/rAsset/bep');
     return null;
   }
@@ -618,7 +615,7 @@ export default function Index(props: any) {
         <div
           className={`row last link_container ${address && 'show_tip'}`}
           style={{ marginBottom: '4px', marginTop: '4px' }}>
-          {address && destTypeData && destTypeData.type == 'native' && (
+          {address && destTypeData && destTypeData.type == 'native' && tokenType && (
             <div className='tip'>
               Click on this{' '}
               <a href={clickSwapToNativeLink(address)} target='_blank'>
@@ -627,7 +624,7 @@ export default function Index(props: any) {
               to check your swap status.
             </div>
           )}
-          {address && destTypeData && destTypeData.type == 'erc20' && (
+          {address && destTypeData && destTypeData.type == 'erc20' && tokenType && (
             <div className='tip'>
               Click on this{' '}
               <a href={clickSwapToErc20Link(tokenType.title, address)} target='_blank'>
@@ -636,7 +633,7 @@ export default function Index(props: any) {
               to check your swap status.
             </div>
           )}
-          {address && destTypeData && destTypeData.type == 'bep20' && (
+          {address && destTypeData && destTypeData.type == 'bep20' && tokenType && (
             <div className='tip'>
               Click on this{' '}
               <a href={clickSwapToBep20Link(tokenType.title, address)} target='_blank'>
@@ -679,6 +676,9 @@ export default function Index(props: any) {
               )
             }
             onClick={() => {
+              if (!tokenType) {
+                return;
+              }
               if (!fromTypeData || !destTypeData) {
                 message.error(`Please select chain to transfer`);
                 return;
@@ -782,6 +782,7 @@ export default function Index(props: any) {
       <SwapLoading
         visible={transferringModalVisible}
         destChainName={destTypeData && destTypeData.title}
+        destChainType={destTypeData && destTypeData.type}
         transferDetail={transferDetail}
         viewTxUrl={viewTxUrl}
         onClose={() => setTransferringModalVisible(false)}

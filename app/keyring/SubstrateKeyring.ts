@@ -73,12 +73,12 @@ export class SubstrateKeyring extends Base implements KeyringStruct {
   }
 
   public decodeAddress(key: string): Uint8Array {
-    console.log('decodeAddress: ', key);
+    // console.log('decodeAddress: ', key);
     return decodeAddress(key);
   }
 
   public sign(secretKey: string, message: string): any {
-    console.log(secretKey, message);
+    // console.log(secretKey, message);
     return {};
   }
 

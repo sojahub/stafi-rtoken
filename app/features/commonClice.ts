@@ -34,14 +34,13 @@ export default class CommonClice {
     const stafiApi = await stafiServer.createStafiApi();
     const poolsData = await stafiApi.query.rTokenLedger.bondedPools(type);
     let pools = poolsData.toJSON();
-    // console.log('pools: ', pools);
+    
     if (pools && pools.length > 0) {
       pools.forEach((poolPubkey: any) => {
         stafiApi.query.rTokenLedger
           .bondPipelines(type, poolPubkey)
           .then((bondedData: any) => {
-            // console.log('bondedData: ', bondedData.toJSON());
-
+            
             let active = 0;
             let bonded = bondedData.toJSON();
             if (bonded) {
@@ -105,8 +104,7 @@ export default class CommonClice {
   }
   async rTokenRate(type: rSymbol) {
     const api = await stafiServer.createStafiApi();
-    const result = await api.query.rTokenRate.rate(type);
-    // console.log('rTokenRate result: ', result.toJSON());
+    const result = await api.query.rTokenRate.rate(type); 
     let ratio: any = NumberUtil.rTokenRateToHuman(result.toJSON());
     if (!ratio) {
       ratio = 1;

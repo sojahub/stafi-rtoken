@@ -5,20 +5,17 @@
     width: 100%;
     height: 32px;
     padding-left: 0px;
-    border-color: #23292F;
+    border-color: #23292f;
     box-shadow: none;
-    font-family: "Helvetica-Bold";
+    font-family: 'Helvetica-Bold';
     input,
     .ant-input-disabled {
       background: #23292f;
       color: #00f3ab;
       font-size: 26px;
       // font-weight: bold;
-      font-family: "Helvetica-Bold";
+      font-family: 'Helvetica-Bold';
       margin-right: 10px;
-    }
-    .ant-input::-webkit-input-placeholder {
-      color: #4f4f4f;
     }
     .ant-input-suffix {
       .input_unit {
@@ -33,7 +30,7 @@
     border-width: 0;
     color: #00f3ab;
     font-size: 26px;
-    font-family: "Helvetica-Bold";
+    font-family: 'Helvetica-Bold';
     &::placeholder {
       color: rgba(0, 243, 171, 0.5);
     }
@@ -42,5 +39,57 @@
   .ant-input-affix-wrapper:not(.ant-input-affix-wrapper-disabled):hover {
     border-width: 0;
     box-shadow: none;
+  }
+}
+
+.address_input_embed_container {
+  .address_input,
+  .address_input:hover {
+    background: #23292f;
+    width: 100%;
+    height: 32px;
+    padding-left: 0px;
+    border-color: #23292f;
+    box-shadow: none;
+    font-family: 'Helvetica-Bold';
+    input,
+    .ant-input-disabled {
+      background: #23292f;
+      color: #00f3ab;
+      font-size: 18px;
+      // font-weight: bold;
+      font-family: 'Helvetica-Bold';
+      margin-right: 10px;
+    }
+    .ant-input::-webkit-input-placeholder {
+      color: #4f4f4f;
+    }
+    .ant-input-suffix {
+      .input_unit {
+        color: #00f3ab;
+        font-size: 18px;
+        margin-right: 14px;
+      }
+    }
+  }
+
+  .ant-input {
+    border-width: 0;
+    color: #00f3ab;
+    font-size: 18px;
+    font-family: 'Helvetica-Bold';
+    &::placeholder {
+      color: rgba(0, 243, 171, 0.5);
+      font-size: 26px;
+    }
+  }
+
+  .ant-input-affix-wrapper:not(.ant-input-affix-wrapper-disabled):hover {
+    border-width: 0;
+    box-shadow: none;
+  }
+
+  .address_input::-webkit-input-placeholder {
+    font-size: 26px;
   }
 }

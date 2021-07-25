@@ -18,7 +18,7 @@ import rpc from '@util/rpc';
 import { message } from 'antd';
 import { AppThunk } from '../store';
 import { setLoading } from './globalClice';
-import { add_Notice, noticeStatus, noticesubType, noticeType } from './noticeClice';
+import { add_Notice, noticeStatus, noticesubType, noticeType, update_NoticeNew } from './noticeClice';
 
 export const STAFI_CHAIN_ID = 1;
 export const ETH_CHAIN_ID = 2;
@@ -96,6 +96,7 @@ export const nativeToOtherSwap =
       web3Enable(stafiServer.getWeb3EnalbeName());
       const injector: any = await web3FromSource(stafiServer.getPolkadotJsSource());
       const api = await stafiServer.createStafiApi();
+      const notice_uuid = stafi_uuid();
       let currentAccount = getState().FISModule.fisAccount.address;
       let tx: any = '';
       if (tokenType == 'fis') {
@@ -146,13 +147,13 @@ export const nativeToOtherSwap =
                     message.error(error.message);
                   }
                 }
-              } else if (method === 'ExtrinsicSuccess') {
-                // console.log('sign and send result: ', JSON.stringify(result));
+              } else if (method === 'ExtrinsicSuccess') { 
                 dispatch(setLoading(false));
                 dispatch(
-                  add_Swap_Notice(tokenStr, tokenAmount, noticeStatus.Empty, {
+                  add_Swap_Notice(notice_uuid, tokenStr, tokenAmount, noticeStatus.Pending, {
                     swapType: 'native',
                     destSwapType: chainId === BSC_CHAIN_ID ? 'bep20' : 'erc20',
+                    address: ethAddress,
                   }),
                 );
                 cb && cb();
@@ -234,6 +235,7 @@ export const erc20ToOtherSwap =
       return;
     }
 
+    const notice_uuid = stafi_uuid();
     const amount = web3.utils.toWei(tokenAmount.toString());
     try {
       if (Number(allowance) < Number(amount)) {
@@ -267,9 +269,10 @@ export const erc20ToOtherSwap =
 
           if (result && result.status) {
             dispatch(
-              add_Swap_Notice(tokenStr, tokenAmount, noticeStatus.Empty, {
+              add_Swap_Notice(notice_uuid, tokenStr, tokenAmount, noticeStatus.Pending, {
                 swapType: 'erc20',
                 destSwapType: destChainId === STAFI_CHAIN_ID ? 'native' : 'bep20',
+                address: address,
               }),
             );
             cb && cb({ txHash: result.transactionHash });
@@ -306,9 +309,10 @@ export const erc20ToOtherSwap =
 
         if (result && result.status && result.transactionHash) {
           dispatch(
-            add_Swap_Notice(tokenStr, tokenAmount, noticeStatus.Empty, {
+            add_Swap_Notice(notice_uuid, tokenStr, tokenAmount, noticeStatus.Pending, {
               swapType: 'erc20',
               destSwapType: destChainId === STAFI_CHAIN_ID ? 'native' : 'bep20',
+              address: address,
             }),
           );
           cb && cb({ txHash: result.transactionHash });
@@ -317,7 +321,6 @@ export const erc20ToOtherSwap =
         }
       }
     } catch (error) {
-      console.log('xxxxxxxxxxxxxxxxx', error);
       message.error(error.message);
     }
     dispatch(setLoading(false));
@@ -365,12 +368,12 @@ export const bep20ToOtherSwap =
       });
       allowance = getState().BSCModule.RATOMBep20Allowance;
     } else if (tokenType == 'rsol') {
-      tokenContract = new web3.eth.Contract(solServer.getTokenAbi(), solServer.getRSOLTokenAddress(), {
+      tokenContract = new web3.eth.Contract(bscServer.getRSOLTokenAbi(), bscServer.getRSOLTokenAddress(), {
         from: bscAddress,
       });
       allowance = getState().BSCModule.RSOLBep20Allowance;
     } else if (tokenType == 'rmatic') {
-      tokenContract = new web3.eth.Contract(maticServer.getTokenAbi(), maticServer.getTokenAddress(), {
+      tokenContract = new web3.eth.Contract(bscServer.getRMATICTokenAbi(), bscServer.getRMATICTokenAddress(), {
         from: bscAddress,
       });
       allowance = getState().BSCModule.RMATICBep20Allowance;
@@ -385,6 +388,7 @@ export const bep20ToOtherSwap =
       return;
     }
 
+    const notice_uuid = stafi_uuid();
     const amount = web3.utils.toWei(tokenAmount.toString());
     try {
       if (Number(allowance) < Number(amount)) {
@@ -422,9 +426,10 @@ export const bep20ToOtherSwap =
 
           if (result && result.status && result.transactionHash) {
             dispatch(
-              add_Swap_Notice(tokenStr, tokenAmount, noticeStatus.Empty, {
+              add_Swap_Notice(notice_uuid, tokenStr, tokenAmount, noticeStatus.Pending, {
                 swapType: 'bep20',
                 destSwapType: destChainId === STAFI_CHAIN_ID ? 'native' : 'erc20',
+                address: address,
               }),
             );
             cb && cb({ txHash: result.transactionHash });
@@ -461,9 +466,10 @@ export const bep20ToOtherSwap =
 
         if (result && result.status && result.transactionHash) {
           dispatch(
-            add_Swap_Notice(tokenStr, tokenAmount, noticeStatus.Empty, {
+            add_Swap_Notice(notice_uuid, tokenStr, tokenAmount, noticeStatus.Pending, {
               swapType: 'bep20',
               destSwapType: destChainId === STAFI_CHAIN_ID ? 'native' : 'erc20',
+              address: address,
             }),
           );
           cb && cb({ txHash: result.transactionHash });
@@ -478,15 +484,20 @@ export const bep20ToOtherSwap =
   };
 
 const add_Swap_Notice =
-  (token: string, amount: string, status: string, subData: any): AppThunk =>
+  (uuid: string, token: string, amount: string, status: string, subData: any): AppThunk =>
   async (dispatch, getState) => {
-    dispatch(add_Notice(stafi_uuid(), token, noticeType.Staker, noticesubType.Swap, amount, status, subData));
+    dispatch(add_Notice(uuid, token, noticeType.Staker, noticesubType.Swap, amount, status, subData));
+  };
+
+const update_Swap_Notice =
+  (uuid: string, token: string, amount: string, status: string, subData: any): AppThunk =>
+  async (dispatch, getState) => {
+    dispatch(update_NoticeNew(uuid, token, noticeType.Staker, noticesubType.Swap, amount, status, subData));
   };
 
 export const getRtokenPriceList = (): AppThunk => async (dispatch, getState) => {
   const result = await rpc.fetchRtokenPriceList();
-  if (result && result.status == '80000') {
-    // console.log('fetchRtokenPriceList result: ', JSON.stringify(result.data));
+  if (result && result.status == '80000') { 
     dispatch(setPriceList(result.data));
   }
 };

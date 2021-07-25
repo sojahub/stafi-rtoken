@@ -7,6 +7,8 @@ import leftArrowSvg from '@images/left_arrow.svg'
 import NumberUtil from '@util/numberUtil'
 import Button from '@shared/components/button/button';
 import numberUtil from '@util/numberUtil';
+import config from '@config/index';
+import {Symbol} from '@keyring/defaults'
 
 type Props={
      onRdeemClick?:Function,
@@ -58,7 +60,7 @@ export default function Index(props:Props){
             disabled={!props.amount || props.amount == '0' || props.validPools.length<=0}
             onClick={() => {
                 props.onRdeemClick && props.onRdeemClick();
-              }}>Unbond</Button><label>Unbond will take 14 days and {props.fisFee!="--"?`${numberUtil.fisFeeToFixed(props.fisFee)}%`:"--"} fee</label>
+              }}>Unbond</Button><label>Unbond will take {config.unboundAroundDays(Symbol.Fis)} days and {props.fisFee!="--"?`${numberUtil.fisFeeToFixed(props.fisFee)}%`:"--"} fee</label>
         </div> 
          <div className="subTitle">
                <div className="label"> 
