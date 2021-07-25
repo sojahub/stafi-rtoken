@@ -26,7 +26,8 @@ export default function Index(props: Props) {
       <div className='footer'>
         <div>{props.data.dateTime}</div>
         <a
-          className={`${props.data.status} ${props.data.rSymbol != 'eth' && props.data.subType}`}
+          className={`${props.data.status} ${!(props.data.rSymbol==Symbol.Eth || 
+            props.data.rSymbol==Symbol.Fis) && props.data.subType}`}
           onClick={() => {
             if (
               props.data.type == noticeType.Staker &&
