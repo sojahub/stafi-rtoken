@@ -1044,15 +1044,15 @@ export const getReward=(pageIndex:Number,cb:Function):AppThunk=>async (dispatch,
   if(result.status==80000){ 
     const rewardList=getState().rETHModule.rewardList; 
     if(result.data.rewardList.length>0){
-      const list=result.data.rewardList.map((item:any)=>{
-        const rate=NumberUtil.rTokenRateToHuman(item.rate);
-        const rbalance=NumberUtil.tokenAmountToChain(item.rbalance,rSymbol.Eth);
+      const list=result.data.rewardList.map((item:any)=>{ 
+        const rate=NumberUtil.tokenAmountToHuman(item.rate,rSymbol.Eth); 
+        const rbalance=NumberUtil.tokenAmountToHuman(item.rbalance,rSymbol.Eth);
         return {
           ...item,
           rbalance:rbalance,
           rate:rate
         }
-      })
+      }) 
       if(result.data.rewardList.length<=pageCount){
         dispatch(setRewardList_lastdata(null))
       }else{

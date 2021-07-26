@@ -30,7 +30,7 @@ export default function Index(){
                     reward=(reward>0 ? "+":"") + NumberUtil.handleFisAmountRateToFixed(reward);
                 }
                 
-                return <DataItem era={item.era} tokenAmount={NumberUtil.handleFisAmountToFixed(item.rbalance)} ratio={NumberUtil.handleFisAmountRateToFixed(item.rate)} redeemableToken={"0.000000"} reward={reward} />
+                return <DataItem key={index} era={item.era} tokenAmount={NumberUtil.handleFisAmountToFixed(item.rbalance)} ratio={NumberUtil.handleFisAmountRateToFixed(item.rate)} redeemableToken={"0.000000"} reward={reward} />
             })
         } 
     </RewardContent>
