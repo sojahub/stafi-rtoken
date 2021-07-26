@@ -26,6 +26,9 @@ export default class Index{
     return web3Instance;
   }
   getRETHTokenAddress(){
+    return config.rETHTokenAddress();
+  }
+  getRETHGoerliTokenAddress(){
     return config.rETHTokenAddress2();
   }
   
