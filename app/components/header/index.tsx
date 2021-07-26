@@ -81,6 +81,7 @@ export default function Index(props: Props) {
       if (location.pathname.includes('/rAsset/erc')) {
         if (state.rETHModule.ethAccount) {
           return {
+            useRopsten: true,
             ethAccount: state.rETHModule.ethAccount,
           };
         }
@@ -105,6 +106,7 @@ export default function Index(props: Props) {
           location.pathname.includes('/rAsset/swap/erc20')
         ) {
           if (state.rETHModule.ethAccount) {
+            returnValue.useRopsten = true;
             returnValue.ethAccount = state.rETHModule.ethAccount;
           }
         }
@@ -122,6 +124,7 @@ export default function Index(props: Props) {
     if (location.pathname.includes('/rETH')) {
       if (state.rETHModule.ethAccount) {
         return {
+          useGoerli: true,
           ethAccount: state.rETHModule.ethAccount,
         };
       }
@@ -311,7 +314,10 @@ export default function Index(props: Props) {
                   <div>{account.ethAccount.balance} ETH</div>
                   <div>{StringUtil.replacePkh(account.ethAccount.address, 4, 38)}</div>
                 </div>
-                {metaMaskNetworkId && !config.metaMaskNetworkIsEth(metaMaskNetworkId) && (
+                {account.useRopsten && metaMaskNetworkId && !config.metaMaskNetworkIsEth(metaMaskNetworkId) && (
+                  <img src={wrong_network} className={'wrong_network'} />
+                )}
+                {account.useGoerli && metaMaskNetworkId && !config.metaMaskNetworkIsGoerliEth(metaMaskNetworkId) && (
                   <img src={wrong_network} className={'wrong_network'} />
                 )}
               </div>
