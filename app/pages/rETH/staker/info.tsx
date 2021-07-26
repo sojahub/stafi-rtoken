@@ -10,7 +10,7 @@ export default function Index(props:any){
 
   const dispatch=useDispatch();
   useEffect(()=>{ 
-    dispatch(getRethAmount(true));
+    dispatch(getRethAmount(false));
   },[])
  
 

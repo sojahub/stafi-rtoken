@@ -124,7 +124,7 @@ export const nativeToOtherSwap =
                     const mod = dispatchError.asModule;
                     const error = data.registry.findMetaError(
                       new Uint8Array([mod.index.toNumber(), mod.error.toNumber()]),
-                    ); 
+                    );
                     let message_str = 'Something is wrong, please make sure you have enough FIS balance';
                     if (tokenType == 'rfis') {
                       message_str = 'Something is wrong, please make sure you have enough FIS and rFIS balance';
@@ -147,7 +147,7 @@ export const nativeToOtherSwap =
                     message.error(error.message);
                   }
                 }
-              } else if (method === 'ExtrinsicSuccess') { 
+              } else if (method === 'ExtrinsicSuccess') {
                 dispatch(setLoading(false));
                 dispatch(
                   add_Swap_Notice(notice_uuid, tokenStr, tokenAmount, noticeStatus.Pending, {
@@ -497,7 +497,7 @@ const update_Swap_Notice =
 
 export const getRtokenPriceList = (): AppThunk => async (dispatch, getState) => {
   const result = await rpc.fetchRtokenPriceList();
-  if (result && result.status == '80000') { 
+  if (result && result.status == '80000') {
     dispatch(setPriceList(result.data));
   }
 };

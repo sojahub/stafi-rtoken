@@ -132,7 +132,7 @@ export const getErc20Allowances=():AppThunk=>(dispatch,getState)=>{
 export const getETHAssetBalance=():AppThunk=>(dispatch,getState)=>{  
   if(getState().rETHModule.ethAccount){ 
     const address=getState().rETHModule.ethAccount.address;  
-    getAssetBalance(address,ethServer.getRETHTokenAbi(), ethServer.getRETHGoerliTokenAddress(),(v:any)=>{
+    getAssetBalance(address,ethServer.getRETHTokenAbi(), ethServer.getRETHTokenAddress(),(v:any)=>{
       dispatch(setErcETHBalance(v))
     })
   }
@@ -278,7 +278,7 @@ export const getFISErc20Allowance=():AppThunk=>(dispatch,getState)=>{
   export const getRETHErc20Allowance=():AppThunk=>(dispatch,getState)=>{
     if(getState().rETHModule.ethAccount){ 
       const address=getState().rETHModule.ethAccount.address;  
-      getErc20Allowance(address,ethServer.getRETHTokenAbi(), ethServer.getRETHGoerliTokenAddress(),(v:any)=>{
+      getErc20Allowance(address,ethServer.getRETHTokenAbi(), ethServer.getRETHTokenAddress(),(v:any)=>{
         dispatch(setRETHErc20Allowance(v)) 
       })
     }

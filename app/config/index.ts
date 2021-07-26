@@ -68,6 +68,7 @@ export default {
     if (!isdev()) {
       return '0x9559aaa82d9649c7a7b220e7c461d2e74c9a3593';
     } else {
+      // Goerli
       return '0x0ed54e1b7b3be1c02d91b4fa8bf5655f3fbe08b4';
     }
   },

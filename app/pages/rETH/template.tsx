@@ -15,7 +15,7 @@ export default function Index(props:any){
     }
   })
   useEffect(()=>{ 
-    ethAccount && ethAccount.address &&  dispatch(reloadData(true));  
+    ethAccount && ethAccount.address &&  dispatch(reloadData(false));
   },[(ethAccount==null)])
   useEffect(()=>{  
     dispatch(monitoring_Method());

@@ -15,7 +15,7 @@ export default function Index(props:any){
     dispatch(getUnmatchedValidators());
     dispatch(getPoolCount());
     dispatch(getUnmatchedETH());
-    dispatch(getTotalRETH(true));
+    dispatch(getTotalRETH(false));
   },[])
  
   const {poolStakerApr,poolValidatorApr,totalStakedAmount,unmatchedValidators,poolCount,poolStatusUnmatchedETH,poolStatusTotalRETH} = useSelector((state:RootState)=>{
