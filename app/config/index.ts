@@ -388,6 +388,12 @@ export default {
     }
     return networkChainId === '0x3';
   },
+  metaMaskNetworkIsGoerliEth: (networkChainId: any) => {
+    if (!isdev()) {
+      return networkChainId === '0x1';
+    }
+    return networkChainId === '0x5';
+  },
   metaMaskNetworkIsBsc: (networkChainId: any) => {
     if (!isdev()) {
       return networkChainId === '0x61';
