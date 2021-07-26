@@ -442,7 +442,7 @@ export default function Index(props: any) {
 
   const updateErcBepData = () => {
     if (fromType == 'erc20' && ethAccount && ethAccount.address) {
-      dispatch(get_eth_getBalance());
+      dispatch(get_eth_getBalance(true));
       dispatch(getErc20Allowances());
       dispatch(getAssetBalanceAll());
       dispatch(eth_Monitoring_Method());

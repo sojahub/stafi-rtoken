@@ -161,7 +161,7 @@ export default function Index(props: any) {
 
   const updateData = () => {
     if (ethAccount && ethAccount.address) {
-      dispatch(handleEthAccount(ethAccount.address));
+      dispatch(handleEthAccount(ethAccount.address, config.ropstenChainId()));
 
       dispatch(getAssetBalanceAll());
 

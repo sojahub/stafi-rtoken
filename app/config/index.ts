@@ -383,6 +383,12 @@ export default {
     }
     return 0x61;
   },
+  ropstenChainId:()=>{
+    return '0x3';
+  },
+  goerliChainId:()=>{
+    return '0x5';
+  },
   metaMaskNetworkIsEth: (networkChainId: any) => {
     if (!isdev()) {
       return networkChainId === '0x1';

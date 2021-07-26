@@ -118,7 +118,7 @@ export default function Index(props: Props) {
         ) {
           if (state.BSCModule.bscAccount) {
             returnValue.bscAccount = state.BSCModule.bscAccount;
-          } 
+          }
         }
         return returnValue;
       }
@@ -150,16 +150,16 @@ export default function Index(props: Props) {
           type: 'rMATIC',
         };
       }
-    } 
-    if(location.pathname.includes("/rFIS")){ 
-        if(state.FISModule.fisAccount){
-            return { 
-                fisAccount:state.FISModule.fisAccount,
-                noticeData:state.noticeModule.noticeData,
-                type: 'rFIS',
-            }
-        } 
-    } 
+    }
+    if (location.pathname.includes('/rFIS')) {
+      if (state.FISModule.fisAccount) {
+        return {
+          fisAccount: state.FISModule.fisAccount,
+          noticeData: state.noticeModule.noticeData,
+          type: 'rFIS',
+        };
+      }
+    }
     return null;
   });
 
@@ -196,8 +196,8 @@ export default function Index(props: Props) {
             }}
           />
         )}
-        
-        {(modalType == 'fis' && !location.pathname.includes("/rFIS")) && ( 
+
+        {modalType == 'fis' && !location.pathname.includes('/rFIS') && (
           <Page_FIS
             location={{}}
             type='header'
@@ -208,12 +208,12 @@ export default function Index(props: Props) {
             }}
           />
         )}
-        {(modalType == 'fis' && location.pathname.includes("/rFIS")) && ( 
+        {modalType == 'fis' && location.pathname.includes('/rFIS') && (
           <Page_rFIS
             location={{}}
             type='header'
             onClose={() => {
-              setVisible(false); 
+              setVisible(false);
             }}
           />
         )}

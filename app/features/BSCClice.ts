@@ -150,7 +150,7 @@ export const connectMetamask =
 
         ethereum
           .request({ method: 'eth_requestAccounts' })
-          .then((accounts: any) => { 
+          .then((accounts: any) => {
             dispatch(handleBscAccount(accounts[0]));
           })
           .catch((error: any) => {
@@ -216,6 +216,10 @@ export const handleBscAccount =
   (address: string): AppThunk =>
   (dispatch, getState) => {
     // dispatch(setBscAccount({ address: address, balance: "--" }));
+    if (!config.metaMaskNetworkIsBsc(getState().globalModule.metaMaskNetworkId)) {
+      dispatch(setBscAccount({ address: address, balance: '--' }));
+      return;
+    }
     ethereum
       .request({ method: 'eth_getBalance', params: [address, 'latest'] })
       .then((result: any) => {
