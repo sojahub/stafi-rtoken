@@ -1,8 +1,9 @@
-import { isdev } from '@config/index'; 
+import { isdev } from '@config/index';
 import { rSymbol, Symbol } from '@keyring/defaults';
 import { keccakAsHex } from '@polkadot/util-crypto';
 import { createSlice } from '@reduxjs/toolkit';
 import EthServer from '@servers/eth/index';
+import RpcServer, { pageCount } from '@servers/rpc/index';
 import { getLocalStorageItem, Keys, localStorage_currentEthPool, localStorage_poolPubKey, removeLocalStorageItem, setLocalStorageItem, stafi_uuid } from '@util/common';
 import NumberUtil from '@util/numberUtil';
 import StringUtil from '@util/stringUtil';
@@ -12,7 +13,6 @@ import { AppThunk } from '../store';
 import { getAssetBalance, getAssetBalanceAll } from './ETHClice';
 import { setLoading } from './globalClice';
 import { add_Notice, noticeStatus, noticesubType, noticeType } from './noticeClice';
-import RpcServer,{pageCount} from '@servers/rpc/index';
 
 const ethServer=new EthServer();
 const rpcServer=new RpcServer();
@@ -336,8 +336,8 @@ export const  checkEthAddress=(address:string)=> {
 }
 
 
-export const reloadData = ():AppThunk => async (dispatch,getState)=>{  
-  dispatch(rTokenRate());
+export const reloadData = (useRopsten?:boolean):AppThunk => async (dispatch,getState)=>{  
+  dispatch(rTokenRate(useRopsten));
   dispatch(get_eth_getBalance());
   dispatch(getMinimumDeposit());
 
@@ -345,16 +345,16 @@ export const reloadData = ():AppThunk => async (dispatch,getState)=>{
   dispatch(getValidatorApr());
   dispatch(getNextCapacity());
   dispatch(getPoolCount());
-  dispatch(getRethAmount());
+  dispatch(getRethAmount(useRopsten));
   dispatch(getNodeStakingPoolCount());
   dispatch(getDepositBalance());
   dispatch(getSelfDeposited());
   dispatch(setRunCount(0));
 }
 
-export const rTokenRate=():AppThunk=>async (dispatch,getState)=>{
+export const rTokenRate=(useRopsten?:boolean):AppThunk=>async (dispatch,getState)=>{
   let web3=ethServer.getWeb3(); 
-  let contract = new web3.eth.Contract(ethServer.getRETHTokenAbi(),ethServer.getRETHTokenAddress());
+  let contract = new web3.eth.Contract(ethServer.getRETHTokenAbi(),useRopsten?ethServer.getRETHTokenAddress():ethServer.getRETHGoerliTokenAddress());
   const amount = web3.utils.toWei('1');
   const result = await contract.methods.getEthValue(amount).call();
   let ratio = web3.utils.fromWei(result, 'ether');  
@@ -476,9 +476,9 @@ export const send=(value:Number,cb?:Function):AppThunk=>async (dispatch,getState
   } 
 }
 
-export const getRethAmount=():AppThunk=>async (dispatch,getState)=>{
+export const getRethAmount=(useRopsten?:boolean):AppThunk=>async (dispatch,getState)=>{
   const address=getState().rETHModule.ethAccount.address;
-  getAssetBalance(address,ethServer.getRETHTokenAbi(), ethServer.getRETHTokenAddress(),(v:any)=>{
+  getAssetBalance(address,ethServer.getRETHTokenAbi(), useRopsten?ethServer.getRETHTokenAddress():ethServer.getRETHGoerliTokenAddress(),(v:any)=>{
     dispatch(setRethAmount(v))
   })
 }
@@ -918,10 +918,10 @@ export const getUnmatchedValidators=():AppThunk=>async (dispatch,getState)=>{
  
 }
 
-export const getTotalRETH=():AppThunk=>async (dispatch,getState)=>{
+export const getTotalRETH=(useRopsten?:boolean):AppThunk=>async (dispatch,getState)=>{
   const address=getState().rETHModule.ethAccount.address; 
   let web3 = ethServer.getWeb3();
-  let contract = new web3.eth.Contract(ethServer.getRETHTokenAbi(), ethServer.getRETHTokenAddress(), {
+  let contract = new web3.eth.Contract(ethServer.getRETHTokenAbi(), useRopsten?ethServer.getRETHTokenAddress():ethServer.getRETHGoerliTokenAddress(), {
     from: address
   });
   const result=await contract.methods.totalSupply().call() 
