@@ -400,4 +400,5 @@ export default {
     }
     return networkChainId === '0x61';
   },
+  minReward:0.000001
 };

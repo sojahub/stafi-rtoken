@@ -1,11 +1,13 @@
 import React from 'react'
+import config from '@config/index';
+import NumberUtil from '@util/numberUtil'
 
 type Props={
     era:Number,
     tokenAmount:string|Number,
     ratio:string | Number,
     redeemableToken:string | Number,
-    reward:any
+    reward:Number|string
 }
 export default function Index(props:Props){
     return <div className="row body">
@@ -21,8 +23,10 @@ export default function Index(props:Props){
     <div className="col col4">
         {props.redeemableToken}
     </div>
-    <div className="col col5">
-        {props.reward=="--"?"--":props.reward}
+    <div className="col col5"> 
+        {(props.reward!="--" && props.reward>0 && props.reward<config.minReward) && `<${config.minReward}`}
+        {(props.reward!="--" && props.reward>=config.minReward) && `+${NumberUtil.handleFisAmountRateToFixed(props.reward)}`}
+        {props.reward=="--" && props.reward}
     </div> 
 </div>
 }
