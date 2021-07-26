@@ -50,7 +50,7 @@ const globalClice = createSlice({
     provinces: [],
     processSlider: false,
     accounts: [],
-    stafiStakerApr: '',
+    stafiStakerApr: '--',
     process: process,
     timeOutFunc: null,
 
@@ -262,6 +262,7 @@ export const fetchStafiStakerApr =
     }
   };
 
+ 
 export const connectPolkadot =
   (cb?: Function): AppThunk =>
   async (dispatch, getState) => {
@@ -276,7 +277,7 @@ export const connectPolkadot_ksm =
     await dispatch(connectPolkadotjs(Symbol.Fis));
     cb && cb();
   };
-export const connectPolkadot_atom =
+export const connectPolkadot_fis =
   (cb?: Function): AppThunk =>
   async (dispatch, getState) => {
     // await dispatch(connectAtomjs());
@@ -298,7 +299,7 @@ export const gSetTimeOut =
   };
 export const gClearTimeOut = (): AppThunk => (dispatch, getState) => {
   const time = getState().globalModule.timeOutFunc;
-  if (time) {
+  if (time) { 
     clearTimeout(time);
   }
 };

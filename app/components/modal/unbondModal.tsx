@@ -55,6 +55,7 @@ export default function Index(props: Props) {
           {props.type == 'rATOM' && `—Period: around ${config.unboundAroundDays(Symbol.Atom)} days`}
           {props.type == 'rSOL' && `—Period: around ${config.unboundAroundDays(Symbol.Sol)} days`}
           {props.type=="rMATIC" && `—Period: around ${config.unboundAroundDays(Symbol.Matic)} days`}
+          {props.type=="rFIS" && `—Period: around ${config.unboundAroundDays(Symbol.Fis)} days`}
           <div className='doubt'>
             <Tooltip
               overlayClassName='modal_doubt_overlay'
@@ -63,16 +64,15 @@ export default function Index(props: Props) {
               <img src={doubt} />
             </Tooltip>
           </div>
-        </div>
-
+        </div> 
         <div className='get_count'>
           {props.type == 'rDOT' && `You will get ${props.getAmount} DOT`}
           {props.type == 'rKSM' && `You will get ${props.getAmount} KSM`}
           {props.type == 'rATOM' && `You will get ${props.getAmount} ATOM`}
           {props.type == 'rSOL' && `You will get ${props.getAmount} SOL`}
           {props.type=="rMATIC" && `You will get ${props.getAmount} MATIC`}
-        </div>
-
+          {props.type=="rFIS" && `You will get ${props.getAmount} FIS`}
+        </div> 
 
         <div className='btns'>
           <A

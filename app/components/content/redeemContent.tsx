@@ -1,9 +1,10 @@
 import leftArrowSvg from '@images/left_arrow.svg';
 import rATOM from '@images/selected_rATOM.svg';
 import rDOT from '@images/selected_rDOT.svg';
-import rKSM from '@images/selected_rKSM.svg'; 
-import rSOL from '@images/selected_r_sol.svg';
+import rFIS from '@images/selected_rFIS.svg';
+import rKSM from '@images/selected_rKSM.svg';
 import rMATIC from '@images/selected_rMatic.svg';
+import rSOL from '@images/selected_r_sol.svg';
 import Button from '@shared/components/button/button';
 import Input from '@shared/components/input/amountInput';
 import EditInput from '@shared/components/input/editAddresInput';
@@ -23,8 +24,7 @@ type Props = {
   type: 'rDOT' | 'rETH' | 'rFIS' | 'rKSM' | 'rATOM' | 'rSOL' | "rMATIC";
 };
 export default function Index(props: Props) {
-  const [inputEdit, setInputEdit] = useState(false);
-
+  const [inputEdit, setInputEdit] = useState(false); 
   const getIcon = () => {
     if (props.type == 'rDOT') {
       return rDOT;
@@ -36,7 +36,9 @@ export default function Index(props: Props) {
       return rSOL;
     } else if (props.type == 'rMATIC') {
       return rMATIC;
-    }
+    }else if(props.type=="rFIS"){
+      return rFIS
+    } 
   };
 
   return (
@@ -54,6 +56,7 @@ export default function Index(props: Props) {
         {props.type == 'rATOM' && ' Redeem ATOM'}
         {props.type == 'rSOL' && ' Redeem SOL'}
         {props.type == 'rMATIC' && ' Redeem MATIC'}
+        {props.type=="rFIS" && " Redeem FIS"}
       </div>
       <div className='subTitle'>
         <div className='label'>
@@ -62,6 +65,7 @@ export default function Index(props: Props) {
           {props.type == 'rATOM' && '1. Unbond ATOM'}
           {props.type == 'rSOL' && '1. Unbond SOL'}
           {props.type == 'rMATIC' && '1. Unbond MATIC'}
+          {props.type=="rFIS" && "1. Unbond FIS"} 
         </div>
         <div className='balance'></div>
       </div>
@@ -77,7 +81,7 @@ export default function Index(props: Props) {
         />
         <div className='balance'>
           {props.type} balance {props.tokenAmount == '--' ? '--' : NumberUtil.handleFisAmountToFixed(props.tokenAmount)}
-        </div>
+        </div> 
       </div>
       {/* <div className="btns">
            <Button disabled={!props.amount} size="small" btnType="ellipse" onClick={()=>{
@@ -110,7 +114,7 @@ export default function Index(props: Props) {
           }}>
           Unbond
         </Button>
-      </div>
+      </div> 
     </LeftContent>
   );
 }

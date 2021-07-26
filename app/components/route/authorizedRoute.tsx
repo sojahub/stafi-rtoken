@@ -36,9 +36,7 @@ const account = (type: string) => {
       if (getLocalStorageItem(Keys.MetamaskAccountKey) == null && getLocalStorageItem(Keys.FisAccountKey)) {
         return '/rETH/wallet';
       }
-      return true;
-    case Symbol.Fis:
-      return getLocalStorageItem(Keys.FisAccountKey);
+      return true; 
     case Symbol.Sol:
       if (getLocalStorageItem(Keys.SolAccountKey) == null || getLocalStorageItem(Keys.FisAccountKey) == null) {
         return '/rSOL/home';
@@ -48,7 +46,13 @@ const account = (type: string) => {
       if(getLocalStorageItem(Keys.MaticAccountKey)==null || getLocalStorageItem(Keys.FisAccountKey)==null){
         return '/rMATIC/home'  
       }
-      return true;
+      return true; 
+    case Symbol.Fis: 
+      if(getLocalStorageItem(Keys.FisAccountKey)){
+        return true
+      }else{
+        return '/rFIS/home' 
+      } 
     default:
       return '/rKSM/home';
   }

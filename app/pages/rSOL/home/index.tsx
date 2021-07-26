@@ -29,9 +29,7 @@ export default function Inde(props: any) {
   const wallet = solServer.getWallet();
   useEffect(() => {
     if (wallet) {
-      wallet.on('connect', (publicKey) => {
-        console.log('on sol wallet connect: ', publicKey);
-        console.log('on sol wallet connect: ', publicKey.toBase58());
+      wallet.on('connect', (publicKey) => { 
         if (fisAccount) {
           props.history.push('/rSOL/type');
         } else if (fisAccounts && fisAccounts.length > 0) {

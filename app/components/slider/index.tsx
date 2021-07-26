@@ -16,7 +16,7 @@ import selected_rETH_svg from '@images/selected_r_eth.svg';
 import selected_rFIS_svg from '@images/selected_r_fis.svg';
 import selected_rKSM_svg from '@images/selected_r_ksm.svg';
 import selected_rSOL_svg from '@images/selected_r_sol.svg';
-import selected_rPool_svg from '@images/selected_r_pool.svg'
+import selected_rPool_svg from '@images/selected_r_pool.svg';
 import React from 'react';
 import { isdev } from '../../config/index';
 import './index.scss';
@@ -49,7 +49,7 @@ const siderData = [
     selectedIcon: selected_rFIS_svg,
     text: 'rFIS',
     urlKeywords: '/rFIS',
-    url: 'https://rtoken.stafi.io/rfis',
+    url:"/rFIS/home"
   },
   {
     icon: rDOT_svg,
@@ -119,6 +119,5 @@ export default function Index(props: Props) {
         <div></div> {isdev() ? 'Testnet' : 'Mainnet'}
       </div>
     </div>
-  );
- 
+  ); 
 }

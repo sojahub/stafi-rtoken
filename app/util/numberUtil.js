@@ -181,7 +181,7 @@ export default {
     }
 
     // console.log(`amount: ${amount} factor: ${factor}`);
-    return divide(amount, factor);
+    return divide(Number(amount), factor);
   },
   tokenAmountToChain(amount, symbol) {
     switch (symbol) { 

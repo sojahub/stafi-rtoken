@@ -88,7 +88,7 @@ export class CosmosKeyring extends Base implements KeyringStruct {
   }
 
   public sign(secretKey: string, message: string): any {
-    console.log(secretKey, message);
+    // console.log(secretKey, message);
     return {}
   }
 

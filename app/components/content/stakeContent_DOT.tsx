@@ -1,17 +1,17 @@
 import doubt from "@images/doubt.svg";
 import rATOM from '@images/selected_rATOM.svg';
 import rDOT from '@images/selected_rDOT.svg';
-import rKSM from '@images/selected_rKSM.svg'; 
+import rFIS from '@images/selected_rFIS.svg';
+import rKSM from '@images/selected_rKSM.svg';
+import rMATIC from '@images/selected_rMatic.svg';
 import rSOL from '@images/solana.svg';
-import rMATIC from '@images/selected_rMatic.svg' 
 import Button from '@shared/components/button/button';
 import Input from '@shared/components/input/amountInput';
 import { Tooltip } from 'antd';
 import React, { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import './index.scss';
-import LeftContent from './leftContent';  
-
+import LeftContent from './leftContent';
 
 type Props={
     onRecovery:Function,
@@ -47,7 +47,9 @@ export default function Index(props:Props){
             return rSOL;
           }else if(props.type=="rMATIC"){
             return rMATIC;
-          } 
+        }else if(props.type=="rFIS"){
+            return rFIS;
+        }
       }
       const haswarn=useMemo(()=>{
         return !bondSwitch || !(props.validPools && props.validPools.length>0)
@@ -55,10 +57,11 @@ export default function Index(props:Props){
     return <LeftContent className="stafi_stake_context">
         <label className="title"> 
             {props.type=="rKSM" && `Stake KSM`}
-            {props.type=="rDOT" && `Stake DOT`}
-            {props.type=="rATOM" && `Stake ATOM`} 
+            {props.type=="rDOT" && `Stake DOT`} 
+            {props.type=="rATOM" && `Stake ATOM`}
+            {props.type=="rFIS" && `Stake FIS`}  
             {props.type == 'rSOL' && `Stake SOL`} 
-            {props.type=="rMATIC" && `Stake MATIC`} 
+            {props.type=="rMATIC" && `Stake MATIC`}  
         </label>
         {haswarn && <div className="warn">Unable to stake, system is waiting for matching validators</div>}
         <div className={`input_panel dot_input_panel ${haswarn && 'showWarn'}`}>
@@ -69,15 +72,15 @@ export default function Index(props:Props){
                 props.onChange && props.onChange(e); 
             }}  icon={getIcon()}/>
 
-{/* selected_rKSM */}
-            {/* unit={"Max"} */}
+            {/* selected_rKSM */}
+            {/* unit={"Max"} */}        
             <div  className="pool">  
                 {props.type=="rKSM" && `${isNaN(props.totalStakedToken)?"--":props.totalStakedToken} KSM is staked via rKSM `}
                 {props.type=="rDOT" && `${isNaN(props.totalStakedToken)?"--":props.totalStakedToken} DOT is staked via rDOT `}
                 {props.type=="rATOM" && `${isNaN(props.totalStakedToken)?"--":props.totalStakedToken} ATOM is staked via rATOM `}
+                {props.type=="rFIS" && `${isNaN(props.totalStakedToken)?"--":props.totalStakedToken} FIS is staked via rFIS `}
                 {props.type == 'rSOL' && `${isNaN(props.totalStakedToken) ? '--' : props.totalStakedToken} SOL is staked via rSOL `}
-
-                {props.type=="rMATIC" && `${isNaN(props.totalStakedToken)?"--":props.totalStakedToken} MATIC is staked via rMATIC `}
+                {props.type=="rMATIC" && `${isNaN(props.totalStakedToken)?"--":props.totalStakedToken} MATIC is staked via rMATIC `} 
                 {/* <A>stats</A> */}
             </div>
         </div>
@@ -108,7 +111,7 @@ export default function Index(props:Props){
                     {props.willAmount}
                 </div>
             </div>
-            <div className="money_panel_item">
+            {props.type!="rFIS" && <div className="money_panel_item">
                 <div className="relay_fee">Relay Fee: {props.bondFees} FIS</div> 
                 <div></div>
 
@@ -118,7 +121,7 @@ export default function Index(props:Props){
                         <img src={doubt} />
                     </Tooltip>
                 </div>
-            </div>
+            </div>}
         </div> 
         <div className="btns"> <Button disabled={(!props.amount || props.amount==0 || haswarn || processSlider)} onClick={()=>{
              props.onStakeClick && props.onStakeClick()

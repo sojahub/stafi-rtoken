@@ -28,6 +28,7 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Page from '../../pages/rDOT/selectWallet/index';
 import Page_FIS from '../../pages/rDOT/selectWallet_rFIS/index';
+import Page_rFIS from '../../pages/rFIS/selectWallet_rFIS/index';
 import Page_Ksm from '../../pages/rKSM/selectWallet/index';
 import './index.scss';
 import Popover from './popover';
@@ -110,13 +111,14 @@ export default function Index(props: Props) {
             returnValue.ethAccount = state.rETHModule.ethAccount;
           }
         }
+
         if (
           // location.pathname.includes('/rAsset/swap/native/bep20') ||
           location.pathname.includes('/rAsset/swap/bep20')
         ) {
           if (state.BSCModule.bscAccount) {
             returnValue.bscAccount = state.BSCModule.bscAccount;
-          }
+          } 
         }
         return returnValue;
       }
@@ -148,7 +150,16 @@ export default function Index(props: Props) {
           type: 'rMATIC',
         };
       }
-    }
+    } 
+    if(location.pathname.includes("/rFIS")){ 
+        if(state.FISModule.fisAccount){
+            return { 
+                fisAccount:state.FISModule.fisAccount,
+                noticeData:state.noticeModule.noticeData,
+                type: 'rFIS',
+            }
+        } 
+    } 
     return null;
   });
 
@@ -185,7 +196,8 @@ export default function Index(props: Props) {
             }}
           />
         )}
-        {modalType == 'fis' && (
+        
+        {(modalType == 'fis' && !location.pathname.includes("/rFIS")) && ( 
           <Page_FIS
             location={{}}
             type='header'
@@ -193,6 +205,15 @@ export default function Index(props: Props) {
               setVisible(false);
               dispatch(dotquery_rBalances_account());
               dispatch(ksmquery_rBalances_account());
+            }}
+          />
+        )}
+        {(modalType == 'fis' && location.pathname.includes("/rFIS")) && ( 
+          <Page_rFIS
+            location={{}}
+            type='header'
+            onClose={() => {
+              setVisible(false); 
             }}
           />
         )}

@@ -468,19 +468,16 @@ export default function Index(props: any) {
   };
 
   if (fromTypeData && fromTypeData.type == 'native' && (!fisAccount || !fisAccount.address)) {
-    console.log('return to native rAsset');
     history.push('/rAsset/native');
     return null;
   }
 
   if (fromTypeData && fromTypeData.type == 'erc20' && (!ethAccount || !ethAccount.address)) {
-    console.log('return to eth rAsset');
     history.push('/rAsset/eth');
     return null;
   }
 
   if (fromTypeData && fromTypeData.type == 'bep20' && (!bscAccount || !bscAccount.address)) {
-    console.log('return to bep rAsset');
     history.push('/rAsset/bep');
     return null;
   }

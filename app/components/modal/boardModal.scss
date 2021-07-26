@@ -40,9 +40,13 @@
             flex:1;
             cursor: pointer;
         }
+        >div:last-child{
+            border-bottom-right-radius: 3px;
+        }
         >div:first-child{
             color:#282B4A ;
             background-color: #F6F6F6;
+            border-bottom-left-radius: 3px;
         }
     }
 }

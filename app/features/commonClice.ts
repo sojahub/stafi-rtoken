@@ -34,14 +34,13 @@ export default class CommonClice {
     const stafiApi = await stafiServer.createStafiApi();
     const poolsData = await stafiApi.query.rTokenLedger.bondedPools(type);
     let pools = poolsData.toJSON();
-    // console.log('pools: ', pools);
+    
     if (pools && pools.length > 0) {
       pools.forEach((poolPubkey: any) => {
         stafiApi.query.rTokenLedger
           .bondPipelines(type, poolPubkey)
           .then((bondedData: any) => {
-            // console.log('bondedData: ', bondedData.toJSON());
-
+            
             let active = 0;
             let bonded = bondedData.toJSON();
             if (bonded) {
@@ -71,15 +70,41 @@ export default class CommonClice {
 
     }
   }
+  async getFisPools(cb?:Function) {
+    const stafiApi = await stafiServer.createStafiApi();
+    const poolsData = await stafiApi.query.rFis.pools();
+    let pools = poolsData.toJSON(); 
+    if (pools && pools.length > 0) {
+      pools.forEach((pool: any) => {
+        stafiApi.query.staking.ledger(pool).then((ledgerData: any) => {
+              let ledger = ledgerData.toJSON();
+              if(ledger){
+                cb && cb({
+                  address: pool,
+                  active: ledger.active
+                })
+              }
+          })
+          .catch((error: any) => {
+            console.log('getPools error: ', error);
+          });
+      });
+
+    }
+  }
   async poolBalanceLimit(type: rSymbol) {
     const stafiApi = await stafiServer.createStafiApi();
     const result = await stafiApi.query.rTokenSeries.poolBalanceLimit(type);
     return result.toJSON();
   }
+  async fis_poolBalanceLimit() {
+    const stafiApi = await stafiServer.createStafiApi();
+    const result = await stafiApi.query.rFis.poolBalanceLimit();
+    return result.toJSON();
+  }
   async rTokenRate(type: rSymbol) {
     const api = await stafiServer.createStafiApi();
-    const result = await api.query.rTokenRate.rate(type);
-    // console.log('rTokenRate result: ', result.toJSON());
+    const result = await api.query.rTokenRate.rate(type); 
     let ratio: any = NumberUtil.rTokenRateToHuman(result.toJSON());
     if (!ratio) {
       ratio = 1;
@@ -125,14 +150,14 @@ export default class CommonClice {
     } else {
       cb && cb(0);
     }
-  }
+  } 
   async getUnbondCommission() {
     const stafiApi = await stafiServer.createStafiApi();
     const result = await stafiApi.query.rTokenSeries.unbondCommission();
     const unbondCommission = NumberUtil.fisFeeToHuman(result.toJSON());
     return unbondCommission;
   }
-  getPool(tokenAmount: any, validPools: any, poolLimit: any) {
+  getPool(tokenAmount: any, validPools: any, poolLimit: any,errorMessage?:string) {
     const data = validPools.find((item: any) => {
       if (poolLimit == 0 || Number(item.active) + Number(tokenAmount) <= Number(poolLimit)) {
         return true;
@@ -141,13 +166,26 @@ export default class CommonClice {
     if (data) {
       return data;
     } else {
-      message.error('There is no matching pool, please try again later.');
+      message.error(errorMessage?errorMessage:'There is no matching pool, please try again later.');
       return null;
     }
   }
-  getPoolForUnbond(tokenAmount: any, validPools: any, type: rSymbol) {
-    const amount = NumberUtil.tokenAmountToChain(tokenAmount.toString(), type);
+  getFisPool(tokenAmount: any, validPools: any, poolLimit: any,errorMessage?:string) {
     const data = validPools.find((item: any) => {
+      if (Number(item.active) + Number(tokenAmount) <= Number(poolLimit)) {
+        return true;
+      }
+    });
+    if (data) {
+      return data;
+    } else {
+      message.error(errorMessage?errorMessage:'There is no matching pool, please try again later.');
+      return null;
+    }
+  }
+  getPoolForUnbond(tokenAmount: any, validPools: any, type: rSymbol,messageStr?:string) {
+    const amount = NumberUtil.tokenAmountToChain(tokenAmount.toString(), type);
+    const data = validPools.find((item: any) => { 
       if (Number(item.active) >= amount) {
         return true;
       }
@@ -155,7 +193,7 @@ export default class CommonClice {
     if (data) {
       return data;
     } else {
-      message.error('There is no matching pool, please try again later.');
+      message.error(messageStr || 'There is no matching pool, please try again later.');
       return null;
     }
   }

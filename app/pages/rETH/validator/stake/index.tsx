@@ -9,7 +9,7 @@ import LeftContent from '@components/content/leftContent';
 import {getNodeStakingPoolCount,handleCurrentPool,handleOffboard,handleStake} from '@features/rETHClice'
 import './index.scss'
 import { useDispatch, useSelector } from 'react-redux';
-import OffboardModal from '@components/modal/offboardModal'
+import OffboardModal from '@components/modal/boardModal'
 import { RootState } from 'app/store';
 import StringUtil from '@util/stringUtil';
 import Popover from '@shared/components/popover/addressSelect'
@@ -124,6 +124,10 @@ export default function Index(props:any){
             onClose={()=>{
                 setOffboardModalVisible(false)
             }}
+            OKText="Offboard"
+            CancelText="Cancel"
+            title="Confirm to offboard"
+            content="Are your sure to offboard? All deposits will be refunded once confirm"
             onOK={()=>{
                 setOffboardModalVisible(false)
                 dispatch(handleOffboard(()=>{

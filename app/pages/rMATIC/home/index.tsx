@@ -1,5 +1,5 @@
 import HomeCard from '@components/card/homeCard';
-import { connectPolkadot_atom } from '@features/globalClice';
+import { connectPolkadot_fis } from '@features/globalClice';
 import { connectMetamask, handleMaticAccount, monitoring_Method } from '@features/rMATICClice';
 import metamask from '@images/metamask.png';
 import rFIS_svg from '@images/rFIS.svg';
@@ -56,7 +56,7 @@ export default function Inde(props:any){
             icon={rFIS_svg} 
              onClick={()=>{   
               setVisible(true);
-              dispatch(connectPolkadot_atom(()=>{
+              dispatch(connectPolkadot_fis(()=>{
                 setVisible(true);
                
               })) 

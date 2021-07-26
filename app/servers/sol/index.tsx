@@ -59,14 +59,12 @@ export default class ExtensionDapp extends SolKeyring {
     try {
       const connection = new Connection(config.solRpcApi(), { wsEndpoint: config.solRpcWs() });
       const parsedTx = await connection.getParsedConfirmedTransaction(txHash).catch((error) => {
-        console.log('getTransactionDetail error: ', error);
         throw new Error();
       });
 
       if (!parsedTx || !parsedTx.slot) {
         return {};
-      }
-      console.log(`testTx: ${JSON.stringify(parsedTx)}`);
+      } 
       const block = await connection.getBlock(parsedTx.slot);
 
       const lamports = this.getTxLamports(parsedTx.transaction.message.instructions[0]);
@@ -76,8 +74,7 @@ export default class ExtensionDapp extends SolKeyring {
         poolAddress: destination,
         blockhash: block.blockhash,
       };
-    } catch (error) {
-      console.log('getTransactionDetail error: ', error);
+    } catch (error) { 
       throw new Error();
     }
   };
