@@ -732,10 +732,11 @@ export default function Index(props: any) {
                     );
                     if (destTypeData && destTypeData.type === 'erc20') {
                       setViewTxUrl(config.etherScanErc20TxInAddressUrl(address));
-                    } else {
+                    } else if (destTypeData && destTypeData.type === 'bep20') {
                       setViewTxUrl(config.bscScanBep20TxInAddressUrl(address));
+                    } else {
+                      setViewTxUrl(config.stafiScanUrl(address));
                     }
-
                     setFormAmount('');
                     setAddress('');
                     setDelayReloadFlag(delayReloadFlag + 1);
@@ -764,7 +765,13 @@ export default function Index(props: any) {
                       setTransferDetail(
                         `${fromAoumt} ${tokenType && tokenType.title} ${fromTypeData && fromTypeData.content}`,
                       );
-                      setViewTxUrl(config.stafiScanUrl(address));
+                      if (destTypeData && destTypeData.type === 'erc20') {
+                        setViewTxUrl(config.etherScanErc20TxInAddressUrl(address));
+                      } else if (destTypeData && destTypeData.type === 'bep20') {
+                        setViewTxUrl(config.bscScanBep20TxInAddressUrl(address));
+                      } else {
+                        setViewTxUrl(config.stafiScanUrl(address));
+                      }
                       setFormAmount('');
                       setAddress('');
                       setDelayReloadFlag(delayReloadFlag + 1);
