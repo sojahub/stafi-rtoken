@@ -259,12 +259,13 @@ export default {
     }
     let  wholeNumberLength=Math.floor(Number(amount)).toString().length; 
     let maxLength = 8;
+    let difference=maxLength-wholeNumberLength;
     if(wholeNumberLength>=maxLength){
       return Math.floor(amount);
-    }else if((maxLength-wholeNumberLength)<2){
+    }else if(difference==7 || difference==6){
       return this.handleEthAmountRound(amount).toFixed(6);
     }else{
-      return this.handleEthAmountRound(amount).toFixed(maxLength-wholeNumberLength);
+      return this.handleEthAmountRound(amount).toFixed(difference<=0?0:difference);
     }
   }
 }; 
