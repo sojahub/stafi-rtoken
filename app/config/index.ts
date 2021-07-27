@@ -274,7 +274,7 @@ export default {
     if (!isdev()) {
       return 'https://cosmos-rpc1.stafi.io';
     } else {
-      return 'https://testcosmosrpc.wetez.io';
+      return 'https://rpc.testnet.cosmos.network';
     }
   },
   rAtomDenom: () => {

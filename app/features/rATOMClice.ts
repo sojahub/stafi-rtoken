@@ -173,23 +173,27 @@ export const createSubstrate =
   };
 
 const queryBalance = async (account: any, dispatch: any, getState: any) => {
-  dispatch(setAtomAccounts(account));
-  let account2: any = { ...account };
-  const client = await atomServer.createApi();
-  let balances = await client.getAllBalances(account2.address);
+  try { 
+    dispatch(setAtomAccounts(account));
+    let account2: any = { ...account };
+    const client = await atomServer.createApi();
+    let balances = await client.getAllBalances(account2.address);
 
-  if (balances.length > 0) {
-    const balanace = balances.find((item: any) => {
-      return item.denom == config.rAtomDenom();
-    });
-    account2.balance = balanace ? NumberUtil.tokenAmountToHuman(balanace.amount, rSymbol.Atom) : 0;
-  } else {
-    account2.balance = 0;
+    if (balances.length > 0) {
+      const balanace = balances.find((item: any) => {
+        return item.denom == config.rAtomDenom();
+      });
+      account2.balance = balanace ? NumberUtil.tokenAmountToHuman(balanace.amount, rSymbol.Atom) : 0;
+    } else {
+      account2.balance = 0;
+    }
+    account2.balance = NumberUtil.handleFisAmountToFixed(account2.balance);
+    dispatch(setTransferrableAmountShow(account2.balance));
+    dispatch(setAtomAccount(account2));
+    dispatch(setAtomAccounts(account2));
+  } catch (error) {
+      
   }
-  account2.balance = NumberUtil.handleFisAmountToFixed(account2.balance);
-  dispatch(setTransferrableAmountShow(account2.balance));
-  dispatch(setAtomAccount(account2));
-  dispatch(setAtomAccounts(account2));
 };
 
 export const transfer =
@@ -208,12 +212,13 @@ export const transfer =
     const validPools = getState().rATOMModule.validPools;
     const poolLimit = getState().rATOMModule.poolLimit;
 
-    const client = await atomServer.createApi();
+    
     const selectedPool = commonClice.getPool(amount, validPools, poolLimit);
     if (selectedPool == null) {
       return;
     }
     try {
+      const client = await atomServer.createApi();
       dispatch(
         setProcessSending({
           brocasting: processStatus.loading,
@@ -458,70 +463,76 @@ export const continueProcess = (): AppThunk => async (dispatch, getState) => {
 export const onProceed =
   (txHash: string, cb?: Function): AppThunk =>
   async (dispatch, getstate) => {
-    const client = await atomServer.createApi();
-    let indexedTx = null;
     try {
-      indexedTx = await client.getTx(txHash);
-    } catch (error) {
-      message.error('Please input the right TxHash');
-      return;
+    
+      const client = await atomServer.createApi();
+      let indexedTx = null;
+      try {
+        indexedTx = await client.getTx(txHash);
+      } catch (error) {
+        message.error('Please input the right TxHash');
+        return;
 
-    }
-    if (!indexedTx) {
-      message.error('Please input the right TxHash');
-      return;
-    }
+      }
+      if (!indexedTx) {
+        message.error('Please input the right TxHash');
+        return;
+      }
 
-    const block = await client.getBlock(indexedTx.height);
-    const blockHash = block.id;
+      const block = await client.getBlock(indexedTx.height);
+      const blockHash = block.id;
 
-    const noticeData = findUuid(getstate().noticeModule.noticeData, txHash, blockHash, dispatch);
+      const noticeData = findUuid(getstate().noticeModule.noticeData, txHash, blockHash, dispatch);
 
-    let bondSuccessParamArr: any[] = [];
-    bondSuccessParamArr.push('0x' + blockHash);
-    bondSuccessParamArr.push('0x' + txHash);
-    let statusObj = {
-      num: 0,
-    };
-    dispatch(
-      rTokenSeries_bondStates(rSymbol.Atom, bondSuccessParamArr, statusObj, (e: string) => {
-        if (e == 'successful') {
-          dispatch(setStakeHash(null));
-          message.success('Transaction has been proceeded', 3, () => {
-            cb && cb('successful');
-          });
-          noticeData && dispatch(add_ATOM_stake_Notice(noticeData.uuid, noticeData.amount, noticeStatus.Confirmed));
-        } else if (e == 'failure' || e == 'stakingFailure') {
-          dispatch(
-            getBlock(blockHash, txHash, noticeData ? noticeData.uuid : null, () => {
+      let bondSuccessParamArr: any[] = [];
+      bondSuccessParamArr.push('0x' + blockHash);
+      bondSuccessParamArr.push('0x' + txHash);
+      let statusObj = {
+        num: 0,
+      };
+      dispatch(
+        rTokenSeries_bondStates(rSymbol.Atom, bondSuccessParamArr, statusObj, (e: string) => {
+          if (e == 'successful') {
+            dispatch(setStakeHash(null));
+            message.success('Transaction has been proceeded', 3, () => {
               cb && cb('successful');
-            }),
-          );
-        } else {
-          if (getstate().globalModule.processSlider == false) {
+            });
+            noticeData && dispatch(add_ATOM_stake_Notice(noticeData.uuid, noticeData.amount, noticeStatus.Confirmed));
+          } else if (e == 'failure' || e == 'stakingFailure') {
             dispatch(
-              initProcess({
-                sending: {
-                  packing: processStatus.success,
-                  brocasting: processStatus.success,
-                  finalizing: processStatus.success,
-                  checkTx: txHash,
-                },
-                staking: {
-                  packing: processStatus.success,
-                  brocasting: processStatus.success,
-                  finalizing: processStatus.success,
-                },
-                minting: {
-                  minting: processStatus.loading,
-                },
+              getBlock(blockHash, txHash, noticeData ? noticeData.uuid : null, () => {
+                cb && cb('successful');
               }),
             );
-            dispatch(setProcessSlider(true));
+          } else {
+            if (getstate().globalModule.processSlider == false) {
+              dispatch(
+                initProcess({
+                  sending: {
+                    packing: processStatus.success,
+                    brocasting: processStatus.success,
+                    finalizing: processStatus.success,
+                    checkTx: txHash,
+                  },
+                  staking: {
+                    packing: processStatus.success,
+                    brocasting: processStatus.success,
+                    finalizing: processStatus.success,
+                  },
+                  minting: {
+                    minting: processStatus.loading,
+                  },
+                }),
+              );
+              dispatch(setProcessSlider(true));
+            }
           }
-        }
-      }),
-    );
+        }),
+      );
+        
+    } catch (error) {
+      
+    }
   };
 
 export const getBlock =

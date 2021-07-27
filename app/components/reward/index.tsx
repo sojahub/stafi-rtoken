@@ -39,8 +39,7 @@ export default function Index(props:Props){
     },[hasMore,loading,props.address]); 
     useEffect(()=>{ 
         if(loading && hasMore){ 
-            dispatch(props.getReward(0,(hasMore:boolean)=>{ 
-                console.log(hasMore,"======props.addressaddress1")
+            dispatch(props.getReward(0,(hasMore:boolean)=>{  
                 setLoading(false);
                 setHasMore(hasMore)
                 setPageIndex(1)
@@ -49,8 +48,7 @@ export default function Index(props:Props){
             setHasMore(true);
             setLoading(true);
             setPageIndex(0);
-        }
-        console.log(props.address,"======props.addressaddress2")
+        } 
     },[props.address])
     const {gloading}=useSelector((state:RootState)=>{
         return {
@@ -59,7 +57,7 @@ export default function Index(props:Props){
     })
     return <LeftContent className="stafi_reward_card">
         <div className="title">
-                 Reward Details <Doubt tip={"This reward records are just estimation, and the actual rewards amount will be confirmed when you redeem. Reward calculation is based on your account balance of the last era, and the changes of rToken  balance mayl impact the accuracy of reward calculation."}/>
+                 Reward Details <Doubt tip={"This reward records are  just estimation, and the actual rewards amount will be confirmed when you redeem. Reward calculation is based on your account balance of the last era, and the changes of rToken balance may impact the accuracy of reward calculation."}/>
         </div>
         <div className="data_table">
             <div className="row heard">
