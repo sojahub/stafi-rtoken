@@ -61,7 +61,7 @@ export default function Index(props:any){
   }}
   onSwapClick={()=>{
     props.history.push({
-      pathname:"/rAsset/swap/native",
+      pathname:"/rAsset/swap/native/default",
       state:{ 
         rSymbol:"rFIS", 
       }
