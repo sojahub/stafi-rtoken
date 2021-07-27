@@ -131,7 +131,7 @@ export default {
   },
   rFISBep20TokenAddress: () => {
     if (!isdev()) {
-      return '0x2ed2c9f3cc1c69c82be35449d7c285dc30b97b5e';
+      return '0x8962a0f6c00ecad3b420ddeb03a6ef624d645fed';
     } else {
       return '0x2ed2c9f3cc1c69c82be35449d7c285dc30b97b5e';
     }
@@ -145,7 +145,7 @@ export default {
   },
   FISBep20TokenAddress: () => {
     if (!isdev()) {
-      return '0x3dabfb5b0ca8c416684e2a26c1ebc4039627c94a';
+      return '0x91c48208a9a171eb26e6f2bd48f41b958e19ebab';
     } else {
       return '0x3dabfb5b0ca8c416684e2a26c1ebc4039627c94a';
     }
@@ -159,7 +159,7 @@ export default {
   },
   rKSMBep20TokenAddress: () => {
     if (!isdev()) {
-      return '0xe2bcc4e638ecaa2f1f257054afcc5a4fd37ed027';
+      return '0xfa1df7c727d56d5fec8c79ef38a9c69aa9f784a3';
     } else {
       return '0xe2bcc4e638ecaa2f1f257054afcc5a4fd37ed027';
     }
@@ -173,7 +173,7 @@ export default {
   },
   rDOTBep20TokenAddress: () => {
     if (!isdev()) {
-      return '0x690c309f48843b37697d98d66b410adc45265efd';
+      return '0x1dab2a526c8ac1ddea86838a7b968626988d33de';
     } else {
       return '0x690c309f48843b37697d98d66b410adc45265efd';
     }
@@ -187,7 +187,7 @@ export default {
   },
   rATOMBep20TokenAddress: () => {
     if (!isdev()) {
-      return '0x5ffb6c41296b46fa365215358e261319fff347fb';
+      return '0x1e5f6d5355ae5f1c5c687d3041c55f0aeec57eab';
     } else {
       return '0x5ffb6c41296b46fa365215358e261319fff347fb';
     }
@@ -222,7 +222,7 @@ export default {
   },
   rETHBep20TokenAddress: () => {
     if (!isdev()) {
-      return '0x8dd855d062475f65d3b3eb27795fa3f2ba247eca';
+      return '0xa7a0a9fda65cd786b3dc718616cee25afb110544';
     } else {
       return '0x8dd855d062475f65d3b3eb27795fa3f2ba247eca';
     }
@@ -236,7 +236,7 @@ export default {
   },
   bep20HandlerAddress: () => {
     if (!isdev()) {
-      return '0xf341278f930c81719aad507b8796af353959e876';
+      return '0x13ef51f0525df6045267baed411f535d86586bc1';
     } else {
       return '0xf341278f930c81719aad507b8796af353959e876';
     }
@@ -250,7 +250,7 @@ export default {
   },
   bep20BridgeAddress: () => {
     if (!isdev()) {
-      return '0x50ba879767654756458dbb29674a8545de83e096';
+      return '0xef3a930e1ffffacd2fc13434ac81bd278b0ecc8d';
     } else {
       return '0x50ba879767654756458dbb29674a8545de83e096';
     }

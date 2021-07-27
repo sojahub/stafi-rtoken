@@ -56,7 +56,7 @@ export default class Index {
     if (isdev()) {
       return '0.001000';
     } else {
-      return '0.000020';
+      return '0.000200';
     }
   }
   getBridgeAbi() {
