@@ -1,6 +1,6 @@
 import config,{isdev} from '@config/index'; 
 import {CosmosKeyring} from '@keyring/CosmosKeyring';
-import { SigningStargateClient } from '@cosmjs/stargate';
+import { SigningStargateClient } from '@cosmjs/stargate'; 
 import { message } from 'antd';
 declare const window: any;
 let cosmosApi:any = null; 
@@ -22,7 +22,7 @@ export default class ExtensionDapp extends CosmosKeyring{
               // The name of the chain to be displayed to the user.
               chainName: "Cosmos-stargate",
               // RPC endpoint of the chain.
-              rpc: "https://testcosmosrpc.wetez.io",
+              rpc: config.rAtomCosmosChainRpc(),
               // REST endpoint of the chain.
               rest: "https://testcosmosrset.wetez.io",
               // Staking coin information

@@ -7,9 +7,10 @@ import moment from 'moment';
 import { AppThunk } from '../store';
 import { bondStates, getMinting } from './FISClice';
 import { initProcess, processStatus, setProcessSending, setProcessSlider, setProcessStaking } from './globalClice';
-import { setProcessParameter as atomSetProcessParameter } from './rATOMClice';
+import { setProcessParameter as atomSetProcessParameter, setProcessParameter as maticSetProcessParameter } from './rATOMClice';
 import { setProcessParameter } from './rDOTClice';
 import { setProcessParameter as krmSetProcessParameter } from './rKSMClice';
+import { setProcessParameter as solSetProcessParameter } from './rSOLClice';
 export enum noticeStatus{
   Confirmed="Confirmed",
   Pending="Pending",
@@ -85,6 +86,28 @@ const noticeClice = createSlice({
       setLocalStorageItem(Keys.StafiNoticeKey,data)
       state.noticeData=data;
     },
+
+    updateNoticeModal(state,{payload}){ 
+      let data= getLocalStorageItem(Keys.StafiNoticeKey);
+     
+      if(!data){ 
+        data={};  
+        data.datas=[] 
+      } 
+      if(payload.showNew){
+        data.showNew=payload.showNew;
+      }
+      const m=data.datas.find((item:any)=>{
+        return item.uuid==payload.data.uuid
+      })
+      if(m){
+        data.datas=data.datas.map((item:any)=>{ 
+          return item.uuid==payload.data.uuid ? {...payload.data,dateTime:item.dateTime} :item;
+        })
+        setLocalStorageItem(Keys.StafiNoticeKey,data)
+        state.noticeData=data;
+      } 
+    },
     readNotice(state,{payload}){
       let data= getLocalStorageItem(Keys.StafiNoticeKey);
       if(data){
@@ -95,7 +118,7 @@ const noticeClice = createSlice({
     }
   },
 });
-export const {addNoticeModal,readNotice}=noticeClice.actions
+export const {addNoticeModal,readNotice,updateNoticeModal}=noticeClice.actions
 
 
 export const add_Notice=(uuid:string,rSymbol:string,type:string,subType:string,amount:string,status:string,subData?:any):AppThunk=>async (dispatch,getState)=>{
@@ -134,6 +157,22 @@ export const update_Notice=(uuid:string,rSymbol:string,type:string,subType:strin
   }))
 }
  
+export const update_NoticeNew=(uuid:string,rSymbol:string,type:string,subType:string,amount:string,status:string,subData?:any):AppThunk=>async (dispatch,getState)=>{
+  dispatch(updateNoticeModal({
+    data:{
+      uuid:uuid,   //信息唯一标识
+      title:subType,   
+      type:type,
+      subType:subType,
+      // content:content,
+      amount:amount,
+      status:status,
+      rSymbol:rSymbol,
+      subData:subData, 
+    },
+    showNew:false
+  }))
+}
 
 export const setProcess=(item:any,list:any,cb?:Function):AppThunk=>async (dispatch,getState)=>{
   if(list){
@@ -172,8 +211,13 @@ export const setProcess=(item:any,list:any,cb?:Function):AppThunk=>async (dispat
       }
       if(item.subData.process.rSymbol==rSymbol.Atom){
         dispatch(atomSetProcessParameter(item.subData.processParameter));
-      }
-      
+      } 
+      if(item.subData.process.rSymbol==rSymbol.Sol){
+        dispatch(solSetProcessParameter(item.subData.processParameter));
+      } 
+      if(item.subData.process.rSymbol==rSymbol.Matic){
+        dispatch(maticSetProcessParameter(item.subData.processParameter));
+      } 
     }
   }
 }
@@ -217,16 +261,31 @@ const re_Minting=(item:any,):AppThunk=>(dispatch,getState)=>{
 }
 
 
-export const findUuid=(datas:any,txHash:string,blockHash:string)=>{  
+export const findUuid=(datas:any,txHash:string,blockHash:string,dispatch:any)=>{  
   if(datas){
     const data = datas.datas.find((item:any)=>{
-      if(item && item.subData && item.subData.processParameter && item.subData.processParameter.sending.txHash==txHash && item.subData.processParameter.sending.blockHash==blockHash){
+      if(item && item.subData && item.subData.processParameter && item.subData.processParameter.sending && item.subData.processParameter.sending.txHash==txHash && item.subData.processParameter.sending.blockHash==blockHash){
         return true;
       }else{
         return false;
       }
     })
     if(data && data.status!=noticeStatus.Confirmed){
+      if(data.subData.process.rSymbol==rSymbol.Ksm){
+        dispatch && dispatch(krmSetProcessParameter(data.subData.processParameter));
+      }
+      if(data.subData.process.rSymbol==rSymbol.Dot){
+        dispatch && dispatch(setProcessParameter(data.subData.processParameter));
+      }
+      if(data.subData.process.rSymbol==rSymbol.Atom){
+        dispatch && dispatch(atomSetProcessParameter(data.subData.processParameter));
+      }
+      if(data.subData.process.rSymbol==rSymbol.Matic){
+        dispatch && dispatch(maticSetProcessParameter(data.subData.processParameter));
+      }
+      if(data.subData.process.rSymbol==rSymbol.Sol){
+        dispatch && dispatch(solSetProcessParameter(data.subData.processParameter));
+      }
       return {
         uuid:data.uuid,
         amount:data.subData.processParameter.sending.amount
@@ -235,6 +294,31 @@ export const findUuid=(datas:any,txHash:string,blockHash:string)=>{
   }
   return null;
 }
+
+export const findUuidWithoutBlockhash = (datas: any, txHash: string) => {
+  if (datas) {
+    const data = datas.datas.find((item: any) => {
+      if (
+        item &&
+        item.subData &&
+        item.subData.processParameter &&
+        item.subData.processParameter.sending &&
+        item.subData.processParameter.sending.txHash == txHash
+      ) {
+        return true;
+      } else {
+        return false;
+      }
+    });
+    if (data && data.status != noticeStatus.Confirmed) {
+      return {
+        uuid: data.uuid,
+        amount: data.subData.processParameter.sending.amount,
+      };
+    }
+  }
+  return null;
+};
  
 export const checkAll_minting=(list:any):AppThunk=>(dispatch,getState)=>{
   if(list){
@@ -242,6 +326,11 @@ export const checkAll_minting=(list:any):AppThunk=>(dispatch,getState)=>{
       return i.status != noticeStatus.Confirmed;
     }); 
     arryList.forEach((item:any) => {
+      if (!item.subData||!item.subData.processParameter||!item.subData.processParameter.staking) {
+        // continue
+        return true;
+      }
+      const staking=item.subData.processParameter.staking;
       if(item.subData && item.subData.processParameter){
         const staking=item.subData.processParameter.staking;
         let process={...item.subData.process}; 
@@ -341,6 +430,26 @@ export const checkAll_minting=(list:any):AppThunk=>(dispatch,getState)=>{
     });
   }
 }
+
+export const check_swap_status = ():AppThunk=>(dispatch,getState)=>{
+  let data= getState().noticeModule.noticeData;
+     
+  if(!data ||!data.datas){ 
+    return;
+  } 
+  data.datas.forEach((item:any) => {
+    if(item.type == noticeType.Staker &&
+      item.subType == noticesubType.Swap) {
+        if(moment().isAfter(moment(item.dateTime,formatStr).add(config.swapWaitingTime(),'s'))){
+          dispatch(updateNoticeModal({
+            data:{...item,status:noticeStatus.Confirmed},
+            showNew:false
+          }))
+        }
+      }
+  });
+}
+
 export const notice_text=(item:any)=>{
   if(item.type==noticeType.Staker && item.subType==noticesubType.Stake){
     return `Staked ${item.amount} ${item.rSymbol.toUpperCase()} from your Wallet to StaFi Validator Pool Contract`
@@ -352,9 +461,22 @@ export const notice_text=(item:any)=>{
     return `Withdraw ${item.amount} ${item.rSymbol.toUpperCase()} from contracts to wallet`
   }else if(item.subType==noticesubType.Swap){
     if(item.subData.swapType == "native"){
+      if(item.subData.destSwapType==='bep20'){
+        return `Swap ${item.amount} Native ${item.rSymbol} to BEP20, it may take 2~10 minutes to arrive`
+      }
       return `Swap ${item.amount} Native ${item.rSymbol} to ERC20, it may take 2~10 minutes to arrive`
-    }else{
-      return `Swap ${item.amount}  ERC20 ${item.rSymbol} to Native, it may take 2~10 minutes to arrive`
+    }else if(item.subData.swapType == "bep20"){
+      if(item.subData.destSwapType == "erc20"){
+        return `Swap ${item.amount}  BEP20 ${item.rSymbol} to ERC20, it may take 2~10 minutes to arrive`
+      }else{
+        return `Swap ${item.amount}  BEP20 ${item.rSymbol} to Native, it may take 2~10 minutes to arrive`
+      }
+    } else{
+      if(item.subData.destSwapType == "bep20"){
+        return `Swap ${item.amount}  ERC20 ${item.rSymbol} to BEP20, it may take 2~10 minutes to arrive`
+      }else{
+        return `Swap ${item.amount}  ERC20 ${item.rSymbol} to Native, it may take 2~10 minutes to arrive`
+      }
     } 
   }else if(item.subType==noticesubType.Deposit){
     return `Deposit ${item.amount} ETH to register as a validator`;

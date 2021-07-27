@@ -33,8 +33,8 @@ export default function Index(props:Props){
                     props.apyList.length==0 && "0.00%"
                   }
                   { 
-                    props.apyList.map((item)=>{ 
-                      return <div><div>+{item.apy}% </div><label>{item.symbol}</label></div>
+                    props.apyList.map((item,i)=>{ 
+                      return <div key={i}><div>+{item.apy}% </div><label>{item.symbol}</label></div>
                     })
                   } 
                 </div>

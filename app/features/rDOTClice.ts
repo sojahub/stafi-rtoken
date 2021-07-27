@@ -8,6 +8,7 @@ import { u8aToHex } from '@polkadot/util';
 import { createSlice } from '@reduxjs/toolkit';
 import keyring from '@servers/index';
 import PolkadotServer from '@servers/polkadot/index';
+import RpcServer,{pageCount} from '@servers/rpc/index';
 import Stafi from '@servers/stafi/index';
 import { getLocalStorageItem, Keys, removeLocalStorageItem, setLocalStorageItem, stafi_uuid } from '@util/common';
 import NumberUtil from '@util/numberUtil';
@@ -43,6 +44,8 @@ const rDOTClice = createSlice({
     totalIssuance:"--",
     stakerApr:"--",
     totalUnbonding:null,
+    rewardList:[],
+    rewardList_lastdata:null
   },
   reducers: {
     setDotAccounts(state, { payload }) {
@@ -122,12 +125,19 @@ const rDOTClice = createSlice({
     },
     setUnBondFees(state,{payload}){
       state.unBondFees=payload
+    },
+    setRewardList(state,{payload}){
+      state.rewardList=payload
+    },
+    setRewardList_lastdata(state,{payload}){
+      state.rewardList_lastdata=payload
     }
   },
 });
 const polkadotServer = new PolkadotServer();
 const commonClice=new CommonClice();
 const stafiServer = new Stafi();
+const rpcServer=new RpcServer();
 export const { setDotAccounts,
   setDotAccount,
   setTransferrableAmountShow,
@@ -143,7 +153,9 @@ export const { setDotAccounts,
   setStakerApr,
   setTotalUnbonding,
   setUnBondFees,
-  setRatioShow
+  setRatioShow,
+  setRewardList,
+  setRewardList_lastdata
 } = rDOTClice.actions;
 
 
@@ -471,7 +483,7 @@ export const continueProcess = (): AppThunk => async (dispatch, getState) => {
 
 export const onProceed=(blockHash: string, txHash: string,cb?:Function):AppThunk => async (dispatch,getstate)=>{
   
-  const noticeData=findUuid(getstate().noticeModule.noticeData,txHash,blockHash)
+  const noticeData=findUuid(getstate().noticeModule.noticeData,txHash,blockHash,dispatch)
   
   let bondSuccessParamArr:any[] = [];
   bondSuccessParamArr.push(blockHash);
@@ -688,4 +700,51 @@ const add_DOT_Notice=(uuid:string,type:string,subType:string,content:string,stat
 }
 
  
+
+export const getReward=(pageIndex:Number,cb:Function):AppThunk=>async (dispatch, getState)=>{
+  const fisSource=getState().FISModule.fisAccount.address;
+  const ethAccount=getState().rETHModule.ethAccount; 
+  dispatch(setLoading(true));
+  try { 
+    if(pageIndex==0){
+      dispatch(setRewardList([]));
+      dispatch(setRewardList_lastdata(null));
+    }
+    const result=await rpcServer.getReward(fisSource,ethAccount?ethAccount.address:"",rSymbol.Dot,pageIndex);
+    if(result.status==80000){ 
+      const rewardList=getState().rDOTModule.rewardList; 
+      if(result.data.rewardList.length>0){
+        const list=result.data.rewardList.map((item:any)=>{
+          const rate=NumberUtil.rTokenRateToHuman(item.rate);
+          const rbalance=NumberUtil.tokenAmountToHuman(item.rbalance,rSymbol.Dot);
+          return {
+            ...item,
+            rbalance:rbalance,
+            rate:rate
+          }
+        })
+        if(result.data.rewardList.length<=pageCount){
+          dispatch(setRewardList_lastdata(null))
+        }else{
+          dispatch(setRewardList_lastdata(list[list.length-1]));
+          list.pop()
+        } 
+        dispatch(setRewardList([...rewardList,...list])); 
+        dispatch(setLoading(false));
+        if(result.data.rewardList.length<=pageCount){
+          cb && cb(false)
+        }else{
+          cb && cb(true)
+        }
+      }else{
+        dispatch(setLoading(false));
+        cb && cb(false)
+      }
+    } else {
+      dispatch(setLoading(false))
+    }
+  } catch (error) {
+    dispatch(setLoading(false));
+  }
+}
 export default rDOTClice.reducer;

@@ -115,8 +115,7 @@ export default function Inde(props:any){
       }else{
         return false;
       }
-    })
-    console.log(rTokenDatas,"=====rTokenDatasrTokenDatas")
+    }) 
     return {
       list:rTokenDatas,
       totalLiquidity:state.rPoolModule.totalLiquidity,
@@ -152,9 +151,9 @@ export default function Inde(props:any){
             }}/>
             <div className="table_body">
               {
-                list.map((data:any)=>{
-                  return <div className="rtoken_type">
-                    {data.children.map((item:any,index:number)=>{
+                list.map((data:any,i:any)=>{
+                  return <div key={`${data.token}${i}`} className="rtoken_type">
+                    {data.children.map((item:any,index:number)=>{ 
                       let type="";
                       let icon=null; 
                       let stakeUrl="";
@@ -204,7 +203,7 @@ export default function Inde(props:any){
                       if(type==""){
                         return <></>
                       }
-                      return <TableItem wrapFiUrl={"https://drop.wrapfi.io"} liquidityUrl={liquidityUrl} history={props.history} stakeUrl={stakeUrl} pairIcon={index==0?icon:null} pairValue={index==0?type:null} apyList={item.apy}  liquidity={item.liquidity} slippage={item.slippage} poolOn={item.platform}/>
+                      return <TableItem key={`${item.contract}${item.id}`} wrapFiUrl={"https://drop.wrapfi.io"} liquidityUrl={liquidityUrl} history={props.history} stakeUrl={stakeUrl} pairIcon={index==0?icon:null} pairValue={index==0?type:null} apyList={item.apy}  liquidity={item.liquidity} slippage={item.slippage} poolOn={item.platform}/>
                     })}
                   </div>
                   

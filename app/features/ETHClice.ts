@@ -1,9 +1,12 @@
+import config from '@config/index';
 import { createSlice } from '@reduxjs/toolkit';
 import AtomServer from '@servers/atom';
 import BridgeServer from '@servers/bridge';
 import EthServer from '@servers/eth/index';
 import KsmServer from '@servers/ksm';
+import MaticServer from '@servers/matic';
 import DotServer from '@servers/polkadot';
+import SolServer from '@servers/sol';
 import FisServer from '@servers/stafi';
 import { AppThunk } from '../store';
 
@@ -12,7 +15,9 @@ const fisServer =new FisServer();
 const ksmServer=new KsmServer();
 const bridgeServer=new BridgeServer();
 const dotServer =new DotServer();
-const atomServer=new AtomServer();
+const atomServer=new AtomServer(); 
+const solServer=new SolServer(); 
+const maticServer=new MaticServer(); 
 const ETHClice = createSlice({
   name: 'ETHModule',
   initialState: {   
@@ -21,12 +26,17 @@ const ETHClice = createSlice({
     ercRFISBalance:"--",
     ercRKSMBalance:"--",
     ercRDOTBalance:"--",
-    ercRATOMBalance:"--",
+    ercRATOMBalance:"--", 
+    ercRSOLBalance:"--", 
+    ercRMaticBalance:"--", 
     FISErc20Allowance:"--",
     RFISErc20Allowance:"--",
     RKSMErc20Allowance:"--",
     RDOTErc20Allowance:"--",
-    RATOMErc20Allowance:"--"
+    RATOMErc20Allowance:"--", 
+    RSOLErc20Allowance:"--", 
+    RMaticErc20Allowance:"--", 
+    RETHErc20Allowance:"--", 
   },
   reducers: {   
     setErcETHBalance(state,{payload}){
@@ -46,6 +56,12 @@ const ETHClice = createSlice({
     },
     setErcRATOMBalance(state,{payload}){
       state.ercRATOMBalance=payload;
+    }, 
+    setErcRSOLBalance(state,{payload}){
+      state.ercRSOLBalance=payload;
+    },
+    setErcRMaticBalance(state,{payload}){
+      state.ercRMaticBalance=payload; 
     },
     setFISErc20Allowance(state,{payload}){
         state.FISErc20Allowance=payload;
@@ -61,6 +77,15 @@ const ETHClice = createSlice({
     },
     setRATOMErc20Allowance(state,{payload}){
       state.RATOMErc20Allowance=payload;
+    }, 
+    setRSOLErc20Allowance(state,{payload}){
+      state.RSOLErc20Allowance=payload;
+    },
+    setRMaticErc20Allowance(state,{payload}){
+      state.RMaticErc20Allowance=payload; 
+    },
+    setRETHErc20Allowance(state,{payload}){
+      state.RETHErc20Allowance=payload; 
     },
   },
 });
@@ -71,13 +96,17 @@ export const {
     setErcRFISBalance,
     setErcRKSMBalance,
     setErcRDOTBalance,
-    setErcRATOMBalance,
+    setErcRATOMBalance, 
+    setErcRSOLBalance, 
+    setErcRMaticBalance, 
     setFISErc20Allowance,
     setRFISErc20Allowance,
     setRKSMErc20Allowance,
     setRDOTErc20Allowance,
-    setRATOMErc20Allowance
-    
+    setRATOMErc20Allowance, 
+    setRSOLErc20Allowance, 
+    setRMaticErc20Allowance,
+    setRETHErc20Allowance,
 }=ETHClice.actions
 
 export const getAssetBalanceAll=():AppThunk=>(dispatch,getState)=>{ 
@@ -86,14 +115,19 @@ export const getAssetBalanceAll=():AppThunk=>(dispatch,getState)=>{
     dispatch(getRFISAssetBalance());
     dispatch(getRKSMAssetBalance());
     dispatch(getRDOTAssetBalance());
-    dispatch(getRATOMAssetBalance());
+    dispatch(getRATOMAssetBalance()); 
+    dispatch(getRSOLAssetBalance()); 
+    dispatch(getRMaticAssetBalance()); 
 }
 export const getErc20Allowances=():AppThunk=>(dispatch,getState)=>{ 
     dispatch(getFISErc20Allowance());
     dispatch(getRFISErc20Allowance());
     dispatch(getRKSMErc20Allowance()); 
     dispatch(getRDOTErc20Allowance());
-    dispatch(getRATOMErc20Allowance());
+    dispatch(getRATOMErc20Allowance()); 
+    dispatch(getRSOLErc20Allowance()); 
+    dispatch(getRMaticErc20Allowance()); 
+    dispatch(getRETHErc20Allowance()); 
 }
 export const getETHAssetBalance=():AppThunk=>(dispatch,getState)=>{  
   if(getState().rETHModule.ethAccount){ 
@@ -144,6 +178,24 @@ export const getFISAssetBalance=():AppThunk=>(dispatch,getState)=>{
         dispatch(setErcRATOMBalance(v))
       })
     }
+  } 
+  export const getRSOLAssetBalance=():AppThunk=>(dispatch,getState)=>{  
+    if(getState().rETHModule.ethAccount){ 
+      const address=getState().rETHModule.ethAccount.address;   
+      getAssetBalance(address,solServer.getTokenAbi(), solServer.getRSOLTokenAddress(),(v:any)=>{
+        dispatch(setErcRSOLBalance(v))
+ 
+      })
+    }
+  }
+ 
+  export const getRMaticAssetBalance=():AppThunk=>(dispatch,getState)=>{  
+    if(getState().rETHModule.ethAccount){  
+      const address=getState().rETHModule.ethAccount.address;   
+      getAssetBalance(address,maticServer.getTokenAbi(), maticServer.getTokenAddress(),(v:any)=>{
+         dispatch(setErcRMaticBalance(v)); 
+      })
+    }
   }
 export const getAssetBalance=(ethAddress:string,getTokenAbi:string,getTokenAddress:string,cb?:Function)=>{
     let web3=ethServer.getWeb3(); 
@@ -157,6 +209,7 @@ export const getAssetBalance=(ethAddress:string,getTokenAbi:string,getTokenAddre
         cb && cb(rbalance);
       }).catch((e:any)=>{
         console.error(e)
+        cb && cb('--');
       });
     }catch(e:any){
       console.error(e)
@@ -204,6 +257,31 @@ export const getFISErc20Allowance=():AppThunk=>(dispatch,getState)=>{
         dispatch(setRATOMErc20Allowance(v))
       })
     }
+  } 
+  export const getRSOLErc20Allowance=():AppThunk=>(dispatch,getState)=>{
+    if(getState().rETHModule.ethAccount){ 
+      const address=getState().rETHModule.ethAccount.address;  
+      getErc20Allowance(address,solServer.getTokenAbi(), solServer.getRSOLTokenAddress(),(v:any)=>{
+        dispatch(setRSOLErc20Allowance(v))
+      })
+    }
+  }
+ 
+  export const getRMaticErc20Allowance=():AppThunk=>(dispatch,getState)=>{
+    if(getState().rETHModule.ethAccount){ 
+      const address=getState().rETHModule.ethAccount.address;  
+      getErc20Allowance(address,maticServer.getTokenAbi(), maticServer.getTokenAddress(),(v:any)=>{
+        dispatch(setRMaticErc20Allowance(v)) 
+      })
+    }
+  }
+  export const getRETHErc20Allowance=():AppThunk=>(dispatch,getState)=>{
+    if(getState().rETHModule.ethAccount){ 
+      const address=getState().rETHModule.ethAccount.address;  
+      getErc20Allowance(address,ethServer.getRETHTokenAbi(), ethServer.getRETHTokenAddress(),(v:any)=>{
+        dispatch(setRETHErc20Allowance(v)) 
+      })
+    }
   }
 const getErc20Allowance=async (ethAddress:string,getTokenAbi:string,getTokenAddress:string,cb?:Function)=>{
     let web3=ethServer.getWeb3(); 
@@ -215,6 +293,7 @@ const getErc20Allowance=async (ethAddress:string,getTokenAbi:string,getTokenAddr
        cb && cb(allowance);
     }catch(e:any){
       console.error(e) 
+      cb && cb('--')
     }
   }
 
@@ -236,7 +315,7 @@ const getErc20Allowance=async (ethAddress:string,getTokenAbi:string,getTokenAddr
   } else if (selectedToken == 'rATOM') {
     tokenAddress = atomServer.getRATOMTokenAddress();
   }
-  return 'https://etherscan.io/token/' + tokenAddress + '?a=' + ethAddress;
+  return config.etherScanTokenUrl(tokenAddress,ethAddress);
 }
 export const clickSwapToNativeLink=(stafiAddress:string) =>{
   return 'https://stafi.subscan.io/account/' +stafiAddress; 

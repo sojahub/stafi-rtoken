@@ -1,12 +1,11 @@
+import { Input, message } from 'antd';
 import React from 'react';
-import {Input,message} from 'antd';
-import {regular,parseInterge} from '@util/utils'
-
 import './index.scss';
+
 
 type Props={
     placeholder?:string,
-    icon:any,
+    icon?:any,
     unit?:string,
     value?:string | number ,
     onChange?:Function,
@@ -33,5 +32,5 @@ export default function Index(props:Props){
     }}
     value={props.value}
     placeholder={props.placeholder} 
-    suffix={<><label className="input_unit">{props.unit}</label><img src={props.icon}/></>}/>
+    suffix={props.icon?<><label className="input_unit">{props.unit}</label><img src={props.icon}/></>:null}/>
 }

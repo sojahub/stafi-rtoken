@@ -1,12 +1,12 @@
-import React, { useEffect } from 'react'; 
-import leftArrowSvg from '@images/left_arrow.svg'; 
-import DataItem from './components/dataItem';
-import A from '@shared/components/button/a'
-import {getStakingPoolStatus,getUnmatchedValidators,getPoolCount,getTotalRETH,getUnmatchedETH} from '@features/rETHClice'
-import './index.scss';
-import { useDispatch, useSelector } from 'react-redux';
+import { getPoolCount, getStakingPoolStatus, getTotalRETH, getUnmatchedETH, getUnmatchedValidators } from '@features/rETHClice';
+import leftArrowSvg from '@images/left_arrow.svg';
+import A from '@shared/components/button/a';
+import StringUtil from '@util/stringUtil';
 import { RootState } from 'app/store';
-import  StringUtil from '@util/stringUtil'
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import DataItem from './components/dataItem';
+import './index.scss';
 export default function Index(props:any){
    
   const dispatch=useDispatch();
@@ -15,7 +15,7 @@ export default function Index(props:any){
     dispatch(getUnmatchedValidators());
     dispatch(getPoolCount());
     dispatch(getUnmatchedETH());
-    dispatch(getTotalRETH())
+    dispatch(getTotalRETH(false));
   },[])
  
   const {poolStakerApr,poolValidatorApr,totalStakedAmount,unmatchedValidators,poolCount,poolStatusUnmatchedETH,poolStatusTotalRETH} = useSelector((state:RootState)=>{

@@ -1,0 +1,41 @@
+.stafi_search_matic_container{
+  padding:34px 106px;
+  position: relative;  
+  .ant-form-item{
+    .ant-form-item-label{
+      label{
+        color:#fff;
+      }
+      >label{
+        width:100%;
+        display: block;
+      }
+      .item_title{
+        display: flex;
+        justify-content: space-between;
+        a{
+          color:#fff;
+          text-decoration: underline; 
+        }
+      }
+    }
+    .stafi_input{
+      border-radius: 7px;
+      color:#8F8F8F
+    }
+    .stafi_select {
+      .ant-select-selector{
+        border-radius: 7px;
+        .ant-select-selection-item{
+          color:#8F8F8F
+        }
+      }
+    }
+  }
+  .btns{
+    display: flex;
+    justify-content: flex-end;
+    margin-top:130px;
+  } 
+
+}

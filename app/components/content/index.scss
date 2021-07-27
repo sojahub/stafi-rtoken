@@ -194,7 +194,8 @@
             font-size: 12px;
             text-align: right;
             color:#c4c4c4;
-            margin-top:10px
+            margin:5px 0px;
+            min-height: 18px;
         }
     }
     .btns{
@@ -223,5 +224,33 @@
         margin-top: 110px; 
         display: flex;
         justify-content: flex-end;
+    }
+
+    .fis_unbond_info{
+        display: flex;
+        margin-top:22px;
+        align-items: center;
+        label{
+            color:#c4c4c4;
+            font-size: 12px;
+            margin-left:11px;
+        }
+    }
+    .fis_withdraw_info{
+        margin-top:33px;
+    }
+    .fis_withdraw{
+        .value{
+            font-size:30px;
+            color:#00F3AB;
+            font-weight: bold; 
+        }
+        .info{
+            margin-left:20px;
+            font-size: 12px;
+            .withdraw_value{
+                font-weight: bold; 
+            }
+        }
     }
 }

@@ -1,7 +1,8 @@
-import {rSymbol} from '@keyring/defaults'
+import { rSymbol } from '@keyring/defaults';
+import { divide, floor } from 'mathjs';
 export default {
   // Add floating point numbers
-  floatAdd: function(arg1, arg2) {
+  floatAdd: function (arg1, arg2) {
     var r1, r2, m;
     try {
       r1 = arg1.toString().split('.')[1].length;
@@ -18,7 +19,7 @@ export default {
   },
 
   // Subtraction of floating point numbers
-  floatSub: function(arg1, arg2) {
+  floatSub: function (arg1, arg2) {
     var r1, r2, m, n;
     try {
       r1 = arg1.toString().split('.')[1].length;
@@ -31,13 +32,12 @@ export default {
       r2 = 0;
     }
     m = Math.pow(10, Math.max(r1, r2));
-    
+
     n = r1 >= r2 ? r1 : r2;
     return ((Math.round(arg1 * m) - Math.round(arg2 * m)) / m).toFixed(n);
   },
 
- 
-  floatMul: function(arg1, arg2) {
+  floatMul: function (arg1, arg2) {
     var m = 0,
       s1 = arg1.toString(),
       s2 = arg2.toString();
@@ -47,14 +47,11 @@ export default {
     try {
       m += s2.split('.')[1].length;
     } catch (e) {}
-    return (
-      (Number(s1.replace('.', '')) * Number(s2.replace('.', ''))) /
-      Math.pow(10, m)
-    );
+    return (Number(s1.replace('.', '')) * Number(s2.replace('.', ''))) / Math.pow(10, m);
   },
 
   // Division of floating point numbers
-  floatDiv: function(arg1, arg2) {
+  floatDiv: function (arg1, arg2) {
     var t1 = 0,
       t2 = 0,
       r1,
@@ -93,8 +90,8 @@ export default {
 
   // The return string contains 6 decimal places and 2 decimal places, including 0
   handleEthRoundToFixed(amount) {
-    if(amount=="--" || isNaN(amount)){
-      return "--"
+    if (amount == '--' || isNaN(amount)) {
+      return '--';
     }
     return (Math.floor(amount * 100) / 100).toFixed(2);
   },
@@ -110,19 +107,19 @@ export default {
   },
 
   // The return string contains 6 decimal places, including 0
-  handleFisAmountToFixed(amount) { 
-    if(amount=="--"){
-      return "--"
+  handleFisAmountToFixed(amount) {
+    if (amount == '--') {
+      return '--';
     }
-    return (Math.floor(amount * 1000000) / 1000000).toFixed(6) || "--";
+    return (floor(amount * 1000000) / 1000000).toFixed(6) || '--';
   },
 
   // The return string contains 6 decimal places, including 0
-  handleFisRoundToFixed(amount) { 
-    if(amount=="--"){
-      return "--"
+  handleFisRoundToFixed(amount) {
+    if (amount == '--') {
+      return '--';
     }
-    return (Math.round(amount * 100000000) / 100000000).toFixed(6) || "--";
+    return (Math.round(amount * 100000000) / 100000000).toFixed(6) || '--';
   },
 
   // Returns a string containing 6 decimal places, including 0
@@ -134,45 +131,77 @@ export default {
     return amount / 1000000000000;
   },
 
+  solAmountToHuman(amount) {
+    return amount / 1000000000;
+  },
+
   fisAmountToChain(amount) {
     return Math.round(Number(amount) * 1000000000000);
   },
 
-  // The return string contains 4 decimal places, including 0
-  handleAtomRoundToFixed(amount) { 
-    if(amount=="--"){
-      return "--"
-    }
-    return (Math.round(amount * 1000000) / 1000000).toFixed(4) || "--";
+  solAmountToChain(amount) {
+    return Math.round(Number(amount) * 1000000000);
   },
 
-  tokenAmountToHuman(amount,symbol){
-   switch(symbol){
-     case rSymbol.Dot:
-      return amount / 10000000000;
-    case rSymbol.Atom:
-      return amount / 1000000;
-     case rSymbol.Fis:
-        return amount / 1000000000000;
-     case rSymbol.Ksm:
-        return amount / 1000000000000;
-     default:
-        return amount / 1000000000000;
-   } 
+  // The return string contains 4 decimal places, including 0
+  handleAtomRoundToFixed(amount) {
+    if (amount == '--') {
+      return '--';
+    } 
+    return (Math.round(amount * 1000000) / 1000000).toFixed(4) || '--';
   },
-  tokenAmountToChain(amount,symbol) {
-    switch(symbol){
+
+  tokenAmountToHuman(amount, symbol) {
+    let factor;
+    switch (symbol) {
+      case rSymbol.Dot:
+        factor = 10000000000;
+        break;
+      case rSymbol.Atom:
+        factor = 1000000;
+        break;
+      case rSymbol.Fis:
+        factor = 1000000000000;
+        break;
+      case rSymbol.Ksm:
+        factor = 1000000000000;
+        break;
+      case rSymbol.Sol:
+        factor = 1000000000;
+        break;
+      case rSymbol.Eth:
+        factor = 1000000000000000000;
+        break;
+      case rSymbol.Matic:
+        factor = 1000000000000000000;
+        break;
+      default:
+        factor = 1000000000000;
+        break;
+    }
+
+    // console.log(`amount: ${amount} factor: ${factor}`);
+    return divide(Number(amount), factor);
+  },
+  tokenAmountToChain(amount, symbol) {
+    switch (symbol) { 
       case rSymbol.Dot:
         return Math.round(Number(amount) * 10000000000);
       case rSymbol.Atom:
         return Math.round(Number(amount) * 1000000);
       case rSymbol.Fis:
         return Math.round(Number(amount) * 1000000000000);
-      case rSymbol.Ksm:
+      case rSymbol.Ksm: 
         return Math.round(Number(amount) * 1000000000000);
+      case rSymbol.Sol:
+        return Math.round(Number(amount) * 1000000000); 
+      case rSymbol.Matic:
+        return Math.round(Number(amount) * 1000000000000000000);
+      case rSymbol.Eth:
+        return Math.round(Number(amount) * 1000000000000000000); 
       default:
         return Math.round(Number(amount) * 1000000000000);
-    }  
+    }
   },
   fisFeeToHuman(fee) {
     return fee / 1000000000;
@@ -223,7 +252,19 @@ export default {
           s[1] += new Array(prec - s[1].length + 1).join('0');
       }
       return s.join(dec);
+  },
+  fixedAmountLength(amount){
+    if(amount=="--"){
+      return "--"
+    }
+    let  wholeNumberLength=Math.floor(Number(amount)).toString().length; 
+    let maxLength = 8;
+    if(wholeNumberLength>=maxLength){
+      return Math.floor(amount);
+    }else if((maxLength-wholeNumberLength)<2){
+      return this.handleEthAmountRound(amount).toFixed(6);
+    }else{
+      return this.handleEthAmountRound(amount).toFixed(maxLength-wholeNumberLength);
+    }
   }
 }; 
-
- 

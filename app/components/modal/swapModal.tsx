@@ -1,15 +1,15 @@
-import React from 'react';
-import {Modal,message} from 'antd';
 import Uniswap_svg from '@images/uniswap.png';
-
+import { message, Modal } from 'antd';
+import React from 'react';
 import './swap.scss';
+
 
 type Props={
   visible:boolean,
   onOk?:Function,
   onCancel?: Function,
-  onUniswapClick?:Function,
-  type:"rDOT"|"rETH"|"rFIS"|"rKSM"|"rATOM",
+  onUniswapClick?:Function, 
+  type:"rDOT"|"rETH"|"rFIS"|"rKSM"|"rATOM"|"rSOL" | "rMATIC", 
 }
 export default function Index(props:Props){
   return <Modal visible={props.visible} 

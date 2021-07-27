@@ -1,75 +1,81 @@
-
+import { Symbol } from '@keyring/defaults';
+import { getLocalStorageItem, Keys } from '@util/common';
+import { includes } from 'lodash';
 import React from 'react';
-import {includes} from 'lodash'; 
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux'; 
+import { connect } from 'react-redux';
 import { Redirect } from 'react-router-dom';
-import {getLocalStorageItem,Keys} from '@util/common';
-import {Symbol} from '@keyring/defaults'
-export const authorized = (allowed:any[], currentRole:any) => includes(allowed, currentRole);
+export const authorized = (allowed: any[], currentRole: any) => includes(allowed, currentRole);
 
- 
-const account=(type:string)=>{
-  switch(type){
+const account = (type: string) => {
+  switch (type) {
     case Symbol.Ksm:
-      if(getLocalStorageItem(Keys.KsmAccountKey)==null && getLocalStorageItem(Keys.FisAccountKey)==null){
-        
-        return '/rKSM/home' 
+      if (getLocalStorageItem(Keys.KsmAccountKey) == null && getLocalStorageItem(Keys.FisAccountKey) == null) {
+        return '/rKSM/home';
       }
-      if(getLocalStorageItem(Keys.KsmAccountKey)==null && getLocalStorageItem(Keys.FisAccountKey)){
+      if (getLocalStorageItem(Keys.KsmAccountKey) == null && getLocalStorageItem(Keys.FisAccountKey)) {
         return '/rKSM/wallet';
       }
       return true;
     case Symbol.Atom:
-      if(getLocalStorageItem(Keys.AtomAccountKey)==null || getLocalStorageItem(Keys.FisAccountKey)==null){
-        return '/rATOM/home' 
-      } 
+      if (getLocalStorageItem(Keys.AtomAccountKey) == null || getLocalStorageItem(Keys.FisAccountKey) == null) {
+        return '/rATOM/home';
+      }
       return true;
-    case Symbol.Dot: 
-      if(getLocalStorageItem(Keys.DotAccountKey)==null && getLocalStorageItem(Keys.FisAccountKey)==null){
-        return '/rDOT/home' 
+    case Symbol.Dot:
+      if (getLocalStorageItem(Keys.DotAccountKey) == null && getLocalStorageItem(Keys.FisAccountKey) == null) {
+        return '/rDOT/home';
       }
-      if(getLocalStorageItem(Keys.DotAccountKey)==null && getLocalStorageItem(Keys.FisAccountKey)){
+      if (getLocalStorageItem(Keys.DotAccountKey) == null && getLocalStorageItem(Keys.FisAccountKey)) {
         return '/rDOT/wallet';
-      } 
-      return true; 
-    case Symbol.Eth: 
-      if(getLocalStorageItem(Keys.MetamaskAccountKey)==null && getLocalStorageItem(Keys.FisAccountKey)==null){
-        return '/rETH/home' 
       }
-      if(getLocalStorageItem(Keys.MetamaskAccountKey)==null && getLocalStorageItem(Keys.FisAccountKey)){
+      return true;
+    case Symbol.Eth:
+      if (getLocalStorageItem(Keys.MetamaskAccountKey) == null && getLocalStorageItem(Keys.FisAccountKey) == null) {
+        return '/rETH/home';
+      }
+      if (getLocalStorageItem(Keys.MetamaskAccountKey) == null && getLocalStorageItem(Keys.FisAccountKey)) {
         return '/rETH/wallet';
-      } 
+      }
       return true; 
-    case Symbol.Fis:
-      return getLocalStorageItem(Keys.FisAccountKey);
+    case Symbol.Sol:
+      if (getLocalStorageItem(Keys.SolAccountKey) == null || getLocalStorageItem(Keys.FisAccountKey) == null) {
+        return '/rSOL/home';
+      }
+      return true;
+    case Symbol.Matic:
+      if(getLocalStorageItem(Keys.MaticAccountKey)==null || getLocalStorageItem(Keys.FisAccountKey)==null){
+        return '/rMATIC/home'  
+      }
+      return true; 
+    case Symbol.Fis: 
+      if(getLocalStorageItem(Keys.FisAccountKey)){
+        return true
+      }else{
+        return '/rFIS/home' 
+      } 
     default:
-        return "/rKSM/home";
-
+      return '/rKSM/home';
   }
-}
+};
 const AuthorizeRoute = (currentRole: string) => {
   return (WrappedComponent: any) => {
-    class WithAuthorization extends React.Component<any> { 
+    class WithAuthorization extends React.Component<any> {
       static propTypes: any;
-      render() { 
-        const url=account(currentRole);
-        if(url===true){
+      render() {
+        const url = account(currentRole);
+        if (url === true) {
           return <WrappedComponent {...this.props} />;
-        }else{
-          return <Redirect to={url}/>
+        } else {
+          return <Redirect to={url} />;
         }
       }
     }
 
-    WithAuthorization.propTypes = { 
-    };
+    WithAuthorization.propTypes = {};
 
-    const mapDispatchToProps = {
-      
-    };
+    const mapDispatchToProps = {};
 
-    return connect((state) => (state), mapDispatchToProps)(WithAuthorization);
+    return connect((state) => state, mapDispatchToProps)(WithAuthorization);
   };
 };
 

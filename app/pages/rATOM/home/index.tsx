@@ -6,7 +6,7 @@ import rFIS_svg from '@images/rFIS.svg';
 import keplr from '@images/keplr.png';
 import Modal from '@shared/components/modal/connectModal';
 import Page_FIS from '../../rATOM/selectWallet_rFIS/index';
-import {connectPolkadot_atom,connectAtomjs} from '@features/globalClice';
+import {connectPolkadot_fis,connectAtomjs} from '@features/globalClice';
 import Button from '@shared/components/button/connect_button';
 import './index.scss';
 
@@ -56,7 +56,7 @@ export default function Inde(props:any){
             icon={rFIS_svg} 
              onClick={()=>{   
               setVisible(true);
-              dispatch(connectPolkadot_atom(()=>{
+              dispatch(connectPolkadot_fis(()=>{
                 setVisible(true);
                 // if(atomAccount){
                 //   props.history.push({

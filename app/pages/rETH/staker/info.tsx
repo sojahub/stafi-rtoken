@@ -1,16 +1,16 @@
-import React, { useEffect, useState } from 'react'; 
-import {useSelector,useDispatch} from 'react-redux';  
-import {setRatioShow,getRethAmount} from '@features/rETHClice'
-import Content from '@components/content/stakeInfoContent'; 
+import Content from '@components/content/stakeInfoContent';
+import { getRethAmount, setRatioShow } from '@features/rETHClice';
 import NumberUtil from '@util/numberUtil';
 import { message } from 'antd';
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
 
 export default function Index(props:any){ 
 
   const dispatch=useDispatch();
   useEffect(()=>{ 
-    dispatch(getRethAmount());
+    dispatch(getRethAmount(false));
   },[])
  
 
