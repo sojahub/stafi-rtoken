@@ -715,6 +715,8 @@ export const getReward=(pageIndex:Number,cb:Function):AppThunk=>async (dispatch,
         dispatch(setLoading(false));
         cb && cb(false)
       }
+    } else {
+      dispatch(setLoading(false))
     }
       
   } catch (error) {

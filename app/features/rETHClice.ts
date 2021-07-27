@@ -1135,6 +1135,8 @@ export const getReward =
           dispatch(setLoading(false));
           cb && cb(false);
         }
+      } else {
+        dispatch(setLoading(false))
       }
     } catch (error) {
       dispatch(setLoading(false));
