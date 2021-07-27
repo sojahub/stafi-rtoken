@@ -56,13 +56,13 @@ import bsc_white from '@images/bsc_white.svg';
 import eth_white from '@images/eth_white.svg';
 import exchange_svg from '@images/exchange.svg';
 import rasset_fis_svg from '@images/rFIS.svg';
-import rasset_rsol_svg from '@images/rSOL.svg';
+// import rasset_rsol_svg from '@images/rSOL.svg';
 import rasset_ratom_svg from '@images/r_atom.svg';
 import rasset_rdot_svg from '@images/r_dot.svg';
 import rasset_reth_svg from '@images/r_eth.svg';
 import rasset_rfis_svg from '@images/r_fis.svg';
 import rasset_rksm_svg from '@images/r_ksm.svg';
-import rasset_rmatic_svg from '@images/r_matic.svg';
+// import rasset_rmatic_svg from '@images/r_matic.svg';
 import stafi_white from '@images/stafi_white.svg';
 import Back from '@shared/components/backIcon';
 import Button from '@shared/components/button/button';
@@ -117,18 +117,18 @@ const tokenDatas = [
     content: '--',
     type: 'ratom',
   },
-  {
-    icon: rasset_rsol_svg,
-    title: 'rSOL',
-    content: '--',
-    type: 'rsol',
-  },
-  {
-    icon: rasset_rmatic_svg,
-    title: 'rMATIC',
-    content: '--',
-    type: 'rmatic',
-  },
+  // {
+  //   icon: rasset_rsol_svg,
+  //   title: 'rSOL',
+  //   content: '--',
+  //   type: 'rsol',
+  // },
+  // {
+  //   icon: rasset_rmatic_svg,
+  //   title: 'rMATIC',
+  //   content: '--',
+  //   type: 'rmatic',
+  // },
 ];
 
 const tokenDatasWithREth = [
@@ -168,18 +168,18 @@ const tokenDatasWithREth = [
     content: '--',
     type: 'ratom',
   },
-  {
-    icon: rasset_rsol_svg,
-    title: 'rSOL',
-    content: '--',
-    type: 'rsol',
-  },
-  {
-    icon: rasset_rmatic_svg,
-    title: 'rMATIC',
-    content: '--',
-    type: 'rmatic',
-  },
+  // {
+  //   icon: rasset_rsol_svg,
+  //   title: 'rSOL',
+  //   content: '--',
+  //   type: 'rsol',
+  // },
+  // {
+  //   icon: rasset_rmatic_svg,
+  //   title: 'rMATIC',
+  //   content: '--',
+  //   type: 'rmatic',
+  // },
 ];
 
 const assetDatas = [
@@ -213,18 +213,13 @@ export default function Index(props: any) {
   const [selectDataSource, setSelectDataSource] = useState(tokenDatas);
   const [tokenType, setTokenType] = useState(tokenDatas[0]);
   const [address, setAddress] = useState<any>();
-  const [visible, setVisible] = useState(false);
   const [transferringModalVisible, setTransferringModalVisible] = useState(false);
 
-  // const [operationType, setOperationType] = useState<
-  //   undefined | "erc20" | "native"
-  // >();
   const [fromTypeData, setFromTypeData] = useState<undefined | SelectorType>();
   const [fromTypeSelections, setFromTypeSelections] = useState(assetDatas);
   const [destTypeData, setDestTypeData] = useState<undefined | SelectorType>();
   const [destTypeSelections, setDestTypeSelections] = useState(assetDatas);
 
-  const [delayReloadFlag, setDelayReloadFlag] = useState(0);
   const [transferDetail, setTransferDetail] = useState('');
   const [viewTxUrl, setViewTxUrl] = useState('');
 
@@ -355,8 +350,8 @@ export default function Index(props: any) {
       tokenDatasWithREth[3].content = rdot_balance;
       tokenDatasWithREth[4].content = rksm_balance;
       tokenDatasWithREth[5].content = ratom_balance;
-      tokenDatasWithREth[6].content = rsol_balance;
-      tokenDatasWithREth[7].content = rmatic_balance;
+      // tokenDatasWithREth[6].content = rsol_balance;
+      // tokenDatasWithREth[7].content = rmatic_balance;
       setSelectDataSource([...tokenDatasWithREth]);
     } else {
       tokenDatas[0].content = fis_balance;
@@ -364,8 +359,8 @@ export default function Index(props: any) {
       tokenDatas[2].content = rdot_balance;
       tokenDatas[3].content = rksm_balance;
       tokenDatas[4].content = ratom_balance;
-      tokenDatas[5].content = rsol_balance;
-      tokenDatas[6].content = rmatic_balance;
+      // tokenDatas[5].content = rsol_balance;
+      // tokenDatas[6].content = rmatic_balance;
       setSelectDataSource([...tokenDatas]);
     }
 
@@ -409,12 +404,16 @@ export default function Index(props: any) {
   }, [fromTypeData && fromTypeData.type, destTypeData && destTypeData.type]);
 
   useInterval(() => {
+    updateData();
+  }, 30000);
+
+  const updateData = () => {
     if (fromTypeData && fromTypeData.type === 'native') {
       updateFisData();
     } else {
       updateErcBepData();
     }
-  }, 30000);
+  };
 
   const updateFisData = () => {
     if (fisAccount && fisAccount.address) {
@@ -739,8 +738,8 @@ export default function Index(props: any) {
                     }
                     setFormAmount('');
                     setAddress('');
-                    setDelayReloadFlag(delayReloadFlag + 1);
                     setTransferringModalVisible(true);
+                    updateData();
                   }),
                 );
               } else {
@@ -774,8 +773,8 @@ export default function Index(props: any) {
                       }
                       setFormAmount('');
                       setAddress('');
-                      setDelayReloadFlag(delayReloadFlag + 1);
                       setTransferringModalVisible(true);
+                      updateData();
                     }),
                   );
                 }

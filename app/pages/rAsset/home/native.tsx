@@ -9,12 +9,12 @@ import { getUnbondCommission as matic_getUnbondCommission, query_rBalances_accou
 import { getUnbondCommission as sol_getUnbondCommission, query_rBalances_account as sol_query_rBalances_account, rTokenRate as sol_rTokenRate } from '@features/rSOLClice';
 import rDOT_svg from '@images/rDOT.svg';
 import rasset_fis_svg from '@images/rFIS.svg';
-import rasset_rsol_svg from '@images/rSOL.svg';
+// import rasset_rsol_svg from '@images/rSOL.svg';
 import rasset_ratom_svg from '@images/r_atom.svg';
 import rasset_rdot_svg from '@images/r_dot.svg';
 import rasset_rfis_svg from '@images/r_fis.svg';
 import rasset_rksm_svg from '@images/r_ksm.svg';
-import rasset_rmatic_svg from '@images/r_matic.svg';
+// import rasset_rmatic_svg from '@images/r_matic.svg';
 import { Symbol } from '@keyring/defaults';
 import Button from '@shared/components/button/connect_button';
 import Content from '@shared/components/content';
@@ -201,7 +201,7 @@ export default function Index(props:any){
             })
           }}
         />
-        <DataItem  
+        {/* <DataItem  
           rSymbol="rSOL"
           icon={rasset_rsol_svg}
           fullName="Solana"
@@ -234,7 +234,7 @@ export default function Index(props:any){
             }
           })
         }}
-      /> 
+      />  */}
       </DataList><CountAmount totalValue={totalPrice} /> </>:<div className="rAsset_content">
       <Button icon={rDOT_svg} onClick={()=>{
            dispatch(connectPolkadotjs(Symbol.Fis)); 

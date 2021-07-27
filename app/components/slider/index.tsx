@@ -1,13 +1,13 @@
 import logo from '@images/logo2.png';
 import rAsset_svg from '@images/rAsset.svg';
-import rSOL_svg from '@images/rSOL.svg';
-import rATOM_svg from '@images/r_atom.svg'; 
+// import rSOL_svg from '@images/rSOL.svg';
+import rATOM_svg from '@images/r_atom.svg';
 import rDOT_svg from '@images/r_dot.svg';
 import rETH_svg from '@images/r_eth.svg';
 import rFIS_svg from '@images/r_fis.svg';
-import rKSM_svg from '@images/r_ksm.svg';  
-import rMatic_svg from '@images/r_matic.svg';
-import selected_rMatic_svg from '@images/selected_r_matic.svg' 
+import rKSM_svg from '@images/r_ksm.svg';
+// import rMatic_svg from '@images/r_matic.svg';
+// import selected_rMatic_svg from '@images/selected_r_matic.svg' 
 import rPool_svg from '@images/r_pool.svg';
 import selected_rAsset_svg from '@images/selected_rAssets.svg';
 import selected_rATOM_svg from '@images/selected_r_atom.svg';
@@ -15,7 +15,6 @@ import selected_rDOT_svg from '@images/selected_r_dot.svg';
 import selected_rETH_svg from '@images/selected_r_eth.svg';
 import selected_rFIS_svg from '@images/selected_r_fis.svg';
 import selected_rKSM_svg from '@images/selected_r_ksm.svg';
-import selected_rSOL_svg from '@images/selected_r_sol.svg';
 import selected_rPool_svg from '@images/selected_r_pool.svg';
 import React from 'react';
 import { isdev } from '../../config/index';
@@ -49,7 +48,8 @@ const siderData = [
     selectedIcon: selected_rFIS_svg,
     text: 'rFIS',
     urlKeywords: '/rFIS',
-    url:"/rFIS/home"
+    // url:"/rFIS/home"
+    url:"https://rtoken.stafi.io/rfis"
   },
   {
     icon: rDOT_svg,
@@ -72,20 +72,20 @@ const siderData = [
     urlKeywords: '/rATOM',
     url: '/rATOM/home',
   },
-  {
-    icon: rSOL_svg,
-    selectedIcon: selected_rSOL_svg,
-    text: 'rSOL',
-    urlKeywords: '/rSOL',
-    url: '/rSOL/home',
-  },
-  {
-      icon:rMatic_svg,
-      selectedIcon:selected_rMatic_svg,
-      text:"rMATIC", 
-      urlKeywords:'/rMATIC',
-      url:"/rMATIC/home"
-  }
+  // {
+  //   icon: rSOL_svg,
+  //   selectedIcon: selected_rSOL_svg,
+  //   text: 'rSOL',
+  //   urlKeywords: '/rSOL',
+  //   url: '/rSOL/home',
+  // },
+  // {
+  //     icon:rMatic_svg,
+  //     selectedIcon:selected_rMatic_svg,
+  //     text:"rMATIC", 
+  //     urlKeywords:'/rMATIC',
+  //     url:"/rMATIC/home"
+  // }
 ];
 type Props = {
   route: any;
