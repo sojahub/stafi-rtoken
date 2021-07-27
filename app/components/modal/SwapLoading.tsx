@@ -1,4 +1,5 @@
 import { LoadingOutlined } from '@ant-design/icons';
+import config from '@config/index';
 import close_bold_svg from '@images/close_bold.svg';
 import complete_svg from '@images/complete.svg';
 import { Modal, Progress, Spin } from 'antd';
@@ -16,10 +17,8 @@ type Props = {
   onClose: Function;
 };
 
-const waitingTime = 10;
-
 export default function SwapLoading(props: Props) {
-  const [timeLeft, setTimeLeft] = useState(waitingTime);
+  const [timeLeft, setTimeLeft] = useState(config.swapWaitingTime());
   const [success, setSuccess] = useState(false);
 
   useEffect(() => {
@@ -35,7 +34,7 @@ export default function SwapLoading(props: Props) {
 
   useEffect(() => {
     if (!props.visible) {
-      setTimeLeft(waitingTime);
+      setTimeLeft(config.swapWaitingTime());
       setSuccess(false);
     }
   }, [props.visible]);
@@ -96,7 +95,7 @@ export default function SwapLoading(props: Props) {
 
             <div style={{ margin: 'auto', marginTop: '20px', width: '594px' }}>
               <Progress
-                percent={((waitingTime - timeLeft) * 100) / waitingTime}
+                percent={((config.swapWaitingTime() - timeLeft) * 100) / config.swapWaitingTime()}
                 showInfo={false}
                 strokeColor={'#00F3AB'}
               />
