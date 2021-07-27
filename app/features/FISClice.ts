@@ -1416,6 +1416,10 @@ export const getReward = (pageIndex: Number, cb: Function): AppThunk => async (d
   const ethSource = getState().rETHModule.ethAccount; 
   dispatch(setLoading(true))
   try { 
+    if(pageIndex==0){
+      dispatch(setRewardList([]));
+      dispatch(setRewardList_lastdata(null));
+    }
     const result = await rpcServer.getReward(stafiSource, ethSource ? ethSource.address : "", rSymbol.Fis, pageIndex);
     if (result.status == 80000) {
       const rewardList = getState().FISModule.rewardList;

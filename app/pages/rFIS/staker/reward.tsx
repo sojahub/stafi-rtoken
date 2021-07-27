@@ -5,8 +5,7 @@ import {getReward, getUnbondCommission} from '@features/FISClice';
 import CommonClice from '@features/commonClice'
 import { useDispatch, useSelector } from 'react-redux';
 import NumberUtil from '@util/numberUtil'
-import { RootState } from 'app/store';
-import config from '@config/index';
+import { RootState } from 'app/store'; 
 
 const commonClice=new CommonClice()
 export default function Index(){
@@ -14,14 +13,15 @@ export default function Index(){
     useEffect(()=>{ 
         dispatch(getUnbondCommission());
     },[])
-    const {rewardList,unbondCommission,rewardList_lastdata}=useSelector((state:RootState)=>{
+    const {rewardList,unbondCommission,rewardList_lastdata,address}=useSelector((state:RootState)=>{
         return {
             rewardList:state.FISModule.rewardList,
             unbondCommission:state.FISModule.unbondCommission,
-            rewardList_lastdata:state.FISModule.rewardList_lastdata
+            rewardList_lastdata:state.FISModule.rewardList_lastdata,
+            address:state.FISModule.fisAccount?state.FISModule.fisAccount.address:''
         }
     }) 
-    return <RewardContent  hours={6} rewardList={rewardList} getReward={getReward} type="FIS">
+    return <RewardContent address={address}  hours={6} rewardList={rewardList} getReward={getReward} type="FIS">
         {
             rewardList.map((item,index)=>{
                 let reward:any='--';

@@ -5,8 +5,7 @@ import {getReward, getUnbondCommission} from '@features/rMATICClice';
 import CommonClice from '@features/commonClice'
 import { useDispatch, useSelector } from 'react-redux';
 import NumberUtil from '@util/numberUtil'
-import { RootState } from 'app/store';
-import config from '@config/index'
+import { RootState } from 'app/store'; 
 
 const commonClice=new CommonClice()
 export default function Index(){
@@ -14,14 +13,15 @@ export default function Index(){
     useEffect(()=>{ 
         dispatch(getUnbondCommission());
     },[])
-    const {rewardList,unbondCommission,rewardList_lastdata}=useSelector((state:RootState)=>{
+    const {rewardList,unbondCommission,rewardList_lastdata,address}=useSelector((state:RootState)=>{
         return {
             rewardList:state.rMATICModule.rewardList,
             unbondCommission:state.rMATICModule.unbondCommission,
-            rewardList_lastdata:state.rMATICModule.rewardList_lastdata
+            rewardList_lastdata:state.rMATICModule.rewardList_lastdata,
+            address:state.rMATICModule.maticAccount?state.rMATICModule.maticAccount.address:''
         }
-    }) 
-    return <RewardContent  hours={24} rewardList={rewardList} getReward={getReward} type="MATIC">
+    })  
+    return <RewardContent address={address} hours={24} rewardList={rewardList} getReward={getReward} type="MATIC">
         {
             rewardList.map((item,index)=>{
                 let reward:any='--';

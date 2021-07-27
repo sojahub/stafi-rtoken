@@ -685,6 +685,10 @@ export const getReward=(pageIndex:Number,cb:Function):AppThunk=>async (dispatch,
   const ethAccount=getState().rETHModule.ethAccount; 
   dispatch(setLoading(true));
   try { 
+    if(pageIndex==0){
+      dispatch(setRewardList([]));
+      dispatch(setRewardList_lastdata(null));
+    }
     const result=await rpcServer.getReward(fisSource,ethAccount?ethAccount.address:"",rSymbol.Ksm,pageIndex);
     if(result.status==80000){ 
       const rewardList=getState().rKSMModule.rewardList; 

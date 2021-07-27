@@ -13,29 +13,45 @@ type Props={
     getReward:Function,
     type:"DOT" | "KSM" | "ATOM" | "ETH" | "MATIC" | "FIS",
     rewardList?:any[],
-    hours?:Number
+    hours?:Number,
+    address?:string
 }
 export default function Index(props:Props){
     // const tbody:any = useRef();
     const dispatch=useDispatch()
-    const [hasMore,setHasMore]=useState(true);
-    const [loading,setLoading]=useState(true);
+    const [hasMore,setHasMore]=useState(false);
+    const [loading,setLoading]=useState(false);
     const [pageIndex,setPageIndex]=useState(0);
     const getMore = () => {
         if(hasMore && !loading){ 
             setLoading(true);
         } 
     } 
-
+   
     useEffect(()=>{
-        if(loading && hasMore){
+        if(loading && hasMore){ 
             dispatch(props.getReward(pageIndex,(hasMore:boolean)=>{ 
                 setLoading(false);
                 setHasMore(hasMore)
                 setPageIndex(pageIndex+1)
             })) 
         }
-    },[hasMore,loading]); 
+    },[hasMore,loading,props.address]); 
+    useEffect(()=>{ 
+        if(loading && hasMore){ 
+            dispatch(props.getReward(0,(hasMore:boolean)=>{ 
+                console.log(hasMore,"======props.addressaddress1")
+                setLoading(false);
+                setHasMore(hasMore)
+                setPageIndex(1)
+            })) 
+        }else{
+            setHasMore(true);
+            setLoading(true);
+            setPageIndex(0);
+        }
+        console.log(props.address,"======props.addressaddress2")
+    },[props.address])
     const {gloading}=useSelector((state:RootState)=>{
         return {
             gloading:state.globalModule.loading

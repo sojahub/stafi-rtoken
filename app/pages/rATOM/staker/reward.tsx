@@ -14,14 +14,15 @@ export default function Index(){
     useEffect(()=>{ 
         dispatch(getUnbondCommission());
     },[])
-    const {rewardList,unbondCommission,rewardList_lastdata}=useSelector((state:RootState)=>{
+    const {rewardList,unbondCommission,rewardList_lastdata,address}=useSelector((state:RootState)=>{
         return {
             rewardList:state.rATOMModule.rewardList,
             unbondCommission:state.rATOMModule.unbondCommission,
-            rewardList_lastdata:state.rATOMModule.rewardList_lastdata
+            rewardList_lastdata:state.rATOMModule.rewardList_lastdata,
+            address:state.rATOMModule.atomAccount?state.rATOMModule.atomAccount.address:''
         }
     }) 
-    return <RewardContent  hours={24} rewardList={rewardList} getReward={getReward} type="ATOM">
+    return <RewardContent address={address} hours={24} rewardList={rewardList} getReward={getReward} type="ATOM">
         {
             rewardList.map((item,index)=>{
                 let reward:any='--';

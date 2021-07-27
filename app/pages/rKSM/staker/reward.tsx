@@ -13,14 +13,15 @@ export default function Index(){
     useEffect(()=>{ 
         dispatch(getUnbondCommission());
     },[])
-    const {rewardList,unbondCommission,rewardList_lastdata}=useSelector((state:RootState)=>{
+    const {rewardList,unbondCommission,rewardList_lastdata,address}=useSelector((state:RootState)=>{
         return {
             rewardList:state.rKSMModule.rewardList,
             unbondCommission:state.rKSMModule.unbondCommission,
-            rewardList_lastdata:state.rKSMModule.rewardList_lastdata
+            rewardList_lastdata:state.rKSMModule.rewardList_lastdata,
+            address:state.rKSMModule.ksmAccount?state.rKSMModule.ksmAccount.address:''
         }
     }) 
-    return <RewardContent  hours={6} rewardList={rewardList} getReward={getReward} type="KSM">
+    return <RewardContent address={address} hours={6} rewardList={rewardList} getReward={getReward} type="KSM">
         {
             rewardList.map((item,index)=>{
                 let reward:any='--'; 

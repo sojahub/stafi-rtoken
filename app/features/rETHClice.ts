@@ -1105,6 +1105,10 @@ export const getReward =
     const ethAccount = getState().rETHModule.ethAccount;
     dispatch(setLoading(true));
     try { 
+      if(pageIndex==0){
+        dispatch(setRewardList([]));
+        dispatch(setRewardList_lastdata(null));
+      }
       const result = await rpcServer.getReward('', ethAccount.address, -1, pageIndex);
       if (result.status == 80000) {
         const rewardList = getState().rETHModule.rewardList;
