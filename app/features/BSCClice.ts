@@ -388,7 +388,7 @@ export const getRATOMBep20Allowance = (): AppThunk => (dispatch, getState) => {
 export const getRSOLBep20Allowance = (): AppThunk => (dispatch, getState) => {
   if (getState().BSCModule.bscAccount) {
     const address = getState().BSCModule.bscAccount.address;
-    getBep20Allowance(address, bscServer.getRATOMTokenAbi(), bscServer.getRATOMTokenAddress(), (v: any) => {
+    getBep20Allowance(address, bscServer.getRSOLTokenAbi(), bscServer.getRSOLTokenAddress(), (v: any) => {
       dispatch(setRSOLBep20Allowance(v));
     });
   }

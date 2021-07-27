@@ -440,7 +440,7 @@ export const check_swap_status = ():AppThunk=>(dispatch,getState)=>{
   data.datas.forEach((item:any) => {
     if(item.type == noticeType.Staker &&
       item.subType == noticesubType.Swap) {
-        if(moment().isAfter(moment(item.dateTime,formatStr).add(120,'s'))){
+        if(moment().isAfter(moment(item.dateTime,formatStr).add(config.swapWaitingTime(),'s'))){
           dispatch(updateNoticeModal({
             data:{...item,status:noticeStatus.Confirmed},
             showNew:false

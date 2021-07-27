@@ -60,7 +60,7 @@ export default {
     if (!isdev()) {
       return 'https://rtoken-api2.stafi.io';
     } else {
-      return 'https://test-rtoken-api2.stafi.io';
+      return 'https://rtoken-api2.stafi.io';
     }
   },
   stafiApi: 'https://drop.stafi.io',
@@ -406,6 +406,9 @@ export default {
       return networkChainId === '0x61';
     }
     return networkChainId === '0x61';
+  },
+  swapWaitingTime:()=>{
+    return 150;
   },
   minReward:0.000001
 };
