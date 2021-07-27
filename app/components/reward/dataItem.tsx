@@ -25,7 +25,7 @@ export default function Index(props:Props){
     </div>
     <div className="col col5"> 
         {(props.reward!="--" && props.reward>0 && props.reward<config.minReward) && `<${config.minReward}`}
-        {(props.reward!="--" && props.reward>=config.minReward) && `+${NumberUtil.handleFisAmountRateToFixed(props.reward)}`}
+        {(props.reward!="--" && props.reward>=config.minReward) && `+${NumberUtil.fixedAmountLength(props.reward)}`}
         {props.reward=="--" && props.reward}
     </div> 
 </div>

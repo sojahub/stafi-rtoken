@@ -20,6 +20,16 @@
         .ant-empty-description{
             color:#ffffff;
         }
+        .no_data{
+            width:100%;
+            text-align: center;
+
+            img{
+                margin-top:116px;
+                width:146px;
+                height:95px;
+            }
+        }
         .row{
             padding:0px 10px 0px 25px;
             height:37px;
@@ -28,6 +38,13 @@
             border-bottom: 1px solid #3B3B3B;
             >div:last-child{
                 flex:1; 
+            }
+            .col{
+                position: relative;
+                .stafi_doubt_icon{
+                    position: absolute;
+                    top:0px;
+                }
             }
             .col.col1{
                 width:53px

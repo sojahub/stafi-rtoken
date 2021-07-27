@@ -17,7 +17,7 @@ import { AppThunk } from '../store';
 import CommonClice from './commonClice';
 import { getAssetBalance } from './ETHClice';
 import { bondStates, bound, fisUnbond, rTokenSeries_bondStates } from './FISClice';
-import { initProcess, processStatus, setProcessSending, setProcessSlider, setProcessType } from './globalClice';
+import { initProcess, processStatus, setProcessSending, setProcessSlider, setProcessType,setLoading } from './globalClice';
 import { add_Notice, findUuid, noticeStatus, noticesubType, noticeType } from './noticeClice';
 import { setIsloadMonitoring } from './rETHClice';
 
@@ -793,34 +793,42 @@ const add_Matic_stake_Notice=(uuid:string,amount:string,status:string,subData?:a
 export const getReward=(pageIndex:Number,cb:Function):AppThunk=>async (dispatch, getState)=>{
   const fisSource=getState().FISModule.fisAccount.address;
   const ethAccount=getState().rETHModule.ethAccount; 
-  const result=await rpcServer.getReward(fisSource,ethAccount?ethAccount.address:"",rSymbol.Matic,pageIndex);
-  if(result.status==80000){ 
-    const rewardList=getState().rMATICModule.rewardList; 
-    if(result.data.rewardList.length>0){
-      const list=result.data.rewardList.map((item:any)=>{
-        const rate=NumberUtil.rTokenRateToHuman(item.rate);
-        const rbalance=NumberUtil.tokenAmountToHuman(item.rbalance,rSymbol.Matic);
-        return {
-          ...item,
-          rbalance:rbalance,
-          rate:rate
+  dispatch(setLoading(true));
+  try { 
+    const result=await rpcServer.getReward(fisSource,ethAccount?ethAccount.address:"",rSymbol.Matic,pageIndex);
+    if(result.status==80000){ 
+      const rewardList=getState().rMATICModule.rewardList; 
+      if(result.data.rewardList.length>0){
+        const list=result.data.rewardList.map((item:any)=>{
+          const rate=NumberUtil.rTokenRateToHuman(item.rate);
+          const rbalance=NumberUtil.tokenAmountToHuman(item.rbalance,rSymbol.Matic);
+          return {
+            ...item,
+            rbalance:rbalance,
+            rate:rate
+          }
+        })
+        if(result.data.rewardList.length<=pageCount){
+          dispatch(setRewardList_lastdata(null))
+        }else{
+          dispatch(setRewardList_lastdata(list[list.length-1]));
+          list.pop()
+        } 
+        dispatch(setRewardList([...rewardList,...list])); 
+        dispatch(setLoading(false));
+        if(result.data.rewardList.length<=pageCount){
+          cb && cb(false)
+        }else{
+          cb && cb(true)
         }
-      })
-      if(result.data.rewardList.length<=pageCount){
-        dispatch(setRewardList_lastdata(null))
       }else{
-        dispatch(setRewardList_lastdata(list[list.length-1]));
-        list.pop()
-      } 
-      dispatch(setRewardList([...rewardList,...list])); 
-      if(result.data.rewardList.length<=pageCount){
+        dispatch(setLoading(false));
         cb && cb(false)
-      }else{
-        cb && cb(true)
       }
-    }else{
-      cb && cb(false)
     }
+      
+  } catch (error) {
+    dispatch(setLoading(false));
   }
 }
  

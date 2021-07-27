@@ -252,5 +252,19 @@ export default {
           s[1] += new Array(prec - s[1].length + 1).join('0');
       }
       return s.join(dec);
+  },
+  fixedAmountLength(amount){
+    if(amount=="--"){
+      return "--"
+    }
+    let  wholeNumberLength=Math.floor(Number(amount)).toString().length; 
+    let maxLength = 8;
+    if(wholeNumberLength>=maxLength){
+      return Math.floor(amount);
+    }else if((maxLength-wholeNumberLength)<2){
+      return this.handleEthAmountRound(amount).toFixed(6);
+    }else{
+      return this.handleEthAmountRound(amount).toFixed(maxLength-wholeNumberLength);
+    }
   }
 }; 

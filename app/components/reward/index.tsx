@@ -1,11 +1,12 @@
 import React,{useEffect, useRef, useState} from 'react';
-import {Empty} from 'antd'
+import no_data_png from '@images/nodata.png';
 import LeftContent from '../content/leftContent'
 import Doubt from '@shared/components/doubt';
 import InfiniteScroll from 'react-infinite-scroller';
 import {Scrollbars} from 'react-custom-scrollbars';
 import './index.scss'
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from 'app/store';
 
 type Props={
     children:any,
@@ -35,9 +36,14 @@ export default function Index(props:Props){
             })) 
         }
     },[hasMore,loading]); 
+    const {gloading}=useSelector((state:RootState)=>{
+        return {
+            gloading:state.globalModule.loading
+        }
+    })
     return <LeftContent className="stafi_reward_card">
         <div className="title">
-                 Reward Details <Doubt tip={"This reward is nominal, the actual reward will be reflected when you redeem, or in the secondary market. Reward is calculation is based on your account balance of last era, balance transfer will impact the accuracy of reward calculation."}/>
+                 Reward Details <Doubt tip={"This reward records are just estimation, and the actual rewards amount will be confirmed when you redeem. Reward calculation is based on your account balance of the last era, and the changes of rToken  balance mayl impact the accuracy of reward calculation."}/>
         </div>
         <div className="data_table">
             <div className="row heard">
@@ -45,7 +51,7 @@ export default function Index(props:Props){
                     Era
                 </div>
                 <div className="col col2">
-                    r{props.type}
+                    r{props.type} <Doubt tip={"rToken amount includes ERC20 rToken and NATIVE rToken that currently connected to this app."}/>
                 </div>
                 <div className="col col3">
                     r{props.type}:{props.type}
@@ -68,7 +74,7 @@ export default function Index(props:Props){
                 loader={loading?<div className="loader">Loading ...</div>:<></>}
                 useWindow={false}
             > 
-                {props.rewardList.length==0 && <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />}
+                {(props.rewardList.length==0 && !gloading) && <div className="no_data"><img src={no_data_png}/></div>}
                 {props.children}
                 </InfiniteScroll>
             </Scrollbars>

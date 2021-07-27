@@ -5,8 +5,7 @@ import {getReward, getUnbondCommission} from '@features/rKSMClice';
 import CommonClice from '@features/commonClice'
 import { useDispatch, useSelector } from 'react-redux';
 import NumberUtil from '@util/numberUtil'
-import { RootState } from 'app/store'; 
-import config from '@config/index';
+import { RootState } from 'app/store';  
 
 const commonClice=new CommonClice()
 export default function Index(){
