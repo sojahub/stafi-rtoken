@@ -379,7 +379,7 @@ export default {
   },
   bscChainId: () => {
     if (!isdev()) {
-      return 0x61;
+      return 0x38;
     }
     return 0x61;
   },
@@ -403,7 +403,7 @@ export default {
   },
   metaMaskNetworkIsBsc: (networkChainId: any) => {
     if (!isdev()) {
-      return networkChainId === '0x61';
+      return networkChainId === '0x38';
     }
     return networkChainId === '0x61';
   },
