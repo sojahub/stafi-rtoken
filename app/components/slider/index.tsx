@@ -48,8 +48,8 @@ const siderData = [
     selectedIcon: selected_rFIS_svg,
     text: 'rFIS',
     urlKeywords: '/rFIS',
-    // url:"/rFIS/home"
-    url:"https://rtoken.stafi.io/rfis"
+    url:"/rFIS/home"
+    // url:"https://rtoken.stafi.io/rfis"
   },
   {
     icon: rDOT_svg,
