@@ -177,6 +177,8 @@ export default function Index(props: any) {
       dispatch(atom_getUnbondCommission());
       dispatch(sol_getUnbondCommission());
       dispatch(matic_getUnbondCommission());
+    } else {
+      dispatch(connectMetamask(config.ropstenChainId(), true));
     }
   };
 
@@ -323,7 +325,7 @@ export default function Index(props: any) {
           <Button
             icon={metamask}
             onClick={() => {
-              dispatch(connectMetamask('0x3'));
+              dispatch(connectMetamask(config.ropstenChainId()));
               dispatch(monitoring_Method());
             }}>
             Connect to Metamask

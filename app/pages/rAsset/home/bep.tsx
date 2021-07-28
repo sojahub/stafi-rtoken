@@ -174,6 +174,8 @@ export default function Index(props: any) {
       dispatch(atom_getUnbondCommission());
       dispatch(sol_getUnbondCommission());
       dispatch(matic_getUnbondCommission());
+    } else {
+      dispatch(connectMetamask(config.bscChainId(), true));
     }
   };
 

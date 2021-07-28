@@ -379,9 +379,9 @@ export default {
   },
   bscChainId: () => {
     if (!isdev()) {
-      return 0x38;
+      return '0x38';
     }
-    return 0x61;
+    return '0x61';
   },
   ropstenChainId:()=>{
     return '0x3';
