@@ -408,7 +408,7 @@ export default {
     return networkChainId === '0x61';
   },
   swapWaitingTime:()=>{
-    return 150;
+    return 20;
   },
   minReward:0.000001
 };

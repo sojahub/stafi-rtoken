@@ -1,55 +1,109 @@
 import { LoadingOutlined } from '@ant-design/icons';
 import config from '@config/index';
+import { setSwapLoadingStatus } from '@features/bridgeClice';
 import close_bold_svg from '@images/close_bold.svg';
 import complete_svg from '@images/complete.svg';
 import { Modal, Progress, Spin } from 'antd';
+import { max } from 'mathjs';
 import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import './SwapLoading.scss';
 
 const antIcon = <LoadingOutlined style={{ fontSize: '60px', color: '#fff' }} spin />;
 
 type Props = {
-  visible: boolean;
   destChainName: string;
   destChainType: string;
   transferDetail: string;
   viewTxUrl: string;
-  onClose: Function;
 };
 
+const STAGE1_PERIOD = config.swapWaitingTime() / 2;
+const STAGE2_PERIOD = config.swapWaitingTime();
+const STAGE1_MAX_PROGRESS = 50;
+
 export default function SwapLoading(props: Props) {
-  const [timeLeft, setTimeLeft] = useState(config.swapWaitingTime());
+  const dispatch = useDispatch();
+
+  const [stage1TimeLeft, setStage1TimeLeft] = useState(STAGE1_PERIOD);
+  const [stage2TimeLeft, setStage2TimeLeft] = useState(STAGE2_PERIOD);
+  const [progress, setProgress] = useState(0);
   const [success, setSuccess] = useState(false);
 
+  const { swapLoadingStatus } = useSelector((state: any) => {
+    return {
+      swapLoadingStatus: state.bridgeModule.swapLoadingStatus,
+    };
+  });
+
+  let stage1IntervalId: any;
+  let stage2IntervalId: any;
+  let stage2StartProgress = 0;
+
   useEffect(() => {
-    if (!timeLeft || !props.visible) {
-      return;
+    if (swapLoadingStatus === 1) {
+      resetStatus();
     }
-    const intervalId = setInterval(() => {
-      setTimeLeft(timeLeft - 0.5);
-    }, 500);
-
-    return () => clearInterval(intervalId);
-  }, [timeLeft, props.visible]);
+  }, [swapLoadingStatus]);
 
   useEffect(() => {
-    if (!props.visible) {
-      setTimeLeft(config.swapWaitingTime());
+    if (swapLoadingStatus === 1) {
+      if (stage1TimeLeft > 0) {
+        stage1IntervalId = setTimeout(() => {
+          console.log('tik tik tik tik tik tik tik tik tik tik tik tik tik tik: ', stage1TimeLeft);
+          setStage1TimeLeft(max(stage1TimeLeft - 0.5, 0));
+        }, 500);
+      }
+    } else if (swapLoadingStatus === 2) {
+      clearTimeout(stage1IntervalId);
+      stage2StartProgress = ((STAGE1_PERIOD - stage1TimeLeft) * STAGE1_MAX_PROGRESS) / STAGE1_PERIOD;
+      if (stage2TimeLeft > 0) {
+        stage2IntervalId = setTimeout(() => {
+          console.log('2tik tik tik tik tik tik tik tik tik tik tik tik tik tik: ', stage2TimeLeft);
+          setStage2TimeLeft(max(stage2TimeLeft - 0.5, 0));
+        }, 500);
+      }
+    } else {
       setSuccess(false);
     }
-  }, [props.visible]);
+    return () => {
+      clearTimeout(stage1IntervalId);
+      clearTimeout(stage2IntervalId);
+    };
+  }, [stage1TimeLeft, stage2TimeLeft, swapLoadingStatus]);
 
   useEffect(() => {
-    if (timeLeft === 0) {
-      setSuccess(true);
+    if (swapLoadingStatus === 1) {
+      setProgress(((STAGE1_PERIOD - stage1TimeLeft) * STAGE1_MAX_PROGRESS) / STAGE1_PERIOD);
+    } else if (swapLoadingStatus === 2) {
+      setProgress(
+        stage2StartProgress + ((STAGE2_PERIOD - stage2TimeLeft) * (100 - stage2StartProgress)) / STAGE2_PERIOD,
+      );
+    } else {
+      setProgress(0);
     }
-  }, [timeLeft]);
+    if (stage2TimeLeft === 0) {
+      setSuccess(true);
+      clearTimeout(stage1IntervalId);
+      clearTimeout(stage2IntervalId);
+      setStage1TimeLeft(STAGE1_PERIOD);
+      setStage2TimeLeft(STAGE2_PERIOD);
+    }
+  }, [stage1TimeLeft, stage2TimeLeft, swapLoadingStatus]);
+
+  const resetStatus = () => {
+    clearTimeout(stage1IntervalId);
+    clearTimeout(stage2IntervalId);
+    setStage1TimeLeft(STAGE1_PERIOD);
+    setStage2TimeLeft(STAGE2_PERIOD);
+    stage2StartProgress = 0;
+  };
 
   return (
     <Modal
-      visible={props.visible}
+      visible={swapLoadingStatus === 1 || swapLoadingStatus === 2}
       className='swap_loading_modal'
-      destroyOnClose
+      destroyOnClose={false}
       closable={false}
       footer={null}
       title={null}
@@ -61,7 +115,7 @@ export default function SwapLoading(props: Props) {
       }}>
       <div>
         <div className={'icon_container_outer'}>
-          <a className={'icon_container_inner'} onClick={() => props.onClose && props.onClose()}>
+          <a className={'icon_container_inner'} onClick={() => dispatch(setSwapLoadingStatus(0))}>
             <img src={close_bold_svg} className={'close_icon'} />
           </a>
         </div>
@@ -94,11 +148,7 @@ export default function SwapLoading(props: Props) {
             <div className='transfer_detail'>{props.transferDetail}</div>
 
             <div style={{ margin: 'auto', marginTop: '20px', width: '594px' }}>
-              <Progress
-                percent={((config.swapWaitingTime() - timeLeft) * 100) / config.swapWaitingTime()}
-                showInfo={false}
-                strokeColor={'#00F3AB'}
-              />
+              <Progress percent={progress} showInfo={false} strokeColor={'#00F3AB'} />
             </div>
 
             <div className={'spin_container'}>

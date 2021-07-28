@@ -213,7 +213,6 @@ export default function Index(props: any) {
   const [selectDataSource, setSelectDataSource] = useState(tokenDatas);
   const [tokenType, setTokenType] = useState(tokenDatas[0]);
   const [address, setAddress] = useState<any>();
-  const [transferringModalVisible, setTransferringModalVisible] = useState(false);
 
   const [fromTypeData, setFromTypeData] = useState<undefined | SelectorType>();
   const [fromTypeSelections, setFromTypeSelections] = useState(assetDatas);
@@ -719,6 +718,17 @@ export default function Index(props: any) {
                 }
               }
 
+              if (destTypeData && destTypeData.type === 'erc20') {
+                setViewTxUrl(config.etherScanErc20TxInAddressUrl(address));
+              } else if (destTypeData && destTypeData.type === 'bep20') {
+                setViewTxUrl(config.bscScanBep20TxInAddressUrl(address));
+              } else {
+                setViewTxUrl(config.stafiScanUrl(address));
+              }
+              setTransferDetail(
+                `${fromAoumt} ${tokenType && tokenType.title} ${fromTypeData && fromTypeData.content}`,
+              );
+
               if (fromTypeData && fromTypeData.type === 'native') {
                 let chainId = ETH_CHAIN_ID;
                 if (destTypeData && destTypeData.type === 'bep20') {
@@ -726,19 +736,8 @@ export default function Index(props: any) {
                 }
                 dispatch(
                   nativeToOtherSwap(chainId, tokenType.title, tokenType.type, fromAoumt, address, () => {
-                    setTransferDetail(
-                      `${fromAoumt} ${tokenType && tokenType.title} ${fromTypeData && fromTypeData.content}`,
-                    );
-                    if (destTypeData && destTypeData.type === 'erc20') {
-                      setViewTxUrl(config.etherScanErc20TxInAddressUrl(address));
-                    } else if (destTypeData && destTypeData.type === 'bep20') {
-                      setViewTxUrl(config.bscScanBep20TxInAddressUrl(address));
-                    } else {
-                      setViewTxUrl(config.stafiScanUrl(address));
-                    }
                     setFormAmount('');
                     setAddress('');
-                    setTransferringModalVisible(true);
                     updateData();
                   }),
                 );
@@ -761,19 +760,8 @@ export default function Index(props: any) {
                 if (swapFun) {
                   dispatch(
                     swapFun(destChainId, tokenType.title, tokenType.type, fromAoumt, address, () => {
-                      setTransferDetail(
-                        `${fromAoumt} ${tokenType && tokenType.title} ${fromTypeData && fromTypeData.content}`,
-                      );
-                      if (destTypeData && destTypeData.type === 'erc20') {
-                        setViewTxUrl(config.etherScanErc20TxInAddressUrl(address));
-                      } else if (destTypeData && destTypeData.type === 'bep20') {
-                        setViewTxUrl(config.bscScanBep20TxInAddressUrl(address));
-                      } else {
-                        setViewTxUrl(config.stafiScanUrl(address));
-                      }
                       setFormAmount('');
                       setAddress('');
-                      setTransferringModalVisible(true);
                       updateData();
                     }),
                   );
@@ -786,12 +774,10 @@ export default function Index(props: any) {
       </div>
 
       <SwapLoading
-        visible={transferringModalVisible}
         destChainName={destTypeData && destTypeData.title}
         destChainType={destTypeData && destTypeData.type}
         transferDetail={transferDetail}
         viewTxUrl={viewTxUrl}
-        onClose={() => setTransferringModalVisible(false)}
       />
     </Content>
   );
