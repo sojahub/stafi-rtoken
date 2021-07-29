@@ -862,7 +862,12 @@ const routesFactory=(role?:any)=>{
                 component: () => <Redirect to="/rFIS/validator/onboard"/>
               }
             ]
-          }]  
+          },
+          {
+            path: '*',
+            component: () => <Redirect to='/rFIS/home' />,
+          },
+        ]  
         },
         {
           path: '*', 

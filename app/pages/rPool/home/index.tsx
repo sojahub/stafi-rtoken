@@ -6,14 +6,14 @@ import rpool_reth_Icon from '@images/rpool_reth.svg';
 import rpool_rfis_Icon from '@images/rpool_rfis.svg';
 import rpool_rksm_Icon from '@images/rpool_rksm.svg';
 import A from '@shared/components/button/a';
+import Doubt from '@shared/components/doubt';
+import numberUtil from '@util/numberUtil';
 import { RootState } from 'app/store';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import CardItem from './components/cardItem';
 import TableHead from './components/tableHead';
 import TableItem from './components/tableItem';
-import numberUtil from '@util/numberUtil';
-import Doubt from '@shared/components/doubt'
 import './index.scss';
 
 const rTokenList:any=[
@@ -169,7 +169,7 @@ export default function Inde(props:any){
                         }else if(item.contract=="0xec736f21bea3d34f222ba101af231b57699760f3"){
                           type="rFIS/ETH";
                           icon=rpool_rfis_Icon;
-                          stakeUrl="https://rtoken.stafi.io/rfis";
+                          stakeUrl="https://app.stafi.io/rFIS";
                           liquidityUrl="https://app.uniswap.org/#/add/v2/ETH/0xc82eb6dea0c93edb8b697b89ad1b13d19469d635";
                           // wrapFiUrl="https://drop.wrapfi.io/phase2/staker?pid=1";
                         }else if(item.contract=="0x53e73e10b0315601c938e4d9454e8c7cf72e1236"){
