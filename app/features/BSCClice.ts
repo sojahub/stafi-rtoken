@@ -237,7 +237,7 @@ export const handleBscAccount =
   };
 
 export const getAssetBalanceAll = (): AppThunk => (dispatch, getState) => {
-  dispatch(getFISAssetBalance());
+  // dispatch(getFISAssetBalance());
   dispatch(getRFISAssetBalance());
   dispatch(getRKSMAssetBalance());
   dispatch(getRDOTAssetBalance());
@@ -247,7 +247,7 @@ export const getAssetBalanceAll = (): AppThunk => (dispatch, getState) => {
   dispatch(getRETHAssetBalance());
 };
 export const getBep20Allowances = (): AppThunk => (dispatch, getState) => {
-  dispatch(getFISBep20Allowance());
+  // dispatch(getFISBep20Allowance());
   dispatch(getRFISBep20Allowance());
   dispatch(getRKSMBep20Allowance());
   dispatch(getRDOTBep20Allowance());

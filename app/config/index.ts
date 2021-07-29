@@ -145,7 +145,8 @@ export default {
   },
   FISBep20TokenAddress: () => {
     if (!isdev()) {
-      return '0x91c48208a9a171eb26e6f2bd48f41b958e19ebab';
+      // return '0x91c48208a9a171eb26e6f2bd48f41b958e19ebab';
+      return '';
     } else {
       return '0x3dabfb5b0ca8c416684e2a26c1ebc4039627c94a';
     }

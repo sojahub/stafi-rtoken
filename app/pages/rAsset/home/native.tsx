@@ -36,7 +36,6 @@ export default function Index(props:any){
   const {fisAccount,tokenAmount,ksmWillAmount,fis_tokenAmount,fisWillAmount,dot_tokenAmount,
 
     dotWillAmount,unitPriceList,atom_tokenAmount,atomWillAmount,sol_tokenAmount,solWillAmount,matic_tokenAmount,maticWillAmount}=useSelector((state:any)=>{ 
-
  
     return {
       unitPriceList:state.bridgeModule.priceList,
@@ -126,7 +125,7 @@ export default function Index(props:any){
           operationType="native"
           onSwapClick={()=>{
             props.history.push({
-              pathname:"/rAsset/swap/native/default",
+              pathname:"/rAsset/swap/native/erc20",
               state:{ 
                 rSymbol:"FIS"
               }

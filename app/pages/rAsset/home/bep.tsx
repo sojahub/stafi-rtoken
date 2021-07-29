@@ -12,7 +12,7 @@ import {
 } from '@features/rMATICClice';
 import { getUnbondCommission as sol_getUnbondCommission, rTokenRate as sol_rTokenRate } from '@features/rSOLClice';
 import metamask from '@images/metamask.png';
-import rasset_fis_svg from '@images/rFIS.svg';
+// import rasset_fis_svg from '@images/rFIS.svg';
 // import rasset_rsol_svg from '@images/rSOL.svg';
 import rasset_ratom_svg from '@images/r_atom.svg';
 import rasset_rdot_svg from '@images/r_dot.svg';
@@ -208,7 +208,7 @@ export default function Index(props: any) {
       {bscAccount && bscAccount.address ? (
         <>
           <DataList>
-            <DataItem
+            {/* <DataItem
               disabled={!config.metaMaskNetworkIsBsc(metaMaskNetworkId)}
               rSymbol='FIS'
               icon={rasset_fis_svg}
@@ -219,7 +219,7 @@ export default function Index(props: any) {
               trade={config.uniswapUrl('0xB8c77482e45F1F44dE1745F52C74426C631bDD52', config.FISBep20TokenAddress())}
               operationType='bep20'
               onSwapClick={() => toSwap('FIS')}
-            />
+            /> */}
 
             <DataItem
               disabled={!config.metaMaskNetworkIsBsc(metaMaskNetworkId)}
