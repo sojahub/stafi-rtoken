@@ -340,14 +340,15 @@ export const erc20ToOtherSwap =
               address: address,
             }),
           );
-          setSwapLoadingStatus(2);
+          dispatch(setSwapLoadingStatus(2));
           cb && cb({ txHash: result.transactionHash });
         } else {
+          dispatch(setSwapLoadingStatus(0));
           message.error('Error! Please try again');
         }
       }
     } catch (error) {
-      setSwapLoadingStatus(0);
+      dispatch(setSwapLoadingStatus(0));
       message.error(error.message);
     } finally {
       dispatch(setLoading(false));
