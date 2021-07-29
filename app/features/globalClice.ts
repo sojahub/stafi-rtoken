@@ -5,7 +5,6 @@ import AtomServer from '@servers/atom/index';
 import keyring from '@servers/index';
 import PolkadotServer from '@servers/polkadot/index';
 import SolServer from '@servers/sol/index';
-import Rpc from '@util/rpc';
 import { message } from 'antd';
 import { AppThunk } from '../store';
 import { createSubstrate as fisCreateSubstrate, reloadData as fisReloadData } from './FISClice';
@@ -249,20 +248,6 @@ export const clice = (symbol: string) => {
   }
 };
 
-export const fetchStafiStakerApr =
-  (cb?: Function): AppThunk =>
-  async (dispatch, getState) => {
-    const result = await Rpc.fetchStafiStakerApr({});
-    if (result.status == '80000') {
-      if (result.data && result.data.apr) {
-        const apr = result.data.apr + '%';
-        dispatch(setStafiStakerApr(apr));
-        cb && cb();
-      }
-    }
-  };
-
- 
 export const connectPolkadot =
   (cb?: Function): AppThunk =>
   async (dispatch, getState) => {

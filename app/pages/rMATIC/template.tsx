@@ -1,15 +1,15 @@
-import React, { useEffect,useLayoutEffect } from 'react'; 
-import { Spin} from 'antd'
-import {useDispatch,useSelector} from 'react-redux'; 
+import { bondSwitch } from '@features/FISClice';
+import { reloadData } from '@features/globalClice';
+import { bondFees, continueProcess, getPools, getTotalIssuance, monitoring_Method, query_rBalances_account } from '@features/rMATICClice';
+import { Symbol } from '@keyring/defaults';
 import Content from '@shared/components/content';
-import {renderRoutes}  from 'react-router-config';
-import {getLocalStorageItem,Keys} from '@util/common'; 
-import {Symbol} from '@keyring/defaults'
-import {fetchStafiStakerApr,reloadData} from '@features/globalClice';
-import {continueProcess,monitoring_Method,getPools,bondFees,getTotalIssuance,query_rBalances_account} from '@features/rMATICClice'
+import { getLocalStorageItem, Keys } from '@util/common';
+import { Spin } from 'antd';
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { renderRoutes } from 'react-router-config';
+import '../template/index.scss';
  
-import {bondSwitch} from '@features/FISClice'; 
-import '../template/index.scss'
 export default function Index(props:any){
   const dispatch = useDispatch();
   
@@ -25,7 +25,6 @@ export default function Index(props:any){
    
   },[fisAccount])
   useEffect(()=>{ 
-    dispatch(fetchStafiStakerApr()); 
     dispatch(bondFees());
     dispatch(bondSwitch()); 
     // if(getLocalStorageItem(Keys.AtomAccountKey)){

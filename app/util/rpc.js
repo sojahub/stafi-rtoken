@@ -1,18 +1,10 @@
-import axios from 'axios';
 import config from '@config/index';
 import { message } from 'antd';
+import axios from 'axios';
  
 const toastTimeout = 500;
 
 export default {
-
-  // get stafi staker apr
-  fetchStafiStakerApr: function (postData) {
-    return this.post(
-      config.api() + '/stafi/v1/webapi/rfis/stakerapr',
-      postData
-    );
-  },
 
   fetchRtokenPriceList: function () {
     return this.post(

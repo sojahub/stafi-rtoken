@@ -1,5 +1,5 @@
 import { bondSwitch } from '@features/FISClice';
-import { fetchStafiStakerApr, reloadData } from '@features/globalClice';
+import { reloadData } from '@features/globalClice';
 import { bondFees, continueProcess, getPools, getTotalIssuance } from '@features/rSOLClice';
 import { Symbol } from '@keyring/defaults';
 import Content from '@shared/components/content';
@@ -24,7 +24,6 @@ export default function Index(props: any) {
     dispatch(getTotalIssuance());
   }, [fisAccount, solAccount]);
   useEffect(() => {
-    dispatch(fetchStafiStakerApr());
     dispatch(bondFees());
     dispatch(bondSwitch());
     if (getLocalStorageItem(Keys.SolAccountKey) && getLocalStorageItem(Keys.FisAccountKey)) {
