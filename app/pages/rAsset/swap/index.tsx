@@ -50,13 +50,13 @@ import bsc_white from '@images/bsc_white.svg';
 import eth_white from '@images/eth_white.svg';
 import exchange_svg from '@images/exchange.svg';
 import rasset_fis_svg from '@images/rFIS.svg';
-// import rasset_rsol_svg from '@images/rSOL.svg';
+import rasset_rsol_svg from '@images/rSOL.svg';
 import rasset_ratom_svg from '@images/r_atom.svg';
 import rasset_rdot_svg from '@images/r_dot.svg';
 import rasset_reth_svg from '@images/r_eth.svg';
 import rasset_rfis_svg from '@images/r_fis.svg';
 import rasset_rksm_svg from '@images/r_ksm.svg';
-// import rasset_rmatic_svg from '@images/r_matic.svg';
+import rasset_rmatic_svg from '@images/r_matic.svg';
 import stafi_white from '@images/stafi_white.svg';
 import Back from '@shared/components/backIcon';
 import Button from '@shared/components/button/button';
@@ -79,102 +79,6 @@ type SelectorType = {
   content: string;
   type: string;
 };
-
-const tokenDatas = [
-  {
-    icon: rasset_fis_svg,
-    title: 'FIS',
-    content: '--',
-    type: 'fis',
-  },
-  {
-    icon: rasset_rfis_svg,
-    title: 'rFIS',
-    content: '--',
-    type: 'rfis',
-  },
-  {
-    icon: rasset_rdot_svg,
-    title: 'rDOT',
-    content: '--',
-    type: 'rdot',
-  },
-  {
-    icon: rasset_rksm_svg,
-    title: 'rKSM',
-    content: '--',
-    type: 'rksm',
-  },
-  {
-    icon: rasset_ratom_svg,
-    title: 'rATOM',
-    content: '--',
-    type: 'ratom',
-  },
-  // {
-  //   icon: rasset_rsol_svg,
-  //   title: 'rSOL',
-  //   content: '--',
-  //   type: 'rsol',
-  // },
-  // {
-  //   icon: rasset_rmatic_svg,
-  //   title: 'rMATIC',
-  //   content: '--',
-  //   type: 'rmatic',
-  // },
-];
-
-const tokenDatasWithREth = [
-  {
-    icon: rasset_fis_svg,
-    title: 'FIS',
-    content: '--',
-    type: 'fis',
-  },
-  {
-    icon: rasset_rfis_svg,
-    title: 'rFIS',
-    content: '--',
-    type: 'rfis',
-  },
-  {
-    icon: rasset_reth_svg,
-    title: 'rETH',
-    content: '--',
-    type: 'reth',
-  },
-  {
-    icon: rasset_rdot_svg,
-    title: 'rDOT',
-    content: '--',
-    type: 'rdot',
-  },
-  {
-    icon: rasset_rksm_svg,
-    title: 'rKSM',
-    content: '--',
-    type: 'rksm',
-  },
-  {
-    icon: rasset_ratom_svg,
-    title: 'rATOM',
-    content: '--',
-    type: 'ratom',
-  },
-  // {
-  //   icon: rasset_rsol_svg,
-  //   title: 'rSOL',
-  //   content: '--',
-  //   type: 'rsol',
-  // },
-  // {
-  //   icon: rasset_rmatic_svg,
-  //   title: 'rMATIC',
-  //   content: '--',
-  //   type: 'rmatic',
-  // },
-];
 
 const allTokenDatas = [
   {
@@ -213,18 +117,18 @@ const allTokenDatas = [
     content: '--',
     type: 'ratom',
   },
-  // {
-  //   icon: rasset_rsol_svg,
-  //   title: 'rSOL',
-  //   content: '--',
-  //   type: 'rsol',
-  // },
-  // {
-  //   icon: rasset_rmatic_svg,
-  //   title: 'rMATIC',
-  //   content: '--',
-  //   type: 'rmatic',
-  // },
+  {
+    icon: rasset_rsol_svg,
+    title: 'rSOL',
+    content: '--',
+    type: 'rsol',
+  },
+  {
+    icon: rasset_rmatic_svg,
+    title: 'rMATIC',
+    content: '--',
+    type: 'rmatic',
+  },
 ];
 
 const assetDatas = [
@@ -405,6 +309,12 @@ export default function Index(props: any) {
       }
       if (item.type === 'ratom') {
         item.content = ratom_balance;
+      }
+      if (item.type === 'rsol') {
+        item.content = rsol_balance;
+      }
+      if (item.type === 'rmatic') {
+        item.content = rmatic_balance;
       }
     });
     let filterTokenDatas;
