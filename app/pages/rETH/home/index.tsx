@@ -34,7 +34,7 @@ export default function Inde(props: any) {
       <Button
         icon={metamask_png}
         onClick={() => {
-          dispatch(connectMetamask('0x5'));
+          dispatch(connectMetamask(config.goerliChainId()));
           dispatch(monitoring_Method());
           ethAccount && dispatch(handleEthAccount(ethAccount.address, config.goerliChainId()));
           props.history.push('/rETH/type');

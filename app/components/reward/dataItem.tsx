@@ -1,6 +1,6 @@
-import React from 'react'
 import config from '@config/index';
-import NumberUtil from '@util/numberUtil'
+import NumberUtil from '@util/numberUtil';
+import React from 'react';
 
 type Props={
     era:Number,
@@ -10,7 +10,7 @@ type Props={
     reward:Number|string
 }
 export default function Index(props:Props){
-    if(props.reward=="--"){
+    if(props.reward === '--') {
         return null;
     }
     return <div className="row body">

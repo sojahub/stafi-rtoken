@@ -221,24 +221,30 @@ declare const window: any;
 declare const ethereum: any;
 
 export const connectMetamask =
-  (chainId: string): AppThunk =>
+  (targetChainId: string, isAutoConnect?: boolean): AppThunk =>
   async (dispatch, getState) => {
     if (typeof window.ethereum !== 'undefined' && ethereum.isMetaMask) {
       ethereum.autoRefreshOnNetworkChange = false;
 
       ethereum.request({ method: 'eth_chainId' }).then((chainId: any) => {
         if (isdev()) {
-          if (ethereum.chainId != chainId) {
-            if (chainId == '0x3') {
-              message.warning('Please connect to Ropsten Test Network!');
+          if (ethereum.chainId != targetChainId) {
+            if (targetChainId === '0x3') {
+              if (!isAutoConnect) {
+                message.warning('Please connect to Ropsten Test Network!');
+              }
             }
-            if (chainId == '0x5') {
-              message.warning('Please connect to Goerli Test Network!');
+            if (targetChainId === '0x5') {
+              if (!isAutoConnect) {
+                message.warning('Please connect to Goerli Test Network!');
+              }
             }
             return;
           }
         } else if (ethereum.chainId != '0x1') {
-          message.warning('Please connect to Ethereum Main Network!');
+          if (!isAutoConnect) {
+            message.warning('Please connect to Ethereum Main Network!');
+          }
           return;
         }
 
@@ -307,15 +313,15 @@ export const monitoring_Method = (): AppThunk => (dispatch, getState) => {
     ethereum.on('chainChanged', (chainId: any) => {
       if (isdev()) {
         if (ethereum.chainId != '0x3' && location.pathname.includes('/rAsset/erc')) {
-          message.warning('Please connect to Ropsten Test Network!');
+          // message.warning('Please connect to Ropsten Test Network!');
           dispatch(setEthAccount(null));
         }
         if (ethereum.chainId != '0x5' && location.pathname.includes('/rETH')) {
-          message.warning('Please connect to Goerli Test Network!');
+          // message.warning('Please connect to Goerli Test Network!');
           dispatch(setEthAccount(null));
         }
       } else if (ethereum.chainId != '0x1') {
-        message.warning('Please connect to Ethereum Main Network!');
+        // message.warning('Please connect to Ethereum Main Network!');
 
         dispatch(setEthAccount(null));
       }
@@ -390,7 +396,11 @@ export const get_eth_getBalance =
   async (dispatch, getState) => {
     if (isdev() && useRopsten && !config.metaMaskNetworkIsEth(getState().globalModule.metaMaskNetworkId)) {
       return;
-    } else if (isdev() && !useRopsten && !config.metaMaskNetworkIsGoerliEth(getState().globalModule.metaMaskNetworkId)) {
+    } else if (
+      isdev() &&
+      !useRopsten &&
+      !config.metaMaskNetworkIsGoerliEth(getState().globalModule.metaMaskNetworkId)
+    ) {
       return;
     }
     let web3 = ethServer.getWeb3();
@@ -1104,8 +1114,8 @@ export const getReward =
   async (dispatch, getState) => {
     const ethAccount = getState().rETHModule.ethAccount;
     dispatch(setLoading(true));
-    try { 
-      if(pageIndex==0){
+    try {
+      if (pageIndex == 0) {
         dispatch(setRewardList([]));
         dispatch(setRewardList_lastdata(null));
       }
@@ -1140,7 +1150,7 @@ export const getReward =
           cb && cb(false);
         }
       } else {
-        dispatch(setLoading(false))
+        dispatch(setLoading(false));
       }
     } catch (error) {
       dispatch(setLoading(false));

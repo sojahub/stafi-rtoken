@@ -41,6 +41,8 @@ const bridgeClice = createSlice({
     estimateEthFee: '--',
     estimateBscFee: '--',
     priceList: [],
+    // 0-invisible, 1-start transferring, 2-start minting
+    swapLoadingStatus: 0,
   },
   reducers: {
     setErc20EstimateFee(state, { payload }) {
@@ -58,11 +60,20 @@ const bridgeClice = createSlice({
     setPriceList(state, { payload }) {
       state.priceList = payload;
     },
+    setSwapLoadingStatus(state, { payload }) {
+      state.swapLoadingStatus = payload;
+    },
   },
 });
 
-export const { setErc20EstimateFee, setBep20EstimateFee, setEstimateEthFee, setEstimateBscFee, setPriceList } =
-  bridgeClice.actions;
+export const {
+  setErc20EstimateFee,
+  setBep20EstimateFee,
+  setEstimateEthFee,
+  setEstimateBscFee,
+  setPriceList,
+  setSwapLoadingStatus,
+} = bridgeClice.actions;
 
 //Native to ERC20
 export const bridgeCommon_ChainFees = (): AppThunk => async (dispatch, getState) => {
@@ -82,6 +93,7 @@ export const bridgeCommon_ChainFees = (): AppThunk => async (dispatch, getState)
     }
   } catch (e) {}
 };
+
 //ERC20 to Native
 export const getBridgeEstimateEthFee = (): AppThunk => async (dispatch, getState) => {
   dispatch(setEstimateEthFee(bridgeServer.getBridgeEstimateEthFee()));
@@ -93,6 +105,7 @@ export const nativeToOtherSwap =
   async (dispatch, getState) => {
     try {
       dispatch(setLoading(true));
+      dispatch(setSwapLoadingStatus(1));
       web3Enable(stafiServer.getWeb3EnalbeName());
       const injector: any = await web3FromSource(stafiServer.getPolkadotJsSource());
       const api = await stafiServer.createStafiApi();
@@ -109,6 +122,7 @@ export const nativeToOtherSwap =
       }
       if (!tx) {
         dispatch(setLoading(false));
+        dispatch(setSwapLoadingStatus(0));
         return;
       }
 
@@ -141,14 +155,17 @@ export const nativeToOtherSwap =
                       message_str = 'Service is paused, please try again later!';
                     }
                     dispatch(setLoading(false));
+                    dispatch(setSwapLoadingStatus(0));
                     message.error(message_str);
                   } catch (error) {
                     dispatch(setLoading(false));
+                    dispatch(setSwapLoadingStatus(0));
                     message.error(error.message);
                   }
                 }
               } else if (method === 'ExtrinsicSuccess') {
                 dispatch(setLoading(false));
+                dispatch(setSwapLoadingStatus(2));
                 dispatch(
                   add_Swap_Notice(notice_uuid, tokenStr, tokenAmount, noticeStatus.Pending, {
                     swapType: 'native',
@@ -161,14 +178,17 @@ export const nativeToOtherSwap =
             });
         } else if (result.isError) {
           dispatch(setLoading(false));
+          dispatch(setSwapLoadingStatus(0));
           message.error(result.toHuman());
         }
       }).catch((error: any) => {
         dispatch(setLoading(false));
+        dispatch(setSwapLoadingStatus(0));
         message.error(error.message);
       });
     } catch (error) {
       dispatch(setLoading(false));
+      dispatch(setSwapLoadingStatus(0));
       message.error(error.message);
     }
   };
@@ -184,6 +204,7 @@ export const erc20ToOtherSwap =
   ): AppThunk =>
   async (dispatch, getState) => {
     dispatch(setLoading(true));
+    dispatch(setSwapLoadingStatus(1));
     let web3 = ethServer.getWeb3();
 
     let tokenContract: any = '';
@@ -232,6 +253,7 @@ export const erc20ToOtherSwap =
     }
     if (!tokenContract) {
       dispatch(setLoading(false));
+      dispatch(setSwapLoadingStatus(0));
       return;
     }
 
@@ -275,11 +297,14 @@ export const erc20ToOtherSwap =
                 address: address,
               }),
             );
+            dispatch(setSwapLoadingStatus(2));
             cb && cb({ txHash: result.transactionHash });
           } else {
+            dispatch(setSwapLoadingStatus(0));
             message.error('Error! Please try again');
           }
         } else {
+          dispatch(setSwapLoadingStatus(0));
           message.error('Error! Please try again');
         }
       } else {
@@ -315,15 +340,19 @@ export const erc20ToOtherSwap =
               address: address,
             }),
           );
+          dispatch(setSwapLoadingStatus(2));
           cb && cb({ txHash: result.transactionHash });
         } else {
+          dispatch(setSwapLoadingStatus(0));
           message.error('Error! Please try again');
         }
       }
     } catch (error) {
+      dispatch(setSwapLoadingStatus(0));
       message.error(error.message);
+    } finally {
+      dispatch(setLoading(false));
     }
-    dispatch(setLoading(false));
   };
 
 export const bep20ToOtherSwap =
@@ -337,6 +366,7 @@ export const bep20ToOtherSwap =
   ): AppThunk =>
   async (dispatch, getState) => {
     dispatch(setLoading(true));
+    dispatch(setSwapLoadingStatus(1));
     let web3 = ethServer.getWeb3();
 
     let tokenContract: any = '';
@@ -385,6 +415,7 @@ export const bep20ToOtherSwap =
     }
     if (!tokenContract) {
       dispatch(setLoading(false));
+      dispatch(setSwapLoadingStatus(0));
       return;
     }
 
@@ -432,11 +463,14 @@ export const bep20ToOtherSwap =
                 address: address,
               }),
             );
+            dispatch(setSwapLoadingStatus(2));
             cb && cb({ txHash: result.transactionHash });
           } else {
+            dispatch(setSwapLoadingStatus(0));
             message.error('Error! Please try again');
           }
         } else {
+          dispatch(setSwapLoadingStatus(0));
           message.error('Error! Please try again');
         }
       } else {
@@ -472,15 +506,19 @@ export const bep20ToOtherSwap =
               address: address,
             }),
           );
+          dispatch(setSwapLoadingStatus(2));
           cb && cb({ txHash: result.transactionHash });
         } else {
+          dispatch(setSwapLoadingStatus(0));
           message.error('Error! Please try again');
         }
       }
     } catch (error) {
+      dispatch(setSwapLoadingStatus(0));
       message.error(error.message);
+    } finally {
+      dispatch(setLoading(false));
     }
-    dispatch(setLoading(false));
   };
 
 const add_Swap_Notice =

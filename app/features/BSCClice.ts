@@ -132,7 +132,7 @@ declare const window: any;
 declare const ethereum: any;
 
 export const connectMetamask =
-  (chainId: string): AppThunk =>
+  (chainId: string, isAutoConnect?: boolean): AppThunk =>
   async (dispatch, getState) => {
     if (typeof window.ethereum !== 'undefined' && ethereum.isMetaMask) {
       ethereum.autoRefreshOnNetworkChange = false;
@@ -140,11 +140,15 @@ export const connectMetamask =
       ethereum.request({ method: 'eth_chainId' }).then((chainId: any) => {
         if (isdev()) {
           if (ethereum.chainId != '0x61') {
-            message.warning('Please connect to Binance Test Network!');
+            if (!isAutoConnect) {
+              message.warning('Please connect to Binance Test Network!');
+            }
             return;
           }
         } else if (ethereum.chainId != '0x38') {
-          message.warning('Please connect to Binance Main Network!');
+          if (!isAutoConnect) {
+            message.warning('Please connect to Binance Main Network!');
+          }
           return;
         }
 
@@ -233,23 +237,23 @@ export const handleBscAccount =
   };
 
 export const getAssetBalanceAll = (): AppThunk => (dispatch, getState) => {
-  dispatch(getFISAssetBalance());
+  // dispatch(getFISAssetBalance());
   dispatch(getRFISAssetBalance());
   dispatch(getRKSMAssetBalance());
   dispatch(getRDOTAssetBalance());
   dispatch(getRATOMAssetBalance());
-  dispatch(getRSOLAssetBalance());
-  dispatch(getRMATICAssetBalance());
+  // dispatch(getRSOLAssetBalance());
+  // dispatch(getRMATICAssetBalance());
   dispatch(getRETHAssetBalance());
 };
 export const getBep20Allowances = (): AppThunk => (dispatch, getState) => {
-  dispatch(getFISBep20Allowance());
+  // dispatch(getFISBep20Allowance());
   dispatch(getRFISBep20Allowance());
   dispatch(getRKSMBep20Allowance());
   dispatch(getRDOTBep20Allowance());
   dispatch(getRATOMBep20Allowance());
-  dispatch(getRSOLBep20Allowance());
-  dispatch(getRMATICBep20Allowance());
+  // dispatch(getRSOLBep20Allowance());
+  // dispatch(getRMATICBep20Allowance());
   dispatch(getRETHBep20Allowance());
 };
 

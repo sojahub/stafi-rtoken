@@ -9,6 +9,7 @@
 /build
 /dll
 package-lock.json
+yarn.lock
 # misc
 .DS_Store
 npm-debug.log*

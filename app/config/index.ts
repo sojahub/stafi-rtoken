@@ -94,10 +94,10 @@ export default {
       return '0xf072c7e6e36639870c3986196237a97fcccb0331';
     }
   },
-  stafiNodeManagerAddress: () => {
-    if (!isdev()) {
-      return '0x4fd35afa32310eaa1354768be6ad2c5c6a62d572';
-    } else {
+  stafiNodeManagerAddress:() => { 
+    if(!isdev()){
+      return '0x342702e87e8714c759a21299402d9ec99efa0caf';
+    }else{
       return '0x68b749894c5484687916d57616b5214cf9fc63cb';
     }
   },
@@ -145,7 +145,8 @@ export default {
   },
   FISBep20TokenAddress: () => {
     if (!isdev()) {
-      return '0x91c48208a9a171eb26e6f2bd48f41b958e19ebab';
+      // return '0x91c48208a9a171eb26e6f2bd48f41b958e19ebab';
+      return '';
     } else {
       return '0x3dabfb5b0ca8c416684e2a26c1ebc4039627c94a';
     }
@@ -379,9 +380,9 @@ export default {
   },
   bscChainId: () => {
     if (!isdev()) {
-      return 0x61;
+      return '0x38';
     }
-    return 0x61;
+    return '0x61';
   },
   ropstenChainId:()=>{
     return '0x3';
@@ -403,7 +404,7 @@ export default {
   },
   metaMaskNetworkIsBsc: (networkChainId: any) => {
     if (!isdev()) {
-      return networkChainId === '0x61';
+      return networkChainId === '0x38';
     }
     return networkChainId === '0x61';
   },

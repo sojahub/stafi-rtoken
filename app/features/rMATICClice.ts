@@ -17,7 +17,7 @@ import { AppThunk } from '../store';
 import CommonClice from './commonClice';
 import { getAssetBalance } from './ETHClice';
 import { bondStates, bound, fisUnbond, rTokenSeries_bondStates } from './FISClice';
-import { initProcess, processStatus, setProcessSending, setProcessSlider, setProcessType,setLoading } from './globalClice';
+import { initProcess, processStatus, setLoading, setProcessSending, setProcessSlider, setProcessType } from './globalClice';
 import { add_Notice, findUuid, noticeStatus, noticesubType, noticeType } from './noticeClice';
 import { setIsloadMonitoring } from './rETHClice';
 
@@ -247,15 +247,15 @@ export const monitoring_Method=():AppThunk=>(dispatch,getState)=> {
     ethereum.on('chainChanged', (chainId:any) => {
       if (isdev()) {
         if (ethereum.chainId != "0x3" && location.pathname.includes("/rAsset/erc")) {
-          message.warning('Please connect to Ropsten Test Network!');  
+          // message.warning('Please connect to Ropsten Test Network!');  
           dispatch(setMaticAccount(null));
         } 
         if (ethereum.chainId != "0x5" && location.pathname.includes("/rETH")) {
-          message.warning('Please connect to Goerli Test Network!');  
+          // message.warning('Please connect to Goerli Test Network!');  
           dispatch(setMaticAccount(null));
         } 
       } else if (ethereum.chainId != '0x1') {
-        message.warning('Please connect to Ethereum Main Network!');
+        // message.warning('Please connect to Ethereum Main Network!');
         
         dispatch(setMaticAccount(null));
       }
