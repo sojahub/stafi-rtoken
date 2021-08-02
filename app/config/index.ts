@@ -295,6 +295,8 @@ export default {
       return `https://kusama.subscan.io/extrinsic/${txHash}`;
     } else if (type == rSymbol.Sol) {
       return `https://solanabeach.io/transaction/${txHash}`;
+    } else if (type == rSymbol.Matic) {
+      return `https://etherscan.io/tx/${txHash}`;
     } else {
       return '';
     }
@@ -307,7 +309,7 @@ export default {
     } else if (type == Symbol.Atom) {
       return 22;
     } else if (type == Symbol.Matic) {
-      return 22;
+      return 3;
     } else if (type == Symbol.Fis) {
       return 14;
     } else if (type == Symbol.Sol) {
