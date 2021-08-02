@@ -126,7 +126,7 @@ export default {
     if (!isdev()) {
       return '0xc82eb6dea0c93edb8b697b89ad1b13d19469d635';
     } else {
-      return '0xc372e985fda306cfe0e903657de808cf757f536f';
+      return '0x630a0549feb82229e2a9ad51a94202cf9e902630';
     }
   },
   rFISBep20TokenAddress: () => {
@@ -140,7 +140,7 @@ export default {
     if (!isdev()) {
       return '0xef3a930e1ffffacd2fc13434ac81bd278b0ecc8d';
     } else {
-      return '0x64591e3f2dbf46cdfb398a0d9ba81f41b7cbd449';
+      return '0x756139e441107c7dd66d2f080a182c2810e927f3';
     }
   },
   FISBep20TokenAddress: () => {
@@ -155,7 +155,7 @@ export default {
     if (!isdev()) {
       return '0x3c3842c4d3037ae121d69ea1e7a0b61413be806c';
     } else {
-      return '0xd1d458c1c3579033a65db4ca2f06c12573aa5e27';
+      return '0xd0b16dd375fa75889a0f0e209aff05b2b1de815b';
     }
   },
   rKSMBep20TokenAddress: () => {
@@ -169,7 +169,7 @@ export default {
     if (!isdev()) {
       return '0x505f5a4ff10985fe9f93f2ae3501da5fe665f08a';
     } else {
-      return '0x6aef17cea6e6841f1957f9fde6538ac391d55636';
+      return '0xab91a1b93b62e14b803515172abda88dc2072a8a';
     }
   },
   rDOTBep20TokenAddress: () => {
@@ -183,7 +183,7 @@ export default {
     if (!isdev()) {
       return '0xd01cb3d113a864763dd3977fe1e725860013b0ed';
     } else {
-      return '0xd363ed9ee73c8b6bd048ae188000be454f7b7925';
+      return '0x6aaad947283d6ed676a6fd5ca60486a323001060';
     }
   },
   rATOMBep20TokenAddress: () => {
@@ -197,7 +197,7 @@ export default {
     if (!isdev()) {
       return '0x08841b9cba30e80a0e51df13b174f362f90e3df1';
     } else {
-      return '0x08841b9cba30e80a0e51df13b174f362f90e3df1';
+      return '0xe21f7b58e4563c58d0f7932a04d62d00034e7437';
     }
   },
   rSOLBep20TokenAddress: () => {
@@ -211,7 +211,7 @@ export default {
     if (!isdev()) {
       return '0x7D1AfA7B718fb893dB30A3aBc0Cfc608AaCfeBB0';
     } else {
-      return '0x499d11e0b6eac7c0593d8fb292dcbbf815fb29ae';
+      return '0x1a80c8874e4bf1516c02aa92b838b33e11cde7e8';
     }
   },
   rMATICBep20TokenAddress: () => {
@@ -232,7 +232,7 @@ export default {
     if (!isdev()) {
       return '0x2b6b6fce3af32efe4430e446717bda72b95ebb9a';
     } else {
-      return '0x05da428a68da64a2b085a4d2d4279d952d7b647a';
+      return '0xed70d0dab69f63f5217fee1a8fa37eeba29e689b';
     }
   },
   bep20HandlerAddress: () => {
@@ -246,7 +246,7 @@ export default {
     if (!isdev()) {
       return '0xc0609ea6e4345555276fac1636b5c27ebc17d817';
     } else {
-      return '0xc3ce28a291def0f5762c545431036a6819b8d6d2';
+      return '0x9058545891f6dcc18f2950b7a13e3079ef5548a3';
     }
   },
   bep20BridgeAddress: () => {

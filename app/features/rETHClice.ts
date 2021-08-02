@@ -359,57 +359,42 @@ export const checkEthAddress = (address: string) => {
   }
 };
 
-export const reloadData =
-  (useRopsten?: boolean): AppThunk =>
-  async (dispatch, getState) => {
-    dispatch(rTokenRate(useRopsten));
-    dispatch(get_eth_getBalance(useRopsten));
-    dispatch(getMinimumDeposit());
+export const reloadData = (): AppThunk => async (dispatch, getState) => {
+  dispatch(rTokenRate());
+  dispatch(get_eth_getBalance());
+  dispatch(getMinimumDeposit());
 
-    dispatch(getStakerApr());
-    dispatch(getValidatorApr());
-    dispatch(getNextCapacity());
-    dispatch(getPoolCount());
-    dispatch(getRethAmount(useRopsten));
-    dispatch(getNodeStakingPoolCount());
-    dispatch(getDepositBalance());
-    dispatch(getSelfDeposited());
-    dispatch(setRunCount(0));
-  };
+  dispatch(getStakerApr());
+  dispatch(getValidatorApr());
+  dispatch(getNextCapacity());
+  dispatch(getPoolCount());
+  dispatch(getRethAmount());
+  dispatch(getNodeStakingPoolCount());
+  dispatch(getDepositBalance());
+  dispatch(getSelfDeposited());
+  dispatch(setRunCount(0));
+};
 
-export const rTokenRate =
-  (useRopsten?: boolean): AppThunk =>
-  async (dispatch, getState) => {
-    let web3 = ethServer.getWeb3();
-    let contract = new web3.eth.Contract(
-      ethServer.getRETHTokenAbi(),
-      useRopsten ? ethServer.getRETHTokenAddress() : ethServer.getRETHGoerliTokenAddress(),
-    );
-    const amount = web3.utils.toWei('1');
-    const result = await contract.methods.getEthValue(amount).call();
-    let ratio = web3.utils.fromWei(result, 'ether');
-    dispatch(setRatio(ratio));
-  };
+export const rTokenRate = (): AppThunk => async (dispatch, getState) => {
+  let web3 = ethServer.getWeb3();
+  let contract = new web3.eth.Contract(ethServer.getRETHTokenAbi(), ethServer.getRETHTokenAddress());
+  const amount = web3.utils.toWei('1');
+  const result = await contract.methods.getEthValue(amount).call();
+  let ratio = web3.utils.fromWei(result, 'ether');
+  dispatch(setRatio(ratio));
+};
 
-export const get_eth_getBalance =
-  (useRopsten?: any): AppThunk =>
-  async (dispatch, getState) => {
-    if (isdev() && useRopsten && !config.metaMaskNetworkIsEth(getState().globalModule.metaMaskNetworkId)) {
-      return;
-    } else if (
-      isdev() &&
-      !useRopsten &&
-      !config.metaMaskNetworkIsGoerliEth(getState().globalModule.metaMaskNetworkId)
-    ) {
-      return;
-    }
-    let web3 = ethServer.getWeb3();
-    const address = getState().rETHModule.ethAccount.address;
-    const result = await ethereum.request({ method: 'eth_getBalance', params: [address, 'latest'] });
-    const balance = web3.utils.fromWei(result, 'ether');
-    dispatch(setEthAccount({ address: address, balance: NumberUtil.handleEthAmountToFixed(balance) }));
-    dispatch(setBalance(balance));
-  };
+export const get_eth_getBalance = (): AppThunk => async (dispatch, getState) => {
+  if (isdev() && !config.metaMaskNetworkIsGoerliEth(getState().globalModule.metaMaskNetworkId)) {
+    return;
+  }
+  let web3 = ethServer.getWeb3();
+  const address = getState().rETHModule.ethAccount.address;
+  const result = await ethereum.request({ method: 'eth_getBalance', params: [address, 'latest'] });
+  const balance = web3.utils.fromWei(result, 'ether');
+  dispatch(setEthAccount({ address: address, balance: NumberUtil.handleEthAmountToFixed(balance) }));
+  dispatch(setBalance(balance));
+};
 
 export const getMinimumDeposit = (): AppThunk => async (dispatch, getState) => {
   let web3 = ethServer.getWeb3();
@@ -529,19 +514,12 @@ export const send =
     }
   };
 
-export const getRethAmount =
-  (useRopsten?: boolean): AppThunk =>
-  async (dispatch, getState) => {
-    const address = getState().rETHModule.ethAccount.address;
-    getAssetBalance(
-      address,
-      ethServer.getRETHTokenAbi(),
-      useRopsten ? ethServer.getRETHTokenAddress() : ethServer.getRETHGoerliTokenAddress(),
-      (v: any) => {
-        dispatch(setRethAmount(v));
-      },
-    );
-  };
+export const getRethAmount = (): AppThunk => async (dispatch, getState) => {
+  const address = getState().rETHModule.ethAccount.address;
+  getAssetBalance(address, ethServer.getRETHTokenAbi(), ethServer.getRETHTokenAddress(), (v: any) => {
+    dispatch(setRethAmount(v));
+  });
+};
 
 export const getDepositBalance = (): AppThunk => async (dispatch, getState) => {
   const address = getState().rETHModule.ethAccount.address;
@@ -977,13 +955,13 @@ export const getUnmatchedValidators = (): AppThunk => async (dispatch, getState)
 };
 
 export const getTotalRETH =
-  (useRopsten?: boolean): AppThunk =>
+  (): AppThunk =>
   async (dispatch, getState) => {
     const address = getState().rETHModule.ethAccount.address;
     let web3 = ethServer.getWeb3();
     let contract = new web3.eth.Contract(
       ethServer.getRETHTokenAbi(),
-      useRopsten ? ethServer.getRETHTokenAddress() : ethServer.getRETHGoerliTokenAddress(),
+      ethServer.getRETHTokenAddress(),
       {
         from: address,
       },

@@ -27,6 +27,8 @@ export default class Index {
       return '0x000000000000000000000000000000659b930f8568952cb7b0c8b7eda3060b01';
     } else if (tokenType == 'reth') {
       return '0x000000000000000000000000000000b2c61e66d44fd65f6070c628e20b44dd01';
+    } else if (tokenType == 'rmatic') {
+      return '0x00000000000000000000000000000014c28bae959bb2de5085d17682eca7b001';
     }
   }
   getRsymbolByTokenType(tokenType: string) {
@@ -41,6 +43,8 @@ export default class Index {
         return rSymbol.Atom;
       case 'rsol':
         return rSymbol.Sol;
+      case 'rmatic':
+        return rSymbol.Matic;
       default:
         return rSymbol.Fis;
     }

@@ -17,7 +17,7 @@ export default function Index(props: any) {
   });
   useEffect(() => {
     ethAccount && ethAccount.address && dispatch(handleEthAccount(ethAccount.address, config.goerliChainId()));
-    ethAccount && ethAccount.address && dispatch(reloadData(false));
+    ethAccount && ethAccount.address && dispatch(reloadData());
   }, [ethAccount == null]);
   useEffect(() => {
     dispatch(monitoring_Method());

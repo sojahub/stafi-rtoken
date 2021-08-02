@@ -50,7 +50,7 @@ export default function SwapLoading(props: Props) {
     if (swapLoadingStatus === 1) {
       if (stage1TimeLeft > 0) {
         stage1IntervalId = setTimeout(() => {
-          console.log('tik tik tik tik tik tik tik tik tik tik tik tik tik tik: ', stage1TimeLeft);
+          // console.log('tik tik tik tik tik tik tik tik tik tik tik tik tik tik: ', stage1TimeLeft);
           setStage1TimeLeft(max(stage1TimeLeft - 0.5, 0));
         }, 500);
       }
@@ -59,7 +59,7 @@ export default function SwapLoading(props: Props) {
       stage2StartProgress = ((STAGE1_PERIOD - stage1TimeLeft) * STAGE1_MAX_PROGRESS) / STAGE1_PERIOD;
       if (stage2TimeLeft > 0) {
         stage2IntervalId = setTimeout(() => {
-          console.log('2tik tik tik tik tik tik tik tik tik tik tik tik tik tik: ', stage2TimeLeft);
+          // console.log('2tik tik tik tik tik tik tik tik tik tik tik tik tik tik: ', stage2TimeLeft);
           setStage2TimeLeft(max(stage2TimeLeft - 0.5, 0));
         }, 500);
       }

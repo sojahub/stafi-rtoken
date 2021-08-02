@@ -150,6 +150,8 @@ export const nativeToOtherSwap =
                       message_str = 'Something is wrong, please make sure you have enough FIS and rATOM balance';
                     } else if (tokenType == 'rsol') {
                       message_str = 'Something is wrong, please make sure you have enough FIS and rSOL balance';
+                    } else if(tokenType == 'rmatic') {
+                      message_str = 'Something is wrong, please make sure you have enough FIS and rMATIC balance';
                     }
                     if (error.name == 'ServicePaused') {
                       message_str = 'Service is paused, please try again later!';

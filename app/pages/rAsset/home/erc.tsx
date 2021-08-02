@@ -161,7 +161,7 @@ export default function Index(props: any) {
 
   const updateData = () => {
     if (ethAccount && ethAccount.address) {
-      dispatch(handleEthAccount(ethAccount.address, config.ropstenChainId()));
+      dispatch(handleEthAccount(ethAccount.address, config.goerliChainId()));
 
       dispatch(getAssetBalanceAll());
 
@@ -178,7 +178,7 @@ export default function Index(props: any) {
       dispatch(sol_getUnbondCommission());
       dispatch(matic_getUnbondCommission());
     } else {
-      dispatch(connectMetamask(config.ropstenChainId(), true));
+      dispatch(connectMetamask(config.goerliChainId(), true));
     }
   };
 
@@ -217,7 +217,7 @@ export default function Index(props: any) {
         <>
           <DataList>
             <DataItem
-              disabled={!config.metaMaskNetworkIsEth(metaMaskNetworkId)}
+              disabled={!config.metaMaskNetworkIsGoerliEth(metaMaskNetworkId)}
               rSymbol='FIS'
               icon={rasset_fis_svg}
               fullName='StaFi'
@@ -230,7 +230,7 @@ export default function Index(props: any) {
             />
 
             <DataItem
-              disabled={!config.metaMaskNetworkIsEth(metaMaskNetworkId)}
+              disabled={!config.metaMaskNetworkIsGoerliEth(metaMaskNetworkId)}
               rSymbol='rFIS'
               icon={rasset_rfis_svg}
               fullName='StaFi'
@@ -242,7 +242,7 @@ export default function Index(props: any) {
               onSwapClick={() => toSwap('rFIS')}
             />
             <DataItem
-              disabled={!config.metaMaskNetworkIsEth(metaMaskNetworkId)}
+              disabled={!config.metaMaskNetworkIsGoerliEth(metaMaskNetworkId)}
               rSymbol='rETH'
               icon={rasset_reth_svg}
               fullName='Ethereum'
@@ -254,7 +254,7 @@ export default function Index(props: any) {
               onSwapClick={() => toSwapBep20('rETH')}
             />
             <DataItem
-              disabled={!config.metaMaskNetworkIsEth(metaMaskNetworkId)}
+              disabled={!config.metaMaskNetworkIsGoerliEth(metaMaskNetworkId)}
               rSymbol='rDOT'
               icon={rasset_rdot_svg}
               fullName='Polkadot'
@@ -267,7 +267,7 @@ export default function Index(props: any) {
             />
 
             <DataItem
-              disabled={!config.metaMaskNetworkIsEth(metaMaskNetworkId)}
+              disabled={!config.metaMaskNetworkIsGoerliEth(metaMaskNetworkId)}
               rSymbol='rKSM'
               icon={rasset_rksm_svg}
               fullName='Kusama'
@@ -280,7 +280,7 @@ export default function Index(props: any) {
             />
 
             <DataItem
-              disabled={!config.metaMaskNetworkIsEth(metaMaskNetworkId)}
+              disabled={!config.metaMaskNetworkIsGoerliEth(metaMaskNetworkId)}
               rSymbol='rATOM'
               icon={rasset_ratom_svg}
               fullName='Cosmos'
@@ -293,7 +293,7 @@ export default function Index(props: any) {
             />
 
             <DataItem
-              disabled={!config.metaMaskNetworkIsEth(metaMaskNetworkId)}
+              disabled={!config.metaMaskNetworkIsGoerliEth(metaMaskNetworkId)}
               rSymbol='rSOL'
               icon={rasset_rsol_svg}
               fullName='Solana'
@@ -306,7 +306,7 @@ export default function Index(props: any) {
             />
 
             <DataItem
-              disabled={!config.metaMaskNetworkIsEth(metaMaskNetworkId)}
+              disabled={!config.metaMaskNetworkIsGoerliEth(metaMaskNetworkId)}
               rSymbol='rMATIC'
               icon={rasset_rmatic_svg}
               fullName='Matic'
@@ -325,7 +325,7 @@ export default function Index(props: any) {
           <Button
             icon={metamask}
             onClick={() => {
-              dispatch(connectMetamask(config.ropstenChainId()));
+              dispatch(connectMetamask(config.goerliChainId()));
               dispatch(monitoring_Method());
             }}>
             Connect to Metamask

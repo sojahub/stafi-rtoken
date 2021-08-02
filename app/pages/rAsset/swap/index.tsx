@@ -411,7 +411,7 @@ export default function Index(props: any) {
 
   const updateErcBepData = () => {
     if (fromType == 'erc20' && ethAccount && ethAccount.address) {
-      dispatch(get_eth_getBalance(true));
+      dispatch(get_eth_getBalance());
       dispatch(getErc20Allowances());
       dispatch(getAssetBalanceAll());
       dispatch(eth_Monitoring_Method());
@@ -640,7 +640,7 @@ export default function Index(props: any) {
                 fromTypeData &&
                 destTypeData &&
                 (fromTypeData.type === 'native' ||
-                  (fromTypeData.type === 'erc20' && config.metaMaskNetworkIsEth(metaMaskNetworkId)) ||
+                  (fromTypeData.type === 'erc20' && config.metaMaskNetworkIsGoerliEth(metaMaskNetworkId)) ||
                   (fromTypeData.type === 'bep20' && config.metaMaskNetworkIsBsc(metaMaskNetworkId)))
               )
             }
