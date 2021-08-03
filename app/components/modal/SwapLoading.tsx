@@ -1,5 +1,4 @@
 import { LoadingOutlined } from '@ant-design/icons';
-import config from '@config/index';
 import { setSwapLoadingStatus } from '@features/bridgeClice';
 import close_bold_svg from '@images/close_bold.svg';
 import complete_svg from '@images/complete.svg';
@@ -18,23 +17,25 @@ type Props = {
   viewTxUrl: string;
 };
 
-const STAGE1_PERIOD = config.swapWaitingTime() / 2;
-const STAGE2_PERIOD = config.swapWaitingTime();
 const STAGE1_MAX_PROGRESS = 50;
 
 export default function SwapLoading(props: Props) {
   const dispatch = useDispatch();
 
+  const { swapLoadingStatus, swapWaitingTime } = useSelector((state: any) => {
+    return {
+      swapLoadingStatus: state.bridgeModule.swapLoadingStatus,
+      swapWaitingTime: state.bridgeModule.swapWaitingTime,
+    };
+  });
+
+  const STAGE1_PERIOD = swapWaitingTime / 2;
+  const STAGE2_PERIOD = swapWaitingTime;
+
   const [stage1TimeLeft, setStage1TimeLeft] = useState(STAGE1_PERIOD);
   const [stage2TimeLeft, setStage2TimeLeft] = useState(STAGE2_PERIOD);
   const [progress, setProgress] = useState(0);
   const [success, setSuccess] = useState(false);
-
-  const { swapLoadingStatus } = useSelector((state: any) => {
-    return {
-      swapLoadingStatus: state.bridgeModule.swapLoadingStatus,
-    };
-  });
 
   let stage1IntervalId: any;
   let stage2IntervalId: any;

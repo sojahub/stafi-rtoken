@@ -1,3 +1,4 @@
+import { isdev } from '@config/';
 import { web3Enable, web3FromSource } from '@polkadot/extension-dapp';
 import { u8aToHex } from '@polkadot/util';
 import { createSlice } from '@reduxjs/toolkit';
@@ -43,6 +44,7 @@ const bridgeClice = createSlice({
     priceList: [],
     // 0-invisible, 1-start transferring, 2-start minting
     swapLoadingStatus: 0,
+    swapWaitingTime: 150,
   },
   reducers: {
     setErc20EstimateFee(state, { payload }) {
@@ -63,6 +65,9 @@ const bridgeClice = createSlice({
     setSwapLoadingStatus(state, { payload }) {
       state.swapLoadingStatus = payload;
     },
+    setSwapWaitingTime(state, { payload }) {
+      state.swapWaitingTime = payload;
+    },
   },
 });
 
@@ -73,6 +78,7 @@ export const {
   setEstimateBscFee,
   setPriceList,
   setSwapLoadingStatus,
+  setSwapWaitingTime,
 } = bridgeClice.actions;
 
 //Native to ERC20
@@ -106,6 +112,11 @@ export const nativeToOtherSwap =
     try {
       dispatch(setLoading(true));
       dispatch(setSwapLoadingStatus(1));
+      if (isdev()) {
+        dispatch(setSwapWaitingTime(30));
+      } else {
+        dispatch(setSwapWaitingTime(50));
+      }
       web3Enable(stafiServer.getWeb3EnalbeName());
       const injector: any = await web3FromSource(stafiServer.getPolkadotJsSource());
       const api = await stafiServer.createStafiApi();
@@ -150,7 +161,7 @@ export const nativeToOtherSwap =
                       message_str = 'Something is wrong, please make sure you have enough FIS and rATOM balance';
                     } else if (tokenType == 'rsol') {
                       message_str = 'Something is wrong, please make sure you have enough FIS and rSOL balance';
-                    } else if(tokenType == 'rmatic') {
+                    } else if (tokenType == 'rmatic') {
                       message_str = 'Something is wrong, please make sure you have enough FIS and rMATIC balance';
                     }
                     if (error.name == 'ServicePaused') {
@@ -207,6 +218,11 @@ export const erc20ToOtherSwap =
   async (dispatch, getState) => {
     dispatch(setLoading(true));
     dispatch(setSwapLoadingStatus(1));
+    if (isdev()) {
+      dispatch(setSwapWaitingTime(30));
+    } else {
+      dispatch(setSwapWaitingTime(150));
+    }
     let web3 = ethServer.getWeb3();
 
     let tokenContract: any = '';
@@ -369,6 +385,11 @@ export const bep20ToOtherSwap =
   async (dispatch, getState) => {
     dispatch(setLoading(true));
     dispatch(setSwapLoadingStatus(1));
+    if (isdev()) {
+      dispatch(setSwapWaitingTime(30));
+    } else {
+      dispatch(setSwapWaitingTime(50));
+    }
     let web3 = ethServer.getWeb3();
 
     let tokenContract: any = '';

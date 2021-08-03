@@ -357,7 +357,7 @@ export default {
     if (!isdev()) {
       return `https://etherscan.io/address/${address}#tokentxns`;
     }
-    return `https://ropsten.etherscan.io/address/${address}#tokentxns`;
+    return `https://goerli.etherscan.io/address/${address}#tokentxns`;
   },
   bscScanBep20TxInAddressUrl: (address: any) => {
     if (!isdev()) {
