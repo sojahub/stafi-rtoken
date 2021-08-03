@@ -1,6 +1,15 @@
+import config from '@config/index';
 import { bondSwitch } from '@features/FISClice';
 import { reloadData } from '@features/globalClice';
-import { bondFees, continueProcess, getPools, getTotalIssuance, monitoring_Method, query_rBalances_account } from '@features/rMATICClice';
+import {
+  bondFees,
+  connectMetamask,
+  continueProcess,
+  getPools,
+  getTotalIssuance,
+  monitoring_Method,
+  query_rBalances_account
+} from '@features/rMATICClice';
 import { Symbol } from '@keyring/defaults';
 import Content from '@shared/components/content';
 import { getLocalStorageItem, Keys } from '@util/common';
@@ -9,69 +18,70 @@ import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { renderRoutes } from 'react-router-config';
 import '../template/index.scss';
- 
-export default function Index(props:any){
-  const dispatch = useDispatch();
-  
-  const {fisAccount}=useSelector((state:any)=>{
-    return {
-      fisAccount:state.FISModule.fisAccount
-    }
-  })
 
-  useEffect(()=>{
-    dispatch(getTotalIssuance()); 
+export default function Index(props: any) {
+  const dispatch = useDispatch();
+
+  const { fisAccount } = useSelector((state: any) => {
+    return {
+      fisAccount: state.FISModule.fisAccount,
+    };
+  });
+
+  useEffect(() => {
+    dispatch(getTotalIssuance());
     dispatch(query_rBalances_account());
-   
-  },[fisAccount])
-  useEffect(()=>{ 
+  }, [fisAccount]);
+
+  useEffect(() => {
     dispatch(bondFees());
-    dispatch(bondSwitch()); 
+    dispatch(bondSwitch());
     // if(getLocalStorageItem(Keys.AtomAccountKey)){
-    //   setTimeout(()=>{ 
-    //     dispatch(connectAtomjs()); 
-    //   },1000) 
-    // } 
-    if(getLocalStorageItem(Keys.FisAccountKey)){
-      dispatch(reloadData(Symbol.Fis)); 
+    //   setTimeout(()=>{
+    //     dispatch(connectAtomjs());
+    //   },1000)
+    // }
+    if (getLocalStorageItem(Keys.FisAccountKey)) {
+      dispatch(reloadData(Symbol.Fis));
     }
     dispatch(getPools());
-    setTimeout(()=>{
+    setTimeout(() => {
       dispatch(continueProcess());
-    },50)
+    }, 50);
     // setTimeout(()=>{
-    //   dispatch(keplr_keystorechange()); 
+    //   dispatch(keplr_keystorechange());
     // },500)
-  },[]) 
+  }, []);
 
- 
-  const {maticAccount}=useSelector((state:any)=>{ 
-    return { 
-      maticAccount:state.rMATICModule.maticAccount, 
-    }
-  })
-  useEffect(()=>{ 
-    maticAccount && maticAccount.address &&  dispatch(reloadData(Symbol.Matic));  
-  },[(maticAccount==null)])
-  useEffect(()=>{  
-    dispatch(monitoring_Method());
-  },[])
-
-
-
-  const {loading} =useSelector((state:any)=>{
+  const { maticAccount } = useSelector((state: any) => {
     return {
-      loading:state.globalModule.loading
-    }
-  })
-  return  <div className="stafi_layout"> 
+      maticAccount: state.rMATICModule.maticAccount,
+    };
+  });
+
+  useEffect(() => {
+    maticAccount && maticAccount.address && dispatch(reloadData(Symbol.Matic));
+  }, [maticAccount && maticAccount.address]);
+
+  useEffect(() => {
+    console.log('xxxxxxxxxxx')
+    dispatch(connectMetamask(config.goerliChainId(), true));
+    dispatch(monitoring_Method());
+  }, []);
+
+  const { loading } = useSelector((state: any) => {
+    return {
+      loading: state.globalModule.loading,
+    };
+  });
+  return (
+    <div className='stafi_layout'>
       {/* <LiquidingProcesSlider route={props.route}  history={props.history}/> */}
-      <div className="stafi_container">
-        <Spin spinning={loading} size="large" tip="loading">
-          <Content>
-            {renderRoutes(props.route.routes)}
-          </Content>
-         </Spin>
-      </div> 
-  </div>
+      <div className='stafi_container'>
+        <Spin spinning={loading} size='large' tip='loading'>
+          <Content>{renderRoutes(props.route.routes)}</Content>
+        </Spin>
+      </div>
+    </div>
+  );
 }

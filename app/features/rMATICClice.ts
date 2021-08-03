@@ -171,7 +171,7 @@ export const reloadData = (): AppThunk => async (dispatch, getState) => {
 
 declare const window: any;
 declare const ethereum: any;
-export const connectMetamask=(chainId:string):AppThunk=>async (dispatch,getState)=> {
+export const connectMetamask=(chainId:string, isAutoConnect?: boolean):AppThunk=>async (dispatch,getState)=> {
   if (typeof window.ethereum !== 'undefined' && ethereum.isMetaMask) {
     ethereum.autoRefreshOnNetworkChange = false;
     
@@ -179,15 +179,21 @@ export const connectMetamask=(chainId:string):AppThunk=>async (dispatch,getState
       if (isdev()) {
         if (ethereum.chainId != chainId) { 
           if(chainId=="0x3"){
-            message.warning('Please connect to Ropsten Test Network!') 
+            if(!isAutoConnect){
+              message.warning('Please connect to Ropsten Test Network!') 
+            }
           }
           if(chainId=="0x5"){
-            message.warning('Please connect to Goerli Test Network!') 
+            if(!isAutoConnect){
+              message.warning('Please connect to Goerli Test Network!') 
+            }
           }
           return;
         }
       } else if (ethereum.chainId != '0x1') { 
-        message.warning('Please connect to Ethereum Main Network!') 
+        if(!isAutoConnect){
+          message.warning('Please connect to Ethereum Main Network!') 
+        }
         return;
       }
 
