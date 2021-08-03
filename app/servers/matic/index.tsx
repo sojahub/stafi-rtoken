@@ -1,6 +1,6 @@
-import config,{isdev} from '@config/index'; 
-import {CosmosKeyring} from '@keyring/CosmosKeyring';
+import config, { isdev } from '@config/index';
 import { SigningStargateClient } from '@cosmjs/stargate';
+import { CosmosKeyring } from '@keyring/CosmosKeyring';
 import { message } from 'antd';
 declare const window: any;
 let cosmosApi:any = null; 
@@ -117,6 +117,9 @@ export default class ExtensionDapp extends CosmosKeyring{
   }
   getTokenAddress() {
     return config.rMATICTokenAddress();
+  }
+  getMaticTokenAddress(){
+    return config.MATICTokenAddress();
   }
   
   getTokenAbi(){ 

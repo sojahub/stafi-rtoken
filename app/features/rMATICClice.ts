@@ -272,7 +272,7 @@ export const monitoring_Method=():AppThunk=>(dispatch,getState)=> {
 export const balancesAll=():AppThunk=>(dispatch,getState)=>{  
   if(getState().rMATICModule.maticAccount){ 
     const address=getState().rMATICModule.maticAccount.address;    
-    getAssetBalance(address,maticServer.getTokenAbi(), maticServer.getTokenAddress(),(v:any)=>{
+    getAssetBalance(address,maticServer.getTokenAbi(), maticServer.getMaticTokenAddress(),(v:any)=>{
       dispatch(setTransferrableAmountShow(v));
       dispatch(setMaticAccount({address:address,balance:v}))
     })
@@ -294,7 +294,7 @@ export const transfer = (amountparam: string, cb?: Function): AppThunk => async 
   
     
   let web3 = ethServer.getWeb3();
-  let contract = new web3.eth.Contract(maticServer.getTokenAbi(), maticServer.getTokenAddress(), {
+  let contract = new web3.eth.Contract(maticServer.getTokenAbi(), maticServer.getMaticTokenAddress(), {
     from: address
   }); 
   const amount = web3.utils.toWei(amountparam.toString());// NumberUtil.tokenAmountToChain(amountparam,rSymbol.Matic);

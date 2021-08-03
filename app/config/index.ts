@@ -195,7 +195,7 @@ export default {
   },
   rSOLTokenAddress: () => {
     if (!isdev()) {
-      return '0x08841b9cba30e80a0e51df13b174f362f90e3df1';
+      return '';
     } else {
       return '0xe21f7b58e4563c58d0f7932a04d62d00034e7437';
     }
@@ -209,7 +209,7 @@ export default {
   },
   rMATICTokenAddress: () => {
     if (!isdev()) {
-      return '0x7D1AfA7B718fb893dB30A3aBc0Cfc608AaCfeBB0';
+      return '';
     } else {
       return '0x1a80c8874e4bf1516c02aa92b838b33e11cde7e8';
     }
@@ -226,6 +226,13 @@ export default {
       return '0xa7a0a9fda65cd786b3dc718616cee25afb110544';
     } else {
       return '0x8dd855d062475f65d3b3eb27795fa3f2ba247eca';
+    }
+  },
+  MATICTokenAddress: () => {
+    if (!isdev()) {
+      return '0x7D1AfA7B718fb893dB30A3aBc0Cfc608AaCfeBB0';
+    } else {
+      return '0x499d11e0b6eac7c0593d8fb292dcbbf815fb29ae';
     }
   },
   erc20HandlerAddress: () => {
