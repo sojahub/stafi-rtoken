@@ -34,6 +34,7 @@ export enum noticesubType {
   Liquify = 'Liquify',
   Deposit = 'Deposit',
   Apply = 'Apply',
+  DexSwap = 'DexSwap',
 }
 const noticeModal = {
   showNew: false,
@@ -593,6 +594,8 @@ export const notice_text = (item: any) => {
     return `Deposit ${item.amount} ETH to register as a validator`;
   } else if (item.subType == noticesubType.Offboard) {
     return `Validator Offboarded`;
+  } else if (item.type == noticeType.Staker && item.subType == noticesubType.DexSwap) {
+    return `Swap ${item.amount} ${item.rSymbol} to ${item.subData.receivedAmount} ${item.subData.destTokenName}.`;
   }
   return '';
 };

@@ -7,6 +7,64 @@ export const isdev = () => {
   let demo = /test/.test(host);
   return local || demo;
 };
+
+export const getRsymbolByTokenType = (tokenType: string) => {
+  switch (tokenType) {
+    case 'rfis':
+      return rSymbol.Fis;
+    case 'rdot':
+      return rSymbol.Dot;
+    case 'rksm':
+      return rSymbol.Ksm;
+    case 'ratom':
+      return rSymbol.Atom;
+    case 'rsol':
+      return rSymbol.Sol;
+    case 'rmatic':
+      return rSymbol.Matic;
+    default:
+      return rSymbol.Fis;
+  }
+};
+
+export const getSymbolRTitle = (symbol: rSymbol) => {
+  switch (symbol) {
+    case rSymbol.Fis:
+      return 'rFIS';
+    case rSymbol.Dot:
+      return 'rDOT';
+    case rSymbol.Ksm:
+      return 'rKSM';
+    case rSymbol.Atom:
+      return 'rATOM';
+    case rSymbol.Sol:
+      return 'rSOL';
+    case rSymbol.Matic:
+      return 'rMATIC';
+    default:
+      return 'rFIS';
+  }
+};
+
+export const getSymbolTitle = (symbol: rSymbol) => {
+  switch (symbol) {
+    case rSymbol.Fis:
+      return 'FIS';
+    case rSymbol.Dot:
+      return 'DOT';
+    case rSymbol.Ksm:
+      return 'KSM';
+    case rSymbol.Atom:
+      return 'ATOM';
+    case rSymbol.Sol:
+      return 'SOL';
+    case rSymbol.Matic:
+      return 'MATIC';
+    default:
+      return 'FIS';
+  }
+};
+
 export default {
   polkadotChain: () => {
     if (!isdev()) {
@@ -94,10 +152,10 @@ export default {
       return '0xf072c7e6e36639870c3986196237a97fcccb0331';
     }
   },
-  stafiNodeManagerAddress:() => { 
-    if(!isdev()){
+  stafiNodeManagerAddress: () => {
+    if (!isdev()) {
       return '0x342702e87e8714c759a21299402d9ec99efa0caf';
-    }else{
+    } else {
       return '0x68b749894c5484687916d57616b5214cf9fc63cb';
     }
   },
@@ -393,10 +451,10 @@ export default {
     }
     return '0x61';
   },
-  ropstenChainId:()=>{
+  ropstenChainId: () => {
     return '0x3';
   },
-  goerliChainId:()=>{
+  goerliChainId: () => {
     return '0x5';
   },
   metaMaskNetworkIsEth: (networkChainId: any) => {
@@ -417,8 +475,8 @@ export default {
     }
     return networkChainId === '0x61';
   },
-  swapWaitingTime:()=>{
+  swapWaitingTime: () => {
     return 150;
   },
-  minReward:0.000001
+  minReward: 0.000001,
 };

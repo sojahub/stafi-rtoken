@@ -200,3 +200,141 @@
     width: 16px;
   }
 }
+
+.type_selector_input_container {
+  background-color: #1d2329;
+  padding: 8px;
+  border-radius: 4px;
+  border: solid 1px #979797;
+
+  .title {
+    font-size: 14px;
+    font-family: 'Helvetica';
+    line-height: 14px;
+    color: white;
+  }
+
+  .content {
+    margin-top: 10px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+
+    .left_container {
+      flex: 1;
+      display: flex;
+      flex-direction: row;
+      align-items: flex-end;
+      height: 20px;
+    }
+
+    .title {
+      font-size: 18px;
+      font-family: 'Helvetica';
+      line-height: 18px;
+      color: white;
+    }
+
+    .select_token_hint {
+      background-color: #02c09a;
+      width: 96px;
+      height: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: #23292f;
+      font-family: 'Helvetica-Bold', sans-serif;
+      font-size: 12px;
+      line-height: 12px;
+    }
+
+    .icon_last_container {
+      margin-left: 7px;
+      width: 7px;
+    }
+
+    .icon_last {
+      width: 7px;
+    }
+  }
+}
+
+.stafi_type_input_select_dark {
+  .ant-popover-arrow {
+    display: none;
+  }
+  .ant-popover-content {
+    transform: translateX(10px);
+  }
+  .ant-popover-inner {
+    width: 340px;
+    background-color: #1d2329;
+    .ant-popover-title {
+      border-bottom: 0px;
+
+      .title {
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        font-family: 'Helvetica-Bold', sans-serif;
+        padding-top: 14px;
+        font-size: 18px;
+        color: white;
+
+        img {
+          cursor: pointer;
+          margin-right: 13px;
+          height: 12px;
+        }
+      }
+    }
+  }
+  .ant-popover-inner-content {
+    padding: 0px 15px 14px 15px;
+    height: 384px;
+    overflow: auto;
+
+    .item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 0;
+      border-bottom: 1px solid #383e44;
+      cursor: pointer;
+
+      .title {
+        display: flex;
+        align-items: center;
+        font-size: 16px;
+        color: white;
+
+        > div {
+          width: 36px;
+          height: 36px;
+          border-radius: 50%;
+          border: 1px solid #eeeeee;
+          box-sizing: content-box;
+          text-align: center;
+          margin-right: 10px;
+
+          img {
+            width: 100%;
+            height: 100%;
+          }
+        }
+      }
+
+      .amount {
+        font-size: 16px;
+        font-weight: bold;
+        color: white;
+      }
+    }
+
+    .item.active,
+    .item:hover {
+      background-color: #21272e;
+    }
+  }
+}

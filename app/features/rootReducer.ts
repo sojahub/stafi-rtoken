@@ -2,7 +2,8 @@ import { connectRouter } from 'connected-react-router';
 import { History } from 'history';
 import { combineReducers } from 'redux';
 import bridgeReducer from './bridgeClice';
-import BSCReducer from "./BSCClice";
+import BSCReducer from './BSCClice';
+import dexReducer from './dexClice';
 import ETHReducer from './ETHClice';
 import FISReducer from './FISClice';
 import globalReducer from './globalClice';
@@ -30,8 +31,9 @@ export default function createRootReducer(history?: History) {
     bridgeModule: bridgeReducer,
     ETHModule: ETHReducer,
     rATOMModule: rATOMReducer,
-    rPoolModule:rPoolReducer,
-    rMATICModule:rMATICReducer,
+    rPoolModule: rPoolReducer,
+    rMATICModule: rMATICReducer,
     BSCModule: BSCReducer,
+    dexModule: dexReducer,
   });
 }

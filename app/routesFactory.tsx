@@ -20,6 +20,7 @@ import RATOMStakerRedeem from './pages/rATOM/staker/redeem';
 import RATOMStakerReward from './pages/rATOM/staker/reward';
 import RATOMHomeTemplate from './pages/rATOM/template';
 import RATOMValidator from './pages/rATOM/validator';
+import RDEXHome from './pages/rDEX/home';
 import RDOTHome from './pages/rDOT/home';
 import RDOTSeach from './pages/rDOT/search';
 import RDOTType from './pages/rDOT/selectType';
@@ -103,10 +104,9 @@ import RSOLStakerRedeem from './pages/rSOL/staker/redeem';
 import RSOLHomeTemplate from './pages/rSOL/template';
 import RSOLValidator from './pages/rSOL/validator';
 import HomeTemplate from './pages/template/homeTemplate';
-   
 
-const routesFactory=(role?:any)=>{ 
-  const routes=[ 
+const routesFactory = (role?: any) => {
+  const routes = [
     {
       id: 'root',
       path: '/',
@@ -540,6 +540,23 @@ const routesFactory=(role?:any)=>{
           ],
         },
         {
+          id: 'rDEX_home',
+          path: '/rDEX',
+          type: 'rDEX',
+          component: RDEXHome,
+          routes: [
+            {
+              id: 'rDEX_home',
+              path: '/rDEX/home',
+              component: RDEXHome,
+            },
+            {
+              path: '*',
+              component: () => <Redirect to='/rDEX/home' />,
+            },
+          ],
+        },
+        {
           id: 'RSOL_home',
           path: '/rSOL',
           type: 'rSOL',
@@ -782,98 +799,110 @@ const routesFactory=(role?:any)=>{
           ],
         },
         {
-          id:"RFIS_template",
-          path:"/rFIS",
-          type:"rFIS",
-          rSymbol:rSymbol.Fis,
+          id: 'RFIS_template',
+          path: '/rFIS',
+          type: 'rFIS',
+          rSymbol: rSymbol.Fis,
           component: RFISHomeTemplate,
-          routes:[{
-            id:"RFIS_home",
-            path:"/rFIS/home",
-            rSymbol:rSymbol.Fis,
-            component:RFISHome
-          },{
-            id:"RFIS_wallet",
-            path:"/rFIS/fiswallet",
-            rSymbol:rSymbol.Fis,
-            component:RFISWalletFIS
-          },{
-            id:"RFIS_type",
-            path:"/rFIS/type",
-            rSymbol:rSymbol.Atom,
-            component:authorizedRoute(Symbol.Fis)(RFISType)
-          },{
-            id:"RFIS_staker",
-            type:"Staker",
-            path:"/rFIS/staker",
-            rSymbol:rSymbol.Fis,
-            component:authorizedRoute(Symbol.Fis)(RFISStaker),
-            routes:[
-              {
-                id:"RFIS_staker_index",
-                path:"/rFIS/staker/index",
-                type:"Staker",
-                rSymbol:rSymbol.Fis,
-                component:RFISStakerIndex
-              },{
-                id:"RFIS_staker_index_info",
-                path:"/rFIS/staker/info",
-                type:"-Status",
-                rSymbol:rSymbol.Fis,
-                component:RFISStakerInfo
-              },{
-                id:"RFIS_staker_index_redeem",
-                path:"/rFIS/staker/redeem",
-                type:"Staker",
-                rSymbol:rSymbol.Fis,
-                component:RFISStakerRedeem
-              },{
-                id:"RFIS_staker_index_redeem",
-                path:"/rFIS/staker/reward",
-                type:"Staker",
-                rSymbol:rSymbol.Fis,
-                component:RFISStakerReward
-              },{
-                path: '*',
-                component: () => <Redirect to="/rFIS/staker/index"/>
-              }
-            ]
-          },{
-            id:"RFIS_validator",
-            type:"Validator",
-            path:"/rFIS/validator",
-            rSymbol:rSymbol.Fis,
-            component:authorizedRoute(Symbol.Fis)(RFISValidator),
-            routes:[
-              {
-                id:"RFIS_validator_index_onboard",
-                path:"/rFIS/validator/onboard",
-                type:"Validator",
-                rSymbol:rSymbol.Fis,
-                component:RFISValidatorOnboard
-              },{
-                id:"RFIS_validator_index_onboard",
-                path:"/rFIS/validator/offboard",
-                type:"Validator",
-                rSymbol:rSymbol.Fis,
-                component:RFISValidatorOffboard
-              },{
-                path: '*',
-                component: () => <Redirect to="/rFIS/validator/onboard"/>
-              }
-            ]
-          },
-          {
-            path: '*',
-            component: () => <Redirect to='/rFIS/home' />,
-          },
-        ]  
+          routes: [
+            {
+              id: 'RFIS_home',
+              path: '/rFIS/home',
+              rSymbol: rSymbol.Fis,
+              component: RFISHome,
+            },
+            {
+              id: 'RFIS_wallet',
+              path: '/rFIS/fiswallet',
+              rSymbol: rSymbol.Fis,
+              component: RFISWalletFIS,
+            },
+            {
+              id: 'RFIS_type',
+              path: '/rFIS/type',
+              rSymbol: rSymbol.Atom,
+              component: authorizedRoute(Symbol.Fis)(RFISType),
+            },
+            {
+              id: 'RFIS_staker',
+              type: 'Staker',
+              path: '/rFIS/staker',
+              rSymbol: rSymbol.Fis,
+              component: authorizedRoute(Symbol.Fis)(RFISStaker),
+              routes: [
+                {
+                  id: 'RFIS_staker_index',
+                  path: '/rFIS/staker/index',
+                  type: 'Staker',
+                  rSymbol: rSymbol.Fis,
+                  component: RFISStakerIndex,
+                },
+                {
+                  id: 'RFIS_staker_index_info',
+                  path: '/rFIS/staker/info',
+                  type: '-Status',
+                  rSymbol: rSymbol.Fis,
+                  component: RFISStakerInfo,
+                },
+                {
+                  id: 'RFIS_staker_index_redeem',
+                  path: '/rFIS/staker/redeem',
+                  type: 'Staker',
+                  rSymbol: rSymbol.Fis,
+                  component: RFISStakerRedeem,
+                },
+                {
+                  id: 'RFIS_staker_index_redeem',
+                  path: '/rFIS/staker/reward',
+                  type: 'Staker',
+                  rSymbol: rSymbol.Fis,
+                  component: RFISStakerReward,
+                },
+                {
+                  path: '*',
+                  component: () => <Redirect to='/rFIS/staker/index' />,
+                },
+              ],
+            },
+            {
+              id: 'RFIS_validator',
+              type: 'Validator',
+              path: '/rFIS/validator',
+              rSymbol: rSymbol.Fis,
+              component: authorizedRoute(Symbol.Fis)(RFISValidator),
+              routes: [
+                {
+                  id: 'RFIS_validator_index_onboard',
+                  path: '/rFIS/validator/onboard',
+                  type: 'Validator',
+                  rSymbol: rSymbol.Fis,
+                  component: RFISValidatorOnboard,
+                },
+                {
+                  id: 'RFIS_validator_index_onboard',
+                  path: '/rFIS/validator/offboard',
+                  type: 'Validator',
+                  rSymbol: rSymbol.Fis,
+                  component: RFISValidatorOffboard,
+                },
+                {
+                  path: '*',
+                  component: () => <Redirect to='/rFIS/validator/onboard' />,
+                },
+              ],
+            },
+            {
+              path: '*',
+              component: () => <Redirect to='/rFIS/home' />,
+            },
+          ],
         },
         {
-          path: '*', 
-          component: () => <Redirect to="/rAsset/native"/>
-        }]
-      }, 
+          path: '*',
+          component: () => <Redirect to='/rAsset/native' />,
+        },
+      ],
+    },
   ];
 
   return renderRoutes(routes);
