@@ -27,6 +27,25 @@ export const getRsymbolByTokenType = (tokenType: string) => {
   }
 };
 
+export const getSymbolByRSymbol = (symbol: rSymbol) => {
+  switch (symbol) {
+    case rSymbol.Fis:
+      return Symbol.Fis;
+    case rSymbol.Dot:
+      return Symbol.Dot;
+    case rSymbol.Ksm:
+      return Symbol.Ksm;
+    case rSymbol.Atom:
+      return Symbol.Atom;
+    case rSymbol.Sol:
+      return Symbol.Sol;
+    case rSymbol.Matic:
+      return Symbol.Matic;
+    default:
+      return 'rFIS';
+  }
+};
+
 export const getSymbolRTitle = (symbol: rSymbol) => {
   switch (symbol) {
     case rSymbol.Fis:

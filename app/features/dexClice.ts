@@ -1,5 +1,5 @@
-import { getSymbolRTitle, getSymbolTitle, isdev } from '@config/index';
-import { rSymbol, Symbol } from '@keyring/defaults';
+import { getSymbolByRSymbol, getSymbolRTitle, getSymbolTitle, isdev } from '@config/index';
+import { rSymbol } from '@keyring/defaults';
 import { web3Enable, web3FromSource } from '@polkadot/extension-dapp';
 import { u8aToHex } from '@polkadot/util';
 import { createSlice } from '@reduxjs/toolkit';
@@ -55,7 +55,7 @@ export const swap =
         console.log('swapFees: ', numberUtil.dexFisFeeToHuman(fee.toJSON()));
       }
 
-      const keyringInstance = keyring.init(Symbol.Atom);
+      const keyringInstance = keyring.init(getSymbolByRSymbol(tokenSymbol));
       const receiver = u8aToHex(keyringInstance.decodeAddress(address));
 
       const tokenAmount2 = numberUtil.tokenAmountToChain(tokenAmount, tokenSymbol);
@@ -65,14 +65,6 @@ export const swap =
       const shouldReceived = numberUtil.handleFisRoundToFixed(tokenAmount * ratio * liquidityRate);
 
       const grade = 0;
-
-      dispatch(
-        add_Swap_Notice(notice_uuid, getSymbolRTitle(tokenSymbol), tokenAmount, noticeStatus.Pending, {
-          destTokenName: getSymbolTitle(tokenSymbol),
-          receivedAmount: shouldReceived,
-          address: address,
-        }),
-      );
 
       api.tx.rDexnSwap
         .swapRtokenForNativeToken(receiver, tokenSymbol, tokenAmount2.toString(), minReceived.toString(), grade)
