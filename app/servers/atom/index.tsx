@@ -20,17 +20,17 @@ export default class ExtensionDapp extends CosmosKeyring{
               // Chain-id of the Cosmos SDK chain.
               chainId: config.rAtomChainId(),
               // The name of the chain to be displayed to the user.
-              chainName: "Cosmos-stargate",
+              chainName: "Cosmos-StaFi",
               // RPC endpoint of the chain.
               rpc: config.rAtomCosmosChainRpc(),
               // REST endpoint of the chain.
-              rest: "https://testcosmosrset.wetez.io",
+              rest: config.rAtomCosmosChainRpc(),
               // Staking coin information
               stakeCurrency: {
                   // Coin denomination to be displayed to the user.
-                  coinDenom: "MUON",
+                  coinDenom: config.rAtomCoinDenom(),
                   // Actual denom (i.e. uatom, uscrt) used by the blockchain.
-                  coinMinimalDenom: "umuon",
+                  coinMinimalDenom: config.rAtomDenom(),
                   // # of decimal points to convert minimal denomination to user-facing denomination.
                   coinDecimals: 6,
               },
@@ -55,18 +55,18 @@ export default class ExtensionDapp extends CosmosKeyring{
               // List of all coin/tokens used in this chain.
               currencies: [{
                   // Coin denomination to be displayed to the user.
-                  coinDenom: "MUON",
+                  coinDenom: config.rAtomCoinDenom(),
                   // Actual denom (i.e. uatom, uscrt) used by the blockchain.
-                  coinMinimalDenom: "umuon",
+                  coinMinimalDenom: config.rAtomDenom(),
                   // # of decimal points to convert minimal denomination to user-facing denomination.
                   coinDecimals: 6,
               }],
               // List of coin/tokens used as a fee token in this chain.
               feeCurrencies: [{
                   // Coin denomination to be displayed to the user.
-                  coinDenom: "MUON",
+                  coinDenom: config.rAtomCoinDenom(),
                   // Actual denom (i.e. uatom, uscrt) used by the blockchain.
-                  coinMinimalDenom: "umuon",
+                  coinMinimalDenom: config.rAtomDenom(),
                   // # of decimal points to convert minimal denomination to user-facing denomination.
                   coinDecimals: 6,
               }],

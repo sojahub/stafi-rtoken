@@ -275,21 +275,28 @@ export default {
     if (!isdev()) {
       return 'cosmoshub-4';
     } else {
-      return 'stargate-final';
+      return 'StaFi';
     }
   },
   rAtomCosmosChainRpc: () => {
     if (!isdev()) {
       return 'https://cosmos-rpc1.stafi.io';
     } else {
-      return 'https://rpc.testnet.cosmos.network';
+      return 'https://testcosmosrpc.wetez.io';
     }
   },
   rAtomDenom: () => {
     if (!isdev()) {
       return 'uatom';
     } else {
-      return 'umuon';
+      return 'stake';
+    }
+  },
+  rAtomCoinDenom: () => {
+    if (!isdev()) {
+      return 'ATOM';
+    } else {
+      return 'STAKE';
     }
   },
   rAtomAignature: '0x00',
