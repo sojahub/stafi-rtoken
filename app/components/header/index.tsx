@@ -157,6 +157,14 @@ export default function Index(props: Props) {
         };
       }
     }
+    if (location.pathname.includes('/rDEX')) {
+      if (state.FISModule.fisAccount) {
+        return {
+          fisAccount: state.FISModule.fisAccount,
+          type: 'rDEX',
+        };
+      }
+    }
     return null;
   });
 

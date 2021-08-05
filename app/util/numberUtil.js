@@ -119,6 +119,9 @@ export default {
     if (amount == '--') {
       return '--';
     }
+    if (isNaN(amount)) {
+      return 0;
+    }
     return (Math.round(amount * 100000000) / 100000000).toFixed(6) || '--';
   },
 
@@ -147,7 +150,7 @@ export default {
   handleAtomRoundToFixed(amount) {
     if (amount == '--') {
       return '--';
-    } 
+    }
     return (Math.round(amount * 1000000) / 1000000).toFixed(4) || '--';
   },
 
@@ -184,21 +187,21 @@ export default {
     return divide(Number(amount), factor);
   },
   tokenAmountToChain(amount, symbol) {
-    switch (symbol) { 
+    switch (symbol) {
       case rSymbol.Dot:
         return Math.round(Number(amount) * 10000000000);
       case rSymbol.Atom:
         return Math.round(Number(amount) * 1000000);
       case rSymbol.Fis:
         return Math.round(Number(amount) * 1000000000000);
-      case rSymbol.Ksm: 
+      case rSymbol.Ksm:
         return Math.round(Number(amount) * 1000000000000);
       case rSymbol.Sol:
-        return Math.round(Number(amount) * 1000000000); 
+        return Math.round(Number(amount) * 1000000000);
       case rSymbol.Matic:
         return Math.round(Number(amount) * 1000000000000000000);
       case rSymbol.Eth:
-        return Math.round(Number(amount) * 1000000000000000000); 
+        return Math.round(Number(amount) * 1000000000000000000);
       default:
         return Math.round(Number(amount) * 1000000000000);
     }
@@ -206,66 +209,75 @@ export default {
   fisFeeToHuman(fee) {
     return fee / 1000000000;
   },
-
+  dexFisFeeToHuman(fee) {
+    return fee / 1000000000000;
+  },
   // 2 decimal places of service charge
   fisFeeToFixed(fee) {
     return this.handleEthAmountRound(fee * 100).toFixed(2);
   },
   rTokenRateToHuman(amount) {
     return amount / 1000000000000;
-  },  
-  amount_format(amount,decimals){
-    if(amount=="--"){
-      return "--"
+  },
+  rLiquidityRateToHuman(amount) {
+    return amount / 1000000000000;
+  },
+  amount_format(amount, decimals) {
+    if (amount == '--') {
+      return '--';
     }
-    return this.number_format(amount,decimals || 2,".",",")
+    return this.number_format(amount, decimals || 2, '.', ',');
   },
   number_format(number, decimals, dec_point, thousands_sep) {
-      /*
-      * Parameter Description:
-      * number：Number to format
-      * decimals：Keep a few decimal places
-      * dec_point：decimal symbol
-      * thousands_sep：Thousandth symbol
-      * */
-      number = (number + '').replace(/[^0-9+-Ee.]/g, '');
-      var n = !isFinite(+number) ? 0 : +number,
-          prec = !isFinite(+decimals) ? 0 : Math.abs(decimals),
-          sep = (typeof thousands_sep === 'undefined') ? ',' : thousands_sep,
-          dec = (typeof dec_point === 'undefined') ? '.' : dec_point,
-          s = '',
-          toFixedFix = function (n, prec) {
-              var k = Math.pow(10, prec);
-              return '' + Math.ceil(n * k) / k;
-          };
-  
-     
-    
-      s = (prec ? toFixedFix(n, prec) : '' + Math.round(n)).split('.');
-      var re = /(-?\d+)(\d{3})/;
-      while (re.test(s[0])) {
-          s[0] = s[0].replace(re, "$1" + sep + "$2");
-      }
-      
-      if ((s[1] || '').length < prec && number.indexOf(".")>-1) {
-          s[1] = s[1] || '';
-          s[1] += new Array(prec - s[1].length + 1).join('0');
-      }
-      return s.join(dec);
+    /*
+     * Parameter Description:
+     * number：Number to format
+     * decimals：Keep a few decimal places
+     * dec_point：decimal symbol
+     * thousands_sep：Thousandth symbol
+     * */
+    number = (number + '').replace(/[^0-9+-Ee.]/g, '');
+    var n = !isFinite(+number) ? 0 : +number,
+      prec = !isFinite(+decimals) ? 0 : Math.abs(decimals),
+      sep = typeof thousands_sep === 'undefined' ? ',' : thousands_sep,
+      dec = typeof dec_point === 'undefined' ? '.' : dec_point,
+      s = '',
+      toFixedFix = function (n, prec) {
+        var k = Math.pow(10, prec);
+        return '' + Math.ceil(n * k) / k;
+      };
+
+    s = (prec ? toFixedFix(n, prec) : '' + Math.round(n)).split('.');
+    var re = /(-?\d+)(\d{3})/;
+    while (re.test(s[0])) {
+      s[0] = s[0].replace(re, '$1' + sep + '$2');
+    }
+
+    if ((s[1] || '').length < prec && number.indexOf('.') > -1) {
+      s[1] = s[1] || '';
+      s[1] += new Array(prec - s[1].length + 1).join('0');
+    }
+    return s.join(dec);
   },
-  fixedAmountLength(amount){
-    if(amount=="--"){
-      return "--"
+  fixedAmountLength(amount) {
+    if (amount == '--') {
+      return '--';
     }
-    let  wholeNumberLength=Math.floor(Number(amount)).toString().length; 
+    let wholeNumberLength = Math.floor(Number(amount)).toString().length;
     let maxLength = 8;
-    let difference=maxLength-wholeNumberLength;
-    if(wholeNumberLength>=maxLength){
+    let difference = maxLength - wholeNumberLength;
+    if (wholeNumberLength >= maxLength) {
       return Math.floor(amount);
-    }else if(difference==7 || difference==6){
+    } else if (difference == 7 || difference == 6) {
       return this.handleEthAmountRound(amount).toFixed(6);
-    }else{
-      return this.handleEthAmountRound(amount).toFixed(difference<=0?0:difference);
+    } else {
+      return this.handleEthAmountRound(amount).toFixed(difference <= 0 ? 0 : difference);
     }
-  }
-}; 
+  },
+  percentageAmountToHuman(percentage) {
+    if (!percentage || percentage === '--' || isNaN(percentage)) {
+      return '--';
+    }
+    return percentage * 100 + '%';
+  },
+};

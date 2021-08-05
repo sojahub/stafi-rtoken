@@ -6,6 +6,7 @@ import { u8aToHex } from '@polkadot/util';
 import { createSlice } from '@reduxjs/toolkit';
 import AtomServer from '@servers/atom/index';
 import keyring from '@servers/index';
+import RpcServer, { pageCount } from '@servers/rpc/index';
 import Stafi from '@servers/stafi/index';
 import { getLocalStorageItem, Keys, removeLocalStorageItem, setLocalStorageItem, stafi_uuid } from '@util/common';
 import NumberUtil from '@util/numberUtil';
@@ -14,10 +15,8 @@ import _m0 from 'protobufjs/minimal';
 import { AppThunk } from '../store';
 import CommonClice from './commonClice';
 import { bondStates, bound, fisUnbond, rTokenSeries_bondStates } from './FISClice';
-import { initProcess, processStatus, setProcessSending, setProcessSlider, setProcessType } from './globalClice';
+import { initProcess, processStatus, setLoading, setProcessSending, setProcessSlider, setProcessType } from './globalClice';
 import { add_Notice, findUuid, noticeStatus, noticesubType, noticeType } from './noticeClice';
-import RpcServer,{pageCount} from '@servers/rpc/index';
-import { setLoading } from './globalClice';
 
 const commonClice = new CommonClice();
 
@@ -33,6 +32,8 @@ const rATOMClice = createSlice({
     poolLimit: 0,
     transferrableAmountShow: '--',
     ratio: '--',
+    liquidityRate: '--',
+    swapFee: '--',
     ratioShow: '--',
     tokenAmount: '--',
     processParameter: null,
@@ -73,6 +74,12 @@ const rATOMClice = createSlice({
     },
     setRatio(state, { payload }) {
       state.ratio = payload;
+    },
+    setLiquidityRate(state, { payload }) {
+      state.liquidityRate = payload;
+    },
+    setSwapFee(state, { payload }) {
+      state.swapFee = payload;
     },
     setRatioShow(state, { payload }) {
       state.ratioShow = payload;
@@ -141,6 +148,8 @@ export const {
   setAtomAccount,
   setTransferrableAmountShow,
   setRatio,
+  setLiquidityRate,
+  setSwapFee,
   setTokenAmount,
   setProcessParameter,
   setStakeHash,
@@ -887,6 +896,14 @@ export const getReward=(pageIndex:Number,cb:Function):AppThunk=>async (dispatch,
 export const rTokenRate = (): AppThunk => async (dispatch, getState) => {
   const ratio = await commonClice.rTokenRate(rSymbol.Atom);
   dispatch(setRatio(ratio));
+};
+export const rLiquidityRate = (): AppThunk => async (dispatch, getState) => {
+  const rate = await commonClice.rLiquidityRate(rSymbol.Atom);
+  dispatch(setLiquidityRate(rate));
+};
+export const rSwapFee = (): AppThunk => async (dispatch, getState) => {
+  const fee = await commonClice.rSwapFee(rSymbol.Atom);
+  dispatch(setSwapFee(fee));
 };
 const add_ATOM_unbond_Notice =
   (uuid: string, amount: string, status: string, subData?: any): AppThunk =>

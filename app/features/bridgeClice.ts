@@ -1,4 +1,4 @@
-import { isdev } from '@config/';
+import { isdev } from '@config/index';
 import { web3Enable, web3FromSource } from '@polkadot/extension-dapp';
 import { u8aToHex } from '@polkadot/util';
 import { createSlice } from '@reduxjs/toolkit';
@@ -14,7 +14,7 @@ import SolServer from '@servers/sol';
 import StafiServer from '@servers/stafi';
 import Stafi from '@servers/stafi/index';
 import { stafi_uuid } from '@util/common';
-import NumberUtil from '@util/numberUtil';
+import { default as NumberUtil } from '@util/numberUtil';
 import rpc from '@util/rpc';
 import { message } from 'antd';
 import { AppThunk } from '../store';
