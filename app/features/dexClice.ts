@@ -9,10 +9,8 @@ import { stafi_uuid } from '@util/common';
 import numberUtil from '@util/numberUtil';
 import { message } from 'antd';
 import { AppThunk } from '../store';
-import CommonClice from './commonClice';
 import { add_Notice, noticeStatus, noticesubType, noticeType } from './noticeClice';
 
-const commonClice = new CommonClice();
 const stafiServer = new StafiServer();
 
 const dexClice = createSlice({
@@ -35,7 +33,7 @@ const dexClice = createSlice({
 export const { setSwapLoadingStatus, setSwapWaitingTime } = dexClice.actions;
 
 export const swap =
-  (tokenSymbol: rSymbol, tokenAmount: any, address: string, cb?: Function): AppThunk =>
+  (tokenSymbol: rSymbol, tokenAmount: any, address: string, minReceived: any, shouldReceived:any, cb?: Function): AppThunk =>
   async (dispatch: any, getState: any) => {
     try {
       dispatch(setSwapLoadingStatus(1));
@@ -50,24 +48,16 @@ export const swap =
       const notice_uuid = stafi_uuid();
       let currentAccount = getState().FISModule.fisAccount.address;
 
-      const fee = await api.query.rDexnSwap.swapFees(tokenSymbol);
-      if (fee && fee.toJSON()) {
-        console.log('swapFees: ', numberUtil.dexFisFeeToHuman(fee.toJSON()));
-      }
-
       const keyringInstance = keyring.init(getSymbolByRSymbol(tokenSymbol));
       const receiver = u8aToHex(keyringInstance.decodeAddress(address));
 
-      const tokenAmount2 = numberUtil.tokenAmountToChain(tokenAmount, tokenSymbol);
-      const ratio: any = await commonClice.rTokenRate(tokenSymbol);
-      const liquidityRate: any = await commonClice.rLiquidityRate(tokenSymbol);
-      const minReceived = tokenAmount2 * ratio * liquidityRate * 0.99;
-      const shouldReceived = numberUtil.handleFisRoundToFixed(tokenAmount * ratio * liquidityRate);
+      const tokenAmountChain = numberUtil.tokenAmountToChain(tokenAmount, tokenSymbol);
+      const minReceivedChain = numberUtil.tokenAmountToChain(minReceived, tokenSymbol);
 
       const grade = 0;
 
       api.tx.rDexnSwap
-        .swapRtokenForNativeToken(receiver, tokenSymbol, tokenAmount2.toString(), minReceived.toString(), grade)
+        .swapRtokenForNativeToken(receiver, tokenSymbol, tokenAmountChain.toString(), minReceivedChain.toString(), grade)
         .signAndSend(currentAccount, { signer: injector.signer }, (result: any) => {
           console.log('xxxxxxxxxxxx', result);
           if (result.status.isInBlock) {
@@ -121,6 +111,7 @@ export const swap =
               });
           } else if (result.isError) {
             console.log('dex swap error 2');
+            dispatch(setSwapLoadingStatus(0));
             message.error(result.toHuman());
           }
         })
