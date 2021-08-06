@@ -5,7 +5,7 @@ const FlexibleWidthXYPlot = makeWidthFlexible(XYPlot);
 
 export default function SwapRateChart() {
   return (
-    <div>
+    <div style={{ width: '600px', maxWidth: '600px' }}>
       <FlexibleWidthXYPlot height={370}>
         <HorizontalGridLines />
         <XAxis />
