@@ -23,7 +23,7 @@ export const CardContainer = styled.div((props) => ({
   paddingRight: props.pr || props.px,
   paddingTop: props.pt || props.py,
   paddingBottom: props.pb || props.py,
-  alignSelf: 'stretch',
+  alignSelf: props.alignSelf || 'stretch',
   backgroundColor: '#1D2329',
   borderStyle: 'solid',
   borderWidth: '1px',

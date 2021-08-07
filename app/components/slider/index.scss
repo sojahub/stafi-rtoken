@@ -1,100 +1,116 @@
-.stafi_left_master_sider{ 
-    background: linear-gradient(to bottom,#2B3239,#292F38) ;
-    min-height: 700px;
-    position: relative; 
-    padding-bottom: 80px;
-    height: fit-content;
+.stafi_left_master_sider {
+  background: linear-gradient(to bottom, #2b3239, #292f38);
+  min-height: 700px;
+  position: relative;
+  padding-bottom: 80px;
+  height: 100%;
 
-    .logo_panel{
-        display: flex;
-        align-items: center;
-        padding:20px;
-        font-size: 30px;
-        .header_logo{
-            width:76px;
-        }
+  .logo_panel {
+    display: flex;
+    align-items: center;
+    padding: 20px;
+    font-size: 30px;
+    .header_logo {
+      width: 76px;
     }
-    .network{
-        position: absolute;
-        bottom: 20px; 
-        left:50px;
-        display: flex;
-        align-items: center;;
-       >div{ 
-        width:5px;
-        height:5px;
-        background-color: #00F3AB;
-        border-radius: 50%;
-        margin-right: 5px;
-       }
-    } 
-}
-.stafi_left_sider {
-    padding-top:40px;
-    width:176px;
+  }
+
+  .bottom_container {
+    position: absolute;
     display: flex;
     flex-direction: column;
     align-items: center;
-    // background-color: #2B3239;
-    .sider_item{
-        padding:3px 9px;
-        min-width: 120px;
-        display: flex; 
-        align-items: center;
-        margin-bottom: 30px;
-        font-size: 16px;
-        color:#fff;
-        cursor:pointer;
-        img{
-            width: 36px;
-            height:36px;
-            margin-right: 10px;
-        } 
-    }
-    .sider_item.selected{
-        background-color: #E7FFF8;
-        border-radius: 21px;
-        font-weight: bold;
-        color:#00F3AB;
-    }
-}
+    bottom: 20px;
+    left: 0;
+    right: 0;
 
-.stafi_stake_sider{ 
-    border-right:1px solid #3B3B3B;
-    padding:32px 22px;
-    height:100%;
-    .sider_item{
-        font-size: 14px;
-        font-weight: bold;
-        margin-bottom: 16px;
+    .text {
+      color: #a5a5a5;
+      font-size: 12px;
+
+      .link {
         cursor: pointer;
-        text-align: left;
-        width: fit-content;
-        
-        .sub_item{
-            font-size: 12px;
-            font-weight: initial;
-            color:#7B7B7B;
-        }
-        .sub_item.sub_active{
-            color:#00F3AB;
-        }
+        color: #00f3ab;
+      }
     }
-    .sider_item.active{
-        color:#00F3AB;
-        .sub_item{
-          color:#7B7B7B;
-        }
-        .sub_item.sub_active{
-            color:#00F3AB;
-        }
+
+    .network {
+      display: flex;
+      align-items: center;
+      > div {
+        width: 5px;
+        height: 5px;
+        background-color: #00f3ab;
+        border-radius: 50%;
+        margin-right: 5px;
+      }
     }
-    // >.sider_item:first-child{
-    //     margin-top:20.5px;
-    // }
-    >.sider_item:last-child{
-        margin-bottom:0px;
+  }
+}
+.stafi_left_sider {
+  padding-top: 40px;
+  width: 176px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  // background-color: #2B3239;
+  .sider_item {
+    padding: 3px 9px;
+    min-width: 120px;
+    display: flex;
+    align-items: center;
+    margin-bottom: 30px;
+    font-size: 16px;
+    color: #fff;
+    cursor: pointer;
+    img {
+      width: 36px;
+      height: 36px;
+      margin-right: 10px;
     }
+  }
+  .sider_item.selected {
+    background-color: #e7fff8;
+    border-radius: 21px;
+    font-weight: bold;
+    color: #00f3ab;
+  }
 }
 
+.stafi_stake_sider {
+  border-right: 1px solid #3b3b3b;
+  padding: 32px 22px;
+  height: 100%;
+  .sider_item {
+    font-size: 14px;
+    font-weight: bold;
+    margin-bottom: 16px;
+    cursor: pointer;
+    text-align: left;
+    width: fit-content;
 
+    .sub_item {
+      font-size: 12px;
+      font-weight: initial;
+      color: #7b7b7b;
+    }
+    .sub_item.sub_active {
+      color: #00f3ab;
+    }
+  }
+  .sider_item.active {
+    color: #00f3ab;
+    .sub_item {
+      color: #7b7b7b;
+    }
+    .sub_item.sub_active {
+      color: #00f3ab;
+    }
+  }
+  // >.sider_item:first-child{
+  //     margin-top:20.5px;
+  // }
+  > .sider_item:last-child {
+    margin-bottom: 0px;
+  }
+}

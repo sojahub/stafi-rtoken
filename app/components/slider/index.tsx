@@ -20,10 +20,11 @@ import selected_rMatic_svg from '@images/selected_r_matic.svg';
 import selected_rPool_svg from '@images/selected_r_pool.svg';
 import selected_rSOL_svg from '@images/selected_r_sol.svg';
 import React from 'react';
+import { useHistory } from 'react-router-dom';
 import { isdev } from '../../config/index';
 import './index.scss';
 import Item from './item';
- 
+
 const siderData = [
   {
     icon: rAsset_svg,
@@ -31,18 +32,20 @@ const siderData = [
     text: 'rAsset',
     urlKeywords: '/rAsset',
     url: '/rAsset/native',
-  },{
-    icon:rPool_svg,
-    selectedIcon:selected_rPool_svg,
-    text:"rPool", 
-    urlKeywords:'/rPool',
-    url:"/rPool/home"
-  },{
-    icon:rDEX_svg,
-    selectedIcon:selected_rDEX_svg,
-    text:"rDEX", 
-    urlKeywords:'/rDEX',
-    url:"/rDEX/home"
+  },
+  {
+    icon: rPool_svg,
+    selectedIcon: selected_rPool_svg,
+    text: 'rPool',
+    urlKeywords: '/rPool',
+    url: '/rPool/home',
+  },
+  {
+    icon: rDEX_svg,
+    selectedIcon: selected_rDEX_svg,
+    text: 'rDEX',
+    urlKeywords: '/rDEX',
+    url: '/rDEX/home',
   },
   {
     icon: rETH_svg,
@@ -57,7 +60,7 @@ const siderData = [
     selectedIcon: selected_rFIS_svg,
     text: 'rFIS',
     urlKeywords: '/rFIS',
-    url:"/rFIS/home"
+    url: '/rFIS/home',
     // url:"https://rtoken.stafi.io/rfis"
   },
   {
@@ -89,18 +92,19 @@ const siderData = [
     url: '/rSOL/home',
   },
   {
-      icon:rMatic_svg,
-      selectedIcon:selected_rMatic_svg,
-      text:"rMATIC", 
-      urlKeywords:'/rMATIC',
-      url:"/rMATIC/home"
-  }
+    icon: rMatic_svg,
+    selectedIcon: selected_rMatic_svg,
+    text: 'rMATIC',
+    urlKeywords: '/rMATIC',
+    url: '/rMATIC/home',
+  },
 ];
 type Props = {
   route: any;
   history: any;
 };
 export default function Index(props: Props) {
+  const history = useHistory();
   // const [selectIndex,setSelectIndex]=useState(0);
   return (
     <div className='stafi_left_master_sider'>
@@ -124,9 +128,18 @@ export default function Index(props: Props) {
           );
         })}
       </div>
-      <div className='network'>
-        <div></div> {isdev() ? 'Testnet' : 'Mainnet'}
+      <div className='bottom_container'>
+        <div className='text'>Run out of FIS fee?</div>
+        <div className='text'>
+          Try{' '}
+          <span className='link' onClick={() => history.push('/feeStation')}>
+            Fee Station
+          </span>
+        </div>
+        <div className='network'>
+          <div></div> {isdev() ? 'Testnet' : 'Mainnet'}
+        </div>
       </div>
     </div>
-  ); 
+  );
 }

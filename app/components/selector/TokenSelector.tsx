@@ -1,5 +1,5 @@
 import React from 'react';
-import './index.scss';
+import './TokenSelector.scss';
 
 type SelectProps = {
   onSelectChange?: Function;

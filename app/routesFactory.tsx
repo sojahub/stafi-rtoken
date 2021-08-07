@@ -3,6 +3,7 @@ import { rSymbol, Symbol } from '@keyring/defaults';
 import React from 'react';
 import { renderRoutes } from 'react-router-config';
 import { Redirect } from 'react-router-dom';
+import FeeStation from './pages/feeStation/FeeStation';
 import RAssetBep from './pages/rAsset/home/bep';
 import RAssetErc from './pages/rAsset/home/erc';
 import RAssetNative from './pages/rAsset/home/native';
@@ -553,6 +554,18 @@ const routesFactory = (role?: any) => {
             {
               path: '*',
               component: () => <Redirect to='/rDEX/home' />,
+            },
+          ],
+        },
+        {
+          id: 'fee_station',
+          path: '/feeStation',
+          type: 'feeStation',
+          component: FeeStation,
+          routes: [
+            {
+              path: '*',
+              component: () => <Redirect to='/feeStation' />,
             },
           ],
         },

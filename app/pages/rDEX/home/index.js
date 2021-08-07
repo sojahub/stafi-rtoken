@@ -1,6 +1,7 @@
 import CommonButton from '@components/CommonButton';
 import { CardContainer, HContainer, Text } from '@components/commonComponents';
 import DexSwapLoading from '@components/modal/DexSwapLoading';
+import TokenSelector from '@components/selector/TokenSelector';
 import { swap } from '@features/dexClice';
 import {
   query_rBalances_account as fis_query_rBalances_account,
@@ -47,7 +48,6 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
 import SwapRateChart from './SwapRateChart';
-import TokenSelector from './TokenSelector';
 
 const allTokenDatas = [
   {
@@ -90,7 +90,7 @@ const allTokenDatas = [
 
 export default function RDEXHome() {
   const dispatch = useDispatch();
-  // 0-main, 1-input address, 2- setting
+  // 0-main, 1-input address, 2-setting, 3-select token
   const [scene, setScene] = useState(0);
   const [lastScene, setLastScene] = useState(0);
   const [rTokenAmount, setRTokenAmount] = useState();
@@ -115,7 +115,7 @@ export default function RDEXHome() {
     rMATICTokenAmount,
   } = useSelector((state) => {
     return {
-      fisAccount: numberUtil.handleFisAmountToFixed(state.FISModule.fisAccount),
+      fisAccount: state.FISModule.fisAccount,
       rFISTokenAmount: numberUtil.handleFisAmountToFixed(state.FISModule.tokenAmount),
       rKSMTokenAmount: numberUtil.handleFisAmountToFixed(state.rKSMModule.tokenAmount),
       rDOTTokenAmount: numberUtil.handleFisAmountToFixed(state.rDOTModule.tokenAmount),
