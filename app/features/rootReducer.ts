@@ -5,6 +5,7 @@ import bridgeReducer from './bridgeClice';
 import BSCReducer from './BSCClice';
 import dexReducer from './dexClice';
 import ETHReducer from './ETHClice';
+import feeStationReducer from './feeStationClice';
 import FISReducer from './FISClice';
 import globalReducer from './globalClice';
 import noticeReducer from './noticeClice';
@@ -35,5 +36,6 @@ export default function createRootReducer(history?: History) {
     rMATICModule: rMATICReducer,
     BSCModule: BSCReducer,
     dexModule: dexReducer,
+    feeStationModule: feeStationReducer,
   });
 }

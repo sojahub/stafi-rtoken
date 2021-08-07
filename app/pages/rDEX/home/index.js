@@ -128,7 +128,7 @@ export default function RDEXHome() {
   });
 
   useEffect(() => {
-    if (fisAccount) {
+    if (fisAccount && fisAccount.address) {
       dispatch(reloadData());
       dispatch(dot_query_rBalances_account());
       dispatch(dot_rTokenRate());
@@ -146,7 +146,7 @@ export default function RDEXHome() {
       // dispatch(sol_rTokenRate());
       // dispatch(matic_rTokenRate());
     }
-  }, [fisAccount]);
+  }, [fisAccount && fisAccount.address]);
 
   useEffect(() => {
     if (!selectedToken) {

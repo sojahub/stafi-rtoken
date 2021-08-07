@@ -384,6 +384,116 @@ export const transfer =
     });
   };
 
+export const swapDotForFis =
+  (amountparam: string, cb?: Function): AppThunk =>
+  async (dispatch, getState) => {
+    const notice_uuid = stafi_uuid();
+
+    const amount = NumberUtil.tokenAmountToChain(amountparam, rSymbol.Dot);
+    const validPools = getState().rDOTModule.validPools;
+    const poolLimit = getState().rDOTModule.poolLimit;
+    const address = getState().rDOTModule.dotAccount.address;
+    web3Enable(stafiServer.getWeb3EnalbeName());
+    const injector = await web3FromSource(stafiServer.getPolkadotJsSource());
+
+    const dotApi = await polkadotServer.createPolkadotApi();
+
+    const selectedPool = commonClice.getPool(amount, validPools, poolLimit);
+    if (selectedPool == null) {
+      return;
+    }
+
+    const ex = await dotApi.tx.balances.transferKeepAlive(selectedPool.address, amount.toString());
+
+    let index = 0;
+    ex.signAndSend(address, { signer: injector.signer }, (result: any) => {
+      if (index == 0) {
+        index = index + 1;
+      }
+
+      const tx = ex.hash.toHex();
+      try {
+        let asInBlock = '';
+        try {
+          asInBlock = '' + result.status.asInBlock;
+        } catch (e) {
+          // do nothinig
+        }
+        if (asInBlock) {
+          dispatch(
+            setStakeHash({
+              txHash: tx,
+              blockHash: asInBlock,
+              notice_uuid: notice_uuid,
+            }),
+          );
+        }
+
+        if (result.status.isInBlock) {
+          //Message notice
+          dispatch(add_DOT_stake_Notice(notice_uuid, amountparam, noticeStatus.Pending));
+
+          result.events
+            .filter((e: any) => {
+              return e.event.section == 'system';
+            })
+            .forEach((data: any) => {
+              if (data.event.method === 'ExtrinsicFailed') {
+                const [dispatchError] = data.event.data;
+                if (dispatchError.isModule) {
+                  try {
+                    const mod = dispatchError.asModule;
+                    const error = data.registry.findMetaError(
+                      new Uint8Array([mod.index.toNumber(), mod.error.toNumber()]),
+                    );
+
+                    let message: string = 'Something is wrong, please try again later!';
+                    if (error.name == '') {
+                      message = '';
+                    }
+                    message && M.info(message);
+                  } catch (error) {
+                    M.error(error.message);
+                  }
+                }
+                dispatch(reloadData());
+                dispatch(setStakeHash(null));
+                dispatch(add_DOT_stake_Notice(notice_uuid, amountparam, noticeStatus.Error));
+              } else if (data.event.method === 'ExtrinsicSuccess') {
+                // dispatch(gSetTimeOut(() => {
+                //   dispatch(setProcessSending({
+                //     finalizing: processStatus.failure,
+                //   }));
+                // }, 10 * 60 * 1000));
+                dispatch(reloadData());
+
+                // Pending
+                dispatch(
+                  add_DOT_stake_Notice(notice_uuid, amountparam, noticeStatus.Pending, {
+                    process: getState().globalModule.process,
+                    processParameter: getState().rDOTModule.processParameter,
+                  }),
+                );
+                asInBlock && cb && cb();
+              }
+            });
+        } else if (result.status.isFinalized) {
+        } else if (result.isError) {
+          M.error(result.toHuman());
+        }
+      } catch (e) {
+        M.error(e.message);
+      }
+    }).catch((e: any) => {
+      dispatch(setLoading(false));
+      if (e == 'Error: Cancelled') {
+        message.error('Cancelled');
+      } else {
+        console.error(e);
+      }
+    });
+  };
+
 export const balancesAll = (): AppThunk => async (dispatch, getState) => {
   const api = await polkadotServer.createPolkadotApi();
   const address = getState().rDOTModule.dotAccount.address;

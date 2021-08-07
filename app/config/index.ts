@@ -130,7 +130,7 @@ export default {
     if (!isdev()) {
       return 'https://rtoken-api.stafi.io';
     } else {
-      return 'https://rtoken-api.stafi.io';
+      return 'https://test-rtoken.stafi.io';
     }
   },
   api2: () => {
@@ -197,6 +197,13 @@ export default {
       return 'https://rtoken.stafi.io/rbridge';
     } else {
       return 'https://test-rtoken.stafi.io/rbridge';
+    }
+  },
+  feeStationApp: () => {
+    if (!isdev()) {
+      return 'https://drop-api.stafi.io/feeStation';
+    } else {
+      return 'https://test-drop-api.stafi.io/feeStation';
     }
   },
   rFISTokenAddress: () => {

@@ -165,6 +165,33 @@ export default function Index(props: Props) {
         };
       }
     }
+    if (location.pathname.includes('/feeStation')) {
+      const returnValue: any = {};
+      if (state.FISModule.fisAccount) {
+        returnValue.fisAccount = state.FISModule.fisAccount;
+      }
+      if (location.pathname.includes('/feeStation/eth')) {
+        if (state.rETHModule.ethAccount) {
+          returnValue.ethAccount = state.rETHModule.ethAccount;
+        }
+      }
+      if (location.pathname.includes('/feeStation/dot')) {
+        if (state.rDOTModule.dotAccount) {
+          returnValue.dotAccount = state.rDOTModule.dotAccount;
+        }
+      }
+      if (location.pathname.includes('/feeStation/ksm')) {
+        if (state.rKSMModule.ksmAccount) {
+          returnValue.ksmAccount = state.rKSMModule.ksmAccount;
+        }
+      }
+      if (location.pathname.includes('/feeStation/atom')) {
+        if (state.rATOMModule.atomAccount) {
+          returnValue.atomAccount = state.rATOMModule.atomAccount;
+        }
+      }
+      return returnValue;
+    }
     return null;
   });
 

@@ -130,7 +130,7 @@ export default function Index(props: Props) {
         <div className='text'>Run out of FIS fee?</div>
         <div className='text'>
           Try{' '}
-          <span className='link' onClick={() => history.push('/feeStation')}>
+          <span className='link' onClick={() => history.push('/feeStation/default')}>
             Fee Station
           </span>
         </div>
