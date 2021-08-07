@@ -32,20 +32,18 @@ const siderData = [
     text: 'rAsset',
     urlKeywords: '/rAsset',
     url: '/rAsset/native',
-  },
-  {
-    icon: rPool_svg,
-    selectedIcon: selected_rPool_svg,
-    text: 'rPool',
-    urlKeywords: '/rPool',
-    url: '/rPool/home',
-  },
-  {
-    icon: rDEX_svg,
-    selectedIcon: selected_rDEX_svg,
-    text: 'rDEX',
-    urlKeywords: '/rDEX',
-    url: '/rDEX/home',
+  },{
+    icon:rDEX_svg,
+    selectedIcon:selected_rDEX_svg,
+    text:"rDEX", 
+    urlKeywords:'/rDEX',
+    url:"/rDEX/home"
+  },{
+    icon:rPool_svg,
+    selectedIcon:selected_rPool_svg,
+    text:"rPool", 
+    urlKeywords:'/rPool',
+    url:"/rPool/home"
   },
   {
     icon: rETH_svg,

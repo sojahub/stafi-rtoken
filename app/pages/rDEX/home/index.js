@@ -21,23 +21,13 @@ import {
   rTokenRate as dot_rTokenRate
 } from '@features/rDOTClice';
 import { query_rBalances_account, rTokenRate as ksm_rTokenRate } from '@features/rKSMClice';
-import {
-  query_rBalances_account as matic_query_rBalances_account,
-  rTokenRate as matic_rTokenRate
-} from '@features/rMATICClice';
-import {
-  query_rBalances_account as sol_query_rBalances_account,
-  rTokenRate as sol_rTokenRate
-} from '@features/rSOLClice';
 import arrowDownIcon from '@images/arrow_down.svg';
 import doubt from '@images/doubt.svg';
 import left_arrow from '@images/left_arrow.svg';
-import rasset_rsol_svg from '@images/rSOL.svg';
 import rasset_ratom_svg from '@images/r_atom.svg';
 import rasset_rdot_svg from '@images/r_dot.svg';
 import rasset_rfis_svg from '@images/r_fis.svg';
 import rasset_rksm_svg from '@images/r_ksm.svg';
-import rasset_rmatic_svg from '@images/r_matic.svg';
 import settingIcon from '@images/setting.svg';
 import { rSymbol } from '@keyring/defaults';
 import AddressInputEmbedNew from '@shared/components/input/addressInputEmbedNew';
@@ -74,18 +64,18 @@ const allTokenDatas = [
     content: '--',
     type: 'ratom',
   },
-  {
-    icon: rasset_rsol_svg,
-    title: 'rSOL',
-    content: '--',
-    type: 'rsol',
-  },
-  {
-    icon: rasset_rmatic_svg,
-    title: 'rMATIC',
-    content: '--',
-    type: 'rmatic',
-  },
+  // {
+  //   icon: rasset_rsol_svg,
+  //   title: 'rSOL',
+  //   content: '--',
+  //   type: 'rsol',
+  // },
+  // {
+  //   icon: rasset_rmatic_svg,
+  //   title: 'rMATIC',
+  //   content: '--',
+  //   type: 'rmatic',
+  // },
 ];
 
 export default function RDEXHome() {
@@ -107,21 +97,23 @@ export default function RDEXHome() {
 
   const {
     fisAccount,
+    transferrableAmount,
     rFISTokenAmount,
     rKSMTokenAmount,
     rDOTTokenAmount,
     rATOMTokenAmount,
-    rSOLTokenAmount,
-    rMATICTokenAmount,
+    // rSOLTokenAmount,
+    // rMATICTokenAmount,
   } = useSelector((state) => {
     return {
       fisAccount: state.FISModule.fisAccount,
+      transferrableAmount: state.FISModule.transferrableAmountShow,
       rFISTokenAmount: numberUtil.handleFisAmountToFixed(state.FISModule.tokenAmount),
       rKSMTokenAmount: numberUtil.handleFisAmountToFixed(state.rKSMModule.tokenAmount),
       rDOTTokenAmount: numberUtil.handleFisAmountToFixed(state.rDOTModule.tokenAmount),
       rATOMTokenAmount: numberUtil.handleFisAmountToFixed(state.rATOMModule.tokenAmount),
-      rSOLTokenAmount: numberUtil.handleFisAmountToFixed(state.rSOLModule.tokenAmount),
-      rMATICTokenAmount: numberUtil.handleFisAmountToFixed(state.rMATICModule.tokenAmount),
+      // rSOLTokenAmount: numberUtil.handleFisAmountToFixed(state.rSOLModule.tokenAmount),
+      // rMATICTokenAmount: numberUtil.handleFisAmountToFixed(state.rMATICModule.tokenAmount),
     };
   });
 
@@ -147,12 +139,12 @@ export default function RDEXHome() {
       dispatch(atom_rLiquidityRate());
       dispatch(query_rBalances_account());
       dispatch(fis_query_rBalances_account());
-      dispatch(sol_query_rBalances_account());
-      dispatch(matic_query_rBalances_account());
+      // dispatch(sol_query_rBalances_account());
+      // dispatch(matic_query_rBalances_account());
       dispatch(ksm_rTokenRate());
       dispatch(fis_rTokenRate());
-      dispatch(sol_rTokenRate());
-      dispatch(matic_rTokenRate());
+      // dispatch(sol_rTokenRate());
+      // dispatch(matic_rTokenRate());
     }
   }, [fisAccount]);
 
@@ -216,14 +208,14 @@ export default function RDEXHome() {
       if (item.type === 'ratom') {
         item.content = rATOMTokenAmount;
       }
-      if (item.type === 'rsol') {
-        item.content = rSOLTokenAmount;
-      }
-      if (item.type === 'rmatic') {
-        item.content = rMATICTokenAmount;
-      }
+      // if (item.type === 'rsol') {
+      //   item.content = rSOLTokenAmount;
+      // }
+      // if (item.type === 'rmatic') {
+      //   item.content = rMATICTokenAmount;
+      // }
     });
-  }, [rFISTokenAmount, rKSMTokenAmount, rDOTTokenAmount, rATOMTokenAmount, rSOLTokenAmount, rMATICTokenAmount]);
+  }, [rFISTokenAmount, rKSMTokenAmount, rDOTTokenAmount, rATOMTokenAmount]);
 
   const getTokenName = () => {
     if (!selectedToken) {
@@ -253,17 +245,26 @@ export default function RDEXHome() {
     if (!selectedToken) {
       return;
     }
+    let leastFee = Number(currentSwapFee) + 0.003;
+    let leastFeeStr = parseInt(leastFee * 1000) / 1000;
+    if (Number(transferrableAmount) < Number(leastFeeStr)) {
+      message.error('Insufficient available FIS balance, at least ' + leastFeeStr + 'FIS');
+      return;
+    }
     if (selectedToken.type === 'ratom') {
       if (!atom_checkAddress(address)) {
         message.error('address input error');
         return;
       }
       dispatch(
-        swap(rSymbol.Atom, rTokenAmount, address, () => {
-          message.success('swap success');
-          setScene(0);
-          setRTokenAmount('');
-          setAddress('');
+        swap(rSymbol.Atom, rTokenAmount, address,
+          numberUtil.handleFisRoundToFixed(minReceiveTokenAmount),
+          numberUtil.handleFisRoundToFixed(receiveTokenAmount), () => {
+            message.success('swap success');
+            setScene(0);
+            setRTokenAmount('');
+            setAddress('');
+            reloadData()
         }),
       );
     }
@@ -272,18 +273,18 @@ export default function RDEXHome() {
   return (
     <HContainer alignItems='flex-start'>
       <Container>
-        <Text size={'30px'} sameLineHeight>
+        <Text size={'30px'} sameLineHeight bold>
           rDEX
         </Text>
-        <Text size={'14px'} sameLineHeight top={'10px'}>
-          Protocl Liquidity for rTokens. Read <span style={{ color: '#00F3AB', cursor: 'pointer' }}>Mechanism</span>
+        <Text size={'14px'} color={'#a5a5a5'} sameLineHeight marginTop={'1px'}>
+          Protocol Liquidity for rTokens. Read <span style={{ color: '#00F3AB', cursor: 'pointer', textDecoration: 'underline' }}>Mechanism</span>
         </Text>
 
         <CardContainer width={'340px'} mt={'50px'} pt={'17px'} pb={'8px'} style={{ minHeight: '468px' }}>
           <HContainer mb={'20px'} ml={'20px'} mr={'20px'}>
             <div style={{ height: '20px', display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
               {scene === 0 && (
-                <Text size={'18px'} sameLineHeight>
+                <Text size={'18px'} sameLineHeight bold>
                   Swap
                 </Text>
               )}
@@ -307,7 +308,7 @@ export default function RDEXHome() {
                     }}
                   />
 
-                  <Text size={'18px'} ml={'12px'} sameLineHeight>
+                  <Text size={'18px'} ml={'12px'} sameLineHeight bold>
                     Setting
                   </Text>
                 </HContainer>
@@ -322,7 +323,7 @@ export default function RDEXHome() {
                     }}
                   />
 
-                  <Text size={'18px'} ml={'12px'} sameLineHeight>
+                  <Text size={'18px'} ml={'12px'} sameLineHeight bold>
                     Select a native token
                   </Text>
                 </HContainer>
@@ -407,9 +408,10 @@ export default function RDEXHome() {
                             <Tooltip
                               overlayClassName='doubt_overlay'
                               placement='topLeft'
+                              overlayInnerStyle={{ color: '#A4A4A4' }}
                               title={`${getTokenName()} = ${
                                 selectedToken.title
-                              } * ExchangeRate * N (N is % of liquidity fee,govered by the protocol, it is 95% atm.)`}>
+                              } * ExchangeRate * N (N is % of liquidity fee, govered by the protocol, it is ${numberUtil.percentageAmountToHuman(currentLiquidityRate)} atm.)`}>
                               <img src={doubt} />
                             </Tooltip>
                           </HContainer>
