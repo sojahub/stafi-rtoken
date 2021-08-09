@@ -27,6 +27,7 @@ import settingIcon from '@images/setting.svg';
 import { Symbol } from '@keyring/defaults';
 import TypeSelectorInput from '@shared/components/input/TypeSelectorInput';
 import Modal from '@shared/components/modal/connectModal';
+import { getLocalStorageItem, Keys } from '@util/common';
 import numberUtil from '@util/numberUtil';
 import { message, Spin, Tooltip } from 'antd';
 import { divide, multiply, subtract } from 'mathjs';
@@ -202,6 +203,11 @@ export default function FeeStation() {
           clearConnectWallet();
         }
       } else if (selectedToken && selectedToken.type === Symbol.Atom) {
+        if (getLocalStorageItem(Keys.AtomAccountKey)) {
+          setTimeout(() => {
+            dispatch(connectAtomjs());
+          }, 1000);
+        }
         if (!atomAccount || !atomAccount.address) {
           setConnectWallet('ATOM');
         } else {
@@ -323,7 +329,7 @@ export default function FeeStation() {
     }
     if (selectedToken.type === Symbol.Eth) {
       dispatch(
-        swapEthForFis(currentPoolInfo.poolAddress, tokenAmount, minReceiveFisAmount, (params) => {
+        swapEthForFis(currentPoolInfo.poolAddress, tokenAmount, receiveFisAmount, minReceiveFisAmount, (params) => {
           if (params) {
             setSwapInfoParams(params);
             dispatch(uploadSwapInfo(params));

@@ -22,6 +22,7 @@ import { keccakFromHexString } from 'ethereumjs-util';
 import Web3Utils from 'web3-utils';
 import { AppThunk } from '../store';
 import { getAssetBalance, getAssetBalanceAll } from './ETHClice';
+import { setSwapLoadingStatus } from './feeStationClice';
 import { setLoading } from './globalClice';
 import { add_Notice, noticeStatus, noticesubType, noticeType } from './noticeClice';
 
@@ -520,13 +521,22 @@ export const send =
   };
 
 export const swapEthForFis =
-  (poolAddress: string, amountparam: string, minOutFisAmountParam: any, cb?: Function): AppThunk =>
+  (
+    poolAddress: string,
+    amountparam: string,
+    receiveFisAmountParam: any,
+    minOutFisAmountParam: any,
+    cb?: Function,
+  ): AppThunk =>
   async (dispatch, getState) => {
     try {
       dispatch(setLoading(true));
+      dispatch(setSwapLoadingStatus(1));
+      const notice_uuid = stafi_uuid();
       let web3 = ethServer.getWeb3();
       const address = getState().rETHModule.ethAccount && getState().rETHModule.ethAccount.address;
       if (!address) {
+        dispatch(setSwapLoadingStatus(0));
         return;
       }
       const amount = web3.utils.toWei(amountparam.toString(), 'ether');
@@ -549,6 +559,7 @@ export const swapEthForFis =
         });
 
       if (!txHash) {
+        dispatch(setSwapLoadingStatus(0));
         return;
       }
 
@@ -572,8 +583,19 @@ export const swapEthForFis =
       const blockHash = txDetail && txDetail.blockHash;
 
       if (!blockHash) {
+        dispatch(setSwapLoadingStatus(0));
         return;
       }
+
+      dispatch(
+        add_ETH_Staker_feeStation_Notice(notice_uuid, amountparam, noticeStatus.Pending, {
+          receiveFisAmount: receiveFisAmountParam,
+          fisAddress: getState().FISModule.fisAccount && getState().FISModule.fisAccount.address,
+          symbol: 'ETH',
+          txHash: txHash,
+          blockHash: blockHash,
+        }),
+      );
 
       const fiskeyringInstance = keyring.init(Symbol.Fis);
       const stafiAddress = u8aToHex(fiskeyringInstance.decodeAddress(getState().FISModule.fisAccount.address));
@@ -589,8 +611,11 @@ export const swapEthForFis =
         });
 
       if (!signature) {
+        dispatch(setSwapLoadingStatus(0));
         return;
       }
+
+      dispatch(setSwapLoadingStatus(2));
 
       blockHash &&
         cb &&
@@ -1235,6 +1260,13 @@ const add_ETH_Staker_stake_Notice =
   async (dispatch, getState) => {
     dispatch(add_ETH_Notice(uuid, noticeType.Staker, noticesubType.Stake, amount, status, subData));
   };
+
+const add_ETH_Staker_feeStation_Notice =
+  (uuid: string, amount: string, status: string, subData?: any): AppThunk =>
+  async (dispatch, getState) => {
+    dispatch(add_ETH_Notice(uuid, noticeType.Staker, noticesubType.FeeStation, amount, status, subData));
+  };
+
 const add_ETH_validator_deposit_Notice =
   (uuid: string, amount: string, status: string, subData?: any): AppThunk =>
   async (dispatch, getState) => {

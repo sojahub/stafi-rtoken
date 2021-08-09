@@ -394,9 +394,7 @@ export const swapAtomForFis =
             }),
           );
 
-          const atomKeyringInstance = keyring.init(Symbol.Atom);
           const fiskeyringInstance = keyring.init(Symbol.Fis);
-          const pubKey = u8aToHex(atomKeyringInstance.decodeAddress(address));
           const stafiAddress = u8aToHex(fiskeyringInstance.decodeAddress(getState().FISModule.fisAccount.address));
 
           blockHash &&
@@ -408,7 +406,7 @@ export const swapAtomForFis =
               txHash: '0x' + txHash,
               poolAddress,
               signature: config.rAtomAignature,
-              pubKey,
+              pubKey: getState().rATOMModule.atomAccount && getState().rATOMModule.atomAccount.pubkey,
               inAmount: amount.toString(),
               minOutAmount: minOutFisAmount.toString(),
             });

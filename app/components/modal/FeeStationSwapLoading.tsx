@@ -4,7 +4,7 @@ import close_bold_svg from '@images/close_bold.svg';
 import complete_svg from '@images/complete.svg';
 import FeeStationServer from '@servers/feeStation';
 import { useInterval } from '@util/utils';
-import { Modal, Progress, Spin } from 'antd';
+import { message, Modal, Progress, Spin } from 'antd';
 import { max } from 'mathjs';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -116,7 +116,12 @@ export default function FeeStationSwapLoading(props: Props) {
     if (props.swapInfoParams) {
       const res = await feeStationServer.getSwapInfo(props.swapInfoParams);
       if (res.status === '80000' && res.data) {
-        setSwapStatus(res.data.swapStatus);
+        if (res.data.swapStatus === 0 || res.data.swapStatus === 1 || res.data.swapStatus === 2) {
+          setSwapStatus(res.data.swapStatus);
+        } else {
+          message.error('get swapStatus error');
+          dispatch(setSwapLoadingStatus(0));
+        }
       }
     }
   };
