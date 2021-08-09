@@ -262,10 +262,14 @@ export const reloadData = (): AppThunk => async (dispatch, getState) => {
 export const createSubstrate =
   (account: any): AppThunk =>
   async (dispatch, getState) => {
-    queryBalance(account, dispatch, getState);
+    dispatch(queryBalance());
   };
 
-const queryBalance = async (account: any, dispatch: any, getState: any) => {
+export const queryBalance = (): AppThunk => async (dispatch, getState) => {
+  const account = getState().FISModule.fisAccount;
+  if (!account || !account.address) {
+    return;
+  }
   dispatch(setFisAccounts(account));
   let account2: any = { ...account };
   const api = await stafiServer.createStafiApi();
@@ -362,7 +366,7 @@ export const transfer =
     } catch (e: any) {}
   };
 
-export const stakingSignature = async (address: any, txHash: string) => {
+export const stakingSignature = async (address: any, data: any) => {
   message.info('Sending succeeded, proceeding signature.');
   await timeout(5000);
   web3Enable(stafiServer.getWeb3EnalbeName());
@@ -370,7 +374,7 @@ export const stakingSignature = async (address: any, txHash: string) => {
   const signRaw = injector?.signer?.signRaw;
   const { signature } = await signRaw({
     address: address,
-    data: txHash,
+    data: data,
     type: 'bytes',
   });
   return signature;

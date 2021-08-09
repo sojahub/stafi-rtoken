@@ -130,7 +130,7 @@ export default {
     if (!isdev()) {
       return 'https://rtoken-api.stafi.io';
     } else {
-      return 'https://test-rtoken.stafi.io';
+      return 'https://rtoken-api.stafi.io';
     }
   },
   api2: () => {
@@ -369,6 +369,13 @@ export default {
       return 'https://testcosmosrpc.wetez.io';
     }
   },
+  rAtomCosmosChainRest: () => {
+    if (!isdev()) {
+      return 'https://cosmos-rpc1.stafi.io';
+    } else {
+      return 'https://testcosmosrest.wetez.io';
+    }
+  },
   rAtomDenom: () => {
     if (!isdev()) {
       return 'uatom';
@@ -488,6 +495,12 @@ export default {
     return '0x3';
   },
   goerliChainId: () => {
+    return '0x5';
+  },
+  ethChainId: () => {
+    if (!isdev()) {
+      return '0x1';
+    }
     return '0x5';
   },
   metaMaskNetworkIsEth: (networkChainId: any) => {

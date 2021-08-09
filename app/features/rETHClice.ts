@@ -1,8 +1,10 @@
 import config, { isdev } from '@config/index';
 import { rSymbol, Symbol } from '@keyring/defaults';
+import { u8aToHex } from '@polkadot/util';
 import { keccakAsHex } from '@polkadot/util-crypto';
 import { createSlice } from '@reduxjs/toolkit';
 import EthServer from '@servers/eth/index';
+import keyring from '@servers/index';
 import RpcServer, { pageCount } from '@servers/rpc/index';
 import {
   getLocalStorageItem,
@@ -16,6 +18,7 @@ import {
 import NumberUtil from '@util/numberUtil';
 import StringUtil from '@util/stringUtil';
 import { message } from 'antd';
+import { keccakFromHexString } from 'ethereumjs-util';
 import Web3Utils from 'web3-utils';
 import { AppThunk } from '../store';
 import { getAssetBalance, getAssetBalanceAll } from './ETHClice';
@@ -386,6 +389,7 @@ export const rTokenRate = (): AppThunk => async (dispatch, getState) => {
 
 export const get_eth_getBalance = (): AppThunk => async (dispatch, getState) => {
   if (isdev() && !config.metaMaskNetworkIsGoerliEth(getState().globalModule.metaMaskNetworkId)) {
+    console.log('dev: metaMaskNetwork wrong');
     return;
   }
   let web3 = ethServer.getWeb3();
@@ -482,6 +486,7 @@ export const getPoolCount = (): AppThunk => async (dispatch, getState) => {
   const poolCount = await managerContract.methods.getStakingPoolCount().call();
   dispatch(setPoolCount(poolCount));
 };
+
 export const send =
   (value: Number, cb?: Function): AppThunk =>
   async (dispatch, getState) => {
@@ -513,6 +518,101 @@ export const send =
       message.error(error.message);
     }
   };
+
+export const swapEthForFis =
+  (poolAddress: string, amountparam: string, minOutFisAmountParam: any, cb?: Function): AppThunk =>
+  async (dispatch, getState) => {
+    try {
+      dispatch(setLoading(true));
+      let web3 = ethServer.getWeb3();
+      const address = getState().rETHModule.ethAccount && getState().rETHModule.ethAccount.address;
+      if (!address) {
+        return;
+      }
+      const amount = web3.utils.toWei(amountparam.toString(), 'ether');
+      const amountHex = web3.utils.toHex(amount);
+      const minOutFisAmount = NumberUtil.tokenAmountToChain(minOutFisAmountParam, rSymbol.Fis);
+      const transactionParameters = {
+        value: amountHex,
+        gas: '0x54647',
+        to: poolAddress,
+        from: address,
+        chainId: config.ethChainId(),
+      };
+      const txHash = await ethereum
+        .request({
+          method: 'eth_sendTransaction',
+          params: [transactionParameters],
+        })
+        .catch((err: any) => {
+          message.error(err.message);
+        });
+
+      if (!txHash) {
+        return;
+      }
+
+      let txDetail;
+      while (true) {
+        await sleep(1000);
+        txDetail = await ethereum
+          .request({
+            method: 'eth_getTransactionByHash',
+            params: [txHash],
+          })
+          .catch((err: any) => {
+            message.error(err.message);
+          });
+
+        if (txDetail.blockHash || !txDetail) {
+          break;
+        }
+      }
+
+      const blockHash = txDetail && txDetail.blockHash;
+
+      if (!blockHash) {
+        return;
+      }
+
+      const fiskeyringInstance = keyring.init(Symbol.Fis);
+      const stafiAddress = u8aToHex(fiskeyringInstance.decodeAddress(getState().FISModule.fisAccount.address));
+      var msgHash = keccakFromHexString(stafiAddress);
+
+      const signature = await ethereum
+        .request({
+          method: 'eth_sign',
+          params: [address, u8aToHex(msgHash)],
+        })
+        .catch((err: any) => {
+          message.error(err.message);
+        });
+
+      if (!signature) {
+        return;
+      }
+
+      blockHash &&
+        cb &&
+        cb({
+          stafiAddress,
+          symbol: 'ETH',
+          blockHash,
+          txHash: txHash,
+          poolAddress,
+          signature,
+          pubKey: address,
+          inAmount: amount.toString(),
+          minOutAmount: minOutFisAmount.toString(),
+        });
+    } finally {
+      dispatch(setLoading(false));
+    }
+  };
+
+function sleep(ms: any) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
 
 export const getRethAmount = (): AppThunk => async (dispatch, getState) => {
   const address = getState().rETHModule.ethAccount.address;
@@ -954,22 +1054,16 @@ export const getUnmatchedValidators = (): AppThunk => async (dispatch, getState)
   dispatch(setUnmatchedValidators(result));
 };
 
-export const getTotalRETH =
-  (): AppThunk =>
-  async (dispatch, getState) => {
-    const address = getState().rETHModule.ethAccount.address;
-    let web3 = ethServer.getWeb3();
-    let contract = new web3.eth.Contract(
-      ethServer.getRETHTokenAbi(),
-      ethServer.getRETHTokenAddress(),
-      {
-        from: address,
-      },
-    );
-    const result = await contract.methods.totalSupply().call();
-    let totalRETH = parseFloat(web3.utils.fromWei(result, 'ether'));
-    dispatch(setPoolStatusTotalRETH(NumberUtil.handleEthAmountToFixed(totalRETH)));
-  };
+export const getTotalRETH = (): AppThunk => async (dispatch, getState) => {
+  const address = getState().rETHModule.ethAccount.address;
+  let web3 = ethServer.getWeb3();
+  let contract = new web3.eth.Contract(ethServer.getRETHTokenAbi(), ethServer.getRETHTokenAddress(), {
+    from: address,
+  });
+  const result = await contract.methods.totalSupply().call();
+  let totalRETH = parseFloat(web3.utils.fromWei(result, 'ether'));
+  dispatch(setPoolStatusTotalRETH(NumberUtil.handleEthAmountToFixed(totalRETH)));
+};
 export const getUnmatchedETH = (): AppThunk => async (dispatch, getState) => {
   const address = getState().rETHModule.ethAccount.address;
   let web3 = ethServer.getWeb3();

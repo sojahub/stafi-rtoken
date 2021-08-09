@@ -1,6 +1,6 @@
-import config,{isdev} from '@config/index'; 
-import {CosmosKeyring} from '@keyring/CosmosKeyring';
-import { SigningStargateClient } from '@cosmjs/stargate'; 
+import config, { isdev } from '@config/index';
+import { SigningStargateClient } from '@cosmjs/stargate';
+import { CosmosKeyring } from '@keyring/CosmosKeyring';
 import { message } from 'antd';
 declare const window: any;
 let cosmosApi:any = null; 
@@ -24,7 +24,7 @@ export default class ExtensionDapp extends CosmosKeyring{
               // RPC endpoint of the chain.
               rpc: config.rAtomCosmosChainRpc(),
               // REST endpoint of the chain.
-              rest: config.rAtomCosmosChainRpc(),
+              rest: config.rAtomCosmosChainRest(),
               // Staking coin information
               stakeCurrency: {
                   // Coin denomination to be displayed to the user.

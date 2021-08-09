@@ -14,8 +14,16 @@ import { message } from 'antd';
 import _m0 from 'protobufjs/minimal';
 import { AppThunk } from '../store';
 import CommonClice from './commonClice';
+import { setSwapLoadingStatus } from './feeStationClice';
 import { bondStates, bound, fisUnbond, rTokenSeries_bondStates } from './FISClice';
-import { initProcess, processStatus, setLoading, setProcessSending, setProcessSlider, setProcessType } from './globalClice';
+import {
+  initProcess,
+  processStatus,
+  setLoading,
+  setProcessSending,
+  setProcessSlider,
+  setProcessType
+} from './globalClice';
 import { add_Notice, findUuid, noticeStatus, noticesubType, noticeType } from './noticeClice';
 
 const commonClice = new CommonClice();
@@ -38,17 +46,16 @@ const rATOMClice = createSlice({
     tokenAmount: '--',
     processParameter: null,
     stakeHash: getLocalStorageItem(Keys.AtomStakeHash),
-    unbondCommission:"--",
-    bondFees:"--",
-    unBondFees:"--",
-    totalIssuance:"--",
-    stakerApr:"--",
+    unbondCommission: '--',
+    bondFees: '--',
+    unBondFees: '--',
+    totalIssuance: '--',
+    stakerApr: '--',
 
-    
-    ercBalance:"--",
-    totalUnbonding:null,
-    rewardList:[],
-    rewardList_lastdata:null
+    ercBalance: '--',
+    totalUnbonding: null,
+    rewardList: [],
+    rewardList_lastdata: null,
   },
   reducers: {
     setAtomAccounts(state, { payload }) {
@@ -132,17 +139,17 @@ const rATOMClice = createSlice({
     setUnBondFees(state, { payload }) {
       state.unBondFees = payload;
     },
-    setRewardList(state,{payload}){
-      state.rewardList=payload
+    setRewardList(state, { payload }) {
+      state.rewardList = payload;
     },
-    setRewardList_lastdata(state,{payload}){
-      state.rewardList_lastdata=payload
-    }
+    setRewardList_lastdata(state, { payload }) {
+      state.rewardList_lastdata = payload;
+    },
   },
 });
 const atomServer = new AtomServer();
 const stafiServer = new Stafi();
-const rpcServer=new RpcServer();
+const rpcServer = new RpcServer();
 export const {
   setAtomAccounts,
   setAtomAccount,
@@ -163,7 +170,7 @@ export const {
   setUnBondFees,
   setRatioShow,
   setRewardList,
-  setRewardList_lastdata
+  setRewardList_lastdata,
 } = rATOMClice.actions;
 
 export const reloadData = (): AppThunk => async (dispatch, getState) => {
@@ -182,7 +189,7 @@ export const createSubstrate =
   };
 
 const queryBalance = async (account: any, dispatch: any, getState: any) => {
-  try { 
+  try {
     dispatch(setAtomAccounts(account));
     let account2: any = { ...account };
     const client = await atomServer.createApi();
@@ -200,9 +207,7 @@ const queryBalance = async (account: any, dispatch: any, getState: any) => {
     dispatch(setTransferrableAmountShow(account2.balance));
     dispatch(setAtomAccount(account2));
     dispatch(setAtomAccounts(account2));
-  } catch (error) {
-      
-  }
+  } catch (error) {}
 };
 
 export const transfer =
@@ -221,7 +226,6 @@ export const transfer =
     const validPools = getState().rATOMModule.validPools;
     const poolLimit = getState().rATOMModule.poolLimit;
 
-    
     const selectedPool = commonClice.getPool(amount, validPools, poolLimit);
     if (selectedPool == null) {
       return;
@@ -341,6 +345,81 @@ export const transfer =
           packing: processStatus.default,
         }),
       );
+    }
+  };
+
+export const swapAtomForFis =
+  (
+    poolAddress: string,
+    amountparam: string,
+    receiveFisAmountParam: any,
+    minOutFisAmountParam: any,
+    cb?: Function,
+  ): AppThunk =>
+  async (dispatch, getState) => {
+    try {
+      dispatch(setLoading(true));
+      dispatch(setSwapLoadingStatus(1));
+      const notice_uuid = stafi_uuid();
+      const amount = NumberUtil.tokenAmountToChain(amountparam, rSymbol.Atom);
+      const minOutFisAmount = NumberUtil.tokenAmountToChain(minOutFisAmountParam, rSymbol.Fis);
+
+      const demon = config.rAtomDenom();
+      const memo = getState().FISModule.fisAccount.address;
+      const address = getState().rATOMModule.atomAccount.address;
+
+      if (!poolAddress) {
+        dispatch(setSwapLoadingStatus(0));
+        return;
+      }
+
+      try {
+        const client = await atomServer.createApi();
+        const sendTokens: any = await client.sendTokens(address, poolAddress, coins(amount, demon), memo);
+        if (sendTokens.code == 0) {
+          const block = await client.getBlock(sendTokens.height);
+          const txHash = sendTokens.transactionHash;
+          const blockHash = block.id;
+
+          dispatch(reloadData());
+          dispatch(setSwapLoadingStatus(2));
+
+          dispatch(
+            add_ATOM_feeStation_Notice(notice_uuid, amountparam, noticeStatus.Pending, {
+              receiveFisAmount: receiveFisAmountParam,
+              fisAddress: getState().FISModule.fisAccount && getState().FISModule.fisAccount.address,
+              symbol: 'ATOM',
+              txHash: '0x' + txHash,
+              blockHash: '0x' + blockHash,
+            }),
+          );
+
+          const atomKeyringInstance = keyring.init(Symbol.Atom);
+          const fiskeyringInstance = keyring.init(Symbol.Fis);
+          const pubKey = u8aToHex(atomKeyringInstance.decodeAddress(address));
+          const stafiAddress = u8aToHex(fiskeyringInstance.decodeAddress(getState().FISModule.fisAccount.address));
+
+          blockHash &&
+            cb &&
+            cb({
+              stafiAddress,
+              symbol: 'ATOM',
+              blockHash: '0x' + blockHash,
+              txHash: '0x' + txHash,
+              poolAddress,
+              signature: config.rAtomAignature,
+              pubKey,
+              inAmount: amount.toString(),
+              minOutAmount: minOutFisAmount.toString(),
+            });
+        } else {
+          dispatch(reloadData());
+          dispatch(setSwapLoadingStatus(0));
+          dispatch(add_ATOM_feeStation_Notice(notice_uuid, amountparam, noticeStatus.Error));
+        }
+      } catch (error) {}
+    } finally {
+      dispatch(setLoading(false));
     }
   };
 
@@ -466,14 +545,13 @@ export const continueProcess = (): AppThunk => async (dispatch, getState) => {
         }
       }),
     );
-  } 
+  }
 };
 
 export const onProceed =
   (txHash: string, cb?: Function): AppThunk =>
   async (dispatch, getstate) => {
     try {
-    
       const client = await atomServer.createApi();
       let indexedTx = null;
       try {
@@ -481,7 +559,6 @@ export const onProceed =
       } catch (error) {
         message.error('Please input the right TxHash');
         return;
-
       }
       if (!indexedTx) {
         message.error('Please input the right TxHash');
@@ -538,10 +615,7 @@ export const onProceed =
           }
         }),
       );
-        
-    } catch (error) {
-      
-    }
+    } catch (error) {}
   };
 
 export const getBlock =
@@ -833,6 +907,7 @@ export const accountUnbonds = (): AppThunk => async (dispatch, getState) => {
     dispatch(setTotalUnbonding(total));
   });
 };
+
 const add_ATOM_stake_Notice =
   (uuid: string, amount: string, status: string, subData?: any): AppThunk =>
   async (dispatch, getState) => {
@@ -846,52 +921,67 @@ const add_ATOM_stake_Notice =
     }, 20);
   };
 
-export const getReward=(pageIndex:Number,cb:Function):AppThunk=>async (dispatch, getState)=>{
-  const fisSource=getState().FISModule.fisAccount.address;
-  const ethAccount=getState().rETHModule.ethAccount; 
-  dispatch(setLoading(true));
-  try { 
-    if(pageIndex==0){
-      dispatch(setRewardList([]));
-      dispatch(setRewardList_lastdata(null));
-    }
-    const result=await rpcServer.getReward(fisSource,ethAccount?ethAccount.address:"",rSymbol.Atom,pageIndex); 
-    if(result.status==80000){ 
-      const rewardList=getState().rATOMModule.rewardList; 
-      if(result.data.rewardList.length>0){
-        const list=result.data.rewardList.map((item:any)=>{
-          const rate=NumberUtil.rTokenRateToHuman(item.rate);
-          const rbalance=NumberUtil.tokenAmountToHuman(item.rbalance,rSymbol.Atom);
-          return {
-            ...item,
-            rbalance:rbalance,
-            rate:rate
-          }
-        })
-        if(result.data.rewardList.length<=pageCount){
-          dispatch(setRewardList_lastdata(null))
-        }else{
-          dispatch(setRewardList_lastdata(list[list.length-1]));
-          list.pop()
-        } 
-        dispatch(setRewardList([...rewardList,...list])); 
-        dispatch(setLoading(false));
-        if(result.data.rewardList.length<=pageCount){
-          cb && cb(false)
-        }else{
-          cb && cb(true)
-        }
-      }else{
-        dispatch(setLoading(false));
-        cb && cb(false)
+const add_ATOM_feeStation_Notice =
+  (uuid: string, amount: string, status: string, subData?: any): AppThunk =>
+  async (dispatch, getState) => {
+    setTimeout(() => {
+      dispatch(add_ATOM_Notice(uuid, noticeType.Staker, noticesubType.FeeStation, amount, status, subData));
+    }, 20);
+  };
+
+export const getReward =
+  (pageIndex: Number, cb: Function): AppThunk =>
+  async (dispatch, getState) => {
+    const fisSource = getState().FISModule.fisAccount.address;
+    const ethAccount = getState().rETHModule.ethAccount;
+    dispatch(setLoading(true));
+    try {
+      if (pageIndex == 0) {
+        dispatch(setRewardList([]));
+        dispatch(setRewardList_lastdata(null));
       }
-    } else {
-      dispatch(setLoading(false))
+      const result = await rpcServer.getReward(
+        fisSource,
+        ethAccount ? ethAccount.address : '',
+        rSymbol.Atom,
+        pageIndex,
+      );
+      if (result.status == 80000) {
+        const rewardList = getState().rATOMModule.rewardList;
+        if (result.data.rewardList.length > 0) {
+          const list = result.data.rewardList.map((item: any) => {
+            const rate = NumberUtil.rTokenRateToHuman(item.rate);
+            const rbalance = NumberUtil.tokenAmountToHuman(item.rbalance, rSymbol.Atom);
+            return {
+              ...item,
+              rbalance: rbalance,
+              rate: rate,
+            };
+          });
+          if (result.data.rewardList.length <= pageCount) {
+            dispatch(setRewardList_lastdata(null));
+          } else {
+            dispatch(setRewardList_lastdata(list[list.length - 1]));
+            list.pop();
+          }
+          dispatch(setRewardList([...rewardList, ...list]));
+          dispatch(setLoading(false));
+          if (result.data.rewardList.length <= pageCount) {
+            cb && cb(false);
+          } else {
+            cb && cb(true);
+          }
+        } else {
+          dispatch(setLoading(false));
+          cb && cb(false);
+        }
+      } else {
+        dispatch(setLoading(false));
+      }
+    } catch (error) {
+      dispatch(setLoading(false));
     }
-  } catch (error) {
-    dispatch(setLoading(false));
-  }
-}
+  };
 
 export const rTokenRate = (): AppThunk => async (dispatch, getState) => {
   const ratio = await commonClice.rTokenRate(rSymbol.Atom);

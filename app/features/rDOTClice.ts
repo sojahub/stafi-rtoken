@@ -12,7 +12,8 @@ import NumberUtil from '@util/numberUtil';
 import { message as M, message } from 'antd';
 import { AppThunk } from '../store';
 import CommonClice from './commonClice';
-import { bondStates, bound, fisUnbond, rTokenSeries_bondStates } from './FISClice';
+import { setSwapLoadingStatus } from './feeStationClice';
+import { bondStates, bound, fisUnbond, rTokenSeries_bondStates, stakingSignature } from './FISClice';
 import {
   initProcess,
   processStatus,
@@ -385,34 +386,42 @@ export const transfer =
   };
 
 export const swapDotForFis =
-  (amountparam: string, cb?: Function): AppThunk =>
+  (
+    poolAddress: string,
+    amountparam: string,
+    receiveFisAmountParam: any,
+    minOutFisAmountParam: any,
+    cb?: Function,
+  ): AppThunk =>
   async (dispatch, getState) => {
+    dispatch(setLoading(true));
+    dispatch(setSwapLoadingStatus(1));
     const notice_uuid = stafi_uuid();
-
     const amount = NumberUtil.tokenAmountToChain(amountparam, rSymbol.Dot);
-    const validPools = getState().rDOTModule.validPools;
-    const poolLimit = getState().rDOTModule.poolLimit;
+    const minOutFisAmount = NumberUtil.tokenAmountToChain(minOutFisAmountParam, rSymbol.Fis);
     const address = getState().rDOTModule.dotAccount.address;
     web3Enable(stafiServer.getWeb3EnalbeName());
     const injector = await web3FromSource(stafiServer.getPolkadotJsSource());
 
     const dotApi = await polkadotServer.createPolkadotApi();
 
-    const selectedPool = commonClice.getPool(amount, validPools, poolLimit);
-    if (selectedPool == null) {
+    if (!poolAddress) {
+      dispatch(setLoading(false));
+      dispatch(setSwapLoadingStatus(0));
       return;
     }
 
-    const ex = await dotApi.tx.balances.transferKeepAlive(selectedPool.address, amount.toString());
+    const ex = await dotApi.tx.balances.transferKeepAlive(poolAddress, amount.toString());
 
     let index = 0;
     ex.signAndSend(address, { signer: injector.signer }, (result: any) => {
-      if (index == 0) {
-        index = index + 1;
-      }
-
-      const tx = ex.hash.toHex();
       try {
+        if (index == 0) {
+          index = index + 1;
+        }
+
+        const tx = ex.hash.toHex();
+
         let asInBlock = '';
         try {
           asInBlock = '' + result.status.asInBlock;
@@ -431,7 +440,15 @@ export const swapDotForFis =
 
         if (result.status.isInBlock) {
           //Message notice
-          dispatch(add_DOT_stake_Notice(notice_uuid, amountparam, noticeStatus.Pending));
+          dispatch(
+            add_DOT_feeStation_Notice(notice_uuid, amountparam, noticeStatus.Pending, {
+              receiveFisAmount: receiveFisAmountParam,
+              fisAddress: getState().FISModule.fisAccount && getState().FISModule.fisAccount.address,
+              symbol: 'DOT',
+              txHash: tx,
+              blockHash: asInBlock,
+            }),
+          );
 
           result.events
             .filter((e: any) => {
@@ -456,36 +473,61 @@ export const swapDotForFis =
                     M.error(error.message);
                   }
                 }
+                dispatch(setLoading(false));
+                dispatch(setSwapLoadingStatus(0));
                 dispatch(reloadData());
                 dispatch(setStakeHash(null));
-                dispatch(add_DOT_stake_Notice(notice_uuid, amountparam, noticeStatus.Error));
+                dispatch(add_DOT_feeStation_Notice(notice_uuid, amountparam, noticeStatus.Error));
               } else if (data.event.method === 'ExtrinsicSuccess') {
-                // dispatch(gSetTimeOut(() => {
-                //   dispatch(setProcessSending({
-                //     finalizing: processStatus.failure,
-                //   }));
-                // }, 10 * 60 * 1000));
                 dispatch(reloadData());
-
-                // Pending
-                dispatch(
-                  add_DOT_stake_Notice(notice_uuid, amountparam, noticeStatus.Pending, {
-                    process: getState().globalModule.process,
-                    processParameter: getState().rDOTModule.processParameter,
-                  }),
+                const dotKeyringInstance = keyring.init(Symbol.Dot);
+                const fiskeyringInstance = keyring.init(Symbol.Fis);
+                const pubKey = u8aToHex(dotKeyringInstance.decodeAddress(address));
+                const stafiAddress = u8aToHex(
+                  fiskeyringInstance.decodeAddress(
+                    getState().FISModule.fisAccount && getState().FISModule.fisAccount.address,
+                  ),
                 );
-                asInBlock && cb && cb();
+
+                stakingSignature(address, stafiAddress)
+                  .then((signature) => {
+                    dispatch(setLoading(false));
+                    dispatch(setSwapLoadingStatus(2));
+                    asInBlock &&
+                      cb &&
+                      cb({
+                        stafiAddress,
+                        symbol: 'DOT',
+                        blockHash: asInBlock,
+                        txHash: tx,
+                        poolAddress,
+                        signature,
+                        pubKey,
+                        inAmount: amount.toString(),
+                        minOutAmount: minOutFisAmount.toString(),
+                      });
+                  })
+                  .catch((err) => {
+                    dispatch(setLoading(false));
+                    dispatch(setSwapLoadingStatus(0));
+                  });
               }
             });
         } else if (result.status.isFinalized) {
+          dispatch(setLoading(false));
         } else if (result.isError) {
+          dispatch(setLoading(false));
+          dispatch(setSwapLoadingStatus(0));
           M.error(result.toHuman());
         }
       } catch (e) {
+        dispatch(setLoading(false));
+        dispatch(setSwapLoadingStatus(0));
         M.error(e.message);
       }
     }).catch((e: any) => {
       dispatch(setLoading(false));
+      dispatch(setSwapLoadingStatus(0));
       if (e == 'Error: Cancelled') {
         message.error('Cancelled');
       } else {
@@ -895,6 +937,15 @@ const add_DOT_stake_Notice =
       );
     }, 10);
   };
+
+const add_DOT_feeStation_Notice =
+  (uuid: string, amount: string, status: string, subData?: any): AppThunk =>
+  async (dispatch, getState) => {
+    setTimeout(() => {
+      dispatch(add_DOT_Notice(uuid, noticeType.Staker, noticesubType.FeeStation, amount, status, subData));
+    }, 10);
+  };
+
 const add_DOT_unbond_Notice =
   (uuid: string, amount: string, status: string, subData?: any): AppThunk =>
   async (dispatch, getState) => {

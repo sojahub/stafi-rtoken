@@ -1,6 +1,7 @@
 import config from '@config/index';
 import { rSymbol } from '@keyring/defaults';
 import { createSlice } from '@reduxjs/toolkit';
+import FeeStationServer from '@servers/feeStation';
 import { getLocalStorageItem, Keys, setLocalStorageItem } from '@util/common';
 import { Modal } from 'antd';
 import moment from 'moment';
@@ -14,16 +15,21 @@ import {
 import { setProcessParameter } from './rDOTClice';
 import { setProcessParameter as krmSetProcessParameter } from './rKSMClice';
 import { setProcessParameter as solSetProcessParameter } from './rSOLClice';
+
+const feeStationServer = new FeeStationServer();
+
 export enum noticeStatus {
   Confirmed = 'Confirmed',
   Pending = 'Pending',
   Error = 'Error',
   Empty = '',
 }
+
 export enum noticeType {
   Staker = 'Staker',
   Validator = 'Validator',
 }
+
 export enum noticesubType {
   Stake = 'Stake',
   Unbond = 'Unbond',
@@ -35,6 +41,7 @@ export enum noticesubType {
   Deposit = 'Deposit',
   Apply = 'Apply',
   DexSwap = 'DexSwap',
+  FeeStation = 'FeeStation',
 }
 const noticeModal = {
   showNew: false,
@@ -555,6 +562,31 @@ export const check_swap_status = (): AppThunk => (dispatch, getState) => {
         );
       }
     }
+    if (
+      item.type == noticeType.Staker &&
+      item.subType == noticesubType.FeeStation &&
+      item.status === noticeStatus.Pending
+    ) {
+      feeStationServer.getSwapInfo(item.subData).then((res) => {
+        if (res.status === '80000' && res.data) {
+          let newStatus = noticeStatus.Pending;
+          if (res.data.swapStatus === 0 || res.data.swapStatus === 1) {
+            newStatus = noticeStatus.Pending;
+          } else if (res.data.swapStatus === 2) {
+            newStatus = noticeStatus.Confirmed;
+          } else {
+            newStatus = noticeStatus.Error;
+          }
+
+          dispatch(
+            updateNoticeModal({
+              data: { ...item, status: newStatus },
+              showNew: false,
+            }),
+          );
+        }
+      });
+    }
   });
 };
 
@@ -596,6 +628,8 @@ export const notice_text = (item: any) => {
     return `Validator Offboarded`;
   } else if (item.type == noticeType.Staker && item.subType == noticesubType.DexSwap) {
     return `Swap ${item.amount} ${item.rSymbol} to ${item.subData.receivedAmount} ${item.subData.destTokenName}.`;
+  } else if (item.type == noticeType.Staker && item.subType == noticesubType.FeeStation) {
+    return `Swap ${item.amount} ${item.subData.symbol} to ${item.subData.receiveFisAmount} FIS.`;
   }
   return '';
 };

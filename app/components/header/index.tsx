@@ -166,7 +166,7 @@ export default function Index(props: Props) {
       }
     }
     if (location.pathname.includes('/feeStation')) {
-      const returnValue: any = {};
+      const returnValue: any = { type: 'feeStation' };
       if (state.FISModule.fisAccount) {
         returnValue.fisAccount = state.FISModule.fisAccount;
       }
@@ -327,6 +327,7 @@ export default function Index(props: Props) {
                 <div>{StringUtil.replacePkh(account.ksmAccount.address, 6, 44)}</div>
               </div>
             )}
+
             {account.type == 'rATOM' &&
               (account.atomAccount ? (
                 <div className='header_tool account'>
@@ -342,6 +343,15 @@ export default function Index(props: Props) {
                   connect to Kepir
                 </div>
               ))}
+
+            {account.type == 'feeStation' &&
+              (account.atomAccount ? (
+                <div className='header_tool account'>
+                  <div>{account.atomAccount.balance} ATOM</div>
+                  <div>{StringUtil.replacePkh(account.atomAccount.address, 6, 38)}</div>
+                </div>
+              ) : null)}
+
             {account.type == 'rSOL' &&
               (account.solAccount ? (
                 <div
@@ -364,7 +374,7 @@ export default function Index(props: Props) {
             {account.ethAccount && (
               <div style={{ display: 'flex', flexDirection: 'column' }}>
                 <div className='header_tool account'>
-                  <div>{account.ethAccount.balance} ETH</div>
+                  <div>{account.ethAccount.balance || '--'} ETH</div>
                   <div>{StringUtil.replacePkh(account.ethAccount.address, 4, 38)}</div>
                 </div>
                 {metaMaskNetworkId && !config.metaMaskNetworkIsGoerliEth(metaMaskNetworkId) && (

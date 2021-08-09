@@ -1,8 +1,8 @@
- import { includes } from 'lodash';
-import { createBrowserHistory, createHashHistory } from 'history'; 
-import axios from 'axios'; 
-import {message} from 'antd'; 
-import webConfig from '@config/index'  
+ import webConfig from '@config/index';
+import { message } from 'antd';
+import axios from 'axios';
+import { createBrowserHistory, createHashHistory } from 'history';
+import { includes } from 'lodash';
 let loadingTimer = null;
 const clearLoading = () => {
   clearTimeout(loadingTimer);
@@ -179,7 +179,7 @@ export const api = {
             !argu.hideMsg && message.error((data && data.message) || 'internet error'); // TBD
           }
         } else {
-          message.error('The request timed out. Please try again later');
+          // message.error('The request timed out. Please try again later');
         }
         return Promise.reject(err);
       });

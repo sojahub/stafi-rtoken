@@ -3,11 +3,13 @@ import { noticesubType, noticeType, notice_text } from '@features/noticeClice';
 import { Symbol } from '@keyring/defaults';
 import { Empty } from 'antd';
 import React from 'react';
+
 type Props = {
   data?: any;
   onClick?: Function;
   noData?: boolean;
 };
+
 export default function Index(props: Props) {
   if (props.noData) {
     return (
@@ -19,16 +21,23 @@ export default function Index(props: Props) {
   return (
     <div className='popover_item'>
       <div className='title'>{props.data.title === 'DexSwap' ? 'Swap' : props.data.title}</div>
+
       <div className='context'>
         {/* {props.data.content} */}
         {notice_text(props.data)}
       </div>
+
       <div className='footer'>
         <div>{props.data.dateTime}</div>
         <a
           className={`${props.data.status} ${
             !(props.data.rSymbol == Symbol.Eth || props.data.rSymbol == Symbol.Fis) && props.data.subType
           }`}
+          style={
+            props.data.type == noticeType.Staker && props.data.subType == noticesubType.FeeStation
+              ? { cursor: 'pointer', textDecoration: 'underline' }
+              : {}
+          }
           onClick={() => {
             if (
               props.data.type == noticeType.Staker &&
@@ -44,6 +53,15 @@ export default function Index(props: Props) {
               } else if (destSwapType === 'bep20') {
                 viewTxUrl = config.bscScanBep20TxInAddressUrl(address);
               }
+              viewTxUrl && window.open(viewTxUrl);
+            }
+            if (
+              props.data.type == noticeType.Staker &&
+              props.data.subType == noticesubType.FeeStation &&
+              props.data.subData
+            ) {
+              const { fisAddress } = props.data.subData;
+              const viewTxUrl = config.stafiScanUrl(fisAddress);
               viewTxUrl && window.open(viewTxUrl);
             }
             if (
