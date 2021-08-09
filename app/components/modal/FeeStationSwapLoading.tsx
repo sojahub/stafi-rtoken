@@ -132,6 +132,7 @@ export default function FeeStationSwapLoading(props: Props) {
     setStage1TimeLeft(STAGE1_PERIOD);
     setStage2TimeLeft(STAGE2_PERIOD);
     stage2StartProgress = 0;
+    setSwapStatus(0);
   };
 
   return (
