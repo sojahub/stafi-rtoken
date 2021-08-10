@@ -13,7 +13,8 @@ const polkadotServer = new PolkadotServer();
 const feeStationClice = createSlice({
   name: 'feeStationModule',
   initialState: {
-    swapLimit: '--',
+    swapMaxLimit: '--',
+    swapMinLimit: '--',
     // Example -> "symbol": "ATOM", "poolAddress": "cosmos19zfpgad0sup6d65hcs9aug7jzq3fe2d89tqvmr", "swapRate": "7590000"
     poolInfoList: [],
     // 0-invisible, 1-start transferring, 2-start minting
@@ -21,8 +22,11 @@ const feeStationClice = createSlice({
     swapWaitingTime: 30,
   },
   reducers: {
-    setSwapLimit(state, { payload }) {
-      state.swapLimit = payload;
+    setSwapMaxLimit(state, { payload }) {
+      state.swapMaxLimit = payload;
+    },
+    setSwapMinLimit(state, { payload }) {
+      state.swapMinLimit = payload;
     },
     setPoolInfoList(state, { payload }) {
       state.poolInfoList = payload;
@@ -36,14 +40,14 @@ const feeStationClice = createSlice({
   },
 });
 
-export const { setPoolInfoList, setSwapLimit, setSwapLoadingStatus, setSwapWaitingTime } = feeStationClice.actions;
+export const { setPoolInfoList, setSwapMaxLimit, setSwapMinLimit, setSwapLoadingStatus, setSwapWaitingTime } =
+  feeStationClice.actions;
 
 export const reloadData = (): AppThunk => async (dispatch: any, getState: any) => {
   const res = await feeStationServer.getPoolInfo();
   if (res.status === '80000' && res.data) {
-    if (!isNaN(res.data.swapLimit)) {
-      dispatch(setSwapLimit(numberUtil.fisAmountToHuman(res.data.swapLimit)));
-    }
+    dispatch(setSwapMaxLimit(numberUtil.fisAmountToHuman(res.data.swapMaxLimit)));
+    dispatch(setSwapMinLimit(numberUtil.fisAmountToHuman(res.data.swapMinLimit)));
     dispatch(setPoolInfoList(res.data.poolInfoList));
   }
 };

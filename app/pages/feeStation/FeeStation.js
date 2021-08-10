@@ -105,7 +105,8 @@ export default function FeeStation() {
     ethAccount,
     metaMaskNetworkId,
     poolInfoList,
-    swapLimit,
+    swapMinLimit,
+    swapMaxLimit,
   } = useSelector((state) => {
     return {
       loading: state.globalModule.loading,
@@ -116,7 +117,8 @@ export default function FeeStation() {
       ethAccount: state.rETHModule.ethAccount,
       metaMaskNetworkId: state.globalModule.metaMaskNetworkId,
       poolInfoList: state.feeStationModule.poolInfoList,
-      swapLimit: state.feeStationModule.swapLimit,
+      swapMinLimit: state.feeStationModule.swapMinLimit,
+      swapMaxLimit: state.feeStationModule.swapMaxLimit,
     };
   });
 
@@ -263,13 +265,13 @@ export default function FeeStation() {
   }, [selectedToken, poolInfoList, tokenAmount, slippageTolerance, customSlippageTolerance]);
 
   useEffect(() => {
-    if (receiveFisAmount && !isNaN(receiveFisAmount)) {
-      if (receiveFisAmount < 1 || receiveFisAmount > 100) {
-        message.warn('You can swap 1~100 FIS every transaction.');
+    if (receiveFisAmount && !isNaN(receiveFisAmount) && !isNaN(swapMinLimit) && !isNaN(swapMaxLimit)) {
+      if (receiveFisAmount < swapMinLimit || receiveFisAmount > swapMaxLimit) {
+        message.warn(`You can swap ${swapMinLimit}~${swapMaxLimit} FIS every transaction.`);
         setTokenAmount('');
       }
     }
-  }, [receiveFisAmount]);
+  }, [receiveFisAmount, swapMinLimit, swapMaxLimit]);
 
   const setConnectWallet = (name) => {
     setContentOpacity(0.5);
@@ -369,6 +371,10 @@ export default function FeeStation() {
     }
     if (!currentPoolInfo) {
       message.error('Unable to swap, system is waiting for matching pool');
+      return false;
+    }
+    if (!swapMinLimit || swapMinLimit === '--' || !swapMaxLimit || swapMaxLimit === '--') {
+      message.error('Unable to swap, system is waiting for swapLimit data');
       return false;
     }
     return true;
@@ -614,7 +620,11 @@ export default function FeeStation() {
         </CardContainer>
       </Spin>
 
-      <Description mt='30px'>Note: You can swap 1~100 FIS every transaction.</Description>
+      {swapMinLimit && swapMinLimit !== '--' && swapMaxLimit && swapMaxLimit !== '--' && (
+        <Description mt='30px'>
+          Note: You can swap {swapMinLimit}~{swapMaxLimit} FIS every transaction.
+        </Description>
+      )}
 
       <Modal visible={fisAccountModalVisible}>
         <Page_FIS
