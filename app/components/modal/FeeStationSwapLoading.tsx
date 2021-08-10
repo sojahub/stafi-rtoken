@@ -20,7 +20,7 @@ type Props = {
   onSwapSuccess: Function;
 };
 
-const STAGE1_MAX_PROGRESS = 50;
+const STAGE1_MAX_PROGRESS = 15;
 
 export default function FeeStationSwapLoading(props: Props) {
   const dispatch = useDispatch();
@@ -32,7 +32,7 @@ export default function FeeStationSwapLoading(props: Props) {
     };
   });
 
-  const STAGE1_PERIOD = swapWaitingTime / 2;
+  const STAGE1_PERIOD = swapWaitingTime / 8;
   const STAGE2_PERIOD = swapWaitingTime;
 
   const [stage1TimeLeft, setStage1TimeLeft] = useState(STAGE1_PERIOD);
@@ -93,8 +93,8 @@ export default function FeeStationSwapLoading(props: Props) {
       let newProgress;
       if (swapStatus !== 2) {
         newProgress = Math.min(
-          95,
-          stage2StartProgress + ((STAGE2_PERIOD - stage2TimeLeft) * (100 - stage2StartProgress)) / STAGE2_PERIOD,
+          90,
+          stage2StartProgress + ((STAGE2_PERIOD - stage2TimeLeft) * (100 - stage2StartProgress) * 8) / STAGE2_PERIOD,
         );
         if (stage2TimeLeft === 0) {
           message.info('We are tranferring tokens to the received address, please check your wallet later.');
