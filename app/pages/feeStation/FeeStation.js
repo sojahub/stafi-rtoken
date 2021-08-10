@@ -17,7 +17,6 @@ import { getPools as dot_getPools, swapDotForFis } from '@features/rDOTClice';
 import { get_eth_getBalance, swapEthForFis } from '@features/rETHClice';
 import { swapKsmForFis } from '@features/rKSMClice';
 import arrowDownIcon from '@images/arrow_down.svg';
-import doubt from '@images/doubt.svg';
 import left_arrow from '@images/left_arrow.svg';
 import atomIcon from '@images/rATOM.svg';
 import dotIcon from '@images/rDOT.svg';
@@ -30,7 +29,7 @@ import TypeSelectorInput from '@shared/components/input/TypeSelectorInput';
 import Modal from '@shared/components/modal/connectModal';
 import { getLocalStorageItem, Keys } from '@util/common';
 import numberUtil from '@util/numberUtil';
-import { message, Spin, Tooltip } from 'antd';
+import { message, Spin } from 'antd';
 import { divide, multiply, subtract } from 'mathjs';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -495,23 +494,15 @@ export default function FeeStation() {
                         disabled={true}
                       />
 
-                      <div style={{ marginTop: '24px', height: '15px' }}>
-                        {selectedToken && (
-                          <HContainer justifyContent='center' alignItems='flex-start'>
-                            <Text size={'12px'} color={'#a5a5a5'}>
-                              {`1 ${selectedToken.title} =  ${
-                                currentPoolInfo ? currentPoolInfo.swapRate / 1000000 : '--'
-                              } FIS`}
-                            </Text>
-                            <Tooltip
-                              overlayClassName='doubt_overlay'
-                              placement='topLeft'
-                              title={`FIS = ${selectedToken.title} * ExchangeRate * N (N is % of liquidity fee,govered by the protocol, it is 95% atm.)`}>
-                              <img src={doubt} />
-                            </Tooltip>
-                          </HContainer>
-                        )}
-                      </div>
+                      {selectedToken && (
+                        <HContainer justifyContent='center' alignItems='center' mt='24px'>
+                          <Text size={'12px'} color={'#a5a5a5'}>
+                            {`1 ${selectedToken.title} =  ${
+                              currentPoolInfo ? currentPoolInfo.swapRate / 1000000 : '--'
+                            } FIS`}
+                          </Text>
+                        </HContainer>
+                      )}
                     </>
                   )}
 
