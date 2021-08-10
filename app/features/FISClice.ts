@@ -262,28 +262,29 @@ export const reloadData = (): AppThunk => async (dispatch, getState) => {
 export const createSubstrate =
   (account: any): AppThunk =>
   async (dispatch, getState) => {
-    dispatch(queryBalance());
+    dispatch(queryBalance(account));
   };
 
-export const queryBalance = (): AppThunk => async (dispatch, getState) => {
-  const account = getState().FISModule.fisAccount;
-  if (!account || !account.address) {
-    return;
-  }
-  dispatch(setFisAccounts(account));
-  let account2: any = { ...account };
-  const api = await stafiServer.createStafiApi();
-  const result = await api.query.system.account(account2.address);
-  if (result) {
-    let fisFreeBalance = NumberUtil.fisAmountToHuman(result.data.free);
-    account2.balance = NumberUtil.handleEthAmountRound(fisFreeBalance);
-  }
-  const fisAccount = getState().FISModule.fisAccount;
-  if (fisAccount && fisAccount.address == account2.address) {
-    dispatch(setFisAccount(account2));
-  }
-  dispatch(setFisAccounts(account2));
-};
+export const queryBalance =
+  (account: any): AppThunk =>
+  async (dispatch, getState) => {
+    if (!account) {
+      return;
+    }
+    dispatch(setFisAccounts(account));
+    let account2: any = { ...account };
+    const api = await stafiServer.createStafiApi();
+    const result = await api.query.system.account(account2.address);
+    if (result) {
+      let fisFreeBalance = NumberUtil.fisAmountToHuman(result.data.free);
+      account2.balance = NumberUtil.handleEthAmountRound(fisFreeBalance);
+    }
+    const fisAccount = getState().FISModule.fisAccount;
+    if (fisAccount && fisAccount.address == account2.address) {
+      dispatch(setFisAccount(account2));
+    }
+    dispatch(setFisAccounts(account2));
+  };
 
 export const transfer =
   (amountparam: number, cb?: Function): AppThunk =>

@@ -143,7 +143,7 @@ export default function FeeStation() {
 
   useEffect(() => {
     if (fisAccount && fisAccount.address) {
-      dispatch(fis_queryBalance());
+      dispatch(fis_queryBalance(fisAccount));
     }
   }, [fisAccount && fisAccount.address]);
 
