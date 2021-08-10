@@ -14,7 +14,7 @@ import {
 } from '@features/globalClice';
 import { swapAtomForFis } from '@features/rATOMClice';
 import { getPools as dot_getPools, swapDotForFis } from '@features/rDOTClice';
-import { get_eth_getBalance, swapEthForFis } from '@features/rETHClice';
+import { connectMetamask, get_eth_getBalance, monitoring_Method, swapEthForFis } from '@features/rETHClice';
 import { swapKsmForFis } from '@features/rKSMClice';
 import arrowDownIcon from '@images/arrow_down.svg';
 import left_arrow from '@images/left_arrow.svg';
@@ -29,6 +29,7 @@ import TypeSelectorInput from '@shared/components/input/TypeSelectorInput';
 import Modal from '@shared/components/modal/connectModal';
 import { getLocalStorageItem, Keys } from '@util/common';
 import numberUtil from '@util/numberUtil';
+import { useInterval } from '@util/utils';
 import { message, Spin } from 'antd';
 import { divide, multiply, subtract } from 'mathjs';
 import React, { useEffect, useState } from 'react';
@@ -122,6 +123,13 @@ export default function FeeStation() {
     };
   });
 
+  useInterval(() => {
+    if (fisAccount) {
+      dispatch(fis_queryBalance(fisAccount));
+    }
+    dispatch(feeStation_reloadData());
+  }, 15000);
+
   useEffect(() => {
     if (
       urlTokenType !== 'default' &&
@@ -142,35 +150,36 @@ export default function FeeStation() {
   }, [urlTokenType, tokenTypes]);
 
   useEffect(() => {
-    if (fisAccount && fisAccount.address) {
+    if (fisAccount) {
       dispatch(fis_queryBalance(fisAccount));
     }
   }, [fisAccount && fisAccount.address]);
 
   useEffect(() => {
-    if (dotAccount && dotAccount.address) {
+    if (selectedToken && selectedToken.type === 'dot' && dotAccount && dotAccount.address) {
       dispatch(reloadData(Symbol.Dot));
       dispatch(dot_getPools());
     }
-  }, [dotAccount && dotAccount.address]);
+  }, [selectedToken && selectedToken.type, dotAccount && dotAccount.address]);
 
   useEffect(() => {
-    if (ksmAccount && ksmAccount.address) {
+    if (selectedToken && selectedToken.type === 'ksm' && ksmAccount && ksmAccount.address) {
       dispatch(reloadData(Symbol.Ksm));
     }
-  }, [ksmAccount && ksmAccount.address]);
+  }, [selectedToken && selectedToken.type, ksmAccount && ksmAccount.address]);
 
   useEffect(() => {
-    if (atomAccount && atomAccount.address) {
+    if (selectedToken && selectedToken.type === 'atom' && atomAccount && atomAccount.address) {
       dispatch(reloadData(Symbol.Atom));
     }
-  }, [atomAccount && atomAccount.address]);
+  }, [selectedToken && selectedToken.type, atomAccount && atomAccount.address]);
 
   useEffect(() => {
-    if (ethAccount && ethAccount.address) {
+    if (selectedToken && selectedToken.type === 'eth' && ethAccount && ethAccount.address) {
       dispatch(get_eth_getBalance());
+      dispatch(monitoring_Method());
     }
-  }, [ethAccount && ethAccount.address, metaMaskNetworkId]);
+  }, [selectedToken && selectedToken.type, ethAccount && ethAccount.address, metaMaskNetworkId]);
 
   useEffect(() => {
     tokenTypes.forEach((item) => {
@@ -308,6 +317,9 @@ export default function FeeStation() {
     if (needConnectWalletName === 'ATOM') {
       dispatch(connectAtomjs(() => {}));
     }
+    if (needConnectWalletName === 'ETH') {
+      dispatch(connectMetamask(config.goerliChainId(), false));
+    }
   };
 
   const clickSwap = () => {
@@ -319,6 +331,7 @@ export default function FeeStation() {
       dispatch(
         swapDotForFis(currentPoolInfo.poolAddress, tokenAmount, receiveFisAmount, minReceiveFisAmount, (params) => {
           if (params) {
+            setTokenAmount('');
             setSwapInfoParams(params);
             dispatch(uploadSwapInfo(params));
           }
@@ -329,6 +342,7 @@ export default function FeeStation() {
       dispatch(
         swapKsmForFis(currentPoolInfo.poolAddress, tokenAmount, receiveFisAmount, minReceiveFisAmount, (params) => {
           if (params) {
+            setTokenAmount('');
             setSwapInfoParams(params);
             dispatch(uploadSwapInfo(params));
           }
@@ -339,6 +353,7 @@ export default function FeeStation() {
       dispatch(
         swapAtomForFis(currentPoolInfo.poolAddress, tokenAmount, receiveFisAmount, minReceiveFisAmount, (params) => {
           if (params) {
+            setTokenAmount('');
             setSwapInfoParams(params);
             dispatch(uploadSwapInfo(params));
           }
@@ -349,6 +364,7 @@ export default function FeeStation() {
       dispatch(
         swapEthForFis(currentPoolInfo.poolAddress, tokenAmount, receiveFisAmount, minReceiveFisAmount, (params) => {
           if (params) {
+            setTokenAmount('');
             setSwapInfoParams(params);
             dispatch(uploadSwapInfo(params));
           }
@@ -660,6 +676,11 @@ export default function FeeStation() {
         transferDetail={transferDetail}
         viewTxUrl={config.stafiScanUrl(fisAccount && fisAccount.address)}
         swapInfoParams={swapInfoParams}
+        onSwapSuccess={() => {
+          if (fisAccount) {
+            dispatch(fis_queryBalance(fisAccount));
+          }
+        }}
       />
     </Container>
   );

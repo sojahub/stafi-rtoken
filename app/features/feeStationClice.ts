@@ -17,9 +17,9 @@ const feeStationClice = createSlice({
     swapMinLimit: '--',
     // Example -> "symbol": "ATOM", "poolAddress": "cosmos19zfpgad0sup6d65hcs9aug7jzq3fe2d89tqvmr", "swapRate": "7590000"
     poolInfoList: [],
-    // 0-invisible, 1-start transferring, 2-start minting
+    // 0-invisible, 1-start transferring, 2-start minting, 3-pause
     swapLoadingStatus: 0,
-    swapWaitingTime: 30,
+    swapWaitingTime: 50,
   },
   reducers: {
     setSwapMaxLimit(state, { payload }) {

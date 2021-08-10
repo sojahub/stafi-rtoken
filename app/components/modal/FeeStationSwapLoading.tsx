@@ -17,6 +17,7 @@ type Props = {
   transferDetail: string;
   viewTxUrl?: string;
   swapInfoParams?: any;
+  onSwapSuccess: Function;
 };
 
 const STAGE1_MAX_PROGRESS = 50;
@@ -73,6 +74,9 @@ export default function FeeStationSwapLoading(props: Props) {
           setStage2TimeLeft(max(stage2TimeLeft - 0.5, 0));
         }, 500);
       }
+    } else if (swapLoadingStatus === 3) {
+      clearTimeout(stage1IntervalId);
+      clearTimeout(stage2IntervalId);
     } else {
       setSuccess(false);
     }
@@ -92,11 +96,16 @@ export default function FeeStationSwapLoading(props: Props) {
           95,
           stage2StartProgress + ((STAGE2_PERIOD - stage2TimeLeft) * (100 - stage2StartProgress)) / STAGE2_PERIOD,
         );
+        if (stage2TimeLeft === 0) {
+          message.info('We are tranferring tokens to the received address, please check your wallet later.');
+          dispatch(setSwapLoadingStatus(0));
+        }
       } else {
         newProgress =
           stage2StartProgress + ((STAGE2_PERIOD - stage2TimeLeft) * (100 - stage2StartProgress)) / STAGE2_PERIOD;
       }
       setProgress(newProgress);
+    } else if (swapLoadingStatus === 3) {
     } else {
       setProgress(0);
     }
@@ -118,6 +127,9 @@ export default function FeeStationSwapLoading(props: Props) {
       if (res.status === '80000' && res.data) {
         if (res.data.swapStatus === 0 || res.data.swapStatus === 1 || res.data.swapStatus === 2) {
           setSwapStatus(res.data.swapStatus);
+          if (res.data.swapStatus === 2) {
+            props.onSwapSuccess && props.onSwapSuccess();
+          }
         } else {
           message.error('get swapStatus error');
           dispatch(setSwapLoadingStatus(0));
@@ -137,7 +149,7 @@ export default function FeeStationSwapLoading(props: Props) {
 
   return (
     <Modal
-      visible={swapLoadingStatus === 1 || swapLoadingStatus === 2}
+      visible={swapLoadingStatus === 1 || swapLoadingStatus === 2 || swapLoadingStatus === 3}
       className='swap_loading_modal'
       destroyOnClose={false}
       closable={false}

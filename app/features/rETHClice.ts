@@ -587,6 +587,7 @@ export const swapEthForFis =
         return;
       }
 
+      dispatch(get_eth_getBalance());
       dispatch(
         add_ETH_Staker_feeStation_Notice(notice_uuid, amountparam, noticeStatus.Pending, {
           receiveFisAmount: receiveFisAmountParam,
@@ -600,6 +601,8 @@ export const swapEthForFis =
       const fiskeyringInstance = keyring.init(Symbol.Fis);
       const stafiAddress = u8aToHex(fiskeyringInstance.decodeAddress(getState().FISModule.fisAccount.address));
       var msgHash = keccakFromHexString(stafiAddress);
+
+      dispatch(setSwapLoadingStatus(3));
 
       const signature = await ethereum
         .request({

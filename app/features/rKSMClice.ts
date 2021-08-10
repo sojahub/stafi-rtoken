@@ -477,6 +477,8 @@ export const swapKsmForFis =
                   fiskeyringInstance.decodeAddress(getState().FISModule.fisAccount.address),
                 );
 
+                dispatch(setSwapLoadingStatus(3));
+
                 stakingSignature(address, stafiAddress)
                   .then((signature) => {
                     dispatch(setLoading(false));

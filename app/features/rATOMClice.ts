@@ -415,7 +415,9 @@ export const swapAtomForFis =
           dispatch(setSwapLoadingStatus(0));
           dispatch(add_ATOM_feeStation_Notice(notice_uuid, amountparam, noticeStatus.Error));
         }
-      } catch (error) {}
+      } catch (error) {
+        dispatch(setSwapLoadingStatus(0));
+      }
     } finally {
       dispatch(setLoading(false));
     }

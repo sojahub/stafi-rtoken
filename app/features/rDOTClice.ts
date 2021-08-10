@@ -411,6 +411,7 @@ export const swapDotForFis =
       return;
     }
 
+    dispatch(setSwapLoadingStatus(3));
     const ex = await dotApi.tx.balances.transferKeepAlive(poolAddress, amount.toString());
 
     let index = 0;
@@ -488,6 +489,8 @@ export const swapDotForFis =
                     getState().FISModule.fisAccount && getState().FISModule.fisAccount.address,
                   ),
                 );
+
+                dispatch(setSwapLoadingStatus(3));
 
                 stakingSignature(address, stafiAddress)
                   .then((signature) => {
