@@ -93,3 +93,50 @@
     font-size: 26px;
   }
 }
+
+.slippage_tolerance_embed_container {
+  border-radius: 5px;
+  margin-right: 2px;
+  background-color: #40464c;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 60px;
+  height: 27px;
+
+  .amount_input,
+  .amount_input:hover {
+    background: #40464c;
+    width: 35px;
+    height: 16px;
+    padding: 0px;
+    border-color: #40464c;
+    box-shadow: none;
+    font-family: 'Helvetica-Bold', sans-serif;
+    input,
+    .ant-input-disabled {
+      background: #40464c;
+      color: white;
+      font-size: 14px;
+      font-family: 'Helvetica-Bold', sans-serif;
+    }
+  }
+
+  .ant-input {
+    border-width: 0;
+    color: white;
+    padding: 0px;
+    width: 35px;
+    height: 16px;
+    font-size: 14px;
+    font-family: 'Helvetica-Bold', sans-serif;
+    &::placeholder {
+      color: rgba(255, 255, 255, 0.5);
+    }
+  }
+
+  .ant-input-affix-wrapper:not(.ant-input-affix-wrapper-disabled):hover {
+    border-width: 0;
+    box-shadow: none;
+  }
+}

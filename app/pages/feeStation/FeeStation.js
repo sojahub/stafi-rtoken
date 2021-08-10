@@ -25,6 +25,7 @@ import ethIcon from '@images/rETH.svg';
 import ksmIcon from '@images/rKSM.svg';
 import settingIcon from '@images/setting.svg';
 import { Symbol } from '@keyring/defaults';
+import SlippageToleranceInputEmbed from '@shared/components/input/slippageToleranceInputEmbed';
 import TypeSelectorInput from '@shared/components/input/TypeSelectorInput';
 import Modal from '@shared/components/modal/connectModal';
 import { getLocalStorageItem, Keys } from '@util/common';
@@ -83,6 +84,7 @@ export default function FeeStation() {
   const [receiveFisAmount, setReceiveFisAmount] = useState();
   const [minReceiveFisAmount, setMinReceiveFisAmount] = useState('--');
   const [slippageTolerance, setSlippageTolerance] = useState(1);
+  const [customSlippageTolerance, setCustomSlippageTolerance] = useState();
   const [contentOpacity, setContentOpacity] = useState(1);
   const [needConnectWalletName, setNeedConnectWalletName] = useState();
 
@@ -241,10 +243,25 @@ export default function FeeStation() {
     } else {
       setReceiveFisAmount(divide(multiply(tokenAmount, poolInfo.swapRate), 1000000));
       setMinReceiveFisAmount(
-        divide(multiply(tokenAmount, poolInfo.swapRate, subtract(1, divide(slippageTolerance, 100))), 1000000),
+        divide(
+          multiply(
+            tokenAmount,
+            poolInfo.swapRate,
+            subtract(
+              1,
+              divide(
+                customSlippageTolerance && Number(customSlippageTolerance) > Number(0)
+                  ? customSlippageTolerance
+                  : slippageTolerance,
+                100,
+              ),
+            ),
+          ),
+          1000000,
+        ),
       );
     }
-  }, [selectedToken, poolInfoList, tokenAmount, slippageTolerance]);
+  }, [selectedToken, poolInfoList, tokenAmount, slippageTolerance, customSlippageTolerance]);
 
   useEffect(() => {
     if (receiveFisAmount && !isNaN(receiveFisAmount)) {
@@ -362,14 +379,15 @@ export default function FeeStation() {
     <Container>
       <Title>Fee Station</Title>
 
-      <Description mb={'24px'}>If you have no native FIS to pay for the fee, you can swap</Description>
+      <Description>If you have no native FIS to pay for the fee, you can swap</Description>
+      <Description mb={'24px'}>native FIS using native DOT, ETH, ATOM, etc.</Description>
 
       <Spin spinning={loading} size='large' tip='loading'>
         <CardContainer width={'340px'} pt={'17px'} pb={'8px'} style={{ minHeight: '468px' }} alignSelf='center'>
           <HContainer mb={'20px'} ml={'20px'} mr={'20px'} style={{ opacity: contentOpacity }}>
             <div style={{ height: '20px', display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
               {scene === 0 && (
-                <Text size={'18px'} sameLineHeight>
+                <Text size={'18px'} sameLineHeight bold>
                   Swap
                 </Text>
               )}
@@ -383,7 +401,7 @@ export default function FeeStation() {
                     }}
                   />
 
-                  <Text size={'18px'} ml={'12px'} sameLineHeight>
+                  <Text size={'18px'} ml={'12px'} sameLineHeight bold>
                     Setting
                   </Text>
                 </HContainer>
@@ -505,22 +523,48 @@ export default function FeeStation() {
 
                       <SlippageToleranceContainer>
                         <SlippageToleranceItem
-                          active={slippageTolerance.toString() === '0.1'}
-                          onClick={() => setSlippageTolerance(0.1)}>
+                          active={
+                            slippageTolerance.toString() === '0.1' &&
+                            (!customSlippageTolerance || Number(customSlippageTolerance) <= Number(0))
+                          }
+                          onClick={() => {
+                            setCustomSlippageTolerance('');
+                            setSlippageTolerance(0.1);
+                          }}>
                           0.1%
                         </SlippageToleranceItem>
 
                         <SlippageToleranceItem
-                          active={slippageTolerance.toString() === '0.5'}
-                          onClick={() => setSlippageTolerance(0.5)}>
+                          active={
+                            slippageTolerance.toString() === '0.5' &&
+                            (!customSlippageTolerance || Number(customSlippageTolerance) <= Number(0))
+                          }
+                          onClick={() => {
+                            setCustomSlippageTolerance('');
+                            setSlippageTolerance(0.5);
+                          }}>
                           0.5%
                         </SlippageToleranceItem>
 
                         <SlippageToleranceItem
-                          active={slippageTolerance.toString() === '1'}
-                          onClick={() => setSlippageTolerance(1)}>
+                          active={
+                            slippageTolerance.toString() === '1' &&
+                            (!customSlippageTolerance || Number(customSlippageTolerance) <= Number(0))
+                          }
+                          onClick={() => {
+                            setCustomSlippageTolerance('');
+                            setSlippageTolerance(1);
+                          }}>
                           1%
                         </SlippageToleranceItem>
+
+                        <HContainer mt={'8px'}>
+                          <SlippageToleranceInputEmbed
+                            onChange={setCustomSlippageTolerance}
+                            value={customSlippageTolerance}
+                          />
+                          <Text size={'14px'}>%</Text>
+                        </HContainer>
                       </SlippageToleranceContainer>
                     </>
                   )}
@@ -553,7 +597,10 @@ export default function FeeStation() {
                         Slippage Tolerance :
                       </Text>
                       <Text size='10px' color='white' sameLineHeight>
-                        {slippageTolerance}%
+                        {customSlippageTolerance && Number(customSlippageTolerance) > Number(0)
+                          ? customSlippageTolerance
+                          : slippageTolerance}
+                        %
                       </Text>
                     </HContainer>
 
@@ -664,7 +711,8 @@ const SlippageToleranceItem = styled.div((props) => ({
   backgroundColor: props.active ? '#02C09A' : '#40464C',
   color: '#ffffff',
   fontSize: '14px',
-  marginRight: '15px',
+  fontFamily: "'Helvetica-Bold', sans-serif",
+  marginRight: '14px',
   display: 'flex',
   flexDirection: 'center',
   alignItems: 'center',
