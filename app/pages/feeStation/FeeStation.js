@@ -170,6 +170,7 @@ export default function FeeStation() {
 
   useEffect(() => {
     if (selectedToken && selectedToken.type === 'atom' && atomAccount && atomAccount.address) {
+      console.log('xxxxxxxxxxxxxxxxx');
       dispatch(reloadData(Symbol.Atom));
     }
   }, [selectedToken && selectedToken.type, atomAccount && atomAccount.address]);
@@ -438,7 +439,7 @@ export default function FeeStation() {
                   />
 
                   <Text size={'18px'} ml={'12px'} sameLineHeight>
-                    Select a native token
+                    Select a token
                   </Text>
                 </HContainer>
               )}

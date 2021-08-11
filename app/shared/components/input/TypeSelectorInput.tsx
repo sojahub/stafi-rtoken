@@ -39,7 +39,7 @@ export default function Index(props: Props) {
         <HContainer
           style={{ cursor: props.selectable ? 'pointer' : '' }}
           onClick={() => {
-            if (props.selectable && !props.disabled) {
+            if (props.selectable) {
               props.onClickSelect && props.onClickSelect();
               // setShowSelect(true);
             }
