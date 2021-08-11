@@ -10,11 +10,24 @@
   .logo_panel {
     display: flex;
     align-items: center;
-    padding: 20px;
+    padding: 20px 20px 5px 20px;
     font-size: 30px;
     .header_logo {
       width: 76px;
     }
+  }
+
+  .network {
+    display: flex;
+    align-items: center;
+    padding-left: 20px;
+    // > div {
+    //   width: 5px;
+    //   height: 5px;
+    //   background-color: #00f3ab;
+    //   border-radius: 50%;
+    //   margin-right: 5px;
+    // }
   }
 
   .stafi_left_sider {
@@ -63,18 +76,6 @@
       .link {
         cursor: pointer;
         color: #00f3ab;
-      }
-    }
-
-    .network {
-      display: flex;
-      align-items: center;
-      > div {
-        width: 5px;
-        height: 5px;
-        background-color: #00f3ab;
-        border-radius: 50%;
-        margin-right: 5px;
       }
     }
   }

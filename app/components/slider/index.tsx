@@ -32,18 +32,20 @@ const siderData = [
     text: 'rAsset',
     urlKeywords: '/rAsset',
     url: '/rAsset/native',
-  },{
-    icon:rDEX_svg,
-    selectedIcon:selected_rDEX_svg,
-    text:"rDEX", 
-    urlKeywords:'/rDEX',
-    url:"/rDEX/home"
-  },{
-    icon:rPool_svg,
-    selectedIcon:selected_rPool_svg,
-    text:"rPool", 
-    urlKeywords:'/rPool',
-    url:"/rPool/home"
+  },
+  {
+    icon: rDEX_svg,
+    selectedIcon: selected_rDEX_svg,
+    text: 'rDEX',
+    urlKeywords: '/rDEX',
+    url: '/rDEX/home',
+  },
+  {
+    icon: rPool_svg,
+    selectedIcon: selected_rPool_svg,
+    text: 'rPool',
+    urlKeywords: '/rPool',
+    url: '/rPool/home',
   },
   {
     icon: rETH_svg,
@@ -109,6 +111,9 @@ export default function Index(props: Props) {
       <div className='logo_panel'>
         <img className='header_logo' src={logo} />
       </div>
+
+      <div className='network'>{isdev() ? 'Testnet' : 'Mainnet'}</div>
+
       <div className='stafi_left_sider'>
         {siderData.map((item, i) => {
           return (
@@ -133,9 +138,6 @@ export default function Index(props: Props) {
           <span className='link' onClick={() => history.push('/feeStation/default')}>
             Fee Station
           </span>
-        </div>
-        <div className='network'>
-          <div></div> {isdev() ? 'Testnet' : 'Mainnet'}
         </div>
       </div>
     </div>
