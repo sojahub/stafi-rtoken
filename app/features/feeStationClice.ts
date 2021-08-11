@@ -3,6 +3,7 @@ import FeeStationServer from '@servers/feeStation';
 import PolkadotServer from '@servers/polkadot/index';
 import StafiServer from '@servers/stafi';
 import numberUtil from '@util/numberUtil';
+import { message } from 'antd';
 import { AppThunk } from '../store';
 import { add_Notice, noticesubType, noticeType } from './noticeClice';
 
@@ -57,6 +58,10 @@ export const uploadSwapInfo =
   async (dispatch: any, getState: any) => {
     console.log('uploadSwapInfo params:', params);
     const res = await feeStationServer.postSwapInfo(params);
+    if (res.status === '80014') {
+      dispatch(setSwapLoadingStatus(0));
+      message.error('Error: Slippage exceeded');
+    }
   };
 
 const add_Swap_Notice =

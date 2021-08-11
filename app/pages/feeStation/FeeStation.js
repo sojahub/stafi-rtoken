@@ -3,14 +3,21 @@ import { CardContainer, HContainer, Text } from '@components/commonComponents';
 import FeeStationSwapLoading from '@components/modal/FeeStationSwapLoading';
 import TokenSelector from '@components/selector/TokenSelector';
 import config from '@config/index';
-import { reloadData as feeStation_reloadData, uploadSwapInfo } from '@features/feeStationClice';
+import {
+  reloadData as feeStation_reloadData,
+  setPoolInfoList,
+  setSwapMaxLimit,
+  setSwapMinLimit,
+  uploadSwapInfo
+} from '@features/feeStationClice';
 import { queryBalance as fis_queryBalance } from '@features/FISClice';
 import {
   connectAtomjs,
   connectPolkadot,
   connectPolkadot_fis,
   connectPolkadot_ksm,
-  reloadData
+  reloadData,
+  setLoading
 } from '@features/globalClice';
 import { swapAtomForFis } from '@features/rATOMClice';
 import { getPools as dot_getPools, swapDotForFis } from '@features/rDOTClice';
@@ -24,6 +31,7 @@ import ethIcon from '@images/rETH.svg';
 import ksmIcon from '@images/rKSM.svg';
 import settingIcon from '@images/setting.svg';
 import { Symbol } from '@keyring/defaults';
+import FeeStationServer from '@servers/feeStation';
 import SlippageToleranceInputEmbed from '@shared/components/input/slippageToleranceInputEmbed';
 import TypeSelectorInput from '@shared/components/input/TypeSelectorInput';
 import Modal from '@shared/components/modal/connectModal';
@@ -39,6 +47,8 @@ import styled from 'styled-components';
 import Page_FIS from '../rATOM/selectWallet_rFIS/index';
 import Page_DOT from '../rDOT/selectWallet/index.tsx';
 import Page_KSM from '../rKSM/selectWallet/index.tsx';
+
+const feeStationServer = new FeeStationServer();
 
 const allTokenDatas = [
   {
@@ -82,6 +92,7 @@ export default function FeeStation() {
   const [selectedToken, setSelectedToken] = useState();
   const [tokenAmount, setTokenAmount] = useState();
   const [receiveFisAmount, setReceiveFisAmount] = useState();
+  const [inputFromReceive, setInputFromReceive] = useState(false);
   const [minReceiveFisAmount, setMinReceiveFisAmount] = useState('--');
   const [slippageTolerance, setSlippageTolerance] = useState(1);
   const [customSlippageTolerance, setCustomSlippageTolerance] = useState();
@@ -170,7 +181,6 @@ export default function FeeStation() {
 
   useEffect(() => {
     if (selectedToken && selectedToken.type === 'atom' && atomAccount && atomAccount.address) {
-      console.log('xxxxxxxxxxxxxxxxx');
       dispatch(reloadData(Symbol.Atom));
     }
   }, [selectedToken && selectedToken.type, atomAccount && atomAccount.address]);
@@ -240,24 +250,33 @@ export default function FeeStation() {
   }, [scene, selectedToken, fisAccount, dotAccount, ksmAccount, atomAccount, ethAccount]);
 
   useEffect(() => {
+    let poolInfo = null;
     if (!selectedToken || !poolInfoList) {
-      setCurrentPoolInfo(null);
+      poolInfo = null;
+    } else {
+      poolInfo = poolInfoList.find((item) => {
+        return item.symbol === selectedToken.title;
+      });
+    }
+    setCurrentPoolInfo(poolInfo);
+  }, [selectedToken, poolInfoList]);
+
+  useEffect(() => {
+    if (inputFromReceive) {
       return;
     }
-    const poolInfo = poolInfoList.find((item) => {
-      return item.symbol === selectedToken.title;
-    });
-    setCurrentPoolInfo(poolInfo);
-    if (!tokenAmount || isNaN(tokenAmount) || Number(tokenAmount) <= Number(0) || !poolInfo) {
+    if (!tokenAmount || isNaN(tokenAmount) || Number(tokenAmount) <= Number(0) || !currentPoolInfo) {
       setReceiveFisAmount('');
       setMinReceiveFisAmount('--');
     } else {
-      setReceiveFisAmount(divide(multiply(tokenAmount, poolInfo.swapRate), 1000000));
+      const fisAmount = divide(multiply(tokenAmount, currentPoolInfo.swapRate), 1000000);
+      setReceiveFisAmount(numberUtil.handleFisRoundToFixed(fisAmount));
+
       setMinReceiveFisAmount(
         divide(
           multiply(
             tokenAmount,
-            poolInfo.swapRate,
+            currentPoolInfo.swapRate,
             subtract(
               1,
               divide(
@@ -272,16 +291,61 @@ export default function FeeStation() {
         ),
       );
     }
-  }, [selectedToken, poolInfoList, tokenAmount, slippageTolerance, customSlippageTolerance]);
+  }, [inputFromReceive, tokenAmount, currentPoolInfo, slippageTolerance, customSlippageTolerance]);
+
+  useEffect(() => {
+    if (!inputFromReceive) {
+      return;
+    }
+    if (!receiveFisAmount || isNaN(receiveFisAmount) || Number(receiveFisAmount) <= Number(0) || !currentPoolInfo) {
+      setTokenAmount('');
+      setMinReceiveFisAmount('--');
+    } else {
+      const tokenAmount = divide(multiply(receiveFisAmount, 1000000), currentPoolInfo.swapRate);
+      if (!selectedToken || selectedToken.balance === '--' || tokenAmount > selectedToken.balance) {
+        setTokenAmount('');
+        setTokenAmount('');
+        message.error('The amount of input exceeds your transferrable balance');
+        return;
+      }
+
+      setTokenAmount(numberUtil.handleFisRoundToFixed(tokenAmount));
+
+      setMinReceiveFisAmount(
+        multiply(
+          receiveFisAmount,
+          subtract(
+            1,
+            divide(
+              customSlippageTolerance && Number(customSlippageTolerance) > Number(0)
+                ? customSlippageTolerance
+                : slippageTolerance,
+              100,
+            ),
+          ),
+        ),
+      );
+    }
+  }, [inputFromReceive, receiveFisAmount, selectedToken, currentPoolInfo, slippageTolerance, customSlippageTolerance]);
 
   useEffect(() => {
     if (receiveFisAmount && !isNaN(receiveFisAmount) && !isNaN(swapMinLimit) && !isNaN(swapMaxLimit)) {
       if (receiveFisAmount < swapMinLimit || receiveFisAmount > swapMaxLimit) {
         message.warn(`You can swap ${swapMinLimit}~${swapMaxLimit} FIS every transaction.`);
-        setTokenAmount('');
+        // setTokenAmount('');
       }
     }
   }, [receiveFisAmount, swapMinLimit, swapMaxLimit]);
+
+  const onChangeTokenAmount = (value) => {
+    setInputFromReceive(false);
+    setTokenAmount(value);
+  };
+
+  const onChangeFisAmount = (value) => {
+    setInputFromReceive(true);
+    setReceiveFisAmount(value);
+  };
 
   const setConnectWallet = (name) => {
     setContentOpacity(0.5);
@@ -323,10 +387,12 @@ export default function FeeStation() {
     }
   };
 
-  const clickSwap = () => {
-    if (!checkInput()) {
+  const clickSwap = async () => {
+    const result = await checkInput();
+    if (!result) {
       return;
     }
+
     setTransferDetail(numberUtil.handleFisRoundToFixed(receiveFisAmount) + ' FIS');
     if (selectedToken.type === Symbol.Dot) {
       dispatch(
@@ -374,7 +440,7 @@ export default function FeeStation() {
     }
   };
 
-  const checkInput = () => {
+  const checkInput = async () => {
     if (!fisAccount || !fisAccount.address) {
       return false;
     }
@@ -394,6 +460,25 @@ export default function FeeStation() {
       message.error('Unable to swap, system is waiting for swapLimit data');
       return false;
     }
+    dispatch(setLoading(true));
+    const res = await feeStationServer.getPoolInfo();
+    if (res.status === '80000' && res.data) {
+      const poolInfo = res.data.poolInfoList?.find((item) => {
+        return item.symbol === selectedToken?.title;
+      });
+      if(!poolInfo || minReceiveFisAmount > divide(multiply(tokenAmount, poolInfo.swapRate), 1000000)){
+        dispatch(setLoading(false));
+        message.error('Swap Rate refreshed, please recheck');
+        dispatch(setSwapMaxLimit(numberUtil.fisAmountToHuman(res.data.swapMaxLimit)));
+        dispatch(setSwapMinLimit(numberUtil.fisAmountToHuman(res.data.swapMinLimit)));
+        dispatch(setPoolInfoList(res.data.poolInfoList));
+        return false;
+      }
+    }else{
+      dispatch(setLoading(false));
+      return false;
+    }
+
     return true;
   };
 
@@ -466,6 +551,7 @@ export default function FeeStation() {
                 selectedData={selectedToken}
                 onSelectChange={(value) => {
                   value && history.replace(`/feeStation/${value.type}`);
+                  setScene(0);
                 }}
               />
             </InnerContainer>
@@ -488,8 +574,14 @@ export default function FeeStation() {
                         value={tokenAmount}
                         selectedData={selectedToken}
                         onClickSelect={() => setScene(3)}
-                        onChange={setTokenAmount}
-                        disabled={!fisAccount || !fisAccount.address || needConnectWalletName}
+                        onChange={onChangeTokenAmount}
+                        disabled={
+                          !fisAccount ||
+                          !fisAccount.address ||
+                          needConnectWalletName ||
+                          !currentPoolInfo ||
+                          !selectedToken
+                        }
                         selectable={true}
                       />
 
@@ -508,13 +600,11 @@ export default function FeeStation() {
                       <TypeSelectorInput
                         selectDataSource={tokenTypes}
                         title='To'
+                        maxInput={Number.MAX_SAFE_INTEGER}
                         selectedTitle='FIS'
-                        value={
-                          receiveFisAmount === '--' || !receiveFisAmount
-                            ? ''
-                            : numberUtil.handleFisRoundToFixed(receiveFisAmount)
-                        }
-                        disabled={true}
+                        value={receiveFisAmount}
+                        onChange={onChangeFisAmount}
+                        disabled={needConnectWalletName || !currentPoolInfo || !selectedToken}
                       />
 
                       {selectedToken && (
@@ -594,7 +684,15 @@ export default function FeeStation() {
                   ) : (
                     <CommonButton
                       text={'Swap'}
-                      disabled={!selectedToken || Number(tokenAmount) <= Number(0) || !currentPoolInfo}
+                      disabled={
+                        !selectedToken ||
+                        Number(tokenAmount) <= Number(0) ||
+                        !currentPoolInfo ||
+                        isNaN(swapMinLimit) ||
+                        isNaN(swapMaxLimit) ||
+                        receiveFisAmount < swapMinLimit ||
+                        receiveFisAmount > swapMaxLimit
+                      }
                       mt='25px'
                       onClick={clickSwap}
                     />
