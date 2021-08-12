@@ -559,9 +559,20 @@ const routesFactory = (role?: any) => {
         },
         {
           id: 'fee_station',
-          path: '/feeStation/:tokenType',
+          path: '/feeStation',
           type: 'feeStation',
           component: FeeStation,
+          routes: [
+            {
+              id: 'fee_station',
+              path: '/feeStation/:tokenType',
+              component: FeeStation,
+            },
+            {
+              path: '*',
+              component: () => <Redirect to='/feeStation/default' />,
+            },
+          ],
         },
         {
           id: 'RSOL_home',

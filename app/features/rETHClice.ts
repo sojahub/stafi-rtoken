@@ -602,9 +602,6 @@ export const swapEthForFis =
       // var msgHash = keccakFromHexString(stafiAddress);
       const data = stringToHex(getState().FISModule.fisAccount.address);
 
-      console.log('xxxx', data);
-      console.log('yyy', data);
-
       dispatch(setSwapLoadingStatus(3));
 
       const signature = await ethereum
