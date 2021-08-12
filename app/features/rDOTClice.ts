@@ -458,17 +458,17 @@ export const swapDotForFis =
           );
         }
 
+        const noticeSubData = {
+          receiveFisAmount: receiveFisAmountParam,
+          fisAddress: getState().FISModule.fisAccount && getState().FISModule.fisAccount.address,
+          symbol: 'DOT',
+          txHash: tx,
+          blockHash: asInBlock,
+        };
+
         if (result.status.isInBlock) {
           //Message notice
-          dispatch(
-            add_DOT_feeStation_Notice(notice_uuid, amountparam, noticeStatus.Pending, {
-              receiveFisAmount: receiveFisAmountParam,
-              fisAddress: getState().FISModule.fisAccount && getState().FISModule.fisAccount.address,
-              symbol: 'DOT',
-              txHash: tx,
-              blockHash: asInBlock,
-            }),
-          );
+          dispatch(add_DOT_feeStation_Notice(notice_uuid, amountparam, noticeStatus.Pending, noticeSubData));
 
           result.events
             .filter((e: any) => {
@@ -497,7 +497,7 @@ export const swapDotForFis =
                 dispatch(setSwapLoadingStatus(0));
                 dispatch(reloadData());
                 dispatch(setStakeHash(null));
-                dispatch(add_DOT_feeStation_Notice(notice_uuid, amountparam, noticeStatus.Error));
+                dispatch(add_DOT_feeStation_Notice(notice_uuid, amountparam, noticeStatus.Error, noticeSubData));
               } else if (data.event.method === 'ExtrinsicSuccess') {
                 dispatch(reloadData());
                 dispatch(setLoading(false));

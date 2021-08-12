@@ -13,13 +13,7 @@ import { message as M, message } from 'antd';
 import { AppThunk } from '../store';
 import CommonClice from './commonClice';
 import { setSwapLoadingStatus } from './feeStationClice';
-import {
-  bondStates,
-  bound,
-  feeStationSignature,
-  fisUnbond,
-  rTokenSeries_bondStates
-} from './FISClice';
+import { bondStates, bound, feeStationSignature, fisUnbond, rTokenSeries_bondStates } from './FISClice';
 import {
   initProcess,
   processStatus,
@@ -452,15 +446,14 @@ export const swapKsmForFis =
         }
 
         if (result.status.isInBlock) {
-          dispatch(
-            add_KSM_feeStation_Notice(notice_uuid, amountparam, noticeStatus.Pending, {
-              receiveFisAmount: receiveFisAmountParam,
-              fisAddress: getState().FISModule.fisAccount && getState().FISModule.fisAccount.address,
-              symbol: 'KSM',
-              txHash: tx,
-              blockHash: asInBlock,
-            }),
-          );
+          const noticeSubData = {
+            receiveFisAmount: receiveFisAmountParam,
+            fisAddress: getState().FISModule.fisAccount && getState().FISModule.fisAccount.address,
+            symbol: 'KSM',
+            txHash: tx,
+            blockHash: asInBlock,
+          };
+          dispatch(add_KSM_feeStation_Notice(notice_uuid, amountparam, noticeStatus.Pending, noticeSubData));
 
           result.events
             .filter((e: any) => {
@@ -489,7 +482,7 @@ export const swapKsmForFis =
                 dispatch(setSwapLoadingStatus(0));
                 dispatch(reloadData());
                 dispatch(setStakeHash(null));
-                dispatch(add_KSM_stake_Notice(notice_uuid, amountparam, noticeStatus.Error));
+                dispatch(add_KSM_stake_Notice(notice_uuid, amountparam, noticeStatus.Error, noticeSubData));
               } else if (data.event.method === 'ExtrinsicSuccess') {
                 dispatch(reloadData());
                 dispatch(setLoading(false));
