@@ -61,6 +61,12 @@ export const uploadSwapInfo =
     if (res.status === '80014') {
       dispatch(setSwapLoadingStatus(0));
       message.error('Error: Slippage exceeded');
+    } else if (res.status === '80006') {
+      dispatch(setSwapLoadingStatus(0));
+      message.error('Failed to verify signature.');
+    } else if (res.statue !== '80000') {
+      dispatch(setSwapLoadingStatus(0));
+      message.error('Something is wrong, please try again later.');
     }
   };
 
