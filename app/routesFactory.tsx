@@ -1,5 +1,6 @@
 import authorizedRoute from '@components/route/authorizedRoute';
 import { rSymbol, Symbol } from '@keyring/defaults';
+import FeeStationTemplate from '@servers/feeStation/template';
 import React from 'react';
 import { renderRoutes } from 'react-router-config';
 import { Redirect } from 'react-router-dom';
@@ -561,7 +562,7 @@ const routesFactory = (role?: any) => {
           id: 'fee_station',
           path: '/feeStation',
           type: 'feeStation',
-          component: FeeStation,
+          component: FeeStationTemplate,
           routes: [
             {
               id: 'fee_station',
