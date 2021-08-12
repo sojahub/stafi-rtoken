@@ -559,6 +559,7 @@ export const swapEthForFis =
       }
 
       dispatch(setSwapLoadingStatus(1));
+      message.info('Signature completed, proceeding to transfer');
       const amount = web3.utils.toWei(amountparam.toString(), 'ether');
       const amountHex = web3.utils.toHex(amount);
       const minOutFisAmount = NumberUtil.tokenAmountToChain(minOutFisAmountParam, rSymbol.Fis);

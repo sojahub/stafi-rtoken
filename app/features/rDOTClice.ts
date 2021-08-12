@@ -431,9 +431,8 @@ export const swapDotForFis =
     }
 
     dispatch(setSwapLoadingStatus(1));
-
+    message.info('Signature completed, proceeding to transfer');
     const ex = await dotApi.tx.balances.transferKeepAlive(poolAddress, amount.toString());
-
     let index = 0;
     ex.signAndSend(address, { signer: injector.signer }, (result: any) => {
       try {
