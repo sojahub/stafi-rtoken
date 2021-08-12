@@ -413,7 +413,13 @@ export const swapAtomForFis =
         } else {
           dispatch(reloadData());
           dispatch(setSwapLoadingStatus(0));
-          dispatch(add_ATOM_feeStation_Notice(notice_uuid, amountparam, noticeStatus.Error));
+          dispatch(
+            add_ATOM_feeStation_Notice(notice_uuid, amountparam, noticeStatus.Error, {
+              receiveFisAmount: receiveFisAmountParam,
+              fisAddress: getState().FISModule.fisAccount && getState().FISModule.fisAccount.address,
+              symbol: 'ATOM',
+            }),
+          );
         }
       } catch (error) {
         dispatch(setSwapLoadingStatus(0));

@@ -629,7 +629,9 @@ export const notice_text = (item: any) => {
   } else if (item.type == noticeType.Staker && item.subType == noticesubType.DexSwap) {
     return `Swap ${item.amount} ${item.rSymbol} to ${item.subData.receivedAmount} ${item.subData.destTokenName}.`;
   } else if (item.type == noticeType.Staker && item.subType == noticesubType.FeeStation) {
-    return `Swap ${item.amount} ${item.subData.symbol} to ${item.subData.receiveFisAmount} FIS.`;
+    return `Swap ${item.amount} ${item.subData && item.subData.symbol} to ${
+      item.subData && item.subData.receiveFisAmount
+    } FIS.`;
   }
   return '';
 };
