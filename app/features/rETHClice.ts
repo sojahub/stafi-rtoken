@@ -1,6 +1,6 @@
 import config, { isdev } from '@config/index';
 import { rSymbol, Symbol } from '@keyring/defaults';
-import { u8aToHex } from '@polkadot/util';
+import { stringToHex, u8aToHex } from '@polkadot/util';
 import { keccakAsHex } from '@polkadot/util-crypto';
 import { createSlice } from '@reduxjs/toolkit';
 import EthServer from '@servers/eth/index';
@@ -18,7 +18,6 @@ import {
 import NumberUtil from '@util/numberUtil';
 import StringUtil from '@util/stringUtil';
 import { message } from 'antd';
-import { keccakFromHexString } from 'ethereumjs-util';
 import Web3Utils from 'web3-utils';
 import { AppThunk } from '../store';
 import { getAssetBalance, getAssetBalanceAll } from './ETHClice';
@@ -600,14 +599,18 @@ export const swapEthForFis =
 
       const fiskeyringInstance = keyring.init(Symbol.Fis);
       const stafiAddress = u8aToHex(fiskeyringInstance.decodeAddress(getState().FISModule.fisAccount.address));
-      var msgHash = keccakFromHexString(stafiAddress);
+      // var msgHash = keccakFromHexString(stafiAddress);
+      const data = stringToHex(getState().FISModule.fisAccount.address);
+
+      console.log('xxxx', data);
+      console.log('yyy', data);
 
       dispatch(setSwapLoadingStatus(3));
 
       const signature = await ethereum
         .request({
-          method: 'eth_sign',
-          params: [address, u8aToHex(msgHash)],
+          method: 'personal_sign',
+          params: [address, data],
         })
         .catch((err: any) => {
           message.error(err.message);

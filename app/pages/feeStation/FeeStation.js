@@ -398,6 +398,7 @@ export default function FeeStation() {
       dispatch(
         swapDotForFis(currentPoolInfo.poolAddress, tokenAmount, receiveFisAmount, minReceiveFisAmount, (params) => {
           if (params) {
+            setInputFromReceive(false);
             setTokenAmount('');
             setSwapInfoParams(params);
             dispatch(uploadSwapInfo(params));
@@ -409,6 +410,7 @@ export default function FeeStation() {
       dispatch(
         swapKsmForFis(currentPoolInfo.poolAddress, tokenAmount, receiveFisAmount, minReceiveFisAmount, (params) => {
           if (params) {
+            setInputFromReceive(false);
             setTokenAmount('');
             setSwapInfoParams(params);
             dispatch(uploadSwapInfo(params));
@@ -420,6 +422,7 @@ export default function FeeStation() {
       dispatch(
         swapAtomForFis(currentPoolInfo.poolAddress, tokenAmount, receiveFisAmount, minReceiveFisAmount, (params) => {
           if (params) {
+            setInputFromReceive(false);
             setTokenAmount('');
             setSwapInfoParams(params);
             dispatch(uploadSwapInfo(params));
@@ -431,6 +434,7 @@ export default function FeeStation() {
       dispatch(
         swapEthForFis(currentPoolInfo.poolAddress, tokenAmount, receiveFisAmount, minReceiveFisAmount, (params) => {
           if (params) {
+            setInputFromReceive(false);
             setTokenAmount('');
             setSwapInfoParams(params);
             dispatch(uploadSwapInfo(params));
@@ -466,7 +470,7 @@ export default function FeeStation() {
       const poolInfo = res.data.poolInfoList?.find((item) => {
         return item.symbol === selectedToken?.title;
       });
-      if(!poolInfo || minReceiveFisAmount > divide(multiply(tokenAmount, poolInfo.swapRate), 1000000)){
+      if (!poolInfo || minReceiveFisAmount > divide(multiply(tokenAmount, poolInfo.swapRate), 1000000)) {
         dispatch(setLoading(false));
         message.error('Swap Rate refreshed, please recheck');
         dispatch(setSwapMaxLimit(numberUtil.fisAmountToHuman(res.data.swapMaxLimit)));
@@ -474,7 +478,7 @@ export default function FeeStation() {
         dispatch(setPoolInfoList(res.data.poolInfoList));
         return false;
       }
-    }else{
+    } else {
       dispatch(setLoading(false));
       return false;
     }
