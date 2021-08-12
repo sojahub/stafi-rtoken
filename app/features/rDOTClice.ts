@@ -13,7 +13,7 @@ import { message as M, message } from 'antd';
 import { AppThunk } from '../store';
 import CommonClice from './commonClice';
 import { setSwapLoadingStatus } from './feeStationClice';
-import { bondStates, bound, fisUnbond, rTokenSeries_bondStates, stakingSignature } from './FISClice';
+import { bondStates, bound, feeStationSignature, fisUnbond, rTokenSeries_bondStates } from './FISClice';
 import {
   initProcess,
   processStatus,
@@ -412,6 +412,26 @@ export const swapDotForFis =
     }
 
     dispatch(setSwapLoadingStatus(3));
+
+    const dotKeyringInstance = keyring.init(Symbol.Dot);
+    const fiskeyringInstance = keyring.init(Symbol.Fis);
+    const pubKey = u8aToHex(dotKeyringInstance.decodeAddress(address));
+    const stafiAddress = u8aToHex(
+      fiskeyringInstance.decodeAddress(getState().FISModule.fisAccount && getState().FISModule.fisAccount.address),
+    );
+
+    const signature = await feeStationSignature(address, stafiAddress).catch((err) => {
+      message.error(err.message);
+    });
+
+    if (!signature) {
+      dispatch(setLoading(false));
+      dispatch(setSwapLoadingStatus(0));
+      return;
+    }
+
+    dispatch(setSwapLoadingStatus(1));
+
     const ex = await dotApi.tx.balances.transferKeepAlive(poolAddress, amount.toString());
 
     let index = 0;
@@ -481,38 +501,20 @@ export const swapDotForFis =
                 dispatch(add_DOT_feeStation_Notice(notice_uuid, amountparam, noticeStatus.Error));
               } else if (data.event.method === 'ExtrinsicSuccess') {
                 dispatch(reloadData());
-                const dotKeyringInstance = keyring.init(Symbol.Dot);
-                const fiskeyringInstance = keyring.init(Symbol.Fis);
-                const pubKey = u8aToHex(dotKeyringInstance.decodeAddress(address));
-                const stafiAddress = u8aToHex(
-                  fiskeyringInstance.decodeAddress(
-                    getState().FISModule.fisAccount && getState().FISModule.fisAccount.address,
-                  ),
-                );
-
-                dispatch(setSwapLoadingStatus(3));
-
-                stakingSignature(address, stafiAddress)
-                  .then((signature) => {
-                    dispatch(setLoading(false));
-                    dispatch(setSwapLoadingStatus(2));
-                    asInBlock &&
-                      cb &&
-                      cb({
-                        stafiAddress,
-                        symbol: 'DOT',
-                        blockHash: asInBlock,
-                        txHash: tx,
-                        poolAddress,
-                        signature,
-                        pubKey,
-                        inAmount: amount.toString(),
-                        minOutAmount: minOutFisAmount.toString(),
-                      });
-                  })
-                  .catch((err) => {
-                    dispatch(setLoading(false));
-                    dispatch(setSwapLoadingStatus(0));
+                dispatch(setLoading(false));
+                dispatch(setSwapLoadingStatus(2));
+                asInBlock &&
+                  cb &&
+                  cb({
+                    stafiAddress,
+                    symbol: 'DOT',
+                    blockHash: asInBlock,
+                    txHash: tx,
+                    poolAddress,
+                    signature,
+                    pubKey,
+                    inAmount: amount.toString(),
+                    minOutAmount: minOutFisAmount.toString(),
                   });
               }
             });

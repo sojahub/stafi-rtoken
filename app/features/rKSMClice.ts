@@ -13,7 +13,13 @@ import { message as M, message } from 'antd';
 import { AppThunk } from '../store';
 import CommonClice from './commonClice';
 import { setSwapLoadingStatus } from './feeStationClice';
-import { bondStates, bound, fisUnbond, rTokenSeries_bondStates, stakingSignature } from './FISClice';
+import {
+  bondStates,
+  bound,
+  feeStationSignature,
+  fisUnbond,
+  rTokenSeries_bondStates
+} from './FISClice';
 import {
   initProcess,
   processStatus,
@@ -404,6 +410,22 @@ export const swapKsmForFis =
       return;
     }
 
+    dispatch(setSwapLoadingStatus(3));
+    const ksmKeyringInstance = keyring.init(Symbol.Ksm);
+    const fiskeyringInstance = keyring.init(Symbol.Fis);
+    const pubKey = u8aToHex(ksmKeyringInstance.decodeAddress(address));
+    const stafiAddress = u8aToHex(fiskeyringInstance.decodeAddress(getState().FISModule.fisAccount.address));
+
+    const signature = await feeStationSignature(address, stafiAddress).catch((err) => {
+      message.error(err.message);
+    });
+    if (!signature) {
+      dispatch(setLoading(false));
+      dispatch(setSwapLoadingStatus(0));
+      return;
+    }
+
+    dispatch(setSwapLoadingStatus(1));
     const ex = await dotApi.tx.balances.transferKeepAlive(poolAddress, amount.toString());
     let index = 0;
     ex.signAndSend(address, { signer: injector.signer }, (result: any) => {
@@ -469,38 +491,21 @@ export const swapKsmForFis =
                 dispatch(add_KSM_stake_Notice(notice_uuid, amountparam, noticeStatus.Error));
               } else if (data.event.method === 'ExtrinsicSuccess') {
                 dispatch(reloadData());
+                dispatch(setLoading(false));
+                dispatch(setSwapLoadingStatus(2));
 
-                const ksmKeyringInstance = keyring.init(Symbol.Ksm);
-                const fiskeyringInstance = keyring.init(Symbol.Fis);
-                const pubKey = u8aToHex(ksmKeyringInstance.decodeAddress(address));
-                const stafiAddress = u8aToHex(
-                  fiskeyringInstance.decodeAddress(getState().FISModule.fisAccount.address),
-                );
-
-                dispatch(setSwapLoadingStatus(3));
-
-                stakingSignature(address, stafiAddress)
-                  .then((signature) => {
-                    dispatch(setLoading(false));
-                    dispatch(setSwapLoadingStatus(2));
-                    
-                    asInBlock &&
-                      cb &&
-                      cb({
-                        stafiAddress,
-                        symbol: 'KSM',
-                        blockHash: asInBlock,
-                        txHash: tx,
-                        poolAddress,
-                        signature,
-                        pubKey,
-                        inAmount: amount.toString(),
-                        minOutAmount: minOutFisAmount.toString(),
-                      });
-                  })
-                  .catch((err) => {
-                    dispatch(setLoading(false));
-                    dispatch(setSwapLoadingStatus(0));
+                asInBlock &&
+                  cb &&
+                  cb({
+                    stafiAddress,
+                    symbol: 'KSM',
+                    blockHash: asInBlock,
+                    txHash: tx,
+                    poolAddress,
+                    signature,
+                    pubKey,
+                    inAmount: amount.toString(),
+                    minOutAmount: minOutFisAmount.toString(),
                   });
               }
             });

@@ -381,6 +381,18 @@ export const stakingSignature = async (address: any, data: any) => {
   return signature;
 };
 
+export const feeStationSignature = async (address: any, data: any) => {
+  web3Enable(stafiServer.getWeb3EnalbeName());
+  const injector = await web3FromSource(stafiServer.getPolkadotJsSource());
+  const signRaw = injector?.signer?.signRaw;
+  const { signature } = await signRaw({
+    address: address,
+    data: data,
+    type: 'bytes',
+  });
+  return signature;
+};
+
 export const solSignature = async (address: any, fisAddress: string) => {
   message.info('Sending succeeded, proceeding signature.');
   await timeout(3000);

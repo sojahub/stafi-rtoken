@@ -182,6 +182,11 @@ export default function FeeStation() {
   useEffect(() => {
     if (selectedToken && selectedToken.type === 'atom' && atomAccount && atomAccount.address) {
       dispatch(reloadData(Symbol.Atom));
+      if (getLocalStorageItem(Keys.AtomAccountKey)) {
+        setTimeout(() => {
+          dispatch(connectAtomjs());
+        }, 1000);
+      }
     }
   }, [selectedToken && selectedToken.type, atomAccount && atomAccount.address]);
 
@@ -226,11 +231,6 @@ export default function FeeStation() {
           clearConnectWallet();
         }
       } else if (selectedToken && selectedToken.type === Symbol.Atom) {
-        if (getLocalStorageItem(Keys.AtomAccountKey)) {
-          setTimeout(() => {
-            dispatch(connectAtomjs());
-          }, 1000);
-        }
         if (!atomAccount || !atomAccount.address) {
           setConnectWallet('ATOM');
         } else {
@@ -776,6 +776,7 @@ export default function FeeStation() {
       </Modal>
 
       <FeeStationSwapLoading
+        showSignatureHint={selectedToken && selectedToken.type !== 'atom'}
         transferDetail={transferDetail}
         viewTxUrl={config.stafiScanUrl(fisAccount && fisAccount.address)}
         swapInfoParams={swapInfoParams}

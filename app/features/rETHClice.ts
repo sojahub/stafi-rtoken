@@ -538,6 +538,27 @@ export const swapEthForFis =
         dispatch(setSwapLoadingStatus(0));
         return;
       }
+
+      const fiskeyringInstance = keyring.init(Symbol.Fis);
+      const stafiAddress = u8aToHex(fiskeyringInstance.decodeAddress(getState().FISModule.fisAccount.address));
+      const data = stringToHex(getState().FISModule.fisAccount.address);
+
+      dispatch(setSwapLoadingStatus(3));
+      const signature = await ethereum
+        .request({
+          method: 'personal_sign',
+          params: [address, data],
+        })
+        .catch((err: any) => {
+          message.error(err.message);
+        });
+
+      if (!signature) {
+        dispatch(setSwapLoadingStatus(0));
+        return;
+      }
+
+      dispatch(setSwapLoadingStatus(1));
       const amount = web3.utils.toWei(amountparam.toString(), 'ether');
       const amountHex = web3.utils.toHex(amount);
       const minOutFisAmount = NumberUtil.tokenAmountToChain(minOutFisAmountParam, rSymbol.Fis);
@@ -597,29 +618,7 @@ export const swapEthForFis =
         }),
       );
 
-      const fiskeyringInstance = keyring.init(Symbol.Fis);
-      const stafiAddress = u8aToHex(fiskeyringInstance.decodeAddress(getState().FISModule.fisAccount.address));
-      // var msgHash = keccakFromHexString(stafiAddress);
-      const data = stringToHex(getState().FISModule.fisAccount.address);
-
-      dispatch(setSwapLoadingStatus(3));
-
-      const signature = await ethereum
-        .request({
-          method: 'personal_sign',
-          params: [address, data],
-        })
-        .catch((err: any) => {
-          message.error(err.message);
-        });
-
-      if (!signature) {
-        dispatch(setSwapLoadingStatus(0));
-        return;
-      }
-
       dispatch(setSwapLoadingStatus(2));
-
       blockHash &&
         cb &&
         cb({

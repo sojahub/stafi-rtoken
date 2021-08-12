@@ -17,6 +17,7 @@ type Props = {
   transferDetail: string;
   viewTxUrl?: string;
   swapInfoParams?: any;
+  showSignatureHint?: boolean;
   onSwapSuccess: Function;
 };
 
@@ -188,7 +189,14 @@ export default function FeeStationSwapLoading(props: Props) {
           <>
             <div className='title'>Swapping</div>
 
-            <div className='context'>We are tranferring tokens to the received address</div>
+            <div className='context' style={{ marginTop: props.showSignatureHint ? '23px' : '29px' }}>
+              We are tranferring tokens to the received address
+            </div>
+            {props.showSignatureHint && (
+              <div className='context' style={{ marginTop: '4px' }}>
+                Please approve 2 signatures during the proceeding.
+              </div>
+            )}
 
             <div className='transfer_detail'>{props.transferDetail}</div>
 

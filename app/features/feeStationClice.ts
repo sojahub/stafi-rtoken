@@ -56,7 +56,7 @@ export const reloadData = (): AppThunk => async (dispatch: any, getState: any) =
 export const uploadSwapInfo =
   (params: any): AppThunk =>
   async (dispatch: any, getState: any) => {
-    console.log('uploadSwapInfo params:', params);
+    // console.log('uploadSwapInfo params:', params);
     const res = await feeStationServer.postSwapInfo(params);
     if (res.status === '80014') {
       dispatch(setSwapLoadingStatus(0));
