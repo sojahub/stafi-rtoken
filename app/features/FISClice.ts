@@ -1,7 +1,7 @@
 import config from '@config/index';
 import { rSymbol, Symbol } from '@keyring/defaults';
 import { web3Enable, web3FromSource } from '@polkadot/extension-dapp';
-import { u8aToHex } from '@polkadot/util';
+import { u8aToHex, stringToHex } from '@polkadot/util';
 import { createSlice } from '@reduxjs/toolkit';
 import { default as keyring, default as keyringInstance } from '@servers/index';
 import RpcServer, { pageCount } from '@servers/rpc/index';
@@ -446,21 +446,17 @@ export const bound =
         message.info('Sending succeeded, proceeding signature.');
         await timeout(3000);
         const ethAddress = getState().rMATICModule.maticAccount.address;
-        const fisPubkey = u8aToHex(keyringInstance.decodeAddress(fisAddress));
-        const msgHash = keccakFromHexString(fisPubkey);
+        const fisPubkey = u8aToHex(keyringInstance.decodeAddress(fisAddress), -1, false);
+        const msg = stringToHex(fisPubkey);
         pubkey = address;
         signature = await ethereum.request({
-          method: 'eth_sign',
-          params: [ethAddress, u8aToHex(msgHash)],
+          method: 'personal_sign',
+          params: [ethAddress, msg],
         });
         message.info('Signature succeeded, proceeding staking');
       } else if (type == rSymbol.Sol) {
         signature = await solSignature(address, fisAddress);
-        const solKeyring = keyring.init(Symbol.Sol);
         pubkey = u8aToHex(new PublicKey(getState().rSOLModule.solAccount.address).toBytes());
-        // blockhash = u8aToHex(base58.decode(blockhash));
-        // txhash = u8aToHex(base58.decode(txhash));
-
         message.info('Signature succeeded, proceeding staking');
       } else {
         signature = await stakingSignature(address, u8aToHex(keyringInstance.decodeAddress(fisAddress)));
