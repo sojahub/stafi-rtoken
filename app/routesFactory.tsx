@@ -87,6 +87,7 @@ import RMaticStakerReward from './pages/rMATIC/staker/reward';
 import RMaticHomeTemplate from './pages/rMATIC/template';
 import RMaticValidator from './pages/rMATIC/validator';
 import RPoolHome from './pages/rPool/home';
+import MintOverview from './pages/rPool/mint';
 import RPoolStaker from './pages/rPool/staker';
 import RPoolStakerInsurance from './pages/rPool/staker/insurance';
 import RPoolStakerReward from './pages/rPool/staker/reward';
@@ -719,6 +720,12 @@ const routesFactory = (role?: any) => {
                   ],
                 },
               ],
+            },
+            {
+              id: 'RPool_Mint_Overview',
+              path: '/rPool/mint/:tokenSymbol/:cycle',
+              className: 'stafi_content_large',
+              component: MintOverview,
             },
             {
               path: '*',

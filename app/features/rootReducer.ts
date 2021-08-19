@@ -8,6 +8,7 @@ import ETHReducer from './ETHClice';
 import feeStationReducer from './feeStationClice';
 import FISReducer from './FISClice';
 import globalReducer from './globalClice';
+import mintProgramsReducer from './mintProgramsClice';
 import noticeReducer from './noticeClice';
 import rAssetReducer from './rAssetClice';
 import rATOMReducer from './rATOMClice';
@@ -37,5 +38,6 @@ export default function createRootReducer(history?: History) {
     BSCModule: BSCReducer,
     dexModule: dexReducer,
     feeStationModule: feeStationReducer,
+    mintProgramsModule: mintProgramsReducer,
   });
 }

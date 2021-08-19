@@ -37,7 +37,7 @@ export default class Index extends SubstrateKeyring {
         free: 'u128',
       },
       RSymbol: {
-        _enum: ['RFIS', 'RDOT', 'RKSM', 'RATOM', 'RSOL', 'RMATIC'],
+        _enum: ['RFIS', 'RDOT', 'RKSM', 'RATOM', 'RSOL', 'RMATIC', 'RBNB'],
       },
       AccountXData: {
         free: 'u128',
@@ -128,6 +128,22 @@ export default class Index extends SubstrateKeyring {
       SwapRate: {
         lock_number: 'u64',
         rate: 'u128',
+      },
+      ClaimInfo: {
+        total_reward: 'Balance',
+        total_claimed: 'Balance',
+        latest_claimed_block: 'BlockNumber',
+        mint_block: 'BlockNumber',
+      },
+      MintRewardAct: {
+        begin: 'BlockNumber',
+        end: 'BlockNumber',
+        cycle: 'u32',
+        reward_rate: 'u128',
+        total_reward: 'Balance',
+        left_amount: 'Balance',
+        user_limit: 'Balance',
+        locked_blocks: 'u32',
       },
     };
     if (stafiApi) {

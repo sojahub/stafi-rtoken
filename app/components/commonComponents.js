@@ -9,6 +9,7 @@ export const Text = styled.div((props) => ({
   marginBottom: props.mb,
   marginLeft: props.ml,
   marginRight: props.mr,
+  textDecoration: props.textDecoration,
   '-webkit-font-smoothing': 'antialiased',
   '-moz-osx-font-smoothing': 'grayscale',
 }));

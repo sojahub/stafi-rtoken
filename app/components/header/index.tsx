@@ -192,6 +192,13 @@ export default function Index(props: Props) {
       }
       return returnValue;
     }
+    if (location.pathname.includes('/rPool/mint')) {
+      const returnValue: any = { type: 'rPool' };
+      if (state.FISModule.fisAccount) {
+        returnValue.fisAccount = state.FISModule.fisAccount;
+      }
+      return returnValue;
+    }
     return null;
   });
 
@@ -211,7 +218,7 @@ export default function Index(props: Props) {
     dispatch(monitorMetaMaskChainChange());
   }, [location.pathname]);
 
-  if (location.pathname.includes('/rPool')) {
+  if (location.pathname.includes('/rPool/home')) {
     return <></>;
   }
 

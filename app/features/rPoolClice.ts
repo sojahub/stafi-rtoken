@@ -1,6 +1,6 @@
-import { createSlice } from '@reduxjs/toolkit';  
-import { AppThunk, RootState } from '../store';  
-import RPoolServer from '@servers/rpool'
+import { createSlice } from '@reduxjs/toolkit';
+import RPoolServer from '@servers/rpool';
+import { AppThunk } from '../store';
 
 const rPoolServer=new RPoolServer();
 const rPoolClice = createSlice({
