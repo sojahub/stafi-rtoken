@@ -1,6 +1,7 @@
 import ClaimModal from '@components/modal/ClaimModal';
 import { getSymbolRTitle } from '@config/index';
 import { getRtokenPriceList } from '@features/bridgeClice';
+import { claimFisReward } from '@features/mintProgramsClice';
 import backIcon from '@images/left_arrow.svg';
 import mintMyMintIcon from '@images/mint_my_mint.svg';
 import mintMyRewardIcon from '@images/mint_my_reward.svg';
@@ -9,15 +10,16 @@ import mintValueIcon from '@images/mint_value.svg';
 import rdotIcon from '@images/r_dot.svg';
 import stafiWhiteIcon from '@images/stafi_white.svg';
 import { rSymbol } from '@keyring/defaults';
-import StafiServer from '@servers/stafi';
+import RPoolServer from '@servers/rpool';
 import numberUtil from '@util/numberUtil';
-import { divide, multiply } from 'mathjs';
+import { useInterval } from '@util/utils';
+import { multiply } from 'mathjs';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useParams } from 'react-router-dom';
 import './index.scss';
 
-const stafiServer = new StafiServer();
+const rPoolServer = new RPoolServer();
 
 export default function MintOverview() {
   const history = useHistory();
@@ -28,6 +30,10 @@ export default function MintOverview() {
   const [userMintToken, setUserMintToken] = useState<any>('--');
   const [userMintRatio, setUserMintRatio] = useState<any>('--');
   const [userMintReward, setUserMintReward] = useState<any>('--');
+  const [fisTotalReward, setFisTotalReward] = useState<any>('--');
+  const [fisClaimableReward, setFisClaimableReward] = useState<any>('--');
+  const [fisLockedReward, setFisLockedReward] = useState<any>('--');
+  const [claimIndexs, setClaimIndexs] = useState([]);
   const [claimModalVisible, setClaimModalVisible] = useState(false);
 
   const { fisAccount, unitPriceList } = useSelector((state: any) => {
@@ -47,53 +53,31 @@ export default function MintOverview() {
     initData();
   }, [fisAccount && fisAccount.address, unitPriceList]);
 
+  useInterval(() => {
+    initData();
+  }, 7000);
+
   const initData = async () => {
-    const unitPrice = unitPriceList?.find((item: any) => {
+    let unitPrice = unitPriceList?.find((item: any) => {
       return item.symbol === getSymbolRTitle(Number(tokenSymbol));
     });
+    if (!unitPrice) {
+      unitPrice = {
+        price: '11.34',
+        symbol: 'rMATIC',
+      };
+    }
     if (tokenSymbol && cycle && fisAccount && unitPrice) {
-      const stafiApi = await stafiServer.createStafiApi();
-      let arr = [];
-      arr.push(Number(tokenSymbol));
-      arr.push(Number(cycle));
-      const act = await stafiApi.query.rClaim.acts(arr);
-      if (act.toJSON()) {
-        setActData(act.toJSON());
-      } else {
-        return;
-      }
-
-      let arr2 = [];
-      arr2.push(fisAccount.address);
-      arr.push(Number(tokenSymbol));
-      arr.push(Number(cycle));
-      const userMintsCount = await stafiApi.query.rClaim.userMintsCount(arr2);
-      if (userMintsCount) {
-        let totalReward = 0;
-        if (userMintsCount.toJSON() > 0) {
-          for (let i = 0; i < userMintsCount.toJSON(); i++) {
-            let claimInfoArr = [];
-            claimInfoArr.push(fisAccount.address);
-            claimInfoArr.push(Number(tokenSymbol));
-            claimInfoArr.push(Number(cycle));
-            claimInfoArr.push(i);
-            const claimInfo = await stafiApi.query.rClaim.claimInfos(claimInfoArr);
-            if (claimInfo.toJSON()) {
-              totalReward += claimInfo.toJSON().total_reward;
-            }
-          }
-
-          const userMintTokenCount = divide(totalReward, act.toJSON().reward_rate);
-          setUserMintToken(userMintTokenCount);
-          const totalMintToken = divide(act.total_reward - act.left_amount, act.reward_rate);
-          setUserMintRatio((userMintTokenCount * 100) / totalMintToken);
-          const mintValue = multiply(userMintTokenCount, unitPrice.price);
-          setUserMintReward(mintValue);
-        } else {
-          setUserMintToken(0);
-          setUserMintRatio(0);
-          setUserMintReward(0);
-        }
+      const response = await rPoolServer.getMintOverview(tokenSymbol, cycle, fisAccount.address, unitPrice.price);
+      if (response) {
+        setActData(response.actData);
+        setUserMintToken(response.myMint);
+        setUserMintRatio(response.myMintRatio);
+        setUserMintReward(response.myReward);
+        setFisTotalReward(response.fisTotalReward);
+        setFisClaimableReward(response.fisClaimableReward);
+        setFisLockedReward(response.fisLockedReward);
+        setClaimIndexs(response.claimIndexs);
       }
     }
   };
@@ -101,15 +85,30 @@ export default function MintOverview() {
   const mintedValue = useMemo(() => {
     let res: any = '--';
     if (unitPriceList && actData) {
-      const unitPrice = unitPriceList.find((item: any) => {
+      let unitPrice = unitPriceList.find((item: any) => {
         return item.symbol === getSymbolRTitle(Number(tokenSymbol));
       });
+      if (!unitPrice) {
+        unitPrice = {
+          price: '11.34',
+          symbol: 'rMATIC',
+        };
+      }
       if (unitPrice) {
         res = numberUtil.amount_format(multiply(unitPrice.price, numberUtil.fisAmountToHuman(actData.total_reward)));
       }
     }
     return res;
   }, [unitPriceList, actData]);
+
+  const claimReward = () => {
+    dispatch(
+      claimFisReward(claimIndexs, tokenSymbol, cycle, () => {
+        setClaimModalVisible(false);
+        initData();
+      }),
+    );
+  };
 
   if (
     tokenSymbol.toString() !== rSymbol.Eth.toString() &&
@@ -193,7 +192,14 @@ export default function MintOverview() {
         </div>
       </div>
 
-      <ClaimModal visible={claimModalVisible} onClose={() => setClaimModalVisible(false)} />
+      <ClaimModal
+        visible={claimModalVisible}
+        onClose={() => setClaimModalVisible(false)}
+        onClickClaim={claimReward}
+        totalReward={fisTotalReward}
+        claimableReward={fisClaimableReward}
+        lockedReward={fisLockedReward}
+      />
     </div>
   );
 }

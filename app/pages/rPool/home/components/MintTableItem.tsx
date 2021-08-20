@@ -26,6 +26,8 @@ export default function MintTableItem(props: Props) {
     let symbol;
     if (tokenType === 'rDOT') {
       symbol = rSymbol.Dot;
+    } else if (tokenType === 'rMATIC') {
+      symbol = rSymbol.Matic;
     } else {
       message.error('Unsupported token type');
       return;

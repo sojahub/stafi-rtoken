@@ -88,9 +88,10 @@ export default function MintPrograms(props: any) {
     };
   });
 
-  const { rDOTActs } = useSelector((state: RootState) => {
+  const { rDOTActs, rMaticActs } = useSelector((state: RootState) => {
     return {
       rDOTActs: state.mintProgramsModule.rDOTActs,
+      rMaticActs: state.mintProgramsModule.rMATICActs,
     };
   });
 
@@ -98,6 +99,9 @@ export default function MintPrograms(props: any) {
     rTokenList.forEach((item: any) => {
       if (item.token === 'rDOT') {
         item.children = rDOTActs;
+      }
+      if (item.token === 'rMATIC') {
+        item.children = rMaticActs;
       }
     });
 
@@ -129,7 +133,7 @@ export default function MintPrograms(props: any) {
 
     console.log('list:', list);
     setMintDataList(list);
-  }, [rDOTActs]);
+  }, [rDOTActs, rMaticActs]);
 
   return (
     <Card className='stafi_rpool_mint'>

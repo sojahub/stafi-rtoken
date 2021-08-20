@@ -145,6 +145,9 @@ export default class Index extends SubstrateKeyring {
         user_limit: 'Balance',
         locked_blocks: 'u32',
       },
+      BondAction: {
+        _enum: ['BondOnly', 'UnbondOnly', 'BothBondUnbond', 'EitherBondUnbond'],
+      },
     };
     if (stafiApi) {
       return stafiApi;

@@ -88,6 +88,10 @@ export default {
     return (Math.floor(amount * 1000000) / 1000000).toFixed(6);
   },
 
+  handleAmountToFixed4(amount) {
+    return (Math.floor(amount * 10000) / 10000).toFixed(4);
+  },
+
   // The return string contains 6 decimal places and 2 decimal places, including 0
   handleEthRoundToFixed(amount) {
     if (amount == '--' || isNaN(amount)) {
