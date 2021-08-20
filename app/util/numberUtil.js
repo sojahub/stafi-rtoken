@@ -157,7 +157,38 @@ export default {
     }
     return (Math.round(amount * 1000000) / 1000000).toFixed(4) || '--';
   },
+  tokenRateToHuman(amount, symbol) {
+    let factor;
+    switch (symbol) {
+      case rSymbol.Dot:
+        factor = 1000000000000;
+        break;
+      case rSymbol.Atom:
+        factor = 1000000000000000000n;
+        break;
+      case rSymbol.Fis:
+        factor = 1000000000000;
+        break;
+      case rSymbol.Ksm:
+        factor = 1000000000000;
+        break;
+      case rSymbol.Sol:
+        factor = 1000000000000000;
+        break;
+      case rSymbol.Eth:
+        factor = 1000000;
+        break;
+      case rSymbol.Matic:
+        factor = 1000000;
+        break;
+      default:
+        factor = 1000000000000;
+        break;
+    }
 
+    // console.log(`amount: ${amount} factor: ${factor}`);
+    return divide(Number(amount), factor);
+  },
   tokenAmountToHuman(amount, symbol) {
     let factor;
     switch (symbol) {

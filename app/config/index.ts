@@ -10,6 +10,8 @@ export const isdev = () => {
 
 export const getRsymbolByTokenType = (tokenType: string) => {
   switch (tokenType) {
+    case 'reth':
+      return rSymbol.Eth;
     case 'rfis':
       return rSymbol.Fis;
     case 'rdot':
@@ -27,8 +29,31 @@ export const getRsymbolByTokenType = (tokenType: string) => {
   }
 };
 
+export const getRsymbolByTokenTitle = (tokenType: string) => {
+  switch (tokenType) {
+    case 'rETH':
+      return rSymbol.Eth;
+    case 'rFIS':
+      return rSymbol.Fis;
+    case 'rDOT':
+      return rSymbol.Dot;
+    case 'rKSM':
+      return rSymbol.Ksm;
+    case 'rATOM':
+      return rSymbol.Atom;
+    case 'rSOL':
+      return rSymbol.Sol;
+    case 'rMATIC':
+      return rSymbol.Matic;
+    default:
+      return rSymbol.Fis;
+  }
+};
+
 export const getSymbolByRSymbol = (symbol: rSymbol) => {
   switch (symbol) {
+    case rSymbol.Eth:
+      return Symbol.Eth;
     case rSymbol.Fis:
       return Symbol.Fis;
     case rSymbol.Dot:
@@ -48,6 +73,8 @@ export const getSymbolByRSymbol = (symbol: rSymbol) => {
 
 export const getSymbolRTitle = (symbol: rSymbol) => {
   switch (symbol) {
+    case rSymbol.Eth:
+      return 'rETH';
     case rSymbol.Fis:
       return 'rFIS';
     case rSymbol.Dot:
@@ -67,6 +94,8 @@ export const getSymbolRTitle = (symbol: rSymbol) => {
 
 export const getSymbolTitle = (symbol: rSymbol) => {
   switch (symbol) {
+    case rSymbol.Eth:
+      return 'ETH';
     case rSymbol.Fis:
       return 'FIS';
     case rSymbol.Dot:

@@ -13,7 +13,7 @@ export default function MintTableHead(props: Props) {
     <div className='head'>
       <div className='col col1'>Mint</div>
 
-      <div className='col  col5'>Protal on</div>
+      <div className='col  col5'>Portal on</div>
 
       <div
         className='col col2 sort_field'

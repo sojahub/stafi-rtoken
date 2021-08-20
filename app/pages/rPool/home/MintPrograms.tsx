@@ -1,13 +1,17 @@
 import Card from '@components/card/index';
+import { getRsymbolByTokenTitle } from '@config/index';
+import { getRtokenPriceList } from '@features/bridgeClice';
 import { getMintPrograms } from '@features/mintProgramsClice';
 import ratom_icon from '@images/r_atom.svg';
 import rdot_icon from '@images/r_dot.svg';
 import reth_icon from '@images/r_eth.svg';
+import rfis_icon from '@images/r_fis.svg';
 import rksm_icon from '@images/r_ksm.svg';
 import rmatic_icon from '@images/r_matic.svg';
 import numberUtil from '@util/numberUtil';
 import { RootState } from 'app/store';
-import React, { useEffect, useState } from 'react';
+import { multiply } from 'mathjs';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import CardItem from './components/cardItem';
 import MintTableHead from './components/MintTableHead';
@@ -17,6 +21,10 @@ import './MintPrograms.scss';
 const rTokenList: any = [
   {
     token: 'rETH',
+    children: [],
+  },
+  {
+    token: 'rFIS',
     children: [],
   },
   {
@@ -48,52 +56,55 @@ export default function MintPrograms(props: any) {
   const [sortWay, setSortWay] = useState<undefined | string>('asc');
   const [mintDataList, setMintDataList] = useState([]);
 
-  const { totalLiquidity, apyAvg } = useSelector((state: RootState) => {
-    let rPoolList = [...state.rPoolModule.rPoolList];
-    if (sortField || sortWay) {
-      rPoolList = rPoolList.sort((a: any, b: any) => {
-        if (sortField == 'apy') {
-          let apy_a: number = 0;
-          let apy_b: number = 0;
-          // a[sortField]
-          a[sortField].forEach((item: any) => {
-            apy_a = apy_a + Number(item.apy ? item.apy : 0);
-          });
-          b[sortField].forEach((item: any) => {
-            apy_b = apy_b + Number(item.apy ? item.apy : 0);
-          });
-          if (apy_a > apy_b) {
-            return sortWay == 'asc' ? -1 : 1;
-          } else if (apy_a < apy_b) {
-            return sortWay == 'asc' ? 1 : -1;
-          } else {
-            return 0;
-          }
-        } else {
-          if (Number(a[sortField]) > Number(b[sortField])) {
-            return sortWay == 'asc' ? -1 : 1;
-          } else if (Number(a[sortField]) < Number(b[sortField])) {
-            return sortWay == 'asc' ? 1 : -1;
-          } else {
-            return 0;
-          }
-        }
+  const { unitPriceList, rDOTActs, rMaticActs, rFISActs, rKSMActs, rATOMActs, rETHActs } = useSelector(
+    (state: RootState) => {
+      return {
+        unitPriceList: state.bridgeModule.priceList,
+        rDOTActs: state.mintProgramsModule.rDOTActs,
+        rMaticActs: state.mintProgramsModule.rMATICActs,
+        rFISActs: state.mintProgramsModule.rFISActs,
+        rKSMActs: state.mintProgramsModule.rKSMActs,
+        rATOMActs: state.mintProgramsModule.rATOMActs,
+        rETHActs: state.mintProgramsModule.rETHActs,
+      };
+    },
+  );
+
+  const totalMintedValue = useMemo(() => {
+    let total = 0;
+    if (!unitPriceList) {
+      return '--';
+    }
+    const map: any = {
+      rDOT: rDOTActs,
+      rMATIC: rMaticActs,
+      rFIS: rFISActs,
+      rKSM: rKSMActs,
+      rATOM: rATOMActs,
+      rETH: rETHActs,
+    };
+
+    for (var tokenTitle in map) {
+      let unitPrice = unitPriceList.find((item: any) => {
+        return item.symbol === tokenTitle;
+      });
+      if (!unitPrice || !map[tokenTitle] || map[tokenTitle].length === 0) {
+        continue;
+      }
+      map[tokenTitle].forEach((item: any) => {
+        total += multiply(
+          unitPrice.price,
+          numberUtil.tokenAmountToHuman(item.total_reward, getRsymbolByTokenTitle(tokenTitle)),
+        );
       });
     }
 
-    return {
-      totalLiquidity: state.rPoolModule.totalLiquidity,
-      apyAvg: state.rPoolModule.apyAvg,
-      slippageAvg: state.rPoolModule.slippageAvg,
-    };
-  });
+    return numberUtil.amount_format(total);
+  }, [unitPriceList, rDOTActs, rMaticActs, rFISActs, rKSMActs, rATOMActs, rETHActs]);
 
-  const { rDOTActs, rMaticActs } = useSelector((state: RootState) => {
-    return {
-      rDOTActs: state.mintProgramsModule.rDOTActs,
-      rMaticActs: state.mintProgramsModule.rMATICActs,
-    };
-  });
+  useEffect(() => {
+    dispatch(getRtokenPriceList());
+  }, []);
 
   useEffect(() => {
     rTokenList.forEach((item: any) => {
@@ -102,6 +113,18 @@ export default function MintPrograms(props: any) {
       }
       if (item.token === 'rMATIC') {
         item.children = rMaticActs;
+      }
+      if (item.token === 'rFIS') {
+        item.children = rFISActs;
+      }
+      if (item.token === 'rKSM') {
+        item.children = rKSMActs;
+      }
+      if (item.token === 'rATOM') {
+        item.children = rATOMActs;
+      }
+      if (item.token === 'rETH') {
+        item.children = rETHActs;
       }
     });
 
@@ -131,15 +154,14 @@ export default function MintPrograms(props: any) {
       });
     }
 
-    console.log('list:', list);
     setMintDataList(list);
-  }, [rDOTActs, rMaticActs]);
+  }, [rDOTActs, rMaticActs, rFISActs, rKSMActs, rATOMActs, rETHActs]);
 
   return (
     <Card className='stafi_rpool_mint'>
       <div className='card_list'>
-        <CardItem label='Total minted value' value={`$${numberUtil.amount_format(totalLiquidity)}`} />
-        <CardItem label='Farming APY. avg' value={`${apyAvg}%`} />
+        <CardItem label='Total minted value' value={`$${totalMintedValue}`} />
+        <CardItem label='Total reward' value={`${'--'}FIS`} />
       </div>
 
       <div className='table'>
@@ -195,13 +217,18 @@ export default function MintPrograms(props: any) {
                     icon = rmatic_icon;
                     stakeUrl = 'https://app.stafi.io/rKSM';
                     liquidityUrl = 'https://app.uniswap.org/#/add/v2/ETH/0x3c3842c4d3037ae121d69ea1e7a0b61413be806c';
+                  } else if (data.token === 'rFIS') {
+                    type = data.token;
+                    icon = rfis_icon;
+                    stakeUrl = 'https://app.stafi.io/rKSM';
+                    liquidityUrl = 'https://app.uniswap.org/#/add/v2/ETH/0x3c3842c4d3037ae121d69ea1e7a0b61413be806c';
                   }
                   if (type == '') {
                     return <></>;
                   }
                   return (
                     <MintTableItem
-                      key={`${item.contract}${item.id}`}
+                      key={`child ${data.token}${index}`}
                       tokenType={type}
                       actData={item}
                       wrapFiUrl={'https://drop.wrapfi.io'}

@@ -1,10 +1,12 @@
 import ClaimModal from '@components/modal/ClaimModal';
-import { getSymbolRTitle } from '@config/index';
+import config, { getSymbolRTitle } from '@config/index';
 import { getRtokenPriceList } from '@features/bridgeClice';
 import { queryBalance as fis_queryBalance } from '@features/FISClice';
 import { connectPolkadot_fis } from '@features/globalClice';
-import { claimFisReward } from '@features/mintProgramsClice';
+import { claimFisReward, claimREthFisReward } from '@features/mintProgramsClice';
+import { connectMetamask, monitoring_Method } from '@features/rETHClice';
 import backIcon from '@images/left_arrow.svg';
+import metamask from '@images/metamask.png';
 import mintMyMintIcon from '@images/mint_my_mint.svg';
 import mintMyRewardIcon from '@images/mint_my_reward.svg';
 import mintRewardTokenIcon from '@images/mint_reward_token.svg';
@@ -45,9 +47,10 @@ export default function MintOverview() {
   const [claimModalVisible, setClaimModalVisible] = useState(false);
   const [fisAccountModalVisible, setFisAccountModalVisible] = useState(false);
 
-  const { fisAccount, unitPriceList } = useSelector((state: any) => {
+  const { fisAccount, ethAccount, unitPriceList } = useSelector((state: any) => {
     return {
       fisAccount: state.FISModule.fisAccount,
+      ethAccount: state.rETHModule.ethAccount,
       unitPriceList: state.bridgeModule.priceList,
     };
   });
@@ -70,6 +73,29 @@ export default function MintOverview() {
     setRTokenName(getSymbolRTitle(Number(tokenSymbol)));
   }, [tokenSymbol]);
 
+  const showContent = useMemo(() => {
+    if (Number(tokenSymbol) === rSymbol.Eth) {
+      return ethAccount && ethAccount && fisAccount && fisAccount.address;
+    } else {
+      return fisAccount && fisAccount.address;
+    }
+  }, [fisAccount && fisAccount.address, ethAccount && ethAccount.address]);
+
+  const mintedValue = useMemo(() => {
+    let res: any = '--';
+    if (unitPriceList && actData) {
+      let unitPrice = unitPriceList.find((item: any) => {
+        return item.symbol === rTokenName;
+      });
+      if (unitPrice) {
+        res = numberUtil.amount_format(
+          multiply(unitPrice.price, numberUtil.tokenAmountToHuman(actData.total_reward, Number(tokenSymbol))),
+        );
+      }
+    }
+    return res;
+  }, [unitPriceList, actData, rTokenName]);
+
   const initData = async () => {
     if (fisAccount) {
       dispatch(fis_queryBalance(fisAccount));
@@ -77,14 +103,17 @@ export default function MintOverview() {
     let unitPrice = unitPriceList?.find((item: any) => {
       return item.symbol === getSymbolRTitle(Number(tokenSymbol));
     });
-    if (!unitPrice) {
-      unitPrice = {
-        price: '11.34',
-        symbol: 'rMATIC',
-      };
-    }
-    if (tokenSymbol && cycle && fisAccount && unitPrice) {
-      const response = await rPoolServer.getMintOverview(tokenSymbol, cycle, fisAccount.address, unitPrice.price);
+    if (tokenSymbol && cycle && unitPrice) {
+      let response;
+      if (Number(tokenSymbol) === rSymbol.Eth) {
+        if (ethAccount && ethAccount.address) {
+          response = await rPoolServer.getREthMintOverview(cycle, ethAccount.address, unitPrice.price);
+        }
+      } else {
+        if (fisAccount && fisAccount.address) {
+          response = await rPoolServer.getMintOverview(tokenSymbol, cycle, fisAccount.address, unitPrice.price);
+        }
+      }
       if (response) {
         setActData(response.actData);
         setUserMintToken(response.myMint);
@@ -98,32 +127,22 @@ export default function MintOverview() {
     }
   };
 
-  const mintedValue = useMemo(() => {
-    let res: any = '--';
-    if (unitPriceList && actData) {
-      let unitPrice = unitPriceList.find((item: any) => {
-        return item.symbol === rTokenName;
-      });
-      if (!unitPrice) {
-        unitPrice = {
-          price: '11.34',
-          symbol: 'rMATIC',
-        };
-      }
-      if (unitPrice) {
-        res = numberUtil.amount_format(multiply(unitPrice.price, numberUtil.fisAmountToHuman(actData.total_reward)));
-      }
-    }
-    return res;
-  }, [unitPriceList, actData, rTokenName]);
-
   const claimReward = () => {
-    dispatch(
-      claimFisReward(claimIndexs, tokenSymbol, cycle, () => {
-        setClaimModalVisible(false);
-        initData();
-      }),
-    );
+    if (Number(tokenSymbol) === rSymbol.Eth) {
+      dispatch(
+        claimREthFisReward(claimIndexs, cycle, () => {
+          setClaimModalVisible(false);
+          initData();
+        }),
+      );
+    } else {
+      dispatch(
+        claimFisReward(claimIndexs, tokenSymbol, cycle, () => {
+          setClaimModalVisible(false);
+          initData();
+        }),
+      );
+    }
   };
 
   if (
@@ -131,7 +150,8 @@ export default function MintOverview() {
     tokenSymbol.toString() !== rSymbol.Dot.toString() &&
     tokenSymbol.toString() !== rSymbol.Ksm.toString() &&
     tokenSymbol.toString() !== rSymbol.Matic.toString() &&
-    tokenSymbol.toString() !== rSymbol.Atom.toString()
+    tokenSymbol.toString() !== rSymbol.Atom.toString() &&
+    tokenSymbol.toString() !== rSymbol.Fis.toString()
   ) {
     history.replace('/rPool/home');
   }
@@ -145,10 +165,10 @@ export default function MintOverview() {
       <div className='title_container'>
         <img src={backIcon} className='back_icon' onClick={() => history.replace('/rPool/home')} />
 
-        <div className='title'>{fisAccount && fisAccount.address ? 'rPool' : 'Connect'}</div>
+        <div className='title'>{showContent ? 'rPool' : 'Connect'}</div>
       </div>
 
-      {fisAccount && fisAccount.address ? (
+      {showContent ? (
         <div className='content_container'>
           {rTokenName === 'rDOT' && <img src={rdotIcon} className='token_icon' />}
           {rTokenName === 'rMATIC' && <img src={rmaticIcon} className='token_icon' />}
@@ -157,8 +177,10 @@ export default function MintOverview() {
             <div className='title'>Mint {rTokenName}</div>
 
             <div className='apr_container'>
-              <div className='number'>28.34%</div>
-              <div className='label'>APR</div>
+              <div className='number'>
+                1{rTokenName} : {actData ? numberUtil.tokenRateToHuman(actData.reward_rate, Number(tokenSymbol)) : '--'}
+                FIS
+              </div>
             </div>
 
             <div className='divider' />
@@ -216,6 +238,7 @@ export default function MintOverview() {
       ) : (
         <div style={{ marginTop: '150px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
           <Button
+            disabled={fisAccount && fisAccount.address}
             icon={rDOT_svg}
             onClick={() => {
               dispatch(
@@ -225,6 +248,18 @@ export default function MintOverview() {
               );
             }}>
             Connect to Polkadotjs extension
+          </Button>
+
+          <div style={{ height: '30px' }}></div>
+
+          <Button
+            disabled={ethAccount && ethAccount.address}
+            icon={metamask}
+            onClick={() => {
+              dispatch(connectMetamask(config.goerliChainId()));
+              dispatch(monitoring_Method());
+            }}>
+            Connect to MetaMask
           </Button>
         </div>
       )}
