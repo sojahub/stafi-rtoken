@@ -45,6 +45,7 @@ export default class Index {
       if (userMintsCount) {
         let totalReward = 0;
         let fisClaimableReward = 0;
+        let fisClaimedReward = 0;
         const claimIndexs = [];
         if (userMintsCount.toJSON() > 0) {
           for (let i = 0; i < userMintsCount.toJSON(); i++) {
@@ -73,6 +74,7 @@ export default class Index {
                 claimIndexs.push(i);
                 fisClaimableReward += shouldClaimAmount;
               }
+              fisClaimedReward += claimInfoJson.total_claimed;
             }
           }
 
@@ -91,7 +93,9 @@ export default class Index {
 
           response.fisTotalReward = numberUtil.fisAmountToHuman(totalReward).toFixed(4);
           response.fisClaimableReward = numberUtil.fisAmountToHuman(fisClaimableReward).toFixed(4);
-          response.fisLockedReward = numberUtil.fisAmountToHuman(totalReward - fisClaimableReward).toFixed(4);
+          response.fisLockedReward = numberUtil
+            .fisAmountToHuman(totalReward - fisClaimableReward - fisClaimedReward)
+            .toFixed(4);
         } else {
           response.myMint = 0;
           response.myMintRatio = 0;
@@ -135,6 +139,7 @@ export default class Index {
       if (userMintsCount) {
         let totalReward = 0;
         let fisClaimableReward = 0;
+        let fisClaimedReward = 0;
         const claimIndexs = [];
         if (userMintsCount.toJSON() > 0) {
           for (let i = 0; i < userMintsCount.toJSON(); i++) {
@@ -145,6 +150,7 @@ export default class Index {
             const claimInfo = await stafiApi.query.rClaim.rEthClaimInfos(claimInfoArr);
             if (claimInfo.toJSON()) {
               const claimInfoJson = claimInfo.toJSON();
+              console.log('claimInfo: ', claimInfoJson);
               totalReward += claimInfoJson.total_reward;
 
               let finalBlock = claimInfoJson.mint_block + actJson.locked_blocks;
@@ -161,6 +167,7 @@ export default class Index {
                 claimIndexs.push(i);
                 fisClaimableReward += shouldClaimAmount;
               }
+              fisClaimedReward += claimInfoJson.total_claimed;
             }
           }
 
@@ -173,7 +180,9 @@ export default class Index {
 
           response.fisTotalReward = numberUtil.fisAmountToHuman(totalReward).toFixed(4);
           response.fisClaimableReward = numberUtil.fisAmountToHuman(fisClaimableReward).toFixed(4);
-          response.fisLockedReward = numberUtil.fisAmountToHuman(totalReward - fisClaimableReward).toFixed(4);
+          response.fisLockedReward = numberUtil
+            .fisAmountToHuman(totalReward - fisClaimableReward - fisClaimedReward)
+            .toFixed(4);
         } else {
           response.myMint = 0;
           response.myMintRatio = 0;

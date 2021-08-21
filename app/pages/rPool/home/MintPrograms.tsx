@@ -87,7 +87,7 @@ export default function MintPrograms(props: any) {
       let unitPrice = unitPriceList?.find((item: any) => {
         return item.symbol === tokenTitle;
       });
-      if (!unitPrice || !map[tokenTitle] || map[tokenTitle].length === 0) {
+      if (!map[tokenTitle] || map[tokenTitle].length === 0) {
         continue;
       }
       map[tokenTitle].forEach((item: any) => {
@@ -96,7 +96,9 @@ export default function MintPrograms(props: any) {
           item.reward_rate,
           getRsymbolByTokenTitle(tokenTitle),
         );
-        total += multiply(unitPrice.price, divide(formatTotalReward, formatRewardRate));
+        if (unitPrice) {
+          total += multiply(unitPrice.price, divide(formatTotalReward, formatRewardRate));
+        }
         fisAmount += formatTotalReward;
       });
     }
