@@ -13,7 +13,8 @@ export default class Index {
     return rpc.post(url);
   }
 
-  async getMintOverview(tokenSymbol: any, cycle: any, fisAddress: string, tokenPrice: any) {
+  async getMintOverview(tokenSymbol: any, cycle: any, fisAddress: string, fisPrice: any) {
+    fisAddress = '33URnrxK5jBoPaZ1hMjj7yMG27aimxbSruYpBZsRFBkbsJne';
     const response: any = {
       actData: null,
       myMint: '--',
@@ -84,14 +85,16 @@ export default class Index {
           response.myMint = numberUtil.handleFisAmountToFixed(userMintTokenCount);
           response.myMintRatio =
             Math.round(((totalReward * 100) / (actJson.total_reward - actJson.left_amount)) * 10) / 10;
-          if (tokenPrice !== '--' && !isNaN(tokenPrice)) {
-            const mintValue = multiply(userMintTokenCount, tokenPrice);
-            response.myReward = numberUtil.handleFisAmountToFixed(mintValue);
+          if (fisPrice && fisPrice !== '--' && !isNaN(fisPrice)) {
+            const mintValue = multiply(formatTotalReward, fisPrice);
+            response.myReward = Math.round(mintValue * 1000000) / 1000000;
           } else {
             response.myReward = '--';
           }
 
-          response.fisTotalReward = numberUtil.fisAmountToHuman(totalReward).toFixed(4);
+          console.log('formatTotalReward: ', formatTotalReward);
+          console.log('formatTotalReward 4: ', formatTotalReward.toFixed(4));
+          response.fisTotalReward = formatTotalReward.toFixed(4);
           response.fisClaimableReward = numberUtil.fisAmountToHuman(fisClaimableReward).toFixed(4);
           response.fisLockedReward = numberUtil
             .fisAmountToHuman(totalReward - fisClaimableReward - fisClaimedReward)
@@ -111,7 +114,8 @@ export default class Index {
     }
   }
 
-  async getREthMintOverview(cycle: any, ethAddress: string, tokenPrice: any) {
+  async getREthMintOverview(cycle: any, ethAddress: string, fisPrice: any) {
+    // ethAddress = '0x1bfCC34DadaA1154bB5f6dC2b7923f3b5cC256f7';
     const response: any = {
       actData: null,
       myMint: '--',
@@ -170,13 +174,18 @@ export default class Index {
               fisClaimedReward += claimInfoJson.total_claimed;
             }
           }
-
-          // const userMintTokenCount = divide(totalReward, actJson.reward_rate);
-          const userMintTokenCount = numberUtil.tokenAmountToHuman(totalReward, rSymbol.Eth);
+          const formatTotalReward = numberUtil.fisAmountToHuman(totalReward);
+          const formatRewardRate = numberUtil.tokenMintRewardRateToHuman(actJson.reward_rate, rSymbol.Eth);
+          const userMintTokenCount = divide(formatTotalReward, formatRewardRate);
           response.myMint = numberUtil.handleFisAmountToFixed(userMintTokenCount);
-          response.myMintRatio = ((totalReward * 100) / (actJson.total_reward - actJson.left_amount)).toFixed(0);
-          const mintValue = multiply(userMintTokenCount, tokenPrice);
-          response.myReward = numberUtil.handleFisAmountToFixed(mintValue);
+          response.myMintRatio =
+            Math.round(((totalReward * 100) / (actJson.total_reward - actJson.left_amount)) * 10) / 10;
+          if (fisPrice && fisPrice !== '--' && !isNaN(fisPrice)) {
+            const mintValue = multiply(formatTotalReward, fisPrice);
+            response.myReward = Math.round(mintValue * 1000000) / 1000000;
+          } else {
+            response.myReward = '--';
+          }
 
           response.fisTotalReward = numberUtil.fisAmountToHuman(totalReward).toFixed(4);
           response.fisClaimableReward = numberUtil.fisAmountToHuman(fisClaimableReward).toFixed(4);

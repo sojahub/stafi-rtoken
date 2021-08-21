@@ -1,5 +1,4 @@
 import close_bold_svg from '@images/close_bold.svg';
-import numberUtil from '@util/numberUtil';
 import { Modal, Spin } from 'antd';
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -24,9 +23,9 @@ export default function ClaimModal(props: Props) {
     };
   });
 
-  const formatTotalReward = totalReward !== '--' ? numberUtil.handleAmountToFixed4(totalReward) : '--';
-  const formatClaimableReward = claimableReward !== '--' ? numberUtil.handleAmountToFixed4(claimableReward) : '--';
-  const formatLockedReward = lockedReward !== '--' ? numberUtil.handleAmountToFixed4(lockedReward) : '--';
+  const formatTotalReward = totalReward !== '--' ? totalReward : '--';
+  const formatClaimableReward = claimableReward !== '--' ? claimableReward : '--';
+  const formatLockedReward = lockedReward !== '--' ? lockedReward : '--';
 
   const claimDisabled = formatClaimableReward === '--' || Number(formatClaimableReward) <= Number(0);
 

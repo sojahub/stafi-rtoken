@@ -103,6 +103,9 @@ export default function MintOverview() {
     let unitPrice = unitPriceList?.find((item: any) => {
       return item.symbol === getSymbolRTitle(Number(tokenSymbol));
     });
+    let fisPrice = unitPriceList?.find((item: any) => {
+      return item.symbol === 'FIS';
+    });
     if (tokenSymbol && cycle) {
       let response;
       if (Number(tokenSymbol) === rSymbol.Eth) {
@@ -110,18 +113,17 @@ export default function MintOverview() {
           response = await rPoolServer.getREthMintOverview(
             cycle,
             ethAccount.address,
-            unitPrice ? unitPrice.price : '--',
+            fisPrice && fisPrice.price,
           );
         }
       } else {
         if (fisAccount && fisAccount.address) {
-          response = await rPoolServer.getMintOverview(tokenSymbol, cycle, fisAccount.address, unitPrice ? unitPrice.price : '--');
-          // response = await rPoolServer.getMintOverview(
-          //   tokenSymbol,
-          //   cycle,
-          //   '34bwmgT1NtcL8FayGiFSB9F1qZFGPjhbDfTaZRoM2AXgjrpo',
-          //   unitPrice ? unitPrice.price : '--',
-          // );
+          response = await rPoolServer.getMintOverview(
+            tokenSymbol,
+            cycle,
+            fisAccount.address,
+            fisPrice && fisPrice.price,
+          );
         }
       }
       if (response) {
