@@ -68,7 +68,7 @@ export default function MintTableItem(props: Props) {
       </div>
 
       <div className='col col2' style={{ display: 'flex', alignItems: 'center' }}>
-        <div>1:{numberUtil.tokenRateToHuman(actData.reward_rate, getRsymbolByTokenTitle(tokenType))}</div>
+        <div>1:{numberUtil.tokenMintRewardRateToHuman(actData.reward_rate, getRsymbolByTokenTitle(tokenType))}</div>
       </div>
 
       <div className='col  col5' style={{ display: 'flex', alignItems: 'center' }}>

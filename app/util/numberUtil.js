@@ -157,7 +157,7 @@ export default {
     }
     return (Math.round(amount * 1000000) / 1000000).toFixed(4) || '--';
   },
-  tokenRateToHuman(amount, symbol) {
+  tokenMintRewardRateToHuman(amount, symbol) {
     let factor;
     switch (symbol) {
       case rSymbol.Dot:

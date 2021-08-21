@@ -92,6 +92,12 @@ const getREthMintInfo = (): AppThunk => async (dispatch: any, getState: any) => 
         acts.push(actJson);
       }
     }
+    acts.sort((x: any, y: any) => {
+      if (x.nowBlock < x.end && y.nowBlock > y.end) {
+        return -1;
+      }
+      return 0;
+    });
     dispatch(setRETHActs(acts));
   }
 };
@@ -121,6 +127,12 @@ const getRSymbolMintInfo =
           acts.push(actJson);
         }
       }
+      acts.sort((x: any, y: any) => {
+        if (x.nowBlock < x.end && y.nowBlock > y.end) {
+          return -1;
+        }
+        return 0;
+      });
       if (symbol === rSymbol.Dot) {
         dispatch(setRDOTActs(acts));
       }

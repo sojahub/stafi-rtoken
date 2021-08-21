@@ -21,7 +21,7 @@ import Button from '@shared/components/button/connect_button';
 import Modal from '@shared/components/modal/connectModal';
 import numberUtil from '@util/numberUtil';
 import { useInterval } from '@util/utils';
-import { multiply } from 'mathjs';
+import { divide, multiply } from 'mathjs';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useParams } from 'react-router-dom';
@@ -88,9 +88,9 @@ export default function MintOverview() {
         return item.symbol === rTokenName;
       });
       if (unitPrice) {
-        res = numberUtil.amount_format(
-          multiply(unitPrice.price, numberUtil.tokenAmountToHuman(actData.total_reward, Number(tokenSymbol))),
-        );
+        const formatTotalReward = numberUtil.fisAmountToHuman(actData.total_reward);
+        const formatRewardRate = numberUtil.tokenMintRewardRateToHuman(actData.reward_rate, Number(tokenSymbol));
+        res = numberUtil.amount_format(multiply(unitPrice.price, divide(formatTotalReward, formatRewardRate)));
       }
     }
     return res;
@@ -103,15 +103,25 @@ export default function MintOverview() {
     let unitPrice = unitPriceList?.find((item: any) => {
       return item.symbol === getSymbolRTitle(Number(tokenSymbol));
     });
-    if (tokenSymbol && cycle && unitPrice) {
+    if (tokenSymbol && cycle) {
       let response;
       if (Number(tokenSymbol) === rSymbol.Eth) {
         if (ethAccount && ethAccount.address) {
-          response = await rPoolServer.getREthMintOverview(cycle, ethAccount.address, unitPrice.price);
+          response = await rPoolServer.getREthMintOverview(
+            cycle,
+            ethAccount.address,
+            unitPrice ? unitPrice.price : '--',
+          );
         }
       } else {
         if (fisAccount && fisAccount.address) {
-          response = await rPoolServer.getMintOverview(tokenSymbol, cycle, fisAccount.address, unitPrice.price);
+          response = await rPoolServer.getMintOverview(tokenSymbol, cycle, fisAccount.address, unitPrice ? unitPrice.price : '--');
+          // response = await rPoolServer.getMintOverview(
+          //   tokenSymbol,
+          //   cycle,
+          //   '34bwmgT1NtcL8FayGiFSB9F1qZFGPjhbDfTaZRoM2AXgjrpo',
+          //   unitPrice ? unitPrice.price : '--',
+          // );
         }
       }
       if (response) {
@@ -178,7 +188,8 @@ export default function MintOverview() {
 
             <div className='apr_container'>
               <div className='number'>
-                1{rTokenName} : {actData ? numberUtil.tokenRateToHuman(actData.reward_rate, Number(tokenSymbol)) : '--'}
+                1{rTokenName} :{' '}
+                {actData ? numberUtil.tokenMintRewardRateToHuman(actData.reward_rate, Number(tokenSymbol)) : '--'}
                 FIS
               </div>
             </div>

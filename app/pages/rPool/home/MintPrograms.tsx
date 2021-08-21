@@ -10,7 +10,7 @@ import rksm_icon from '@images/r_ksm.svg';
 import rmatic_icon from '@images/r_matic.svg';
 import numberUtil from '@util/numberUtil';
 import { RootState } from 'app/store';
-import { multiply } from 'mathjs';
+import { divide, multiply } from 'mathjs';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import CardItem from './components/cardItem';
@@ -70,11 +70,10 @@ export default function MintPrograms(props: any) {
     },
   );
 
-  const totalMintedValue = useMemo(() => {
+  const { totalMintedValue, totalFisAmount } = useMemo(() => {
     let total = 0;
-    if (!unitPriceList) {
-      return '--';
-    }
+    let fisAmount = 0;
+    const response = { totalMintedValue: '--', totalFisAmount: '--' };
     const map: any = {
       rDOT: rDOTActs,
       rMATIC: rMaticActs,
@@ -85,21 +84,29 @@ export default function MintPrograms(props: any) {
     };
 
     for (var tokenTitle in map) {
-      let unitPrice = unitPriceList.find((item: any) => {
+      let unitPrice = unitPriceList?.find((item: any) => {
         return item.symbol === tokenTitle;
       });
       if (!unitPrice || !map[tokenTitle] || map[tokenTitle].length === 0) {
         continue;
       }
       map[tokenTitle].forEach((item: any) => {
-        total += multiply(
-          unitPrice.price,
-          numberUtil.tokenAmountToHuman(item.total_reward, getRsymbolByTokenTitle(tokenTitle)),
+        const formatTotalReward = numberUtil.fisAmountToHuman(item.total_reward);
+        const formatRewardRate = numberUtil.tokenMintRewardRateToHuman(
+          item.reward_rate,
+          getRsymbolByTokenTitle(tokenTitle),
         );
+        total += multiply(unitPrice.price, divide(formatTotalReward, formatRewardRate));
+        fisAmount += formatTotalReward;
       });
     }
 
-    return numberUtil.amount_format(total);
+    if (unitPriceList) {
+      response.totalMintedValue = numberUtil.amount_format(total);
+    }
+    response.totalFisAmount = numberUtil.amount_format(fisAmount);
+
+    return response;
   }, [unitPriceList, rDOTActs, rMaticActs, rFISActs, rKSMActs, rATOMActs, rETHActs]);
 
   useEffect(() => {
@@ -161,7 +168,7 @@ export default function MintPrograms(props: any) {
     <Card className='stafi_rpool_mint'>
       <div className='card_list'>
         <CardItem label='Total minted value' value={`$${totalMintedValue}`} />
-        <CardItem label='Total reward' value={`${'--'}FIS`} />
+        <CardItem label='Total reward FIS' value={`${totalFisAmount}`} />
       </div>
 
       <div className='table'>

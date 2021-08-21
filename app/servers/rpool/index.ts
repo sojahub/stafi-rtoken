@@ -3,7 +3,7 @@ import { rSymbol } from '@keyring/defaults';
 import StafiServer from '@servers/stafi';
 import numberUtil from '@util/numberUtil';
 import rpc from '@util/rpc';
-import { multiply } from 'mathjs';
+import { divide, multiply } from 'mathjs';
 
 const stafiServer = new StafiServer();
 
@@ -56,6 +56,7 @@ export default class Index {
             const claimInfo = await stafiApi.query.rClaim.claimInfos(claimInfoArr);
             if (claimInfo.toJSON()) {
               const claimInfoJson = claimInfo.toJSON();
+              console.log('claimInfo: ', claimInfoJson);
               totalReward += claimInfoJson.total_reward;
 
               let finalBlock = claimInfoJson.mint_block + actJson.locked_blocks;
@@ -75,12 +76,18 @@ export default class Index {
             }
           }
 
-          // const userMintTokenCount = divide(totalReward, actJson.reward_rate);
-          const userMintTokenCount = numberUtil.tokenAmountToHuman(totalReward, Number(tokenSymbol));
+          const formatTotalReward = numberUtil.fisAmountToHuman(totalReward);
+          const formatRewardRate = numberUtil.tokenMintRewardRateToHuman(actJson.reward_rate, Number(tokenSymbol));
+          const userMintTokenCount = divide(formatTotalReward, formatRewardRate);
           response.myMint = numberUtil.handleFisAmountToFixed(userMintTokenCount);
-          response.myMintRatio = ((totalReward * 100) / (actJson.total_reward - actJson.left_amount)).toFixed(0);
-          const mintValue = multiply(userMintTokenCount, tokenPrice);
-          response.myReward = numberUtil.handleFisAmountToFixed(mintValue);
+          response.myMintRatio =
+            Math.round(((totalReward * 100) / (actJson.total_reward - actJson.left_amount)) * 10) / 10;
+          if (tokenPrice !== '--' && !isNaN(tokenPrice)) {
+            const mintValue = multiply(userMintTokenCount, tokenPrice);
+            response.myReward = numberUtil.handleFisAmountToFixed(mintValue);
+          } else {
+            response.myReward = '--';
+          }
 
           response.fisTotalReward = numberUtil.fisAmountToHuman(totalReward).toFixed(4);
           response.fisClaimableReward = numberUtil.fisAmountToHuman(fisClaimableReward).toFixed(4);
