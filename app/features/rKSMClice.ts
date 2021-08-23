@@ -622,11 +622,11 @@ export const unbond =
           u8aToHex(keyringInstance.decodeAddress(recipient)),
           selectedPool.poolPubkey,
           'Unbond succeeded, unbonding period is around ' + config.unboundAroundDays(Symbol.Ksm) + ' days',
-          (r?: string) => {
+          (r?: string, txHash?: string) => {
             dispatch(reloadData());
 
             if (r == 'Success') {
-              dispatch(add_KSM_unbond_Notice(stafi_uuid(), willAmount, noticeStatus.Confirmed));
+              dispatch(add_KSM_unbond_Notice(stafi_uuid(), willAmount, noticeStatus.Confirmed, { txHash }));
             }
             if (r == 'Failed') {
               dispatch(add_KSM_unbond_Notice(stafi_uuid(), willAmount, noticeStatus.Error));

@@ -1,5 +1,5 @@
-import sort_arrow from '@images/sort_arrow.svg';
-import sort_arrow_white from '@images/sort_arrow_white.svg';
+// import sort_arrow from '@images/sort_arrow.svg';
+// import sort_arrow_white from '@images/sort_arrow_white.svg';
 import React from 'react';
 
 type Props = {
@@ -15,7 +15,7 @@ export default function MintTableHead(props: Props) {
 
       <div className='col  col5'>Portal on</div>
 
-      <div
+      {/* <div
         className='col col2 sort_field'
         onClick={() => {
           props.onClick && props.onClick('apy');
@@ -26,7 +26,9 @@ export default function MintTableHead(props: Props) {
         ) : (
           <img src={sort_arrow} />
         )}
-      </div>
+      </div> */}
+
+      <div className='col col2 sort_field'>APY</div>
 
       <div className='col  col5'>Reward</div>
 

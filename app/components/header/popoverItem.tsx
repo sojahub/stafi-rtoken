@@ -36,7 +36,9 @@ export default function Index(props: Props) {
           }`}
           style={
             props.data.type == noticeType.Staker &&
-            (props.data.subType == noticesubType.FeeStation || props.data.subType == noticesubType.Claim)
+            (props.data.subType == noticesubType.FeeStation ||
+              props.data.subType == noticesubType.Claim ||
+              props.data.subType == noticesubType.Unbond)
               ? { cursor: 'pointer', textDecoration: 'underline' }
               : {}
           }
@@ -71,6 +73,16 @@ export default function Index(props: Props) {
             if (
               props.data.type == noticeType.Staker &&
               props.data.subType == noticesubType.Claim &&
+              props.data.subData
+            ) {
+              const { txHash } = props.data.subData;
+              const viewTxUrl = config.stafiScanTxUrl(txHash);
+              viewTxUrl && window.open(viewTxUrl);
+              props.hideNoticePopover && props.hideNoticePopover();
+            }
+            if (
+              props.data.type == noticeType.Staker &&
+              props.data.subType == noticesubType.Unbond &&
               props.data.subData
             ) {
               const { txHash } = props.data.subData;

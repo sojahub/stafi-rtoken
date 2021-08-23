@@ -1,5 +1,4 @@
 import { getRsymbolByTokenTitle } from '@config/index';
-import add_svg from '@images/add2.svg';
 import doubt from '@images/doubt.svg';
 import rATOM from '@images/selected_rATOM.svg';
 import rDOT from '@images/selected_rDOT.svg';
@@ -157,9 +156,21 @@ export default function Index(props: Props) {
             </div>
             <div>{props.apr}</div>
           </div>
-          <div className='add_icon'>
-            <img src={add_svg} style={{ width: '20px', height: '20px' }} />
+
+          <div
+            style={{
+              fontSize: '30px',
+              fontFamily: "'Helvetica-Bold'",
+              marginBottom: '6px',
+              marginLeft: '10px',
+              marginRight: '10px',
+              height: '35px',
+              color: 'white',
+              alignSelf: 'flex-end',
+            }}>
+            +
           </div>
+
           <div className='money_panel_item'>
             <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'flex-end' }}>
               <div>Mint Reward</div>

@@ -80,7 +80,7 @@ const rSOLClice = createSlice({
     setRatioShow(state, { payload }) {
       state.ratioShow = payload;
     },
-    setTokenAmount(state, { payload }) { 
+    setTokenAmount(state, { payload }) {
       state.tokenAmount = payload;
     },
     setProcessParameter(state, { payload }) {
@@ -154,7 +154,7 @@ export const {
 } = rSOLClice.actions;
 
 export const reloadData = (): AppThunk => async (dispatch, getState) => {
-  const account = getState().rSOLModule.solAccount; 
+  const account = getState().rSOLModule.solAccount;
   if (account) {
     dispatch(createSubstrate(account));
   }
@@ -224,10 +224,9 @@ export const transfer =
       let result: any;
       result = await solServer.sendTransaction(amount, selectedPool.address).catch((error) => {
         throw error;
-      }); 
+      });
 
-      if (result.blockHash && result.txHash) { 
-
+      if (result.blockHash && result.txHash) {
         const hexBlockHash = u8aToHex(base58.decode(result.blockHash));
         const hexTxHash = u8aToHex(base58.decode(result.txHash));
 
@@ -400,11 +399,11 @@ export const unbond =
           u8aToHex(new solanaWeb3.PublicKey(recipient).toBytes()),
           selectedPool.poolPubkey,
           'Unbond succeeded, unbonding period is around ' + config.unboundAroundDays(Symbol.Sol) + ' days',
-          (r?: string) => {
+          (r?: string, txHash?: string) => {
             dispatch(reloadData());
 
             if (r == 'Success') {
-              dispatch(add_SOL_unbond_Notice(stafi_uuid(), willAmount, noticeStatus.Confirmed));
+              dispatch(add_SOL_unbond_Notice(stafi_uuid(), willAmount, noticeStatus.Confirmed, { txHash }));
             }
             if (r == 'Failed') {
               dispatch(add_SOL_unbond_Notice(stafi_uuid(), willAmount, noticeStatus.Error));
@@ -420,7 +419,7 @@ export const unbond =
 
 export const continueProcess = (): AppThunk => async (dispatch, getState) => {
   const stakeHash = getState().rSOLModule.stakeHash;
-  if (stakeHash && stakeHash.blockHash && stakeHash.txHash) { 
+  if (stakeHash && stakeHash.blockHash && stakeHash.txHash) {
     dispatch(
       bondStates(rSymbol.Sol, stakeHash.txHash, stakeHash.blockHash, (e: string) => {
         if (e == 'successful') {
@@ -439,7 +438,7 @@ export const onProceed =
   (txHash: string, cb?: Function): AppThunk =>
   async (dispatch, getstate) => {
     const noticeData = findUuidWithoutBlockhash(getstate().noticeModule.noticeData, txHash);
- 
+
     let blockhash: any;
     try {
       const result = await solServer.getTransactionDetail(getstate().rSOLModule.solAccount.address, txHash);
@@ -529,7 +528,7 @@ export const getBlock =
         getState().rSOLModule.solAccount.address,
         txHash,
       );
- 
+
       if (!amount || !poolAddress || !blockhash) {
         message.error('Transaction record not found!');
         return;
@@ -818,7 +817,7 @@ const add_DOT_Swap_Notice =
   };
 const add_SOL_Notice =
   (uuid: string, type: string, subType: string, content: string, status: string, subData?: any): AppThunk =>
-  async (dispatch, getState) => { 
+  async (dispatch, getState) => {
     dispatch(add_Notice(uuid, Symbol.Sol, type, subType, content, status, subData));
   };
 export default rSOLClice.reducer;

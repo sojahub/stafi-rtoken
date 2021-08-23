@@ -41,6 +41,10 @@ export default class Index {
       acts.sort((x: any, y: any) => {
         if (x.nowBlock < x.end && y.nowBlock > y.end) {
           return -1;
+        } else if (x.end <= nowBlock && y.end <= nowBlock) {
+          return y.total_reward - x.total_reward;
+        } else if (x.end > nowBlock && y.end > nowBlock) {
+          return x.end - y.end;
         }
         return 0;
       });

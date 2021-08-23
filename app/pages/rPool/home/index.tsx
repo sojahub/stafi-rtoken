@@ -19,14 +19,16 @@ export default function Inde(props: any) {
         </div>
       </div>
 
-      {/* <div className='how_to_earn'>
-        <div
-          onClick={() => {
-            window.open('https://docs.stafi.io/rproduct/rpool/the-guide-for-rpool');
-          }}>
-          How to earn
-        </div>
-      </div> */}
+      <div className='how_to_earn' style={{ height: '20px' }}>
+        {index === 1 && (
+          <div
+            onClick={() => {
+              window.open('https://docs.stafi.io/rtoken-app/rpool/the-guide-for-rpool');
+            }}>
+            How to earn
+          </div>
+        )}
+      </div>
 
       {index === 0 && <MintPrograms />}
       {index === 1 && <LiquidityPrograms />}

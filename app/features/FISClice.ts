@@ -1,7 +1,7 @@
 import config from '@config/index';
 import { rSymbol, Symbol } from '@keyring/defaults';
 import { web3Enable, web3FromSource } from '@polkadot/extension-dapp';
-import { u8aToHex, stringToHex } from '@polkadot/util';
+import { stringToHex, u8aToHex } from '@polkadot/util';
 import { createSlice } from '@reduxjs/toolkit';
 import { default as keyring, default as keyringInstance } from '@servers/index';
 import RpcServer, { pageCount } from '@servers/rpc/index';
@@ -19,7 +19,6 @@ import {
 import NumberUtil from '@util/numberUtil';
 import StringUtil from '@util/stringUtil';
 import { message } from 'antd';
-import { keccakFromHexString } from 'ethereumjs-util';
 import { AppThunk } from '../store';
 import CommonClice from './commonClice';
 import {
@@ -918,8 +917,9 @@ export const fisUnbond =
                 })
                 .forEach((data: any) => {
                   if (data.event.method === 'ExtrinsicSuccess') {
+                    const txHash = api.hash.toHex();
                     dispatch(reloadData());
-                    cb && cb('Success');
+                    cb && cb('Success', txHash);
                     message.success(topstr);
                   } else if (data.event.method === 'ExtrinsicFailed') {
                     dispatch(reloadData());
