@@ -57,9 +57,13 @@ export default function Index(props: Props) {
     if (!mintRewardAct) {
       return 0;
     }
-    return multiply(
-      Number(props.willAmount),
-      numberUtil.tokenMintRewardRateToHuman(mintRewardAct?.reward_rate, getRsymbolByTokenTitle(props.type)),
+    return (
+      Math.round(
+        multiply(
+          Number(props.willAmount),
+          numberUtil.tokenMintRewardRateToHuman(mintRewardAct?.reward_rate, getRsymbolByTokenTitle(props.type)),
+        ) * 1000000,
+      ) / 1000000
     );
   }, [props.willAmount, mintRewardAct]);
 
