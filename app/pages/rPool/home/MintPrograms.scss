@@ -101,10 +101,9 @@
       font-weight: bold;
       color: #7c7c7c;
     }
-    // .table_body{
-    //     height:300px;
-    //     overflow: auto;
-    // }
+    .table_body {
+      min-height: 300px;
+    }
     .rtoken_type {
       background-color: #293038;
       border-radius: 2px;

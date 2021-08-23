@@ -23,7 +23,8 @@ export default function Index(props: Props) {
       className={`stafi_content ${className} ${
         location.pathname.includes('/rETH') ||
         location.pathname.includes('rAsset/erc') ||
-        location.pathname.includes('swap/erc')
+        location.pathname.includes('swap/erc') ||
+        location.pathname.includes('/rPool')
           ? ''
           : 'stafi_content_notice'
       } ${location.pathname.includes('/rPool') ? 'stafi_content_large' : ''} ${props.className}`}>

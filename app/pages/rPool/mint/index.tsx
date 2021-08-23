@@ -110,11 +110,7 @@ export default function MintOverview() {
       let response;
       if (Number(tokenSymbol) === rSymbol.Eth) {
         if (ethAccount && ethAccount.address) {
-          response = await rPoolServer.getREthMintOverview(
-            cycle,
-            ethAccount.address,
-            fisPrice && fisPrice.price,
-          );
+          response = await rPoolServer.getREthMintOverview(cycle, ethAccount.address, fisPrice && fisPrice.price);
         }
       } else {
         if (fisAccount && fisAccount.address) {
@@ -142,14 +138,14 @@ export default function MintOverview() {
   const claimReward = () => {
     if (Number(tokenSymbol) === rSymbol.Eth) {
       dispatch(
-        claimREthFisReward(claimIndexs, cycle, () => {
+        claimREthFisReward(fisClaimableReward, claimIndexs, cycle, () => {
           setClaimModalVisible(false);
           initData();
         }),
       );
     } else {
       dispatch(
-        claimFisReward(claimIndexs, tokenSymbol, cycle, () => {
+        claimFisReward(fisClaimableReward, claimIndexs, tokenSymbol, cycle, () => {
           setClaimModalVisible(false);
           initData();
         }),
@@ -220,7 +216,7 @@ export default function MintOverview() {
               <div className='label'>My Mint</div>
 
               <div className='content_text'>
-                {userMintToken !== '--' ? `${userMintToken}` : '--'}(
+                {userMintToken !== '--' ? `${userMintToken}` : '--'} (
                 {userMintRatio !== '--' ? `${userMintRatio}` : '--'}
                 %)
               </div>
@@ -253,6 +249,7 @@ export default function MintOverview() {
           <Button
             disabled={fisAccount && fisAccount.address}
             icon={rDOT_svg}
+            width={'400px'}
             onClick={() => {
               dispatch(
                 connectPolkadot_fis(() => {
@@ -268,6 +265,7 @@ export default function MintOverview() {
           <Button
             disabled={ethAccount && ethAccount.address}
             icon={metamask}
+            width={'400px'}
             onClick={() => {
               dispatch(connectMetamask(config.goerliChainId()));
               dispatch(monitoring_Method());

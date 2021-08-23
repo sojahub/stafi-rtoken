@@ -14,7 +14,7 @@ export default class Index {
   }
 
   async getMintOverview(tokenSymbol: any, cycle: any, fisAddress: string, fisPrice: any) {
-    fisAddress = '33URnrxK5jBoPaZ1hMjj7yMG27aimxbSruYpBZsRFBkbsJne';
+    // fisAddress = '33URnrxK5jBoPaZ1hMjj7yMG27aimxbSruYpBZsRFBkbsJne';
     const response: any = {
       actData: null,
       myMint: '--',
@@ -47,6 +47,7 @@ export default class Index {
         let totalReward = 0;
         let fisClaimableReward = 0;
         let fisClaimedReward = 0;
+        let userMint = 0;
         const claimIndexs = [];
         if (userMintsCount.toJSON() > 0) {
           for (let i = 0; i < userMintsCount.toJSON(); i++) {
@@ -76,13 +77,15 @@ export default class Index {
                 fisClaimableReward += shouldClaimAmount;
               }
               fisClaimedReward += claimInfoJson.total_claimed;
+              userMint += claimInfoJson.mint_amount;
             }
           }
 
           const formatTotalReward = numberUtil.fisAmountToHuman(totalReward);
-          const formatRewardRate = numberUtil.tokenMintRewardRateToHuman(actJson.reward_rate, Number(tokenSymbol));
-          const userMintTokenCount = divide(formatTotalReward, formatRewardRate);
-          response.myMint = numberUtil.handleFisAmountToFixed(userMintTokenCount);
+          // const formatRewardRate = numberUtil.tokenMintRewardRateToHuman(actJson.reward_rate, Number(tokenSymbol));
+          // const userMintTokenCount = divide(formatTotalReward, formatRewardRate);
+          response.myMint =
+            Math.round(numberUtil.tokenAmountToHuman(userMint, Number(tokenSymbol)) * 1000000) / 1000000;
           response.myMintRatio =
             Math.round(((totalReward * 100) / (actJson.total_reward - actJson.left_amount)) * 10) / 10;
           if (fisPrice && fisPrice !== '--' && !isNaN(fisPrice)) {

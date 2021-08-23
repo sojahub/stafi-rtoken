@@ -4,11 +4,13 @@ import { stringToHex, u8aToHex } from '@polkadot/util';
 import { createSlice } from '@reduxjs/toolkit';
 import keyring from '@servers/index';
 import StafiServer from '@servers/stafi';
+import { stafi_uuid } from '@util/common';
 import { formatDuration } from '@util/dateUtil';
 import { message } from 'antd';
 import { divide, max } from 'mathjs';
 import { AppThunk } from '../store';
 import { setLoading } from './globalClice';
+import { add_Notice, noticeStatus, noticesubType, noticeType } from './noticeClice';
 
 const stafiServer = new StafiServer();
 
@@ -64,6 +66,7 @@ export const {
 } = rPoolClice.actions;
 
 export const getMintPrograms = (): AppThunk => async (dispatch: any, getState: any) => {
+  dispatch(setLoading(true));
   dispatch(getREthMintInfo());
   dispatch(getRSymbolMintInfo(rSymbol.Dot));
   dispatch(getRSymbolMintInfo(rSymbol.Matic));
@@ -99,6 +102,7 @@ const getREthMintInfo = (): AppThunk => async (dispatch: any, getState: any) => 
       return 0;
     });
     dispatch(setRETHActs(acts));
+    dispatch(setLoading(false));
   }
 };
 
@@ -148,13 +152,15 @@ const getRSymbolMintInfo =
       if (symbol === rSymbol.Atom) {
         dispatch(setRATOMActs(acts));
       }
+      dispatch(setLoading(false));
     }
   };
 
 export const claimFisReward =
-  (claimIndexs: any, symbol: any, cycle: any, cb: Function): AppThunk =>
+  (fisAmount: any, claimIndexs: any, symbol: any, cycle: any, cb: Function): AppThunk =>
   async (dispatch: any, getState: any) => {
     dispatch(setLoading(true));
+    const notice_uuid = stafi_uuid();
     const stafiApi = await stafiServer.createStafiApi();
     let txs: Array<any> = [];
     claimIndexs.forEach((index: any) => {
@@ -207,6 +213,7 @@ export const claimFisReward =
                     }
                   } else if (method === 'ExtrinsicSuccess') {
                     dispatch(setLoading(false));
+                    dispatch(add_claim_Notice(notice_uuid, fisAmount, noticeStatus.Confirmed, {}));
                     message.success('Claim successfully');
                     cb();
                   }
@@ -241,10 +248,10 @@ export const claimFisReward =
 declare const ethereum: any;
 
 export const claimREthFisReward =
-  (claimIndexs: any, cycle: any, cb: Function): AppThunk =>
+  (fisAmount: any, claimIndexs: any, cycle: any, cb: Function): AppThunk =>
   async (dispatch: any, getState: any) => {
     dispatch(setLoading(true));
-
+    const notice_uuid = stafi_uuid();
     const fisAddress = getState().FISModule.fisAccount.address;
     const ethAddress = getState().rETHModule.ethAccount && getState().rETHModule.ethAccount.address;
 
@@ -315,6 +322,7 @@ export const claimREthFisReward =
                       dispatch(setLoading(false));
                     }
                   } else if (method === 'ExtrinsicSuccess') {
+                    dispatch(add_claim_Notice(notice_uuid, fisAmount, noticeStatus.Confirmed, {}));
                     dispatch(setLoading(false));
                     message.success('Claim successfully');
                     cb();
@@ -345,6 +353,12 @@ export const claimREthFisReward =
       dispatch(setLoading(false));
       message.error('No txs found');
     }
+  };
+
+const add_claim_Notice =
+  (uuid: string, amount: string, status: string, subData?: any): AppThunk =>
+  async (dispatch, getState) => {
+    dispatch(add_Notice(uuid, noticeType.Staker, noticesubType.Claim, amount, status, subData));
   };
 
 export default rPoolClice.reducer;

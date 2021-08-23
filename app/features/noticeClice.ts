@@ -42,6 +42,7 @@ export enum noticesubType {
   Apply = 'Apply',
   DexSwap = 'DexSwap',
   FeeStation = 'FeeStation',
+  Claim = 'Claim',
 }
 const noticeModal = {
   showNew: false,
@@ -632,6 +633,8 @@ export const notice_text = (item: any) => {
     return `Swap ${item.amount} ${item.subData && item.subData.symbol} to ${
       item.subData && item.subData.receiveFisAmount
     } FIS.`;
+  } else if (item.type == noticeType.Staker && item.subType == noticesubType.Claim) {
+    return `Claim ${item.amount} FIS from the Mint.`;
   }
   return '';
 };

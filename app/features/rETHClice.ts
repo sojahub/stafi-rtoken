@@ -392,7 +392,11 @@ export const get_eth_getBalance = (): AppThunk => async (dispatch, getState) => 
     console.log('dev: metaMaskNetwork wrong');
     return;
   }
+
   let web3 = ethServer.getWeb3();
+  if (!getState().rETHModule.ethAccount) {
+    return;
+  }
   const address = getState().rETHModule.ethAccount.address;
   const result = await ethereum.request({ method: 'eth_getBalance', params: [address, 'latest'] });
   const balance = web3.utils.fromWei(result, 'ether');

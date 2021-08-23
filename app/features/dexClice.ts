@@ -59,7 +59,7 @@ export const swap =
       api.tx.rDexnSwap
         .swapRtokenForNativeToken(receiver, tokenSymbol, tokenAmountChain.toString(), minReceivedChain.toString(), grade)
         .signAndSend(currentAccount, { signer: injector.signer }, (result: any) => {
-          console.log('xxxxxxxxxxxx', result);
+          // console.log('xxxxxxxxxxxx', result);
           if (result.status.isInBlock) {
             result.events
               .filter((obj: any) => obj.event.section === 'system')

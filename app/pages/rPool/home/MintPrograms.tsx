@@ -9,6 +9,7 @@ import rfis_icon from '@images/r_fis.svg';
 import rksm_icon from '@images/r_ksm.svg';
 import rmatic_icon from '@images/r_matic.svg';
 import numberUtil from '@util/numberUtil';
+import { Spin } from 'antd';
 import { RootState } from 'app/store';
 import { divide, multiply } from 'mathjs';
 import React, { useEffect, useMemo, useState } from 'react';
@@ -52,11 +53,15 @@ export default function MintPrograms(props: any) {
     dispatch(getMintPrograms());
   }, []);
 
+  setInterval(() => {
+    dispatch(getMintPrograms());
+  }, 60000);
+
   const [sortField, setSortField] = useState('apy');
   const [sortWay, setSortWay] = useState<undefined | string>('asc');
   const [mintDataList, setMintDataList] = useState([]);
 
-  const { unitPriceList, rDOTActs, rMaticActs, rFISActs, rKSMActs, rATOMActs, rETHActs } = useSelector(
+  const { unitPriceList, rDOTActs, rMaticActs, rFISActs, rKSMActs, rATOMActs, rETHActs, loading } = useSelector(
     (state: RootState) => {
       return {
         unitPriceList: state.bridgeModule.priceList,
@@ -66,6 +71,7 @@ export default function MintPrograms(props: any) {
         rKSMActs: state.mintProgramsModule.rKSMActs,
         rATOMActs: state.mintProgramsModule.rATOMActs,
         rETHActs: state.mintProgramsModule.rETHActs,
+        loading: state.globalModule.loading,
       };
     },
   );
@@ -192,68 +198,70 @@ export default function MintPrograms(props: any) {
           }}
         />
 
-        <div className='table_body'>
-          {mintDataList.map((data: any, i: any) => {
-            return (
-              <div key={`${data.token}${i}`} className='rtoken_type'>
-                {data.children.map((item: any, index: number) => {
-                  let type = '';
-                  let icon = null;
-                  let stakeUrl = '';
-                  let liquidityUrl = '';
-                  if (data.token === 'rETH') {
-                    type = data.token;
-                    icon = reth_icon;
-                    stakeUrl = 'https://app.stafi.io/rETH';
-                    liquidityUrl = 'https://app.uniswap.org/#/add/v2/0x9559aaa82d9649c7a7b220e7c461d2e74c9a3593/ETH';
-                  } else if (data.token === 'rDOT') {
-                    type = data.token;
-                    icon = rdot_icon;
-                    stakeUrl = 'https://app.stafi.io/rFIS';
-                    liquidityUrl = 'https://app.uniswap.org/#/add/v2/ETH/0xc82eb6dea0c93edb8b697b89ad1b13d19469d635';
-                  } else if (data.token === 'rKSM') {
-                    type = data.token;
-                    icon = rksm_icon;
-                    stakeUrl = 'https://app.stafi.io/rATOM';
-                    liquidityUrl = 'https://app.uniswap.org/#/add/v2/ETH/0xd01cb3d113a864763dd3977fe1e725860013b0ed';
-                  } else if (data.token === 'rATOM') {
-                    type = data.token;
-                    icon = ratom_icon;
-                    stakeUrl = 'https://app.stafi.io/rDOT';
-                    liquidityUrl = 'https://app.uniswap.org/#/add/v2/ETH/0x505f5a4ff10985fe9f93f2ae3501da5fe665f08a';
-                  } else if (data.token === 'rMATIC') {
-                    type = data.token;
-                    icon = rmatic_icon;
-                    stakeUrl = 'https://app.stafi.io/rKSM';
-                    liquidityUrl = 'https://app.uniswap.org/#/add/v2/ETH/0x3c3842c4d3037ae121d69ea1e7a0b61413be806c';
-                  } else if (data.token === 'rFIS') {
-                    type = data.token;
-                    icon = rfis_icon;
-                    stakeUrl = 'https://app.stafi.io/rKSM';
-                    liquidityUrl = 'https://app.uniswap.org/#/add/v2/ETH/0x3c3842c4d3037ae121d69ea1e7a0b61413be806c';
-                  }
-                  if (type == '') {
-                    return <></>;
-                  }
-                  return (
-                    <MintTableItem
-                      key={`child ${data.token}${index}`}
-                      tokenType={type}
-                      actData={item}
-                      wrapFiUrl={'https://drop.wrapfi.io'}
-                      liquidityUrl={liquidityUrl}
-                      history={props.history}
-                      stakeUrl={stakeUrl}
-                      pairIcon={index == 0 ? icon : null}
-                      pairValue={index == 0 ? type : null}
-                      poolOn={item.platform}
-                    />
-                  );
-                })}
-              </div>
-            );
-          })}
-        </div>
+        <Spin spinning={loading} size='large' tip='loading'>
+          <div className='table_body'>
+            {mintDataList.map((data: any, i: any) => {
+              return (
+                <div key={`${data.token}${i}`} className='rtoken_type'>
+                  {data.children.map((item: any, index: number) => {
+                    let type = '';
+                    let icon = null;
+                    let stakeUrl = '';
+                    let liquidityUrl = '';
+                    if (data.token === 'rETH') {
+                      type = data.token;
+                      icon = reth_icon;
+                      stakeUrl = 'https://app.stafi.io/rETH';
+                      liquidityUrl = 'https://app.uniswap.org/#/add/v2/0x9559aaa82d9649c7a7b220e7c461d2e74c9a3593/ETH';
+                    } else if (data.token === 'rDOT') {
+                      type = data.token;
+                      icon = rdot_icon;
+                      stakeUrl = 'https://app.stafi.io/rFIS';
+                      liquidityUrl = 'https://app.uniswap.org/#/add/v2/ETH/0xc82eb6dea0c93edb8b697b89ad1b13d19469d635';
+                    } else if (data.token === 'rKSM') {
+                      type = data.token;
+                      icon = rksm_icon;
+                      stakeUrl = 'https://app.stafi.io/rATOM';
+                      liquidityUrl = 'https://app.uniswap.org/#/add/v2/ETH/0xd01cb3d113a864763dd3977fe1e725860013b0ed';
+                    } else if (data.token === 'rATOM') {
+                      type = data.token;
+                      icon = ratom_icon;
+                      stakeUrl = 'https://app.stafi.io/rDOT';
+                      liquidityUrl = 'https://app.uniswap.org/#/add/v2/ETH/0x505f5a4ff10985fe9f93f2ae3501da5fe665f08a';
+                    } else if (data.token === 'rMATIC') {
+                      type = data.token;
+                      icon = rmatic_icon;
+                      stakeUrl = 'https://app.stafi.io/rKSM';
+                      liquidityUrl = 'https://app.uniswap.org/#/add/v2/ETH/0x3c3842c4d3037ae121d69ea1e7a0b61413be806c';
+                    } else if (data.token === 'rFIS') {
+                      type = data.token;
+                      icon = rfis_icon;
+                      stakeUrl = 'https://app.stafi.io/rKSM';
+                      liquidityUrl = 'https://app.uniswap.org/#/add/v2/ETH/0x3c3842c4d3037ae121d69ea1e7a0b61413be806c';
+                    }
+                    if (type == '') {
+                      return <></>;
+                    }
+                    return (
+                      <MintTableItem
+                        key={`child ${data.token}${index}`}
+                        tokenType={type}
+                        actData={item}
+                        wrapFiUrl={'https://drop.wrapfi.io'}
+                        liquidityUrl={liquidityUrl}
+                        history={props.history}
+                        stakeUrl={stakeUrl}
+                        pairIcon={index == 0 ? icon : null}
+                        pairValue={index == 0 ? type : null}
+                        poolOn={item.platform}
+                      />
+                    );
+                  })}
+                </div>
+              );
+            })}
+          </div>
+        </Spin>
       </div>
     </Card>
   );
