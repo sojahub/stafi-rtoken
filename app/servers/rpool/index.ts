@@ -59,7 +59,7 @@ export default class Index {
             const claimInfo = await stafiApi.query.rClaim.claimInfos(claimInfoArr);
             if (claimInfo.toJSON()) {
               const claimInfoJson = claimInfo.toJSON();
-              console.log('claimInfo: ', claimInfoJson);
+              // console.log('claimInfo: ', claimInfoJson);
               totalReward += claimInfoJson.total_reward;
 
               let finalBlock = claimInfoJson.mint_block + actJson.locked_blocks;
@@ -82,8 +82,6 @@ export default class Index {
           }
 
           const formatTotalReward = numberUtil.fisAmountToHuman(totalReward);
-          // const formatRewardRate = numberUtil.tokenMintRewardRateToHuman(actJson.reward_rate, Number(tokenSymbol));
-          // const userMintTokenCount = divide(formatTotalReward, formatRewardRate);
           response.myMint =
             Math.round(numberUtil.tokenAmountToHuman(userMint, Number(tokenSymbol)) * 1000000) / 1000000;
           response.myMintRatio =
@@ -95,8 +93,6 @@ export default class Index {
             response.myReward = '--';
           }
 
-          // console.log('formatTotalReward: ', formatTotalReward);
-          // console.log('formatTotalReward 4: ', formatTotalReward.toFixed(4));
           response.fisTotalReward = formatTotalReward.toFixed(4);
           response.fisClaimableReward = numberUtil.fisAmountToHuman(fisClaimableReward).toFixed(4);
           response.fisLockedReward = numberUtil
@@ -158,7 +154,7 @@ export default class Index {
             const claimInfo = await stafiApi.query.rClaim.rEthClaimInfos(claimInfoArr);
             if (claimInfo.toJSON()) {
               const claimInfoJson = claimInfo.toJSON();
-              console.log('claimInfo: ', claimInfoJson);
+              // console.log('claimInfo: ', claimInfoJson);
               totalReward += claimInfoJson.total_reward;
 
               let finalBlock = claimInfoJson.mint_block + actJson.locked_blocks;
@@ -180,9 +176,6 @@ export default class Index {
             }
           }
           const formatTotalReward = numberUtil.fisAmountToHuman(totalReward);
-          // const formatRewardRate = numberUtil.tokenMintRewardRateToHuman(actJson.reward_rate, rSymbol.Eth);
-          // const userMintTokenCount = divide(formatTotalReward, formatRewardRate);
-          // response.myMint = numberUtil.handleFisAmountToFixed(userMintTokenCount);
           response.myMint = Math.round(numberUtil.tokenAmountToHuman(userMint, rSymbol.Eth) * 1000000) / 1000000;
           response.myMintRatio =
             Math.round(((totalReward * 100) / (actJson.total_reward - actJson.left_amount)) * 10) / 10;
