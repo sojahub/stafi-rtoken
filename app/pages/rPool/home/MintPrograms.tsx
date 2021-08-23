@@ -138,30 +138,53 @@ export default function MintPrograms(props: any) {
     });
 
     let list = [...rTokenList];
-    if (sortField && sortWay) {
-      list = list.sort((a: any, b: any) => {
-        if (sortField == 'apy') {
-          let apy_a: number = 0;
-          let apy_b: number = 0;
-          // a[sortField]
-          a.children.forEach((item: any) => {
-            apy_a = apy_a + Number(item.reward_rate ? item.reward_rate : 0);
-          });
-          b.children.forEach((item: any) => {
-            apy_b = apy_b + Number(item.reward_rate ? item.reward_rate : 0);
-          });
-          if (apy_a > apy_b) {
-            return sortWay == 'asc' ? -1 : 1;
-          } else if (apy_a < apy_b) {
-            return sortWay == 'asc' ? 1 : -1;
-          } else {
-            return 0;
-          }
-        } else {
-          return 0;
+    // if (sortField && sortWay) {
+    //   list = list.sort((a: any, b: any) => {
+    //     if (sortField == 'apy') {
+    //       let apy_a: number = 0;
+    //       let apy_b: number = 0;
+    //       // a[sortField]
+    //       a.children.forEach((item: any) => {
+    //         apy_a = apy_a + Number(item.reward_rate ? item.reward_rate : 0);
+    //       });
+    //       b.children.forEach((item: any) => {
+    //         apy_b = apy_b + Number(item.reward_rate ? item.reward_rate : 0);
+    //       });
+    //       if (apy_a > apy_b) {
+    //         return sortWay == 'asc' ? -1 : 1;
+    //       } else if (apy_a < apy_b) {
+    //         return sortWay == 'asc' ? 1 : -1;
+    //       } else {
+    //         return 0;
+    //       }
+    //     } else {
+    //       return 0;
+    //     }
+    //   });
+    // }
+
+    list.sort((x: any, y: any) => {
+      if (x.children.length === 0 || y.children.length === 0) {
+        return 0;
+      }
+      if (x.children[0].nowBlock < x.children[0].end && y.children[0].nowBlock > y.children[0].end) {
+        return -1;
+      } else if (x.children[0].nowBlock < x.children[0].end && y.children[0].nowBlock < y.children[0].end) {
+        if (x.children[0].end !== y.children[0].end) {
+          return x.children[0].end - y.children[0].end;
         }
-      });
-    }
+        let xTotal = 0;
+        x.children.forEach((i: any) => {
+          xTotal += i.total_reward;
+        });
+        let yTotal = 0;
+        y.children.forEach((i: any) => {
+          yTotal += i.total_reward;
+        });
+        return yTotal - xTotal;
+      }
+      return 0;
+    });
 
     setMintDataList(list);
   }, [rDOTActs, rMaticActs, rFISActs, rKSMActs, rATOMActs, rETHActs]);
