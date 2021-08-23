@@ -12,7 +12,6 @@ import NumberUtil from '@util/numberUtil';
 import { message } from 'antd';
 import InputDataDecoder from 'ethereum-input-data-decoder';
 import _m0 from 'protobufjs/minimal';
-import Web3Utils from 'web3-utils';
 import { AppThunk } from '../store';
 import CommonClice from './commonClice';
 import { getAssetBalance } from './ETHClice';
@@ -228,18 +227,15 @@ export const connectMetamask =
 export const handleMaticAccount =
   (address: string): AppThunk =>
   (dispatch, getState) => {
+    if (!address) {
+      return;
+    }
     dispatch(setMaticAccount({ address: address, balance: '--' }));
-    ethereum
-      .request({ method: 'eth_getBalance', params: [address, 'latest'] })
-      .then((result: any) => {
-        //const address = StringUtil.replacePkh(address, 4, 38);
-        const balance = NumberUtil.handleEthAmountToFixed(Web3Utils.fromWei(result, 'ether'));
-        dispatch(setMaticAccount({ address: address, balance: balance }));
-      })
-      .catch((error: any) => {
-        dispatch(setMaticAccount({ address: address, balance: '--' }));
-        message.error(error.message);
-      });
+
+    getAssetBalance(address, maticServer.getTokenAbi(), maticServer.getMaticTokenAddress(), (v: any) => {
+      dispatch(setTransferrableAmountShow(v));
+      dispatch(setMaticAccount({ address: address, balance: v }));
+    });
   };
 
 export const monitoring_Method = (): AppThunk => (dispatch, getState) => {
