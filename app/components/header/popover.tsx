@@ -7,6 +7,8 @@ import './popover.scss';
 import Item from './popoverItem';
 
 type Props = {
+  visible: boolean;
+  onVisibleChange: Function;
   children: any;
   history?: any;
 };
@@ -17,9 +19,7 @@ export default function Index(props: Props) {
     return state.noticeModule.noticeData;
   });
 
-  useEffect(() => {
-
-  }, []);
+  useEffect(() => {}, []);
   const content = (
     <>
       {!data && <Item noData={true} />}
@@ -29,6 +29,7 @@ export default function Index(props: Props) {
             <Item
               key={index}
               data={item}
+              hideNoticePopover={() => props.onVisibleChange(false)}
               onClick={() => {
                 dispatch(setProcess(item, data.datas));
                 const hasGo_DOT = location.pathname.includes('/rDOT');
@@ -57,12 +58,14 @@ export default function Index(props: Props) {
   );
   return (
     <Popover
+      visible={props.visible}
       onVisibleChange={(e) => {
         if (e) {
           dispatch(checkAll_minting(data ? data.datas : []));
           dispatch(check_swap_status());
           dispatch(readNotice({}));
         }
+        props.onVisibleChange(e);
       }}
       placement='bottomLeft'
       overlayClassName='stafi_notice_popover'

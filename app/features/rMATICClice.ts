@@ -326,12 +326,60 @@ export const transfer =
       dispatch(setProcessSlider(true));
       const sendTokens: any = await contract.methods.transfer(selectedPool.address, amount).send();
       if (sendTokens && sendTokens.status) {
-        const blockHash = sendTokens.blockHash;
         const txHash = sendTokens.transactionHash;
+        // const blockHash = sendTokens.blockHash;
 
         //const block = await client.getBlock(sendTokens.height);
         // const txHash=sendTokens.transactionHash;
         // const blockHash=block.id
+
+        let txDetail;
+        while (true) {
+          await sleep(1000);
+          txDetail = await ethereum
+            .request({
+              method: 'eth_getTransactionByHash',
+              params: [txHash],
+            })
+            .catch((err: any) => {
+              message.error(err.message);
+            });
+
+          if (txDetail.blockHash || !txDetail) {
+            break;
+          }
+        }
+
+        const blockHash = txDetail && txDetail.blockHash;
+        if (!blockHash) {
+          message.error('Error! Please try again');
+          dispatch(
+            setProcessSending({
+              brocasting: processStatus.success,
+              packing: processStatus.failure,
+            }),
+          );
+          dispatch(
+            setProcessParameter({
+              sending: {
+                amount: amountparam,
+                address,
+                uuid: notice_uuid,
+              },
+              href: cb ? '/rMATIC/staker/info' : null,
+            }),
+          );
+          dispatch(reloadData());
+          dispatch(
+            add_Matic_stake_Notice(notice_uuid, amountparam, noticeStatus.Error, {
+              process: getState().globalModule.process,
+              processParameter: getState().rMATICModule.processParameter,
+            }),
+          );
+        }
+
+        console.log('tx, block:', txHash, blockHash);
+
         dispatch(
           setProcessSending({
             brocasting: processStatus.success,
@@ -439,6 +487,10 @@ export const transfer =
       }
     }
   };
+
+function sleep(ms: any) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
 
 export const query_rBalances_account = (): AppThunk => async (dispatch, getState) => {
   commonClice.query_rBalances_account(getState().FISModule.fisAccount, rSymbol.Matic, (data: any) => {

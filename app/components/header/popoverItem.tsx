@@ -7,6 +7,7 @@ import React from 'react';
 type Props = {
   data?: any;
   onClick?: Function;
+  hideNoticePopover?: Function;
   noData?: boolean;
 };
 
@@ -55,6 +56,7 @@ export default function Index(props: Props) {
                 viewTxUrl = config.bscScanBep20TxInAddressUrl(address);
               }
               viewTxUrl && window.open(viewTxUrl);
+              props.hideNoticePopover && props.hideNoticePopover();
             }
             if (
               props.data.type == noticeType.Staker &&
@@ -64,6 +66,7 @@ export default function Index(props: Props) {
               const { fisAddress } = props.data.subData;
               const viewTxUrl = config.stafiScanUrl(fisAddress);
               viewTxUrl && window.open(viewTxUrl);
+              props.hideNoticePopover && props.hideNoticePopover();
             }
             if (
               props.data.type == noticeType.Staker &&
@@ -73,6 +76,7 @@ export default function Index(props: Props) {
               const { txHash } = props.data.subData;
               const viewTxUrl = config.stafiScanTxUrl(txHash);
               viewTxUrl && window.open(viewTxUrl);
+              props.hideNoticePopover && props.hideNoticePopover();
             }
             if (
               !(props.data.rSymbol == Symbol.Eth || props.data.rSymbol == Symbol.Fis) &&

@@ -41,6 +41,8 @@ export default function Index(props: Props) {
   const dispatch = useDispatch();
   const [visible, setVisible] = useState(false);
   const [modalType, setModalType] = useState<any>();
+  const [noticePopoverVisible, setNoticePopoverVisible] = useState(false);
+
   const account = useSelector((state: any) => {
     if (location.pathname.includes('/rDOT')) {
       if (state.rDOTModule.dotAccount && state.FISModule.fisAccount) {
@@ -267,7 +269,9 @@ export default function Index(props: Props) {
           />
         )}
       </Modal>
+
       <div></div>
+
       <div className='info_span'>
         {account == null && (Tool.pageType() == rSymbol.Ksm || Tool.pageType() == rSymbol.Dot) && (
           <div
@@ -291,10 +295,11 @@ export default function Index(props: Props) {
             Connect to Polkadotjs
           </div>
         )}
+
         {account && (
           <div className='header_tools'>
             <div className={`header_tool notice ${noticeData && noticeData.showNew && 'new'}`}>
-              <Popover history={props.history}>
+              <Popover history={props.history} visible={noticePopoverVisible} onVisibleChange={setNoticePopoverVisible}>
                 <img src={notice} />
               </Popover>
             </div>

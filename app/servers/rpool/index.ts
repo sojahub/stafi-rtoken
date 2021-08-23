@@ -1,9 +1,10 @@
-import config from '@config/index';
+import config, { getRsymbolByTokenTitle } from '@config/index';
 import { rSymbol } from '@keyring/defaults';
 import StafiServer from '@servers/stafi';
+import { formatDuration } from '@util/dateUtil';
 import numberUtil from '@util/numberUtil';
 import rpc from '@util/rpc';
-import { multiply } from 'mathjs';
+import { divide, max, multiply } from 'mathjs';
 
 const stafiServer = new StafiServer();
 
@@ -11,6 +12,48 @@ export default class Index {
   getRPoolList() {
     const url = config.api() + '/stafi/v1/webapi/rpool/rpoollist';
     return rpc.post(url);
+  }
+
+  async getRTokenMintRewardActs(symbol: rSymbol) {
+    const stafiApi = await stafiServer.createStafiApi();
+    const actLatestCycle = await stafiApi.query.rClaim.actLatestCycle(symbol);
+    const acts = [];
+    if (actLatestCycle == 0) {
+      console.log('empty mint info');
+    } else {
+      const lastHeader = await stafiApi.rpc.chain.getHeader();
+      const nowBlock = lastHeader && lastHeader.toJSON() && lastHeader.toJSON().number;
+      for (let i = 1; i <= actLatestCycle; i++) {
+        let arr = [];
+        arr.push(symbol);
+        arr.push(i);
+        const act = await stafiApi.query.rClaim.acts(arr);
+        if (act.toJSON()) {
+          const actJson = act.toJSON();
+          actJson.nowBlock = nowBlock;
+          let days = divide(actJson.end - actJson.begin, 14400);
+          actJson.durationInDays = Math.round(days * 10) / 10;
+          actJson.remainingTime = formatDuration(max(0, actJson.end - nowBlock) * 6);
+          actJson.endTimeStamp = Date.now() + (actJson.end - nowBlock) * 6000;
+          acts.push(actJson);
+        }
+      }
+      acts.sort((x: any, y: any) => {
+        if (x.nowBlock < x.end && y.nowBlock > y.end) {
+          return -1;
+        }
+        return 0;
+      });
+    }
+    return acts;
+  }
+
+  async getCurrentActiveAct(rTokenTitle: string) {
+    const acts = await this.getRTokenMintRewardActs(getRsymbolByTokenTitle(rTokenTitle));
+    const activeAct = acts.find((item: any) => {
+      return item.nowBlock >= item.begin && item.nowBlock <= item.end - 10;
+    });
+    return activeAct;
   }
 
   async getMintOverview(tokenSymbol: any, cycle: any, fisAddress: string, fisPrice: any) {
@@ -47,7 +90,7 @@ export default class Index {
         let totalReward = 0;
         let fisClaimableReward = 0;
         let fisClaimedReward = 0;
-        let userMint = 0;
+        let userMint = BigInt(0);
         const claimIndexs = [];
         if (userMintsCount.toJSON() > 0) {
           for (let i = 0; i < userMintsCount.toJSON(); i++) {
@@ -77,7 +120,7 @@ export default class Index {
                 fisClaimableReward += shouldClaimAmount;
               }
               fisClaimedReward += claimInfoJson.total_claimed;
-              userMint += parseInt(claimInfoJson.mint_amount, 16);
+              userMint += BigInt(BigInt(claimInfoJson.mint_amount).toString(10));
             }
           }
 

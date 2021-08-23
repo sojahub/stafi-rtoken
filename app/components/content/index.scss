@@ -1,256 +1,258 @@
-
-.stafi_left_context{
-    padding: 36px 30px 30px 30px;
+.stafi_left_context {
+  padding: 36px 30px 30px 30px;
+  width: 100%;
+}
+.stafi_stake_context {
+  .title {
+    font-size: 30px;
+    font-weight: bold;
+  }
+  .warn {
+    color: #fd5d89;
+    font-size: 14px;
+  }
+  .divider {
+    margin-top: 10px;
+    height: 1px;
+    background-color: rgba($color: #474747, $alpha: 0.5);
+  }
+  .input_panel {
     width: 100%;
-}
-.stafi_stake_context{
-    
-    .title{
-        font-size:30px;
-        font-weight: bold;
-    }
-    .warn{
-        color:#FD5D89;
-        font-size: 16px;
-    }
-    .input_panel{
-        width:100%;
-        margin-top:60px;
-    }
-    .pool_panel{
-        margin-top:30px;
-        font-size: 16px;
-   
-    }
-    .money_panel{
-        margin-top:40px; 
-        .money_panel_item{
-            font-size: 16px;
-            position: relative;
-            width: fit-content;
-            >div:last-child{
-                font-size: 30px;
-                font-weight: bold;
-                color:#00F3AB;
-                line-height: 30px;
-            }
-            .money_panel_item_doubt{
-                position: absolute;
-                top:0px;
-                right:0px;
-                top: -15px;
-                right: -15px;
-            }
-            .relay_fee{
-                color:#C4C4C4;
-            }
-        }
-        // >div:last-child{
-        //     margin-top:30px;
-        // }
-        .money_panel_row{
-            display: flex;
-            .add_icon{
-                width:54px;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-            }
-        }
-        >div{
-            margin-top:25px;
-        }
-    }
- 
-    .doubt_overlay{
-        font-size: 10px;
-    }
-    .dot_input_panel{
-        margin-top:28px;
-        .tip{
-            margin-bottom: 10px;
-            font-size: 16px;
-            text-align: right;
-            color:#C4C4C4;
-        }
-        .pool{
-            margin-top:10px;
-            font-size: 16px; 
-            color:#C4C4C4;
-            a{
-                text-decoration: underline;
-            }
-        }
-    }
-    .dot_input_panel.showWarn{
-        margin-top:10px;
-    }
-    .btns{
-        margin-top: 20px;
-        display: flex;
-        justify-content: flex-end;
-        align-items: center;
-        a{
-            margin-right: 18px;
-            font-weight: initial;
-            color:#C1C1C1;
-        }
-        // button{
-        //     padding: 12px 33px;
-        // }
-    }
-}
-.stafi_stake_context_eth{
-    .input_panel{
-        margin-top:60px;
-    
-        .pool{
-            margin-top:30px;
-        }
-    }
-    .money_panel{
-        margin-top:60px;
-    }
-    .btns{
-        margin-top:38px;
-    }
-}
-.stafi_stake_info_context{
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    .item:first-child{
-        border-bottom:1px solid #3B3B3B;
-    }
-    .item{
-        flex:1;
-        .title{
-            padding-top:15px;
-            font-size: 30px;
-            img{
-                margin:0px 10px;
-            }
-        }
-        .content{
-            display: flex;
-            justify-content: space-between;
-            margin-top:20px;
-            font-size: 30px;
-            color:#00F3AB;
-            font-weight: bold;
-            padding-left:65px;
-            .btns{
-                display: flex;
-                align-items: center;
-                button{
-                    margin-left:10px;
-                }
-                .dow_svg{
-                    width: 5px;
-                    margin-left: 5px;
-                    transform: rotate(-90deg);
-                }
-            }
-            
-        }
-        .describe{
-            padding-left:65px;
-            color:#C4C4C4;
-            margin-top:50px;
-        }
-    
-    }
-}
-.stafi_stake_redeem_context{
-    position: relative;
-    .back_icon{
-        position: absolute; 
-        left: 8px;
-        top: 47px;
-        cursor: pointer;
-    }
-    .title{
-        font-size:30px;
-        font-weight: bold;
-    }
-    .subTitle{
-     
-        margin-top:40px;
-        margin-bottom: 10px;
-        display: flex;
-        justify-content: space-between;
-        .label{
-            font-size: 20px;
-        }
-        .balance{
-            font-size: 12px;
-            text-align: right;
-            color:#c4c4c4;
-            margin-top:10px
-        }
-    }
-    .input_panel{
-        .balance{
-            font-size: 12px;
-            text-align: right;
-            color:#c4c4c4;
-            margin:5px 0px;
-            min-height: 18px;
-        }
-    }
-    .btns{
-        margin-top:23px;
-        display: flex;
-        align-items: center;
-        color:#707070;
-        font-size: 12px;
-        button{
-            margin-right: 10px;
-        }
-       
-    }
-    .unbonding{
-        font-size: 12px;
-        margin-bottom: 33px;
-        label{
-            font-size: 30px;
-            font-weight: bold;
-            color:#00F3AB;
-            margin-right: 20px;
-            
-        };
-    }
-    .unbond_btns{
-        margin-top: 110px; 
-        display: flex;
-        justify-content: flex-end;
-    }
+    // margin-top: 60px;
+  }
+  .pool_panel {
+    margin-top: 30px;
+    font-size: 16px;
+  }
+  .money_panel {
+    margin-top: 40px;
+    .money_panel_item {
+      font-size: 14px;
+      line-height: 14px;
+      color: #d5d5d5;
+      position: relative;
+      width: fit-content;
 
-    .fis_unbond_info{
+      > div:last-child {
+        margin-top: 6px;
+        font-size: 30px;
+        font-weight: bold;
+        color: #00f3ab;
+        line-height: 30px;
+      }
+      .money_panel_item_doubt {
+        position: absolute;
+        top: 0px;
+        right: 0px;
+        top: -15px;
+        right: -15px;
+      }
+      .relay_fee {
+        color: #d5d5d5;
+      }
+    }
+    // >div:last-child{
+    //     margin-top:30px;
+    // }
+    .money_panel_row {
+      display: flex;
+      align-items: flex-end;
+      .add_icon {
+        width: 54px;
         display: flex;
-        margin-top:22px;
+        justify-content: center;
         align-items: center;
-        label{
-            color:#c4c4c4;
-            font-size: 12px;
-            margin-left:11px;
-        }
+      }
     }
-    .fis_withdraw_info{
-        margin-top:33px;
+    > div {
+      margin-top: 25px;
     }
-    .fis_withdraw{
-        .value{
-            font-size:30px;
-            color:#00F3AB;
-            font-weight: bold; 
-        }
-        .info{
-            margin-left:20px;
-            font-size: 12px;
-            .withdraw_value{
-                font-weight: bold; 
-            }
-        }
+  }
+
+  .doubt_overlay {
+    font-size: 10px;
+  }
+  .dot_input_panel {
+    // margin-top: 28px;
+    .tip {
+      margin-top: 10px;
+      font-size: 14px;
+      text-align: right;
+      color: #ffffff;
     }
+    .pool {
+      margin-top: 10px;
+      font-size: 14px;
+      color: #d5d5d5;
+      a {
+        text-decoration: underline;
+      }
+    }
+  }
+  .dot_input_panel.showWarn {
+    margin-top: 10px;
+  }
+  .btns {
+    margin-top: 20px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    a {
+      margin-right: 18px;
+      font-weight: initial;
+      color: #c1c1c1;
+    }
+    // button{
+    //     padding: 12px 33px;
+    // }
+  }
+}
+.stafi_stake_context_eth {
+  .input_panel {
+    margin-top: 60px;
+
+    .pool {
+      margin-top: 30px;
+    }
+  }
+  .money_panel {
+    margin-top: 60px;
+  }
+  .btns {
+    margin-top: 38px;
+  }
+}
+.stafi_stake_info_context {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  .item:first-child {
+    border-bottom: 1px solid #3b3b3b;
+  }
+  .item {
+    flex: 1;
+    .title {
+      padding-top: 15px;
+      font-size: 30px;
+      img {
+        margin: 0px 10px;
+      }
+    }
+    .content {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 20px;
+      font-size: 30px;
+      color: #00f3ab;
+      font-weight: bold;
+      padding-left: 65px;
+      .btns {
+        display: flex;
+        align-items: center;
+        button {
+          margin-left: 10px;
+        }
+        .dow_svg {
+          width: 5px;
+          margin-left: 5px;
+          transform: rotate(-90deg);
+        }
+      }
+    }
+    .describe {
+      padding-left: 65px;
+      color: #c4c4c4;
+      margin-top: 50px;
+    }
+  }
+}
+.stafi_stake_redeem_context {
+  position: relative;
+  .back_icon {
+    position: absolute;
+    left: 8px;
+    top: 47px;
+    cursor: pointer;
+  }
+  .title {
+    font-size: 30px;
+    font-weight: bold;
+  }
+  .subTitle {
+    margin-top: 40px;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    .label {
+      font-size: 20px;
+    }
+    .balance {
+      font-size: 12px;
+      text-align: right;
+      color: #c4c4c4;
+      margin-top: 10px;
+    }
+  }
+  .input_panel {
+    .balance {
+      font-size: 12px;
+      text-align: right;
+      color: #c4c4c4;
+      margin: 5px 0px;
+      min-height: 18px;
+    }
+  }
+  .btns {
+    margin-top: 23px;
+    display: flex;
+    align-items: center;
+    color: #707070;
+    font-size: 12px;
+    button {
+      margin-right: 10px;
+    }
+  }
+  .unbonding {
+    font-size: 12px;
+    margin-bottom: 33px;
+    label {
+      font-size: 30px;
+      font-weight: bold;
+      color: #00f3ab;
+      margin-right: 20px;
+    }
+  }
+  .unbond_btns {
+    margin-top: 110px;
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .fis_unbond_info {
+    display: flex;
+    margin-top: 22px;
+    align-items: center;
+    label {
+      color: #c4c4c4;
+      font-size: 12px;
+      margin-left: 11px;
+    }
+  }
+  .fis_withdraw_info {
+    margin-top: 33px;
+  }
+  .fis_withdraw {
+    .value {
+      font-size: 30px;
+      color: #00f3ab;
+      font-weight: bold;
+    }
+    .info {
+      margin-left: 20px;
+      font-size: 12px;
+      .withdraw_value {
+        font-weight: bold;
+      }
+    }
+  }
 }

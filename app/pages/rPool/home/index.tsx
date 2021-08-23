@@ -19,14 +19,14 @@ export default function Inde(props: any) {
         </div>
       </div>
 
-      <div className='how_to_earn'>
+      {/* <div className='how_to_earn'>
         <div
           onClick={() => {
             window.open('https://docs.stafi.io/rproduct/rpool/the-guide-for-rpool');
           }}>
           How to earn
         </div>
-      </div>
+      </div> */}
 
       {index === 0 && <MintPrograms />}
       {index === 1 && <LiquidityPrograms />}

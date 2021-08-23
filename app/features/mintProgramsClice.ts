@@ -3,6 +3,7 @@ import { web3Enable, web3FromSource } from '@polkadot/extension-dapp';
 import { stringToHex, u8aToHex } from '@polkadot/util';
 import { createSlice } from '@reduxjs/toolkit';
 import keyring from '@servers/index';
+import RPoolServer from '@servers/rpool';
 import StafiServer from '@servers/stafi';
 import { stafi_uuid } from '@util/common';
 import { formatDuration } from '@util/dateUtil';
@@ -13,6 +14,7 @@ import { setLoading } from './globalClice';
 import { add_Notice, noticeStatus, noticesubType, noticeType } from './noticeClice';
 
 const stafiServer = new StafiServer();
+const rPoolServer = new RPoolServer();
 
 const rPoolClice = createSlice({
   name: 'mintProgramsModule',
@@ -110,52 +112,23 @@ const getREthMintInfo = (): AppThunk => async (dispatch: any, getState: any) => 
 const getRSymbolMintInfo =
   (symbol: rSymbol): AppThunk =>
   async (dispatch: any, getState: any) => {
-    const stafiApi = await stafiServer.createStafiApi();
-    const actLatestCycle = await stafiApi.query.rClaim.actLatestCycle(symbol);
-    if (actLatestCycle == 0) {
-      console.log('empty mint info');
-    } else {
-      const lastHeader = await stafiApi.rpc.chain.getHeader();
-      const nowBlock = lastHeader && lastHeader.toJSON() && lastHeader.toJSON().number;
-      const acts = [];
-      for (let i = 1; i <= actLatestCycle; i++) {
-        let arr = [];
-        arr.push(symbol);
-        arr.push(i);
-        const act = await stafiApi.query.rClaim.acts(arr);
-        if (act.toJSON()) {
-          const actJson = act.toJSON();
-          actJson.nowBlock = nowBlock;
-          let days = divide(actJson.end - actJson.begin, 14400);
-          actJson.durationInDays = Math.round(days * 10) / 10;
-          actJson.remainingTime = formatDuration(max(0, actJson.end - nowBlock) * 6);
-          actJson.endTimeStamp = Date.now() + (actJson.end - nowBlock) * 6000;
-          acts.push(actJson);
-        }
-      }
-      acts.sort((x: any, y: any) => {
-        if (x.nowBlock < x.end && y.nowBlock > y.end) {
-          return -1;
-        }
-        return 0;
-      });
-      if (symbol === rSymbol.Dot) {
-        dispatch(setRDOTActs(acts));
-      }
-      if (symbol === rSymbol.Matic) {
-        dispatch(setRMATICActs(acts));
-      }
-      if (symbol === rSymbol.Fis) {
-        dispatch(setRFISActs(acts));
-      }
-      if (symbol === rSymbol.Ksm) {
-        dispatch(setRKSMActs(acts));
-      }
-      if (symbol === rSymbol.Atom) {
-        dispatch(setRATOMActs(acts));
-      }
-      dispatch(setLoading(false));
+    const acts = await rPoolServer.getRTokenMintRewardActs(symbol);
+    if (symbol === rSymbol.Dot) {
+      dispatch(setRDOTActs(acts));
     }
+    if (symbol === rSymbol.Matic) {
+      dispatch(setRMATICActs(acts));
+    }
+    if (symbol === rSymbol.Fis) {
+      dispatch(setRFISActs(acts));
+    }
+    if (symbol === rSymbol.Ksm) {
+      dispatch(setRKSMActs(acts));
+    }
+    if (symbol === rSymbol.Atom) {
+      dispatch(setRATOMActs(acts));
+    }
+    dispatch(setLoading(false));
   };
 
 export const claimFisReward =
