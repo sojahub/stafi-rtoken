@@ -51,7 +51,7 @@ export default function MintPrograms(props: any) {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(getMintPrograms());
+    dispatch(getMintPrograms(true));
   }, []);
 
   useInterval(() => {

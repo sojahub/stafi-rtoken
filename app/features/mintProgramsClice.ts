@@ -67,15 +67,19 @@ export const {
   setRATOMActs,
 } = rPoolClice.actions;
 
-export const getMintPrograms = (): AppThunk => async (dispatch: any, getState: any) => {
-  dispatch(setLoading(true));
-  dispatch(getREthMintInfo());
-  dispatch(getRSymbolMintInfo(rSymbol.Dot));
-  dispatch(getRSymbolMintInfo(rSymbol.Matic));
-  dispatch(getRSymbolMintInfo(rSymbol.Fis));
-  dispatch(getRSymbolMintInfo(rSymbol.Atom));
-  dispatch(getRSymbolMintInfo(rSymbol.Ksm));
-};
+export const getMintPrograms =
+  (showLoading?: boolean): AppThunk =>
+  async (dispatch: any, getState: any) => {
+    if (showLoading) {
+      dispatch(setLoading(true));
+    }
+    dispatch(getREthMintInfo());
+    dispatch(getRSymbolMintInfo(rSymbol.Dot));
+    dispatch(getRSymbolMintInfo(rSymbol.Matic));
+    dispatch(getRSymbolMintInfo(rSymbol.Fis));
+    dispatch(getRSymbolMintInfo(rSymbol.Atom));
+    dispatch(getRSymbolMintInfo(rSymbol.Ksm));
+  };
 
 const getREthMintInfo = (): AppThunk => async (dispatch: any, getState: any) => {
   const stafiApi = await stafiServer.createStafiApi();

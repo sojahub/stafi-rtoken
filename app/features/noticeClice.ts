@@ -634,7 +634,7 @@ export const notice_text = (item: any) => {
       item.subData && item.subData.receiveFisAmount
     } FIS.`;
   } else if (item.type == noticeType.Staker && item.subType == noticesubType.Claim) {
-    return `Claim ${item.amount} FIS from the Mint.`;
+    return `Claim ${item.amount} FIS from the Mint Program.`;
   }
   return '';
 };
