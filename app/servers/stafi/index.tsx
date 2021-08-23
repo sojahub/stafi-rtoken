@@ -130,7 +130,7 @@ export default class Index extends SubstrateKeyring {
         rate: 'u128',
       },
       ClaimInfo: {
-        mint_amount: 'u128',
+        mint_amount: 'Balance',
         total_reward: 'Balance',
         total_claimed: 'Balance',
         latest_claimed_block: 'BlockNumber',

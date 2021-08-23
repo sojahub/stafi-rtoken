@@ -34,7 +34,8 @@ export default function Index(props: Props) {
             !(props.data.rSymbol == Symbol.Eth || props.data.rSymbol == Symbol.Fis) && props.data.subType
           }`}
           style={
-            props.data.type == noticeType.Staker && props.data.subType == noticesubType.FeeStation
+            props.data.type == noticeType.Staker &&
+            (props.data.subType == noticesubType.FeeStation || props.data.subType == noticesubType.Claim)
               ? { cursor: 'pointer', textDecoration: 'underline' }
               : {}
           }
@@ -62,6 +63,15 @@ export default function Index(props: Props) {
             ) {
               const { fisAddress } = props.data.subData;
               const viewTxUrl = config.stafiScanUrl(fisAddress);
+              viewTxUrl && window.open(viewTxUrl);
+            }
+            if (
+              props.data.type == noticeType.Staker &&
+              props.data.subType == noticesubType.Claim &&
+              props.data.subData
+            ) {
+              const { txHash } = props.data.subData;
+              const viewTxUrl = config.stafiScanTxUrl(txHash);
               viewTxUrl && window.open(viewTxUrl);
             }
             if (

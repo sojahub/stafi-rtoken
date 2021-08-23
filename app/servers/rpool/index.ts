@@ -3,7 +3,7 @@ import { rSymbol } from '@keyring/defaults';
 import StafiServer from '@servers/stafi';
 import numberUtil from '@util/numberUtil';
 import rpc from '@util/rpc';
-import { divide, multiply } from 'mathjs';
+import { multiply } from 'mathjs';
 
 const stafiServer = new StafiServer();
 
@@ -77,7 +77,7 @@ export default class Index {
                 fisClaimableReward += shouldClaimAmount;
               }
               fisClaimedReward += claimInfoJson.total_claimed;
-              userMint += claimInfoJson.mint_amount;
+              userMint += parseInt(claimInfoJson.mint_amount, 16);
             }
           }
 
@@ -95,8 +95,8 @@ export default class Index {
             response.myReward = '--';
           }
 
-          console.log('formatTotalReward: ', formatTotalReward);
-          console.log('formatTotalReward 4: ', formatTotalReward.toFixed(4));
+          // console.log('formatTotalReward: ', formatTotalReward);
+          // console.log('formatTotalReward 4: ', formatTotalReward.toFixed(4));
           response.fisTotalReward = formatTotalReward.toFixed(4);
           response.fisClaimableReward = numberUtil.fisAmountToHuman(fisClaimableReward).toFixed(4);
           response.fisLockedReward = numberUtil
@@ -147,6 +147,7 @@ export default class Index {
         let totalReward = 0;
         let fisClaimableReward = 0;
         let fisClaimedReward = 0;
+        let userMint = 0;
         const claimIndexs = [];
         if (userMintsCount.toJSON() > 0) {
           for (let i = 0; i < userMintsCount.toJSON(); i++) {
@@ -175,12 +176,14 @@ export default class Index {
                 fisClaimableReward += shouldClaimAmount;
               }
               fisClaimedReward += claimInfoJson.total_claimed;
+              userMint += parseInt(claimInfoJson.mint_amount, 16);
             }
           }
           const formatTotalReward = numberUtil.fisAmountToHuman(totalReward);
-          const formatRewardRate = numberUtil.tokenMintRewardRateToHuman(actJson.reward_rate, rSymbol.Eth);
-          const userMintTokenCount = divide(formatTotalReward, formatRewardRate);
-          response.myMint = numberUtil.handleFisAmountToFixed(userMintTokenCount);
+          // const formatRewardRate = numberUtil.tokenMintRewardRateToHuman(actJson.reward_rate, rSymbol.Eth);
+          // const userMintTokenCount = divide(formatTotalReward, formatRewardRate);
+          // response.myMint = numberUtil.handleFisAmountToFixed(userMintTokenCount);
+          response.myMint = Math.round(numberUtil.tokenAmountToHuman(userMint, rSymbol.Eth) * 1000000) / 1000000;
           response.myMintRatio =
             Math.round(((totalReward * 100) / (actJson.total_reward - actJson.left_amount)) * 10) / 10;
           if (fisPrice && fisPrice !== '--' && !isNaN(fisPrice)) {

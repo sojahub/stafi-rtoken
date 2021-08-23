@@ -92,6 +92,7 @@ const getREthMintInfo = (): AppThunk => async (dispatch: any, getState: any) => 
         let days = divide(actJson.end - actJson.begin, 14400);
         actJson.durationInDays = Math.round(days * 10) / 10;
         actJson.remainingTime = formatDuration(max(0, actJson.end - nowBlock) * 6);
+        actJson.endTimeStamp = Date.now() + (actJson.end - nowBlock) * 6000;
         acts.push(actJson);
       }
     }
@@ -128,6 +129,7 @@ const getRSymbolMintInfo =
           let days = divide(actJson.end - actJson.begin, 14400);
           actJson.durationInDays = Math.round(days * 10) / 10;
           actJson.remainingTime = formatDuration(max(0, actJson.end - nowBlock) * 6);
+          actJson.endTimeStamp = Date.now() + (actJson.end - nowBlock) * 6000;
           acts.push(actJson);
         }
       }
@@ -212,8 +214,9 @@ export const claimFisReward =
                       dispatch(setLoading(false));
                     }
                   } else if (method === 'ExtrinsicSuccess') {
+                    const txHash = tx.hash.toHex();
                     dispatch(setLoading(false));
-                    dispatch(add_claim_Notice(notice_uuid, fisAmount, noticeStatus.Confirmed, {}));
+                    dispatch(add_claim_Notice(notice_uuid, fisAmount, noticeStatus.Confirmed, { txHash: txHash }));
                     message.success('Claim successfully');
                     cb();
                   }
@@ -358,7 +361,7 @@ export const claimREthFisReward =
 const add_claim_Notice =
   (uuid: string, amount: string, status: string, subData?: any): AppThunk =>
   async (dispatch, getState) => {
-    dispatch(add_Notice(uuid, noticeType.Staker, noticesubType.Claim, amount, status, subData));
+    dispatch(add_Notice(uuid, 'FIS', noticeType.Staker, noticesubType.Claim, amount, status, subData));
   };
 
 export default rPoolClice.reducer;

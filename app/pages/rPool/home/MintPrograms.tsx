@@ -9,6 +9,7 @@ import rfis_icon from '@images/r_fis.svg';
 import rksm_icon from '@images/r_ksm.svg';
 import rmatic_icon from '@images/r_matic.svg';
 import numberUtil from '@util/numberUtil';
+import { useInterval } from '@util/utils';
 import { Spin } from 'antd';
 import { RootState } from 'app/store';
 import { divide, multiply } from 'mathjs';
@@ -19,7 +20,7 @@ import MintTableHead from './components/MintTableHead';
 import MintTableItem from './components/MintTableItem';
 import './MintPrograms.scss';
 
-const rTokenList: any = [
+const rTokenList: Array<any> = [
   {
     token: 'rETH',
     children: [],
@@ -53,7 +54,7 @@ export default function MintPrograms(props: any) {
     dispatch(getMintPrograms());
   }, []);
 
-  setInterval(() => {
+  useInterval(() => {
     dispatch(getMintPrograms());
   }, 60000);
 
@@ -80,34 +81,27 @@ export default function MintPrograms(props: any) {
     let total = 0;
     let fisAmount = 0;
     const response = { totalMintedValue: '--', totalFisAmount: '--' };
-    const map: any = {
-      rDOT: rDOTActs,
-      rMATIC: rMaticActs,
-      rFIS: rFISActs,
-      rKSM: rKSMActs,
-      rATOM: rATOMActs,
-      rETH: rETHActs,
-    };
 
-    for (var tokenTitle in map) {
+    mintDataList.forEach((tokenItem: any) => {
       let unitPrice = unitPriceList?.find((item: any) => {
-        return item.symbol === tokenTitle;
+        return item.symbol === tokenItem.token;
       });
-      if (!map[tokenTitle] || map[tokenTitle].length === 0) {
-        continue;
+      if (!unitPrice || !tokenItem.children || tokenItem.children.length === 0) {
+        return true;
       }
-      map[tokenTitle].forEach((item: any) => {
+
+      tokenItem.children.forEach((item: any) => {
         const formatTotalReward = numberUtil.fisAmountToHuman(item.total_reward);
         const formatRewardRate = numberUtil.tokenMintRewardRateToHuman(
           item.reward_rate,
-          getRsymbolByTokenTitle(tokenTitle),
+          getRsymbolByTokenTitle(tokenItem.token),
         );
         if (unitPrice) {
           total += multiply(unitPrice.price, divide(formatTotalReward, formatRewardRate));
         }
         fisAmount += formatTotalReward;
       });
-    }
+    });
 
     if (unitPriceList) {
       response.totalMintedValue = numberUtil.amount_format(total);
@@ -115,7 +109,7 @@ export default function MintPrograms(props: any) {
     response.totalFisAmount = numberUtil.amount_format(fisAmount);
 
     return response;
-  }, [unitPriceList, rDOTActs, rMaticActs, rFISActs, rKSMActs, rATOMActs, rETHActs]);
+  }, [unitPriceList, mintDataList]);
 
   useEffect(() => {
     dispatch(getRtokenPriceList());
@@ -171,6 +165,10 @@ export default function MintPrograms(props: any) {
 
     setMintDataList(list);
   }, [rDOTActs, rMaticActs, rFISActs, rKSMActs, rATOMActs, rETHActs]);
+
+  useInterval(() => {
+    setMintDataList([...mintDataList]);
+  }, 1000);
 
   return (
     <Card className='stafi_rpool_mint'>

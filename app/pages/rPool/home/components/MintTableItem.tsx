@@ -2,6 +2,7 @@ import { getRsymbolByTokenTitle } from '@config/index';
 import stafiIcon from '@images/stafi_green.svg';
 import { rSymbol } from '@keyring/defaults';
 import GhostButton from '@shared/components/button/ghostButton';
+import { formatDuration } from '@util/dateUtil';
 import numberUtil from '@util/numberUtil';
 import { message } from 'antd';
 import React from 'react';
@@ -76,7 +77,9 @@ export default function MintTableItem(props: Props) {
       </div>
 
       <div className='col  col5' style={{ display: 'flex', alignItems: 'center' }}>
-        {actData.nowBlock >= actData.end ? 'End' : `${actData.durationInDays}D(${actData.remainingTime})`}
+        {actData.nowBlock >= actData.end
+          ? 'End'
+          : `${actData.durationInDays}D(${formatDuration(actData.endTimeStamp - Date.now())})`}
       </div>
 
       <div className='col col6' style={{ display: 'flex', alignItems: 'center' }}>

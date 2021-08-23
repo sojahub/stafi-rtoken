@@ -514,6 +514,9 @@ export default {
   stafiScanUrl: (address: any) => {
     return `https://stafi.subscan.io/account/${address}?tab=transfer`;
   },
+  stafiScanTxUrl: (txHash: any) => {
+    return `https://stafi.subscan.io/extrinsic/${txHash}`;
+  },
   bscChainId: () => {
     if (!isdev()) {
       return '0x38';
