@@ -78,11 +78,11 @@ export default function Index(props: Props) {
             </>
           ) : (
             <>
-              {Number(props.totalStakedAmount) <= 0 ? (
-                <>{props.totalStakedAmount} ETH is staked in pool contracts</>
+              {isNaN(props.totalStakedAmount) ? (
+                <>-- ETH is staked in pool contracts</>
               ) : (
                 <>
-                  {props.totalStakedAmount} ETH is staked in{' '}
+                  {numberUtil.amount_format(props.totalStakedAmount)} ETH is staked in{' '}
                   <A
                     onClick={() => {
                       props.history && props.history.push('/rETH/poolStatus');
