@@ -56,8 +56,51 @@ export default class Index {
     return acts;
   }
 
+  async getEthMintRewardActs() {
+    const acts: any = [];
+    const stafiApi = await stafiServer.createStafiApi();
+    const rethActLatestCycle = await stafiApi.query.rClaim.rEthActLatestCycle();
+    if (rethActLatestCycle == 0) {
+      console.log('empty reth mint info');
+    } else {
+      const lastHeader = await stafiApi.rpc.chain.getHeader();
+      const nowBlock = lastHeader && lastHeader.toJSON() && lastHeader.toJSON().number;
+      for (let i = 1; i <= rethActLatestCycle; i++) {
+        try {
+          const act = await stafiApi.query.rClaim.rEthActs(i);
+          if (act.toJSON()) {
+            const actJson = act.toJSON();
+            actJson.nowBlock = nowBlock;
+            let days = divide(actJson.end - actJson.begin, 14400);
+            actJson.durationInDays = Math.round(days * 10) / 10;
+            actJson.remainingTime = formatDuration(max(0, actJson.end - nowBlock) * 6);
+            actJson.endTimeStamp = Date.now() + (actJson.end - nowBlock) * 6000;
+            acts.push(actJson);
+          }
+        } catch (error) {
+          continue;
+        }
+      }
+      acts.sort((x: any, y: any) => {
+        if (x.nowBlock < x.end && y.nowBlock > y.end) {
+          return -1;
+        }
+        return 0;
+      });
+    }
+    return acts;
+  }
+
   async getCurrentActiveAct(rTokenTitle: string) {
     const acts = await this.getRTokenMintRewardActs(getRsymbolByTokenTitle(rTokenTitle));
+    const activeAct = acts.find((item: any) => {
+      return item.nowBlock >= item.begin && item.nowBlock <= item.end - 10;
+    });
+    return activeAct;
+  }
+
+  async getCurrentActiveEthAct() {
+    const acts = await this.getEthMintRewardActs();
     const activeAct = acts.find((item: any) => {
       return item.nowBlock >= item.begin && item.nowBlock <= item.end - 10;
     });
@@ -264,8 +307,7 @@ export default class Index {
             response.myMintRatio = min(
               100,
               Math.round(
-                ((formatTotalReward * 100) /
-                  numberUtil.tokenAmountToHuman(actJson.total_rtoken_amount, rSymbol.Eth)) *
+                ((formatTotalReward * 100) / numberUtil.tokenAmountToHuman(actJson.total_rtoken_amount, rSymbol.Eth)) *
                   10,
               ) / 10,
             );

@@ -10,18 +10,22 @@ import './index.scss';
 export default function Index(props: any) {
   const dispatch = useDispatch();
 
-  const { ethAccount } = useSelector((state: any) => {
+  const { ethAccount, metaMaskNetworkId } = useSelector((state: any) => {
     return {
       ethAccount: state.rETHModule.ethAccount,
+      metaMaskNetworkId: state.globalModule.metaMaskNetworkId,
     };
   });
+
   useEffect(() => {
     ethAccount && ethAccount.address && dispatch(handleEthAccount(ethAccount.address, config.goerliChainId()));
     ethAccount && ethAccount.address && dispatch(reloadData());
-  }, [ethAccount == null]);
+  }, [ethAccount && ethAccount.address, metaMaskNetworkId]);
+
   useEffect(() => {
     dispatch(monitoring_Method());
   }, []);
+
   const { loading } = useSelector((state: any) => {
     return {
       loading: state.globalModule.loading,

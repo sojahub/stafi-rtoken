@@ -98,17 +98,29 @@ export default function Index(props: Props) {
       <div className={`input_panel dot_input_panel ${haswarn && 'showWarn'}`}>
         <div className='pool'>
           {props.type == 'rKSM' &&
-            `${isNaN(props.totalStakedToken) ? '--' : props.totalStakedToken} KSM is staked via rKSM `}
+            `${
+              isNaN(props.totalStakedToken) ? '--' : numberUtil.amount_format(props.totalStakedToken)
+            } KSM is staked via rKSM `}
           {props.type == 'rDOT' &&
-            `${isNaN(props.totalStakedToken) ? '--' : props.totalStakedToken} DOT is staked via rDOT `}
+            `${
+              isNaN(props.totalStakedToken) ? '--' : numberUtil.amount_format(props.totalStakedToken)
+            } DOT is staked via rDOT `}
           {props.type == 'rATOM' &&
-            `${isNaN(props.totalStakedToken) ? '--' : props.totalStakedToken} ATOM is staked via rATOM `}
+            `${
+              isNaN(props.totalStakedToken) ? '--' : numberUtil.amount_format(props.totalStakedToken)
+            } ATOM is staked via rATOM `}
           {props.type == 'rFIS' &&
-            `${isNaN(props.totalStakedToken) ? '--' : props.totalStakedToken} FIS is staked via rFIS `}
+            `${
+              isNaN(props.totalStakedToken) ? '--' : numberUtil.amount_format(props.totalStakedToken)
+            } FIS is staked via rFIS `}
           {props.type == 'rSOL' &&
-            `${isNaN(props.totalStakedToken) ? '--' : props.totalStakedToken} SOL is staked via rSOL `}
+            `${
+              isNaN(props.totalStakedToken) ? '--' : numberUtil.amount_format(props.totalStakedToken)
+            } SOL is staked via rSOL `}
           {props.type == 'rMATIC' &&
-            `${isNaN(props.totalStakedToken) ? '--' : props.totalStakedToken} MATIC is staked via rMATIC `}
+            `${
+              isNaN(props.totalStakedToken) ? '--' : numberUtil.amount_format(props.totalStakedToken)
+            } MATIC is staked via rMATIC `}
           {/* <A>stats</A> */}
         </div>
 
@@ -137,16 +149,17 @@ export default function Index(props: Props) {
 
       <div className='money_panel'>
         <div className='money_panel_item'>
-          <div>You will get {props.type}</div>
+          <div style={{ fontFamily: 'Helvetica-Bold' }}>You will get {props.type}</div>
           <div>{props.willAmount}</div>
         </div>
 
         <div className='money_panel_row'>
           <div className='money_panel_item'>
             <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'flex-end' }}>
-              <div>Staking APR</div>
+              <div style={{ fontFamily: 'Helvetica-Bold' }}>Staking APR</div>
               <div
                 style={{
+                  width: '20px',
                   marginLeft: '3px',
                   transform: 'scale(0.6)',
                   transformOrigin: 'left bottom',
@@ -173,9 +186,10 @@ export default function Index(props: Props) {
 
           <div className='money_panel_item'>
             <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'flex-end' }}>
-              <div>Mint Reward</div>
+              <div style={{ fontFamily: 'Helvetica-Bold' }}>Mint Reward</div>
               <div
                 style={{
+                  width: '20px',
                   marginLeft: '3px',
                   transform: 'scale(0.6)',
                   transformOrigin: 'left bottom',
@@ -188,20 +202,24 @@ export default function Index(props: Props) {
         </div>
 
         {props.type != 'rFIS' && (
-          <div className='money_panel_item'>
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'row',
+              alignItems: 'flex-start',
+              fontSize: '14px',
+              color: '#d5d5d5',
+            }}>
             <div className='relay_fee'>Relay Fee: {props.bondFees} FIS</div>
-            <div></div>
 
-            <div className='money_panel_item_doubt'>
-              <Tooltip
-                overlayClassName='doubt_overlay'
-                placement='topLeft'
-                title={
-                  'Fee charged by the relayers to pay for the cross-chain contract interaction service fee between StaFi chain and designated chain.'
-                }>
-                <img src={doubt} />
-              </Tooltip>
-            </div>
+            <Tooltip
+              overlayClassName='doubt_overlay'
+              placement='topLeft'
+              title={
+                'Fee charged by the relayers to pay for the cross-chain contract interaction service fee between StaFi chain and designated chain.'
+              }>
+              <img src={doubt} style={{ marginLeft: '2px' }} />
+            </Tooltip>
           </div>
         )}
       </div>

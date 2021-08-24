@@ -21,8 +21,7 @@ import {
   processStatus,
   setLoading,
   setProcessSending,
-  setProcessSlider,
-  setProcessType
+  setProcessSlider, setProcessType
 } from './globalClice';
 import { add_Notice, findUuid, noticeStatus, noticesubType, noticeType } from './noticeClice';
 import { setIsloadMonitoring } from './rETHClice';
@@ -374,7 +373,7 @@ export const transfer =
           );
         }
 
-        console.log('tx, block:', txHash, blockHash);
+        // console.log('tx, block:', txHash, blockHash);
 
         dispatch(
           setProcessSending({

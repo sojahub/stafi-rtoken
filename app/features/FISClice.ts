@@ -448,10 +448,20 @@ export const bound =
         const fisPubkey = u8aToHex(keyringInstance.decodeAddress(fisAddress), -1, false);
         const msg = stringToHex(fisPubkey);
         pubkey = address;
-        signature = await ethereum.request({
-          method: 'personal_sign',
-          params: [ethAddress, msg],
-        });
+        signature = await ethereum
+          .request({
+            method: 'personal_sign',
+            params: [ethAddress, msg],
+          })
+          .catch((err: any) => {
+            dispatch(
+              setProcessStaking({
+                brocasting: processStatus.failure,
+              }),
+            );
+            message.error(err.message);
+            throw err;
+          });
         message.info('Signature succeeded, proceeding staking');
       } else if (type == rSymbol.Sol) {
         signature = await solSignature(address, fisAddress);
@@ -597,6 +607,7 @@ export const bound =
         cb && cb('failure');
       } else {
         console.error(e);
+        cb && cb('failure');
       }
     }
   };

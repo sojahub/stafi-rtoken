@@ -31,7 +31,7 @@
       line-height: 14px;
       color: #d5d5d5;
       position: relative;
-      width: fit-content;
+      // width: fit-content;
 
       > div:last-child {
         margin-top: 6px;
@@ -41,11 +41,11 @@
         line-height: 30px;
       }
       .money_panel_item_doubt {
-        position: absolute;
-        top: 0px;
-        right: 0px;
-        top: -15px;
-        right: -15px;
+        // position: absolute;
+        // top: 0px;
+        // right: 0px;
+        // top: -15px;
+        // right: -15px;
       }
       .relay_fee {
         color: #d5d5d5;
@@ -57,7 +57,7 @@
     .money_panel_row {
       display: flex;
       align-items: flex-end;
-      
+
       .add_icon {
         width: 54px;
         display: flex;
@@ -110,14 +110,21 @@
 }
 .stafi_stake_context_eth {
   .input_panel {
-    margin-top: 60px;
+    // margin-top: 60px;
 
     .pool {
-      margin-top: 30px;
+      margin-top: 10px;
     }
   }
+
+  .divider {
+    margin-top: 10px;
+    height: 1px;
+    background-color: rgba($color: #474747, $alpha: 0.5);
+  }
+
   .money_panel {
-    margin-top: 60px;
+    margin-top: 40px;
   }
   .btns {
     margin-top: 38px;

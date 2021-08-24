@@ -6,10 +6,8 @@ import keyring from '@servers/index';
 import RPoolServer from '@servers/rpool';
 import StafiServer from '@servers/stafi';
 import { stafi_uuid } from '@util/common';
-import { formatDuration } from '@util/dateUtil';
 import { message } from 'antd';
 import { delay } from 'lodash';
-import { divide, max } from 'mathjs';
 import { AppThunk } from '../store';
 import { setLoading } from './globalClice';
 import { add_Notice, noticeStatus, noticesubType, noticeType } from './noticeClice';
@@ -79,7 +77,7 @@ export const getMintPrograms =
     if (showLoading) {
       dispatch(setLoading(true));
     }
-    
+
     Promise.all([
       dispatch(getREthMintInfo()),
       dispatch(getRSymbolMintInfo(rSymbol.Matic)),
@@ -103,38 +101,8 @@ export const getMintPrograms =
   };
 
 const getREthMintInfo = (): AppThunk => async (dispatch: any, getState: any) => {
-  const stafiApi = await stafiServer.createStafiApi();
-  const rethActLatestCycle = await stafiApi.query.rClaim.rEthActLatestCycle();
-  if (rethActLatestCycle == 0) {
-    console.log('empty reth mint info');
-  } else {
-    const lastHeader = await stafiApi.rpc.chain.getHeader();
-    const nowBlock = lastHeader && lastHeader.toJSON() && lastHeader.toJSON().number;
-    const acts = [];
-    for (let i = 1; i <= rethActLatestCycle; i++) {
-      try {
-        const act = await stafiApi.query.rClaim.rEthActs(i);
-        if (act.toJSON()) {
-          const actJson = act.toJSON();
-          actJson.nowBlock = nowBlock;
-          let days = divide(actJson.end - actJson.begin, 14400);
-          actJson.durationInDays = Math.round(days * 10) / 10;
-          actJson.remainingTime = formatDuration(max(0, actJson.end - nowBlock) * 6);
-          actJson.endTimeStamp = Date.now() + (actJson.end - nowBlock) * 6000;
-          acts.push(actJson);
-        }
-      } catch (error) {
-        continue;
-      }
-    }
-    acts.sort((x: any, y: any) => {
-      if (x.nowBlock < x.end && y.nowBlock > y.end) {
-        return -1;
-      }
-      return 0;
-    });
-    dispatch(setRETHActs(acts));
-  }
+  const acts = await rPoolServer.getEthMintRewardActs();
+  dispatch(setRETHActs(acts));
 };
 
 const getRSymbolMintInfo =

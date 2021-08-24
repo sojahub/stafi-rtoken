@@ -19,8 +19,7 @@ import {
   processStatus,
   setLoading,
   setProcessSending,
-  setProcessSlider,
-  setProcessType
+  setProcessSlider, setProcessType
 } from './globalClice';
 import { add_Notice, findUuid, noticeStatus, noticesubType, noticeType } from './noticeClice';
 

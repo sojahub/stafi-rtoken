@@ -443,7 +443,7 @@ export default {
     } else if (type == Symbol.Atom) {
       return 22;
     } else if (type == Symbol.Matic) {
-      return 3;
+      return 9;
     } else if (type == Symbol.Fis) {
       return 14;
     } else if (type == Symbol.Sol) {

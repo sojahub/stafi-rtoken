@@ -21,8 +21,7 @@ import {
   processStatus,
   setLoading,
   setProcessSending,
-  setProcessSlider,
-  setProcessType
+  setProcessSlider, setProcessType
 } from './globalClice';
 import { add_Notice, findUuid, noticeStatus, noticesubType, noticeType } from './noticeClice';
 
@@ -293,6 +292,7 @@ export const transfer =
               }
 
               if (r == 'failure') {
+
                 dispatch(add_ATOM_stake_Notice(notice_uuid, amountparam, noticeStatus.Error));
               }
 
