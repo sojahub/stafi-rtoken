@@ -103,6 +103,10 @@
     }
     .table_body {
       min-height: 300px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      align-items: stretch;
     }
     .rtoken_type {
       background-color: #293038;

@@ -95,6 +95,7 @@ export default function Index(props: Props) {
               props.data.type == noticeType.Staker &&
               props.data.subType == noticesubType.Stake
             ) {
+              props.hideNoticePopover && props.hideNoticePopover();
               props.onClick && props.onClick();
             }
           }}>

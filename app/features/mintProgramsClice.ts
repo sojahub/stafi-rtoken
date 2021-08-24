@@ -8,6 +8,7 @@ import StafiServer from '@servers/stafi';
 import { stafi_uuid } from '@util/common';
 import { formatDuration } from '@util/dateUtil';
 import { message } from 'antd';
+import { delay } from 'lodash';
 import { divide, max } from 'mathjs';
 import { AppThunk } from '../store';
 import { setLoading } from './globalClice';
@@ -25,6 +26,7 @@ const rPoolClice = createSlice({
     rFISActs: [],
     rKSMActs: [],
     rATOMActs: [],
+    loadComplete: false,
     totalLiquidity: '--',
     apyAvg: '--',
   },
@@ -53,6 +55,9 @@ const rPoolClice = createSlice({
     setRATOMActs(state, { payload }) {
       state.rATOMActs = payload;
     },
+    setLoadComplete(state, { payload }) {
+      state.loadComplete = payload;
+    },
   },
 });
 
@@ -65,6 +70,7 @@ export const {
   setRETHActs,
   setRKSMActs,
   setRATOMActs,
+  setLoadComplete,
 } = rPoolClice.actions;
 
 export const getMintPrograms =
@@ -73,12 +79,27 @@ export const getMintPrograms =
     if (showLoading) {
       dispatch(setLoading(true));
     }
-    dispatch(getREthMintInfo());
-    dispatch(getRSymbolMintInfo(rSymbol.Dot));
-    dispatch(getRSymbolMintInfo(rSymbol.Matic));
-    dispatch(getRSymbolMintInfo(rSymbol.Fis));
-    dispatch(getRSymbolMintInfo(rSymbol.Atom));
-    dispatch(getRSymbolMintInfo(rSymbol.Ksm));
+    
+    Promise.all([
+      dispatch(getREthMintInfo()),
+      dispatch(getRSymbolMintInfo(rSymbol.Matic)),
+      dispatch(getRSymbolMintInfo(rSymbol.Dot)),
+      dispatch(getRSymbolMintInfo(rSymbol.Fis)),
+      dispatch(getRSymbolMintInfo(rSymbol.Atom)),
+      dispatch(getRSymbolMintInfo(rSymbol.Ksm)),
+    ])
+      .then((values) => {
+        delay(() => {
+          dispatch(setLoadComplete(true));
+        }, 300);
+        dispatch(setLoading(false));
+      })
+      .catch((err) => {
+        delay(() => {
+          dispatch(setLoadComplete(true));
+        }, 300);
+        dispatch(setLoading(false));
+      });
   };
 
 const getREthMintInfo = (): AppThunk => async (dispatch: any, getState: any) => {
@@ -91,15 +112,19 @@ const getREthMintInfo = (): AppThunk => async (dispatch: any, getState: any) => 
     const nowBlock = lastHeader && lastHeader.toJSON() && lastHeader.toJSON().number;
     const acts = [];
     for (let i = 1; i <= rethActLatestCycle; i++) {
-      const act = await stafiApi.query.rClaim.rEthActs(i);
-      if (act.toJSON()) {
-        const actJson = act.toJSON();
-        actJson.nowBlock = nowBlock;
-        let days = divide(actJson.end - actJson.begin, 14400);
-        actJson.durationInDays = Math.round(days * 10) / 10;
-        actJson.remainingTime = formatDuration(max(0, actJson.end - nowBlock) * 6);
-        actJson.endTimeStamp = Date.now() + (actJson.end - nowBlock) * 6000;
-        acts.push(actJson);
+      try {
+        const act = await stafiApi.query.rClaim.rEthActs(i);
+        if (act.toJSON()) {
+          const actJson = act.toJSON();
+          actJson.nowBlock = nowBlock;
+          let days = divide(actJson.end - actJson.begin, 14400);
+          actJson.durationInDays = Math.round(days * 10) / 10;
+          actJson.remainingTime = formatDuration(max(0, actJson.end - nowBlock) * 6);
+          actJson.endTimeStamp = Date.now() + (actJson.end - nowBlock) * 6000;
+          acts.push(actJson);
+        }
+      } catch (error) {
+        continue;
       }
     }
     acts.sort((x: any, y: any) => {
@@ -109,14 +134,15 @@ const getREthMintInfo = (): AppThunk => async (dispatch: any, getState: any) => 
       return 0;
     });
     dispatch(setRETHActs(acts));
-    dispatch(setLoading(false));
   }
 };
 
 const getRSymbolMintInfo =
   (symbol: rSymbol): AppThunk =>
   async (dispatch: any, getState: any) => {
+    console.log('111111', symbol);
     const acts = await rPoolServer.getRTokenMintRewardActs(symbol);
+    console.log('xxxxxxxxxxxxxxx', symbol);
     if (symbol === rSymbol.Dot) {
       dispatch(setRDOTActs(acts));
     }
@@ -132,7 +158,6 @@ const getRSymbolMintInfo =
     if (symbol === rSymbol.Atom) {
       dispatch(setRATOMActs(acts));
     }
-    dispatch(setLoading(false));
   };
 
 export const claimFisReward =

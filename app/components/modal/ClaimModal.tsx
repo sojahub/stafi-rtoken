@@ -48,8 +48,8 @@ export default function ClaimModal(props: Props) {
         backgroundColor: '#23292F',
       }}
       style={{
-        left: '70px',
-        top: '260px',
+        left: '77px',
+        top: '210px',
       }}>
       <Spin spinning={loading} size='large' tip='loading'>
         <div className='claim_reward_body'>

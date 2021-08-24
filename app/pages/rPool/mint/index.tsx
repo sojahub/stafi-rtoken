@@ -1,5 +1,5 @@
 import ClaimModal from '@components/modal/ClaimModal';
-import config, { getSymbolRTitle } from '@config/index';
+import config, { getSymbolRTitle, getSymbolTitle } from '@config/index';
 import { getRtokenPriceList } from '@features/bridgeClice';
 import { queryBalance as fis_queryBalance } from '@features/FISClice';
 import { connectPolkadot_fis } from '@features/globalClice';
@@ -12,7 +12,11 @@ import mintMyRewardIcon from '@images/mint_my_reward.svg';
 import mintRewardTokenIcon from '@images/mint_reward_token.svg';
 import mintValueIcon from '@images/mint_value.svg';
 import rDOT_svg from '@images/rDOT.svg';
+import ratomIcon from '@images/r_atom.svg';
 import rdotIcon from '@images/r_dot.svg';
+import rethIcon from '@images/r_eth.svg';
+import rfisIcon from '@images/r_fis.svg';
+import rksmIcon from '@images/r_ksm.svg';
 import rmaticIcon from '@images/r_matic.svg';
 import stafiWhiteIcon from '@images/stafi_white.svg';
 import { rSymbol } from '@keyring/defaults';
@@ -21,7 +25,7 @@ import Button from '@shared/components/button/connect_button';
 import Modal from '@shared/components/modal/connectModal';
 import numberUtil from '@util/numberUtil';
 import { useInterval } from '@util/utils';
-import { divide, multiply } from 'mathjs';
+import { multiply } from 'mathjs';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useParams } from 'react-router-dom';
@@ -36,6 +40,7 @@ export default function MintOverview() {
   const dispatch = useDispatch();
 
   const [rTokenName, setRTokenName] = useState('');
+  const [tokenName, setTokenName] = useState('');
   const [actData, setActData] = useState<any>();
   const [userMintToken, setUserMintToken] = useState<any>('--');
   const [userMintRatio, setUserMintRatio] = useState<any>('--');
@@ -71,6 +76,7 @@ export default function MintOverview() {
 
   useEffect(() => {
     setRTokenName(getSymbolRTitle(Number(tokenSymbol)));
+    setTokenName(getSymbolTitle(Number(tokenSymbol)));
   }, [tokenSymbol]);
 
   const showContent = useMemo(() => {
@@ -88,9 +94,8 @@ export default function MintOverview() {
         return item.symbol === rTokenName;
       });
       if (unitPrice) {
-        const formatTotalReward = numberUtil.fisAmountToHuman(actData.total_reward);
-        const formatRewardRate = numberUtil.tokenMintRewardRateToHuman(actData.reward_rate, Number(tokenSymbol));
-        res = numberUtil.amount_format(multiply(unitPrice.price, divide(formatTotalReward, formatRewardRate)));
+        const rTokenTotalReward = numberUtil.tokenAmountToHuman(actData.total_rtoken_amount);
+        res = numberUtil.amount_format(multiply(unitPrice.price, rTokenTotalReward));
       }
     }
     return res;
@@ -180,13 +185,17 @@ export default function MintOverview() {
         <div className='content_container'>
           {rTokenName === 'rDOT' && <img src={rdotIcon} className='token_icon' />}
           {rTokenName === 'rMATIC' && <img src={rmaticIcon} className='token_icon' />}
+          {rTokenName === 'rATOM' && <img src={ratomIcon} className='token_icon' />}
+          {rTokenName === 'rFIS' && <img src={rfisIcon} className='token_icon' />}
+          {rTokenName === 'rKSM' && <img src={rksmIcon} className='token_icon' />}
+          {rTokenName === 'rETH' && <img src={rethIcon} className='token_icon' />}
 
           <div className='right_content'>
             <div className='title'>Mint {rTokenName}</div>
 
             <div className='apr_container'>
               <div className='number'>
-                1{rTokenName} :{' '}
+                1{tokenName} :{' '}
                 {actData ? numberUtil.tokenMintRewardRateToHuman(actData.reward_rate, Number(tokenSymbol)) : '--'}
                 FIS
               </div>

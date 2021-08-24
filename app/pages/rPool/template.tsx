@@ -13,7 +13,7 @@ export default function Index(props: any) {
     };
   });
   return (
-    <div className='stafi_layout_full'>
+    <div className='stafi_layout_full' style={{ paddingTop: 0 }}>
       <div className='stafi_container'>
         {/* <Spin spinning={loading} size='large' tip='loading'> */}
         <Content location={props.location} routes={props.route.routes}>

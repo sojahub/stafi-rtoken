@@ -4,7 +4,7 @@ import StafiServer from '@servers/stafi';
 import { formatDuration } from '@util/dateUtil';
 import numberUtil from '@util/numberUtil';
 import rpc from '@util/rpc';
-import { divide, max, multiply } from 'mathjs';
+import { divide, max, min, multiply } from 'mathjs';
 
 const stafiServer = new StafiServer();
 
@@ -27,15 +27,19 @@ export default class Index {
         let arr = [];
         arr.push(symbol);
         arr.push(i);
-        const act = await stafiApi.query.rClaim.acts(arr);
-        if (act.toJSON()) {
-          const actJson = act.toJSON();
-          actJson.nowBlock = nowBlock;
-          let days = divide(actJson.end - actJson.begin, 14400);
-          actJson.durationInDays = Math.round(days * 10) / 10;
-          actJson.remainingTime = formatDuration(max(0, actJson.end - nowBlock) * 6);
-          actJson.endTimeStamp = Date.now() + (actJson.end - nowBlock) * 6000;
-          acts.push(actJson);
+        try {
+          const act = await stafiApi.query.rClaim.acts(arr);
+          if (act.toJSON()) {
+            const actJson = act.toJSON();
+            actJson.nowBlock = nowBlock;
+            let days = divide(actJson.end - actJson.begin, 14400);
+            actJson.durationInDays = Math.round(days * 10) / 10;
+            actJson.remainingTime = formatDuration(max(0, actJson.end - nowBlock) * 6);
+            actJson.endTimeStamp = Date.now() + (actJson.end - nowBlock) * 6000;
+            acts.push(actJson);
+          }
+        } catch (err) {
+          continue;
         }
       }
       acts.sort((x: any, y: any) => {
@@ -103,36 +107,57 @@ export default class Index {
             claimInfoArr.push(Number(tokenSymbol));
             claimInfoArr.push(Number(cycle));
             claimInfoArr.push(i);
-            const claimInfo = await stafiApi.query.rClaim.claimInfos(claimInfoArr);
-            if (claimInfo.toJSON()) {
-              const claimInfoJson = claimInfo.toJSON();
-              // console.log('claimInfo: ', claimInfoJson);
-              totalReward += claimInfoJson.total_reward;
+            try {
+              const claimInfo = await stafiApi.query.rClaim.claimInfos(claimInfoArr);
+              if (claimInfo.toJSON()) {
+                const claimInfoJson = claimInfo.toJSON();
+                // console.log('claimInfo: ', claimInfoJson);
+                totalReward += claimInfoJson.total_reward;
 
-              let finalBlock = claimInfoJson.mint_block + actJson.locked_blocks;
-              const lastHeader = await stafiApi.rpc.chain.getHeader();
-              const nowBlock = lastHeader && lastHeader.toJSON() && lastHeader.toJSON().number;
+                let finalBlock = claimInfoJson.mint_block + actJson.locked_blocks;
+                const lastHeader = await stafiApi.rpc.chain.getHeader();
+                const nowBlock = lastHeader && lastHeader.toJSON() && lastHeader.toJSON().number;
 
-              let shouldClaimAmount = claimInfoJson.total_reward - claimInfoJson.total_claimed;
-              if (nowBlock < finalBlock) {
-                let duBlocks = nowBlock - claimInfoJson.latest_claimed_block;
-                shouldClaimAmount = (claimInfoJson.total_reward * duBlocks) / actJson.locked_blocks;
+                let shouldClaimAmount = claimInfoJson.total_reward - claimInfoJson.total_claimed;
+                if (nowBlock < finalBlock) {
+                  let duBlocks = nowBlock - claimInfoJson.latest_claimed_block;
+                  shouldClaimAmount = (claimInfoJson.total_reward * duBlocks) / actJson.locked_blocks;
+                }
+
+                if (Number(shouldClaimAmount) > Number(0)) {
+                  claimIndexs.push(i);
+                  fisClaimableReward += shouldClaimAmount;
+                }
+                fisClaimedReward += claimInfoJson.total_claimed;
+                userMint += BigInt(BigInt(claimInfoJson.mint_amount).toString(10));
               }
-
-              if (Number(shouldClaimAmount) > Number(0)) {
-                claimIndexs.push(i);
-                fisClaimableReward += shouldClaimAmount;
-              }
-              fisClaimedReward += claimInfoJson.total_claimed;
-              userMint += BigInt(BigInt(claimInfoJson.mint_amount).toString(10));
+            } catch (err) {
+              console.log('get claimInfo error');
+              continue;
             }
           }
 
           const formatTotalReward = numberUtil.fisAmountToHuman(totalReward);
           response.myMint =
             Math.round(numberUtil.tokenAmountToHuman(userMint, Number(tokenSymbol)) * 1000000) / 1000000;
-          response.myMintRatio =
-            Math.round(((totalReward * 100) / (actJson.total_reward - actJson.left_amount)) * 10) / 10;
+
+          if (Number(actJson.total_rtoken_amount) === Number(0)) {
+            if (Number(formatTotalReward) > 0) {
+              response.myMintRatio = 100;
+            } else {
+              response.myMintRatio = 0;
+            }
+          } else {
+            response.myMintRatio = min(
+              100,
+              Math.round(
+                ((formatTotalReward * 100) /
+                  numberUtil.tokenAmountToHuman(actJson.total_rtoken_amount, Number(tokenSymbol))) *
+                  10,
+              ) / 10,
+            );
+          }
+
           if (fisPrice && fisPrice !== '--' && !isNaN(fisPrice)) {
             const mintValue = multiply(formatTotalReward, fisPrice);
             response.myReward = Math.round(mintValue * 1000000) / 1000000;
@@ -194,38 +219,58 @@ export default class Index {
         const claimIndexs = [];
         if (userMintsCount.toJSON() > 0) {
           for (let i = 0; i < userMintsCount.toJSON(); i++) {
-            let claimInfoArr = [];
-            claimInfoArr.push(ethAddress);
-            claimInfoArr.push(Number(cycle));
-            claimInfoArr.push(i);
-            const claimInfo = await stafiApi.query.rClaim.rEthClaimInfos(claimInfoArr);
-            if (claimInfo.toJSON()) {
-              const claimInfoJson = claimInfo.toJSON();
-              // console.log('claimInfo: ', claimInfoJson);
-              totalReward += claimInfoJson.total_reward;
+            try {
+              let claimInfoArr = [];
+              claimInfoArr.push(ethAddress);
+              claimInfoArr.push(Number(cycle));
+              claimInfoArr.push(i);
+              const claimInfo = await stafiApi.query.rClaim.rEthClaimInfos(claimInfoArr);
+              if (claimInfo.toJSON()) {
+                const claimInfoJson = claimInfo.toJSON();
+                // console.log('claimInfo: ', claimInfoJson);
+                totalReward += claimInfoJson.total_reward;
 
-              let finalBlock = claimInfoJson.mint_block + actJson.locked_blocks;
-              const lastHeader = await stafiApi.rpc.chain.getHeader();
-              const nowBlock = lastHeader && lastHeader.toJSON() && lastHeader.toJSON().number;
+                let finalBlock = claimInfoJson.mint_block + actJson.locked_blocks;
+                const lastHeader = await stafiApi.rpc.chain.getHeader();
+                const nowBlock = lastHeader && lastHeader.toJSON() && lastHeader.toJSON().number;
 
-              let shouldClaimAmount = claimInfoJson.total_reward - claimInfoJson.total_claimed;
-              if (nowBlock < finalBlock) {
-                let duBlocks = nowBlock - claimInfoJson.latest_claimed_block;
-                shouldClaimAmount = (claimInfoJson.total_reward * duBlocks) / actJson.locked_blocks;
+                let shouldClaimAmount = claimInfoJson.total_reward - claimInfoJson.total_claimed;
+                if (nowBlock < finalBlock) {
+                  let duBlocks = nowBlock - claimInfoJson.latest_claimed_block;
+                  shouldClaimAmount = (claimInfoJson.total_reward * duBlocks) / actJson.locked_blocks;
+                }
+
+                if (Number(shouldClaimAmount) > Number(0)) {
+                  claimIndexs.push(i);
+                  fisClaimableReward += shouldClaimAmount;
+                }
+                fisClaimedReward += claimInfoJson.total_claimed;
+                userMint += parseInt(claimInfoJson.mint_amount, 16);
               }
-
-              if (Number(shouldClaimAmount) > Number(0)) {
-                claimIndexs.push(i);
-                fisClaimableReward += shouldClaimAmount;
-              }
-              fisClaimedReward += claimInfoJson.total_claimed;
-              userMint += parseInt(claimInfoJson.mint_amount, 16);
+            } catch (error) {
+              continue;
             }
           }
           const formatTotalReward = numberUtil.fisAmountToHuman(totalReward);
           response.myMint = Math.round(numberUtil.tokenAmountToHuman(userMint, rSymbol.Eth) * 1000000) / 1000000;
-          response.myMintRatio =
-            Math.round(((totalReward * 100) / (actJson.total_reward - actJson.left_amount)) * 10) / 10;
+
+          if (Number(actJson.total_rtoken_amount) === Number(0)) {
+            if (Number(formatTotalReward) > 0) {
+              response.myMintRatio = 100;
+            } else {
+              response.myMintRatio = 0;
+            }
+          } else {
+            response.myMintRatio = min(
+              100,
+              Math.round(
+                ((formatTotalReward * 100) /
+                  numberUtil.tokenAmountToHuman(actJson.total_rtoken_amount, rSymbol.Eth)) *
+                  10,
+              ) / 10,
+            );
+          }
+
           if (fisPrice && fisPrice !== '--' && !isNaN(fisPrice)) {
             const mintValue = multiply(formatTotalReward, fisPrice);
             response.myReward = Math.round(mintValue * 1000000) / 1000000;

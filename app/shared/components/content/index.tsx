@@ -27,7 +27,7 @@ export default function Index(props: Props) {
         location.pathname.includes('/rPool')
           ? ''
           : 'stafi_content_notice'
-      } ${location.pathname.includes('/rPool') ? 'stafi_content_large' : ''} ${props.className}`}>
+      }  ${props.className}`}>
       {props.children}
     </div>
   );

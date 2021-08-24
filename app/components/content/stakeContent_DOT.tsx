@@ -59,12 +59,12 @@ export default function Index(props: Props) {
     return (
       Math.round(
         multiply(
-          Number(props.willAmount),
+          Number(props.amount),
           numberUtil.tokenMintRewardRateToHuman(mintRewardAct?.reward_rate, getRsymbolByTokenTitle(props.type)),
         ) * 1000000,
       ) / 1000000
     );
-  }, [props.willAmount, mintRewardAct]);
+  }, [props.amount, mintRewardAct]);
 
   const getIcon = () => {
     if (props.type == 'rKSM') {
