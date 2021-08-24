@@ -142,7 +142,7 @@ export default class Index {
             Math.round(numberUtil.tokenAmountToHuman(userMint, Number(tokenSymbol)) * 1000000) / 1000000;
 
           if (Number(actJson.total_rtoken_amount) === Number(0)) {
-            if (Number(formatTotalReward) > 0) {
+            if (Number(response.myMint) > 0) {
               response.myMintRatio = 100;
             } else {
               response.myMintRatio = 0;
@@ -151,7 +151,7 @@ export default class Index {
             response.myMintRatio = min(
               100,
               Math.round(
-                ((formatTotalReward * 100) /
+                ((response.myMint * 100) /
                   numberUtil.tokenAmountToHuman(actJson.total_rtoken_amount, Number(tokenSymbol))) *
                   10,
               ) / 10,

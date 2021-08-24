@@ -53,7 +53,7 @@ export default function Index(props: Props) {
   };
 
   const fisRewardAmount = useMemo(() => {
-    if (!mintRewardAct) {
+    if (!mintRewardAct || !props.amount) {
       return 0;
     }
     return (

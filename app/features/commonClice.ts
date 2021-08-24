@@ -157,7 +157,7 @@ export default class CommonClice {
   }
   async getTotalUnbonding(fisAddress: string, rSymbol: any, cb?: Function) {
     // let fisAddress = getState().FISModule.fisAccount.address;
-    let totalUnbonding: any = 0;
+    let totalUnbonding: any = BigInt(0);
     const stafiApi = await stafiServer.createStafiApi();
     const eraResult = await stafiApi.query.rTokenLedger.chainEras(rSymbol);
     let currentEra = eraResult.toJSON();
@@ -167,7 +167,7 @@ export default class CommonClice {
       if (accountUnbonds && accountUnbonds.length > 0) {
         accountUnbonds.forEach((accountUnbond: any) => {
           if (Number(accountUnbond.unlock_era) > Number(currentEra)) {
-            totalUnbonding = totalUnbonding + accountUnbond.value;
+            totalUnbonding += BigInt(BigInt(accountUnbond.value).toString(10));
           }
         });
 
