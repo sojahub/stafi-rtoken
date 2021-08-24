@@ -94,7 +94,7 @@ export default function MintOverview() {
         return item.symbol === rTokenName;
       });
       if (unitPrice) {
-        const rTokenTotalReward = numberUtil.tokenAmountToHuman(actData.total_rtoken_amount);
+        const rTokenTotalReward = numberUtil.tokenAmountToHuman(actData.total_rtoken_amount, Number(tokenSymbol));
         res = numberUtil.amount_format(multiply(unitPrice.price, rTokenTotalReward));
       }
     }

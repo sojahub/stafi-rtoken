@@ -140,9 +140,7 @@ const getREthMintInfo = (): AppThunk => async (dispatch: any, getState: any) => 
 const getRSymbolMintInfo =
   (symbol: rSymbol): AppThunk =>
   async (dispatch: any, getState: any) => {
-    console.log('111111', symbol);
     const acts = await rPoolServer.getRTokenMintRewardActs(symbol);
-    console.log('xxxxxxxxxxxxxxx', symbol);
     if (symbol === rSymbol.Dot) {
       dispatch(setRDOTActs(acts));
     }
