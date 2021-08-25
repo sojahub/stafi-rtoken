@@ -5,7 +5,6 @@ import AtomServer from '@servers/atom/index';
 import keyring from '@servers/index';
 import PolkadotServer from '@servers/polkadot/index';
 import SolServer from '@servers/sol/index';
-import { message } from 'antd';
 import { AppThunk } from '../store';
 import { createSubstrate as fisCreateSubstrate, reloadData as fisReloadData } from './FISClice';
 import { createSubstrate as atomCreateSubstrate, reloadData as atomReloadData } from './rATOMClice';
@@ -194,7 +193,7 @@ export const connectAtomjs =
       dispatch(clice(Symbol.Atom).createSubstrate(account));
       cb && cb();
     } catch (e) {
-      message.error('Please create an account');
+      // message.error('Please create an account');
     }
   };
 export const connectSoljs =
@@ -203,7 +202,7 @@ export const connectSoljs =
     try {
       solServer.connectSolJs();
     } catch (e) {
-      message.error('Please create an account');
+      // message.error('Please create an account');
     }
   };
 export const reloadData =

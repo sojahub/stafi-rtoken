@@ -746,7 +746,7 @@ export const getBlock =
             });
 
             if (!poolData) {
-              message.error('The destination address in the transaction does not match the pool address');
+              // message.error('The destination address in the transaction does not match the pool address');
               return;
             }
 
