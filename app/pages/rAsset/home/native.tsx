@@ -294,7 +294,7 @@ export default function Index(props: any) {
           <CountAmount totalValue={totalPrice} />{' '}
         </>
       ) : (
-        <div className='rAsset_content'>
+        <div className='rAsset_content' style={{ flexDirection: 'column' }}>
           <Button
             icon={rDOT_svg}
             onClick={() => {
@@ -303,6 +303,20 @@ export default function Index(props: any) {
             }}>
             Connect to Polkadotjs extension
           </Button>
+
+          <div
+            style={{
+              color: '#b0b0b0',
+              fontSize: '10px',
+              lineHeight: '14px',
+              marginTop: '10px',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+            }}>
+            <div>PolkadotJS extention DOES NOT support Ledger. </div>
+            <div>DO NOT use ledger when you are signing</div>
+          </div>
         </div>
       )}
 
