@@ -739,6 +739,9 @@ export const onProceed =
 export const getBlock =
   (blockHash: string, txHash: string, uuid?: string, cb?: Function): AppThunk =>
   async (dispatch, getState) => {
+    if (!getState().rDOTModule.dotAccount) {
+      return;
+    }
     try {
       const api = await polkadotServer.createPolkadotApi();
       const address = getState().rDOTModule.dotAccount.address;
