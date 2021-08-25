@@ -847,7 +847,7 @@ export const getBlock =
         message.error('No results were found');
       }
     } catch (e) {
-      message.error(e.message);
+      // message.error(e.message);
     }
   };
 
