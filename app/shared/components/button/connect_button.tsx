@@ -14,7 +14,7 @@ export default function Index(props: Props) {
     <Button
       disabled={props.disabled}
       className='stafi_connect_button'
-      style={{ width: props.width ? props.width : '' }}
+      style={{ width: props.width }}
       onClick={() => {
         props.onClick && props.onClick();
       }}>

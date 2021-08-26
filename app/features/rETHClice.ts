@@ -584,9 +584,25 @@ export const swapEthForFis =
         });
 
       if (!txHash) {
+        message.error('send transaction failed');
         dispatch(setSwapLoadingStatus(0));
         return;
       }
+
+      dispatch(
+        add_ETH_Staker_feeStation_Notice(notice_uuid, amountparam, noticeStatus.Pending, {
+          receiveFisAmount: receiveFisAmountParam,
+          fisAddress: getState().FISModule.fisAccount && getState().FISModule.fisAccount.address,
+          symbol: 'ETH',
+          txHash: txHash,
+          signature,
+          pubKey: address,
+          inAmount: amount.toString(),
+          minOutAmount: minOutFisAmount.toString(),
+          stafiAddress,
+          poolAddress,
+        }),
+      );
 
       let txDetail;
       while (true) {
@@ -620,6 +636,12 @@ export const swapEthForFis =
           symbol: 'ETH',
           txHash: txHash,
           blockHash: blockHash,
+          signature,
+          pubKey: address,
+          inAmount: amount.toString(),
+          minOutAmount: minOutFisAmount.toString(),
+          stafiAddress,
+          poolAddress,
         }),
       );
 

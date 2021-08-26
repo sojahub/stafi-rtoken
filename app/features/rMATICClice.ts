@@ -689,6 +689,10 @@ export const getBlock =
       }
 
       let amount = 0;
+    // if (!poolData) {
+    //   // message.error("The destination address in the transaction does not match the pool address");
+    //   return;
+    // }
 
       const decoder = new InputDataDecoder(maticServer.getTokenAbi());
       const result2 = decoder.decodeData(result.input);

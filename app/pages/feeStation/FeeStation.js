@@ -305,7 +305,9 @@ export default function FeeStation() {
       if (!selectedToken || selectedToken.balance === '--' || tokenAmount > selectedToken.balance) {
         setTokenAmount('');
         setTokenAmount('');
-        message.error('The amount of input exceeds your transferrable balance');
+        if (selectedToken && selectedToken.balance !== '--') {
+          message.error('The amount of input exceeds your transferrable balance');
+        }
         return;
       }
 
@@ -326,7 +328,14 @@ export default function FeeStation() {
         ),
       );
     }
-  }, [inputFromReceive, receiveFisAmount, selectedToken, currentPoolInfo, slippageTolerance, customSlippageTolerance]);
+  }, [
+    inputFromReceive,
+    receiveFisAmount,
+    selectedToken && selectedToken.balance,
+    currentPoolInfo && currentPoolInfo.swapRate,
+    slippageTolerance,
+    customSlippageTolerance,
+  ]);
 
   useEffect(() => {
     if (receiveFisAmount && !isNaN(receiveFisAmount) && !isNaN(swapMinLimit) && !isNaN(swapMaxLimit)) {
@@ -456,7 +465,7 @@ export default function FeeStation() {
         return false;
       }
     }
-    if (!currentPoolInfo) {
+    if (!currentPoolInfo || !currentPoolInfo.poolAddress) {
       message.error('Unable to swap, system is waiting for matching pool');
       return false;
     }

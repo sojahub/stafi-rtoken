@@ -66,7 +66,7 @@ export const uploadSwapInfo =
       message.error('Failed to verify signature.');
     } else if (res.status !== '80000') {
       dispatch(setSwapLoadingStatus(0));
-      message.error('Something is wrong, please try again later.');
+      message.error(res.message);
     }
   };
 

@@ -464,6 +464,12 @@ export const swapDotForFis =
           symbol: 'DOT',
           txHash: tx,
           blockHash: asInBlock,
+          stafiAddress,
+          poolAddress,
+          signature,
+          pubKey,
+          inAmount: amount.toString(),
+          minOutAmount: minOutFisAmount.toString(),
         };
 
         if (result.status.isInBlock) {
@@ -739,6 +745,9 @@ export const onProceed =
 export const getBlock =
   (blockHash: string, txHash: string, uuid?: string, cb?: Function): AppThunk =>
   async (dispatch, getState) => {
+    if (!getState().rDOTModule.dotAccount) {
+      return;
+    }
     try {
       const api = await polkadotServer.createPolkadotApi();
       const address = getState().rDOTModule.dotAccount.address;
@@ -847,7 +856,7 @@ export const getBlock =
         message.error('No results were found');
       }
     } catch (e) {
-      message.error(e.message);
+      // message.error(e.message);
     }
   };
 

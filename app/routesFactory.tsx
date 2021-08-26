@@ -22,7 +22,6 @@ import RATOMStakerRedeem from './pages/rATOM/staker/redeem';
 import RATOMStakerReward from './pages/rATOM/staker/reward';
 import RATOMHomeTemplate from './pages/rATOM/template';
 import RATOMValidator from './pages/rATOM/validator';
-import RDEXHome from './pages/rDEX/home';
 import RDOTHome from './pages/rDOT/home';
 import RDOTSeach from './pages/rDOT/search';
 import RDOTType from './pages/rDOT/selectType';
@@ -74,18 +73,6 @@ import RKSMStakerRedeem from './pages/rKSM/staker/redeem';
 import RKSMStakerReward from './pages/rKSM/staker/reward';
 import RKSMHomeTemplate from './pages/rKSM/template';
 import RKSMValidator from './pages/rKSM/validator';
-import RMaticHome from './pages/rMATIC/home';
-import RMaticSeach from './pages/rMATIC/search';
-import RMaticType from './pages/rMATIC/selectType';
-import RMaticWallet from './pages/rMATIC/selectWallet';
-import RMaticWalletFIS from './pages/rMATIC/selectWallet_rFIS';
-import RMaticStaker from './pages/rMATIC/staker';
-import RMaticStakerIndex from './pages/rMATIC/staker/home';
-import RMaticStakerInfo from './pages/rMATIC/staker/info';
-import RMaticStakerRedeem from './pages/rMATIC/staker/redeem';
-import RMaticStakerReward from './pages/rMATIC/staker/reward';
-import RMaticHomeTemplate from './pages/rMATIC/template';
-import RMaticValidator from './pages/rMATIC/validator';
 import RPoolHome from './pages/rPool/home';
 import MintOverview from './pages/rPool/mint';
 import RPoolStaker from './pages/rPool/staker';
@@ -95,17 +82,6 @@ import RPoolStakerStatus from './pages/rPool/staker/status';
 import RPoolStakerStatusNativeErc20 from './pages/rPool/staker/status/erc20';
 import RPoolStakerStatusNative from './pages/rPool/staker/status/native';
 import RPoolHomeTemplate from './pages/rPool/template';
-import RSOLHome from './pages/rSOL/home';
-import RSOLSeach from './pages/rSOL/search';
-import RSOLType from './pages/rSOL/selectType';
-import RSOLWallet from './pages/rSOL/selectWallet';
-import RSOLWalletFIS from './pages/rSOL/selectWallet_rFIS';
-import RSOLStaker from './pages/rSOL/staker';
-import RSOLStakerIndex from './pages/rSOL/staker/home';
-import RSOLStakerInfo from './pages/rSOL/staker/info';
-import RSOLStakerRedeem from './pages/rSOL/staker/redeem';
-import RSOLHomeTemplate from './pages/rSOL/template';
-import RSOLValidator from './pages/rSOL/validator';
 import HomeTemplate from './pages/template/homeTemplate';
 
 const routesFactory = (role?: any) => {
@@ -542,23 +518,23 @@ const routesFactory = (role?: any) => {
             },
           ],
         },
-        {
-          id: 'rDEX_home',
-          path: '/rDEX',
-          type: 'rDEX',
-          component: RDEXHome,
-          routes: [
-            {
-              id: 'rDEX_home',
-              path: '/rDEX/home',
-              component: RDEXHome,
-            },
-            {
-              path: '*',
-              component: () => <Redirect to='/rDEX/home' />,
-            },
-          ],
-        },
+        // {
+        //   id: 'rDEX_home',
+        //   path: '/rDEX',
+        //   type: 'rDEX',
+        //   component: RDEXHome,
+        //   routes: [
+        //     {
+        //       id: 'rDEX_home',
+        //       path: '/rDEX/home',
+        //       component: RDEXHome,
+        //     },
+        //     {
+        //       path: '*',
+        //       component: () => <Redirect to='/rDEX/home' />,
+        //     },
+        //   ],
+        // },
         {
           id: 'fee_station',
           path: '/feeStation',
@@ -576,91 +552,91 @@ const routesFactory = (role?: any) => {
             },
           ],
         },
-        {
-          id: 'RSOL_home',
-          path: '/rSOL',
-          type: 'rSOL',
-          rSymbol: rSymbol.Sol,
-          component: RSOLHomeTemplate,
-          routes: [
-            {
-              id: 'RSOL_home',
-              path: '/rSOL/home',
-              rSymbol: rSymbol.Sol,
-              component: RSOLHome,
-            },
-            {
-              id: 'RSOL_wallet',
-              path: '/rSOL/wallet',
-              rSymbol: rSymbol.Sol,
-              component: RSOLWallet,
-            },
-            {
-              id: 'RSOL_wallet',
-              path: '/rSOL/fiswallet',
-              rSymbol: rSymbol.Sol,
-              component: RSOLWalletFIS,
-            },
-            {
-              id: 'RSOL_staker',
-              type: 'Staker',
-              path: '/rSOL/staker',
-              rSymbol: rSymbol.Sol,
-              component: authorizedRoute(Symbol.Sol)(RSOLStaker),
-              routes: [
-                {
-                  id: 'RSOL_staker_index',
-                  path: '/rSOL/staker/index',
-                  type: 'Staker',
-                  rSymbol: rSymbol.Sol,
-                  component: RSOLStakerIndex,
-                },
-                {
-                  id: 'RSOL_staker_index_info',
-                  path: '/rSOL/staker/info',
-                  type: '-Status',
-                  rSymbol: rSymbol.Sol,
-                  component: RSOLStakerInfo,
-                },
-                ,
-                {
-                  id: 'RSOL_staker_index_redeem',
-                  path: '/rSOL/staker/redeem',
-                  type: 'Staker',
-                  rSymbol: rSymbol.Sol,
-                  component: RSOLStakerRedeem,
-                },
-                {
-                  path: '*',
-                  component: () => <Redirect to='/rSOL/staker/index' />,
-                },
-              ],
-            },
-            {
-              id: 'RSOL_validator',
-              type: 'Validator',
-              path: '/rSOL/validator',
-              rSymbol: rSymbol.Sol,
-              component: authorizedRoute(Symbol.Sol)(RSOLValidator),
-            },
-            {
-              id: 'RSOL_search',
-              path: '/rSOL/search',
-              rSymbol: rSymbol.Sol,
-              component: authorizedRoute(Symbol.Sol)(RSOLSeach),
-            },
-            {
-              id: 'RSOL_type',
-              path: '/rSOL/type',
-              rSymbol: rSymbol.Sol,
-              component: authorizedRoute(Symbol.Sol)(RSOLType),
-            },
-            {
-              path: '*',
-              component: () => <Redirect to='/rSOL/home' />,
-            },
-          ],
-        },
+        // {
+        //   id: 'RSOL_home',
+        //   path: '/rSOL',
+        //   type: 'rSOL',
+        //   rSymbol: rSymbol.Sol,
+        //   component: RSOLHomeTemplate,
+        //   routes: [
+        //     {
+        //       id: 'RSOL_home',
+        //       path: '/rSOL/home',
+        //       rSymbol: rSymbol.Sol,
+        //       component: RSOLHome,
+        //     },
+        //     {
+        //       id: 'RSOL_wallet',
+        //       path: '/rSOL/wallet',
+        //       rSymbol: rSymbol.Sol,
+        //       component: RSOLWallet,
+        //     },
+        //     {
+        //       id: 'RSOL_wallet',
+        //       path: '/rSOL/fiswallet',
+        //       rSymbol: rSymbol.Sol,
+        //       component: RSOLWalletFIS,
+        //     },
+        //     {
+        //       id: 'RSOL_staker',
+        //       type: 'Staker',
+        //       path: '/rSOL/staker',
+        //       rSymbol: rSymbol.Sol,
+        //       component: authorizedRoute(Symbol.Sol)(RSOLStaker),
+        //       routes: [
+        //         {
+        //           id: 'RSOL_staker_index',
+        //           path: '/rSOL/staker/index',
+        //           type: 'Staker',
+        //           rSymbol: rSymbol.Sol,
+        //           component: RSOLStakerIndex,
+        //         },
+        //         {
+        //           id: 'RSOL_staker_index_info',
+        //           path: '/rSOL/staker/info',
+        //           type: '-Status',
+        //           rSymbol: rSymbol.Sol,
+        //           component: RSOLStakerInfo,
+        //         },
+        //         ,
+        //         {
+        //           id: 'RSOL_staker_index_redeem',
+        //           path: '/rSOL/staker/redeem',
+        //           type: 'Staker',
+        //           rSymbol: rSymbol.Sol,
+        //           component: RSOLStakerRedeem,
+        //         },
+        //         {
+        //           path: '*',
+        //           component: () => <Redirect to='/rSOL/staker/index' />,
+        //         },
+        //       ],
+        //     },
+        //     {
+        //       id: 'RSOL_validator',
+        //       type: 'Validator',
+        //       path: '/rSOL/validator',
+        //       rSymbol: rSymbol.Sol,
+        //       component: authorizedRoute(Symbol.Sol)(RSOLValidator),
+        //     },
+        //     {
+        //       id: 'RSOL_search',
+        //       path: '/rSOL/search',
+        //       rSymbol: rSymbol.Sol,
+        //       component: authorizedRoute(Symbol.Sol)(RSOLSeach),
+        //     },
+        //     {
+        //       id: 'RSOL_type',
+        //       path: '/rSOL/type',
+        //       rSymbol: rSymbol.Sol,
+        //       component: authorizedRoute(Symbol.Sol)(RSOLType),
+        //     },
+        //     {
+        //       path: '*',
+        //       component: () => <Redirect to='/rSOL/home' />,
+        //     },
+        //   ],
+        // },
         {
           id: 'RPool_index',
           path: '/rPool',
@@ -733,97 +709,97 @@ const routesFactory = (role?: any) => {
             },
           ],
         },
-        {
-          id: 'RMATIC_index',
-          path: '/rMATIC',
-          type: 'rMATIC',
-          rSymbol: rSymbol.Matic,
-          component: RMaticHomeTemplate,
-          routes: [
-            {
-              id: 'RMATIC_home',
-              path: '/rMATIC/home',
-              rSymbol: rSymbol.Matic,
-              component: RMaticHome,
-            },
-            {
-              id: 'RMATIC_wallet',
-              path: '/rMATIC/wallet',
-              rSymbol: rSymbol.Matic,
-              component: RMaticWallet,
-            },
-            {
-              id: 'RMatic_wallet',
-              path: '/rMATIC/fiswallet',
-              rSymbol: rSymbol.Matic,
-              component: RMaticWalletFIS,
-            },
-            {
-              id: 'RMATIC_staker',
-              type: 'Staker',
-              path: '/rMATIC/staker',
-              rSymbol: rSymbol.Matic,
-              component: authorizedRoute(Symbol.Matic)(RMaticStaker),
-              routes: [
-                {
-                  id: 'RMATIC_staker_index',
-                  path: '/rMATIC/staker/index',
-                  type: 'Staker',
-                  rSymbol: rSymbol.Matic,
-                  component: RMaticStakerIndex,
-                },
-                {
-                  id: 'RMATIC_staker_index_info',
-                  path: '/rMATIC/staker/info',
-                  type: '-Status',
-                  rSymbol: rSymbol.Matic,
-                  component: RMaticStakerInfo,
-                },
-                {
-                  id: 'RMATIC_reward_index',
-                  path: '/rMATIC/staker/reward',
-                  type: 'Staker',
-                  rSymbol: rSymbol.Matic,
-                  component: RMaticStakerReward,
-                },
-                {
-                  id: 'RMATIC_staker_index_redeem',
-                  path: '/rMATIC/staker/redeem',
-                  type: 'Staker',
-                  rSymbol: rSymbol.Matic,
-                  component: RMaticStakerRedeem,
-                },
-                {
-                  path: '*',
-                  component: () => <Redirect to='/rMATIC/staker/index' />,
-                },
-              ],
-            },
-            {
-              id: 'RMATIC_validator',
-              type: 'Validator',
-              path: '/rMATIC/validator',
-              rSymbol: rSymbol.Matic,
-              component: authorizedRoute(Symbol.Matic)(RMaticValidator),
-            },
-            {
-              id: 'RMATIC_search',
-              path: '/rMATIC/search',
-              rSymbol: rSymbol.Matic,
-              component: authorizedRoute(Symbol.Matic)(RMaticSeach),
-            },
-            {
-              id: 'RMATIC_type',
-              path: '/rMATIC/type',
-              rSymbol: rSymbol.Matic,
-              component: authorizedRoute(Symbol.Matic)(RMaticType),
-            },
-            {
-              path: '*',
-              component: () => <Redirect to='/rMATIC/home' />,
-            },
-          ],
-        },
+        // {
+        //   id: 'RMATIC_index',
+        //   path: '/rMATIC',
+        //   type: 'rMATIC',
+        //   rSymbol: rSymbol.Matic,
+        //   component: RMaticHomeTemplate,
+        //   routes: [
+        //     {
+        //       id: 'RMATIC_home',
+        //       path: '/rMATIC/home',
+        //       rSymbol: rSymbol.Matic,
+        //       component: RMaticHome,
+        //     },
+        //     {
+        //       id: 'RMATIC_wallet',
+        //       path: '/rMATIC/wallet',
+        //       rSymbol: rSymbol.Matic,
+        //       component: RMaticWallet,
+        //     },
+        //     {
+        //       id: 'RMatic_wallet',
+        //       path: '/rMATIC/fiswallet',
+        //       rSymbol: rSymbol.Matic,
+        //       component: RMaticWalletFIS,
+        //     },
+        //     {
+        //       id: 'RMATIC_staker',
+        //       type: 'Staker',
+        //       path: '/rMATIC/staker',
+        //       rSymbol: rSymbol.Matic,
+        //       component: authorizedRoute(Symbol.Matic)(RMaticStaker),
+        //       routes: [
+        //         {
+        //           id: 'RMATIC_staker_index',
+        //           path: '/rMATIC/staker/index',
+        //           type: 'Staker',
+        //           rSymbol: rSymbol.Matic,
+        //           component: RMaticStakerIndex,
+        //         },
+        //         {
+        //           id: 'RMATIC_staker_index_info',
+        //           path: '/rMATIC/staker/info',
+        //           type: '-Status',
+        //           rSymbol: rSymbol.Matic,
+        //           component: RMaticStakerInfo,
+        //         },
+        //         {
+        //           id: 'RMATIC_reward_index',
+        //           path: '/rMATIC/staker/reward',
+        //           type: 'Staker',
+        //           rSymbol: rSymbol.Matic,
+        //           component: RMaticStakerReward,
+        //         },
+        //         {
+        //           id: 'RMATIC_staker_index_redeem',
+        //           path: '/rMATIC/staker/redeem',
+        //           type: 'Staker',
+        //           rSymbol: rSymbol.Matic,
+        //           component: RMaticStakerRedeem,
+        //         },
+        //         {
+        //           path: '*',
+        //           component: () => <Redirect to='/rMATIC/staker/index' />,
+        //         },
+        //       ],
+        //     },
+        //     {
+        //       id: 'RMATIC_validator',
+        //       type: 'Validator',
+        //       path: '/rMATIC/validator',
+        //       rSymbol: rSymbol.Matic,
+        //       component: authorizedRoute(Symbol.Matic)(RMaticValidator),
+        //     },
+        //     {
+        //       id: 'RMATIC_search',
+        //       path: '/rMATIC/search',
+        //       rSymbol: rSymbol.Matic,
+        //       component: authorizedRoute(Symbol.Matic)(RMaticSeach),
+        //     },
+        //     {
+        //       id: 'RMATIC_type',
+        //       path: '/rMATIC/type',
+        //       rSymbol: rSymbol.Matic,
+        //       component: authorizedRoute(Symbol.Matic)(RMaticType),
+        //     },
+        //     {
+        //       path: '*',
+        //       component: () => <Redirect to='/rMATIC/home' />,
+        //     },
+        //   ],
+        // },
         {
           id: 'RFIS_template',
           path: '/rFIS',
