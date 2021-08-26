@@ -305,7 +305,9 @@ export default function FeeStation() {
       if (!selectedToken || selectedToken.balance === '--' || tokenAmount > selectedToken.balance) {
         setTokenAmount('');
         setTokenAmount('');
-        message.error('The amount of input exceeds your transferrable balance');
+        if (selectedToken && selectedToken.balance !== '--') {
+          message.error('The amount of input exceeds your transferrable balance');
+        }
         return;
       }
 
@@ -329,7 +331,7 @@ export default function FeeStation() {
   }, [
     inputFromReceive,
     receiveFisAmount,
-    selectedToken,
+    selectedToken && selectedToken.balance,
     currentPoolInfo && currentPoolInfo.swapRate,
     slippageTolerance,
     customSlippageTolerance,
