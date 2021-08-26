@@ -588,8 +588,10 @@ export const check_swap_status = (): AppThunk => async (dispatch, getState) => {
             }),
           );
         } else {
-          console.log('xcvsd', item.subData);
-          reHandleFeeStation(item.subData);
+          // console.log('xcvsd', item.subData);
+          if(moment().isBefore(moment(item.dateTime, formatStr).add(14, 'd'))){
+            reHandleFeeStation(item.subData);
+          }
         }
       });
     }
