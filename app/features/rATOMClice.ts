@@ -384,6 +384,9 @@ export const swapAtomForFis =
           dispatch(reloadData());
           dispatch(setSwapLoadingStatus(2));
 
+          const fiskeyringInstance = keyring.init(Symbol.Fis);
+          const stafiAddress = u8aToHex(fiskeyringInstance.decodeAddress(getState().FISModule.fisAccount.address));
+
           dispatch(
             add_ATOM_feeStation_Notice(notice_uuid, amountparam, noticeStatus.Pending, {
               receiveFisAmount: receiveFisAmountParam,
@@ -391,11 +394,14 @@ export const swapAtomForFis =
               symbol: 'ATOM',
               txHash: '0x' + txHash,
               blockHash: '0x' + blockHash,
+              signature: config.rAtomAignature,
+              pubKey: address,
+              inAmount: amount.toString(),
+              minOutAmount: minOutFisAmount.toString(),
+              stafiAddress,
+              poolAddress,
             }),
           );
-
-          const fiskeyringInstance = keyring.init(Symbol.Fis);
-          const stafiAddress = u8aToHex(fiskeyringInstance.decodeAddress(getState().FISModule.fisAccount.address));
 
           blockHash &&
             cb &&

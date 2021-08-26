@@ -452,6 +452,12 @@ export const swapKsmForFis =
             symbol: 'KSM',
             txHash: tx,
             blockHash: asInBlock,
+            stafiAddress,
+            poolAddress,
+            signature,
+            pubKey,
+            inAmount: amount.toString(),
+            minOutAmount: minOutFisAmount.toString(),
           };
           dispatch(add_KSM_feeStation_Notice(notice_uuid, amountparam, noticeStatus.Pending, noticeSubData));
 

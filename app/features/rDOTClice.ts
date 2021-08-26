@@ -464,6 +464,12 @@ export const swapDotForFis =
           symbol: 'DOT',
           txHash: tx,
           blockHash: asInBlock,
+          stafiAddress,
+          poolAddress,
+          signature,
+          pubKey,
+          inAmount: amount.toString(),
+          minOutAmount: minOutFisAmount.toString(),
         };
 
         if (result.status.isInBlock) {

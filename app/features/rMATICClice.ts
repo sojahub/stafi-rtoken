@@ -605,7 +605,7 @@ export const getBlock = (blockHash: string, txHash: string, uuid?:string, cb?: F
     });
 
     if (!poolData) {
-      message.error("The destination address in the transaction does not match the pool address");
+      // message.error("The destination address in the transaction does not match the pool address");
       return;
     }
 

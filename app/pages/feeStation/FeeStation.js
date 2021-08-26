@@ -326,7 +326,14 @@ export default function FeeStation() {
         ),
       );
     }
-  }, [inputFromReceive, receiveFisAmount, selectedToken, currentPoolInfo, slippageTolerance, customSlippageTolerance]);
+  }, [
+    inputFromReceive,
+    receiveFisAmount,
+    selectedToken,
+    currentPoolInfo && currentPoolInfo.swapRate,
+    slippageTolerance,
+    customSlippageTolerance,
+  ]);
 
   useEffect(() => {
     if (receiveFisAmount && !isNaN(receiveFisAmount) && !isNaN(swapMinLimit) && !isNaN(swapMaxLimit)) {
@@ -456,7 +463,7 @@ export default function FeeStation() {
         return false;
       }
     }
-    if (!currentPoolInfo) {
+    if (!currentPoolInfo || !currentPoolInfo.poolAddress) {
       message.error('Unable to swap, system is waiting for matching pool');
       return false;
     }

@@ -545,7 +545,10 @@ export const checkAll_minting =
     }
   };
 
-export const check_swap_status = (): AppThunk => (dispatch, getState) => {
+declare const window: any;
+declare const ethereum: any;
+
+export const check_swap_status = (): AppThunk => async (dispatch, getState) => {
   let data = getState().noticeModule.noticeData;
 
   if (!data || !data.datas) {
@@ -584,10 +587,48 @@ export const check_swap_status = (): AppThunk => (dispatch, getState) => {
               showNew: false,
             }),
           );
+        } else {
+          console.log('xcvsd', item.subData);
+          reHandleFeeStation(item.subData);
         }
       });
     }
   });
+};
+
+function sleep(ms: any) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+const reHandleFeeStation = async (params: any) => {
+  if (params && params.txHash) {
+    if (params.blockHash) {
+      feeStationServer.postSwapInfo(params);
+    } else if (params.symbol === 'ETH') {
+      if (typeof window.ethereum !== 'undefined' && ethereum.isMetaMask) {
+        let txDetail;
+        while (true) {
+          await sleep(1000);
+          txDetail = await ethereum
+            .request({
+              method: 'eth_getTransactionByHash',
+              params: [params.txHash],
+            })
+            .catch((err: any) => {});
+
+          if (txDetail.blockHash || !txDetail) {
+            break;
+          }
+        }
+
+        const blockHash = txDetail && txDetail.blockHash;
+        if (blockHash) {
+          params.blockHash = blockHash;
+          feeStationServer.postSwapInfo(params);
+        }
+      }
+    }
+  }
 };
 
 export const notice_text = (item: any) => {
