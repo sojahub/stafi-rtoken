@@ -252,7 +252,7 @@ export default function MintOverview() {
               </div>
             </div>
 
-            {Number(tokenSymbol) === rSymbol.Eth && <div className='hint'>rETH reward is calculated every 20 minutes</div>}
+            {Number(tokenSymbol) === rSymbol.Eth && <div className='hint'>rETH reward is calculated every 5 minutes</div>}
           </div>
         </div>
       ) : (
