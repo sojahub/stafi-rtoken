@@ -19,7 +19,7 @@ export default class Index {
     const actLatestCycle = await stafiApi.query.rClaim.actLatestCycle(symbol);
     const acts = [];
     if (actLatestCycle == 0) {
-      console.log('empty mint info');
+      // console.log('empty mint info');
     } else {
       const lastHeader = await stafiApi.rpc.chain.getHeader();
       const nowBlock = lastHeader && lastHeader.toJSON() && lastHeader.toJSON().number;

@@ -21,7 +21,7 @@ export const formatDuration = (milliSeconds) => {
   var days = Math.floor(sec_num / (3600 * 24));
   var hours = Math.floor((sec_num - days * 3600 * 24) / 3600);
   var minutes = Math.floor((sec_num - days * 3600 * 24 - hours * 3600) / 60);
-  var seconds = sec_num - hours * 3600 - minutes * 60;
+  var seconds = sec_num - days * 3600 * 24 - hours * 3600 - minutes * 60;
 
   if (days < 0) {
     days = '00';
