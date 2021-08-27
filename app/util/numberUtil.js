@@ -187,7 +187,7 @@ export default {
     }
 
     // console.log(`amount: ${amount} factor: ${factor}`);
-    return divide(Number(amount), factor);
+    return divide(Number(amount), Number(factor));
   },
   tokenAmountToHuman(amount, symbol) {
     let factor;
