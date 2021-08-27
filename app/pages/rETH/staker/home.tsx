@@ -1,6 +1,7 @@
 import Content from '@components/content/stakeContent_ETH';
 import { reloadData, send } from '@features/rETHClice';
 import { ratioToAmount } from '@util/common';
+import numberUtil from '@util/numberUtil';
 import { message } from 'antd';
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -31,7 +32,7 @@ export default function Index(props: any) {
         history={props.history}
         amount={amount}
         willAmount={ratio == '--' ? '--' : ratioToAmount(amount, ratio)}
-        transferrableAmount={balance}
+        transferrableAmount={numberUtil.handleFisAmountToFixed(balance)}
         apr={stakerApr}
         onChange={(value: any) => {
           if (Number(value) > 0 && Number(value) < Number(minimumDeposit)) {
