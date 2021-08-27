@@ -189,7 +189,7 @@ export const monitoring_Method = (): AppThunk => (dispatch, getState) => {
           dispatch(getAssetBalanceAll());
           dispatch(getBep20Allowances());
           // dispatch(reloadData());
-        }, 20);
+        }, 200);
       } else {
         dispatch(handleBscAccount(null));
       }
