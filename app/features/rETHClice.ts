@@ -307,7 +307,7 @@ export const monitoring_Method = (): AppThunk => (dispatch, getState) => {
         setTimeout(() => {
           dispatch(getAssetBalanceAll());
           dispatch(reloadData());
-        }, 20);
+        }, 200);
       } else {
         dispatch(handleEthAccount(null));
       }
