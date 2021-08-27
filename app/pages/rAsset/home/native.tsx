@@ -3,30 +3,38 @@ import CommonClice from '@features/commonClice';
 import {
   getUnbondCommission as fis_getUnbondCommission,
   query_rBalances_account as fis_query_rBalances_account,
-  rTokenRate as fis_rTokenRate
+  rTokenRate as fis_rTokenRate,
 } from '@features/FISClice';
 import { connectPolkadotjs, reloadData } from '@features/globalClice';
 import {
   getUnbondCommission as atom_getUnbondCommission,
   query_rBalances_account as atom_query_rBalances_account,
-  rTokenRate as atom_rTokenRate
+  rTokenRate as atom_rTokenRate,
 } from '@features/rATOMClice';
 import {
   getUnbondCommission as dot_getUnbondCommission,
   query_rBalances_account as dot_query_rBalances_account,
-  rTokenRate as dot_rTokenRate
+  rTokenRate as dot_rTokenRate,
 } from '@features/rDOTClice';
 import { getUnbondCommission, query_rBalances_account, rTokenRate as ksm_rTokenRate } from '@features/rKSMClice';
-// import { getUnbondCommission as matic_getUnbondCommission, query_rBalances_account as matic_query_rBalances_account, rTokenRate as matic_rTokenRate } from '@features/rMATICClice';
-// import { getUnbondCommission as sol_getUnbondCommission, query_rBalances_account as sol_query_rBalances_account, rTokenRate as sol_rTokenRate } from '@features/rSOLClice';
+import {
+  getUnbondCommission as matic_getUnbondCommission,
+  query_rBalances_account as matic_query_rBalances_account,
+  rTokenRate as matic_rTokenRate,
+} from '@features/rMATICClice';
+import {
+  getUnbondCommission as sol_getUnbondCommission,
+  query_rBalances_account as sol_query_rBalances_account,
+  rTokenRate as sol_rTokenRate,
+} from '@features/rSOLClice';
 import rDOT_svg from '@images/rDOT.svg';
 import rasset_fis_svg from '@images/rFIS.svg';
-// import rasset_rsol_svg from '@images/rSOL.svg';
+import rasset_rsol_svg from '@images/rSOL.svg';
 import rasset_ratom_svg from '@images/r_atom.svg';
 import rasset_rdot_svg from '@images/r_dot.svg';
 import rasset_rfis_svg from '@images/r_fis.svg';
 import rasset_rksm_svg from '@images/r_ksm.svg';
-// import rasset_rmatic_svg from '@images/r_matic.svg';
+import rasset_rmatic_svg from '@images/r_matic.svg';
 import { Symbol } from '@keyring/defaults';
 import Button from '@shared/components/button/connect_button';
 import Content from '@shared/components/content';
@@ -141,20 +149,20 @@ export default function Index(props: any) {
       dispatch(fis_query_rBalances_account());
       dispatch(dot_query_rBalances_account());
       dispatch(atom_query_rBalances_account());
-      // dispatch(sol_query_rBalances_account())
-      // dispatch(matic_query_rBalances_account())
+      dispatch(sol_query_rBalances_account());
+      dispatch(matic_query_rBalances_account());
       dispatch(ksm_rTokenRate());
       dispatch(fis_rTokenRate());
       dispatch(dot_rTokenRate());
       dispatch(atom_rTokenRate());
-      // dispatch(sol_rTokenRate() );
-      // dispatch(matic_rTokenRate() );
+      dispatch(sol_rTokenRate());
+      dispatch(matic_rTokenRate());
       dispatch(getUnbondCommission());
       dispatch(fis_getUnbondCommission());
       dispatch(dot_getUnbondCommission());
       dispatch(atom_getUnbondCommission());
-      // dispatch(sol_getUnbondCommission());
-      // dispatch(matic_getUnbondCommission());
+      dispatch(sol_getUnbondCommission());
+      dispatch(matic_getUnbondCommission());
     }
   }, [fisAccount]);
   return (
@@ -256,40 +264,40 @@ export default function Index(props: any) {
                 });
               }}
             />
-            {/* <DataItem  
-          rSymbol="rSOL"
-          icon={rasset_rsol_svg}
-          fullName="Solana"
-          balance={sol_tokenAmount=="--" ?"--":NumberUtil.handleFisAmountToFixed(sol_tokenAmount)}
-          willGetBalance={solWillAmount}
-          unit="SOL"
-          operationType="native"
-          onSwapClick={()=>{
-            props.history.push({
-              pathname:"/rAsset/swap/native/default",
-              state:{ 
-                rSymbol:"rSOL"
-              }
-            })
-          }}
-        />
-      <DataItem 
-        rSymbol="rMATIC"
-        icon={rasset_rmatic_svg}
-        fullName="Matic"
-        balance={matic_tokenAmount=="--" ?"--":NumberUtil.handleFisAmountToFixed(matic_tokenAmount)}
-        willGetBalance={maticWillAmount}
-        unit="MATIC"
-        operationType="native"
-        onSwapClick={()=>{
-          props.history.push({
-            pathname:"/rAsset/swap/native/default",
-            state:{ 
-              rSymbol:"rMATIC"
-            }
-          })
-        }}
-      />  */}
+            <DataItem
+              rSymbol='rSOL'
+              icon={rasset_rsol_svg}
+              fullName='Solana'
+              balance={sol_tokenAmount == '--' ? '--' : NumberUtil.handleFisAmountToFixed(sol_tokenAmount)}
+              willGetBalance={solWillAmount}
+              unit='SOL'
+              operationType='native'
+              onSwapClick={() => {
+                props.history.push({
+                  pathname: '/rAsset/swap/native/default',
+                  state: {
+                    rSymbol: 'rSOL',
+                  },
+                });
+              }}
+            />
+            <DataItem
+              rSymbol='rMATIC'
+              icon={rasset_rmatic_svg}
+              fullName='Matic'
+              balance={matic_tokenAmount == '--' ? '--' : NumberUtil.handleFisAmountToFixed(matic_tokenAmount)}
+              willGetBalance={maticWillAmount}
+              unit='MATIC'
+              operationType='native'
+              onSwapClick={() => {
+                props.history.push({
+                  pathname: '/rAsset/swap/native/default',
+                  state: {
+                    rSymbol: 'rMATIC',
+                  },
+                });
+              }}
+            />
           </DataList>
           <CountAmount totalValue={totalPrice} />{' '}
         </>
