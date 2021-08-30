@@ -161,7 +161,7 @@ export default {
     let factor;
     switch (symbol) {
       case rSymbol.Dot:
-        factor = 1000000000000;
+        factor = 100000000000000;
         break;
       case rSymbol.Atom:
         factor = 1000000000000000000n;
@@ -187,7 +187,7 @@ export default {
     }
 
     // console.log(`amount: ${amount} factor: ${factor}`);
-    return divide(Number(amount), factor);
+    return divide(Number(amount), Number(factor));
   },
   tokenAmountToHuman(amount, symbol) {
     let factor;

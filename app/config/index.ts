@@ -322,14 +322,14 @@ export default {
   },
   rMATICTokenAddress: () => {
     if (!isdev()) {
-      return '';
+      return '0x3dbb00c9be5a327e25caf4f650844c5dba81e34b';
     } else {
       return '0x1a80c8874e4bf1516c02aa92b838b33e11cde7e8';
     }
   },
   rMATICBep20TokenAddress: () => {
     if (!isdev()) {
-      return '0xbc45fda97bb810cec5fb888a355e7252c8ceca83';
+      return '0x117eefdde5e5aed6626ffedbb5d2ac955f64dbf3';
     } else {
       return '0xbc45fda97bb810cec5fb888a355e7252c8ceca83';
     }

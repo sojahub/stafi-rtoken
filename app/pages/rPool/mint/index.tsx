@@ -251,6 +251,8 @@ export default function MintOverview() {
                 Claim
               </div>
             </div>
+
+            {Number(tokenSymbol) === rSymbol.Eth && <div className='hint'>rETH reward is calculated every 5 minutes</div>}
           </div>
         </div>
       ) : (
