@@ -222,7 +222,7 @@ export const transfer =
       message.info('Please approve transaction in sollet wallet.', 5);
 
       let result: any;
-      result = await solServer.sendTransaction(amount, selectedPool.address).catch((error) => {
+      result = await solServer.sendTransaction(Number(amount), selectedPool.address).catch((error) => {
         throw error;
       });
 
@@ -351,7 +351,7 @@ export const reStaking =
             staking.address,
             staking.txHash,
             staking.blockHash,
-            NumberUtil.solAmountToChain(staking.amount),
+            NumberUtil.solAmountToChain(staking.amount).toString(),
             staking.poolAddress,
             staking.type,
             (r: string) => {

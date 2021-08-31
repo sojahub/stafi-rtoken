@@ -240,7 +240,7 @@ export const transfer =
       );
       dispatch(setProcessType(rSymbol.Atom));
       dispatch(setProcessSlider(true));
-      const sendTokens: any = await client.sendTokens(address, selectedPool.address, coins(amount, demon), memo);
+      const sendTokens: any = await client.sendTokens(address, selectedPool.address, coins(Number(amount), demon), memo);
       if (sendTokens.code == 0) {
         const block = await client.getBlock(sendTokens.height);
         const txHash = sendTokens.transactionHash;
@@ -375,7 +375,7 @@ export const swapAtomForFis =
 
       try {
         const client = await atomServer.createApi();
-        const sendTokens: any = await client.sendTokens(address, poolAddress, coins(amount, demon), memo);
+        const sendTokens: any = await client.sendTokens(address, poolAddress, coins(Number(amount), demon), memo);
         if (sendTokens.code == 0) {
           const block = await client.getBlock(sendTokens.height);
           const txHash = sendTokens.transactionHash;
@@ -731,7 +731,7 @@ export const getBlock =
         }),
       );
       dispatch(
-        bound(address, txHash, blockHash, amount, poolPubkey, rSymbol.Atom, (r: string) => {
+        bound(address, txHash, blockHash, amount.toString(), poolPubkey, rSymbol.Atom, (r: string) => {
           // dispatch(setStakeHash(null));
 
           if (r == 'loading') {
