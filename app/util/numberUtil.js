@@ -1,8 +1,6 @@
 import { rSymbol } from '@keyring/defaults';
-import EthServer from '@servers/eth';
 import { divide, floor } from 'mathjs';
-
-const ethServer = new EthServer();
+import Web3Utils from 'web3-utils';
 
 export default {
   // Add floating point numbers
@@ -226,7 +224,6 @@ export default {
     return divide(Number(amount), factor);
   },
   tokenAmountToChain(amount, symbol) {
-    let web3 = ethServer.getWeb3();
     switch (symbol) {
       case rSymbol.Dot:
         return Math.round(Number(amount) * 10000000000);
@@ -239,9 +236,9 @@ export default {
       case rSymbol.Sol:
         return Math.round(Number(amount) * 1000000000);
       case rSymbol.Matic:
-        return web3.utils.toWei(amount);
+        return Web3Utils.toWei(amount);
       case rSymbol.Eth:
-        return web3.utils.toWei(amount);
+        return Web3Utils.toWei(amount);
       default:
         return Math.round(Number(amount) * 1000000000000);
     }
