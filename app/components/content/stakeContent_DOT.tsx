@@ -170,35 +170,39 @@ export default function Index(props: Props) {
             <div>{props.apr}</div>
           </div>
 
-          <div
-            style={{
-              fontSize: '30px',
-              fontFamily: "'Helvetica-Bold'",
-              marginBottom: '6px',
-              marginLeft: '10px',
-              marginRight: '10px',
-              height: '35px',
-              color: 'white',
-              alignSelf: 'flex-end',
-            }}>
-            +
-          </div>
-
-          <div className='money_panel_item'>
-            <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'flex-end' }}>
-              <div style={{ fontFamily: 'Helvetica-Bold' }}>Mint Reward</div>
+          {mintRewardAct && (
+            <>
               <div
                 style={{
-                  width: '20px',
-                  marginLeft: '3px',
-                  transform: 'scale(0.6)',
-                  transformOrigin: 'left bottom',
+                  fontSize: '30px',
+                  fontFamily: "'Helvetica-Bold'",
+                  marginBottom: '6px',
+                  marginLeft: '10px',
+                  marginRight: '10px',
+                  height: '35px',
+                  color: 'white',
+                  alignSelf: 'flex-end',
                 }}>
-                +FIS
+                +
               </div>
-            </div>
-            <div>{fisRewardAmount}</div>
-          </div>
+
+              <div className='money_panel_item'>
+                <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'flex-end' }}>
+                  <div style={{ fontFamily: 'Helvetica-Bold' }}>Mint Reward</div>
+                  <div
+                    style={{
+                      width: '20px',
+                      marginLeft: '3px',
+                      transform: 'scale(0.6)',
+                      transformOrigin: 'left bottom',
+                    }}>
+                    +FIS
+                  </div>
+                </div>
+                <div>{fisRewardAmount}</div>
+              </div>
+            </>
+          )}
         </div>
 
         {props.type != 'rFIS' && (
