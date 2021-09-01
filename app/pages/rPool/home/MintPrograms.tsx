@@ -38,10 +38,10 @@ const rTokenList: Array<any> = [
     token: 'rATOM',
     children: [],
   },
-  // {
-  //   token: 'rMATIC',
-  //   children: [],
-  // },
+  {
+    token: 'rMATIC',
+    children: [],
+  },
   {
     token: 'rKSM',
     children: [],

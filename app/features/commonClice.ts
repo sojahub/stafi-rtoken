@@ -213,7 +213,7 @@ export default class CommonClice {
   getPoolForUnbond(tokenAmount: any, validPools: any, type: rSymbol, messageStr?: string) {
     const amount = NumberUtil.tokenAmountToChain(tokenAmount.toString(), type);
     const data = validPools.find((item: any) => {
-      if (Number(item.active) >= amount) {
+      if (Number(item.active) >= Number(amount)) {
         return true;
       }
     });

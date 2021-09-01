@@ -414,7 +414,7 @@ export const bound =
     address: string,
     txhash: any,
     blockhash: any,
-    amount: number,
+    amount: string,
     pooladdress: string,
     type: rSymbol,
     cb?: Function,

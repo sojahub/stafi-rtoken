@@ -3,29 +3,29 @@ import CommonClice from '@features/commonClice';
 import {
   getUnbondCommission as fis_getUnbondCommission,
   query_rBalances_account as fis_query_rBalances_account,
-  rTokenRate as fis_rTokenRate,
+  rTokenRate as fis_rTokenRate
 } from '@features/FISClice';
 import { connectPolkadotjs, reloadData } from '@features/globalClice';
 import {
   getUnbondCommission as atom_getUnbondCommission,
   query_rBalances_account as atom_query_rBalances_account,
-  rTokenRate as atom_rTokenRate,
+  rTokenRate as atom_rTokenRate
 } from '@features/rATOMClice';
 import {
   getUnbondCommission as dot_getUnbondCommission,
   query_rBalances_account as dot_query_rBalances_account,
-  rTokenRate as dot_rTokenRate,
+  rTokenRate as dot_rTokenRate
 } from '@features/rDOTClice';
 import { getUnbondCommission, query_rBalances_account, rTokenRate as ksm_rTokenRate } from '@features/rKSMClice';
 import {
   getUnbondCommission as matic_getUnbondCommission,
   query_rBalances_account as matic_query_rBalances_account,
-  rTokenRate as matic_rTokenRate,
+  rTokenRate as matic_rTokenRate
 } from '@features/rMATICClice';
 import {
   getUnbondCommission as sol_getUnbondCommission,
   query_rBalances_account as sol_query_rBalances_account,
-  rTokenRate as sol_rTokenRate,
+  rTokenRate as sol_rTokenRate
 } from '@features/rSOLClice';
 import rDOT_svg from '@images/rDOT.svg';
 import rasset_fis_svg from '@images/rFIS.svg';

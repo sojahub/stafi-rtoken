@@ -1,11 +1,11 @@
-import React from 'react';
-import {Form,message} from 'antd';
-import {useDispatch} from 'react-redux';
-import Input from '@shared/components/input/index';
-import Button from '@shared/components/button/button';
 import config from '@config/index';
+import { onProceed } from '@features/rMATICClice';
 import leftArrowSvg from '@images/left_arrow.svg';
-import {onProceed} from '@features/rMATICClice';
+import Button from '@shared/components/button/button';
+import Input from '@shared/components/input/index';
+import { Form, message } from 'antd';
+import React from 'react';
+import { useDispatch } from 'react-redux';
 import './index.scss';
 export default function Index(props:any){
   const [form] = Form.useForm();
@@ -38,7 +38,7 @@ export default function Index(props:any){
       <Form.Item initialValue="MATIC" label="Token" name="token">  
             <Input disabled={true}/>
       </Form.Item> 
-      <Form.Item label={<div className="item_title"><label>TxHash</label><a href={config.txHashAndBlockhashURl.atomURL} target="_blank">How to get TxHash</a></div>} name="txHash">
+      <Form.Item label={<div className="item_title"><label>TxHash</label><a href={config.txHashAndBlockhashURl.maticURL} target="_blank">How to get TxHash</a></div>} name="txHash">
           <Input placeholder="" />
         </Form.Item>  
         <div className="btns">

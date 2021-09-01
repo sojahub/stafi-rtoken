@@ -1,5 +1,7 @@
 import { rSymbol } from '@keyring/defaults';
 import { divide, floor } from 'mathjs';
+import Web3Utils from 'web3-utils';
+
 export default {
   // Add floating point numbers
   floatAdd: function (arg1, arg2) {
@@ -224,21 +226,21 @@ export default {
   tokenAmountToChain(amount, symbol) {
     switch (symbol) {
       case rSymbol.Dot:
-        return Math.round(Number(amount) * 10000000000);
+        return Math.round(Number(amount) * 10000000000).toString();
       case rSymbol.Atom:
-        return Math.round(Number(amount) * 1000000);
+        return Math.round(Number(amount) * 1000000).toString();
       case rSymbol.Fis:
-        return Math.round(Number(amount) * 1000000000000);
+        return Math.round(Number(amount) * 1000000000000).toString();
       case rSymbol.Ksm:
-        return Math.round(Number(amount) * 1000000000000);
+        return Math.round(Number(amount) * 1000000000000).toString();
       case rSymbol.Sol:
-        return Math.round(Number(amount) * 1000000000);
+        return Math.round(Number(amount) * 1000000000).toString();
       case rSymbol.Matic:
-        return Math.round(Number(amount) * 1000000000000000000);
+        return Web3Utils.toWei(amount.toString()).toString();
       case rSymbol.Eth:
-        return Math.round(Number(amount) * 1000000000000000000);
+        return Web3Utils.toWei(amount.toString()).toString();
       default:
-        return Math.round(Number(amount) * 1000000000000);
+        return Math.round(Number(amount) * 1000000000000).toString();
     }
   },
   fisFeeToHuman(fee) {
