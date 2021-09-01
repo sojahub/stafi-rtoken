@@ -747,7 +747,7 @@ export const getBlock =
         }),
       );
       dispatch(
-        bound(address, txHash, blockHash, amount, poolPubkey, rSymbol.Matic, (r: string) => {
+        bound(address, txHash, blockHash, amount.toString(), poolPubkey, rSymbol.Matic, (r: string) => {
           // dispatch(setStakeHash(null));
 
           if (r == 'loading') {

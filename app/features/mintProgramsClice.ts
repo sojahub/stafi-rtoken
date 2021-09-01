@@ -80,7 +80,7 @@ export const getMintPrograms =
 
     Promise.all([
       dispatch(getREthMintInfo()),
-      // dispatch(getRSymbolMintInfo(rSymbol.Matic)),
+      dispatch(getRSymbolMintInfo(rSymbol.Matic)),
       dispatch(getRSymbolMintInfo(rSymbol.Dot)),
       dispatch(getRSymbolMintInfo(rSymbol.Fis)),
       dispatch(getRSymbolMintInfo(rSymbol.Atom)),

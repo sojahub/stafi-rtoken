@@ -378,11 +378,12 @@ export default {
   },
   txHashAndBlockhashURl: {
     dotURL:
-      'https://docs.stafi.io/rproduct/rdot-solution/rdot-staker-guide/recovery-function#2-the-way-to-get-txhash-and-blockhash',
+      'https://docs.stafi.io/rtoken-app/rdot-solution/rdot-staker-guide/recovery-function#2-the-way-to-get-txhash-and-blockhash',
     ksmURL:
-      'https://docs.stafi.io/rproduct/rksm-solution/staker-guide/recovery-function#2-the-way-to-get-txhash-and-blockhash',
-    atomURL: 'https://docs.stafi.io/rproduct/ratom-solution/staker-guide/recovery-function#2-the-way-to-get-txhash',
+      'https://docs.stafi.io/rtoken-app/rksm-solution/staker-guide/recovery-function#2-the-way-to-get-txhash-and-blockhash',
+    atomURL: 'https://docs.stafi.io/rtoken-app/ratom-solution/staker-guide/recovery-function#2-the-way-to-get-txhash',
     solURL: 'https://docs.stafi.io/rproduct/ratom-solution/staker-guide/recovery-function#2-the-way-to-get-txhash',
+    maticURL: 'https://docs.stafi.io/rtoken-app/rmatic-solution/staker-guide/recovery-function#2-how-to-get-txhash',
   },
   rAtomChainId: () => {
     if (!isdev()) {

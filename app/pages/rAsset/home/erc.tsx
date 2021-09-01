@@ -3,9 +3,7 @@ import { getRtokenPriceList } from '@features/bridgeClice';
 import CommonClice from '@features/commonClice';
 import { getAssetBalanceAll } from '@features/ETHClice';
 import { getUnbondCommission as fis_getUnbondCommission, rTokenRate as fis_rTokenRate } from '@features/FISClice';
-import {
-  getUnbondCommission as atom_getUnbondCommission, rTokenRate as atom_rTokenRate
-} from '@features/rATOMClice';
+import { getUnbondCommission as atom_getUnbondCommission, rTokenRate as atom_rTokenRate } from '@features/rATOMClice';
 import { getUnbondCommission as dot_getUnbondCommission, rTokenRate as dot_rTokenRate } from '@features/rDOTClice';
 import { connectMetamask, handleEthAccount, monitoring_Method } from '@features/rETHClice';
 import { getUnbondCommission as ksm_getUnbondCommission, rTokenRate as ksm_rTokenRate } from '@features/rKSMClice';
@@ -301,7 +299,7 @@ export default function Index(props: any) {
               trade={config.uniswap.rsolURL}
               operationType='erc20'
               onSwapClick={() => toSwap('rSOL')}
-            />
+            />*/}
 
             <DataItem
               disabled={!config.metaMaskNetworkIsGoerliEth(metaMaskNetworkId)}

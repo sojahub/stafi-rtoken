@@ -335,7 +335,7 @@ export const transfer =
                 );
                 asInBlock &&
                   dispatch(
-                    bound(address, tx, asInBlock, amount, selectedPool.poolPubkey, rSymbol.Ksm, (r: string) => {
+                    bound(address, tx, asInBlock, amount.toString(), selectedPool.poolPubkey, rSymbol.Ksm, (r: string) => {
                       if (r == 'loading') {
                         dispatch(add_KSM_stake_Notice(notice_uuid, amountparam, noticeStatus.Pending));
                       } else {
@@ -579,7 +579,7 @@ export const reStaking =
             staking.address,
             staking.txHash,
             staking.blockHash,
-            NumberUtil.fisAmountToChain(staking.amount),
+            NumberUtil.fisAmountToChain(staking.amount).toString(),
             staking.poolAddress,
             staking.type,
             (r: string) => {

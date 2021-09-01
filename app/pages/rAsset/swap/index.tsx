@@ -36,11 +36,11 @@ import {
 } from '@features/rDOTClice';
 import { checkEthAddress, get_eth_getBalance, monitoring_Method as eth_Monitoring_Method } from '@features/rETHClice';
 import { getUnbondCommission, query_rBalances_account, rTokenRate as ksm_rTokenRate } from '@features/rKSMClice';
-// import {
-//   getUnbondCommission as matic_getUnbondCommission,
-//   query_rBalances_account as matic_query_rBalances_account,
-//   rTokenRate as matic_rTokenRate
-// } from '@features/rMATICClice';
+import {
+  getUnbondCommission as matic_getUnbondCommission,
+  query_rBalances_account as matic_query_rBalances_account,
+  rTokenRate as matic_rTokenRate
+} from '@features/rMATICClice';
 // import {
 //   getUnbondCommission as sol_getUnbondCommission,
 //   query_rBalances_account as sol_query_rBalances_account,
@@ -56,7 +56,7 @@ import rasset_rdot_svg from '@images/r_dot.svg';
 import rasset_reth_svg from '@images/r_eth.svg';
 import rasset_rfis_svg from '@images/r_fis.svg';
 import rasset_rksm_svg from '@images/r_ksm.svg';
-// import rasset_rmatic_svg from '@images/r_matic.svg';
+import rasset_rmatic_svg from '@images/r_matic.svg';
 import stafi_white from '@images/stafi_white.svg';
 import Back from '@shared/components/backIcon';
 import Button from '@shared/components/button/button';
@@ -123,12 +123,12 @@ const allTokenDatas = [
   //   content: '--',
   //   type: 'rsol',
   // },
-  // {
-  //   icon: rasset_rmatic_svg,
-  //   title: 'rMATIC',
-  //   content: '--',
-  //   type: 'rmatic',
-  // },
+  {
+    icon: rasset_rmatic_svg,
+    title: 'rMATIC',
+    content: '--',
+    type: 'rmatic',
+  },
 ];
 
 const assetDatas = [
@@ -393,19 +393,19 @@ export default function Index(props: any) {
       dispatch(dot_query_rBalances_account());
       dispatch(atom_query_rBalances_account());
       // dispatch(sol_query_rBalances_account());
-      // dispatch(matic_query_rBalances_account());
+      dispatch(matic_query_rBalances_account());
       dispatch(ksm_rTokenRate());
       dispatch(fis_rTokenRate());
       dispatch(dot_rTokenRate());
       dispatch(atom_rTokenRate());
       // dispatch(sol_rTokenRate());
-      // dispatch(matic_rTokenRate());
+      dispatch(matic_rTokenRate());
       dispatch(getUnbondCommission());
       dispatch(fis_getUnbondCommission());
       dispatch(dot_getUnbondCommission());
       dispatch(atom_getUnbondCommission());
       // dispatch(sol_getUnbondCommission());
-      // dispatch(matic_getUnbondCommission());
+      dispatch(matic_getUnbondCommission());
     }
   };
 

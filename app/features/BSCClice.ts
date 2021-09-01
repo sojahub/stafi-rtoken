@@ -243,7 +243,7 @@ export const getAssetBalanceAll = (): AppThunk => (dispatch, getState) => {
   dispatch(getRDOTAssetBalance());
   dispatch(getRATOMAssetBalance());
   // dispatch(getRSOLAssetBalance());
-  // dispatch(getRMATICAssetBalance());
+  dispatch(getRMATICAssetBalance());
   dispatch(getRETHAssetBalance());
 };
 export const getBep20Allowances = (): AppThunk => (dispatch, getState) => {
@@ -253,7 +253,7 @@ export const getBep20Allowances = (): AppThunk => (dispatch, getState) => {
   dispatch(getRDOTBep20Allowance());
   dispatch(getRATOMBep20Allowance());
   // dispatch(getRSOLBep20Allowance());
-  // dispatch(getRMATICBep20Allowance());
+  dispatch(getRMATICBep20Allowance());
   dispatch(getRETHBep20Allowance());
 };
 
