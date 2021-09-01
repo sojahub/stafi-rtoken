@@ -297,7 +297,7 @@ export default function Index(props: any) {
               trade={config.uniswap.rsolURL}
               operationType='bep20'
               onSwapClick={() => toSwap('rSOL')}
-            />*/}
+            />
 
             <DataItem
               disabled={!config.metaMaskNetworkIsBsc(metaMaskNetworkId)}
