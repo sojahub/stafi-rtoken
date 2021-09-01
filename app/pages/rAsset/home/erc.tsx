@@ -299,7 +299,7 @@ export default function Index(props: any) {
               trade={config.uniswap.rsolURL}
               operationType='erc20'
               onSwapClick={() => toSwap('rSOL')}
-            />*/}
+            />
 
             <DataItem
               disabled={!config.metaMaskNetworkIsGoerliEth(metaMaskNetworkId)}

@@ -558,4 +558,21 @@ export default {
     return 150;
   },
   minReward: 0.000001,
+  lockContractAddress: (platform: any) => {
+    if (platform === 'Ethereum') {
+      if (!isdev()) {
+        return '';
+      } else {
+        return '0xb613d56f21c811a9505cedf314cca8c7c705e06d';
+      }
+    }
+    if (platform === 'BSC') {
+      if (!isdev()) {
+        return '';
+      } else {
+        return '0xe96cacf34367d048772bff0e838e5a1795995a28';
+      }
+    }
+    return '';
+  },
 };

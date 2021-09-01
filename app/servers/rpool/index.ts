@@ -1,5 +1,6 @@
 import config, { getRsymbolByTokenTitle } from '@config/index';
 import { rSymbol } from '@keyring/defaults';
+import EthServer from '@servers/eth';
 import StafiServer from '@servers/stafi';
 import { formatDuration } from '@util/dateUtil';
 import numberUtil from '@util/numberUtil';
@@ -7,11 +8,66 @@ import rpc from '@util/rpc';
 import { divide, max, min, multiply } from 'mathjs';
 
 const stafiServer = new StafiServer();
+const ethServer = new EthServer();
 
 export default class Index {
+  getStakingLockDropAbi() {
+    const abi =
+      '[{"inputs":[{"internalType":"address","name":"_dropToken","type":"address"}],"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"user","type":"address"},{"indexed":true,"internalType":"uint256","name":"pid","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"}],"name":"ClaimReward","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"user","type":"address"},{"indexed":true,"internalType":"uint256","name":"pid","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"}],"name":"Deposit","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"user","type":"address"},{"indexed":true,"internalType":"uint256","name":"pid","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"}],"name":"EmergencyWithdraw","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"previousOwner","type":"address"},{"indexed":true,"internalType":"address","name":"newOwner","type":"address"}],"name":"OwnershipTransferred","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"user","type":"address"},{"indexed":true,"internalType":"uint256","name":"pid","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"}],"name":"Withdraw","type":"event"},{"inputs":[{"internalType":"contract IERC20","name":"_stakeToken","type":"address"},{"internalType":"uint256","name":"_startBlock","type":"uint256"},{"internalType":"uint256","name":"_rewardPerBlock","type":"uint256"},{"internalType":"uint256","name":"_totalReward","type":"uint256"},{"internalType":"uint256","name":"_claimableStartBlock","type":"uint256"},{"internalType":"uint256","name":"_lockedEndBlock","type":"uint256"}],"name":"add","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"_pid","type":"uint256"}],"name":"claimReward","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"_pid","type":"uint256"},{"internalType":"uint256","name":"_amount","type":"uint256"}],"name":"deposit","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"dropToken","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"_pid","type":"uint256"}],"name":"emergencyWithdraw","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"_from","type":"uint256"},{"internalType":"uint256","name":"_to","type":"uint256"},{"internalType":"uint256","name":"_rewardPerBlock","type":"uint256"},{"internalType":"uint256","name":"_leftReward","type":"uint256"}],"name":"getPoolReward","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"pure","type":"function"},{"inputs":[{"internalType":"uint256","name":"_pid","type":"uint256"},{"internalType":"address","name":"_user","type":"address"}],"name":"getUserClaimableReward","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"owner","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"_pid","type":"uint256"},{"internalType":"address","name":"_user","type":"address"}],"name":"pendingReward","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"","type":"uint256"}],"name":"poolInfo","outputs":[{"internalType":"bool","name":"emergencySwitch","type":"bool"},{"internalType":"contractIERC20","name":"stakeToken","type":"address"},{"internalType":"uint256","name":"startBlock","type":"uint256"},{"internalType":"uint256","name":"rewardPerBlock","type":"uint256"},{"internalType":"uint256","name":"totalReward","type":"uint256"},{"internalType":"uint256","name":"leftReward","type":"uint256"},{"internalType":"uint256","name":"claimableStartBlock","type":"uint256"},{"internalType":"uint256","name":"lockedEndBlock","type":"uint256"},{"internalType":"uint256","name":"lastRewardBlock","type":"uint256"},{"internalType":"uint256","name":"rewardPerShare","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"poolLength","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"renounceOwnership","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"_pid","type":"uint256"},{"internalType":"bool","name":"_emergencySwitch","type":"bool"}],"name":"set","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"newOwner","type":"address"}],"name":"transferOwnership","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"_pid","type":"uint256"}],"name":"updatePool","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"","type":"uint256"},{"internalType":"address","name":"","type":"address"}],"name":"userInfo","outputs":[{"internalType":"uint256","name":"amount","type":"uint256"},{"internalType":"uint256","name":"rewardDebt","type":"uint256"},{"internalType":"uint256","name":"claimedReward","type":"uint256"},{"internalType":"uint256","name":"currentTotalReward","type":"uint256"},{"internalType":"uint256","name":"lastClaimedRewardBlock","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"_pid","type":"uint256"},{"internalType":"uint256","name":"_amount","type":"uint256"}],"name":"withdraw","outputs":[],"stateMutability":"nonpayable","type":"function"}]';
+    return JSON.parse(abi);
+  }
+
   getRPoolList() {
     const url = config.api() + '/stafi/v1/webapi/rpool/rpoollist';
     return rpc.post(url);
+  }
+
+  async getLPList(phase2Acts: [any], ethAddress: any) {
+    const web3 = ethServer.getWeb3();
+
+    for (let item of phase2Acts) {
+      for (let poolItem of item.children) {
+        let contractAddress = config.lockContractAddress(poolItem.platform);
+        if (!contractAddress) {
+          continue;
+        }
+        console.log('address:', contractAddress);
+        let lockContract = new web3.eth.Contract(this.getStakingLockDropAbi(), contractAddress, {
+          from: ethAddress,
+        });
+
+        const poolLength = await lockContract.methods.poolLength().call();
+        console.log('poolLength: ', poolLength);
+        console.log('poolIndex: ', poolItem.poolIndex);
+        const poolInfo = await lockContract.methods.poolInfo(poolItem.poolIndex).call();
+        console.log('poolInfo: ', poolInfo);
+
+        let totalReward = web3.utils.fromWei(poolInfo.totalReward, 'ether');
+        poolItem.totalReward = totalReward.toString().replace(/(\d)(?=(?:\d{3})+$)/g, '$1,');
+        poolItem.totalRewardValue = totalReward;
+
+        let rewardPerBlock = web3.utils.fromWei(poolInfo.rewardPerBlock, 'ether');
+        poolItem.rewardPerBlockValue = rewardPerBlock;
+
+        poolItem.startBlock = poolInfo.startBlock;
+
+        // let tokenContract = new web3.eth.Contract(Web3Util.getStakeTokenAbi(), poolInfo.stakeToken, {
+        //   from: this.currentAddress
+        // });
+
+        // tokenContract.methods.balanceOf(Web3Util.getStakingLockDropAddress()).call().then(poolStakeTokenSupply => {
+        //   let stakeTokenSupply = web3.utils.fromWei(poolStakeTokenSupply, 'ether');
+        //   this.phase2Acts[i].stakeTokenSupply = stakeTokenSupply;
+
+        //   this.handleApr(i);
+        //   this.handleTvlValue(i);
+        // });
+      }
+    }
+
+    phase2Acts.forEach((item: any) => {
+      item.children?.forEach((poolItem: any) => {});
+    });
   }
 
   async getRTokenMintRewardActs(symbol: rSymbol) {

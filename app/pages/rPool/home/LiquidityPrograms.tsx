@@ -1,5 +1,5 @@
 import Card from '@components/card/index';
-import { getRPoolList } from '@features/rPoolClice';
+import { getLPList, getRPoolList } from '@features/rPoolClice';
 import rpool_ratom_Icon from '@images/rpool_ratom.svg';
 import rpool_rdot_Icon from '@images/rpool_rdot.svg';
 import rpool_reth_Icon from '@images/rpool_reth.svg';
@@ -38,10 +38,142 @@ const rTokenList: any = [
   },
 ];
 
+const phase2Acts = [
+  {
+    name: 'UNI-V2 rETH/ETH LP',
+    extraName: 'rETH',
+    children: [
+      {
+        platform: 'Ethereum',
+        poolIndex: 0,
+        apr: '- -',
+        toDate: '--',
+        totalReward: '--',
+        tvl: '--',
+        rewardPerBlockValue: '',
+        totalRewardValue: '',
+        startBlock: '',
+        endBlock: '',
+        stakeTokenSupply: '',
+        stakeTokenPrice: '',
+      },
+      {
+        platform: 'BSC',
+        poolIndex: 0,
+        apr: '- -',
+        toDate: '--',
+        totalReward: '--',
+        tvl: '--',
+        rewardPerBlockValue: '',
+        totalRewardValue: '',
+        startBlock: '',
+        endBlock: '',
+        stakeTokenSupply: '',
+        stakeTokenPrice: '',
+      },
+    ],
+  },
+  {
+    name: 'UNI-V2 rFIS/FIS LP',
+    extraName: 'rFIS',
+    children: [
+      {
+        platform: 'Ethereum',
+        poolIndex: 1,
+        apr: '- -',
+        toDate: '--',
+        totalReward: '--',
+        tvl: '--',
+        rewardPerBlockValue: '',
+        totalRewardValue: '',
+        startBlock: '',
+        endBlock: '',
+        stakeTokenSupply: '',
+        stakeTokenPrice: '',
+      },
+      {
+        platform: 'BSC',
+        poolIndex: 1,
+        apr: '- -',
+        toDate: '--',
+        totalReward: '--',
+        tvl: '--',
+        rewardPerBlockValue: '',
+        totalRewardValue: '',
+        startBlock: '',
+        endBlock: '',
+        stakeTokenSupply: '',
+        stakeTokenPrice: '',
+      },
+    ],
+  },
+  {
+    name: 'UNI-V2 rDOT/DOT LP',
+    extraName: 'rDOT',
+    children: [
+      {
+        platform: 'BSC',
+        poolIndex: 2,
+        apr: '- -',
+        toDate: '--',
+        totalReward: '--',
+        tvl: '--',
+        rewardPerBlockValue: '',
+        totalRewardValue: '',
+        startBlock: '',
+        endBlock: '',
+        stakeTokenSupply: '',
+        stakeTokenPrice: '',
+      },
+    ],
+  },
+  {
+    name: 'UNI-V2 rKSM/KSM LP',
+    extraName: 'rKSM',
+    children: [
+      {
+        platform: 'BSC',
+        poolIndex: 3,
+        apr: '- -',
+        toDate: '--',
+        totalReward: '--',
+        tvl: '--',
+        rewardPerBlockValue: '',
+        totalRewardValue: '',
+        startBlock: '',
+        endBlock: '',
+        stakeTokenSupply: '',
+        stakeTokenPrice: '',
+      },
+    ],
+  },
+  {
+    name: 'UNI-V2 rATOM/ATOM LP',
+    extraName: 'rATOM',
+    children: [
+      {
+        platform: 'BSC',
+        poolIndex: 4,
+        apr: '- -',
+        toDate: '--',
+        totalReward: '--',
+        tvl: '--',
+        rewardPerBlockValue: '',
+        totalRewardValue: '',
+        startBlock: '',
+        endBlock: '',
+        stakeTokenSupply: '',
+        stakeTokenPrice: '',
+      },
+    ],
+  },
+];
+
 export default function LiquidityPrograms(props: any) {
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(getRPoolList());
+    dispatch(getLPList(phase2Acts));
   }, []);
   const [sortField, setSortField] = useState('liquidity');
   const [sortWay, setSortWay] = useState<undefined | string>('asc');
