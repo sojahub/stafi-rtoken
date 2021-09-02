@@ -1,12 +1,20 @@
+import config from '@config/index';
 import { createSlice } from '@reduxjs/toolkit';
+import EthServer from '@servers/eth';
 import RPoolServer from '@servers/rpool';
+import { message } from 'antd';
 import { AppThunk } from '../store';
+import { setLoading } from './globalClice';
 
 const rPoolServer = new RPoolServer();
+const ethServer = new EthServer();
+
 const rPoolClice = createSlice({
   name: 'rPoolModule',
   initialState: {
     rPoolList: [],
+    lpList: [],
+    loadingLpList: false,
     totalLiquidity: '--',
     apyAvg: '--',
     slippageAvg: '-',
@@ -14,6 +22,12 @@ const rPoolClice = createSlice({
   reducers: {
     setRPoolList(state, { payload }) {
       state.rPoolList = payload;
+    },
+    setLpList(state, { payload }) {
+      state.lpList = payload;
+    },
+    setLoadingLpList(state, { payload }) {
+      state.loadingLpList = payload;
     },
     setTotalLiquidity(state, { payload }) {
       state.totalLiquidity = payload;
@@ -27,7 +41,8 @@ const rPoolClice = createSlice({
   },
 });
 
-export const { setRPoolList, setTotalLiquidity, setApyAvg, setSlippageAvg } = rPoolClice.actions;
+export const { setRPoolList, setLpList, setLoadingLpList, setTotalLiquidity, setApyAvg, setSlippageAvg } =
+  rPoolClice.actions;
 
 export const getRPoolList = (): AppThunk => async (dispatch, getState) => {
   const result = await rPoolServer.getRPoolList();
@@ -59,12 +74,109 @@ export const getRPoolList = (): AppThunk => async (dispatch, getState) => {
 };
 
 export const getLPList =
-  (phase2Acts: any): AppThunk =>
+  (phase2Acts: any, showLoading: boolean): AppThunk =>
+  async (dispatch, getState) => {
+    // if (!getState().rETHModule.ethAccount || !getState().rETHModule.ethAccount.address) {
+    //   return;
+    // }
+    try {
+      if (showLoading) {
+        dispatch(setLoadingLpList(true));
+      }
+      await rPoolServer.fillLpData(phase2Acts, '', () => {});
+      dispatch(setLpList([...phase2Acts]));
+    } finally {
+      dispatch(setLoadingLpList(false));
+    }
+  };
+
+export const stakeLp =
+  (amount: any, platform: string, poolIndex: any, cb?: Function): AppThunk =>
   async (dispatch, getState) => {
     if (!getState().rETHModule.ethAccount || !getState().rETHModule.ethAccount.address) {
       return;
     }
-    const result = await rPoolServer.getLPList(phase2Acts, getState().rETHModule.ethAccount.address);
+    dispatch(setLoading(true));
+    const web3 = ethServer.getWeb3();
+    const amountInWei = web3.utils.toWei(amount.toString());
+
+    try {
+      const lockDropContract = new web3.eth.Contract(
+        rPoolServer.getStakingLockDropAbi(),
+        config.lockContractAddress(platform),
+        {
+          from: getState().rETHModule.ethAccount.address,
+        },
+      );
+      const result = await lockDropContract.methods.deposit(poolIndex, amountInWei).send();
+      if (result && result.status) {
+        message.success('LP is staked');
+        cb && cb();
+      }
+    } catch (err) {
+      message.error(err.message);
+    } finally {
+      dispatch(setLoading(false));
+    }
+  };
+
+export const unstakeLp =
+  (amount: any, platform: string, poolIndex: any, cb?: Function): AppThunk =>
+  async (dispatch, getState) => {
+    if (!getState().rETHModule.ethAccount || !getState().rETHModule.ethAccount.address) {
+      return;
+    }
+    dispatch(setLoading(true));
+    const web3 = ethServer.getWeb3();
+    const amountInWei = web3.utils.toWei(amount.toString());
+
+    try {
+      const lockDropContract = new web3.eth.Contract(
+        rPoolServer.getStakingLockDropAbi(),
+        config.lockContractAddress(platform),
+        {
+          from: getState().rETHModule.ethAccount.address,
+        },
+      );
+      const result = await lockDropContract.methods.withdraw(poolIndex, amountInWei).send();
+      if (result && result.status) {
+        message.success('LP is unstaked');
+        cb && cb();
+      }
+    } catch (err) {
+      message.error(err.message);
+    } finally {
+      dispatch(setLoading(false));
+    }
+  };
+
+export const claimLpReward =
+  (platform: string, poolIndex: any, cb?: Function): AppThunk =>
+  async (dispatch, getState) => {
+    if (!getState().rETHModule.ethAccount || !getState().rETHModule.ethAccount.address) {
+      return;
+    }
+    dispatch(setLoading(true));
+    const web3 = ethServer.getWeb3();
+
+    try {
+      const lockDropContract = new web3.eth.Contract(
+        rPoolServer.getStakingLockDropAbi(),
+        config.lockContractAddress(platform),
+        {
+          from: getState().rETHModule.ethAccount.address,
+        },
+      );
+      const result = await lockDropContract.methods.claimReward(poolIndex).send();
+      if (result && result.status) {
+        message.success('Claim reward success');
+        cb && cb();
+      }
+    } catch (err) {
+      message.error(err.message);
+    } finally {
+      dispatch(setLoading(false));
+    }
   };
 
 export default rPoolClice.reducer;

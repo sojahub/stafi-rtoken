@@ -91,6 +91,9 @@ export default {
   },
 
   handleAmountToFixed4(amount) {
+    if (isNaN(amount)) {
+      return '--';
+    }
     return (Math.floor(amount * 10000) / 10000).toFixed(4);
   },
 
@@ -129,6 +132,22 @@ export default {
       return 0;
     }
     return (Math.round(amount * 100000000) / 100000000).toFixed(6) || '--';
+  },
+
+  handleAmountRound(amount, powNumber) {
+    if (amount == '--' || isNaN(amount)) {
+      return '--';
+    }
+    const factor = Math.pow(10, powNumber);
+    return Math.round(amount * factor) / factor;
+  },
+
+  handleAmountRoundToFixed(amount, powNumber) {
+    if (amount == '--' || isNaN(amount)) {
+      return '--';
+    }
+    const factor = Math.pow(10, powNumber);
+    return (Math.round(amount * factor) / factor).toFixed(powNumber);
   },
 
   // Returns a string containing 6 decimal places, including 0

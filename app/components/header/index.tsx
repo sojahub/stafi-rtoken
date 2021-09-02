@@ -201,6 +201,13 @@ export default function Index(props: Props) {
       }
       return returnValue;
     }
+    if (location.pathname.includes('/rPool/lp')) {
+      const returnValue: any = { type: 'rPool' };
+      if (state.rETHModule.ethAccount) {
+        returnValue.ethAccount = state.rETHModule.ethAccount;
+      }
+      return returnValue;
+    }
     return null;
   });
 

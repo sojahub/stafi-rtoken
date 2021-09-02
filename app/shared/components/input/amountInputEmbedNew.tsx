@@ -1,8 +1,9 @@
-import { Input, message } from "antd";
-import React from "react";
-import "./inputEmbedNew.scss";
+import { Input, message } from 'antd';
+import React from 'react';
+import './inputEmbedNew.scss';
 
 type Props = {
+  fromSource?: 'default' | 'liquidity_programs';
   placeholder?: string;
   icon?: any;
   unit?: string;
@@ -13,24 +14,24 @@ type Props = {
 };
 export default function Index(props: Props) {
   return (
-    <div className={'amount_input_embed_new_container'}>
+    <div
+      className={
+        !props.fromSource || props.fromSource === 'default'
+          ? 'amount_input_embed_new_container'
+          : 'stake_amount_input_container'
+      }>
       <Input
-        className={"amount_input ant-input-affix-wrapper"}
+        className={'amount_input ant-input-affix-wrapper'}
         disabled={props.disabled}
         onChange={(e) => {
-          let value = e.target.value.replace(/[^\d\.]/g, "");
-          value = value.replace(/^\./g, "");
-          value = value.replace(/\.{2,}/g, ".");
-          value = value
-            .replace(".", "$#$")
-            .replace(/\./g, "")
-            .replace("$#$", ".");
-          value = value.replace(/^(\-)*(\d+)\.(\d\d\d\d\d\d).*$/, "$1$2.$3");
+          let value = e.target.value.replace(/[^\d\.]/g, '');
+          value = value.replace(/^\./g, '');
+          value = value.replace(/\.{2,}/g, '.');
+          value = value.replace('.', '$#$').replace(/\./g, '').replace('$#$', '.');
+          value = value.replace(/^(\-)*(\d+)\.(\d\d\d\d\d\d).*$/, '$1$2.$3');
           if (Number(value) > Number(props.maxInput)) {
-            message.error(
-              "The amount of input exceeds your transferrable balance"
-            );
-            props.onChange && props.onChange("");
+            message.error('The amount of input exceeds your transferrable balance');
+            props.onChange && props.onChange('');
           } else {
             props.onChange && props.onChange(value);
           }
@@ -40,7 +41,7 @@ export default function Index(props: Props) {
         suffix={
           props.icon ? (
             <>
-              <label className="input_unit">{props.unit}</label>
+              <label className='input_unit'>{props.unit}</label>
               <img src={props.icon} />
             </>
           ) : null

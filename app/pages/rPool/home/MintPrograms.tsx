@@ -74,7 +74,7 @@ export default function MintPrograms(props: any) {
         rATOMActs: state.mintProgramsModule.rATOMActs,
         rETHActs: state.mintProgramsModule.rETHActs,
         loadComplete: state.mintProgramsModule.loadComplete,
-        loading: state.globalModule.loading,
+        loading: state.mintProgramsModule.loadingList,
       };
     });
 

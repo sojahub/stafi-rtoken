@@ -17,12 +17,18 @@ export default class Index {
     return JSON.parse(abi);
   }
 
+  getStakeTokenAbi() {
+    const abi =
+      '[{"inputs":[],"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"owner","type":"address"},{"indexed":true,"internalType":"address","name":"spender","type":"address"},{"indexed":false,"internalType":"uint256","name":"value","type":"uint256"}],"name":"Approval","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"address","name":"account","type":"address"}],"name":"Paused","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"bytes32","name":"role","type":"bytes32"},{"indexed":true,"internalType":"bytes32","name":"previousAdminRole","type":"bytes32"},{"indexed":true,"internalType":"bytes32","name":"newAdminRole","type":"bytes32"}],"name":"RoleAdminChanged","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"bytes32","name":"role","type":"bytes32"},{"indexed":true,"internalType":"address","name":"account","type":"address"},{"indexed":true,"internalType":"address","name":"sender","type":"address"}],"name":"RoleGranted","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"bytes32","name":"role","type":"bytes32"},{"indexed":true,"internalType":"address","name":"account","type":"address"},{"indexed":true,"internalType":"address","name":"sender","type":"address"}],"name":"RoleRevoked","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"from","type":"address"},{"indexed":true,"internalType":"address","name":"to","type":"address"},{"indexed":false,"internalType":"uint256","name":"value","type":"uint256"}],"name":"Transfer","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"address","name":"account","type":"address"}],"name":"Unpaused","type":"event"},{"inputs":[],"name":"DEFAULT_ADMIN_ROLE","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"MINTER_ROLE","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"PAUSER_ROLE","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"owner","type":"address"},{"internalType":"address","name":"spender","type":"address"}],"name":"allowance","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"spender","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"approve","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"account","type":"address"}],"name":"balanceOf","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"burn","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"account","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"burnFrom","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"decimals","outputs":[{"internalType":"uint8","name":"","type":"uint8"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"spender","type":"address"},{"internalType":"uint256","name":"subtractedValue","type":"uint256"}],"name":"decreaseAllowance","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bytes32","name":"role","type":"bytes32"}],"name":"getRoleAdmin","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"bytes32","name":"role","type":"bytes32"},{"internalType":"uint256","name":"index","type":"uint256"}],"name":"getRoleMember","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"bytes32","name":"role","type":"bytes32"}],"name":"getRoleMemberCount","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"bytes32","name":"role","type":"bytes32"},{"internalType":"address","name":"account","type":"address"}],"name":"grantRole","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bytes32","name":"role","type":"bytes32"},{"internalType":"address","name":"account","type":"address"}],"name":"hasRole","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"spender","type":"address"},{"internalType":"uint256","name":"addedValue","type":"uint256"}],"name":"increaseAllowance","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"mint","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"name","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"pause","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"paused","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"bytes32","name":"role","type":"bytes32"},{"internalType":"address","name":"account","type":"address"}],"name":"renounceRole","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bytes32","name":"role","type":"bytes32"},{"internalType":"address","name":"account","type":"address"}],"name":"revokeRole","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"symbol","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"totalSupply","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"recipient","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"transfer","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"sender","type":"address"},{"internalType":"address","name":"recipient","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"transferFrom","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"unpause","outputs":[],"stateMutability":"nonpayable","type":"function"}]';
+    return JSON.parse(abi);
+  }
+
   getRPoolList() {
     const url = config.api() + '/stafi/v1/webapi/rpool/rpoollist';
     return rpc.post(url);
   }
 
-  async getLPList(phase2Acts: [any], ethAddress: any) {
+  async fillLpData(phase2Acts: [any], ethAddress: any, updateCb: Function) {
     const web3 = ethServer.getWeb3();
 
     for (let item of phase2Acts) {
@@ -31,16 +37,17 @@ export default class Index {
         if (!contractAddress) {
           continue;
         }
-        console.log('address:', contractAddress);
+        // console.log('address:', contractAddress);
         let lockContract = new web3.eth.Contract(this.getStakingLockDropAbi(), contractAddress, {
           from: ethAddress,
         });
 
         const poolLength = await lockContract.methods.poolLength().call();
-        console.log('poolLength: ', poolLength);
-        console.log('poolIndex: ', poolItem.poolIndex);
+        // console.log('poolLength: ', poolLength);
+        // console.log('poolIndex: ', poolItem.poolIndex);
         const poolInfo = await lockContract.methods.poolInfo(poolItem.poolIndex).call();
-        console.log('poolInfo: ', poolInfo);
+        // console.log('poolInfo: ', poolInfo);
+        poolItem.stakeTokenAddress = poolInfo.stakeToken;
 
         let totalReward = web3.utils.fromWei(poolInfo.totalReward, 'ether');
         poolItem.totalReward = totalReward.toString().replace(/(\d)(?=(?:\d{3})+$)/g, '$1,');
@@ -50,24 +57,43 @@ export default class Index {
         poolItem.rewardPerBlockValue = rewardPerBlock;
 
         poolItem.startBlock = poolInfo.startBlock;
+      }
+    }
+    // updateCb && updateCb();
 
-        // let tokenContract = new web3.eth.Contract(Web3Util.getStakeTokenAbi(), poolInfo.stakeToken, {
-        //   from: this.currentAddress
-        // });
+    // TODO
+    const wraPriceValue = 2;
+    const totalBlocks = 2254114;
 
-        // tokenContract.methods.balanceOf(Web3Util.getStakingLockDropAddress()).call().then(poolStakeTokenSupply => {
-        //   let stakeTokenSupply = web3.utils.fromWei(poolStakeTokenSupply, 'ether');
-        //   this.phase2Acts[i].stakeTokenSupply = stakeTokenSupply;
+    for (let item of phase2Acts) {
+      for (let poolItem of item.children) {
+        let tokenContract = new web3.eth.Contract(this.getStakeTokenAbi(), poolItem.stakeTokenAddress, {
+          from: ethAddress,
+        });
 
-        //   this.handleApr(i);
-        //   this.handleTvlValue(i);
-        // });
+        let contractAddress = config.lockContractAddress(poolItem.platform);
+        if (!contractAddress) {
+          continue;
+        }
+        const poolStakeTokenSupply = await tokenContract.methods.balanceOf(contractAddress).call();
+        let stakeTokenSupply = web3.utils.fromWei(poolStakeTokenSupply, 'ether');
+        poolItem.stakeTokenSupply = stakeTokenSupply;
+        // TODO
+        poolItem.stakeTokenPrice = 1;
+
+        let ratio;
+        if (poolItem.stakeTokenSupply > 0) {
+          ratio =
+            (poolItem.rewardPerBlockValue * totalBlocks * wraPriceValue * 100) /
+            (poolItem.stakeTokenPrice * poolItem.stakeTokenSupply);
+        } else {
+          ratio = (poolItem.rewardPerBlockValue * totalBlocks * wraPriceValue * 100) / poolItem.stakeTokenPrice;
+        }
+        poolItem.apr = numberUtil.handleAmountRoundToFixed(ratio, 2);
       }
     }
 
-    phase2Acts.forEach((item: any) => {
-      item.children?.forEach((poolItem: any) => {});
-    });
+    updateCb && updateCb();
   }
 
   async getRTokenMintRewardActs(symbol: rSymbol) {
@@ -393,6 +419,110 @@ export default class Index {
       }
     } finally {
       return response;
+    }
+  }
+
+  async getLiquidityOverview(ethAddress: any, platform: any, poolIndex: any, lpPrice: any, fisPrice: any) {
+    const response: any = {
+      actData: null,
+      totalMintedValue: '--',
+      myMint: '--',
+      myMintRatio: '--',
+      myReward: '--',
+      fisTotalReward: '--',
+      fisClaimableReward: '--',
+      fisLockedReward: '--',
+      claimIndexs: [],
+      stakeTokenAddress: '',
+      lpBalance: '--',
+      lpAllowance: '--',
+      userStakedAmount: '--',
+    };
+    try {
+      const web3 = ethServer.getWeb3();
+      let contractAddress = config.lockContractAddress(platform);
+      if (!contractAddress) {
+        throw new Error('contract address not found');
+      }
+      let lockContract = new web3.eth.Contract(this.getStakingLockDropAbi(), contractAddress, {
+        from: ethAddress,
+      });
+      const poolInfo = await lockContract.methods.poolInfo(poolIndex).call();
+      console.log('poolInfo: ', poolInfo);
+      if (!poolInfo) {
+        return;
+      }
+      const totalReward = web3.utils.fromWei(poolInfo.totalReward, 'ether');
+
+      const stakeTokenAddress = poolInfo.stakeToken;
+      if (stakeTokenAddress) {
+        response.stakeTokenAddress = stakeTokenAddress;
+        let stakeTokenContract = new web3.eth.Contract(this.getStakeTokenAbi(), stakeTokenAddress, {
+          from: ethAddress,
+        });
+
+        const balance = await stakeTokenContract.methods.balanceOf(ethAddress).call();
+        response.lpBalance = web3.utils.fromWei(balance, 'ether');
+        const allowance = await stakeTokenContract.methods.allowance(ethAddress, contractAddress).call();
+        response.lpAllowance = allowance;
+      }
+
+      const userInfo = await lockContract.methods.userInfo(poolIndex, ethAddress).call();
+      console.log('userInfo: ', userInfo);
+      if (!userInfo) {
+        return;
+      }
+      response.userStakedAmount = web3.utils.fromWei(userInfo.amount, 'ether');
+
+      if (!isNaN(Number(lpPrice))) {
+        response.totalMintedValue = numberUtil.handleAmountRoundToFixed(Number(lpPrice) * totalReward, 2);
+        response.myMint = numberUtil.handleAmountRoundToFixed(Number(lpPrice) * response.userStakedAmount, 2);
+      }
+      if (Number(totalReward) === Number(0)) {
+        if (Number(response.userStakedAmount) > 0) {
+          response.myMintRatio = 100;
+        } else {
+          response.myMintRatio = 0;
+        }
+      } else {
+        response.myMintRatio = min(100, Math.round(((response.userStakedAmount * 100) / totalReward) * 10) / 10);
+      }
+
+      const userClaimableReward = await lockContract.methods.getUserClaimableReward(poolIndex, ethAddress).call();
+      const userPendingReward = await lockContract.methods.pendingReward(poolIndex, ethAddress).call();
+      if (isNaN(userClaimableReward) || isNaN(userPendingReward)) {
+        return;
+      }
+      response.fisClaimableReward = web3.utils.fromWei(userClaimableReward, 'ether');
+      response.fisTotalReward =
+        Number(web3.utils.fromWei(userInfo.currentTotalReward, 'ether')) +
+        Number(web3.utils.fromWei(userPendingReward, 'ether')) +
+        Number(web3.utils.fromWei(userInfo.claimedReward, 'ether'));
+      response.fisLockedReward = Number(response.fisTotalReward) - Number(response.fisClaimableReward);
+
+      if (!isNaN(Number(fisPrice))) {
+        response.myReward = numberUtil.handleAmountRoundToFixed(fisPrice * response.fisTotalReward, 2);
+      }
+    } finally {
+      return response;
+    }
+  }
+
+  async approveLpAllowance(ethAddress: any, stakeTokenAddress: any, platform: any, cb?: Function) {
+    try {
+      const web3 = ethServer.getWeb3();
+      let tokenContract = new web3.eth.Contract(this.getStakeTokenAbi(), stakeTokenAddress, {
+        from: ethAddress,
+      });
+      let allowance = web3.utils.toWei('10000000');
+      let contractAddress = config.lockContractAddress(platform);
+      if (!contractAddress) {
+        throw new Error('contract address not found');
+      }
+      const result = await tokenContract.methods.approve(contractAddress, allowance).send();
+      console.log('approve result:', result);
+    } finally {
+      cb && cb();
     }
   }
 }
