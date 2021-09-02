@@ -554,6 +554,12 @@ export default {
     }
     return networkChainId === '0x61';
   },
+  metaMaskNetworkIsPolygon: (networkChainId: any) => {
+    if (!isdev()) {
+      return networkChainId === '0x89';
+    }
+    return networkChainId === '0x13881';
+  },
   swapWaitingTime: () => {
     return 150;
   },
@@ -571,6 +577,13 @@ export default {
         return '';
       } else {
         return '0xe96cacf34367d048772bff0e838e5a1795995a28';
+      }
+    }
+    if (platform === 'Polygon') {
+      if (!isdev()) {
+        return '';
+      } else {
+        return '0xf341278f930c81719aad507b8796af353959e876';
       }
     }
     return '';

@@ -1,3 +1,4 @@
+import config from '@config/index';
 import { claimLpReward, stakeLp, unstakeLp } from '@features/rPoolClice';
 import RPoolServer from '@servers/rpool';
 import AmountInputEmbedNew from '@shared/components/input/amountInputEmbedNew';
@@ -25,13 +26,25 @@ export default function LiquidityStaker(props: LiquidityStakerProps) {
 
   const { lpData, initData } = props;
 
-  const { fisAccount, ethAccount, unitPriceList } = useSelector((state: any) => {
+  const { metaMaskNetworkId, fisAccount, ethAccount, unitPriceList } = useSelector((state: any) => {
     return {
+      metaMaskNetworkId: state.globalModule.metaMaskNetworkId,
       fisAccount: state.FISModule.fisAccount,
       ethAccount: state.rETHModule.ethAccount,
       unitPriceList: state.bridgeModule.priceList,
     };
   });
+
+  const metaMaskNetworkMatched = useMemo(() => {
+    if (platform === 'Ethereum') {
+      return config.metaMaskNetworkIsGoerliEth(metaMaskNetworkId);
+    } else if (platform === 'BSC') {
+      return config.metaMaskNetworkIsBsc(metaMaskNetworkId);
+    } else if (platform === 'Polygon') {
+      return config.metaMaskNetworkIsPolygon(metaMaskNetworkId);
+    }
+    return false;
+  }, [metaMaskNetworkId, platform]);
 
   const { totalReward, claimableReward, lockedReward } = useMemo(() => {
     const response = {
@@ -102,6 +115,9 @@ export default function LiquidityStaker(props: LiquidityStakerProps) {
   };
 
   const clickStake = () => {
+    if (!metaMaskNetworkMatched) {
+      return;
+    }
     if (!amount || isNaN(amount)) {
       return;
     }
@@ -118,6 +134,9 @@ export default function LiquidityStaker(props: LiquidityStakerProps) {
   };
 
   const clickUnstake = () => {
+    if (!metaMaskNetworkMatched) {
+      return;
+    }
     if (!amount || isNaN(amount)) {
       return;
     }
@@ -134,6 +153,9 @@ export default function LiquidityStaker(props: LiquidityStakerProps) {
   };
 
   const clickClaim = () => {
+    if (!metaMaskNetworkMatched) {
+      return;
+    }
     if (!claimableReward || isNaN(Number(claimableReward)) || Number(claimableReward) <= Number(0)) {
       return;
     }
@@ -192,14 +214,17 @@ export default function LiquidityStaker(props: LiquidityStakerProps) {
         {index === 0 && props.lpData && props.lpData.lpAllowance > 0 && (
           <div
             className='button'
-            style={{ marginLeft: '10px', opacity: Number(amount) > Number(0) ? 1 : 0.5 }}
+            style={{ marginLeft: '10px', opacity: Number(amount) > Number(0) && metaMaskNetworkMatched ? 1 : 0.5 }}
             onClick={clickStake}>
             Stake
           </div>
         )}
 
         {index === 0 && props.lpData && props.lpData.lpAllowance === 0 && (
-          <div className='button' style={{ marginLeft: '10px' }} onClick={clickApprove}>
+          <div
+            className='button'
+            style={{ marginLeft: '10px', opacity: metaMaskNetworkMatched ? 1 : 0.5 }}
+            onClick={clickApprove}>
             Approve
           </div>
         )}
@@ -207,7 +232,7 @@ export default function LiquidityStaker(props: LiquidityStakerProps) {
         {index === 1 && (
           <div
             className='button'
-            style={{ marginLeft: '10px', opacity: Number(amount) > Number(0) ? 1 : 0.5 }}
+            style={{ marginLeft: '10px', opacity: Number(amount) > Number(0) && metaMaskNetworkMatched ? 1 : 0.5 }}
             onClick={clickUnstake}>
             Untake
           </div>
@@ -235,7 +260,11 @@ export default function LiquidityStaker(props: LiquidityStakerProps) {
 
       <div
         className='button'
-        style={{ marginLeft: '447px', marginTop: '10px', opacity: Number(claimableReward) > Number(0) ? 1 : 0.5 }}
+        style={{
+          marginLeft: '447px',
+          marginTop: '10px',
+          opacity: Number(claimableReward) > Number(0) && metaMaskNetworkMatched ? 1 : 0.5,
+        }}
         onClick={clickClaim}>
         Claim
       </div>

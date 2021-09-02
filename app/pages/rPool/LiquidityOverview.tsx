@@ -62,11 +62,12 @@ export default function LiquidityOverview() {
     };
   });
 
-  const { fisAccount, ethAccount, unitPriceList } = useSelector((state: any) => {
+  const { fisAccount, ethAccount, unitPriceList, metaMaskNetworkId } = useSelector((state: any) => {
     return {
       fisAccount: state.FISModule.fisAccount,
       ethAccount: state.rETHModule.ethAccount,
       unitPriceList: state.bridgeModule.priceList,
+      metaMaskNetworkId: state.globalModule.metaMaskNetworkId,
     };
   });
 
@@ -78,7 +79,7 @@ export default function LiquidityOverview() {
 
   useEffect(() => {
     initData();
-  }, [ethAccount && ethAccount.address, unitPriceList, lpPrice]);
+  }, [ethAccount && ethAccount.address, unitPriceList, lpPrice, metaMaskNetworkId]);
 
   useInterval(() => {
     initData();
@@ -182,7 +183,7 @@ export default function LiquidityOverview() {
               <div className='title'>{lpName}</div>
 
               <div className='apr_container'>
-                <div className='number'>28.34%</div>
+                <div className='number'>{overviewData && !isNaN(overviewData.apr) ? overviewData.apr + '%' : '--'}</div>
                 <div className='label'>APY</div>
               </div>
 

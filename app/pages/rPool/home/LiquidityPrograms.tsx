@@ -174,6 +174,27 @@ const phase2Acts = [
   //     },
   //   ],
   // },
+  {
+    name: 'UNI-V2 rMATIC/MATIC LP',
+    extraName: 'rMATIC',
+    children: [
+      {
+        platform: 'Polygon',
+        poolIndex: 0,
+        stakeTokenAddress: '',
+        apr: '--',
+        toDate: '--',
+        totalReward: '--',
+        tvl: '--',
+        rewardPerBlockValue: '',
+        totalRewardValue: '',
+        startBlock: '',
+        endBlock: '',
+        stakeTokenSupply: '',
+        stakeTokenPrice: '',
+      },
+    ],
+  },
 ];
 
 export default function LiquidityPrograms(props: any) {
@@ -364,9 +385,15 @@ export default function LiquidityPrograms(props: any) {
                       stakeUrl = 'https://app.stafi.io/rKSM';
                       liquidityUrl = 'https://app.uniswap.org/#/add/v2/ETH/0x3c3842c4d3037ae121d69ea1e7a0b61413be806c';
                       // wrapFiUrl="https://drop.wrapfi.io/phase2/staker?pid=4";
+                    } else if (data.extraName === 'rMATIC') {
+                      type = 'rMATIC/MATIC';
+                      icon = rpool_rksm_Icon;
+                      stakeUrl = 'https://app.stafi.io/rKSM';
+                      liquidityUrl = 'https://app.uniswap.org/#/add/v2/ETH/0x3c3842c4d3037ae121d69ea1e7a0b61413be806c';
+                      // wrapFiUrl="https://drop.wrapfi.io/phase2/staker?pid=4";
                     }
                     if (type === '') {
-                      return <></>;
+                      return <div key={`${data.name}${item.platform}${index}`}></div>;
                     }
                     return (
                       <TableItem

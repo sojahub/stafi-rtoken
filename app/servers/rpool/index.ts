@@ -29,71 +29,121 @@ export default class Index {
   }
 
   async fillLpData(phase2Acts: [any], ethAddress: any, updateCb: Function) {
-    const web3 = ethServer.getWeb3();
+    try {
+      for (let item of phase2Acts) {
+        for (let poolItem of item.children) {
+          let contractAddress = config.lockContractAddress(poolItem.platform);
+          if (!contractAddress) {
+            continue;
+          }
 
-    for (let item of phase2Acts) {
-      for (let poolItem of item.children) {
-        let contractAddress = config.lockContractAddress(poolItem.platform);
-        if (!contractAddress) {
-          continue;
+          const web3 = ethServer.getWeb3FromPlatform(poolItem.platform);
+          if (!web3) {
+            continue;
+          }
+
+          try {
+            // console.log('address:', contractAddress);
+            let lockContract = new web3.eth.Contract(this.getStakingLockDropAbi(), contractAddress, {
+              from: ethAddress,
+            });
+
+            const poolLength = await lockContract.methods.poolLength().call();
+            // console.log('poolLength: ', poolLength);
+            // console.log('poolIndex: ', poolItem.poolIndex);
+            const poolInfo = await lockContract.methods.poolInfo(poolItem.poolIndex).call();
+            // console.log('poolInfo: ', poolInfo);
+            poolItem.stakeTokenAddress = poolInfo.stakeToken;
+
+            let totalReward = web3.utils.fromWei(poolInfo.totalReward, 'ether');
+            poolItem.totalReward = totalReward.toString().replace(/(\d)(?=(?:\d{3})+$)/g, '$1,');
+            poolItem.totalRewardValue = totalReward;
+
+            let rewardPerBlock = web3.utils.fromWei(poolInfo.rewardPerBlock, 'ether');
+            poolItem.rewardPerBlockValue = rewardPerBlock;
+
+            poolItem.startBlock = poolInfo.startBlock;
+          } catch (err) {
+            console.log('sdfsd111 error', err.message);
+          }
         }
-        // console.log('address:', contractAddress);
-        let lockContract = new web3.eth.Contract(this.getStakingLockDropAbi(), contractAddress, {
-          from: ethAddress,
-        });
-
-        const poolLength = await lockContract.methods.poolLength().call();
-        // console.log('poolLength: ', poolLength);
-        // console.log('poolIndex: ', poolItem.poolIndex);
-        const poolInfo = await lockContract.methods.poolInfo(poolItem.poolIndex).call();
-        // console.log('poolInfo: ', poolInfo);
-        poolItem.stakeTokenAddress = poolInfo.stakeToken;
-
-        let totalReward = web3.utils.fromWei(poolInfo.totalReward, 'ether');
-        poolItem.totalReward = totalReward.toString().replace(/(\d)(?=(?:\d{3})+$)/g, '$1,');
-        poolItem.totalRewardValue = totalReward;
-
-        let rewardPerBlock = web3.utils.fromWei(poolInfo.rewardPerBlock, 'ether');
-        poolItem.rewardPerBlockValue = rewardPerBlock;
-
-        poolItem.startBlock = poolInfo.startBlock;
       }
-    }
-    // updateCb && updateCb();
 
+      for (let item of phase2Acts) {
+        for (let poolItem of item.children) {
+          const web3 = ethServer.getWeb3FromPlatform(poolItem.platform);
+          if (!web3) {
+            continue;
+          }
+
+          try {
+            let tokenContract = new web3.eth.Contract(this.getStakeTokenAbi(), poolItem.stakeTokenAddress, {
+              from: ethAddress,
+            });
+
+            let contractAddress = config.lockContractAddress(poolItem.platform);
+            if (!contractAddress) {
+              continue;
+            }
+            const poolStakeTokenSupply = await tokenContract.methods.balanceOf(contractAddress).call();
+            let stakeTokenSupply = web3.utils.fromWei(poolStakeTokenSupply, 'ether');
+            poolItem.stakeTokenSupply = stakeTokenSupply;
+
+            // TODO
+            poolItem.stakeTokenPrice = 1;
+            poolItem.apr = await this.getLpApr(
+              poolItem.platform,
+              ethAddress,
+              poolItem.stakeTokenAddress,
+              poolItem.rewardPerBlockValue,
+              poolItem.stakeTokenPrice,
+            );
+          } catch (err) {
+            console.log('sdfsd error', err.message);
+          }
+        }
+      }
+
+      updateCb && updateCb();
+    } catch (err) {
+      console.log(err);
+      console.error(err.message);
+    }
+  }
+
+  async getLpApr(platform: any, ethAddress: any, stakeTokenAddress: any, rewardPerBlock: any, stakeTokenPrice: any) {
+    let apr = '--';
     // TODO
-    const wraPriceValue = 2;
+    const dropTokenPriceValue = 2;
     const totalBlocks = 2254114;
 
-    for (let item of phase2Acts) {
-      for (let poolItem of item.children) {
-        let tokenContract = new web3.eth.Contract(this.getStakeTokenAbi(), poolItem.stakeTokenAddress, {
-          from: ethAddress,
-        });
-
-        let contractAddress = config.lockContractAddress(poolItem.platform);
-        if (!contractAddress) {
-          continue;
-        }
-        const poolStakeTokenSupply = await tokenContract.methods.balanceOf(contractAddress).call();
-        let stakeTokenSupply = web3.utils.fromWei(poolStakeTokenSupply, 'ether');
-        poolItem.stakeTokenSupply = stakeTokenSupply;
-        // TODO
-        poolItem.stakeTokenPrice = 1;
-
-        let ratio;
-        if (poolItem.stakeTokenSupply > 0) {
-          ratio =
-            (poolItem.rewardPerBlockValue * totalBlocks * wraPriceValue * 100) /
-            (poolItem.stakeTokenPrice * poolItem.stakeTokenSupply);
-        } else {
-          ratio = (poolItem.rewardPerBlockValue * totalBlocks * wraPriceValue * 100) / poolItem.stakeTokenPrice;
-        }
-        poolItem.apr = numberUtil.handleAmountRoundToFixed(ratio, 2);
+    try {
+      const web3 = ethServer.getWeb3FromPlatform(platform);
+      if (!web3) {
+        return apr;
       }
-    }
+      let tokenContract = new web3.eth.Contract(this.getStakeTokenAbi(), stakeTokenAddress, {
+        from: ethAddress,
+      });
 
-    updateCb && updateCb();
+      let contractAddress = config.lockContractAddress(platform);
+      if (!contractAddress) {
+        return apr;
+      }
+      const poolStakeTokenSupply = await tokenContract.methods.balanceOf(contractAddress).call();
+      let stakeTokenSupply = web3.utils.fromWei(poolStakeTokenSupply, 'ether');
+
+      let ratio;
+      if (stakeTokenSupply > 0) {
+        ratio = (rewardPerBlock * totalBlocks * dropTokenPriceValue * 100) / (stakeTokenPrice * stakeTokenSupply);
+      } else {
+        ratio = (rewardPerBlock * totalBlocks * dropTokenPriceValue * 100) / stakeTokenPrice;
+      }
+      apr = numberUtil.handleAmountRoundToFixed(ratio, 2);
+    } catch (err) {
+      console.log('sdfsd error', err.message);
+    }
+    return apr;
   }
 
   async getRTokenMintRewardActs(symbol: rSymbol) {
@@ -424,7 +474,7 @@ export default class Index {
 
   async getLiquidityOverview(ethAddress: any, platform: any, poolIndex: any, lpPrice: any, fisPrice: any) {
     const response: any = {
-      actData: null,
+      apr: '--',
       totalMintedValue: '--',
       myMint: '--',
       myMintRatio: '--',
@@ -439,7 +489,11 @@ export default class Index {
       userStakedAmount: '--',
     };
     try {
-      const web3 = ethServer.getWeb3();
+      const web3 = ethServer.getWeb3FromPlatform(platform);
+      if (!web3) {
+        throw new Error('unknown platform');
+      }
+
       let contractAddress = config.lockContractAddress(platform);
       if (!contractAddress) {
         throw new Error('contract address not found');
@@ -465,6 +519,9 @@ export default class Index {
         response.lpBalance = web3.utils.fromWei(balance, 'ether');
         const allowance = await stakeTokenContract.methods.allowance(ethAddress, contractAddress).call();
         response.lpAllowance = allowance;
+
+        const rewardPerBlock = web3.utils.fromWei(poolInfo.rewardPerBlock, 'ether');
+        response.apr = await this.getLpApr(platform, ethAddress, stakeTokenAddress, rewardPerBlock, 1);
       }
 
       const userInfo = await lockContract.methods.userInfo(poolIndex, ethAddress).call();
