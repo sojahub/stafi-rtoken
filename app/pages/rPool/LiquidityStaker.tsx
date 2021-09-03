@@ -1,5 +1,5 @@
 import config from '@config/index';
-import { claimLpReward, stakeLp, unstakeLp } from '@features/rPoolClice';
+import { approveLpAllowance, claimLpReward, stakeLp, unstakeLp } from '@features/rPoolClice';
 import RPoolServer from '@servers/rpool';
 import AmountInputEmbedNew from '@shared/components/input/amountInputEmbedNew';
 import numberUtil from '@util/numberUtil';
@@ -104,6 +104,9 @@ export default function LiquidityStaker(props: LiquidityStakerProps) {
     if (!metaMaskNetworkMatched) {
       return;
     }
+    if (!amount || isNaN(amount)) {
+      return;
+    }
     if (!ethAccount || !ethAccount.address) {
       message.error('eth address empty');
       return;
@@ -112,9 +115,13 @@ export default function LiquidityStaker(props: LiquidityStakerProps) {
       message.error('waiting for data');
       return;
     }
-    rPoolServer.approveLpAllowance(ethAccount.address, lpData.stakeTokenAddress, platform, () => {
-      initData && initData();
-    });
+    dispatch(
+      approveLpAllowance(ethAccount.address, lpData.stakeTokenAddress, platform, (success: boolean) => {
+        if (success) {
+          initData && initData();
+        }
+      }),
+    );
   };
 
   const clickStake = () => {
@@ -232,8 +239,8 @@ export default function LiquidityStaker(props: LiquidityStakerProps) {
             className='button'
             style={{
               marginLeft: '10px',
-              opacity: metaMaskNetworkMatched ? 1 : 0.5,
-              cursor: metaMaskNetworkMatched ? 'pointer' : 'not-allowed',
+              opacity: Number(amount) > Number(0) && metaMaskNetworkMatched ? 1 : 0.5,
+              cursor: Number(amount) > Number(0) && metaMaskNetworkMatched ? 'pointer' : 'not-allowed',
             }}
             onClick={clickApprove}>
             Approve

@@ -76,9 +76,6 @@ export const getRPoolList = (): AppThunk => async (dispatch, getState) => {
 export const getLPList =
   (phase2Acts: any, showLoading: boolean): AppThunk =>
   async (dispatch, getState) => {
-    // if (!getState().rETHModule.ethAccount || !getState().rETHModule.ethAccount.address) {
-    //   return;
-    // }
     try {
       if (showLoading) {
         dispatch(setLoadingLpList(true));
@@ -87,6 +84,29 @@ export const getLPList =
       dispatch(setLpList([...phase2Acts]));
     } finally {
       dispatch(setLoadingLpList(false));
+    }
+  };
+
+export const approveLpAllowance =
+  (ethAddress: any, stakeTokenAddress: any, platform: any, cb?: Function): AppThunk =>
+  async (dispatch, getState) => {
+    dispatch(setLoading(true));
+    try {
+      const web3 = ethServer.getWeb3();
+      let tokenContract = new web3.eth.Contract(rPoolServer.getStakeTokenAbi(), stakeTokenAddress, {
+        from: ethAddress,
+      });
+      let allowance = web3.utils.toWei('10000000');
+      let contractAddress = config.lockContractAddress(platform);
+      if (!contractAddress) {
+        throw new Error('contract address not found');
+      }
+      const result = await tokenContract.methods.approve(contractAddress, allowance).send();
+      if (result && result.status) {
+        cb && cb(true);
+      }
+    } finally {
+      dispatch(setLoading(false));
     }
   };
 

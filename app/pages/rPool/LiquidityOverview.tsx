@@ -215,7 +215,7 @@ export default function LiquidityOverview() {
               <div className='content_row'>
                 <img src={mintValueIcon} className='icon' />
 
-                <div className='label'>Minted Value</div>
+                <div className='label'>Staked Value</div>
 
                 <div className='content_text'>{mintedValue !== '--' ? `$${mintedValue}` : '--'}</div>
               </div>

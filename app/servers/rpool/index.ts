@@ -506,43 +506,49 @@ export default class Index {
       if (!poolInfo) {
         return;
       }
-      const totalReward = web3.utils.fromWei(poolInfo.totalReward, 'ether');
+      // const totalReward = web3.utils.fromWei(poolInfo.totalReward, 'ether');
 
       const stakeTokenAddress = poolInfo.stakeToken;
-      if (stakeTokenAddress) {
-        response.stakeTokenAddress = stakeTokenAddress;
-        let stakeTokenContract = new web3.eth.Contract(this.getStakeTokenAbi(), stakeTokenAddress, {
-          from: ethAddress,
-        });
-
-        const balance = await stakeTokenContract.methods.balanceOf(ethAddress).call();
-        response.lpBalance = web3.utils.fromWei(balance, 'ether');
-        const allowance = await stakeTokenContract.methods.allowance(ethAddress, contractAddress).call();
-        response.lpAllowance = allowance;
-
-        const rewardPerBlock = web3.utils.fromWei(poolInfo.rewardPerBlock, 'ether');
-        response.apr = await this.getLpApr(platform, ethAddress, stakeTokenAddress, rewardPerBlock, 1);
+      if (!stakeTokenAddress) {
+        return;
       }
 
+      response.stakeTokenAddress = stakeTokenAddress;
+      let stakeTokenContract = new web3.eth.Contract(this.getStakeTokenAbi(), stakeTokenAddress, {
+        from: ethAddress,
+      });
+
+      const poolStakeTokenSupply = await stakeTokenContract.methods.balanceOf(contractAddress).call();
+      const stakeTokenSupply = web3.utils.fromWei(poolStakeTokenSupply, 'ether');
+
+      const balance = await stakeTokenContract.methods.balanceOf(ethAddress).call();
+      response.lpBalance = web3.utils.fromWei(balance, 'ether');
+      const allowance = await stakeTokenContract.methods.allowance(ethAddress, contractAddress).call();
+      response.lpAllowance = allowance;
+
+      const rewardPerBlock = web3.utils.fromWei(poolInfo.rewardPerBlock, 'ether');
+      response.apr = await this.getLpApr(platform, ethAddress, stakeTokenAddress, rewardPerBlock, 1);
+
       const userInfo = await lockContract.methods.userInfo(poolIndex, ethAddress).call();
-      console.log('userInfo: ', userInfo);
+      // console.log('userInfo: ', userInfo);
       if (!userInfo) {
         return;
       }
       response.userStakedAmount = web3.utils.fromWei(userInfo.amount, 'ether');
 
       if (!isNaN(Number(lpPrice))) {
-        response.totalMintedValue = numberUtil.handleAmountRoundToFixed(Number(lpPrice) * totalReward, 2);
+        response.totalMintedValue = numberUtil.handleAmountRoundToFixed(Number(lpPrice) * stakeTokenSupply, 2);
         response.myMint = numberUtil.handleAmountRoundToFixed(Number(lpPrice) * response.userStakedAmount, 2);
       }
-      if (Number(totalReward) === Number(0)) {
+
+      if (Number(stakeTokenSupply) === Number(0)) {
         if (Number(response.userStakedAmount) > 0) {
           response.myMintRatio = 100;
         } else {
           response.myMintRatio = 0;
         }
       } else {
-        response.myMintRatio = min(100, Math.round(((response.userStakedAmount * 100) / totalReward) * 10) / 10);
+        response.myMintRatio = min(100, Math.round(((response.userStakedAmount * 100) / stakeTokenSupply) * 10) / 10);
       }
 
       const userClaimableReward = await lockContract.methods.getUserClaimableReward(poolIndex, ethAddress).call();
@@ -562,24 +568,6 @@ export default class Index {
       }
     } finally {
       return response;
-    }
-  }
-
-  async approveLpAllowance(ethAddress: any, stakeTokenAddress: any, platform: any, cb?: Function) {
-    try {
-      const web3 = ethServer.getWeb3();
-      let tokenContract = new web3.eth.Contract(this.getStakeTokenAbi(), stakeTokenAddress, {
-        from: ethAddress,
-      });
-      let allowance = web3.utils.toWei('10000000');
-      let contractAddress = config.lockContractAddress(platform);
-      if (!contractAddress) {
-        throw new Error('contract address not found');
-      }
-      const result = await tokenContract.methods.approve(contractAddress, allowance).send();
-      console.log('approve result:', result);
-    } finally {
-      cb && cb();
     }
   }
 }
