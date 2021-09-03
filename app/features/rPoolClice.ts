@@ -172,7 +172,7 @@ const rPoolClice = createSlice({
   name: 'rPoolModule',
   initialState: {
     rPoolList: [],
-    lpList: [],
+    lpList: lpActs,
     loadingLpList: false,
     totalLiquidity: '--',
     apyAvg: '--',
@@ -236,9 +236,9 @@ export const getLPList =
   (showLoading: boolean): AppThunk =>
   async (dispatch, getState) => {
     try {
-      if (showLoading) {
-        dispatch(setLoadingLpList(true));
-      }
+      // if (showLoading) {
+      //   dispatch(setLoadingLpList(true));
+      // }
       const newList = await rPoolServer.fillLpData(lpActs, '');
       dispatch(setLpList(newList));
     } finally {
