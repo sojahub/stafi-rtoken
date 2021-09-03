@@ -563,7 +563,7 @@ export default class Index {
         Number(web3.utils.fromWei(userPendingReward, 'ether')) +
         Number(web3.utils.fromWei(userInfo.claimedReward, 'ether'));
 
-      console.log('sdfsdf', web3.utils.fromWei(userInfo.claimedReward, 'ether'));
+      // console.log('sdfsdf', web3.utils.fromWei(userInfo.claimedReward, 'ether'));
       response.fisLockedReward = max(
         0,
         Number(response.fisTotalReward) -

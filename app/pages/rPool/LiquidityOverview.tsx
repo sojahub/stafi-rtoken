@@ -30,7 +30,7 @@ import LiquidityStaker from './LiquidityStaker';
 const rPoolServer = new RPoolServer();
 
 export default function LiquidityOverview() {
-  let isMounted = false;
+  let isMounted = true;
   const history = useHistory();
   const location = useLocation();
   const { lpPlatform, poolIndex } = useParams<any>();
@@ -147,8 +147,7 @@ export default function LiquidityOverview() {
           lpPrice,
           fisPrice && fisPrice.price,
         );
-        console.log('response:', response);
-        console.log('isMounted:', isMounted);
+        // console.log('response:', response);
       }
       if (response && isMounted) {
         setOverviewData(response);

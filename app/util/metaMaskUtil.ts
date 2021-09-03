@@ -27,7 +27,6 @@ export const liquidityUrlMatchMetaMask = (networkChainId: any, url: string) => {
 };
 
 export const liquidityPlatformMatchMetaMask = (networkChainId: any, platform: string) => {
-  console.log('sdfsdf', networkChainId, platform);
   if (platform === 'Ethereum') {
     return config.metaMaskNetworkIsGoerliEth(networkChainId);
   }
