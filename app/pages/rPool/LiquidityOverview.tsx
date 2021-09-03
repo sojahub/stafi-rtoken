@@ -17,6 +17,7 @@ import stafiWhiteIcon from '@images/stafi_white.svg';
 import RPoolServer from '@servers/rpool';
 import Button from '@shared/components/button/connect_button';
 import Modal from '@shared/components/modal/connectModal';
+import { liquidityPlatformMatchMetaMask } from '@util/metaMaskUtil';
 import numberUtil from '@util/numberUtil';
 import { useInterval } from '@util/utils';
 import { Spin } from 'antd';
@@ -29,8 +30,9 @@ import LiquidityStaker from './LiquidityStaker';
 
 const rPoolServer = new RPoolServer();
 
+let isMounted = false;
+
 export default function LiquidityOverview() {
-  let isMounted = true;
   const history = useHistory();
   const location = useLocation();
   const { lpPlatform, poolIndex } = useParams<any>();
@@ -93,6 +95,10 @@ export default function LiquidityOverview() {
   useInterval(() => {
     initData();
   }, refreshInterval);
+
+  const metaMaskNetworkMatched = useMemo(() => {
+    return liquidityPlatformMatchMetaMask(metaMaskNetworkId, lpPlatform);
+  }, [metaMaskNetworkId, lpPlatform]);
 
   const lpNameWithPrefix = useMemo(() => {
     let prefix;
@@ -234,8 +240,8 @@ export default function LiquidityOverview() {
                 <div className='label'>My Share</div>
 
                 <div className='content_text'>
-                  {userMintToken !== '--' ? `$${userMintToken}` : '--'} (
-                  {userMintRatio !== '--' ? `${userMintRatio}` : '--'}
+                  {userMintToken !== '--' && metaMaskNetworkMatched ? `$${userMintToken}` : '--'} (
+                  {userMintRatio !== '--' && metaMaskNetworkMatched ? `${userMintRatio}` : '--'}
                   %)
                 </div>
               </div>
@@ -245,19 +251,51 @@ export default function LiquidityOverview() {
 
                 <div className='label'>My Reward</div>
 
-                <div className='content_text'>{userMintReward !== '--' ? `$${userMintReward}` : '--'}</div>
+                <div className='content_text'>
+                  {userMintReward !== '--' && metaMaskNetworkMatched ? `$${userMintReward}` : '--'}
+                </div>
               </div>
 
               <div className='button_container'>
-                <div className='button' style={{ marginRight: '20px' }} onClick={() => setShowStaker(true)}>
+                <div
+                  className='button'
+                  style={{
+                    marginRight: '20px',
+                    opacity: metaMaskNetworkMatched ? 1 : 0.5,
+                    cursor: metaMaskNetworkMatched ? 'pointer' : 'not-allowed',
+                  }}
+                  onClick={() => {
+                    if (metaMaskNetworkMatched) {
+                      setShowStaker(true);
+                    }
+                  }}>
                   Staking
                 </div>
 
-                <div className='button' onClick={() => setClaimModalVisible(true)}>
+                <div
+                  className='button'
+                  style={{
+                    opacity: metaMaskNetworkMatched ? 1 : 0.5,
+                    cursor: metaMaskNetworkMatched ? 'pointer' : 'not-allowed',
+                  }}
+                  onClick={() => {
+                    if (metaMaskNetworkMatched) {
+                    }
+                  }}>
                   Add Liquidity
                 </div>
 
-                <div className='button' onClick={() => setShowStaker(true)}>
+                <div
+                  className='button'
+                  style={{
+                    opacity: metaMaskNetworkMatched ? 1 : 0.5,
+                    cursor: metaMaskNetworkMatched ? 'pointer' : 'not-allowed',
+                  }}
+                  onClick={() => {
+                    if (metaMaskNetworkMatched) {
+                      setShowStaker(true);
+                    }
+                  }}>
                   Claim Reward
                 </div>
               </div>
