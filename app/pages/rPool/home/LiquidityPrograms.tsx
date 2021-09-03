@@ -1,10 +1,11 @@
 import Card from '@components/card/index';
 import { getLPList } from '@features/rPoolClice';
-import rpool_ratom_Icon from '@images/rpool_ratom.svg';
-import rpool_rdot_Icon from '@images/rpool_rdot.svg';
+import rpool_ratom_Icon from '@images/rpool_ratom_atom.svg';
+import rpool_rdot_Icon from '@images/rpool_rdot_dot.svg';
 import rpool_reth_Icon from '@images/rpool_reth.svg';
-import rpool_rfis_Icon from '@images/rpool_rfis.svg';
-import rpool_rksm_Icon from '@images/rpool_rksm.svg';
+import rpool_rfis_Icon from '@images/rpool_rfis_fis.svg';
+import rpool_rksm_Icon from '@images/rpool_rksm_ksm.svg';
+import rpool_rmatic_Icon from '@images/rpool_rmatic_matic.svg';
 import Doubt from '@shared/components/doubt';
 import numberUtil from '@util/numberUtil';
 import { useInterval } from '@util/utils';
@@ -42,7 +43,7 @@ const rTokenList: any = [
 
 const phase2Acts = [
   {
-    name: 'UNI-V2 rETH/ETH LP',
+    name: 'rETH/ETH LP',
     extraName: 'rETH',
     children: [
       {
@@ -78,7 +79,7 @@ const phase2Acts = [
     ],
   },
   {
-    name: 'UNI-V2 rFIS/FIS LP',
+    name: 'rFIS/FIS LP',
     extraName: 'rFIS',
     children: [
       {
@@ -114,7 +115,7 @@ const phase2Acts = [
     ],
   },
   {
-    name: 'UNI-V2 rDOT/DOT LP',
+    name: 'rDOT/DOT LP',
     extraName: 'rDOT',
     children: [
       {
@@ -134,48 +135,50 @@ const phase2Acts = [
       },
     ],
   },
-  // {
-  //   name: 'UNI-V2 rKSM/KSM LP',
-  //   extraName: 'rKSM',
-  //   children: [
-  //     {
-  //       platform: 'BSC',
-  //       poolIndex: 3,
-  //       apr: '- -',
-  //       toDate: '--',
-  //       totalReward: '--',
-  //       tvl: '--',
-  //       rewardPerBlockValue: '',
-  //       totalRewardValue: '',
-  //       startBlock: '',
-  //       endBlock: '',
-  //       stakeTokenSupply: '',
-  //       stakeTokenPrice: '',
-  //     },
-  //   ],
-  // },
-  // {
-  //   name: 'UNI-V2 rATOM/ATOM LP',
-  //   extraName: 'rATOM',
-  //   children: [
-  //     {
-  //       platform: 'BSC',
-  //       poolIndex: 4,
-  //       apr: '- -',
-  //       toDate: '--',
-  //       totalReward: '--',
-  //       tvl: '--',
-  //       rewardPerBlockValue: '',
-  //       totalRewardValue: '',
-  //       startBlock: '',
-  //       endBlock: '',
-  //       stakeTokenSupply: '',
-  //       stakeTokenPrice: '',
-  //     },
-  //   ],
-  // },
   {
-    name: 'UNI-V2 rMATIC/MATIC LP',
+    name: 'rKSM/KSM LP',
+    extraName: 'rKSM',
+    children: [
+      {
+        platform: 'BSC',
+        poolIndex: 3,
+        stakeTokenAddress: '',
+        apr: '- -',
+        toDate: '--',
+        totalReward: '--',
+        tvl: '--',
+        rewardPerBlockValue: '',
+        totalRewardValue: '',
+        startBlock: '',
+        endBlock: '',
+        stakeTokenSupply: '',
+        stakeTokenPrice: '',
+      },
+    ],
+  },
+  {
+    name: 'rATOM/ATOM LP',
+    extraName: 'rATOM',
+    children: [
+      {
+        platform: 'BSC',
+        poolIndex: 4,
+        stakeTokenAddress: '',
+        apr: '- -',
+        toDate: '--',
+        totalReward: '--',
+        tvl: '--',
+        rewardPerBlockValue: '',
+        totalRewardValue: '',
+        startBlock: '',
+        endBlock: '',
+        stakeTokenSupply: '',
+        stakeTokenPrice: '',
+      },
+    ],
+  },
+  {
+    name: 'rMATIC/MATIC LP',
     extraName: 'rMATIC',
     children: [
       {
@@ -369,25 +372,25 @@ export default function LiquidityPrograms(props: any) {
                       // wrapFiUrl="https://drop.wrapfi.io/phase2/staker?pid=1";
                     } else if (data.extraName === 'rDOT') {
                       type = 'rDOT/DOT';
-                      icon = rpool_ratom_Icon;
+                      icon = rpool_rdot_Icon;
                       stakeUrl = 'https://app.stafi.io/rATOM';
                       liquidityUrl = 'https://app.uniswap.org/#/add/v2/ETH/0xd01cb3d113a864763dd3977fe1e725860013b0ed';
                       // wrapFiUrl="https://drop.wrapfi.io/phase2/staker?pid=5";
                     } else if (data.extraName === 'rKSM') {
                       type = 'rKSM/KSM';
-                      icon = rpool_rdot_Icon;
+                      icon = rpool_rksm_Icon;
                       stakeUrl = 'https://app.stafi.io/rDOT';
                       liquidityUrl = 'https://app.uniswap.org/#/add/v2/ETH/0x505f5a4ff10985fe9f93f2ae3501da5fe665f08a';
                       // wrapFiUrl="https://drop.wrapfi.io/phase2/staker?pid=3";
                     } else if (data.extraName === 'rATOM') {
                       type = 'rATOM/ATOM';
-                      icon = rpool_rksm_Icon;
+                      icon = rpool_ratom_Icon;
                       stakeUrl = 'https://app.stafi.io/rKSM';
                       liquidityUrl = 'https://app.uniswap.org/#/add/v2/ETH/0x3c3842c4d3037ae121d69ea1e7a0b61413be806c';
                       // wrapFiUrl="https://drop.wrapfi.io/phase2/staker?pid=4";
                     } else if (data.extraName === 'rMATIC') {
                       type = 'rMATIC/MATIC';
-                      icon = rpool_rksm_Icon;
+                      icon = rpool_rmatic_Icon;
                       stakeUrl = 'https://app.stafi.io/rKSM';
                       liquidityUrl = 'https://app.uniswap.org/#/add/v2/ETH/0x3c3842c4d3037ae121d69ea1e7a0b61413be806c';
                       // wrapFiUrl="https://drop.wrapfi.io/phase2/staker?pid=4";

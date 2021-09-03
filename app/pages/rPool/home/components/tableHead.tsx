@@ -31,7 +31,7 @@ export default function Index(props: Props) {
       </div>
 
       <div
-        className='col col3 sort_field'
+        className='col col4 sort_field'
         onClick={() => {
           props.onClick && props.onClick('liquidity');
         }}>

@@ -52,13 +52,13 @@ export default function LiquidityStaker(props: LiquidityStakerProps) {
       claimableReward: '--',
       lockedReward: '--',
     };
-    if (lpData && lpData.fisTotalReward) {
+    if (lpData && !isNaN(lpData.fisTotalReward)) {
       response.totalReward = numberUtil.handleAmountToFixed4(lpData.fisTotalReward);
     }
-    if (lpData && lpData.fisClaimableReward) {
+    if (lpData && !isNaN(lpData.fisClaimableReward)) {
       response.claimableReward = numberUtil.handleAmountToFixed4(lpData.fisClaimableReward);
     }
-    if (lpData && lpData.fisLockedReward) {
+    if (lpData && !isNaN(lpData.fisLockedReward)) {
       response.lockedReward = numberUtil.handleAmountToFixed4(lpData.fisLockedReward);
     }
     return response;
@@ -101,6 +101,9 @@ export default function LiquidityStaker(props: LiquidityStakerProps) {
   };
 
   const clickApprove = () => {
+    if (!metaMaskNetworkMatched) {
+      return;
+    }
     if (!ethAccount || !ethAccount.address) {
       message.error('eth address empty');
       return;
@@ -214,16 +217,24 @@ export default function LiquidityStaker(props: LiquidityStakerProps) {
         {index === 0 && props.lpData && props.lpData.lpAllowance > 0 && (
           <div
             className='button'
-            style={{ marginLeft: '10px', opacity: Number(amount) > Number(0) && metaMaskNetworkMatched ? 1 : 0.5 }}
+            style={{
+              marginLeft: '10px',
+              opacity: Number(amount) > Number(0) && metaMaskNetworkMatched ? 1 : 0.5,
+              cursor: Number(amount) > Number(0) && metaMaskNetworkMatched ? 'pointer' : 'not-allowed',
+            }}
             onClick={clickStake}>
             Stake
           </div>
         )}
 
-        {index === 0 && props.lpData && props.lpData.lpAllowance === 0 && (
+        {index === 0 && props.lpData && Number(props.lpData.lpAllowance) === Number(0) && (
           <div
             className='button'
-            style={{ marginLeft: '10px', opacity: metaMaskNetworkMatched ? 1 : 0.5 }}
+            style={{
+              marginLeft: '10px',
+              opacity: metaMaskNetworkMatched ? 1 : 0.5,
+              cursor: metaMaskNetworkMatched ? 'pointer' : 'not-allowed',
+            }}
             onClick={clickApprove}>
             Approve
           </div>
@@ -232,7 +243,11 @@ export default function LiquidityStaker(props: LiquidityStakerProps) {
         {index === 1 && (
           <div
             className='button'
-            style={{ marginLeft: '10px', opacity: Number(amount) > Number(0) && metaMaskNetworkMatched ? 1 : 0.5 }}
+            style={{
+              marginLeft: '10px',
+              opacity: Number(amount) > Number(0) && metaMaskNetworkMatched ? 1 : 0.5,
+              cursor: Number(amount) > Number(0) && metaMaskNetworkMatched ? 'pointer' : 'not-allowed',
+            }}
             onClick={clickUnstake}>
             Untake
           </div>
@@ -264,6 +279,7 @@ export default function LiquidityStaker(props: LiquidityStakerProps) {
           marginLeft: '447px',
           marginTop: '10px',
           opacity: Number(claimableReward) > Number(0) && metaMaskNetworkMatched ? 1 : 0.5,
+          cursor: Number(claimableReward) > Number(0) && metaMaskNetworkMatched ? 'pointer' : 'not-allowed',
         }}
         onClick={clickClaim}>
         Claim

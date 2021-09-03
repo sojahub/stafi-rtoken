@@ -7,16 +7,17 @@ import mintMyMintIcon from '@images/mint_my_mint.svg';
 import mintMyRewardIcon from '@images/mint_my_reward.svg';
 import mintRewardTokenIcon from '@images/mint_reward_token.svg';
 import mintValueIcon from '@images/mint_value.svg';
-import ratomIcon from '@images/r_atom.svg';
-import rdotIcon from '@images/r_dot.svg';
-import rethIcon from '@images/r_eth.svg';
-import rfisIcon from '@images/r_fis.svg';
-import rksmIcon from '@images/r_ksm.svg';
-import rmaticIcon from '@images/r_matic.svg';
+import rpool_ratom_Icon from '@images/rpool_ratom_atom.svg';
+import rpool_rdot_Icon from '@images/rpool_rdot_dot.svg';
+import rpool_reth_Icon from '@images/rpool_reth.svg';
+import rpool_rfis_Icon from '@images/rpool_rfis_fis.svg';
+import rpool_rksm_Icon from '@images/rpool_rksm_ksm.svg';
+import rpool_rmatic_Icon from '@images/rpool_rmatic_matic.svg';
 import stafiWhiteIcon from '@images/stafi_white.svg';
 import RPoolServer from '@servers/rpool';
 import Button from '@shared/components/button/connect_button';
 import Modal from '@shared/components/modal/connectModal';
+import numberUtil from '@util/numberUtil';
 import { useInterval } from '@util/utils';
 import { Spin } from 'antd';
 import React, { useEffect, useMemo, useState } from 'react';
@@ -85,6 +86,18 @@ export default function LiquidityOverview() {
     initData();
   }, refreshInterval);
 
+  const lpNameWithPrefix = useMemo(() => {
+    let prefix;
+    if (platform === 'Ethereum') {
+      prefix = 'UNI-V2 ';
+    } else if (platform === 'BSC') {
+      prefix = 'PANCAKE ';
+    } else if (platform === 'Polygon') {
+      prefix = 'QUICKSWAP ';
+    }
+    return prefix + lpName;
+  }, [lpName, platform]);
+
   const showContent = useMemo(() => {
     return ethAccount && ethAccount.address;
   }, [ethAccount && ethAccount.address]);
@@ -101,7 +114,7 @@ export default function LiquidityOverview() {
     //   }
     // }
     if (overviewData) {
-      return overviewData.totalMintedValue;
+      return numberUtil.amount_format(overviewData.totalMintedValue);
     }
     return res;
   }, [unitPriceList, rTokenName, overviewData]);
@@ -126,13 +139,13 @@ export default function LiquidityOverview() {
           lpPrice,
           fisPrice && fisPrice.price,
         );
-        console.log('response:', response);
+        // console.log('response:', response);
       }
       if (response) {
         setOverviewData(response);
-        setUserMintToken(response.myMint);
+        setUserMintToken(numberUtil.amount_format(response.myMint));
         setUserMintRatio(response.myMintRatio);
-        setUserMintReward(response.myReward);
+        setUserMintReward(numberUtil.amount_format(response.myReward));
         setFisTotalReward(response.fisTotalReward);
         setFisClaimableReward(response.fisClaimableReward);
         setFisLockedReward(response.fisLockedReward);
@@ -160,27 +173,29 @@ export default function LiquidityOverview() {
               if (showStaker) {
                 setShowStaker(false);
               } else {
-                history.replace('/rPool/home');
+                history.replace('/rPool/home', {
+                  index: 1,
+                });
               }
             }}
           />
 
-          <div className='title' style={{ fontSize: showStaker ? '20px' : '30px' }}>
-            {showContent ? (showStaker ? `MY STAKED ${lpName}` : 'rPool') : 'Connect'}
+          <div className='title' style={{ fontSize: showStaker ? '20px' : '30px', height: '48px', lineHeight: '48px' }}>
+            {showContent ? (showStaker ? `MY STAKED ${lpNameWithPrefix}` : 'rPool') : 'Connect'}
           </div>
         </div>
 
         {showContent && !showStaker && (
           <div className='content_container'>
-            {rTokenName === 'rDOT' && <img src={rdotIcon} className='token_icon' />}
-            {rTokenName === 'rMATIC' && <img src={rmaticIcon} className='token_icon' />}
-            {rTokenName === 'rATOM' && <img src={ratomIcon} className='token_icon' />}
-            {rTokenName === 'rFIS' && <img src={rfisIcon} className='token_icon' />}
-            {rTokenName === 'rKSM' && <img src={rksmIcon} className='token_icon' />}
-            {rTokenName === 'rETH' && <img src={rethIcon} className='token_icon' />}
+            {rTokenName === 'rDOT' && <img src={rpool_rdot_Icon} className='token_icon' />}
+            {rTokenName === 'rMATIC' && <img src={rpool_rmatic_Icon} className='token_icon' />}
+            {rTokenName === 'rATOM' && <img src={rpool_ratom_Icon} className='token_icon' />}
+            {rTokenName === 'rFIS' && <img src={rpool_rfis_Icon} className='token_icon' />}
+            {rTokenName === 'rKSM' && <img src={rpool_rksm_Icon} className='token_icon' />}
+            {rTokenName === 'rETH' && <img src={rpool_reth_Icon} className='token_icon' />}
 
             <div className='right_content'>
-              <div className='title'>{lpName}</div>
+              <div className='title'>{lpNameWithPrefix}</div>
 
               <div className='apr_container'>
                 <div className='number'>{overviewData && !isNaN(overviewData.apr) ? overviewData.apr + '%' : '--'}</div>
@@ -208,10 +223,10 @@ export default function LiquidityOverview() {
               <div className='content_row'>
                 <img src={mintMyMintIcon} className='icon' />
 
-                <div className='label'>My Mint</div>
+                <div className='label'>My Share</div>
 
                 <div className='content_text'>
-                  {userMintToken !== '--' ? `${userMintToken}` : '--'} (
+                  {userMintToken !== '--' ? `$${userMintToken}` : '--'} (
                   {userMintRatio !== '--' ? `${userMintRatio}` : '--'}
                   %)
                 </div>

@@ -1,6 +1,6 @@
-import poolCurveIcon from '@images/poolCurveIcon.svg';
+import poolPancakeIcon from '@images/pancake.svg';
 import poolUniswapIcon from '@images/poolUniswapIcon.png';
-import poolWrapFiIcon from '@images/poolWrapFiIcon.svg';
+import poolQuickSwapIcon from '@images/quick_swap.png';
 import GhostButton from '@shared/components/button/ghostButton';
 import numberUtil from '@util/numberUtil';
 import React from 'react';
@@ -38,39 +38,49 @@ export default function Index(props: Props) {
       </div>
 
       <div className='col col5'>
-        {props.poolOn == 1 && (
-          <>
-            <img src={poolUniswapIcon} /> Uniswap
-          </>
+        {props.platform === 'Ethereum' && (
+          <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+            <img src={poolUniswapIcon} style={{ width: '20px', height: '20px', marginRight: '5px' }} />
+            <div style={{ fontSize: '14px' }}>Uniswap</div>
+          </div>
         )}
-        {props.poolOn == 2 && (
-          <>
-            <img src={poolCurveIcon} /> Curve
-          </>
+
+        {props.platform === 'BSC' && (
+          <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+            <img src={poolPancakeIcon} style={{ width: '20px', height: '20px', marginRight: '5px' }} />
+
+            <div style={{ fontSize: '14px' }}>Pancake</div>
+          </div>
         )}
-        {props.poolOn == 3 && (
-          <>
-            <img src={poolWrapFiIcon} /> WrapFi
-          </>
+
+        {props.platform === 'Polygon' && (
+          <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+            <img src={poolQuickSwapIcon} style={{ width: '20px', height: '20px', marginRight: '5px' }} />
+
+            <div style={{ fontSize: '14px' }}>QuickSwap</div>
+          </div>
         )}
       </div>
 
       <div className='col col5'>{props.platform}</div>
 
-      <div className='col col2'>
-        {/* {props.apyList.length == 0 && '0.00%'}
-        {props.apyList.map((item, i) => {
-          return (
-            <div key={i}>
-              <div>+{item.apy}% </div>
-              <label>{item.symbol}</label>
-            </div>
-          );
-        })} */}
-        {props.apr !== '--' ? `+${props.apr}%` : '--'}
+      <div className='col col2' style={{ display: 'flex', flexDirection: 'row', alignItems: 'flex-end' }}>
+        <div style={{ fontSize: '14px', lineHeight: '14px' }}>{props.apr !== '--' ? `+${props.apr}%` : '--'}</div>
+        <div
+          style={{
+            lineHeight: '10px',
+            fontSize: '10px',
+            color: '#7c7c7c',
+            marginLeft: '12px',
+            transform: 'scale(0.8)',
+            transformOrigin: 'bottom',
+            marginRight: '6px',
+          }}>
+          FIS
+        </div>
       </div>
 
-      <div className='col  col3'>${numberUtil.amount_format(props.liquidity)}</div>
+      <div className='col  col4'>${numberUtil.amount_format(props.liquidity)}</div>
 
       <div className='col col5'>{props.slippage ? `${Number(props.slippage).toFixed(2)}%` : '--'}</div>
 
