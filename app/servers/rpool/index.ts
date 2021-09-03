@@ -5,6 +5,7 @@ import StafiServer from '@servers/stafi';
 import { formatDuration } from '@util/dateUtil';
 import numberUtil from '@util/numberUtil';
 import rpc from '@util/rpc';
+import { cloneDeep } from 'lodash';
 import { divide, max, min, multiply } from 'mathjs';
 
 const stafiServer = new StafiServer();
@@ -28,9 +29,10 @@ export default class Index {
     return rpc.post(url);
   }
 
-  async fillLpData(phase2Acts: [any], ethAddress: any, updateCb: Function) {
+  async fillLpData(sourceActs: Array<any>, ethAddress: any) {
+    const lpActs = cloneDeep(sourceActs);
     try {
-      for (let item of phase2Acts) {
+      for (let item of lpActs) {
         for (let poolItem of item.children) {
           let contractAddress = config.lockContractAddress(poolItem.platform);
           if (!contractAddress) {
@@ -69,7 +71,7 @@ export default class Index {
         }
       }
 
-      for (let item of phase2Acts) {
+      for (let item of lpActs) {
         for (let poolItem of item.children) {
           const web3 = ethServer.getWeb3FromPlatform(poolItem.platform);
           if (!web3) {
@@ -104,7 +106,7 @@ export default class Index {
         }
       }
 
-      updateCb && updateCb();
+      return lpActs;
     } catch (err) {
       console.log(err);
       console.error(err.message);
@@ -502,7 +504,7 @@ export default class Index {
         from: ethAddress,
       });
       const poolInfo = await lockContract.methods.poolInfo(poolIndex).call();
-      console.log('poolInfo: ', poolInfo);
+      // console.log('poolInfo: ', poolInfo);
       if (!poolInfo) {
         return;
       }

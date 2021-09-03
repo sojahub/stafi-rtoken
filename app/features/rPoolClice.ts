@@ -6,6 +6,165 @@ import { message } from 'antd';
 import { AppThunk } from '../store';
 import { setLoading } from './globalClice';
 
+const lpActs: Array<any> = [
+  {
+    name: 'rETH/ETH LP',
+    extraName: 'rETH',
+    children: [
+      {
+        platform: 'Ethereum',
+        poolIndex: 0,
+        stakeTokenAddress: '',
+        apr: '--',
+        toDate: '--',
+        totalReward: '--',
+        tvl: '--',
+        rewardPerBlockValue: '',
+        totalRewardValue: '',
+        startBlock: '',
+        endBlock: '',
+        stakeTokenSupply: '',
+        stakeTokenPrice: '',
+      },
+      {
+        platform: 'BSC',
+        poolIndex: 0,
+        stakeTokenAddress: '',
+        apr: '--',
+        toDate: '--',
+        totalReward: '--',
+        tvl: '--',
+        rewardPerBlockValue: '',
+        totalRewardValue: '',
+        startBlock: '',
+        endBlock: '',
+        stakeTokenSupply: '',
+        stakeTokenPrice: '',
+      },
+    ],
+  },
+  {
+    name: 'rFIS/FIS LP',
+    extraName: 'rFIS',
+    children: [
+      {
+        platform: 'Ethereum',
+        poolIndex: 1,
+        stakeTokenAddress: '',
+        apr: '--',
+        toDate: '--',
+        totalReward: '--',
+        tvl: '--',
+        rewardPerBlockValue: '',
+        totalRewardValue: '',
+        startBlock: '',
+        endBlock: '',
+        stakeTokenSupply: '',
+        stakeTokenPrice: '',
+      },
+      {
+        platform: 'BSC',
+        poolIndex: 1,
+        stakeTokenAddress: '',
+        apr: '--',
+        toDate: '--',
+        totalReward: '--',
+        tvl: '--',
+        rewardPerBlockValue: '',
+        totalRewardValue: '',
+        startBlock: '',
+        endBlock: '',
+        stakeTokenSupply: '',
+        stakeTokenPrice: '',
+      },
+    ],
+  },
+  {
+    name: 'rDOT/DOT LP',
+    extraName: 'rDOT',
+    children: [
+      {
+        platform: 'BSC',
+        poolIndex: 2,
+        stakeTokenAddress: '',
+        apr: '--',
+        toDate: '--',
+        totalReward: '--',
+        tvl: '--',
+        rewardPerBlockValue: '',
+        totalRewardValue: '',
+        startBlock: '',
+        endBlock: '',
+        stakeTokenSupply: '',
+        stakeTokenPrice: '',
+      },
+    ],
+  },
+  {
+    name: 'rKSM/KSM LP',
+    extraName: 'rKSM',
+    children: [
+      {
+        platform: 'BSC',
+        poolIndex: 3,
+        stakeTokenAddress: '',
+        apr: '- -',
+        toDate: '--',
+        totalReward: '--',
+        tvl: '--',
+        rewardPerBlockValue: '',
+        totalRewardValue: '',
+        startBlock: '',
+        endBlock: '',
+        stakeTokenSupply: '',
+        stakeTokenPrice: '',
+      },
+    ],
+  },
+  {
+    name: 'rATOM/ATOM LP',
+    extraName: 'rATOM',
+    children: [
+      {
+        platform: 'BSC',
+        poolIndex: 4,
+        stakeTokenAddress: '',
+        apr: '- -',
+        toDate: '--',
+        totalReward: '--',
+        tvl: '--',
+        rewardPerBlockValue: '',
+        totalRewardValue: '',
+        startBlock: '',
+        endBlock: '',
+        stakeTokenSupply: '',
+        stakeTokenPrice: '',
+      },
+    ],
+  },
+  {
+    name: 'rMATIC/MATIC LP',
+    extraName: 'rMATIC',
+    children: [
+      {
+        platform: 'Polygon',
+        poolIndex: 0,
+        stakeTokenAddress: '',
+        apr: '--',
+        toDate: '--',
+        totalReward: '--',
+        tvl: '--',
+        rewardPerBlockValue: '',
+        totalRewardValue: '',
+        startBlock: '',
+        endBlock: '',
+        stakeTokenSupply: '',
+        stakeTokenPrice: '',
+      },
+    ],
+  },
+];
+
 const rPoolServer = new RPoolServer();
 const ethServer = new EthServer();
 
@@ -74,14 +233,14 @@ export const getRPoolList = (): AppThunk => async (dispatch, getState) => {
 };
 
 export const getLPList =
-  (phase2Acts: any, showLoading: boolean): AppThunk =>
+  (showLoading: boolean): AppThunk =>
   async (dispatch, getState) => {
     try {
       if (showLoading) {
         dispatch(setLoadingLpList(true));
       }
-      await rPoolServer.fillLpData(phase2Acts, '', () => {});
-      dispatch(setLpList([...phase2Acts]));
+      const newList = await rPoolServer.fillLpData(lpActs, '');
+      dispatch(setLpList(newList));
     } finally {
       dispatch(setLoadingLpList(false));
     }

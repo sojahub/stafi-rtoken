@@ -560,6 +560,7 @@ export default {
     }
     return networkChainId === '0x13881';
   },
+
   swapWaitingTime: () => {
     return 150;
   },

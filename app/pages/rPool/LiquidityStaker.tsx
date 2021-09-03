@@ -1,7 +1,7 @@
-import config from '@config/index';
 import { approveLpAllowance, claimLpReward, stakeLp, unstakeLp } from '@features/rPoolClice';
 import RPoolServer from '@servers/rpool';
 import AmountInputEmbedNew from '@shared/components/input/amountInputEmbedNew';
+import { liquidityPlatformMatchMetaMask } from '@util/metaMaskUtil';
 import numberUtil from '@util/numberUtil';
 import { message } from 'antd';
 import React, { useMemo, useState } from 'react';
@@ -19,7 +19,7 @@ type LiquidityStakerProps = {
 
 export default function LiquidityStaker(props: LiquidityStakerProps) {
   const dispatch = useDispatch();
-  const { platform, poolIndex } = useParams<any>();
+  const { lpPlatform, poolIndex } = useParams<any>();
 
   const [index, setIndex] = useState(0);
   const [amount, setAmount] = useState<any>();
@@ -36,15 +36,8 @@ export default function LiquidityStaker(props: LiquidityStakerProps) {
   });
 
   const metaMaskNetworkMatched = useMemo(() => {
-    if (platform === 'Ethereum') {
-      return config.metaMaskNetworkIsGoerliEth(metaMaskNetworkId);
-    } else if (platform === 'BSC') {
-      return config.metaMaskNetworkIsBsc(metaMaskNetworkId);
-    } else if (platform === 'Polygon') {
-      return config.metaMaskNetworkIsPolygon(metaMaskNetworkId);
-    }
-    return false;
-  }, [metaMaskNetworkId, platform]);
+    return liquidityPlatformMatchMetaMask(metaMaskNetworkId, lpPlatform);
+  }, [metaMaskNetworkId, lpPlatform]);
 
   const { totalReward, claimableReward, lockedReward } = useMemo(() => {
     const response = {
@@ -116,7 +109,7 @@ export default function LiquidityStaker(props: LiquidityStakerProps) {
       return;
     }
     dispatch(
-      approveLpAllowance(ethAccount.address, lpData.stakeTokenAddress, platform, (success: boolean) => {
+      approveLpAllowance(ethAccount.address, lpData.stakeTokenAddress, lpPlatform, (success: boolean) => {
         if (success) {
           initData && initData();
         }
@@ -136,9 +129,10 @@ export default function LiquidityStaker(props: LiquidityStakerProps) {
       return;
     }
     dispatch(
-      stakeLp(amount, platform, poolIndex, () => {
+      stakeLp(amount, lpPlatform, poolIndex, () => {
         setAmount('');
         initData && initData();
+        clickStake();
       }),
     );
   };
@@ -155,7 +149,7 @@ export default function LiquidityStaker(props: LiquidityStakerProps) {
       return;
     }
     dispatch(
-      unstakeLp(amount, platform, poolIndex, () => {
+      unstakeLp(amount, lpPlatform, poolIndex, () => {
         setAmount('');
         initData && initData();
       }),
@@ -174,7 +168,7 @@ export default function LiquidityStaker(props: LiquidityStakerProps) {
       return;
     }
     dispatch(
-      claimLpReward(platform, poolIndex, () => {
+      claimLpReward(lpPlatform, poolIndex, () => {
         initData && initData();
       }),
     );
@@ -182,7 +176,9 @@ export default function LiquidityStaker(props: LiquidityStakerProps) {
 
   return (
     <div className='liquidity_staker'>
-      <div className='lp_balance'>{lpBalance}</div>
+      <div className='lp_balance'>
+        {lpData && !isNaN(lpData.userStakedAmount) ? numberUtil.amount_format(lpData.userStakedAmount) : '--'}
+      </div>
 
       <div className='tab_container'>
         <div

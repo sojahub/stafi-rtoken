@@ -30,10 +30,11 @@ import LiquidityStaker from './LiquidityStaker';
 const rPoolServer = new RPoolServer();
 
 export default function LiquidityOverview() {
+  let isMounted = false;
   const history = useHistory();
   const location = useLocation();
-  const { platform, poolIndex } = useParams<any>();
-  const refreshInterval = platform === 'BSC' || platform === 'Polygon' ? 3000 : 15000;
+  const { lpPlatform, poolIndex } = useParams<any>();
+  const refreshInterval = lpPlatform === 'BSC' || lpPlatform === 'Polygon' ? 3000 : 15000;
 
   let lpName = null,
     rTokenName = null;
@@ -73,6 +74,13 @@ export default function LiquidityOverview() {
   });
 
   useEffect(() => {
+    isMounted = true;
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  useEffect(() => {
     if (ethAccount && ethAccount.address) {
       dispatch(getRtokenPriceList());
     }
@@ -88,15 +96,15 @@ export default function LiquidityOverview() {
 
   const lpNameWithPrefix = useMemo(() => {
     let prefix;
-    if (platform === 'Ethereum') {
+    if (lpPlatform === 'Ethereum') {
       prefix = 'UNI-V2 ';
-    } else if (platform === 'BSC') {
+    } else if (lpPlatform === 'BSC') {
       prefix = 'PANCAKE ';
-    } else if (platform === 'Polygon') {
+    } else if (lpPlatform === 'Polygon') {
       prefix = 'QUICKSWAP ';
     }
     return prefix + lpName;
-  }, [lpName, platform]);
+  }, [lpName, lpPlatform]);
 
   const showContent = useMemo(() => {
     return ethAccount && ethAccount.address;
@@ -129,19 +137,19 @@ export default function LiquidityOverview() {
     let fisPrice = unitPriceList?.find((item: any) => {
       return item.symbol === 'FIS';
     });
-    if (platform && poolIndex) {
+    if (lpPlatform && poolIndex) {
       let response;
       if (ethAccount && ethAccount.address) {
         response = await rPoolServer.getLiquidityOverview(
           ethAccount.address,
-          platform,
+          lpPlatform,
           poolIndex,
           lpPrice,
           fisPrice && fisPrice.price,
         );
         // console.log('response:', response);
       }
-      if (response) {
+      if (response && isMounted) {
         setOverviewData(response);
         setUserMintToken(numberUtil.amount_format(response.myMint));
         setUserMintRatio(response.myMintRatio);
@@ -154,7 +162,7 @@ export default function LiquidityOverview() {
     }
   };
 
-  if (!platform || !lpName || !rTokenName) {
+  if (!lpPlatform || !lpName || !rTokenName) {
     history.replace('/rPool/home');
   }
 
