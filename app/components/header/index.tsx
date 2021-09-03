@@ -22,13 +22,12 @@ import report_icon from '@images/report_icon.svg';
 import wrong_network from '@images/wrong_network.svg';
 import { rSymbol, Symbol } from '@keyring/defaults';
 import Modal from '@shared/components/modal/connectModal';
-import { getMetaMaskTokenSymbol, liquidityPlatformMatchMetaMask } from '@util/metaMaskUtil';
+import { getMetaMaskTokenSymbol, liquidityUrlMatchMetaMask } from '@util/metaMaskUtil';
 import NumberUtil from '@util/numberUtil';
 import StringUtil from '@util/stringUtil';
 import Tool from '@util/toolUtil';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useParams } from 'react-router-dom';
 import Page from '../../pages/rDOT/selectWallet/index';
 import Page_FIS from '../../pages/rDOT/selectWallet_rFIS/index';
 import Page_rFIS from '../../pages/rFIS/selectWallet_rFIS/index';
@@ -44,7 +43,6 @@ export default function Index(props: Props) {
   const dispatch = useDispatch();
   const [visible, setVisible] = useState(false);
   const [modalType, setModalType] = useState<any>();
-  const { lpPlatform } = useParams<any>();
   const [noticePopoverVisible, setNoticePopoverVisible] = useState(false);
 
   const account = useSelector((state: any) => {
@@ -410,7 +408,7 @@ export default function Index(props: Props) {
                 </div>
                 {account.type === 'rPool/lp' &&
                   metaMaskNetworkId &&
-                  !liquidityPlatformMatchMetaMask(metaMaskNetworkId, lpPlatform) && (
+                  !liquidityUrlMatchMetaMask(metaMaskNetworkId, location.pathname) && (
                     <img src={wrong_network} className={'wrong_network'} />
                   )}
                 {account.type !== 'rPool/lp' &&

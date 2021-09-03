@@ -13,7 +13,21 @@ export const getMetaMaskTokenSymbol = (networkChainId: any) => {
   return 'ETH';
 };
 
+export const liquidityUrlMatchMetaMask = (networkChainId: any, url: string) => {
+  if (url.includes('rPool/lp/Ethereum')) {
+    return config.metaMaskNetworkIsGoerliEth(networkChainId);
+  }
+  if (url.includes('rPool/lp/BSC')) {
+    return config.metaMaskNetworkIsBsc(networkChainId);
+  }
+  if (url.includes('rPool/lp/Polygon')) {
+    return config.metaMaskNetworkIsPolygon(networkChainId);
+  }
+  return false;
+};
+
 export const liquidityPlatformMatchMetaMask = (networkChainId: any, platform: string) => {
+  console.log('sdfsdf', networkChainId, platform);
   if (platform === 'Ethereum') {
     return config.metaMaskNetworkIsGoerliEth(networkChainId);
   }

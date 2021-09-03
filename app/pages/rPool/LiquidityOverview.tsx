@@ -147,7 +147,8 @@ export default function LiquidityOverview() {
           lpPrice,
           fisPrice && fisPrice.price,
         );
-        // console.log('response:', response);
+        console.log('response:', response);
+        console.log('isMounted:', isMounted);
       }
       if (response && isMounted) {
         setOverviewData(response);
