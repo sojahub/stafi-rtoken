@@ -408,12 +408,12 @@ export default function Index(props: Props) {
                   </div>
                   <div>{StringUtil.replacePkh(account.ethAccount.address, 4, 38)}</div>
                 </div>
-                {account.type === 'rpool/lp' &&
+                {account.type === 'rPool/lp' &&
                   metaMaskNetworkId &&
                   !liquidityPlatformMatchMetaMask(metaMaskNetworkId, lpPlatform) && (
                     <img src={wrong_network} className={'wrong_network'} />
                   )}
-                {account.type !== 'rpool/lp' &&
+                {account.type !== 'rPool/lp' &&
                   metaMaskNetworkId &&
                   !config.metaMaskNetworkIsGoerliEth(metaMaskNetworkId) && (
                     <img src={wrong_network} className={'wrong_network'} />
