@@ -112,6 +112,7 @@ export default function LiquidityStaker(props: LiquidityStakerProps) {
       approveLpAllowance(ethAccount.address, lpData.stakeTokenAddress, lpPlatform, (success: boolean) => {
         if (success) {
           initData && initData();
+          clickStake();
         }
       }),
     );
@@ -132,7 +133,6 @@ export default function LiquidityStaker(props: LiquidityStakerProps) {
       stakeLp(amount, lpPlatform, poolIndex, () => {
         setAmount('');
         initData && initData();
-        clickStake();
       }),
     );
   };

@@ -66,7 +66,7 @@ export default class Index {
 
             poolItem.startBlock = poolInfo.startBlock;
           } catch (err) {
-            console.log('sdfsd111 error', err.message);
+            console.error(err.message);
           }
         }
       }
@@ -101,14 +101,13 @@ export default class Index {
               poolItem.stakeTokenPrice,
             );
           } catch (err) {
-            console.log('sdfsd error', err.message);
+            console.error(err.message);
           }
         }
       }
 
       return lpActs;
     } catch (err) {
-      console.log(err);
       console.error(err.message);
     }
   }
@@ -563,7 +562,14 @@ export default class Index {
         Number(web3.utils.fromWei(userInfo.currentTotalReward, 'ether')) +
         Number(web3.utils.fromWei(userPendingReward, 'ether')) +
         Number(web3.utils.fromWei(userInfo.claimedReward, 'ether'));
-      response.fisLockedReward = Number(response.fisTotalReward) - Number(response.fisClaimableReward);
+
+      console.log('sdfsdf', web3.utils.fromWei(userInfo.claimedReward, 'ether'));
+      response.fisLockedReward = max(
+        0,
+        Number(response.fisTotalReward) -
+          Number(response.fisClaimableReward) -
+          Number(web3.utils.fromWei(userInfo.claimedReward, 'ether')),
+      );
 
       if (!isNaN(Number(fisPrice))) {
         response.myReward = numberUtil.handleAmountRoundToFixed(fisPrice * response.fisTotalReward, 2);
