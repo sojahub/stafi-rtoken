@@ -1,6 +1,6 @@
+import sort_arrow from '@images/sort_arrow.svg';
+import sort_arrow_white from '@images/sort_arrow_white.svg';
 import React from 'react';
-import sort_arrow from '@images/sort_arrow.svg'
-import sort_arrow_white from '@images/sort_arrow_white.svg'
 type Props={
     sortField?:string,
     sortWay?:string,

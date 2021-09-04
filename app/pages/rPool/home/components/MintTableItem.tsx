@@ -51,7 +51,7 @@ export default function MintTableItem(props: Props) {
 
   return (
     <div className='row'>
-      <div className='col col1' style={{ display: 'flex', alignItems: 'center' }}>
+      <div className='col col2' style={{ display: 'flex', alignItems: 'center' }}>
         {props.pairIcon && (
           <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
             <img src={props.pairIcon} style={{ width: '26px', height: '26px', marginRight: '10px' }} />
@@ -68,7 +68,7 @@ export default function MintTableItem(props: Props) {
         </div>
       </div>
 
-      <div className='col col2' style={{ display: 'flex', alignItems: 'center' }}>
+      <div className='col col4' style={{ display: 'flex', alignItems: 'center' }}>
         <div>1:{numberUtil.tokenMintRewardRateToHuman(actData.reward_rate, getRsymbolByTokenTitle(tokenType))}</div>
       </div>
 
@@ -77,12 +77,16 @@ export default function MintTableItem(props: Props) {
       </div>
 
       <div className='col  col5' style={{ display: 'flex', alignItems: 'center' }}>
+        {!isNaN(actData.mintedValue) ? '$' + numberUtil.amount_format(actData.mintedValue) : '--'}
+      </div>
+
+      <div className='col  col5' style={{ display: 'flex', alignItems: 'center' }}>
         {actData.nowBlock >= actData.end
           ? 'End'
           : `${actData.durationInDays}D(${formatDuration(actData.endTimeStamp - Date.now())})`}
       </div>
 
-      <div className='col col6' style={{ display: 'flex', alignItems: 'center' }}>
+      <div className='col col2' style={{ display: 'flex', alignItems: 'center' }}>
         <GhostButton className='liquidity_btn' onClick={clickEarn}>
           Earn
         </GhostButton>
