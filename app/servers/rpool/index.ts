@@ -169,6 +169,7 @@ export default class Index {
             actJson.durationInDays = Math.round(days * 10) / 10;
             actJson.remainingTime = formatDuration(max(0, actJson.end - nowBlock) * 6);
             actJson.endTimeStamp = Date.now() + (actJson.end - nowBlock) * 6000;
+            actJson.mintedValue = '--';
             acts.push(actJson);
           }
         } catch (err) {
@@ -208,6 +209,7 @@ export default class Index {
             actJson.durationInDays = Math.round(days * 10) / 10;
             actJson.remainingTime = formatDuration(max(0, actJson.end - nowBlock) * 6);
             actJson.endTimeStamp = Date.now() + (actJson.end - nowBlock) * 6000;
+            actJson.mintedValue = '--';
             acts.push(actJson);
           }
         } catch (error) {
