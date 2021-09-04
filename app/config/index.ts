@@ -570,21 +570,21 @@ export default {
       if (!isdev()) {
         return '';
       } else {
-        return '0xb613d56f21c811a9505cedf314cca8c7c705e06d';
+        return '0x2f34b2be8e739ac24c79bcef0e3504cf8f1f4c10';
       }
     }
     if (platform === 'BSC') {
       if (!isdev()) {
         return '';
       } else {
-        return '0xe96cacf34367d048772bff0e838e5a1795995a28';
+        return '0xac5d3b8e3321f9129b8a7509068270ec660702dc';
       }
     }
     if (platform === 'Polygon') {
       if (!isdev()) {
         return '';
       } else {
-        return '0xf341278f930c81719aad507b8796af353959e876';
+        return '0x3ee0f8ac7f001bb6090c7c692003dd78dc3b3fc7';
       }
     }
     return '';
