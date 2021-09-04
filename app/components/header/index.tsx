@@ -22,7 +22,7 @@ import report_icon from '@images/report_icon.svg';
 import wrong_network from '@images/wrong_network.svg';
 import { rSymbol, Symbol } from '@keyring/defaults';
 import Modal from '@shared/components/modal/connectModal';
-import { getMetaMaskTokenSymbol, liquidityUrlMatchMetaMask } from '@util/metaMaskUtil';
+import { getLpPlatformFromUrl, getMetaMaskTokenSymbol, liquidityPlatformMatchMetaMask } from '@util/metaMaskUtil';
 import NumberUtil from '@util/numberUtil';
 import StringUtil from '@util/stringUtil';
 import Tool from '@util/toolUtil';
@@ -408,7 +408,7 @@ export default function Index(props: Props) {
                 </div>
                 {account.type === 'rPool/lp' &&
                   metaMaskNetworkId &&
-                  !liquidityUrlMatchMetaMask(metaMaskNetworkId, location.pathname) && (
+                  !liquidityPlatformMatchMetaMask(metaMaskNetworkId, getLpPlatformFromUrl(location.pathname)) && (
                     <img src={wrong_network} className={'wrong_network'} />
                   )}
                 {account.type !== 'rPool/lp' &&

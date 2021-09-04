@@ -152,6 +152,27 @@ export default {
       return 'wss://solana-dev-wss.wetez.io';
     }
   },
+  ethProviderUrl: () => {
+    if (!isdev()) {
+      return 'wss://eth-mainnet.ws.alchemyapi.io/v2/bkdml_X06uuwFV4-KONSO3NoPHkIIv8Z';
+    } else {
+      return 'wss://eth-goerli.alchemyapi.io/v2/O4w9rgihCPcRvH1IDF2BHLt5YSzSI9oJ';
+    }
+  },
+  bscProviderUrl: () => {
+    if (!isdev()) {
+      return 'wss://bsc-ws-node.nariox.org:443';
+    } else {
+      return 'wss://speedy-nodes-nyc.moralis.io/5a284cffde906505c6eb2af8/bsc/testnet/ws';
+    }
+  },
+  polygonProviderUrl: () => {
+    if (!isdev()) {
+      return 'wss://rpc-mainnet.matic.network';
+    } else {
+      return 'wss://matic-testnet-archive-ws.bwarelabs.com';
+    }
+  },
   solWalletProviderUrl: () => {
     return 'https://www.sollet.io';
   },
@@ -536,6 +557,24 @@ export default {
     }
     return '0x5';
   },
+  metaMaskEthNetworkId: () => {
+    if (!isdev()) {
+      return '0x1';
+    }
+    return '0x5';
+  },
+  metaMaskBscNetworkId: () => {
+    if (!isdev()) {
+      return '0x38';
+    }
+    return '0x61';
+  },
+  metaMaskPolygonNetworkId: () => {
+    if (!isdev()) {
+      return '0x89';
+    }
+    return '0x13881';
+  },
   metaMaskNetworkIsEth: (networkChainId: any) => {
     if (!isdev()) {
       return networkChainId === '0x1';
@@ -586,6 +625,18 @@ export default {
       } else {
         return '0xf341278f930c81719aad507b8796af353959e876';
       }
+    }
+    return '';
+  },
+  addLiquidityLink: (platform: any) => {
+    if (platform === 'Ethereum') {
+      return 'https://app.uniswap.org/#/add/v2/ETH/0x9559Aaa82d9649C7A7b220E7c461d2E74c9a3593?lng=en-US';
+    }
+    if (platform === 'BSC') {
+      return '';
+    }
+    if (platform === 'Polygon') {
+      return 'https://quickswap.exchange/#/add/ETH/0x9f28e2455f9FFcFac9EBD6084853417362bc5dBb';
     }
     return '';
   },

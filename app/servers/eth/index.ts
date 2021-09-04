@@ -1,4 +1,4 @@
-import config, { isdev } from '@config/index';
+import config from '@config/index';
 import { api } from '@util/http';
 import Web3 from 'web3';
 
@@ -47,17 +47,7 @@ export default class Index {
       return ethWeb3Instance;
     }
 
-    let provider: any;
-    if (isdev()) {
-      provider = new Web3.providers.WebsocketProvider(
-        'wss://eth-goerli.alchemyapi.io/v2/O4w9rgihCPcRvH1IDF2BHLt5YSzSI9oJ',
-      );
-    } else {
-      provider = new Web3.providers.WebsocketProvider(
-        'wss://eth-mainnet.ws.alchemyapi.io/v2/bkdml_X06uuwFV4-KONSO3NoPHkIIv8Z',
-      );
-    }
-
+    let provider = new Web3.providers.WebsocketProvider(config.ethProviderUrl());
     ethWeb3Instance = new Web3(provider);
     return ethWeb3Instance;
   }
@@ -67,16 +57,7 @@ export default class Index {
       return bscWeb3Instance;
     }
 
-    let provider: any;
-
-    if (isdev()) {
-      provider = new Web3.providers.WebsocketProvider(
-        'wss://speedy-nodes-nyc.moralis.io/5a284cffde906505c6eb2af8/bsc/testnet/ws',
-      );
-    } else {
-      provider = new Web3.providers.WebsocketProvider('wss://bsc-ws-node.nariox.org:443');
-    }
-
+    let provider = new Web3.providers.WebsocketProvider(config.bscProviderUrl());
     bscWeb3Instance = new Web3(provider);
     return bscWeb3Instance;
   }
@@ -86,13 +67,7 @@ export default class Index {
       return polygonWeb3Instance;
     }
 
-    let provider: any;
-    if (isdev()) {
-      provider = new Web3.providers.WebsocketProvider('wss://ws-matic-mumbai.chainstacklabs.com');
-    } else {
-      provider = new Web3.providers.WebsocketProvider('wss://rpc-mainnet.matic.network');
-    }
-
+    let provider = new Web3.providers.WebsocketProvider(config.polygonProviderUrl());
     polygonWeb3Instance = new Web3(provider);
     return polygonWeb3Instance;
   }

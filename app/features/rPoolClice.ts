@@ -1,10 +1,13 @@
 import config from '@config/index';
+import { Symbol } from '@keyring/defaults';
 import { createSlice } from '@reduxjs/toolkit';
 import EthServer from '@servers/eth';
 import RPoolServer from '@servers/rpool';
+import { stafi_uuid } from '@util/common';
 import { message } from 'antd';
 import { AppThunk } from '../store';
 import { setLoading } from './globalClice';
+import { add_Notice, noticeStatus, noticesubType, noticeType } from './noticeClice';
 
 const lpActs: Array<any> = [
   {
@@ -263,14 +266,17 @@ export const approveLpAllowance =
       const result = await tokenContract.methods.approve(contractAddress, allowance).send();
       if (result && result.status) {
         cb && cb(true);
+      } else {
+        dispatch(setLoading(false));
       }
-    } finally {
+    } catch (err) {
       dispatch(setLoading(false));
+    } finally {
     }
   };
 
 export const stakeLp =
-  (amount: any, platform: string, poolIndex: any, cb?: Function): AppThunk =>
+  (amount: any, platform: string, poolIndex: any, lpNameWithPrefix: string, cb?: Function): AppThunk =>
   async (dispatch, getState) => {
     if (!getState().rETHModule.ethAccount || !getState().rETHModule.ethAccount.address) {
       return;
@@ -289,6 +295,11 @@ export const stakeLp =
       );
       const result = await lockDropContract.methods.deposit(poolIndex, amountInWei).send();
       if (result && result.status) {
+        dispatch(
+          add_Notice(stafi_uuid(), '', noticeType.Lp, noticesubType.Stake, amount.toString(), noticeStatus.Confirmed, {
+            lpNameWithPrefix,
+          }),
+        );
         message.success('LP is staked');
         cb && cb();
       }
@@ -300,7 +311,7 @@ export const stakeLp =
   };
 
 export const unstakeLp =
-  (amount: any, platform: string, poolIndex: any, cb?: Function): AppThunk =>
+  (amount: any, platform: string, poolIndex: any, lpNameWithPrefix: string, cb?: Function): AppThunk =>
   async (dispatch, getState) => {
     if (!getState().rETHModule.ethAccount || !getState().rETHModule.ethAccount.address) {
       return;
@@ -319,6 +330,11 @@ export const unstakeLp =
       );
       const result = await lockDropContract.methods.withdraw(poolIndex, amountInWei).send();
       if (result && result.status) {
+        dispatch(
+          add_Notice(stafi_uuid(), '', noticeType.Lp, noticesubType.Unstake, amount.toString(), noticeStatus.Confirmed, {
+            lpNameWithPrefix,
+          }),
+        );
         message.success('LP is unstaked');
         cb && cb();
       }
@@ -330,7 +346,7 @@ export const unstakeLp =
   };
 
 export const claimLpReward =
-  (platform: string, poolIndex: any, cb?: Function): AppThunk =>
+  (platform: string, poolIndex: any, lpNameWithPrefix: string, claimableAmount: any, cb?: Function): AppThunk =>
   async (dispatch, getState) => {
     if (!getState().rETHModule.ethAccount || !getState().rETHModule.ethAccount.address) {
       return;
@@ -348,6 +364,19 @@ export const claimLpReward =
       );
       const result = await lockDropContract.methods.claimReward(poolIndex).send();
       if (result && result.status) {
+        dispatch(
+          add_Notice(
+            stafi_uuid(),
+            Symbol.Fis,
+            noticeType.Lp,
+            noticesubType.Claim,
+            claimableAmount,
+            noticeStatus.Confirmed,
+            {
+              lpNameWithPrefix,
+            },
+          ),
+        );
         message.success('Claim reward success');
         cb && cb();
       }

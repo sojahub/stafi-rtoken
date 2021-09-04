@@ -13,7 +13,6 @@ import rpool_reth_Icon from '@images/rpool_reth.svg';
 import rpool_rfis_Icon from '@images/rpool_rfis_fis.svg';
 import rpool_rksm_Icon from '@images/rpool_rksm_ksm.svg';
 import rpool_rmatic_Icon from '@images/rpool_rmatic_matic.svg';
-import stafiWhiteIcon from '@images/stafi_white.svg';
 import RPoolServer from '@servers/rpool';
 import Button from '@shared/components/button/connect_button';
 import Modal from '@shared/components/modal/connectModal';
@@ -157,7 +156,7 @@ export default function LiquidityOverview() {
       }
       if (response && isMounted) {
         setOverviewData(response);
-        setUserMintToken(numberUtil.amount_format(response.myMint));
+        setUserMintToken(numberUtil.amount_format(numberUtil.handleAmountRoundToFixed(response.userStakedAmount, 2)));
         setUserMintRatio(response.myMintRatio);
         setUserMintReward(numberUtil.amount_format(response.myReward));
         setFisTotalReward(response.fisTotalReward);
@@ -223,7 +222,8 @@ export default function LiquidityOverview() {
 
                 <div className='label'>Reward Token</div>
 
-                <img src={stafiWhiteIcon} className='stafi_icon' />
+                {/* <img src={stafiWhiteIcon} className='stafi_icon' /> */}
+                <div className='content_text'>FIS</div>
               </div>
 
               <div className='content_row'>
@@ -240,7 +240,7 @@ export default function LiquidityOverview() {
                 <div className='label'>My Share</div>
 
                 <div className='content_text'>
-                  {userMintToken !== '--' && metaMaskNetworkMatched ? `$${userMintToken}` : '--'} (
+                  {userMintToken !== '--' && metaMaskNetworkMatched ? `${userMintToken}` : '--'} (
                   {userMintRatio !== '--' && metaMaskNetworkMatched ? `${userMintRatio}` : '--'}
                   %)
                 </div>
@@ -279,8 +279,9 @@ export default function LiquidityOverview() {
                     cursor: metaMaskNetworkMatched ? 'pointer' : 'not-allowed',
                   }}
                   onClick={() => {
-                    if (metaMaskNetworkMatched) {
-                    }
+                    metaMaskNetworkMatched &&
+                      config.addLiquidityLink(lpPlatform) &&
+                      window.open(config.addLiquidityLink(lpPlatform));
                   }}>
                   Add Liquidity
                 </div>
@@ -305,7 +306,7 @@ export default function LiquidityOverview() {
 
         {showContent && showStaker && (
           <>
-            <LiquidityStaker disabled={false} lpData={overviewData} initData={initData} />
+            <LiquidityStaker disabled={false} lpData={overviewData} initData={initData} lpNameWithPrefix={lpNameWithPrefix}/>
           </>
         )}
 

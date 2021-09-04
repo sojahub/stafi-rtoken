@@ -34,13 +34,12 @@ export default class Index {
     try {
       for (let item of lpActs) {
         for (let poolItem of item.children) {
-          let contractAddress = config.lockContractAddress(poolItem.platform);
-          if (!contractAddress) {
-            continue;
-          }
-
           const web3 = ethServer.getWeb3FromPlatform(poolItem.platform);
           if (!web3) {
+            continue;
+          }
+          let contractAddress = config.lockContractAddress(poolItem.platform);
+          if (!contractAddress) {
             continue;
           }
 
@@ -65,28 +64,14 @@ export default class Index {
             poolItem.rewardPerBlockValue = rewardPerBlock;
 
             poolItem.startBlock = poolInfo.startBlock;
-          } catch (err) {
-            console.error(err.message);
-          }
-        }
-      }
 
-      for (let item of lpActs) {
-        for (let poolItem of item.children) {
-          const web3 = ethServer.getWeb3FromPlatform(poolItem.platform);
-          if (!web3) {
-            continue;
-          }
-
-          try {
+            if (!poolItem.stakeTokenAddress) {
+              continue;
+            }
             let tokenContract = new web3.eth.Contract(this.getStakeTokenAbi(), poolItem.stakeTokenAddress, {
               from: ethAddress,
             });
 
-            let contractAddress = config.lockContractAddress(poolItem.platform);
-            if (!contractAddress) {
-              continue;
-            }
             const poolStakeTokenSupply = await tokenContract.methods.balanceOf(contractAddress).call();
             let stakeTokenSupply = web3.utils.fromWei(poolStakeTokenSupply, 'ether');
             poolItem.stakeTokenSupply = stakeTokenSupply;
@@ -101,6 +86,7 @@ export default class Index {
               poolItem.stakeTokenPrice,
             );
           } catch (err) {
+            console.log('ersfdsdf', err);
             console.error(err.message);
           }
         }

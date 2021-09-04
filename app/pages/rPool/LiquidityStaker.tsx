@@ -14,6 +14,7 @@ const rPoolServer = new RPoolServer();
 type LiquidityStakerProps = {
   disabled: boolean;
   lpData: any;
+  lpNameWithPrefix: string;
   initData?: Function;
 };
 
@@ -24,7 +25,7 @@ export default function LiquidityStaker(props: LiquidityStakerProps) {
   const [index, setIndex] = useState(0);
   const [amount, setAmount] = useState<any>();
 
-  const { lpData, initData } = props;
+  const { lpData, initData, lpNameWithPrefix } = props;
 
   const { metaMaskNetworkId, fisAccount, ethAccount, unitPriceList } = useSelector((state: any) => {
     return {
@@ -130,7 +131,7 @@ export default function LiquidityStaker(props: LiquidityStakerProps) {
       return;
     }
     dispatch(
-      stakeLp(amount, lpPlatform, poolIndex, () => {
+      stakeLp(amount, lpPlatform, poolIndex, lpNameWithPrefix, () => {
         setAmount('');
         initData && initData();
       }),
@@ -149,7 +150,7 @@ export default function LiquidityStaker(props: LiquidityStakerProps) {
       return;
     }
     dispatch(
-      unstakeLp(amount, lpPlatform, poolIndex, () => {
+      unstakeLp(amount, lpPlatform, poolIndex, lpNameWithPrefix, () => {
         setAmount('');
         initData && initData();
       }),
@@ -168,7 +169,7 @@ export default function LiquidityStaker(props: LiquidityStakerProps) {
       return;
     }
     dispatch(
-      claimLpReward(lpPlatform, poolIndex, () => {
+      claimLpReward(lpPlatform, poolIndex, lpNameWithPrefix, claimableReward, () => {
         initData && initData();
       }),
     );
@@ -217,31 +218,36 @@ export default function LiquidityStaker(props: LiquidityStakerProps) {
           </div>
         </div>
 
-        {index === 0 && props.lpData && props.lpData.lpAllowance > 0 && (
-          <div
-            className='button'
-            style={{
-              marginLeft: '10px',
-              opacity: Number(amount) > Number(0) && metaMaskNetworkMatched ? 1 : 0.5,
-              cursor: Number(amount) > Number(0) && metaMaskNetworkMatched ? 'pointer' : 'not-allowed',
-            }}
-            onClick={clickStake}>
-            Stake
-          </div>
-        )}
+        {index === 0 &&
+          props.lpData &&
+          !isNaN(props.lpData.lpAllowance) &&
+          Number(props.lpData.lpAllowance) > Number(0) && (
+            <div
+              className='button'
+              style={{
+                marginLeft: '10px',
+                opacity: Number(amount) > Number(0) && metaMaskNetworkMatched ? 1 : 0.5,
+                cursor: Number(amount) > Number(0) && metaMaskNetworkMatched ? 'pointer' : 'not-allowed',
+              }}
+              onClick={clickStake}>
+              Stake
+            </div>
+          )}
 
-        {index === 0 && props.lpData && Number(props.lpData.lpAllowance) === Number(0) && (
-          <div
-            className='button'
-            style={{
-              marginLeft: '10px',
-              opacity: Number(amount) > Number(0) && metaMaskNetworkMatched ? 1 : 0.5,
-              cursor: Number(amount) > Number(0) && metaMaskNetworkMatched ? 'pointer' : 'not-allowed',
-            }}
-            onClick={clickApprove}>
-            Approve
-          </div>
-        )}
+        {index === 0 &&
+          props.lpData &&
+          (Number(props.lpData.lpAllowance) === Number(0) || isNaN(props.lpData.lpAllowance)) && (
+            <div
+              className='button'
+              style={{
+                marginLeft: '10px',
+                opacity: Number(amount) > Number(0) && metaMaskNetworkMatched ? 1 : 0.5,
+                cursor: Number(amount) > Number(0) && metaMaskNetworkMatched ? 'pointer' : 'not-allowed',
+              }}
+              onClick={clickApprove}>
+              Approve
+            </div>
+          )}
 
         {index === 1 && (
           <div
