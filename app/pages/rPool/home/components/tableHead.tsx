@@ -1,11 +1,13 @@
 import sort_arrow from '@images/sort_arrow.svg';
 import sort_arrow_white from '@images/sort_arrow_white.svg';
 import React from 'react';
+
 type Props = {
   sortField?: string;
   sortWay?: string;
   onClick?: Function;
 };
+
 export default function Index(props: Props) {
   return (
     <div className='head'>

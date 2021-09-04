@@ -13,6 +13,7 @@ import numberUtil from '@util/numberUtil';
 import { useInterval } from '@util/utils';
 import { Spin } from 'antd';
 import { RootState } from 'app/store';
+import { cloneDeep } from 'lodash';
 import { multiply } from 'mathjs';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -107,7 +108,6 @@ export default function MintPrograms(props: any) {
       response.totalMintedValue = numberUtil.amount_format(total);
     }
     response.totalFisAmount = numberUtil.amount_format(fisAmount);
-
     return response;
   }, [unitPriceList, mintDataList]);
 
@@ -126,22 +126,22 @@ export default function MintPrograms(props: any) {
   useEffect(() => {
     rTokenList.forEach((item: any) => {
       if (item.token === 'rDOT') {
-        item.children = rDOTActs;
+        item.children = cloneDeep(rDOTActs);
       }
       if (item.token === 'rMATIC') {
-        item.children = rMaticActs;
+        item.children = cloneDeep(rMaticActs);
       }
       if (item.token === 'rFIS') {
-        item.children = rFISActs;
+        item.children = cloneDeep(rFISActs);
       }
       if (item.token === 'rKSM') {
-        item.children = rKSMActs;
+        item.children = cloneDeep(rKSMActs);
       }
       if (item.token === 'rATOM') {
-        item.children = rATOMActs;
+        item.children = cloneDeep(rATOMActs);
       }
       if (item.token === 'rETH') {
-        item.children = rETHActs;
+        item.children = cloneDeep(rETHActs);
       }
     });
 
@@ -170,12 +170,30 @@ export default function MintPrograms(props: any) {
       return 0;
     });
 
-    setMintDataList(list);
-  }, [rDOTActs, rMaticActs, rFISActs, rKSMActs, rATOMActs, rETHActs]);
+    list.forEach((tokenItem: any) => {
+      let unitPrice = unitPriceList?.find((item: any) => {
+        return item.symbol === tokenItem.token;
+      });
+      if (!unitPrice || !tokenItem.children || tokenItem.children.length === 0) {
+        return true;
+      }
 
-  useInterval(() => {
-    setMintDataList([...mintDataList]);
-  }, 1000);
+      tokenItem.children.forEach((item: any) => {
+        const formatTotalRTokenAmount = numberUtil.tokenAmountToHuman(
+          item.total_rtoken_amount,
+          getRsymbolByTokenTitle(tokenItem.token),
+        );
+        if (unitPrice) {
+          item.mintedValue = multiply(unitPrice.price, formatTotalRTokenAmount);
+        }
+      });
+    });
+    setMintDataList(list);
+  }, [unitPriceList, rDOTActs, rMaticActs, rFISActs, rKSMActs, rATOMActs, rETHActs]);
+
+  // useInterval(() => {
+  //   setMintDataList([...mintDataList]);
+  // }, 1000);
 
   return (
     <Card className='stafi_rpool_mint'>
