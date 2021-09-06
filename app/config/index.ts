@@ -539,6 +539,24 @@ export default {
   stafiScanTxUrl: (txHash: any) => {
     return `https://stafi.subscan.io/extrinsic/${txHash}`;
   },
+  etherScanTxUrl: (txHash: any) => {
+    if (!isdev()) {
+      return `https://etherscan.io/tx/${txHash}`;
+    }
+    return `https://goerli.etherscan.io/tx/${txHash}`;
+  },
+  bscScanTxUrl: (txHash: any) => {
+    if (!isdev()) {
+      return `https://bscscan.com/tx/${txHash}`;
+    }
+    return `https://testnet.bscscan.com/tx/${txHash}`;
+  },
+  polygonScanTxUrl: (txHash: any) => {
+    if (!isdev()) {
+      return `https://polygonscan.com/tx/${txHash}`;
+    }
+    return `https://mumbai.polygonscan.com/tx/${txHash}`;
+  },
   bscChainId: () => {
     if (!isdev()) {
       return '0x38';

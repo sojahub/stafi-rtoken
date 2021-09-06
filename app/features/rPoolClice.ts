@@ -294,10 +294,13 @@ export const stakeLp =
         },
       );
       const result = await lockDropContract.methods.deposit(poolIndex, amountInWei).send();
+      console.log('result: ', result);
       if (result && result.status) {
         dispatch(
           add_Notice(stafi_uuid(), '', noticeType.Lp, noticesubType.Stake, amount.toString(), noticeStatus.Confirmed, {
+            platform,
             lpNameWithPrefix,
+            txHash: result.transactionHash,
           }),
         );
         message.success('LP is staked');
@@ -331,9 +334,19 @@ export const unstakeLp =
       const result = await lockDropContract.methods.withdraw(poolIndex, amountInWei).send();
       if (result && result.status) {
         dispatch(
-          add_Notice(stafi_uuid(), '', noticeType.Lp, noticesubType.Unstake, amount.toString(), noticeStatus.Confirmed, {
-            lpNameWithPrefix,
-          }),
+          add_Notice(
+            stafi_uuid(),
+            '',
+            noticeType.Lp,
+            noticesubType.Unstake,
+            amount.toString(),
+            noticeStatus.Confirmed,
+            {
+              platform,
+              lpNameWithPrefix,
+              txHash: result.transactionHash,
+            },
+          ),
         );
         message.success('LP is unstaked');
         cb && cb();
@@ -373,7 +386,9 @@ export const claimLpReward =
             claimableAmount,
             noticeStatus.Confirmed,
             {
+              platform,
               lpNameWithPrefix,
+              txHash: result.transactionHash,
             },
           ),
         );

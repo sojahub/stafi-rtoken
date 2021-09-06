@@ -35,9 +35,11 @@ export default function Index(props: Props) {
             !(props.data.rSymbol == Symbol.Eth || props.data.rSymbol == Symbol.Fis) && props.data.subType
           }`}
           style={
-            props.data.type == noticeType.Staker &&
+            (props.data.type == noticeType.Staker || props.data.type == noticeType.Lp) &&
             (props.data.subType == noticesubType.FeeStation ||
               props.data.subType == noticesubType.Claim ||
+              props.data.subType == noticesubType.Unstake ||
+              props.data.subType == noticesubType.Stake ||
               props.data.subType == noticesubType.Unbond)
               ? { cursor: 'pointer', textDecoration: 'underline' }
               : {}
@@ -97,6 +99,19 @@ export default function Index(props: Props) {
             ) {
               props.hideNoticePopover && props.hideNoticePopover();
               props.onClick && props.onClick();
+            }
+            if (props.data.type == noticeType.Lp && props.data.subData) {
+              const { txHash, platform } = props.data.subData;
+              let viewTxUrl;
+              if (platform === 'Ethereum') {
+                viewTxUrl = config.etherScanTxUrl(txHash);
+              } else if (platform === 'BSC') {
+                viewTxUrl = config.bscScanTxUrl(txHash);
+              } else if (platform === 'Polygon') {
+                viewTxUrl = config.polygonScanTxUrl(txHash);
+              }
+              viewTxUrl && window.open(viewTxUrl);
+              props.hideNoticePopover && props.hideNoticePopover();
             }
           }}>
           {props.data.status}
