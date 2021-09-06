@@ -4,6 +4,7 @@ import { createSlice } from '@reduxjs/toolkit';
 import FeeStationServer from '@servers/feeStation';
 import { getLocalStorageItem, Keys, setLocalStorageItem } from '@util/common';
 import { Modal } from 'antd';
+import { cloneDeep } from 'lodash';
 import moment from 'moment';
 import { AppThunk } from '../store';
 import { bondStates, getMinting } from './FISClice';
@@ -590,7 +591,7 @@ export const check_swap_status = (): AppThunk => async (dispatch, getState) => {
           );
         } else {
           // console.log('xcvsd', item.subData);
-          if(moment().isBefore(moment(item.dateTime, formatStr).add(14, 'd'))){
+          if (moment().isBefore(moment(item.dateTime, formatStr).add(14, 'd'))) {
             reHandleFeeStation(item.subData);
           }
         }
@@ -604,10 +605,11 @@ function sleep(ms: any) {
 }
 
 const reHandleFeeStation = async (params: any) => {
-  if (params && params.txHash) {
-    if (params.blockHash) {
-      feeStationServer.postSwapInfo(params);
-    } else if (params.symbol === 'ETH') {
+  const newParams = cloneDeep(params);
+  if (newParams && newParams.txHash) {
+    if (newParams.blockHash) {
+      feeStationServer.postSwapInfo(newParams);
+    } else if (newParams.symbol === 'ETH') {
       if (typeof window.ethereum !== 'undefined' && ethereum.isMetaMask) {
         let txDetail;
         while (true) {
@@ -615,19 +617,19 @@ const reHandleFeeStation = async (params: any) => {
           txDetail = await ethereum
             .request({
               method: 'eth_getTransactionByHash',
-              params: [params.txHash],
+              params: [newParams.txHash],
             })
             .catch((err: any) => {});
 
-          if (txDetail.blockHash || !txDetail) {
+          if (!txDetail || txDetail.blockHash) {
             break;
           }
         }
 
         const blockHash = txDetail && txDetail.blockHash;
         if (blockHash) {
-          params.blockHash = blockHash;
-          feeStationServer.postSwapInfo(params);
+          newParams.blockHash = blockHash;
+          feeStationServer.postSwapInfo(newParams);
         }
       }
     }
