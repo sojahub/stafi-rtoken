@@ -12,6 +12,7 @@ import mintProgramsReducer from './mintProgramsClice';
 import noticeReducer from './noticeClice';
 import rAssetReducer from './rAssetClice';
 import rATOMReducer from './rATOMClice';
+import rBNBClice from './rBNBClice';
 import rDOTReducer from './rDOTClice';
 import rETHReducer from './rETHClice';
 import rKSMReducer from './rKSMClice';
@@ -35,6 +36,7 @@ export default function createRootReducer(history?: History) {
     rATOMModule: rATOMReducer,
     rPoolModule: rPoolReducer,
     rMATICModule: rMATICReducer,
+    rBNBModule: rBNBClice,
     BSCModule: BSCReducer,
     dexModule: dexReducer,
     feeStationModule: feeStationReducer,

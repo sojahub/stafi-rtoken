@@ -31,7 +31,7 @@ type Props = {
   validPools?: any[];
   totalStakedToken?: any;
   bondFees?: any;
-  type: 'rDOT' | 'rFIS' | 'rKSM' | 'rATOM' | 'rSOL' | 'rMATIC';
+  type: 'rDOT' | 'rFIS' | 'rKSM' | 'rATOM' | 'rSOL' | 'rMATIC' | 'rBNB';
   histroy?: any;
 };
 export default function Index(props: Props) {
@@ -79,6 +79,8 @@ export default function Index(props: Props) {
       return rMATIC;
     } else if (props.type == 'rFIS') {
       return rFIS;
+    } else if (props.type == 'rBNB') {
+      return rMATIC;
     }
   };
   const haswarn = useMemo(() => {
@@ -93,6 +95,7 @@ export default function Index(props: Props) {
         {props.type == 'rFIS' && `Stake FIS`}
         {props.type == 'rSOL' && `Stake SOL`}
         {props.type == 'rMATIC' && `Stake MATIC`}
+        {props.type == 'rBNB' && `Stake BNB`}
       </label>
 
       <div className={`input_panel dot_input_panel ${haswarn && 'showWarn'}`}>
@@ -121,6 +124,10 @@ export default function Index(props: Props) {
             `${
               isNaN(props.totalStakedToken) ? '--' : numberUtil.amount_format(props.totalStakedToken)
             } MATIC is staked via rMATIC `}
+          {props.type == 'rBNB' &&
+            `${
+              isNaN(props.totalStakedToken) ? '--' : numberUtil.amount_format(props.totalStakedToken)
+            } BNB is staked via rBNB `}
           {/* <A>stats</A> */}
         </div>
 

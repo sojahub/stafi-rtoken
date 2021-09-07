@@ -98,6 +98,13 @@ const siderData = [
     urlKeywords: '/rMATIC',
     url: '/rMATIC/home',
   },
+  {
+    icon: rMatic_svg,
+    selectedIcon: selected_rMatic_svg,
+    text: 'rBNB',
+    urlKeywords: '/rBNB',
+    url: '/rBNB/home',
+  },
 ];
 type Props = {
   route: any;

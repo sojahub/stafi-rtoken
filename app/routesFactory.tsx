@@ -22,6 +22,18 @@ import RATOMStakerRedeem from './pages/rATOM/staker/redeem';
 import RATOMStakerReward from './pages/rATOM/staker/reward';
 import RATOMHomeTemplate from './pages/rATOM/template';
 import RATOMValidator from './pages/rATOM/validator';
+import RBnbHome from './pages/rBNB/home';
+import RBnbSeach from './pages/rBNB/search';
+import RBnbType from './pages/rBNB/selectType';
+import RBnbWallet from './pages/rBNB/selectWallet';
+import RBnbWalletFIS from './pages/rBNB/selectWallet_rFIS';
+import RBnbStaker from './pages/rBNB/staker';
+import RBnbStakerIndex from './pages/rBNB/staker/home';
+import RBnbStakerInfo from './pages/rBNB/staker/info';
+import RBnbStakerRedeem from './pages/rBNB/staker/redeem';
+import RBnbStakerReward from './pages/rBNB/staker/reward';
+import RBnbHomeTemplate from './pages/rBNB/template';
+import RBnbValidator from './pages/rBNB/validator';
 import RDOTHome from './pages/rDOT/home';
 import RDOTSeach from './pages/rDOT/search';
 import RDOTType from './pages/rDOT/selectType';
@@ -809,6 +821,97 @@ const routesFactory = (role?: any) => {
             {
               path: '*',
               component: () => <Redirect to='/rMATIC/home' />,
+            },
+          ],
+        },
+        {
+          id: 'RBNB_index',
+          path: '/rBNB',
+          type: 'rBNB',
+          rSymbol: rSymbol.Bnb,
+          component: RBnbHomeTemplate,
+          routes: [
+            {
+              id: 'RBNB_home',
+              path: '/rBNB/home',
+              rSymbol: rSymbol.Bnb,
+              component: RBnbHome,
+            },
+            {
+              id: 'RBNB_wallet',
+              path: '/rBNB/wallet',
+              rSymbol: rSymbol.Bnb,
+              component: RBnbWallet,
+            },
+            {
+              id: 'RBnb_wallet',
+              path: '/rBNB/fiswallet',
+              rSymbol: rSymbol.Bnb,
+              component: RBnbWalletFIS,
+            },
+            {
+              id: 'RBNB_staker',
+              type: 'Staker',
+              path: '/rBNB/staker',
+              rSymbol: rSymbol.Bnb,
+              component: authorizedRoute(Symbol.Bnb)(RBnbStaker),
+              routes: [
+                {
+                  id: 'RBNB_staker_index',
+                  path: '/rBNB/staker/index',
+                  type: 'Staker',
+                  rSymbol: rSymbol.Bnb,
+                  component: RBnbStakerIndex,
+                },
+                {
+                  id: 'RBNB_staker_index_info',
+                  path: '/rBNB/staker/info',
+                  type: '-Status',
+                  rSymbol: rSymbol.Bnb,
+                  component: RBnbStakerInfo,
+                },
+                {
+                  id: 'RBNB_reward_index',
+                  path: '/rBNB/staker/reward',
+                  type: 'Staker',
+                  rSymbol: rSymbol.Bnb,
+                  component: RBnbStakerReward,
+                },
+                {
+                  id: 'RBNB_staker_index_redeem',
+                  path: '/rBNB/staker/redeem',
+                  type: 'Staker',
+                  rSymbol: rSymbol.Bnb,
+                  component: RBnbStakerRedeem,
+                },
+                {
+                  path: '*',
+                  component: () => <Redirect to='/rBNB/staker/index' />,
+                },
+              ],
+            },
+            {
+              id: 'RBNB_validator',
+              type: 'Validator',
+              path: '/rBNB/validator',
+              rSymbol: rSymbol.Bnb,
+              component: authorizedRoute(Symbol.Bnb)(RBnbValidator),
+            },
+            {
+              id: 'RBNB_search',
+              path: '/rBNB/search',
+              rSymbol: rSymbol.Bnb,
+              component: authorizedRoute(Symbol.Bnb)(RBnbSeach),
+            },
+            {
+              id: 'RBNB_type',
+              path: '/rBNB/type',
+              rSymbol: rSymbol.Bnb,
+              component: authorizedRoute(Symbol.Bnb)(RBnbType),
+            },
+            {
+              path: '*',
+              component: () => <Redirect to='/rBNB/home' />,
             },
           ],
         },

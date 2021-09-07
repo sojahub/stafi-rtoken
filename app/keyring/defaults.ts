@@ -8,6 +8,7 @@ enum Symbol {
   Kava = 'kava',
   One = 'one',
   Matic = 'matic',
+  Bnb = 'bnb',
   Sol = 'sol',
   Eth="eth"
 }
@@ -21,6 +22,7 @@ enum rSymbol {
   Atom = 3, 
   Sol = 4,  
   Matic=5, 
+  Bnb=6, 
 }
 
 const ACCOUNT_PREFIX = 'account:';

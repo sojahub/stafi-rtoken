@@ -36,23 +36,28 @@ const account = (type: string) => {
       if (getLocalStorageItem(Keys.MetamaskAccountKey) == null && getLocalStorageItem(Keys.FisAccountKey)) {
         return '/rETH/wallet';
       }
-      return true; 
+      return true;
     case Symbol.Sol:
       if (getLocalStorageItem(Keys.SolAccountKey) == null || getLocalStorageItem(Keys.FisAccountKey) == null) {
         return '/rSOL/home';
       }
       return true;
     case Symbol.Matic:
-      if(getLocalStorageItem(Keys.MaticAccountKey)==null || getLocalStorageItem(Keys.FisAccountKey)==null){
-        return '/rMATIC/home'  
+      if (getLocalStorageItem(Keys.MaticAccountKey) == null || getLocalStorageItem(Keys.FisAccountKey) == null) {
+        return '/rMATIC/home';
       }
-      return true; 
-    case Symbol.Fis: 
-      if(getLocalStorageItem(Keys.FisAccountKey)){
-        return true
-      }else{
-        return '/rFIS/home' 
-      } 
+      return true;
+    case Symbol.Bnb:
+      if (getLocalStorageItem(Keys.MetamaskAccountKey) == null || getLocalStorageItem(Keys.FisAccountKey) == null) {
+        return '/rBNB/home';
+      }
+      return true;
+    case Symbol.Fis:
+      if (getLocalStorageItem(Keys.FisAccountKey)) {
+        return true;
+      } else {
+        return '/rFIS/home';
+      }
     default:
       return '/rKSM/home';
   }
