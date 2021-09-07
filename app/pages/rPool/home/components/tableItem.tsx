@@ -80,9 +80,9 @@ export default function Index(props: Props) {
         </div>
       </div>
 
-      <div className='col  col4'>${numberUtil.amount_format(props.liquidity)}</div>
+      <div className='col  col4'>{!isNaN(props.slippage) ? `$${numberUtil.amount_format(props.liquidity)}` : '--'}</div>
 
-      <div className='col col5'>{props.slippage ? `${Number(props.slippage).toFixed(2)}%` : '--'}</div>
+      <div className='col col5'>{!isNaN(props.slippage) ? `${Number(props.slippage).toFixed(2)}%` : '--'}</div>
 
       <div className='col col2'>
         <GhostButton

@@ -5,6 +5,7 @@ import StafiServer from '@servers/stafi';
 import { formatDuration } from '@util/dateUtil';
 import numberUtil from '@util/numberUtil';
 import rpc from '@util/rpc';
+import web3Util from '@util/web3Util';
 import { cloneDeep } from 'lodash';
 import { divide, max, min, multiply } from 'mathjs';
 
@@ -29,8 +30,25 @@ export default class Index {
     return rpc.post(url);
   }
 
+  getLpPriceList(contractList: any) {
+    const url = config.api() + '/stafi/v1/webapi/drop/getlppricelist';
+    return rpc.post(url, { contract: JSON.stringify(contractList) });
+  }
+
   async fillLpData(sourceActs: Array<any>, ethAddress: any) {
     const lpActs = cloneDeep(sourceActs);
+    let rPoolList = [];
+    const rPoolListRes = await this.getRPoolList();
+    if (rPoolListRes.status === '80000' && rPoolListRes.data) {
+      rPoolList = rPoolListRes.data.list;
+    }
+
+    let wraPrice = '';
+    const lpPriceRes = await this.getLpPriceList(web3Util.getLpContractList());
+    if (lpPriceRes.status === '80000' && lpPriceRes.data) {
+      wraPrice = lpPriceRes.data.wraPrice;
+    }
+
     try {
       for (let item of lpActs) {
         for (let poolItem of item.children) {
@@ -76,17 +94,29 @@ export default class Index {
             let stakeTokenSupply = web3.utils.fromWei(poolStakeTokenSupply, 'ether');
             poolItem.stakeTokenSupply = stakeTokenSupply;
 
-            // TODO
-            poolItem.stakeTokenPrice = 1;
+            if (poolItem.lpContract) {
+              const lpPool = rPoolList.find((item: any) => {
+                return item.contract === poolItem.lpContract;
+              });
+              if (lpPool) {
+                poolItem.liquidity = lpPool.liquidity;
+                poolItem.slippage = lpPool.slippage;
+                poolItem.lpPrice = lpPool.lpPrice;
+              } else {
+                poolItem.lpPrice = 1;
+              }
+            } else {
+              poolItem.lpPrice = 1;
+            }
             poolItem.apr = await this.getLpApr(
               poolItem.platform,
               ethAddress,
               poolItem.stakeTokenAddress,
               poolItem.rewardPerBlockValue,
-              poolItem.stakeTokenPrice,
+              poolItem.lpPrice,
+              wraPrice,
             );
           } catch (err) {
-            console.log('ersfdsdf', err);
             console.error(err.message);
           }
         }
@@ -98,10 +128,19 @@ export default class Index {
     }
   }
 
-  async getLpApr(platform: any, ethAddress: any, stakeTokenAddress: any, rewardPerBlock: any, stakeTokenPrice: any) {
+  async getLpApr(
+    platform: any,
+    ethAddress: any,
+    stakeTokenAddress: any,
+    rewardPerBlock: any,
+    stakeTokenPrice: any,
+    wraPrice: any,
+  ) {
     let apr = '--';
-    // TODO
-    const dropTokenPriceValue = 2;
+
+    if (isNaN(wraPrice)) {
+      return apr;
+    }
     const totalBlocks = 2254114;
 
     try {
@@ -122,9 +161,9 @@ export default class Index {
 
       let ratio;
       if (stakeTokenSupply > 0) {
-        ratio = (rewardPerBlock * totalBlocks * dropTokenPriceValue * 100) / (stakeTokenPrice * stakeTokenSupply);
+        ratio = (rewardPerBlock * totalBlocks * wraPrice * 100) / (stakeTokenPrice * stakeTokenSupply);
       } else {
-        ratio = (rewardPerBlock * totalBlocks * dropTokenPriceValue * 100) / stakeTokenPrice;
+        ratio = (rewardPerBlock * totalBlocks * wraPrice * 100) / stakeTokenPrice;
       }
       apr = numberUtil.handleAmountRoundToFixed(ratio, 2);
     } catch (err) {
@@ -478,6 +517,12 @@ export default class Index {
       userStakedAmount: '--',
     };
     try {
+      let wraPrice = '';
+      const lpPriceRes = await this.getLpPriceList(web3Util.getLpContractList());
+      if (lpPriceRes.status === '80000' && lpPriceRes.data) {
+        wraPrice = lpPriceRes.data.wraPrice;
+      }
+
       const web3 = ethServer.getWeb3FromPlatform(platform);
       if (!web3) {
         throw new Error('unknown platform');
@@ -516,7 +561,7 @@ export default class Index {
       response.lpAllowance = allowance;
 
       const rewardPerBlock = web3.utils.fromWei(poolInfo.rewardPerBlock, 'ether');
-      response.apr = await this.getLpApr(platform, ethAddress, stakeTokenAddress, rewardPerBlock, 1);
+      response.apr = await this.getLpApr(platform, ethAddress, stakeTokenAddress, rewardPerBlock, 1, wraPrice);
 
       const userInfo = await lockContract.methods.userInfo(poolIndex, ethAddress).call();
       // console.log('userInfo: ', userInfo);
