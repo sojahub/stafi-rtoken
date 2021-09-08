@@ -1,6 +1,7 @@
 import Content from '@components/content/stakeContent_DOT';
-import { setProcessSlider } from '@features/globalClice';
+import { reloadData, setProcessSlider } from '@features/globalClice';
 import { rTokenLedger, rTokenRate, transfer } from '@features/rBNBClice';
+import { Symbol } from '@keyring/defaults';
 import { ratioToAmount } from '@util/common';
 import NumberUtil from '@util/numberUtil';
 import { message } from 'antd';
@@ -73,6 +74,7 @@ export default function Index(props: any) {
 
             dispatch(
               transfer(amount, () => {
+                dispatch(reloadData(Symbol.Bnb));
                 dispatch(setProcessSlider(false));
                 props.history.push('/rBNB/staker/info');
               }),

@@ -143,7 +143,6 @@ export default class CommonClice {
   async getTotalIssuance(type: rSymbol) {
     const stafiApi = await stafiServer.createStafiApi();
     const result = await stafiApi.query.rBalances.totalIssuance(type);
-    console.log('totalIssuance: ', result.toJSON());
     let totalIssuance: any = NumberUtil.tokenAmountToHuman(result.toJSON(), type);
     totalIssuance = NumberUtil.handleFisAmountToFixed(totalIssuance);
     return totalIssuance;

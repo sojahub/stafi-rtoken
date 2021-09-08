@@ -146,7 +146,7 @@ export const connectPolkadotjs =
   };
 
 export const checkMetaMaskNetworkId = (): AppThunk => (dispatch, getState) => {
-  // console.log('checkMetaMaskNetworkId');
+  console.log('checkMetaMaskNetworkId');
   if (typeof window.ethereum !== 'undefined' && ethereum.isMetaMask) {
     ethereum.request({ method: 'eth_chainId' }).then((chainId: any) => {
       dispatch(setMetaMaskNetworkId(chainId));

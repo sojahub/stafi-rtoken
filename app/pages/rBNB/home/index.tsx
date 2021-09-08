@@ -1,6 +1,7 @@
 import HomeCard from '@components/card/homeCard';
+import config from '@config/index';
 import { connectPolkadot_fis } from '@features/globalClice';
-import { connectMetamask, handleMaticAccount, monitoring_Method } from '@features/rMATICClice';
+import { connectMetamask } from '@features/rETHClice';
 import metamask from '@images/metamask.png';
 import rFIS_svg from '@images/rFIS.svg';
 import Button from '@shared/components/button/connect_button';
@@ -14,18 +15,18 @@ import './index.scss';
 export default function Inde(props: any) {
   const [visible, setVisible] = useState(false);
   const dispatch = useDispatch();
-  const { fisAccount, maticAccount, fisAccounts } = useSelector((state: any) => {
+  const { fisAccount, ethAccount, fisAccounts } = useSelector((state: any) => {
     return {
       fisAccount: state.FISModule.fisAccount,
       fisAccounts: state.FISModule.fisAccounts,
-      maticAccount: state.rMATICModule.maticAccount,
+      ethAccount: state.rETHModule.ethAccount,
     };
   });
 
-  if (fisAccount && maticAccount) {
+  if (fisAccount && fisAccount.address && ethAccount && ethAccount.address) {
     return <Redirect to='/rBNB/type' />;
   }
-  
+
   return (
     <HomeCard
       title={
@@ -36,17 +37,15 @@ export default function Inde(props: any) {
       subTitle={'Staking via StaFi Staking Contract and get rMATIC in return'}
       onIntroUrl=''>
       <Button
-        disabled={!!maticAccount}
+        disabled={!!(ethAccount && ethAccount.address)}
         icon={metamask}
         onClick={() => {
-          dispatch(connectMetamask('0x5'));
-          dispatch(monitoring_Method());
-          maticAccount && dispatch(handleMaticAccount(maticAccount.address));
+          dispatch(connectMetamask(config.bscChainId()));
           if (fisAccount) {
-            props.history.push('/rMATIC/type');
+            props.history.push('/rBNB/type');
           } else if (fisAccounts && fisAccounts.length > 0) {
             props.history.push({
-              pathname: '/rMATIC/fiswallet',
+              pathname: '/rBNB/fiswallet',
               state: {
                 showBackIcon: false,
               },
@@ -56,9 +55,9 @@ export default function Inde(props: any) {
         }}>
         Connect to Metamask
       </Button>
-      
+
       <Button
-        disabled={!!fisAccount}
+        disabled={!!(fisAccount && fisAccount.address)}
         icon={rFIS_svg}
         onClick={() => {
           setVisible(true);
