@@ -2,6 +2,7 @@ import config from '@config/index';
 import dow_svg from '@images/left_arrow_black.svg';
 import rDOT_DOT_svg from '@images/rDOT_DOT.svg';
 import rATOM_stafi_svg from '@images/selected_r_atom.svg';
+import rBnb_stafi_svg from '@images/selected_r_bnb.svg';
 import rDOT_stafi_svg from '@images/selected_r_dot.svg';
 import rETH_stafi_svg from '@images/selected_r_eth.svg';
 import rFIS_stafi_svg from '@images/selected_r_fis.svg';
@@ -41,7 +42,7 @@ export default function Index(props: Props) {
           {props.type == 'rFIS' && <img src={rFIS_stafi_svg} style={{ width: '40px' }} />}
           {props.type == 'rSOL' && <img src={rSOL_stafi_svg} style={{ width: '40px' }} />}
           {props.type == 'rMATIC' && <img src={rMatic_stafi_svg} style={{ width: '40px' }} />}
-          {props.type == 'rBNB' && <img src={rMatic_stafi_svg} style={{ width: '40px' }} />}
+          {props.type == 'rBNB' && <img src={rBnb_stafi_svg} style={{ width: '40px' }} />}
           {props.type}
         </div>
 
@@ -159,10 +160,10 @@ export default function Index(props: Props) {
           {props.type == 'rMATIC' && `rMATIC / MATIC`}
           {props.type == 'rBNB' && `rBNB / BNB`}
         </div>
-        
+
         <div className='content'>
           <div>{props.ratioShow}</div>
-          
+
           <div className='btns'>
             <Button
               onClick={() => {
@@ -174,10 +175,10 @@ export default function Index(props: Props) {
             </Button>
           </div>
         </div>
-        
+
         <div className='describe'>Updated every {props.hours} hours</div>
       </div>
-      
+
       <Modal
         type={props.type}
         visible={visibleModal}

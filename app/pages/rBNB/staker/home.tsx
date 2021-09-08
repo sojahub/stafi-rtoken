@@ -4,6 +4,7 @@ import { rTokenLedger, rTokenRate, transfer } from '@features/rBNBClice';
 import { ratioToAmount } from '@util/common';
 import NumberUtil from '@util/numberUtil';
 import { message } from 'antd';
+import { max, subtract } from 'mathjs';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import './index.scss';
@@ -25,9 +26,14 @@ export default function Index(props: any) {
         state.rBNBModule.bondFees + state.FISModule.estimateBondTxFees;
 
       const ethAccount = state.rETHModule.ethAccount;
+      const balance = ethAccount ? ethAccount.balance : '--';
+      let transferrableAmount = '--';
+      if (!isNaN(balance)) {
+        transferrableAmount = max(0, subtract(balance, 0.0003));
+      }
 
       return {
-        transferrableAmount: ethAccount ? ethAccount.balance : '--',
+        transferrableAmount,
         ratio: state.rBNBModule.ratio,
         stafiStakerApr: state.rBNBModule.stakerApr,
         fisCompare: fisCompare,
@@ -45,7 +51,9 @@ export default function Index(props: any) {
         amount={amount}
         willAmount={ratio == '--' ? '--' : ratioToAmount(amount, ratio)}
         unit={'BNB'}
-        transferrableAmount={isNaN(transferrableAmount) ? 0 : NumberUtil.handleFisAmountToFixed(transferrableAmount)}
+        transferrableAmount={
+          isNaN(Number(transferrableAmount)) ? 0 : NumberUtil.handleFisAmountToFixed(transferrableAmount)
+        }
         apr={stafiStakerApr}
         onChange={(value: any) => {
           setAmount(value);
