@@ -204,7 +204,6 @@ export const transfer =
         throw new Error('tx error');
       }
 
-      dispatch(get_eth_getBalance());
       // const sendTokens: any = await contract.methods.transfer(selectedPool.address, amount).send();
       let txDetail;
       while (true) {
@@ -229,6 +228,7 @@ export const transfer =
         throw new Error('tx error');
       }
 
+      dispatch(get_eth_getBalance());
       // console.log('tx, block:', txHash, blockHash);
 
       dispatch(
