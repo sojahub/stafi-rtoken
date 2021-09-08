@@ -23,6 +23,7 @@ import {
   setProcessType
 } from './globalClice';
 import { add_Notice, findUuid, noticeStatus, noticesubType, noticeType } from './noticeClice';
+import { get_eth_getBalance } from './rETHClice';
 
 const commonClice = new CommonClice();
 
@@ -289,7 +290,6 @@ export const transfer =
         setProcessSending({
           brocasting: processStatus.loading,
           packing: processStatus.default,
-          finalizing: processStatus.default,
         }),
       );
       dispatch(setProcessType(rSymbol.Bnb));
@@ -313,10 +313,11 @@ export const transfer =
         });
 
       if (!txHash) {
-        message.error('send transaction failed');
+        // message.error('send transaction failed');
         throw new Error('tx error');
       }
 
+      dispatch(get_eth_getBalance());
       // const sendTokens: any = await contract.methods.transfer(selectedPool.address, amount).send();
       let txDetail;
       while (true) {
@@ -483,6 +484,7 @@ export const reStaking =
   (cb?: Function): AppThunk =>
   async (dispatch, getState) => {
     const processParameter = getState().rBNBModule.processParameter;
+    console.log('sdfsdfsd', processParameter);
     if (processParameter) {
       const staking = processParameter.staking;
       const href = processParameter.href;
@@ -618,7 +620,6 @@ export const onProceed =
                   sending: {
                     packing: processStatus.success,
                     brocasting: processStatus.success,
-                    finalizing: processStatus.success,
                     checkTx: txHash,
                   },
                   staking: {
@@ -691,7 +692,6 @@ export const getBlock =
           sending: {
             packing: processStatus.success,
             brocasting: processStatus.success,
-            finalizing: processStatus.success,
             checkTx: txHash,
           },
           staking: {
@@ -872,20 +872,14 @@ export const rTokenLedger = (): AppThunk => async (dispatch, getState) => {
 const handleStakerApr =
   (currentRate?: any, lastRate?: any): AppThunk =>
   async (dispatch, getState) => {
-    dispatch(setStakerApr('13.7%'));
-
-    // if (currentRate && lastRate) {
-    //   const apr =
-    //     NumberUtil.handleEthRoundToFixed(((currentRate - lastRate) / 1000000000000 / 7) * 365.25 * 100) + '%';
-    //   dispatch(setStakerApr(apr));
-    // } else {
-    //   dispatch(setStakerApr('13.7%'));
-    // }
+    dispatch(setStakerApr('13.4%'));
   };
+
 export const checkAddress = (address: string) => {
   const keyringInstance = keyring.init(Symbol.Bnb);
   return keyringInstance.checkAddress(address);
 };
+
 export const accountUnbonds = (): AppThunk => async (dispatch, getState) => {
   // dispatch(getTotalUnbonding(rSymbol.Matic,(total:any)=>{
   //   dispatch(setTotalUnbonding(total));
