@@ -52,6 +52,7 @@ import exchange_svg from '@images/exchange.svg';
 import rasset_fis_svg from '@images/rFIS.svg';
 // import rasset_rsol_svg from '@images/rSOL.svg';
 import rasset_ratom_svg from '@images/r_atom.svg';
+import rasset_rbnb_svg from '@images/r_bnb.svg';
 import rasset_rdot_svg from '@images/r_dot.svg';
 import rasset_reth_svg from '@images/r_eth.svg';
 import rasset_rfis_svg from '@images/r_fis.svg';
@@ -129,6 +130,12 @@ const allTokenDatas = [
     content: '--',
     type: 'rmatic',
   },
+  {
+    icon: rasset_rbnb_svg,
+    title: 'rBNB',
+    content: '--',
+    type: 'rbnb',
+  },
 ];
 
 const assetDatas = [
@@ -184,6 +191,7 @@ export default function Index(props: any) {
     rsol_balance,
     rmatic_balance,
     reth_balance,
+    rbnb_balance,
   } = useSelector((state: any) => {
     if (fromTypeData && fromTypeData.type === 'erc20') {
       return {
@@ -195,6 +203,7 @@ export default function Index(props: any) {
         rsol_balance: NumberUtil.handleFisAmountToFixed(state.ETHModule.ercRSOLBalance),
         rmatic_balance: NumberUtil.handleFisAmountToFixed(state.ETHModule.ercRMaticBalance),
         reth_balance: NumberUtil.handleFisAmountToFixed(state.ETHModule.ercETHBalance),
+        rbnb_balance: NumberUtil.handleFisAmountToFixed(0),
         estimateEthFee: state.bridgeModule.estimateEthFee,
       };
     } else if (fromTypeData && fromTypeData.type === 'bep20') {
@@ -207,6 +216,7 @@ export default function Index(props: any) {
         rsol_balance: NumberUtil.handleFisAmountToFixed(state.BSCModule.bepRSOLBalance),
         rmatic_balance: NumberUtil.handleFisAmountToFixed(state.BSCModule.bepRMATICBalance),
         reth_balance: NumberUtil.handleFisAmountToFixed(state.BSCModule.bepRETHBalance),
+        rbnb_balance: NumberUtil.handleFisAmountToFixed(0),
         estimateBscFee: state.bridgeModule.estimateBscFee,
       };
     } else {
@@ -218,6 +228,7 @@ export default function Index(props: any) {
         fis_balance: state.FISModule.fisAccount ? state.FISModule.fisAccount.balance : '--',
         rsol_balance: NumberUtil.handleFisAmountToFixed(state.rSOLModule.tokenAmount),
         rmatic_balance: NumberUtil.handleFisAmountToFixed(state.rMATICModule.tokenAmount),
+        rbnb_balance: NumberUtil.handleFisAmountToFixed(0),
         erc20EstimateFee: state.bridgeModule.erc20EstimateFee,
         bep20EstimateFee: state.bridgeModule.bep20EstimateFee,
       };
@@ -316,11 +327,14 @@ export default function Index(props: any) {
       if (item.type === 'rmatic') {
         item.content = rmatic_balance;
       }
+      if (item.type === 'rbnb') {
+        item.content = rbnb_balance;
+      }
     });
     let filterTokenDatas;
     if ((fromType === 'native' && destType === 'erc20') || (fromType === 'erc20' && destType === 'native')) {
       filterTokenDatas = allTokenDatas.filter((item: any) => {
-        return item.type !== 'reth';
+        return item.type !== 'reth' && item.type !== 'rbnb';
       });
     } else if ((fromType === 'erc20' && destType === 'bep20') || (fromType === 'bep20' && destType === 'erc20')) {
       filterTokenDatas = allTokenDatas.filter((item: any) => {

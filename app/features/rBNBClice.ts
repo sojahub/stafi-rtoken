@@ -6,13 +6,7 @@ import EthServer from '@servers/eth/index';
 import keyring from '@servers/index';
 import RpcServer, { pageCount } from '@servers/rpc/index';
 import Stafi from '@servers/stafi/index';
-import {
-  getLocalStorageItem,
-  Keys,
-  removeLocalStorageItem,
-  setLocalStorageItem,
-  stafi_uuid
-} from '@util/common';
+import { getLocalStorageItem, Keys, removeLocalStorageItem, setLocalStorageItem, stafi_uuid } from '@util/common';
 import { default as numberUtil, default as NumberUtil } from '@util/numberUtil';
 import { message } from 'antd';
 import _m0 from 'protobufjs/minimal';
@@ -196,15 +190,13 @@ export const transfer =
           params: [transactionParameters],
         })
         .catch((err: any) => {
-          message.error(err.message);
+          throw err;
         });
 
       if (!txHash) {
-        // message.error('send transaction failed');
         throw new Error('tx error');
       }
 
-      // const sendTokens: any = await contract.methods.transfer(selectedPool.address, amount).send();
       let txDetail;
       while (true) {
         await sleep(1000);
@@ -229,7 +221,6 @@ export const transfer =
       }
 
       dispatch(get_eth_getBalance());
-      // console.log('tx, block:', txHash, blockHash);
 
       dispatch(
         setProcessSending({
@@ -261,7 +252,6 @@ export const transfer =
           href: cb ? '/rBNB/staker/info' : null,
         }),
       );
-      // await timeout(1000);
       dispatch(
         add_Matic_stake_Notice(notice_uuid, amountparam, noticeStatus.Pending, {
           process: getState().globalModule.process,
@@ -290,7 +280,7 @@ export const transfer =
           }),
         );
     } catch (error) {
-      if (error.message === 'MetaMask Tx Signature: User denied transaction signature.') {
+      if (error.message === 'MetaMask Tx Signature: User denied transaction signature.' || error.code === 4001) {
         message.error('Error: cancelled');
         dispatch(setProcessSlider(false));
       } else if (error.message === 'tx error') {
@@ -310,7 +300,6 @@ export const transfer =
             href: cb ? '/rBNB/staker/info' : null,
           }),
         );
-        // await timeout(1000);
         dispatch(reloadData());
         dispatch(
           add_Matic_stake_Notice(notice_uuid, amountparam, noticeStatus.Error, {
