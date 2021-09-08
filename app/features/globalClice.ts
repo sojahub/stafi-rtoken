@@ -12,17 +12,20 @@ import { createSubstrate as dotCreateSubstrate, reloadData as dotReloadData } fr
 import { createSubstrate as ksmCreateSubstrate, reloadData as ksmReloadData } from './rKSMClice';
 import { reloadData as maticReloadData } from './rMATICClice';
 import { createSubstrate as solCreateSubstrate, reloadData as solReloadData } from './rSOLClice';
+
 export enum processStatus {
   default = 0,
   success = 1,
   failure = 2,
   loading = 3,
 }
+
 //0|1|2|4
 const polkadotServer = new PolkadotServer();
 
 const atomServer = new AtomServer();
 const solServer = new SolServer();
+
 export const process = {
   rSymbol: '',
   sending: {
@@ -42,6 +45,7 @@ export const process = {
     checkTx: '', //
   },
 };
+
 const globalClice = createSlice({
   name: 'globalModule',
   initialState: {

@@ -1,11 +1,22 @@
 import classNames from 'classnames';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import './index.scss';
 import LiquidityPrograms from './LiquidityPrograms';
 import MintPrograms from './MintPrograms';
 
 export default function Inde(props: any) {
   const [index, setIndex] = useState(0);
+
+  const location = useLocation();
+
+  useEffect(() => {
+    if (location.state) {
+      if (location.state.index !== index) {
+        setIndex(location.state.index);
+      }
+    }
+  }, []);
 
   return (
     <div>

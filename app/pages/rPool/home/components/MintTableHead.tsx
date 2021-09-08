@@ -11,7 +11,7 @@ type Props = {
 export default function MintTableHead(props: Props) {
   return (
     <div className='head'>
-      <div className='col col1'>Mint</div>
+      <div className='col col2'>Mint</div>
 
       <div className='col  col5'>Portal on</div>
 
@@ -28,13 +28,15 @@ export default function MintTableHead(props: Props) {
         )}
       </div> */}
 
-      <div className='col col2 sort_field'>APY</div>
+      <div className='col col4 sort_field'>APY</div>
 
       <div className='col  col5'>Reward</div>
 
+      <div className='col  col5'>Minted Value</div>
+
       <div className='col  col5'>Duration(Days)</div>
 
-      <div className='col col6'>Farm</div>
+      <div className='col col2'>Farm</div>
     </div>
   );
 }

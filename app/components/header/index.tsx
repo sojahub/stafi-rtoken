@@ -12,6 +12,7 @@ import {
   query_rBalances_account as dotquery_rBalances_account,
   reloadData as dotReloadData
 } from '@features/rDOTClice';
+import { monitoring_Method as eth_monitoring_Method } from '@features/rETHClice';
 import {
   query_rBalances_account as ksmquery_rBalances_account,
   reloadData as ksmReloadData
@@ -21,6 +22,7 @@ import report_icon from '@images/report_icon.svg';
 import wrong_network from '@images/wrong_network.svg';
 import { rSymbol, Symbol } from '@keyring/defaults';
 import Modal from '@shared/components/modal/connectModal';
+import { getLpPlatformFromUrl, getMetaMaskTokenSymbol, liquidityPlatformMatchMetaMask } from '@util/metaMaskUtil';
 import NumberUtil from '@util/numberUtil';
 import StringUtil from '@util/stringUtil';
 import Tool from '@util/toolUtil';
@@ -201,6 +203,13 @@ export default function Index(props: Props) {
       }
       return returnValue;
     }
+    if (location.pathname.includes('/rPool/lp')) {
+      const returnValue: any = { type: 'rPool/lp' };
+      if (state.rETHModule.ethAccount) {
+        returnValue.ethAccount = state.rETHModule.ethAccount;
+      }
+      return returnValue;
+    }
     return null;
   });
 
@@ -219,6 +228,12 @@ export default function Index(props: Props) {
     dispatch(checkMetaMaskNetworkId());
     dispatch(monitorMetaMaskChainChange());
   }, [location.pathname]);
+
+  useEffect(() => {
+    if (account && account.ethAccount) {
+      dispatch(eth_monitoring_Method());
+    }
+  }, [account]);
 
   if (location.pathname.includes('/rPool/home')) {
     return <></>;
@@ -386,12 +401,21 @@ export default function Index(props: Props) {
             {account.ethAccount && (
               <div style={{ display: 'flex', flexDirection: 'column' }}>
                 <div className='header_tool account'>
-                  <div>{account.ethAccount.balance || '--'} ETH</div>
+                  <div>
+                    {account.ethAccount.balance || '--'} {getMetaMaskTokenSymbol(metaMaskNetworkId)}
+                  </div>
                   <div>{StringUtil.replacePkh(account.ethAccount.address, 4, 38)}</div>
                 </div>
-                {metaMaskNetworkId && !config.metaMaskNetworkIsGoerliEth(metaMaskNetworkId) && (
-                  <img src={wrong_network} className={'wrong_network'} />
-                )}
+                {account.type === 'rPool/lp' &&
+                  metaMaskNetworkId &&
+                  !liquidityPlatformMatchMetaMask(metaMaskNetworkId, getLpPlatformFromUrl(location.pathname)) && (
+                    <img src={wrong_network} className={'wrong_network'} />
+                  )}
+                {account.type !== 'rPool/lp' &&
+                  metaMaskNetworkId &&
+                  !config.metaMaskNetworkIsGoerliEth(metaMaskNetworkId) && (
+                    <img src={wrong_network} className={'wrong_network'} />
+                  )}
               </div>
             )}
             {account.bscAccount && (
