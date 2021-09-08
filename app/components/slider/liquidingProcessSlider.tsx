@@ -1,5 +1,6 @@
 import { setProcessSlider } from '@features/globalClice';
 import { reSending as atomReSending, reStaking as atomReStaking } from '@features/rATOMClice';
+import { reSending as bnbReSending, reStaking as bnbReStaking } from '@features/rBNBClice';
 import { reSending, reStaking } from '@features/rDOTClice';
 import { reSending as ksmReSending, reStaking as ksmReStaking } from '@features/rKSMClice';
 import { reSending as maticReSending, reStaking as maticReStaking } from '@features/rMATICClice';
@@ -73,7 +74,15 @@ export default function Index(props: Props) {
         }),
       );
     }
+    if (util.pageType() == rSymbol.Bnb) {
+      dispatch(
+        bnbReSending((href: any) => {
+          href && props.history.push(href);
+        }),
+      );
+    }
   };
+
   const reStakingClick = () => {
     if (util.pageType() == rSymbol.Dot) {
       dispatch(
@@ -111,6 +120,13 @@ export default function Index(props: Props) {
     if (util.pageType() == rSymbol.Matic) {
       dispatch(
         maticReStaking((href: any) => {
+          href && props.history.push(href);
+        }),
+      );
+    }
+    if (util.pageType() == rSymbol.Bnb) {
+      dispatch(
+        bnbReStaking((href: any) => {
           href && props.history.push(href);
         }),
       );

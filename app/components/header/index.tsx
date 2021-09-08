@@ -152,6 +152,16 @@ export default function Index(props: Props) {
         };
       }
     }
+    if (location.pathname.includes('/rBNB')) {
+      if (state.rETHModule.ethAccount || state.FISModule.fisAccount) {
+        return {
+          ethAccount: state.rETHModule.ethAccount,
+          fisAccount: state.FISModule.fisAccount,
+          noticeData: state.noticeModule.noticeData,
+          type: 'rBNB',
+        };
+      }
+    }
     if (location.pathname.includes('/rFIS')) {
       if (state.FISModule.fisAccount) {
         return {
@@ -398,7 +408,8 @@ export default function Index(props: Props) {
                   connect to Phantom
                 </div>
               ))}
-            {account.ethAccount && (
+
+            {account.type !== 'rBNB' && account.ethAccount && (
               <div style={{ display: 'flex', flexDirection: 'column' }}>
                 <div className='header_tool account'>
                   <div>
@@ -418,6 +429,21 @@ export default function Index(props: Props) {
                   )}
               </div>
             )}
+
+            {account.type === 'rBNB' && account.ethAccount && (
+              <div style={{ display: 'flex', flexDirection: 'column' }}>
+                <div className='header_tool account'>
+                  <div>
+                    {(config.metaMaskNetworkIsBsc(metaMaskNetworkId) && account.ethAccount.balance) || '--'} BNB
+                  </div>
+                  <div>{StringUtil.replacePkh(account.ethAccount.address, 4, 38)}</div>
+                </div>
+                {metaMaskNetworkId && !config.metaMaskNetworkIsBsc(metaMaskNetworkId) && (
+                  <img src={wrong_network} className={'wrong_network'} />
+                )}
+              </div>
+            )}
+
             {account.bscAccount && (
               <div style={{ display: 'flex', flexDirection: 'column' }}>
                 <div className='header_tool account'>
@@ -429,6 +455,7 @@ export default function Index(props: Props) {
                 )}
               </div>
             )}
+
             {account.maticAccount && (
               <div className='header_tool account'>
                 <div>{NumberUtil.handleFisAmountToFixed(account.maticAccount.balance)} MATIC</div>

@@ -388,10 +388,10 @@ export const rTokenRate = (): AppThunk => async (dispatch, getState) => {
 };
 
 export const get_eth_getBalance = (): AppThunk => async (dispatch, getState) => {
-  // if (!config.metaMaskNetworkIsGoerliEth(getState().globalModule.metaMaskNetworkId)) {
-  // console.log('get_eth_getBalance: metaMaskNetwork wrong');
-  // return;
-  // }
+  if (isdev() && !config.metaMaskNetworkIsGoerliEth(getState().globalModule.metaMaskNetworkId)) {
+    // console.log('current metaMaskNetwork:', getState().globalModule.metaMaskNetworkId);
+    // return;
+  }
 
   let web3 = ethServer.getWeb3();
   if (!getState().rETHModule.ethAccount) {

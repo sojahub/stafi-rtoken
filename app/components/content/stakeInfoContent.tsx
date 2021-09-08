@@ -2,6 +2,7 @@ import config from '@config/index';
 import dow_svg from '@images/left_arrow_black.svg';
 import rDOT_DOT_svg from '@images/rDOT_DOT.svg';
 import rATOM_stafi_svg from '@images/selected_r_atom.svg';
+import rBnb_stafi_svg from '@images/selected_r_bnb.svg';
 import rDOT_stafi_svg from '@images/selected_r_dot.svg';
 import rETH_stafi_svg from '@images/selected_r_eth.svg';
 import rFIS_stafi_svg from '@images/selected_r_fis.svg';
@@ -21,12 +22,13 @@ type Props = {
   tokenAmount?: any;
   ratioShow?: any;
   onStakeClick?: any;
-  type: 'rDOT' | 'rETH' | 'rFIS' | 'rKSM' | 'rATOM' | 'rSOL' | 'rMATIC';
+  type: 'rDOT' | 'rETH' | 'rFIS' | 'rKSM' | 'rATOM' | 'rSOL' | 'rMATIC' | 'rBNB';
   totalUnbonding?: any;
   onSwapClick?: Function;
   onUniswapClick?: Function;
   hours?: number;
 };
+
 export default function Index(props: Props) {
   const [visibleModal, setVisibleModal] = useState(false);
   return (
@@ -40,8 +42,10 @@ export default function Index(props: Props) {
           {props.type == 'rFIS' && <img src={rFIS_stafi_svg} style={{ width: '40px' }} />}
           {props.type == 'rSOL' && <img src={rSOL_stafi_svg} style={{ width: '40px' }} />}
           {props.type == 'rMATIC' && <img src={rMatic_stafi_svg} style={{ width: '40px' }} />}
+          {props.type == 'rBNB' && <img src={rBnb_stafi_svg} style={{ width: '40px' }} />}
           {props.type}
         </div>
+
         <div className='content'>
           <div>{props.tokenAmount == '--' ? '--' : NumberUtil.handleFisAmountToFixed(props.tokenAmount)}</div>
           <div className='btns'>
@@ -121,7 +125,12 @@ export default function Index(props: Props) {
                 ? NumberUtil.handleAtomRoundToFixed(props.tokenAmount * props.ratio)
                 : '--'
             }`}
-
+          {props.type == 'rBNB' &&
+            `Your current staked BNB  is ${
+              props.tokenAmount != '--' && props.ratio != '--'
+                ? NumberUtil.handleAtomRoundToFixed(props.tokenAmount * props.ratio)
+                : '--'
+            }`}
           {props.type == 'rSOL' &&
             `Your current staked SOL  is ${
               props.tokenAmount != '--' && props.ratio != '--'
@@ -135,8 +144,10 @@ export default function Index(props: Props) {
           {props.type == 'rATOM' && props.totalUnbonding > 0 && `. Unbonding ATOM is ${props.totalUnbonding}`}
           {props.type == 'rSOL' && props.totalUnbonding > 0 && `. Unbonding SOL is ${props.totalUnbonding}`}
           {props.type == 'rMATIC' && props.totalUnbonding > 0 && `. Unbonding MATIC is ${props.totalUnbonding}`}
+          {props.type == 'rBNB' && props.totalUnbonding > 0 && `. Unbonding BNB is ${props.totalUnbonding}`}
         </div>
       </div>
+
       <div className='item'>
         <div className='title'>
           <img src={rDOT_DOT_svg} />
@@ -147,9 +158,12 @@ export default function Index(props: Props) {
           {props.type == 'rETH' && `rETH / ETH`}
           {props.type == 'rSOL' && `rSOL / SOL`}
           {props.type == 'rMATIC' && `rMATIC / MATIC`}
+          {props.type == 'rBNB' && `rBNB / BNB`}
         </div>
+
         <div className='content'>
           <div>{props.ratioShow}</div>
+
           <div className='btns'>
             <Button
               onClick={() => {
@@ -161,8 +175,10 @@ export default function Index(props: Props) {
             </Button>
           </div>
         </div>
+
         <div className='describe'>Updated every {props.hours} hours</div>
       </div>
+
       <Modal
         type={props.type}
         visible={visibleModal}

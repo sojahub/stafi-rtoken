@@ -1,5 +1,6 @@
 import { getRsymbolByTokenTitle } from '@config/index';
 import doubt from '@images/doubt.svg';
+import rBNB from '@images/selected_bnb.svg';
 import rATOM from '@images/selected_rATOM.svg';
 import rDOT from '@images/selected_rDOT.svg';
 import rFIS from '@images/selected_rFIS.svg';
@@ -31,7 +32,7 @@ type Props = {
   validPools?: any[];
   totalStakedToken?: any;
   bondFees?: any;
-  type: 'rDOT' | 'rFIS' | 'rKSM' | 'rATOM' | 'rSOL' | 'rMATIC';
+  type: 'rDOT' | 'rFIS' | 'rKSM' | 'rATOM' | 'rSOL' | 'rMATIC' | 'rBNB';
   histroy?: any;
 };
 export default function Index(props: Props) {
@@ -79,6 +80,8 @@ export default function Index(props: Props) {
       return rMATIC;
     } else if (props.type == 'rFIS') {
       return rFIS;
+    } else if (props.type == 'rBNB') {
+      return rBNB;
     }
   };
   const haswarn = useMemo(() => {
@@ -93,34 +96,39 @@ export default function Index(props: Props) {
         {props.type == 'rFIS' && `Stake FIS`}
         {props.type == 'rSOL' && `Stake SOL`}
         {props.type == 'rMATIC' && `Stake MATIC`}
+        {props.type == 'rBNB' && `Stake BNB`}
       </label>
 
       <div className={`input_panel dot_input_panel ${haswarn && 'showWarn'}`}>
         <div className='pool'>
           {props.type == 'rKSM' &&
             `${
-              isNaN(props.totalStakedToken) ? '--' : numberUtil.amount_format(props.totalStakedToken)
+              isNaN(props.totalStakedToken) ? '--' : numberUtil.amount_format(props.totalStakedToken, 6)
             } KSM is staked via rKSM `}
           {props.type == 'rDOT' &&
             `${
-              isNaN(props.totalStakedToken) ? '--' : numberUtil.amount_format(props.totalStakedToken)
+              isNaN(props.totalStakedToken) ? '--' : numberUtil.amount_format(props.totalStakedToken, 6)
             } DOT is staked via rDOT `}
           {props.type == 'rATOM' &&
             `${
-              isNaN(props.totalStakedToken) ? '--' : numberUtil.amount_format(props.totalStakedToken)
+              isNaN(props.totalStakedToken) ? '--' : numberUtil.amount_format(props.totalStakedToken, 6)
             } ATOM is staked via rATOM `}
           {props.type == 'rFIS' &&
             `${
-              isNaN(props.totalStakedToken) ? '--' : numberUtil.amount_format(props.totalStakedToken)
+              isNaN(props.totalStakedToken) ? '--' : numberUtil.amount_format(props.totalStakedToken, 6)
             } FIS is staked via rFIS `}
           {props.type == 'rSOL' &&
             `${
-              isNaN(props.totalStakedToken) ? '--' : numberUtil.amount_format(props.totalStakedToken)
+              isNaN(props.totalStakedToken) ? '--' : numberUtil.amount_format(props.totalStakedToken, 6)
             } SOL is staked via rSOL `}
           {props.type == 'rMATIC' &&
             `${
-              isNaN(props.totalStakedToken) ? '--' : numberUtil.amount_format(props.totalStakedToken)
+              isNaN(props.totalStakedToken) ? '--' : numberUtil.amount_format(props.totalStakedToken, 6)
             } MATIC is staked via rMATIC `}
+          {props.type == 'rBNB' &&
+            `${
+              isNaN(props.totalStakedToken) ? '--' : numberUtil.amount_format(props.totalStakedToken, 6)
+            } BNB is staked via rBNB `}
           {/* <A>stats</A> */}
         </div>
 

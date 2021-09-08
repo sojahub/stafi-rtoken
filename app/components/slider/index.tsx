@@ -4,6 +4,7 @@ import rAsset_svg from '@images/rAsset.svg';
 // import rDEX_svg from '@images/rDEX_inactive.svg';
 import rSOL_svg from '@images/rSOL.svg';
 import rATOM_svg from '@images/r_atom.svg';
+import rBnb_svg from '@images/r_bnb.svg';
 import rDOT_svg from '@images/r_dot.svg';
 import rETH_svg from '@images/r_eth.svg';
 import rFIS_svg from '@images/r_fis.svg';
@@ -12,6 +13,7 @@ import rMatic_svg from '@images/r_matic.svg';
 import rPool_svg from '@images/r_pool.svg';
 import selected_rAsset_svg from '@images/selected_rAssets.svg';
 import selected_rATOM_svg from '@images/selected_r_atom.svg';
+import selected_rBnb_svg from '@images/selected_r_bnb.svg';
 import selected_rDOT_svg from '@images/selected_r_dot.svg';
 import selected_rETH_svg from '@images/selected_r_eth.svg';
 import selected_rFIS_svg from '@images/selected_r_fis.svg';
@@ -97,6 +99,13 @@ const siderData = [
     text: 'rMATIC',
     urlKeywords: '/rMATIC',
     url: '/rMATIC/home',
+  },
+  {
+    icon: rBnb_svg,
+    selectedIcon: selected_rBnb_svg,
+    text: 'rBNB',
+    urlKeywords: '/rBNB',
+    url: '/rBNB/home',
   },
 ];
 type Props = {

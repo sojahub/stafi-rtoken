@@ -50,6 +50,8 @@ export default class CommonClice {
             let poolAddress;
             if (symbol == Symbol.Matic) {
               poolAddress = poolPubkey;
+            } else if (symbol == Symbol.Bnb) {
+              poolAddress = poolPubkey;
             } else if (symbol == Symbol.Atom) {
               poolAddress = keyringInstance.encodeAddress(hexToU8a(poolPubkey));
             } else {

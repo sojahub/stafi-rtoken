@@ -453,7 +453,9 @@ export default {
       return `https://solanabeach.io/transaction/${txHash}`;
     } else if (type == rSymbol.Matic) {
       return `https://etherscan.io/tx/${txHash}`;
-    } else {
+    } else if (type == rSymbol.Bnb) {
+      return `https://bscscan.com/tx/${txHash}`;
+    }else {
       return '';
     }
   },
@@ -470,7 +472,9 @@ export default {
       return 14;
     } else if (type == Symbol.Sol) {
       return 10;
-    } else {
+    } else if (type == Symbol.Bnb) {
+      return 14;
+    }else {
       return 0;
     }
   },

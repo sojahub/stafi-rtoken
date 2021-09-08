@@ -8,6 +8,7 @@ import SolServer from '@servers/sol/index';
 import { AppThunk } from '../store';
 import { createSubstrate as fisCreateSubstrate, reloadData as fisReloadData } from './FISClice';
 import { createSubstrate as atomCreateSubstrate, reloadData as atomReloadData } from './rATOMClice';
+import { reloadData as bnbReloadData } from './rBNBClice';
 import { createSubstrate as dotCreateSubstrate, reloadData as dotReloadData } from './rDOTClice';
 import { createSubstrate as ksmCreateSubstrate, reloadData as ksmReloadData } from './rKSMClice';
 import { reloadData as maticReloadData } from './rMATICClice';
@@ -149,7 +150,7 @@ export const connectPolkadotjs =
   };
 
 export const checkMetaMaskNetworkId = (): AppThunk => (dispatch, getState) => {
-  // console.log('checkMetaMaskNetworkId');
+  console.log('checkMetaMaskNetworkId');
   if (typeof window.ethereum !== 'undefined' && ethereum.isMetaMask) {
     ethereum.request({ method: 'eth_chainId' }).then((chainId: any) => {
       dispatch(setMetaMaskNetworkId(chainId));
@@ -246,6 +247,10 @@ export const clice = (symbol: string) => {
     case Symbol.Matic:
       return {
         reloadData: maticReloadData,
+      };
+    case Symbol.Bnb:
+      return {
+        reloadData: bnbReloadData,
       };
     case Symbol.Kava:
     case Symbol.One:

@@ -463,6 +463,28 @@ export const bound =
             throw err;
           });
         message.info('Signature succeeded, proceeding staking');
+      } else if (type === rSymbol.Bnb) {
+        message.info('Sending succeeded, proceeding signature.');
+        await timeout(3000);
+        const ethAddress = getState().rETHModule.ethAccount.address;
+        const fisPubkey = u8aToHex(keyringInstance.decodeAddress(fisAddress), -1, false);
+        const msg = stringToHex(fisPubkey);
+        pubkey = address;
+        signature = await ethereum
+          .request({
+            method: 'personal_sign',
+            params: [ethAddress, msg],
+          })
+          .catch((err: any) => {
+            dispatch(
+              setProcessStaking({
+                brocasting: processStatus.failure,
+              }),
+            );
+            message.error(err.message);
+            throw err;
+          });
+        message.info('Signature succeeded, proceeding staking');
       } else if (type == rSymbol.Sol) {
         signature = await solSignature(address, fisAddress);
         pubkey = u8aToHex(new PublicKey(getState().rSOLModule.solAccount.address).toBytes());
