@@ -6,6 +6,7 @@ import reth_validator from '@images/reth_validator.svg';
 import rFIS_svg from '@images/rFIS_black.svg';
 import rKSM_svg from '@images/rKSM_black2.svg';
 import rSOL_svg from '@images/rSOL_stafi.svg';
+import rBnb_svg from '@images/selected_bnb.svg';
 import rATOM_svg from '@images/selected_rATOM.svg';
 import rMatic_svg from '@images/selected_rMatic.svg';
 import validator_svg from '@images/validator_2.svg';
@@ -63,7 +64,7 @@ export default function Index(props: Props) {
           {props.type == 'rETH' && <img src={reth_staker} />}
           {props.type == 'rSOL' && <img src={rSOL_svg} />}
           {props.type == 'rMATIC' && <img src={rMatic_svg} />}
-          {props.type == 'rBNB' && <img src={rMatic_svg} />}
+          {props.type == 'rBNB' && <img src={rBnb_svg} />}
           <div>{props.type == 'rETH' ? 'Staked' : props.type}</div>
           <label>{props.total}</label>
         </div>

@@ -75,7 +75,6 @@ export default function Index(props: any) {
         onInputConfirm={(e: boolean) => {
           if (!e) {
             if (!checkEthAddress(recipient)) {
-              message.error('address input error');
               return false;
             }
           }
@@ -85,6 +84,11 @@ export default function Index(props: any) {
           setRecipient(e);
         }}
         onRdeemClick={() => {
+          if (Number(amount) > Number(tokenAmount)) {
+            message.error('The input amount exceeds your rToken balance');
+            setAmount('');
+            return;
+          }
           if (checkEthAddress(recipient)) {
             setVisible(true);
           } else {

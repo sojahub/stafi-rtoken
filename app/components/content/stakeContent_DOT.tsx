@@ -11,7 +11,7 @@ import RPoolServer from '@servers/rpool';
 import Button from '@shared/components/button/button';
 import Input from '@shared/components/input/amountInput';
 import numberUtil from '@util/numberUtil';
-import { Tooltip } from 'antd';
+import { message, Tooltip } from 'antd';
 import { multiply } from 'mathjs';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
@@ -240,6 +240,11 @@ export default function Index(props: Props) {
         <Button
           disabled={!props.amount || props.amount == 0 || haswarn || processSlider}
           onClick={() => {
+            if (Number(props.amount) > Number(props.transferrableAmount)) {
+              props.onChange('');
+              message.error('The input amount exceeds your transferrable balance');
+              return;
+            }
             props.onStakeClick && props.onStakeClick();
           }}>
           Stake
