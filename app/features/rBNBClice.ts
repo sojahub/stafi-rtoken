@@ -8,13 +8,11 @@ import MaticServer from '@servers/matic/index';
 import RpcServer, { pageCount } from '@servers/rpc/index';
 import Stafi from '@servers/stafi/index';
 import { getLocalStorageItem, Keys, removeLocalStorageItem, setLocalStorageItem, stafi_uuid } from '@util/common';
-import NumberUtil from '@util/numberUtil';
+import { default as numberUtil, default as NumberUtil } from '@util/numberUtil';
 import { message } from 'antd';
-import InputDataDecoder from 'ethereum-input-data-decoder';
 import _m0 from 'protobufjs/minimal';
 import { AppThunk } from '../store';
 import CommonClice from './commonClice';
-import { getAssetBalance } from './ETHClice';
 import { bondStates, bound, fisUnbond, rTokenSeries_bondStates } from './FISClice';
 import {
   initProcess,
@@ -256,38 +254,36 @@ declare const ethereum: any;
 //   }
 // };
 
-export const balancesAll = (): AppThunk => (dispatch, getState) => {
-  if (getState().rMATICModule.maticAccount) {
-    const address = getState().rMATICModule.maticAccount.address;
-    getAssetBalance(address, maticServer.getTokenAbi(), maticServer.getMaticTokenAddress(), (v: any) => {
-      dispatch(setTransferrableAmountShow(v));
-      // dispatch(setMaticAccount({ address: address, balance: v }));
-    });
-  }
-};
+// export const balancesAll = (): AppThunk => (dispatch, getState) => {
+//   if (getState().rMATICModule.maticAccount) {
+//     const address = getState().rMATICModule.maticAccount.address;
+//     getAssetBalance(address, maticServer.getTokenAbi(), maticServer.getMaticTokenAddress(), (v: any) => {
+//       dispatch(setTransferrableAmountShow(v));
+//       // dispatch(setMaticAccount({ address: address, balance: v }));
+//     });
+//   }
+// };
 
 export const transfer =
   (amountparam: string, cb?: Function): AppThunk =>
   async (dispatch, getState) => {
-    const processParameter = getState().rMATICModule.processParameter;
+    const processParameter = getState().rBNBModule.processParameter;
     const notice_uuid = (processParameter && processParameter.uuid) || stafi_uuid();
 
     dispatch(initProcess(null));
 
-    const address = getState().rMATICModule.maticAccount.address;
-    const validPools = getState().rMATICModule.validPools;
-    const poolLimit = getState().rMATICModule.poolLimit;
+    const address = getState().rETHModule.ethAccount && getState().rETHModule.ethAccount.address;
+    const validPools = getState().rBNBModule.validPools;
+    const poolLimit = getState().rBNBModule.poolLimit;
 
     let web3 = ethServer.getWeb3();
-    let contract = new web3.eth.Contract(maticServer.getTokenAbi(), maticServer.getMaticTokenAddress(), {
-      from: address,
-    });
-    const amount = web3.utils.toWei(amountparam.toString()); // NumberUtil.tokenAmountToChain(amountparam,rSymbol.Matic);
-
+    const amount = web3.utils.toWei(amountparam.toString(), 'ether');
+    const amountInBnb = numberUtil.tokenAmountToChain(amountparam, rSymbol.Bnb);
     const selectedPool = commonClice.getPool(amount, validPools, poolLimit);
-    if (selectedPool == null) {
+    if (!selectedPool || !address) {
       return;
     }
+
     try {
       dispatch(
         setProcessSending({
@@ -296,123 +292,121 @@ export const transfer =
           finalizing: processStatus.default,
         }),
       );
-      dispatch(setProcessType(rSymbol.Matic));
+      dispatch(setProcessType(rSymbol.Bnb));
       dispatch(setProcessSlider(true));
-      const sendTokens: any = await contract.methods.transfer(selectedPool.address, amount).send();
-      if (sendTokens && sendTokens.status) {
-        const txHash = sendTokens.transactionHash;
-        // const blockHash = sendTokens.blockHash;
 
-        //const block = await client.getBlock(sendTokens.height);
-        // const txHash=sendTokens.transactionHash;
-        // const blockHash=block.id
+      const amountHex = web3.utils.toHex(amount);
+      const transactionParameters = {
+        value: amountHex,
+        gas: '0x54647',
+        to: selectedPool.address,
+        from: address,
+        chainId: config.ethChainId(),
+      };
+      const txHash = await ethereum
+        .request({
+          method: 'eth_sendTransaction',
+          params: [transactionParameters],
+        })
+        .catch((err: any) => {
+          message.error(err.message);
+        });
 
-        let txDetail;
-        while (true) {
-          await sleep(1000);
-          txDetail = await ethereum
-            .request({
-              method: 'eth_getTransactionByHash',
-              params: [txHash],
-            })
-            .catch((err: any) => {
-              message.error(err.message);
-            });
+      if (!txHash) {
+        message.error('send transaction failed');
+        throw new Error('tx error');
+      }
 
-          if (txDetail.blockHash || !txDetail) {
-            break;
-          }
+      // const sendTokens: any = await contract.methods.transfer(selectedPool.address, amount).send();
+      let txDetail;
+      while (true) {
+        await sleep(1000);
+        txDetail = await ethereum
+          .request({
+            method: 'eth_getTransactionByHash',
+            params: [txHash],
+          })
+          .catch((err: any) => {
+            message.error(err.message);
+          });
+
+        if (!txDetail || txDetail.blockHash) {
+          break;
         }
+      }
 
-        const blockHash = txDetail && txDetail.blockHash;
-        if (!blockHash) {
-          message.error('Error! Please try again');
-          dispatch(
-            setProcessSending({
-              brocasting: processStatus.success,
-              packing: processStatus.failure,
-            }),
-          );
-          dispatch(
-            setProcessParameter({
-              sending: {
-                amount: amountparam,
-                address,
-                uuid: notice_uuid,
-              },
-              href: cb ? '/rMATIC/staker/info' : null,
-            }),
-          );
-          dispatch(reloadData());
-          dispatch(
-            add_Matic_stake_Notice(notice_uuid, amountparam, noticeStatus.Error, {
-              process: getState().globalModule.process,
-              processParameter: getState().rMATICModule.processParameter,
-            }),
-          );
-        }
-
-        // console.log('tx, block:', txHash, blockHash);
-
-        dispatch(
-          setProcessSending({
-            brocasting: processStatus.success,
-            packing: processStatus.success,
-            checkTx: txHash,
-          }),
-        );
-
-        dispatch(reloadData());
-
-        dispatch(
-          setProcessParameter({
-            sending: {
-              amount: amountparam,
-              txHash: txHash,
-              blockHash: blockHash,
-              address,
-              uuid: notice_uuid,
-            },
-            staking: {
-              amount: amountparam,
-              txHash: txHash,
-              blockHash: blockHash,
-              address,
-              type: rSymbol.Matic,
-              poolAddress: selectedPool.poolPubkey,
-            },
-            href: cb ? '/rMATIC/staker/info' : null,
-          }),
-        );
-
-        dispatch(
-          add_Matic_stake_Notice(notice_uuid, amountparam, noticeStatus.Pending, {
-            process: getState().globalModule.process,
-            processParameter: getState().rMATICModule.processParameter,
-          }),
-        );
-        blockHash &&
-          dispatch(
-            bound(address, txHash, blockHash, amount, selectedPool.poolPubkey, rSymbol.Matic, (r: string) => {
-              if (r == 'loading') {
-                dispatch(add_Matic_stake_Notice(notice_uuid, amountparam, noticeStatus.Pending));
-              } else {
-                dispatch(setStakeHash(null));
-              }
-
-              if (r == 'failure') {
-                dispatch(add_Matic_stake_Notice(notice_uuid, amountparam, noticeStatus.Error));
-              }
-
-              if (r == 'successful') {
-                dispatch(add_Matic_stake_Notice(notice_uuid, amountparam, noticeStatus.Confirmed));
-                cb && cb();
-                dispatch(reloadData());
-              }
-            }),
-          );
-      } else {
+      const blockHash = txDetail && txDetail.blockHash;
+      if (!blockHash) {
         message.error('Error! Please try again');
+        throw new Error('tx error');
+      }
+
+      // console.log('tx, block:', txHash, blockHash);
+
+      dispatch(
+        setProcessSending({
+          brocasting: processStatus.success,
+          packing: processStatus.success,
+          checkTx: txHash,
+        }),
+      );
+
+      dispatch(reloadData());
+
+      dispatch(
+        setProcessParameter({
+          sending: {
+            amount: amountparam,
+            txHash: txHash,
+            blockHash: blockHash,
+            address,
+            uuid: notice_uuid,
+          },
+          staking: {
+            amount: amountparam,
+            txHash: txHash,
+            blockHash: blockHash,
+            address,
+            type: rSymbol.Bnb,
+            poolAddress: selectedPool.poolPubkey,
+          },
+          href: cb ? '/rBNB/staker/info' : null,
+        }),
+      );
+
+      dispatch(
+        add_Matic_stake_Notice(notice_uuid, amountparam, noticeStatus.Pending, {
+          process: getState().globalModule.process,
+          processParameter: getState().rBNBModule.processParameter,
+        }),
+      );
+
+      console.log('bnb amount: ', amountInBnb);
+      blockHash &&
+        dispatch(
+          bound(address, txHash, blockHash, amountInBnb, selectedPool.poolPubkey, rSymbol.Bnb, (r: string) => {
+            if (r == 'loading') {
+              dispatch(add_Matic_stake_Notice(notice_uuid, amountparam, noticeStatus.Pending));
+            } else {
+              dispatch(setStakeHash(null));
+            }
+
+            if (r == 'failure') {
+              dispatch(add_Matic_stake_Notice(notice_uuid, amountparam, noticeStatus.Error));
+            }
+
+            if (r == 'successful') {
+              dispatch(add_Matic_stake_Notice(notice_uuid, amountparam, noticeStatus.Confirmed));
+              cb && cb();
+              dispatch(reloadData());
+            }
+          }),
+        );
+    } catch (error) {
+      if (error.message === 'MetaMask Tx Signature: User denied transaction signature.') {
+        message.error('Error: cancelled');
+        dispatch(setProcessSlider(false));
+      } else if (error.message === 'tx error') {
         dispatch(
           setProcessSending({
             brocasting: processStatus.success,
@@ -426,21 +420,16 @@ export const transfer =
               address,
               uuid: notice_uuid,
             },
-            href: cb ? '/rMATIC/staker/info' : null,
+            href: cb ? '/rBNB/staker/info' : null,
           }),
         );
         dispatch(reloadData());
         dispatch(
           add_Matic_stake_Notice(notice_uuid, amountparam, noticeStatus.Error, {
             process: getState().globalModule.process,
-            processParameter: getState().rMATICModule.processParameter,
+            processParameter: getState().rBNBModule.processParameter,
           }),
         );
-      }
-    } catch (error) {
-      if (error.message === 'MetaMask Tx Signature: User denied transaction signature.') {
-        message.error('Error: cancelled');
-        dispatch(setProcessSlider(false));
       } else {
         dispatch(
           setProcessParameter({
@@ -449,7 +438,7 @@ export const transfer =
               address,
               uuid: notice_uuid,
             },
-            href: cb ? '/rMATIC/staker/info' : null,
+            href: cb ? '/rBNB/staker/info' : null,
           }),
         );
         dispatch(
@@ -479,7 +468,7 @@ export const query_rBalances_account = (): AppThunk => async (dispatch, getState
 export const reSending =
   (cb?: Function): AppThunk =>
   async (dispatch, getState) => {
-    const processParameter = getState().rMATICModule.processParameter;
+    const processParameter = getState().rBNBModule.processParameter;
     if (processParameter) {
       const href = processParameter.href;
       dispatch(
@@ -493,7 +482,7 @@ export const reSending =
 export const reStaking =
   (cb?: Function): AppThunk =>
   async (dispatch, getState) => {
-    const processParameter = getState().rMATICModule.processParameter;
+    const processParameter = getState().rBNBModule.processParameter;
     if (processParameter) {
       const staking = processParameter.staking;
       const href = processParameter.href;
@@ -503,7 +492,7 @@ export const reStaking =
             staking.address,
             staking.txHash,
             staking.blockHash,
-            NumberUtil.tokenAmountToChain(staking.amount, rSymbol.Matic),
+            NumberUtil.tokenAmountToChain(staking.amount, rSymbol.Bnb),
             staking.poolAddress,
             staking.type,
             (r: string) => {
@@ -536,21 +525,21 @@ export const unbond =
   (amount: string, recipient: string, willAmount: any, cb?: Function): AppThunk =>
   async (dispatch, getState) => {
     try {
-      const validPools = getState().rMATICModule.validPools;
-      let selectedPool = commonClice.getPoolForUnbond(amount, validPools, rSymbol.Matic);
+      const validPools = getState().rBNBModule.validPools;
+      let selectedPool = commonClice.getPoolForUnbond(amount, validPools, rSymbol.Bnb);
       if (selectedPool == null) {
         cb && cb();
         return;
       }
-      const keyringInstance = keyring.init(Symbol.Matic);
+      const keyringInstance = keyring.init(Symbol.Bnb);
 
       dispatch(
         fisUnbond(
           amount,
-          rSymbol.Matic,
+          rSymbol.Bnb,
           u8aToHex(keyringInstance.decodeAddress(recipient)),
           selectedPool.poolPubkey,
-          'Unbond succeeded, unbonding period is around ' + config.unboundAroundDays(Symbol.Matic) + ' days',
+          'Unbond succeeded, unbonding period is around ' + config.unboundAroundDays(Symbol.Bnb) + ' days',
           (r?: string, txHash?: string) => {
             dispatch(reloadData());
             if (r == 'Success') {
@@ -569,10 +558,10 @@ export const unbond =
   };
 
 export const continueProcess = (): AppThunk => async (dispatch, getState) => {
-  const stakeHash = getState().rMATICModule.stakeHash;
+  const stakeHash = getState().rBNBModule.stakeHash;
   if (stakeHash && stakeHash.blockHash && stakeHash.txHash) {
     dispatch(
-      bondStates(rSymbol.Matic, stakeHash.txHash, stakeHash.blockHash, (e: string) => {
+      bondStates(rSymbol.Bnb, stakeHash.txHash, stakeHash.blockHash, (e: string) => {
         if (e == 'successful') {
           message.success('minting succeeded', 3, () => {
             dispatch(setStakeHash(null));
@@ -592,10 +581,11 @@ export const onProceed =
       method: 'eth_getTransactionByHash',
       params: [txHash],
     });
+
     if (result) {
-      const address = getstate().rMATICModule.maticAccount.address;
+      const address = getstate().rETHModule.ethAccount && getstate().rETHModule.ethAccount.address;
       if (address.toLowerCase() != result.from.toLowerCase()) {
-        message.error('Please select your Matic account that sent the transaction');
+        message.error('Please select your Bnb account that sent the transaction');
         return;
       }
       const blockHash = result.blockHash;
@@ -608,7 +598,7 @@ export const onProceed =
         num: 0,
       };
       dispatch(
-        rTokenSeries_bondStates(rSymbol.Matic, bondSuccessParamArr, statusObj, (e: string) => {
+        rTokenSeries_bondStates(rSymbol.Bnb, bondSuccessParamArr, statusObj, (e: string) => {
           if (e == 'successful') {
             dispatch(setStakeHash(null));
             message.success('Transaction has been proceeded', 3, () => {
@@ -655,33 +645,35 @@ export const getBlock =
   (blockHash: string, txHash: string, uuid?: string, cb?: Function): AppThunk =>
   async (dispatch, getState) => {
     try {
-      const address = getState().rMATICModule.maticAccount.address;
-      const validPools = getState().rMATICModule.validPools;
+      const web3 = ethServer.getWeb3();
+      const address = getState().rETHModule.ethAccount && getState().rETHModule.ethAccount.address;
+      const validPools = getState().rBNBModule.validPools;
 
       const result = await ethereum.request({
         method: 'eth_getTransactionByHash',
         params: [txHash],
       });
       if (address.toLowerCase() != result.from.toLowerCase()) {
-        message.error('Please select your Matic account that sent the transaction');
+        message.error('Please select your Bnb account that sent the transaction');
         return;
       }
 
-      let amount = 0;
+      let amount: any = 0;
       // if (!poolData) {
       //   // message.error("The destination address in the transaction does not match the pool address");
       //   return;
       // }
 
-      const decoder = new InputDataDecoder(maticServer.getTokenAbi());
-      const result2 = decoder.decodeData(result.input);
-      amount = result2.inputs[1].toString(10);
+      const transferAmount = web3.utils.fromWei(result.value.toString(10), 'ether');
+      amount = numberUtil.tokenAmountToChain(transferAmount, rSymbol.Bnb);
+      console.log('sfsdfsdf', transferAmount);
+      console.log('sfsdfsdf', amount);
       if (Number(amount) <= 0) {
         message.error('Wrong amount. Please Check your TxHash');
         return;
       }
 
-      let poolPubkey = '0x' + result2.inputs[0];
+      let poolPubkey = result.to;
 
       const poolData = validPools.find((item: any) => {
         if (item.poolPubkey == poolPubkey) {
@@ -716,17 +708,18 @@ export const getBlock =
       dispatch(
         setProcessParameter({
           staking: {
-            amount: NumberUtil.tokenAmountToHuman(amount, rSymbol.Matic),
+            amount: NumberUtil.tokenAmountToHuman(amount, rSymbol.Bnb),
             txHash,
             blockHash,
             address,
-            type: rSymbol.Matic,
+            type: rSymbol.Bnb,
             poolAddress: poolPubkey,
           },
         }),
       );
+      console.log('recovery amount', amount.toString());
       dispatch(
-        bound(address, txHash, blockHash, amount.toString(), poolPubkey, rSymbol.Matic, (r: string) => {
+        bound(address, txHash, blockHash, amount.toString(), poolPubkey, rSymbol.Bnb, (r: string) => {
           // dispatch(setStakeHash(null));
 
           if (r == 'loading') {
@@ -734,7 +727,7 @@ export const getBlock =
               dispatch(
                 add_Matic_stake_Notice(
                   uuid,
-                  NumberUtil.tokenAmountToHuman(amount, rSymbol.Matic).toString(),
+                  NumberUtil.tokenAmountToHuman(amount, rSymbol.Bnb).toString(),
                   noticeStatus.Pending,
                 ),
               );
@@ -747,7 +740,7 @@ export const getBlock =
               dispatch(
                 add_Matic_stake_Notice(
                   uuid,
-                  NumberUtil.tokenAmountToHuman(amount, rSymbol.Matic).toString(),
+                  NumberUtil.tokenAmountToHuman(amount, rSymbol.Bnb).toString(),
                   noticeStatus.Error,
                 ),
               );
@@ -757,7 +750,7 @@ export const getBlock =
               dispatch(
                 add_Matic_stake_Notice(
                   uuid,
-                  NumberUtil.tokenAmountToHuman(amount, rSymbol.Matic).toString(),
+                  NumberUtil.tokenAmountToHuman(amount, rSymbol.Bnb).toString(),
                   noticeStatus.Confirmed,
                 ),
               );
@@ -835,11 +828,11 @@ export const getPools =
   (cb?: Function): AppThunk =>
   async (dispatch, getState) => {
     dispatch(setValidPools(null));
-    commonClice.getPools(rSymbol.Matic, Symbol.Matic, (data: any) => {
+    commonClice.getPools(rSymbol.Bnb, Symbol.Bnb, (data: any) => {
       dispatch(setValidPools(data));
       cb && cb();
     });
-    const data = await commonClice.poolBalanceLimit(rSymbol.Matic);
+    const data = await commonClice.poolBalanceLimit(rSymbol.Bnb);
     dispatch(setPoolLimit(data));
   };
 
@@ -849,27 +842,27 @@ export const getUnbondCommission = (): AppThunk => async (dispatch, getState) =>
 };
 
 export const bondFees = (): AppThunk => async (dispatch, getState) => {
-  const result = await commonClice.bondFees(rSymbol.Matic);
+  const result = await commonClice.bondFees(rSymbol.Bnb);
   dispatch(setBondFees(result));
 };
 
 export const unbondFees = (): AppThunk => async (dispatch, getState) => {
-  const result = await commonClice.unbondFees(rSymbol.Matic);
+  const result = await commonClice.unbondFees(rSymbol.Bnb);
   dispatch(setUnBondFees(result));
 };
 export const getTotalIssuance = (): AppThunk => async (dispatch, getState) => {
-  const result = await commonClice.getTotalIssuance(rSymbol.Matic);
+  const result = await commonClice.getTotalIssuance(rSymbol.Bnb);
   dispatch(setTotalIssuance(result));
 };
 
 export const rTokenLedger = (): AppThunk => async (dispatch, getState) => {
   const stafiApi = await stafiServer.createStafiApi();
-  const eraResult = await stafiApi.query.rTokenLedger.chainEras(rSymbol.Matic);
+  const eraResult = await stafiApi.query.rTokenLedger.chainEras(rSymbol.Bnb);
   let currentEra = eraResult.toJSON();
   if (currentEra) {
-    let rateResult = await stafiApi.query.rTokenRate.eraRate(rSymbol.Matic, currentEra - 1);
+    let rateResult = await stafiApi.query.rTokenRate.eraRate(rSymbol.Bnb, currentEra - 1);
     const currentRate = rateResult.toJSON();
-    const rateResult2 = await stafiApi.query.rTokenRate.eraRate(rSymbol.Matic, currentEra - 8);
+    const rateResult2 = await stafiApi.query.rTokenRate.eraRate(rSymbol.Bnb, currentEra - 8);
     let lastRate = rateResult2.toJSON();
     dispatch(handleStakerApr(currentRate, lastRate));
   } else {
@@ -890,7 +883,7 @@ const handleStakerApr =
     // }
   };
 export const checkAddress = (address: string) => {
-  const keyringInstance = keyring.init(Symbol.Matic);
+  const keyringInstance = keyring.init(Symbol.Bnb);
   return keyringInstance.checkAddress(address);
 };
 export const accountUnbonds = (): AppThunk => async (dispatch, getState) => {
@@ -899,7 +892,7 @@ export const accountUnbonds = (): AppThunk => async (dispatch, getState) => {
   // }))
 
   let fisAddress = getState().FISModule.fisAccount.address;
-  commonClice.getTotalUnbonding(fisAddress, rSymbol.Matic, (total: any) => {
+  commonClice.getTotalUnbonding(fisAddress, rSymbol.Bnb, (total: any) => {
     dispatch(setTotalUnbonding(total));
   });
 };
@@ -910,7 +903,7 @@ const add_Matic_stake_Notice =
       dispatch(
         add_Matic_Notice(uuid, noticeType.Staker, noticesubType.Stake, amount, status, {
           process: getState().globalModule.process,
-          processParameter: getState().rMATICModule.processParameter,
+          processParameter: getState().rBNBModule.processParameter,
         }),
       );
     }, 20);
@@ -927,18 +920,13 @@ export const getReward =
         dispatch(setRewardList([]));
         dispatch(setRewardList_lastdata(null));
       }
-      const result = await rpcServer.getReward(
-        fisSource,
-        ethAccount ? ethAccount.address : '',
-        rSymbol.Matic,
-        pageIndex,
-      );
+      const result = await rpcServer.getReward(fisSource, ethAccount ? ethAccount.address : '', rSymbol.Bnb, pageIndex);
       if (result.status == 80000) {
-        const rewardList = getState().rMATICModule.rewardList;
+        const rewardList = getState().rBNBModule.rewardList;
         if (result.data.rewardList.length > 0) {
           const list = result.data.rewardList.map((item: any) => {
             const rate = NumberUtil.rTokenRateToHuman(item.rate);
-            const rbalance = NumberUtil.tokenAmountToHuman(item.rbalance, rSymbol.Matic);
+            const rbalance = NumberUtil.tokenAmountToHuman(item.rbalance, rSymbol.Bnb);
             return {
               ...item,
               rbalance: rbalance,
@@ -984,7 +972,7 @@ const add_Matic_unbond_Notice =
 const add_Matic_Notice =
   (uuid: string, type: string, subType: string, content: string, status: string, subData?: any): AppThunk =>
   async (dispatch, getState) => {
-    dispatch(add_Notice(uuid, Symbol.Matic, type, subType, content, status, subData));
+    dispatch(add_Notice(uuid, Symbol.Bnb, type, subType, content, status, subData));
   };
 
 export default rBNBClice.reducer;

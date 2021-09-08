@@ -1,9 +1,10 @@
+import config from '@config/index';
 import { bondSwitch } from '@features/FISClice';
 import { reloadData } from '@features/globalClice';
-import { bondFees, continueProcess, getPools, reloadData as bnb_reloadData } from '@features/rBNBClice';
+import { bondFees, continueProcess, getPools } from '@features/rBNBClice';
+import { get_eth_getBalance } from '@features/rETHClice';
 import { Symbol } from '@keyring/defaults';
 import Content from '@shared/components/content';
-import { getLocalStorageItem, Keys } from '@util/common';
 import { Spin } from 'antd';
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -20,30 +21,31 @@ export default function Index(props: any) {
   });
 
   useEffect(() => {
-    dispatch(bnb_reloadData());
+    fisAccount && fisAccount.address && dispatch(reloadData(Symbol.Fis));
   }, [fisAccount && fisAccount.address]);
 
   useEffect(() => {
     dispatch(bondFees());
     dispatch(bondSwitch());
-    if (getLocalStorageItem(Keys.FisAccountKey)) {
-      dispatch(reloadData(Symbol.Fis));
-    }
     dispatch(getPools());
     setTimeout(() => {
       dispatch(continueProcess());
     }, 50);
   }, []);
 
-  const { maticAccount } = useSelector((state: any) => {
+  const { ethAccount, metaMaskNetworkId } = useSelector((state: any) => {
     return {
-      maticAccount: state.rMATICModule.maticAccount,
+      metaMaskNetworkId: state.globalModule.metaMaskNetworkId,
+      ethAccount: state.rETHModule.ethAccount,
     };
   });
 
   useEffect(() => {
-    maticAccount && maticAccount.address && dispatch(reloadData(Symbol.Matic));
-  }, [maticAccount && maticAccount.address]);
+    if (config.metaMaskNetworkIsBsc(metaMaskNetworkId) && ethAccount && ethAccount.address) {
+      dispatch(get_eth_getBalance());
+      dispatch(reloadData(Symbol.Bnb));
+    }
+  }, [ethAccount && ethAccount.address, metaMaskNetworkId]);
 
   const { loading } = useSelector((state: any) => {
     return {

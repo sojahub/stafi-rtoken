@@ -1,6 +1,6 @@
 import Content from '@components/content/stakeContent_DOT';
 import { setProcessSlider } from '@features/globalClice';
-import { rTokenLedger, rTokenRate, transfer } from '@features/rMATICClice';
+import { rTokenLedger, rTokenRate, transfer } from '@features/rBNBClice';
 import { ratioToAmount } from '@util/common';
 import NumberUtil from '@util/numberUtil';
 import { message } from 'antd';
@@ -17,14 +17,17 @@ export default function Index(props: any) {
     dispatch(rTokenRate());
     dispatch(rTokenLedger());
   }, []);
-  
+
   const { transferrableAmount, ratio, stafiStakerApr, fisCompare, validPools, totalIssuance, bondFees } = useSelector(
     (state: any) => {
       const fisCompare =
         NumberUtil.fisAmountToChain(state.FISModule.fisAccount.balance) <
         state.rBNBModule.bondFees + state.FISModule.estimateBondTxFees;
+
+      const ethAccount = state.rETHModule.ethAccount;
+
       return {
-        transferrableAmount: state.rBNBModule.transferrableAmountShow,
+        transferrableAmount: ethAccount ? ethAccount.balance : '--',
         ratio: state.rBNBModule.ratio,
         stafiStakerApr: state.rBNBModule.stakerApr,
         fisCompare: fisCompare,
@@ -42,7 +45,7 @@ export default function Index(props: any) {
         amount={amount}
         willAmount={ratio == '--' ? '--' : ratioToAmount(amount, ratio)}
         unit={'BNB'}
-        transferrableAmount={NumberUtil.handleFisAmountToFixed(transferrableAmount)}
+        transferrableAmount={isNaN(transferrableAmount) ? 0 : NumberUtil.handleFisAmountToFixed(transferrableAmount)}
         apr={stafiStakerApr}
         onChange={(value: any) => {
           setAmount(value);
@@ -66,14 +69,6 @@ export default function Index(props: any) {
                 props.history.push('/rBNB/staker/info');
               }),
             );
-            // if(getSessionStorageItem("atom_stake_tips_modal")){
-            //     dispatch(transfer(amount,()=>{
-            //       dispatch(setProcessSlider(false));
-            //       props.history.push("/rMATIC/staker/info")
-            //     }));
-            // }else{
-            //   setVisible(true)
-            // }
           } else {
             message.error('Please enter the amount');
           }

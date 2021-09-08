@@ -2,7 +2,7 @@ import { setProcessSlider } from '@features/globalClice';
 import { reSending as atomReSending, reStaking as atomReStaking } from '@features/rATOMClice';
 import { reSending, reStaking } from '@features/rDOTClice';
 import { reSending as ksmReSending, reStaking as ksmReStaking } from '@features/rKSMClice';
-import { reSending as maticReSending, reStaking as maticReStaking } from '@features/rMATICClice';
+import { reSending as bnbReSending, reSending as maticReSending, reStaking as bnbReStaking, reStaking as maticReStaking } from '@features/rMATICClice';
 import { reSending as solReSending, reStaking as solReStaking } from '@features/rSOLClice';
 import close_svg from '@images/close.svg';
 import Liquiding_heard from '@images/liquiding_heard.svg';
@@ -73,6 +73,13 @@ export default function Index(props: Props) {
         }),
       );
     }
+    if (util.pageType() == rSymbol.Bnb) {
+      dispatch(
+        bnbReSending((href: any) => {
+          href && props.history.push(href);
+        }),
+      );
+    }
   };
   const reStakingClick = () => {
     if (util.pageType() == rSymbol.Dot) {
@@ -111,6 +118,13 @@ export default function Index(props: Props) {
     if (util.pageType() == rSymbol.Matic) {
       dispatch(
         maticReStaking((href: any) => {
+          href && props.history.push(href);
+        }),
+      );
+    }
+    if (util.pageType() == rSymbol.Bnb) {
+      dispatch(
+        bnbReStaking((href: any) => {
           href && props.history.push(href);
         }),
       );

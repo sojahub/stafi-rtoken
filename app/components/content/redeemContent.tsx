@@ -11,6 +11,7 @@ import EditInput from '@shared/components/input/editAddresInput';
 import NumberUtil from '@util/numberUtil';
 import React, { useState } from 'react';
 import LeftContent from './leftContent';
+
 type Props = {
   onRdeemClick?: Function;
   amount?: string;
@@ -21,10 +22,11 @@ type Props = {
   address?: string;
   onInputChange?: Function;
   onInputConfirm?: Function;
-  type: 'rDOT' | 'rETH' | 'rFIS' | 'rKSM' | 'rATOM' | 'rSOL' | "rMATIC";
+  type: 'rDOT' | 'rETH' | 'rFIS' | 'rKSM' | 'rATOM' | 'rSOL' | 'rMATIC' | 'rBNB';
 };
+
 export default function Index(props: Props) {
-  const [inputEdit, setInputEdit] = useState(false); 
+  const [inputEdit, setInputEdit] = useState(false);
   const getIcon = () => {
     if (props.type == 'rDOT') {
       return rDOT;
@@ -36,9 +38,11 @@ export default function Index(props: Props) {
       return rSOL;
     } else if (props.type == 'rMATIC') {
       return rMATIC;
-    }else if(props.type=="rFIS"){
-      return rFIS
-    } 
+    } else if (props.type == 'rFIS') {
+      return rFIS;
+    } else if (props.type == 'rBNB') {
+      return rMATIC;
+    }
   };
 
   return (
@@ -50,14 +54,17 @@ export default function Index(props: Props) {
         }}
         src={leftArrowSvg}
       />
+
       <div className='title'>
         {props.type == 'rDOT' && ' Redeem DOT'}
         {props.type == 'rKSM' && ' Redeem KSM'}
         {props.type == 'rATOM' && ' Redeem ATOM'}
         {props.type == 'rSOL' && ' Redeem SOL'}
         {props.type == 'rMATIC' && ' Redeem MATIC'}
-        {props.type=="rFIS" && " Redeem FIS"}
+        {props.type == 'rFIS' && ' Redeem FIS'}
+        {props.type == 'rBNB' && ' Redeem BNB'}
       </div>
+
       <div className='subTitle'>
         <div className='label'>
           {props.type == 'rDOT' && '1. Unbond DOT'}
@@ -65,10 +72,12 @@ export default function Index(props: Props) {
           {props.type == 'rATOM' && '1. Unbond ATOM'}
           {props.type == 'rSOL' && '1. Unbond SOL'}
           {props.type == 'rMATIC' && '1. Unbond MATIC'}
-          {props.type=="rFIS" && "1. Unbond FIS"} 
+          {props.type == 'rFIS' && '1. Unbond FIS'}
+          {props.type == 'rBNB' && '1. Unbond BNB'}
         </div>
         <div className='balance'></div>
       </div>
+
       <div className='input_panel'>
         <Input
           placeholder={'AMOUNT'}
@@ -81,16 +90,18 @@ export default function Index(props: Props) {
         />
         <div className='balance'>
           {props.type} balance {props.tokenAmount == '--' ? '--' : NumberUtil.handleFisAmountToFixed(props.tokenAmount)}
-        </div> 
+        </div>
       </div>
       {/* <div className="btns">
            <Button disabled={!props.amount} size="small" btnType="ellipse" onClick={()=>{
                props.onRdeemClick && props.onRdeemClick();
            }}>Unbond</Button> Unbond will take 28 days and {(props.fisFee != "--") && numberUtil.fisFeeToFixed(props.fisFee)}% fee
          </div> */}
+
       <div className='subTitle'>
         <div className='label'> 2. Receiving address</div>
       </div>
+
       <EditInput
         value={props.address}
         onEdit={(e: boolean) => {
@@ -105,6 +116,7 @@ export default function Index(props: Props) {
         }}
       />
       {/* <Button size="small" btnType="ellipse">Withdraw</Button> */}
+
       <div className='unbond_btns'>
         <Button
           disabled={!props.amount || props.amount == '0' || !props.address || inputEdit}
@@ -114,7 +126,7 @@ export default function Index(props: Props) {
           }}>
           Unbond
         </Button>
-      </div> 
+      </div>
     </LeftContent>
   );
 }

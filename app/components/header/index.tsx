@@ -394,13 +394,27 @@ export default function Index(props: Props) {
                 </div>
               ))}
 
-            {account.ethAccount && (
+            {account.type !== 'rBNB' && account.ethAccount && (
               <div style={{ display: 'flex', flexDirection: 'column' }}>
                 <div className='header_tool account'>
                   <div>{account.ethAccount.balance || '--'} ETH</div>
                   <div>{StringUtil.replacePkh(account.ethAccount.address, 4, 38)}</div>
                 </div>
                 {metaMaskNetworkId && !config.metaMaskNetworkIsGoerliEth(metaMaskNetworkId) && (
+                  <img src={wrong_network} className={'wrong_network'} />
+                )}
+              </div>
+            )}
+
+            {account.type === 'rBNB' && account.ethAccount && (
+              <div style={{ display: 'flex', flexDirection: 'column' }}>
+                <div className='header_tool account'>
+                  <div>
+                    {(config.metaMaskNetworkIsBsc(metaMaskNetworkId) && account.ethAccount.balance) || '--'} BNB
+                  </div>
+                  <div>{StringUtil.replacePkh(account.ethAccount.address, 4, 38)}</div>
+                </div>
+                {metaMaskNetworkId && !config.metaMaskNetworkIsBsc(metaMaskNetworkId) && (
                   <img src={wrong_network} className={'wrong_network'} />
                 )}
               </div>
@@ -417,7 +431,7 @@ export default function Index(props: Props) {
                 )}
               </div>
             )}
-            
+
             {account.maticAccount && (
               <div className='header_tool account'>
                 <div>{NumberUtil.handleFisAmountToFixed(account.maticAccount.balance)} MATIC</div>

@@ -449,7 +449,9 @@ export default {
       return 14;
     } else if (type == Symbol.Sol) {
       return 10;
-    } else {
+    } else if (type == Symbol.Bnb) {
+      return 14;
+    }else {
       return 0;
     }
   },

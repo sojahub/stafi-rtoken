@@ -389,8 +389,8 @@ export const rTokenRate = (): AppThunk => async (dispatch, getState) => {
 
 export const get_eth_getBalance = (): AppThunk => async (dispatch, getState) => {
   if (isdev() && !config.metaMaskNetworkIsGoerliEth(getState().globalModule.metaMaskNetworkId)) {
-    console.log('dev: metaMaskNetwork wrong');
-    return;
+    // console.log('current metaMaskNetwork:', getState().globalModule.metaMaskNetworkId);
+    // return;
   }
 
   let web3 = ethServer.getWeb3();
