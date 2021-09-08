@@ -1,5 +1,5 @@
 import Content from '@components/content/stakeInfoContent';
-import { accountUnbonds, query_rBalances_account, rTokenRate, setRatioShow } from '@features/rMATICClice';
+import { accountUnbonds, query_rBalances_account, rTokenRate, setRatioShow } from '@features/rBNBClice';
 import NumberUtil from '@util/numberUtil';
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';

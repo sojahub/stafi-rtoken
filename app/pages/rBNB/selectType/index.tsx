@@ -1,5 +1,5 @@
 import TypeCard from '@components/card/typeCard';
-import { getTotalIssuance, rTokenLedger } from '@features/rMATICClice';
+import { getTotalIssuance, rTokenLedger } from '@features/rBNBClice';
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Redirect } from 'react-router';
@@ -8,11 +8,12 @@ export default function Index(props: any) {
   const dispatch = useDispatch();
   const { totalIssuance, stakerApr, tokenAmount } = useSelector((state: any) => {
     return {
-      totalIssuance: state.rMATICModule.totalIssuance,
-      stakerApr: state.rMATICModule.stakerApr,
-      tokenAmount: state.rMATICModule.tokenAmount,
+      totalIssuance: state.rBNBModule.totalIssuance,
+      stakerApr: state.rBNBModule.stakerApr,
+      tokenAmount: state.rBNBModule.tokenAmount,
     };
   });
+  
   useEffect(() => {
     dispatch(getTotalIssuance());
     dispatch(rTokenLedger());

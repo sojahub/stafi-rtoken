@@ -159,8 +159,10 @@ export default function Index(props: Props) {
           {props.type == 'rMATIC' && `rMATIC / MATIC`}
           {props.type == 'rBNB' && `rBNB / BNB`}
         </div>
+        
         <div className='content'>
           <div>{props.ratioShow}</div>
+          
           <div className='btns'>
             <Button
               onClick={() => {
@@ -172,8 +174,10 @@ export default function Index(props: Props) {
             </Button>
           </div>
         </div>
+        
         <div className='describe'>Updated every {props.hours} hours</div>
       </div>
+      
       <Modal
         type={props.type}
         visible={visibleModal}
