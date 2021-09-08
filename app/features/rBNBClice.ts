@@ -4,10 +4,15 @@ import { u8aToHex } from '@polkadot/util';
 import { createSlice } from '@reduxjs/toolkit';
 import EthServer from '@servers/eth/index';
 import keyring from '@servers/index';
-import MaticServer from '@servers/matic/index';
 import RpcServer, { pageCount } from '@servers/rpc/index';
 import Stafi from '@servers/stafi/index';
-import { getLocalStorageItem, Keys, removeLocalStorageItem, setLocalStorageItem, stafi_uuid } from '@util/common';
+import {
+  getLocalStorageItem,
+  Keys,
+  removeLocalStorageItem,
+  setLocalStorageItem,
+  stafi_uuid
+} from '@util/common';
 import { default as numberUtil, default as NumberUtil } from '@util/numberUtil';
 import { message } from 'antd';
 import _m0 from 'protobufjs/minimal';
@@ -115,7 +120,7 @@ const rBNBClice = createSlice({
     },
   },
 });
-const maticServer = new MaticServer();
+
 const stafiServer = new Stafi();
 const rpcServer = new RpcServer();
 const ethServer = new EthServer();
@@ -140,130 +145,12 @@ export const {
 } = rBNBClice.actions;
 
 export const reloadData = (): AppThunk => async (dispatch, getState) => {
-  //const account = getState().rMATICModule.maticAccount;
-  // if(account){
-  //   dispatch(createSubstrate(account));
-  // }
-
-  // dispatch(balancesAll());
   dispatch(query_rBalances_account());
   dispatch(getTotalIssuance());
   dispatch(rTokenRate());
 };
 
-declare const window: any;
 declare const ethereum: any;
-
-// export const connectMetamask =
-//   (chainId: string, isAutoConnect?: boolean): AppThunk =>
-//   async (dispatch, getState) => {
-//     if (typeof window.ethereum !== 'undefined' && ethereum.isMetaMask) {
-//       ethereum.autoRefreshOnNetworkChange = false;
-
-//       ethereum.request({ method: 'eth_chainId' }).then((chainId: any) => {
-//         if (isdev()) {
-//           if (ethereum.chainId != chainId) {
-//             if (chainId == '0x3') {
-//               if (!isAutoConnect) {
-//                 message.warning('Please connect to Ropsten Test Network!');
-//               }
-//             }
-//             if (chainId == '0x5') {
-//               if (!isAutoConnect) {
-//                 message.warning('Please connect to Goerli Test Network!');
-//               }
-//             }
-//             return;
-//           }
-//         } else if (ethereum.chainId != '0x1') {
-//           if (!isAutoConnect) {
-//             message.warning('Please connect to Ethereum Main Network!');
-//           }
-//           return;
-//         }
-
-//         ethereum
-//           .request({ method: 'eth_requestAccounts' })
-//           .then((accounts: any) => {
-//             dispatch(handleMaticAccount(accounts[0]));
-//           })
-//           .catch((error: any) => {
-//             dispatch(setMaticAccount(null));
-//             if (error.code === 4001) {
-//               message.error('Please connect to MetaMask.');
-//             } else {
-//               message.error('error.message');
-//             }
-//           });
-//       });
-//     } else {
-//       message.warning('Please install MetaMask!');
-//     }
-//   };
-
-// export const handleMaticAccount =
-//   (address: string): AppThunk =>
-//   (dispatch, getState) => {
-//     if (!address) {
-//       return;
-//     }
-//     dispatch(setMaticAccount({ address: address, balance: '--' }));
-
-//     getAssetBalance(address, maticServer.getTokenAbi(), maticServer.getMaticTokenAddress(), (v: any) => {
-//       dispatch(setTransferrableAmountShow(v));
-//       dispatch(setMaticAccount({ address: address, balance: v }));
-//     });
-//   };
-
-// export const monitoring_Method = (): AppThunk => (dispatch, getState) => {
-//   const isload_monitoring = getState().rETHModule.isload_monitoring;
-
-//   if (isload_monitoring) {
-//     return;
-//   }
-//   if (typeof window.ethereum !== 'undefined' && ethereum.isMetaMask) {
-//     dispatch(setIsloadMonitoring(true));
-//     ethereum.autoRefreshOnNetworkChange = false;
-//     ethereum.on('accountsChanged', (accounts: any) => {
-//       if (accounts.length > 0) {
-//         dispatch(handleMaticAccount(accounts[0]));
-
-//         setTimeout(() => {
-//           dispatch(reloadData());
-//         }, 20);
-//       } else {
-//         dispatch(handleMaticAccount(null));
-//       }
-//     });
-
-//     ethereum.on('chainChanged', (chainId: any) => {
-//       if (isdev()) {
-//         if (ethereum.chainId != '0x3' && location.pathname.includes('/rAsset/erc')) {
-//           // message.warning('Please connect to Ropsten Test Network!');
-//           dispatch(setMaticAccount(null));
-//         }
-//         if (ethereum.chainId != '0x5' && location.pathname.includes('/rETH')) {
-//           // message.warning('Please connect to Goerli Test Network!');
-//           dispatch(setMaticAccount(null));
-//         }
-//       } else if (ethereum.chainId != '0x1') {
-//         // message.warning('Please connect to Ethereum Main Network!');
-
-//         dispatch(setMaticAccount(null));
-//       }
-//     });
-//   }
-// };
-
-// export const balancesAll = (): AppThunk => (dispatch, getState) => {
-//   if (getState().rMATICModule.maticAccount) {
-//     const address = getState().rMATICModule.maticAccount.address;
-//     getAssetBalance(address, maticServer.getTokenAbi(), maticServer.getMaticTokenAddress(), (v: any) => {
-//       dispatch(setTransferrableAmountShow(v));
-//       // dispatch(setMaticAccount({ address: address, balance: v }));
-//     });
-//   }
-// };
 
 export const transfer =
   (amountparam: string, cb?: Function): AppThunk =>
@@ -374,7 +261,7 @@ export const transfer =
           href: cb ? '/rBNB/staker/info' : null,
         }),
       );
-
+      // await timeout(1000);
       dispatch(
         add_Matic_stake_Notice(notice_uuid, amountparam, noticeStatus.Pending, {
           process: getState().globalModule.process,
@@ -382,7 +269,6 @@ export const transfer =
         }),
       );
 
-      console.log('bnb amount: ', amountInBnb);
       blockHash &&
         dispatch(
           bound(address, txHash, blockHash, amountInBnb, selectedPool.poolPubkey, rSymbol.Bnb, (r: string) => {
@@ -424,6 +310,7 @@ export const transfer =
             href: cb ? '/rBNB/staker/info' : null,
           }),
         );
+        // await timeout(1000);
         dispatch(reloadData());
         dispatch(
           add_Matic_stake_Notice(notice_uuid, amountparam, noticeStatus.Error, {
@@ -484,7 +371,6 @@ export const reStaking =
   (cb?: Function): AppThunk =>
   async (dispatch, getState) => {
     const processParameter = getState().rBNBModule.processParameter;
-    console.log('sdfsdfsd', processParameter);
     if (processParameter) {
       const staking = processParameter.staking;
       const href = processParameter.href;

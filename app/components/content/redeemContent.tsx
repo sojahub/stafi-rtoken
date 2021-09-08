@@ -1,4 +1,5 @@
 import leftArrowSvg from '@images/left_arrow.svg';
+import rBNB from '@images/selected_bnb.svg';
 import rATOM from '@images/selected_rATOM.svg';
 import rDOT from '@images/selected_rDOT.svg';
 import rFIS from '@images/selected_rFIS.svg';
@@ -41,7 +42,7 @@ export default function Index(props: Props) {
     } else if (props.type == 'rFIS') {
       return rFIS;
     } else if (props.type == 'rBNB') {
-      return rMATIC;
+      return rBNB;
     }
   };
 

@@ -10,11 +10,12 @@ import { AppThunk } from '../store';
 import { bondStates, getMinting } from './FISClice';
 import { initProcess, processStatus, setProcessSending, setProcessSlider, setProcessStaking } from './globalClice';
 import {
-  setProcessParameter as atomSetProcessParameter,
-  setProcessParameter as maticSetProcessParameter
+  setProcessParameter as atomSetProcessParameter
 } from './rATOMClice';
+import { setProcessParameter as bnbSetProcessParameter } from './rBNBClice';
 import { setProcessParameter } from './rDOTClice';
 import { setProcessParameter as krmSetProcessParameter } from './rKSMClice';
+import { setProcessParameter as maticSetProcessParameter } from './rMATICClice';
 import { setProcessParameter as solSetProcessParameter } from './rSOLClice';
 
 const feeStationServer = new FeeStationServer();
@@ -268,6 +269,9 @@ export const setProcess =
         if (item.subData.process.rSymbol == rSymbol.Matic) {
           dispatch(maticSetProcessParameter(item.subData.processParameter));
         }
+        if (item.subData.process.rSymbol == rSymbol.Bnb) {
+          dispatch(bnbSetProcessParameter(item.subData.processParameter));
+        }
       }
     }
   };
@@ -353,6 +357,9 @@ export const findUuid = (datas: any, txHash: string, blockHash: string, dispatch
       }
       if (data.subData.process.rSymbol == rSymbol.Sol) {
         dispatch && dispatch(solSetProcessParameter(data.subData.processParameter));
+      }
+      if (data.subData.process.rSymbol == rSymbol.Bnb) {
+        dispatch && dispatch(bnbSetProcessParameter(data.subData.processParameter));
       }
       return {
         uuid: data.uuid,
