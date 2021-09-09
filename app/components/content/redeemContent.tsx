@@ -120,7 +120,7 @@ export default function Index(props: Props) {
 
       <div className='unbond_btns'>
         <Button
-          disabled={!props.amount || props.amount == '0' || !props.address || inputEdit}
+          disabled={isNaN(Number(props.amount)) || Number(props.amount) <= Number(0) || !props.address || inputEdit}
           btnType='ellipse'
           onClick={() => {
             props.onRdeemClick && props.onRdeemClick();

@@ -58,6 +58,13 @@ const siderData = [
     url: '/rETH/home',
   },
   {
+    icon: rBnb_svg,
+    selectedIcon: selected_rBnb_svg,
+    text: 'rBNB',
+    urlKeywords: '/rBNB',
+    url: '/rBNB/home',
+  },
+  {
     icon: rFIS_svg,
     selectedIcon: selected_rFIS_svg,
     text: 'rFIS',
@@ -99,13 +106,6 @@ const siderData = [
     text: 'rMATIC',
     urlKeywords: '/rMATIC',
     url: '/rMATIC/home',
-  },
-  {
-    icon: rBnb_svg,
-    selectedIcon: selected_rBnb_svg,
-    text: 'rBNB',
-    urlKeywords: '/rBNB',
-    url: '/rBNB/home',
   },
 ];
 type Props = {

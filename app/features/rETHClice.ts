@@ -20,7 +20,7 @@ import StringUtil from '@util/stringUtil';
 import { message } from 'antd';
 import Web3Utils from 'web3-utils';
 import { AppThunk } from '../store';
-import { getAssetBalance, getAssetBalanceAll } from './ETHClice';
+import { getAssetBalance } from './ETHClice';
 import { setSwapLoadingStatus } from './feeStationClice';
 import { setLoading } from './globalClice';
 import { add_Notice, noticeStatus, noticesubType, noticeType } from './noticeClice';
@@ -305,7 +305,7 @@ export const monitoring_Method = (): AppThunk => (dispatch, getState) => {
         dispatch(handleEthAccount(accounts[0]));
 
         setTimeout(() => {
-          dispatch(getAssetBalanceAll());
+          // dispatch(getAssetBalanceAll());
           dispatch(reloadData());
         }, 200);
       } else {

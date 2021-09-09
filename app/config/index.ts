@@ -362,6 +362,13 @@ export default {
       return '0x8dd855d062475f65d3b3eb27795fa3f2ba247eca';
     }
   },
+  rBNBBep20TokenAddress: () => {
+    if (!isdev()) {
+      return '';
+    } else {
+      return '0xa8cc91264ddd4430b3e5b95d1ea701dcee734f14';
+    }
+  },
   MATICTokenAddress: () => {
     if (!isdev()) {
       return '0x7D1AfA7B718fb893dB30A3aBc0Cfc608AaCfeBB0';

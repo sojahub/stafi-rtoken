@@ -45,7 +45,7 @@ export default function Index(props: any) {
       dispatch(get_eth_getBalance());
       dispatch(reloadData(Symbol.Bnb));
     }
-  }, [ethAccount && ethAccount.address, metaMaskNetworkId]);
+  }, [ethAccount && ethAccount.address, fisAccount && fisAccount.address, metaMaskNetworkId]);
 
   const { loading } = useSelector((state: any) => {
     return {

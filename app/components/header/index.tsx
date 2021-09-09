@@ -12,7 +12,7 @@ import {
   query_rBalances_account as dotquery_rBalances_account,
   reloadData as dotReloadData
 } from '@features/rDOTClice';
-import { monitoring_Method as eth_monitoring_Method } from '@features/rETHClice';
+import { monitoring_Method as eth_monitoring_method } from '@features/rETHClice';
 import {
   query_rBalances_account as ksmquery_rBalances_account,
   reloadData as ksmReloadData
@@ -241,7 +241,7 @@ export default function Index(props: Props) {
 
   useEffect(() => {
     if (account && account.ethAccount) {
-      dispatch(eth_monitoring_Method());
+      dispatch(eth_monitoring_method());
     }
   }, [account]);
 

@@ -4,6 +4,7 @@ import { connectMetamask, getAssetBalanceAll, handleBscAccount, monitoring_Metho
 import CommonClice from '@features/commonClice';
 import { getUnbondCommission as fis_getUnbondCommission, rTokenRate as fis_rTokenRate } from '@features/FISClice';
 import { getUnbondCommission as atom_getUnbondCommission, rTokenRate as atom_rTokenRate } from '@features/rATOMClice';
+import { getUnbondCommission as bnb_getUnbondCommission, rTokenRate as bnb_rTokenRate } from '@features/rBNBClice';
 import { getUnbondCommission as dot_getUnbondCommission, rTokenRate as dot_rTokenRate } from '@features/rDOTClice';
 import { getUnbondCommission as ksm_getUnbondCommission, rTokenRate as ksm_rTokenRate } from '@features/rKSMClice';
 import {
@@ -14,6 +15,7 @@ import { getUnbondCommission as sol_getUnbondCommission, rTokenRate as sol_rToke
 import metamask from '@images/metamask.png';
 import rasset_rsol_svg from '@images/rSOL.svg';
 import rasset_ratom_svg from '@images/r_atom.svg';
+import rasset_rbnb_svg from '@images/r_bnb.svg';
 import rasset_rdot_svg from '@images/r_dot.svg';
 import rasset_reth_svg from '@images/r_eth.svg';
 import rasset_rfis_svg from '@images/r_fis.svg';
@@ -44,12 +46,14 @@ export default function Index(props: any) {
     rsol_bepBalance,
     rmatic_bepBalance,
     reth_bepBalance,
+    rbnb_bepBalance,
     ksmWillAmount,
     fisWillAmount,
     dotWillAmount,
     solWillAmount,
     maticWillAmount,
     atomWillAmount,
+    bnbWillAmount,
     unitPriceList,
   } = useSelector((state: any) => {
     return {
@@ -63,6 +67,7 @@ export default function Index(props: any) {
       rsol_bepBalance: state.BSCModule.bepRSOLBalance,
       rmatic_bepBalance: state.BSCModule.bepRMATICBalance,
       reth_bepBalance: state.BSCModule.bepRETHBalance,
+      rbnb_bepBalance: state.BSCModule.bepRBNBBalance,
       ksmWillAmount: commonClice.getWillAmount(
         state.rKSMModule.ratio,
         state.rKSMModule.unbondCommission,
@@ -93,6 +98,11 @@ export default function Index(props: any) {
         state.rMATICModule.unbondCommission,
         state.BSCModule.bepRMATICBalance,
       ),
+      bnbWillAmount: commonClice.getWillAmount(
+        state.rBNBModule.ratio,
+        state.rBNBModule.unbondCommission,
+        state.BSCModule.bepRBNBBalance,
+      ),
     };
   });
 
@@ -122,6 +132,8 @@ export default function Index(props: any) {
         count = count + item.price * reth_bepBalance;
       } else if (item.symbol == 'rSOL' && rsol_bepBalance && rsol_bepBalance != '--') {
         count = count + item.price * rsol_bepBalance;
+      } else if (item.symbol == 'rBNB' && rbnb_bepBalance && rbnb_bepBalance != '--') {
+        count = count + item.price * rbnb_bepBalance;
       }
     });
     return count;
@@ -167,12 +179,14 @@ export default function Index(props: any) {
       dispatch(atom_rTokenRate());
       dispatch(sol_rTokenRate());
       dispatch(matic_rTokenRate());
+      dispatch(bnb_rTokenRate());
       dispatch(ksm_getUnbondCommission());
       dispatch(fis_getUnbondCommission());
       dispatch(dot_getUnbondCommission());
       dispatch(atom_getUnbondCommission());
       dispatch(sol_getUnbondCommission());
       dispatch(matic_getUnbondCommission());
+      dispatch(bnb_getUnbondCommission());
     } else {
       dispatch(connectMetamask(config.bscChainId(), true));
     }
@@ -310,6 +324,19 @@ export default function Index(props: any) {
               trade={config.uniswap.ratomURL}
               operationType='bep20'
               onSwapClick={() => toSwap('rMATIC')}
+            />
+
+            <DataItem
+              disabled={!config.metaMaskNetworkIsBsc(metaMaskNetworkId)}
+              rSymbol='rBNB'
+              icon={rasset_rbnb_svg}
+              fullName='BSC'
+              balance={rbnb_bepBalance == '--' ? '--' : NumberUtil.handleFisAmountToFixed(rbnb_bepBalance)}
+              willGetBalance={bnbWillAmount}
+              unit='BNB'
+              trade={config.uniswap.ratomURL}
+              operationType='bep20'
+              onSwapClick={() => toSwap('rBNB')}
             />
           </DataList>{' '}
           <CountAmount totalValue={totalPrice} />
