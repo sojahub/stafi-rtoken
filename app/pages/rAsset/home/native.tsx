@@ -12,6 +12,11 @@ import {
   rTokenRate as atom_rTokenRate
 } from '@features/rATOMClice';
 import {
+  getUnbondCommission as bnb_getUnbondCommission,
+  query_rBalances_account as bnb_query_rBalances_account,
+  rTokenRate as bnb_rTokenRate
+} from '@features/rBNBClice';
+import {
   getUnbondCommission as dot_getUnbondCommission,
   query_rBalances_account as dot_query_rBalances_account,
   rTokenRate as dot_rTokenRate
@@ -27,6 +32,7 @@ import rDOT_svg from '@images/rDOT.svg';
 import rasset_fis_svg from '@images/rFIS.svg';
 // import rasset_rsol_svg from '@images/rSOL.svg';
 import rasset_ratom_svg from '@images/r_atom.svg';
+import rasset_rbnb_svg from '@images/r_bnb.svg';
 import rasset_rdot_svg from '@images/r_dot.svg';
 import rasset_rfis_svg from '@images/r_fis.svg';
 import rasset_rksm_svg from '@images/r_ksm.svg';
@@ -48,6 +54,8 @@ import './page.scss';
 const commonClice = new CommonClice();
 export default function Index(props: any) {
   const dispatch = useDispatch();
+  const [visible, setVisible] = useState(false);
+
   const {
     fisAccount,
     tokenAmount,
@@ -64,6 +72,8 @@ export default function Index(props: any) {
     solWillAmount,
     matic_tokenAmount,
     maticWillAmount,
+    bnb_tokenAmount,
+    bnbWillAmount,
   } = useSelector((state: any) => {
     return {
       unitPriceList: state.bridgeModule.priceList,
@@ -104,6 +114,12 @@ export default function Index(props: any) {
         state.rMATICModule.unbondCommission,
         state.rMATICModule.tokenAmount,
       ),
+      bnb_tokenAmount: state.rBNBModule.tokenAmount,
+      bnbWillAmount: commonClice.getWillAmount(
+        state.rBNBModule.ratio,
+        state.rBNBModule.unbondCommission,
+        state.rBNBModule.tokenAmount,
+      ),
     };
   });
 
@@ -127,18 +143,30 @@ export default function Index(props: any) {
         count = count + item.price * sol_tokenAmount;
       } else if (item.symbol == 'rMATIC' && matic_tokenAmount && matic_tokenAmount != '--') {
         count = count + item.price * matic_tokenAmount;
+      } else if (item.symbol == 'rBNB' && bnb_tokenAmount && bnb_tokenAmount != '--') {
+        count = count + item.price * bnb_tokenAmount;
       }
     });
     return count;
-  }, [unitPriceList, tokenAmount, fisAccount, fis_tokenAmount, dot_tokenAmount, atom_tokenAmount, sol_tokenAmount]);
+  }, [
+    unitPriceList,
+    tokenAmount,
+    fisAccount,
+    fis_tokenAmount,
+    dot_tokenAmount,
+    atom_tokenAmount,
+    sol_tokenAmount,
+    matic_tokenAmount,
+    bnb_tokenAmount,
+  ]);
 
-  const [visible, setVisible] = useState(false);
   useEffect(() => {
     if (fisAccount) {
       dispatch(getRtokenPriceList());
       dispatch(reloadData(Symbol.Fis));
     }
   }, []);
+  
   useEffect(() => {
     if (fisAccount) {
       dispatch(query_rBalances_account());
@@ -147,18 +175,21 @@ export default function Index(props: any) {
       dispatch(atom_query_rBalances_account());
       // dispatch(sol_query_rBalances_account())
       dispatch(matic_query_rBalances_account());
+      dispatch(bnb_query_rBalances_account());
       dispatch(ksm_rTokenRate());
       dispatch(fis_rTokenRate());
       dispatch(dot_rTokenRate());
       dispatch(atom_rTokenRate());
       // dispatch(sol_rTokenRate() );
       dispatch(matic_rTokenRate());
+      dispatch(bnb_rTokenRate());
       dispatch(getUnbondCommission());
       dispatch(fis_getUnbondCommission());
       dispatch(dot_getUnbondCommission());
       dispatch(atom_getUnbondCommission());
       // dispatch(sol_getUnbondCommission());
       dispatch(matic_getUnbondCommission());
+      dispatch(bnb_getUnbondCommission());
     }
   }, [fisAccount]);
   return (
@@ -290,6 +321,23 @@ export default function Index(props: any) {
                   pathname: '/rAsset/swap/native/default',
                   state: {
                     rSymbol: 'rMATIC',
+                  },
+                });
+              }}
+            />
+            <DataItem
+              rSymbol='rBNB'
+              icon={rasset_rbnb_svg}
+              fullName='BSC'
+              balance={bnb_tokenAmount == '--' ? '--' : NumberUtil.handleFisAmountToFixed(bnb_tokenAmount)}
+              willGetBalance={bnbWillAmount}
+              unit='BNB'
+              operationType='native'
+              onSwapClick={() => {
+                props.history.push({
+                  pathname: '/rAsset/swap/native/bep20',
+                  state: {
+                    rSymbol: 'rBNB',
                   },
                 });
               }}

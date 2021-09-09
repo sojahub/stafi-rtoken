@@ -24,6 +24,7 @@ const BSCClice = createSlice({
     bepRSOLBalance: '--',
     bepRMATICBalance: '--',
     bepRETHBalance: '--',
+    bepRBNBBalance: '--',
     FISBep20Allowance: '--',
     RFISBep20Allowance: '--',
     RKSMBep20Allowance: '--',
@@ -32,6 +33,7 @@ const BSCClice = createSlice({
     RSOLBep20Allowance: '--',
     RMATICBep20Allowance: '--',
     RETHBep20Allowance: '--',
+    RBNBBep20Allowance: '--',
     isload_monitoring: false,
   },
   reducers: {
@@ -76,6 +78,9 @@ const BSCClice = createSlice({
     setBepRETHBalance(state, { payload }) {
       state.bepRETHBalance = payload;
     },
+    setBepRBNBBalance(state, { payload }) {
+      state.bepRBNBBalance = payload;
+    },
     setFISBep20Allowance(state, { payload }) {
       state.FISBep20Allowance = payload;
     },
@@ -100,6 +105,9 @@ const BSCClice = createSlice({
     setRETHBep20Allowance(state, { payload }) {
       state.RETHBep20Allowance = payload;
     },
+    setRBNBBep20Allowance(state, { payload }) {
+      state.RBNBBep20Allowance = payload;
+    },
     setIsloadMonitoring(state, { payload }) {
       state.isload_monitoring = payload;
     },
@@ -117,6 +125,7 @@ export const {
   setBepRSOLBalance,
   setBepRMATICBalance,
   setBepRETHBalance,
+  setBepRBNBBalance,
   setFISBep20Allowance,
   setRFISBep20Allowance,
   setRKSMBep20Allowance,
@@ -125,6 +134,7 @@ export const {
   setRSOLBep20Allowance,
   setRMATICBep20Allowance,
   setRETHBep20Allowance,
+  setRBNBBep20Allowance,
   setIsloadMonitoring,
 } = BSCClice.actions;
 
@@ -245,6 +255,7 @@ export const getAssetBalanceAll = (): AppThunk => (dispatch, getState) => {
   // dispatch(getRSOLAssetBalance());
   dispatch(getRMATICAssetBalance());
   dispatch(getRETHAssetBalance());
+  dispatch(getRBNBAssetBalance());
 };
 export const getBep20Allowances = (): AppThunk => (dispatch, getState) => {
   // dispatch(getFISBep20Allowance());
@@ -255,6 +266,7 @@ export const getBep20Allowances = (): AppThunk => (dispatch, getState) => {
   // dispatch(getRSOLBep20Allowance());
   dispatch(getRMATICBep20Allowance());
   dispatch(getRETHBep20Allowance());
+  dispatch(getRBNBBep20Allowance());
 };
 
 export const getFISAssetBalance = (): AppThunk => (dispatch, getState) => {
@@ -322,6 +334,15 @@ export const getRETHAssetBalance = (): AppThunk => (dispatch, getState) => {
     const address = getState().BSCModule.bscAccount.address;
     getAssetBalance(address, bscServer.getRETHTokenAbi(), bscServer.getRETHTokenAddress(), (v: any) => {
       dispatch(setBepRETHBalance(v));
+    });
+  }
+};
+
+export const getRBNBAssetBalance = (): AppThunk => (dispatch, getState) => {
+  if (getState().BSCModule.bscAccount) {
+    const address = getState().BSCModule.bscAccount.address;
+    getAssetBalance(address, bscServer.getRTokenAbi(), bscServer.getRBNBTokenAddress(), (v: any) => {
+      dispatch(setBepRBNBBalance(v));
     });
   }
 };
@@ -412,6 +433,15 @@ export const getRETHBep20Allowance = (): AppThunk => (dispatch, getState) => {
     const address = getState().BSCModule.bscAccount.address;
     getBep20Allowance(address, bscServer.getRETHTokenAbi(), bscServer.getRETHTokenAddress(), (v: any) => {
       dispatch(setRETHBep20Allowance(v));
+    });
+  }
+};
+
+export const getRBNBBep20Allowance = (): AppThunk => (dispatch, getState) => {
+  if (getState().rETHModule.ethAccount && getState().rETHModule.ethAccount.address) {
+    const address = getState().rETHModule.ethAccount.address;
+    getBep20Allowance(address, bscServer.getRTokenAbi(), bscServer.getRBNBTokenAddress(), (v: any) => {
+      dispatch(setRBNBBep20Allowance(v));
     });
   }
 };

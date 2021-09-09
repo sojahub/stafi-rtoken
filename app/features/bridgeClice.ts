@@ -163,6 +163,8 @@ export const nativeToOtherSwap =
                       message_str = 'Something is wrong, please make sure you have enough FIS and rSOL balance';
                     } else if (tokenType == 'rmatic') {
                       message_str = 'Something is wrong, please make sure you have enough FIS and rMATIC balance';
+                    }else if (tokenType == 'rbnb') {
+                      message_str = 'Something is wrong, please make sure you have enough FIS and rBNB balance';
                     }
                     if (error.name == 'ServicePaused') {
                       message_str = 'Service is paused, please try again later!';
@@ -435,6 +437,11 @@ export const bep20ToOtherSwap =
         from: bscAddress,
       });
       allowance = getState().BSCModule.RETHBep20Allowance;
+    }else if (tokenType == 'rbnb') {
+      tokenContract = new web3.eth.Contract(bscServer.getRTokenAbi(), bscServer.getRBNBTokenAddress(), {
+        from: bscAddress,
+      });
+      allowance = getState().BSCModule.RBNBBep20Allowance;
     }
     if (!tokenContract) {
       dispatch(setLoading(false));
