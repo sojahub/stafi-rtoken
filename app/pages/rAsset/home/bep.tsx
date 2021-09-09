@@ -4,10 +4,7 @@ import { connectMetamask, getAssetBalanceAll, handleBscAccount, monitoring_Metho
 import CommonClice from '@features/commonClice';
 import { getUnbondCommission as fis_getUnbondCommission, rTokenRate as fis_rTokenRate } from '@features/FISClice';
 import { getUnbondCommission as atom_getUnbondCommission, rTokenRate as atom_rTokenRate } from '@features/rATOMClice';
-import {
-  getUnbondCommission as bnb_getUnbondCommission,
-  rTokenRate as bnb_rTokenRate
-} from '@features/rBNBClice';
+import { getUnbondCommission as bnb_getUnbondCommission, rTokenRate as bnb_rTokenRate } from '@features/rBNBClice';
 import { getUnbondCommission as dot_getUnbondCommission, rTokenRate as dot_rTokenRate } from '@features/rDOTClice';
 import { getUnbondCommission as ksm_getUnbondCommission, rTokenRate as ksm_rTokenRate } from '@features/rKSMClice';
 import {
@@ -139,6 +136,8 @@ export default function Index(props: any) {
         count = count + item.price * reth_bepBalance;
       } else if (item.symbol == 'rSOL' && rsol_bepBalance && rsol_bepBalance != '--') {
         count = count + item.price * rsol_bepBalance;
+      } else if (item.symbol == 'rBNB' && rbnb_bepBalance && rbnb_bepBalance != '--') {
+        count = count + item.price * rbnb_bepBalance;
       }
     });
     return count;
