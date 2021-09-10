@@ -62,6 +62,7 @@ const account = (type: string) => {
       return '/rKSM/home';
   }
 };
+
 const AuthorizeRoute = (currentRole: string) => {
   return (WrappedComponent: any) => {
     class WithAuthorization extends React.Component<any> {
