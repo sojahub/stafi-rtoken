@@ -175,6 +175,8 @@ export default class CommonClice {
 
         totalUnbonding = NumberUtil.handleFisAmountToFixed(NumberUtil.tokenAmountToHuman(totalUnbonding, rSymbol));
         cb && cb(totalUnbonding);
+      } else {
+        cb && cb(0);
       }
     } else {
       cb && cb(0);

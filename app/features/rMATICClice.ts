@@ -172,6 +172,7 @@ export const reloadData = (): AppThunk => async (dispatch, getState) => {
   dispatch(balancesAll());
   dispatch(query_rBalances_account());
   dispatch(getTotalIssuance());
+  dispatch(accountUnbonds());
 };
 
 declare const window: any;
@@ -254,7 +255,7 @@ export const monitoring_Method = (): AppThunk => (dispatch, getState) => {
           dispatch(reloadData());
         }, 20);
       } else {
-        dispatch(handleMaticAccount(null));
+        // dispatch(handleMaticAccount(null));
       }
     });
 

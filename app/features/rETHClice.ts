@@ -307,9 +307,11 @@ export const monitoring_Method = (): AppThunk => (dispatch, getState) => {
         setTimeout(() => {
           // dispatch(getAssetBalanceAll());
           dispatch(reloadData());
+          window.location.reload();
         }, 200);
       } else {
-        dispatch(handleEthAccount(null));
+        // MetaMask is locked or the user has not connected any accounts
+        // dispatch(handleEthAccount(null));
       }
     });
 

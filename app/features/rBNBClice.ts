@@ -22,7 +22,7 @@ import {
   setProcessType
 } from './globalClice';
 import { add_Notice, findUuid, noticeStatus, noticesubType, noticeType } from './noticeClice';
-import { get_eth_getBalance } from './rETHClice';
+import { connectMetamask, get_eth_getBalance } from './rETHClice';
 
 const commonClice = new CommonClice();
 
@@ -142,6 +142,7 @@ export const reloadData = (): AppThunk => async (dispatch, getState) => {
   dispatch(query_rBalances_account());
   dispatch(getTotalIssuance());
   dispatch(rTokenRate());
+  dispatch(accountUnbonds());
 };
 
 declare const ethereum: any;
@@ -149,6 +150,12 @@ declare const ethereum: any;
 export const transfer =
   (amountparam: string, cb?: Function): AppThunk =>
   async (dispatch, getState) => {
+    const isUnlocked = await ethereum._metamask.isUnlocked();
+    if (!isUnlocked) {
+      dispatch(connectMetamask(config.bscChainId()));
+      return;
+    }
+
     const processParameter = getState().rBNBModule.processParameter;
     const notice_uuid = (processParameter && processParameter.uuid) || stafi_uuid();
 
@@ -759,7 +766,6 @@ export const accountUnbonds = (): AppThunk => async (dispatch, getState) => {
   // dispatch(getTotalUnbonding(rSymbol.Matic,(total:any)=>{
   //   dispatch(setTotalUnbonding(total));
   // }))
-
   let fisAddress = getState().FISModule.fisAccount.address;
   commonClice.getTotalUnbonding(fisAddress, rSymbol.Bnb, (total: any) => {
     dispatch(setTotalUnbonding(total));

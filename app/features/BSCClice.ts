@@ -201,7 +201,7 @@ export const monitoring_Method = (): AppThunk => (dispatch, getState) => {
           // dispatch(reloadData());
         }, 200);
       } else {
-        dispatch(handleBscAccount(null));
+        // dispatch(handleBscAccount(null));
       }
     });
 
