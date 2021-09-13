@@ -150,7 +150,7 @@ export default class Index extends SubstrateKeyring {
         total_native_token_amount: 'u128',
       },
       BondAction: {
-        _enum: ['BondOnly', 'UnbondOnly', 'BothBondUnbond', 'EitherBondUnbond'],
+        _enum: ['BondOnly', 'UnbondOnly', 'BothBondUnbond', 'EitherBondUnbond', 'InterDeduct'],
       },
     };
     if (stafiApi) {
