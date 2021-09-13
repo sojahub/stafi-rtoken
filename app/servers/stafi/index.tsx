@@ -152,6 +152,17 @@ export default class Index extends SubstrateKeyring {
       BondAction: {
         _enum: ['BondOnly', 'UnbondOnly', 'BothBondUnbond', 'EitherBondUnbond', 'InterDeduct'],
       },
+      BondSwap: {
+        bonder: 'AccountId',
+        swap_fee: 'Balance',
+        swap_receiver: 'AccountId',
+        bridger: 'AccountId',
+        recipient: 'Vec<u8>',
+        dest_id: 'ChainId',
+        expire: 'BlockNumber',
+        bond_state: 'BondState',
+        refunded: 'bool'
+      }
     };
     if (stafiApi) {
       return stafiApi;
