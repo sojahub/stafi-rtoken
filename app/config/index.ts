@@ -136,11 +136,11 @@ export default {
     }
   },
   solRpcApi: () => {
-    if (process.env.NODE_ENV == 'production' && !isdev()) {
+    if (!isdev()) {
       return clusterApiUrl('mainnet-beta');
     } else {
-      // return clusterApiUrl('devnet');
-      return 'https://solana-dev-rpc.wetez.io';
+      return clusterApiUrl('devnet');
+      // return 'https://solana-dev-rpc.wetez.io';
     }
   },
   solRpcWs: () => {
@@ -148,8 +148,9 @@ export default {
       // return clusterApiUrl('mainnet-beta');
       return '';
     } else {
-      // return clusterApiUrl('devnet');
-      return 'wss://solana-dev-wss.wetez.io';
+      // return '';
+      return clusterApiUrl('devnet');
+      // return 'wss://solana-dev-wss.wetez.io';
     }
   },
   ethProviderUrl: () => {
@@ -462,7 +463,7 @@ export default {
       return `https://etherscan.io/tx/${txHash}`;
     } else if (type == rSymbol.Bnb) {
       return `https://bscscan.com/tx/${txHash}`;
-    }else {
+    } else {
       return '';
     }
   },
@@ -481,7 +482,7 @@ export default {
       return 10;
     } else if (type == Symbol.Bnb) {
       return 14;
-    }else {
+    } else {
       return 0;
     }
   },
