@@ -28,6 +28,7 @@ export default class CommonClice {
       const accountData = await stafiApi.query.rBalances.account(rSymbol, address);
       let data = accountData.toJSON();
       cb && cb(data);
+      return data;
     }
   }
   async getPools(type: rSymbol, symbol: Symbol, cb?: Function) {

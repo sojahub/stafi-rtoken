@@ -1,4 +1,4 @@
-import { isdev } from '@config/index';
+import { rSymbol } from '@keyring/defaults';
 import { web3Enable, web3FromSource } from '@polkadot/extension-dapp';
 import { u8aToHex } from '@polkadot/util';
 import { createSlice } from '@reduxjs/toolkit';
@@ -11,13 +11,16 @@ import KsmServer from '@servers/ksm';
 import MaticServer from '@servers/matic';
 import DotServer from '@servers/polkadot';
 import SolServer from '@servers/sol';
-import StafiServer from '@servers/stafi';
+import { default as FisServer, default as StafiServer } from '@servers/stafi';
 import Stafi from '@servers/stafi/index';
 import { stafi_uuid } from '@util/common';
 import { default as NumberUtil } from '@util/numberUtil';
 import rpc from '@util/rpc';
 import { message } from 'antd';
 import { AppThunk } from '../store';
+import { getAssetBalance as getBscAssetBalance } from './BSCClice';
+import CommonClice from './commonClice';
+import { getAssetBalance } from './ETHClice';
 import { setLoading } from './globalClice';
 import { add_Notice, noticeStatus, noticesubType, noticeType, update_NoticeNew } from './noticeClice';
 
@@ -29,11 +32,14 @@ const bridgeServer = new BridgeServer();
 const bscServer = new BscServer();
 const stafiServer = new StafiServer();
 const ethServer = new EthServer();
+const fisServer = new FisServer();
 const ksmServer = new KsmServer();
 const dotServer = new DotServer();
 const atomServer = new AtomServer();
 const solServer = new SolServer();
 const maticServer = new MaticServer();
+const commonClice = new CommonClice();
+
 const bridgeClice = createSlice({
   name: 'bridgeModule',
   initialState: {
@@ -45,6 +51,12 @@ const bridgeClice = createSlice({
     // 0-invisible, 1-start transferring, 2-start minting
     swapLoadingStatus: 0,
     swapWaitingTime: 150,
+    swapLoadingParams: {
+      // 1: xx=>erc, 2: xx=>bep, 3: xx=>native
+      swapType: 0,
+      tokenType: '',
+      amount: '',
+    },
   },
   reducers: {
     setErc20EstimateFee(state, { payload }) {
@@ -68,6 +80,9 @@ const bridgeClice = createSlice({
     setSwapWaitingTime(state, { payload }) {
       state.swapWaitingTime = payload;
     },
+    setSwapLoadingParams(state, { payload }) {
+      state.swapLoadingParams = payload;
+    },
   },
 });
 
@@ -79,6 +94,7 @@ export const {
   setPriceList,
   setSwapLoadingStatus,
   setSwapWaitingTime,
+  setSwapLoadingParams,
 } = bridgeClice.actions;
 
 //Native to ERC20
@@ -112,11 +128,13 @@ export const nativeToOtherSwap =
     try {
       dispatch(setLoading(true));
       dispatch(setSwapLoadingStatus(1));
-      if (isdev()) {
-        dispatch(setSwapWaitingTime(30));
+      dispatch(setSwapWaitingTime(600));
+      if (chainId === ETH_CHAIN_ID) {
+        updateSwapParamsOfErc(dispatch, tokenType, tokenAmount, ethAddress);
       } else {
-        dispatch(setSwapWaitingTime(50));
+        updateSwapParamsOfBep(dispatch, tokenType, tokenAmount, ethAddress);
       }
+
       web3Enable(stafiServer.getWeb3EnalbeName());
       const injector: any = await web3FromSource(stafiServer.getPolkadotJsSource());
       const api = await stafiServer.createStafiApi();
@@ -163,7 +181,7 @@ export const nativeToOtherSwap =
                       message_str = 'Something is wrong, please make sure you have enough FIS and rSOL balance';
                     } else if (tokenType == 'rmatic') {
                       message_str = 'Something is wrong, please make sure you have enough FIS and rMATIC balance';
-                    }else if (tokenType == 'rbnb') {
+                    } else if (tokenType == 'rbnb') {
                       message_str = 'Something is wrong, please make sure you have enough FIS and rBNB balance';
                     }
                     if (error.name == 'ServicePaused') {
@@ -220,11 +238,13 @@ export const erc20ToOtherSwap =
   async (dispatch, getState) => {
     dispatch(setLoading(true));
     dispatch(setSwapLoadingStatus(1));
-    if (isdev()) {
-      dispatch(setSwapWaitingTime(30));
+    dispatch(setSwapWaitingTime(600));
+    if (destChainId === BSC_CHAIN_ID) {
+      updateSwapParamsOfBep(dispatch, tokenType, tokenAmount, address);
     } else {
-      dispatch(setSwapWaitingTime(150));
+      updateSwapParamsOfNative(dispatch, tokenType, tokenAmount, address);
     }
+
     let web3 = ethServer.getWeb3();
 
     let tokenContract: any = '';
@@ -387,11 +407,13 @@ export const bep20ToOtherSwap =
   async (dispatch, getState) => {
     dispatch(setLoading(true));
     dispatch(setSwapLoadingStatus(1));
-    if (isdev()) {
-      dispatch(setSwapWaitingTime(30));
+    dispatch(setSwapWaitingTime(600));
+    if (destChainId === ETH_CHAIN_ID) {
+      updateSwapParamsOfErc(dispatch, tokenType, tokenAmount, address);
     } else {
-      dispatch(setSwapWaitingTime(50));
+      updateSwapParamsOfNative(dispatch, tokenType, tokenAmount, address);
     }
+
     let web3 = ethServer.getWeb3();
 
     let tokenContract: any = '';
@@ -437,7 +459,7 @@ export const bep20ToOtherSwap =
         from: bscAddress,
       });
       allowance = getState().BSCModule.RETHBep20Allowance;
-    }else if (tokenType == 'rbnb') {
+    } else if (tokenType == 'rbnb') {
       tokenContract = new web3.eth.Contract(bscServer.getRTokenAbi(), bscServer.getRBNBTokenAddress(), {
         from: bscAddress,
       });
@@ -568,6 +590,135 @@ export const getRtokenPriceList = (): AppThunk => async (dispatch, getState) => 
   if (result && result.status == '80000') {
     dispatch(setPriceList(result.data));
   }
+};
+
+const updateSwapParamsOfErc = (dispatch: any, tokenType: string, tokenAmount: any, ethAddress: string) => {
+  let tokenAbi;
+  let tokenAddress;
+  if (tokenType === 'fis') {
+    tokenAbi = fisServer.getFISTokenAbi();
+    tokenAddress = fisServer.getFISTokenAddress();
+  } else if (tokenType === 'rfis') {
+    tokenAbi = fisServer.getRFISTokenAbi();
+    tokenAddress = fisServer.getRFISTokenAddress();
+  } else if (tokenType === 'rksm') {
+    tokenAbi = ksmServer.getRKSMTokenAbi();
+    tokenAddress = ksmServer.getRKSMTokenAddress();
+  } else if (tokenType === 'rdot') {
+    tokenAbi = dotServer.getRDOTTokenAbi();
+    tokenAddress = dotServer.getRDOTTokenAddress();
+  } else if (tokenType === 'ratom') {
+    tokenAbi = atomServer.getTokenAbi();
+    tokenAddress = atomServer.getRATOMTokenAddress();
+  } else if (tokenType === 'rsol') {
+    tokenAbi = solServer.getTokenAbi();
+    tokenAddress = solServer.getRSOLTokenAddress();
+  } else if (tokenType === 'reth') {
+    tokenAbi = ethServer.getRETHTokenAbi();
+    tokenAddress = ethServer.getRETHTokenAddress();
+  }
+
+  if (tokenAbi && tokenAddress) {
+    getAssetBalance(ethAddress, tokenAbi, tokenAddress, (v) => {
+      dispatch(
+        setSwapLoadingParams({
+          address: ethAddress,
+          swapType: 1,
+          amount: tokenAmount,
+          tokenType: tokenType,
+          oldBalance: v,
+          tokenAbi,
+          tokenAddress,
+        }),
+      );
+    });
+  }
+};
+
+const updateSwapParamsOfBep = (dispatch: any, tokenType: string, tokenAmount: any, ethAddress: string) => {
+  let tokenAbi;
+  let tokenAddress;
+  if (tokenType === 'fis') {
+    tokenAbi = bscServer.getFISTokenAbi();
+    tokenAddress = bscServer.getFISTokenAddress();
+  } else if (tokenType === 'rfis') {
+    tokenAbi = bscServer.getRFISTokenAbi();
+    tokenAddress = bscServer.getRFISTokenAddress();
+  } else if (tokenType === 'rksm') {
+    tokenAbi = bscServer.getRKSMTokenAbi();
+    tokenAddress = bscServer.getRKSMTokenAddress();
+  } else if (tokenType === 'rdot') {
+    tokenAbi = bscServer.getRDOTTokenAbi();
+    tokenAddress = bscServer.getRDOTTokenAddress();
+  } else if (tokenType === 'ratom') {
+    tokenAbi = bscServer.getRATOMTokenAbi();
+    tokenAddress = bscServer.getRATOMTokenAddress();
+  } else if (tokenType === 'rsol') {
+    tokenAbi = bscServer.getRSOLTokenAbi();
+    tokenAddress = bscServer.getRSOLTokenAddress();
+  } else if (tokenType === 'reth') {
+    tokenAbi = bscServer.getRETHTokenAbi();
+    tokenAddress = bscServer.getRETHTokenAddress();
+  }
+
+  if (tokenAbi && tokenAddress) {
+    getBscAssetBalance(ethAddress, tokenAbi, tokenAddress, (v) => {
+      dispatch(
+        setSwapLoadingParams({
+          address: ethAddress,
+          swapType: 2,
+          amount: tokenAmount,
+          tokenType: tokenType,
+          oldBalance: v,
+          tokenAbi,
+          tokenAddress,
+        }),
+      );
+    });
+  }
+};
+
+const updateSwapParamsOfNative = async (dispatch: any, tokenType: string, tokenAmount: any, address: string) => {
+  let rType;
+  if (tokenType === 'rfis') {
+    rType = rSymbol.Fis;
+  } else if (tokenType === 'rksm') {
+    rType = rSymbol.Ksm;
+  } else if (tokenType === 'rdot') {
+    rType = rSymbol.Dot;
+  } else if (tokenType === 'ratom') {
+    rType = rSymbol.Atom;
+  } else if (tokenType === 'rsol') {
+    rType = rSymbol.Sol;
+  } else if (tokenType === 'rmatic') {
+    rType = rSymbol.Matic;
+  } else if (tokenType === 'reth') {
+    rType = rSymbol.Eth;
+  } else if (tokenType === 'rbnb') {
+    rType = rSymbol.Bnb;
+  }
+
+  let data;
+  if (tokenType === 'fis') {
+    const api = await stafiServer.createStafiApi();
+    const result = await api.query.system.account(address);
+    if (result) {
+      data = result.data;
+    }
+  } else {
+    data = await commonClice.query_rBalances_account({ address }, rType);
+  }
+  const oldBalance = data ? Number(data.free) : 0;
+
+  dispatch(
+    setSwapLoadingParams({
+      address: address,
+      swapType: 3,
+      amount: tokenAmount,
+      tokenType: tokenType,
+      oldBalance,
+    }),
+  );
 };
 
 export default bridgeClice.reducer;
