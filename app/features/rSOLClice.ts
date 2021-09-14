@@ -7,14 +7,7 @@ import keyring from '@servers/index';
 import { default as PolkadotServer, default as SolServer } from '@servers/sol/index';
 import Stafi from '@servers/stafi/index';
 import * as solanaWeb3 from '@solana/web3.js';
-import {
-  getLocalStorageItem,
-  Keys,
-  removeLocalStorageItem,
-  setLocalStorageItem,
-  stafi_uuid,
-  timeout
-} from '@util/common';
+import { getLocalStorageItem, Keys, removeLocalStorageItem, setLocalStorageItem, stafi_uuid } from '@util/common';
 import NumberUtil from '@util/numberUtil';
 import { message } from 'antd';
 import base58 from 'bs58';
@@ -178,10 +171,6 @@ const queryBalance = async (account: any, dispatch: any, getState: any) => {
 
   let solBalance = NumberUtil.tokenAmountToHuman(balance, rSymbol.Sol);
   account2.balance = solBalance ? NumberUtil.handleEthAmountRound(solBalance) : 0;
-  // const solAccount = getState().rSOLModule.solAccount;
-  // if (solAccount && solAccount.address == account2.address) {
-  // dispatch(setSolAccount(account2));
-  // }
 
   dispatch(setTransferrableAmountShow(account2.balance));
   dispatch(setSolAccount(account2));
@@ -219,15 +208,15 @@ export const transfer =
     dispatch(setProcessSlider(true));
 
     try {
-      await timeout(3000);
-      message.info('Please approve transaction in sollet wallet.', 5);
+      // await timeout(3000);
+      // message.info('Please approve transaction in sollet wallet.', 5);
 
       let result: any;
       result = await solServer.sendTransaction(Number(amount), selectedPool.address).catch((error) => {
         throw error;
       });
 
-      if (result.blockHash && result.txHash) {
+      if (result && result.blockHash && result.txHash) {
         const hexBlockHash = u8aToHex(base58.decode(result.blockHash));
         const hexTxHash = u8aToHex(base58.decode(result.txHash));
 
@@ -299,6 +288,8 @@ export const transfer =
         message.error('cancelled');
         dispatch(setProcessSlider(false));
         dispatch(reloadData());
+      } else {
+        message.error(error.message);
       }
     }
   };
@@ -472,9 +463,9 @@ const _onProceedInternal =
           });
           noticeData && dispatch(add_SOL_stake_Notice(noticeData.uuid, noticeData.amount, noticeStatus.Confirmed));
         } else if (e == 'failure' || e == 'stakingFailure') {
-          const wallet = solServer.getWallet();
-          if (!wallet.connected) {
-            wallet.connect().then((res: any) => {
+          const solana = solServer.getProvider();
+          if (!solana.isConnected) {
+            solana.connect().then((res: any) => {
               if (res) {
                 dispatch(
                   getBlock(txHash, noticeData ? noticeData.uuid : null, () => {

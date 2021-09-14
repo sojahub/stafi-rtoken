@@ -146,11 +146,11 @@ export default {
     }
   },
   solRpcApi: () => {
-    if (process.env.NODE_ENV == 'production' && !isdev()) {
+    if (!isdev()) {
       return clusterApiUrl('mainnet-beta');
     } else {
-      // return clusterApiUrl('devnet');
-      return 'https://solana-dev-rpc.wetez.io';
+      return clusterApiUrl('devnet');
+      // return 'https://solana-dev-rpc.wetez.io';
     }
   },
   solRpcWs: () => {
@@ -158,8 +158,9 @@ export default {
       // return clusterApiUrl('mainnet-beta');
       return '';
     } else {
-      // return clusterApiUrl('devnet');
-      return 'wss://solana-dev-wss.wetez.io';
+      // return '';
+      return clusterApiUrl('devnet');
+      // return 'wss://solana-dev-wss.wetez.io';
     }
   },
   solWalletProviderUrl: () => {

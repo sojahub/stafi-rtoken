@@ -32,23 +32,23 @@ export default function Index(props: any) {
     dispatch(rTokenLedger());
   }, []);
 
-  let publicKey: any;
-  if (solServer.getWallet() && solServer.getWallet().connected) {
-    publicKey = solServer.getWallet().publicKey;
-  }
   useEffect(() => {
-    if (publicKey && publicKey.toBase58() !== solAccount.address) {
+    let publicKey: any;
+    if (solServer.getProvider() && solServer.getProvider().isConnected) {
+      publicKey = solServer.getProvider().publicKey;
+    }
+    if (publicKey && publicKey.toString() !== solAccount.address) {
       // message.warn('Sollet address switched', 5);
       setAmount('');
       const account = {
         name: '',
-        pubkey: publicKey.toBase58(),
-        address: publicKey.toBase58(),
+        pubkey: publicKey.toString(),
+        address: publicKey.toString(),
         balance: '--',
       };
       dispatch(clice(Symbol.Sol).createSubstrate(account));
     }
-  }, [publicKey]);
+  }, []);
 
   const { transferrableAmount, ratio, stafiStakerApr, fisCompare, validPools, totalIssuance, bondFees } = useSelector(
     (state: any) => {
@@ -66,33 +66,6 @@ export default function Index(props: any) {
       };
     },
   );
-
-  const clickStake = () => {
-    if (amount) {
-      if (fisCompare) {
-        message.error('No enough FIS to pay for the fee');
-        return;
-      }
-
-      const wallet = solServer.getWallet();
-      if (!wallet.connected) {
-        wallet
-          .connect()
-          .then((res: any) => {
-            if (res) {
-              checkWalletAddress(getPublicKey(res));
-            }
-          })
-          .catch((error: any) => {
-            console.warn('stake home connect sollet error: ', error);
-          });
-      } else {
-        checkWalletAddress(wallet.publicKey);
-      }
-    } else {
-      message.error('Please enter the amount');
-    }
-  };
 
   const getPublicKey = (result: any) => {
     return new PublicKey(result._bn);
@@ -122,6 +95,17 @@ export default function Index(props: any) {
       }),
     );
   };
+
+  const clickStake = () => {
+    if (amount) {
+      if (fisCompare) {
+        message.error('No enough FIS to pay for the fee');
+        return;
+      }
+
+    startStake();
+  };
+}
 
   return (
     <Content
