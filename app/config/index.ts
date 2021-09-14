@@ -139,8 +139,8 @@ export default {
     if (!isdev()) {
       return clusterApiUrl('mainnet-beta');
     } else {
-      return clusterApiUrl('devnet');
-      // return 'https://solana-dev-rpc.wetez.io';
+      // return clusterApiUrl('devnet');
+      return 'https://solana-dev-rpc.wetez.io';
     }
   },
   solRpcWs: () => {
@@ -149,8 +149,8 @@ export default {
       return '';
     } else {
       // return '';
-      return clusterApiUrl('devnet');
-      // return 'wss://solana-dev-wss.wetez.io';
+      // return clusterApiUrl('devnet');
+      return 'wss://solana-dev-wss.wetez.io';
     }
   },
   ethProviderUrl: () => {
