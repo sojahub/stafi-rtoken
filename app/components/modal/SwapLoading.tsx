@@ -1,13 +1,23 @@
 import { LoadingOutlined } from '@ant-design/icons';
 import { setSwapLoadingStatus } from '@features/bridgeClice';
+import { getAssetBalance as getBscAssetBalance } from '@features/BSCClice';
+import CommonClice from '@features/commonClice';
+import { getAssetBalance } from '@features/ETHClice';
 import close_bold_svg from '@images/close_bold.svg';
 import complete_svg from '@images/complete.svg';
-import { Modal, Progress, Spin } from 'antd';
+import { rSymbol } from '@keyring/defaults';
+import Stafi from '@servers/stafi/index';
+import numberUtil from '@util/numberUtil';
+import { useInterval } from '@util/utils';
+import { message, Modal, Progress, Spin } from 'antd';
+import { cloneDeep } from 'lodash';
 import { max } from 'mathjs';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import './SwapLoading.scss';
 
+const commonClice = new CommonClice();
+const stafiServer = new Stafi();
 const antIcon = <LoadingOutlined style={{ fontSize: '60px', color: '#fff' }} spin />;
 
 type Props = {
@@ -17,24 +27,27 @@ type Props = {
   viewTxUrl: string;
 };
 
-const STAGE1_MAX_PROGRESS = 50;
+const STAGE1_MAX_PROGRESS = 15;
 
 export default function SwapLoading(props: Props) {
   const dispatch = useDispatch();
 
-  const { swapLoadingStatus, swapWaitingTime } = useSelector((state: any) => {
+  const { swapLoadingStatus, swapWaitingTime, swapLoadingParams } = useSelector((state: any) => {
     return {
       swapLoadingStatus: state.bridgeModule.swapLoadingStatus,
       swapWaitingTime: state.bridgeModule.swapWaitingTime,
+      swapLoadingParams: state.bridgeModule.swapLoadingParams,
     };
   });
 
-  const STAGE1_PERIOD = swapWaitingTime / 2;
+  const STAGE1_PERIOD = swapWaitingTime / 30;
   const STAGE2_PERIOD = swapWaitingTime;
 
   const [stage1TimeLeft, setStage1TimeLeft] = useState(STAGE1_PERIOD);
   const [stage2TimeLeft, setStage2TimeLeft] = useState(STAGE2_PERIOD);
   const [progress, setProgress] = useState(0);
+  // 0	default, 1	success, other failed
+  const [swapStatus, setSwapStatus] = useState(0);
   const [success, setSuccess] = useState(false);
 
   let stage1IntervalId: any;
@@ -46,6 +59,12 @@ export default function SwapLoading(props: Props) {
       resetStatus();
     }
   }, [swapLoadingStatus]);
+
+  useInterval(() => {
+    if (swapLoadingStatus === 2) {
+      updateSwapStatus();
+    }
+  }, 3000);
 
   useEffect(() => {
     if (swapLoadingStatus === 1) {
@@ -60,10 +79,12 @@ export default function SwapLoading(props: Props) {
       stage2StartProgress = ((STAGE1_PERIOD - stage1TimeLeft) * STAGE1_MAX_PROGRESS) / STAGE1_PERIOD;
       if (stage2TimeLeft > 0) {
         stage2IntervalId = setTimeout(() => {
-          // console.log('2tik tik tik tik tik tik tik tik tik tik tik tik tik tik: ', stage2TimeLeft);
           setStage2TimeLeft(max(stage2TimeLeft - 0.5, 0));
         }, 500);
       }
+    } else if (swapLoadingStatus === 3) {
+      clearTimeout(stage1IntervalId);
+      clearTimeout(stage2IntervalId);
     } else {
       setSuccess(false);
     }
@@ -77,9 +98,22 @@ export default function SwapLoading(props: Props) {
     if (swapLoadingStatus === 1) {
       setProgress(((STAGE1_PERIOD - stage1TimeLeft) * STAGE1_MAX_PROGRESS) / STAGE1_PERIOD);
     } else if (swapLoadingStatus === 2) {
-      setProgress(
-        stage2StartProgress + ((STAGE2_PERIOD - stage2TimeLeft) * (100 - stage2StartProgress)) / STAGE2_PERIOD,
-      );
+      let newProgress;
+      if (swapStatus !== 1) {
+        newProgress = Math.min(
+          90,
+          stage2StartProgress + ((STAGE2_PERIOD - stage2TimeLeft) * (100 - stage2StartProgress) * 15) / STAGE2_PERIOD,
+        );
+        if (stage2TimeLeft === 0) {
+          message.info('We are tranferring tokens to the received address, please check your wallet later.');
+          dispatch(setSwapLoadingStatus(0));
+        }
+      } else {
+        newProgress =
+          stage2StartProgress + ((STAGE2_PERIOD - stage2TimeLeft) * (100 - stage2StartProgress)) / STAGE2_PERIOD;
+      }
+      setProgress(newProgress);
+    } else if (swapLoadingStatus === 3) {
     } else {
       setProgress(0);
     }
@@ -92,12 +126,101 @@ export default function SwapLoading(props: Props) {
     }
   }, [stage1TimeLeft, stage2TimeLeft, swapLoadingStatus]);
 
+  useEffect(() => {
+    if (progress === 100 || swapStatus === 1) {
+      setSuccess(true);
+      clearTimeout(stage1IntervalId);
+      clearTimeout(stage2IntervalId);
+      setStage1TimeLeft(STAGE1_PERIOD);
+      setStage2TimeLeft(STAGE2_PERIOD);
+    }
+  }, [progress, swapStatus]);
+
   const resetStatus = () => {
     clearTimeout(stage1IntervalId);
     clearTimeout(stage2IntervalId);
     setStage1TimeLeft(STAGE1_PERIOD);
     setStage2TimeLeft(STAGE2_PERIOD);
     stage2StartProgress = 0;
+    setSwapStatus(0);
+  };
+
+  const updateSwapStatus = async () => {
+    if (
+      !swapLoadingParams ||
+      !swapLoadingParams.swapType ||
+      isNaN(swapLoadingParams.amount) ||
+      isNaN(swapLoadingParams.oldBalance) ||
+      !swapLoadingParams.tokenType
+    ) {
+      return;
+    }
+
+    if (swapLoadingParams.swapType === 3) {
+      let rType;
+      if (swapLoadingParams.tokenType === 'rfis') {
+        rType = rSymbol.Fis;
+      } else if (swapLoadingParams.tokenType === 'rksm') {
+        rType = rSymbol.Ksm;
+      } else if (swapLoadingParams.tokenType === 'rdot') {
+        rType = rSymbol.Dot;
+      } else if (swapLoadingParams.tokenType === 'ratom') {
+        rType = rSymbol.Atom;
+      } else if (swapLoadingParams.tokenType === 'rsol') {
+        rType = rSymbol.Sol;
+      } else if (swapLoadingParams.tokenType === 'rmatic') {
+        rType = rSymbol.Matic;
+      } else if (swapLoadingParams.tokenType === 'reth') {
+        rType = rSymbol.Eth;
+      } else if (swapLoadingParams.tokenType === 'rbnb') {
+        rType = rSymbol.Bnb;
+      }
+
+      let data;
+      if (swapLoadingParams.tokenType === 'fis') {
+        const api = await stafiServer.createStafiApi();
+        const result = await api.query.system.account(swapLoadingParams.address);
+        if (result) {
+          data = result.data;
+        }
+      } else {
+        data = await commonClice.query_rBalances_account({ address: swapLoadingParams.address }, rType, (v) => {});
+      }
+      if (data) {
+        if (
+          numberUtil.fisAmountToHuman(Number(data.free) - Number(swapLoadingParams.oldBalance)) ===
+          Number(swapLoadingParams.amount)
+        ) {
+          setSwapStatus(1);
+        }
+      }
+    } else if (swapLoadingParams.swapType === 1) {
+      if (swapLoadingParams.tokenAbi && swapLoadingParams.tokenAddress) {
+        getAssetBalance(
+          swapLoadingParams.address,
+          cloneDeep(swapLoadingParams.tokenAbi),
+          swapLoadingParams.tokenAddress,
+          (v) => {
+            if (Number(v) === Number(swapLoadingParams.oldBalance) + Number(swapLoadingParams.amount)) {
+              setSwapStatus(1);
+            }
+          },
+        );
+      }
+    } else if (swapLoadingParams.swapType === 2) {
+      if (swapLoadingParams.tokenAbi && swapLoadingParams.tokenAddress) {
+        getBscAssetBalance(
+          swapLoadingParams.address,
+          cloneDeep(swapLoadingParams.tokenAbi),
+          swapLoadingParams.tokenAddress,
+          (v) => {
+            if (Number(v) === Number(swapLoadingParams.oldBalance) + Number(swapLoadingParams.amount)) {
+              setSwapStatus(1);
+            }
+          },
+        );
+      }
+    }
   };
 
   return (

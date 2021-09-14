@@ -1,4 +1,11 @@
 import config from '@config/index';
+import { query_rBalances_account as fis_query_rBalances_account } from '@features/FISClice';
+import { query_rBalances_account as atom_query_rBalances_account } from '@features/rATOMClice';
+import { query_rBalances_account as bnb_query_rBalances_account } from '@features/rBNBClice';
+import { query_rBalances_account as dot_query_rBalances_account } from '@features/rDOTClice';
+import { query_rBalances_account as ksm_query_rBalances_account } from '@features/rKSMClice';
+import { query_rBalances_account as matic_query_rBalances_account } from '@features/rMATICClice';
+import { query_rBalances_account as sol_query_rBalances_account } from '@features/rSOLClice';
 import { rSymbol, Symbol } from '@keyring/defaults';
 import { web3Enable, web3FromSource } from '@polkadot/extension-dapp';
 import { stringToHex, u8aToHex } from '@polkadot/util';
@@ -284,6 +291,20 @@ export const queryBalance =
     }
     dispatch(setFisAccounts(account2));
   };
+
+export const queryTokenBalances = (): AppThunk => async (dispatch, getState) => {
+  const account = getState().FISModule.fisAccount;
+  if (account) {
+    dispatch(createSubstrate(account));
+  }
+  dispatch(fis_query_rBalances_account());
+  dispatch(ksm_query_rBalances_account());
+  dispatch(dot_query_rBalances_account());
+  dispatch(atom_query_rBalances_account());
+  dispatch(sol_query_rBalances_account());
+  dispatch(matic_query_rBalances_account());
+  dispatch(bnb_query_rBalances_account());
+};
 
 export const transfer =
   (amountparam: number, cb?: Function): AppThunk =>

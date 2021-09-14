@@ -2,6 +2,7 @@ import config, { isdev } from '@config/index';
 import { createSlice } from '@reduxjs/toolkit';
 import BridgeServer from '@servers/bridge';
 import BscServer from '@servers/bsc/index';
+import EthServer from '@servers/eth/index';
 import { getLocalStorageItem, Keys, removeLocalStorageItem, setLocalStorageItem } from '@util/common';
 import numberUtil from '@util/numberUtil';
 import { message } from 'antd';
@@ -9,6 +10,7 @@ import Web3Utils from 'web3-utils';
 import { AppThunk } from '../store';
 
 const bscServer = new BscServer();
+const ethServer = new EthServer();
 const bridegServer = new BridgeServer();
 
 const BSCClice = createSlice({
@@ -348,7 +350,7 @@ export const getRBNBAssetBalance = (): AppThunk => (dispatch, getState) => {
 };
 
 export const getAssetBalance = (ethAddress: string, getTokenAbi: string, getTokenAddress: string, cb?: Function) => {
-  let web3 = bscServer.getWeb3();
+  let web3 = ethServer.getBSCWeb3();
   let contract = new web3.eth.Contract(getTokenAbi, getTokenAddress, {
     from: ethAddress,
   });

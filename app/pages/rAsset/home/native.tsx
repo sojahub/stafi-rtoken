@@ -166,12 +166,13 @@ export default function Index(props: any) {
       dispatch(reloadData(Symbol.Fis));
     }
   }, []);
-  
+
   useEffect(() => {
     if (fisAccount) {
-      dispatch(query_rBalances_account());
+      dispatch(reloadData(Symbol.Fis));
       dispatch(fis_query_rBalances_account());
       dispatch(dot_query_rBalances_account());
+      dispatch(query_rBalances_account());
       dispatch(atom_query_rBalances_account());
       // dispatch(sol_query_rBalances_account())
       dispatch(matic_query_rBalances_account());
@@ -191,7 +192,8 @@ export default function Index(props: any) {
       dispatch(matic_getUnbondCommission());
       dispatch(bnb_getUnbondCommission());
     }
-  }, [fisAccount]);
+  }, [fisAccount && fisAccount.address]);
+
   return (
     <Content>
       <Tag
