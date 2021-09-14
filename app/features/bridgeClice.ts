@@ -659,6 +659,9 @@ const updateSwapParamsOfBep = (dispatch: any, tokenType: string, tokenAmount: an
   } else if (tokenType === 'reth') {
     tokenAbi = bscServer.getRETHTokenAbi();
     tokenAddress = bscServer.getRETHTokenAddress();
+  } else if (tokenType === 'rbnb') {
+    tokenAbi = bscServer.getRTokenAbi();
+    tokenAddress = bscServer.getRBNBTokenAddress();
   }
 
   if (tokenAbi && tokenAddress) {

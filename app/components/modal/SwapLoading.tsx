@@ -158,7 +158,7 @@ export default function SwapLoading(props: Props) {
 
     if (swapLoadingParams.swapType === 3) {
       let rType;
-      if (swapLoadingParams.tokenType === 'rfis') {
+      if (swapLoadingParams.tokenType === 'rfis' || swapLoadingParams.tokenType === 'fis') {
         rType = rSymbol.Fis;
       } else if (swapLoadingParams.tokenType === 'rksm') {
         rType = rSymbol.Ksm;
@@ -187,8 +187,13 @@ export default function SwapLoading(props: Props) {
         data = await commonClice.query_rBalances_account({ address: swapLoadingParams.address }, rType, (v) => {});
       }
       if (data) {
+        console.log('sdfsdfsdf', Number(data.free));
+        console.log(
+          'sdfsdfsdf',
+          numberUtil.tokenAmountToHuman(Number(data.free) - Number(swapLoadingParams.oldBalance), rType),
+        );
         if (
-          numberUtil.fisAmountToHuman(Number(data.free) - Number(swapLoadingParams.oldBalance)) ===
+          numberUtil.tokenAmountToHuman(Number(data.free) - Number(swapLoadingParams.oldBalance), rType) ===
           Number(swapLoadingParams.amount)
         ) {
           setSwapStatus(1);
