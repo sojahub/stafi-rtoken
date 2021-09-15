@@ -1,8 +1,14 @@
 import { LoadingOutlined } from '@ant-design/icons';
 import { setSwapLoadingStatus } from '@features/bridgeClice';
-import { getAssetBalance as getBscAssetBalance, getAssetBalanceAll as getBep20AssetBalanceAll } from '@features/BSCClice';
+import {
+  getAssetBalance as getBscAssetBalance,
+  getAssetBalanceAll as getBep20AssetBalanceAll
+} from '@features/BSCClice';
 import CommonClice from '@features/commonClice';
-import { getAssetBalance as getEthAssetBalance, getAssetBalanceAll as getErc20AssetBalanceAll } from '@features/ETHClice';
+import {
+  getAssetBalance as getEthAssetBalance,
+  getAssetBalanceAll as getErc20AssetBalanceAll
+} from '@features/ETHClice';
 import { queryTokenBalances } from '@features/FISClice';
 import close_bold_svg from '@images/close_bold.svg';
 import complete_svg from '@images/complete.svg';
@@ -53,6 +59,7 @@ export default function SwapLoading(props: Props) {
 
   let stage1IntervalId: any;
   let stage2IntervalId: any;
+  let successTimeoutId: any;
   let stage2StartProgress = 0;
 
   useEffect(() => {
@@ -110,8 +117,10 @@ export default function SwapLoading(props: Props) {
           dispatch(setSwapLoadingStatus(0));
         }
       } else {
-        newProgress =
-          stage2StartProgress + ((STAGE2_PERIOD - stage2TimeLeft) * (100 - stage2StartProgress)) / STAGE2_PERIOD;
+        newProgress = Math.min(
+          98,
+          stage2StartProgress + ((STAGE2_PERIOD - stage2TimeLeft) * (100 - stage2StartProgress) * 15) / STAGE2_PERIOD,
+        );
       }
       setProgress(newProgress);
     } else if (swapLoadingStatus === 3) {
@@ -119,31 +128,41 @@ export default function SwapLoading(props: Props) {
       setProgress(0);
     }
     if (stage2TimeLeft === 0) {
-      setSuccess(true);
-      clearTimeout(stage1IntervalId);
-      clearTimeout(stage2IntervalId);
-      setStage1TimeLeft(STAGE1_PERIOD);
-      setStage2TimeLeft(STAGE2_PERIOD);
+      setStatusToSuccess();
     }
   }, [stage1TimeLeft, stage2TimeLeft, swapLoadingStatus]);
 
   useEffect(() => {
-    if (progress === 100 || swapStatus === 1) {
-      setSuccess(true);
-      clearTimeout(stage1IntervalId);
-      clearTimeout(stage2IntervalId);
-      setStage1TimeLeft(STAGE1_PERIOD);
-      setStage2TimeLeft(STAGE2_PERIOD);
+    if (progress === 100) {
+      setStatusToSuccess();
     }
-  }, [progress, swapStatus]);
+  }, [progress]);
+
+  useEffect(() => {
+    if (swapStatus === 1) {
+      successTimeoutId = setTimeout(() => {
+        setStatusToSuccess();
+      }, 20000);
+    }
+  }, [swapStatus]);
 
   const resetStatus = () => {
     clearTimeout(stage1IntervalId);
     clearTimeout(stage2IntervalId);
+    clearTimeout(successTimeoutId);
     setStage1TimeLeft(STAGE1_PERIOD);
     setStage2TimeLeft(STAGE2_PERIOD);
     stage2StartProgress = 0;
     setSwapStatus(0);
+  };
+
+  const setStatusToSuccess = () => {
+    setSuccess(true);
+    clearTimeout(stage1IntervalId);
+    clearTimeout(stage2IntervalId);
+    clearTimeout(successTimeoutId);
+    setStage1TimeLeft(STAGE1_PERIOD);
+    setStage2TimeLeft(STAGE2_PERIOD);
   };
 
   const updateSwapStatus = async () => {
@@ -152,7 +171,8 @@ export default function SwapLoading(props: Props) {
       !swapLoadingParams.swapType ||
       isNaN(swapLoadingParams.amount) ||
       isNaN(swapLoadingParams.oldBalance) ||
-      !swapLoadingParams.tokenType
+      !swapLoadingParams.tokenType ||
+      swapStatus === 1
     ) {
       return;
     }
