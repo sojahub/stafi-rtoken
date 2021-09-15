@@ -264,6 +264,7 @@ export const reloadData = (): AppThunk => async (dispatch, getState) => {
   dispatch(getTotalIssuance());
   dispatch(initValidatorStatus());
   dispatch(RefreshUnbonding());
+  dispatch(getPools());
 };
 export const createSubstrate =
   (account: any): AppThunk =>

@@ -143,6 +143,7 @@ export const reloadData = (): AppThunk => async (dispatch, getState) => {
   dispatch(getTotalIssuance());
   dispatch(rTokenRate());
   dispatch(accountUnbonds());
+  dispatch(getPools());
 };
 
 declare const ethereum: any;

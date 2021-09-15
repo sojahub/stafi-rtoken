@@ -19,7 +19,8 @@ import {
   processStatus,
   setLoading,
   setProcessSending,
-  setProcessSlider, setProcessType
+  setProcessSlider,
+  setProcessType
 } from './globalClice';
 import { add_Notice, findUuid, noticeStatus, noticesubType, noticeType } from './noticeClice';
 
@@ -169,6 +170,7 @@ export const reloadData = (): AppThunk => async (dispatch, getState) => {
   dispatch(balancesAll());
   dispatch(query_rBalances_account());
   dispatch(getTotalIssuance());
+  dispatch(getPools());
 };
 export const createSubstrate =
   (account: any): AppThunk =>
@@ -335,23 +337,31 @@ export const transfer =
                 );
                 asInBlock &&
                   dispatch(
-                    bound(address, tx, asInBlock, amount.toString(), selectedPool.poolPubkey, rSymbol.Ksm, (r: string) => {
-                      if (r == 'loading') {
-                        dispatch(add_KSM_stake_Notice(notice_uuid, amountparam, noticeStatus.Pending));
-                      } else {
-                        dispatch(setStakeHash(null));
-                      }
+                    bound(
+                      address,
+                      tx,
+                      asInBlock,
+                      amount.toString(),
+                      selectedPool.poolPubkey,
+                      rSymbol.Ksm,
+                      (r: string) => {
+                        if (r == 'loading') {
+                          dispatch(add_KSM_stake_Notice(notice_uuid, amountparam, noticeStatus.Pending));
+                        } else {
+                          dispatch(setStakeHash(null));
+                        }
 
-                      if (r == 'failure') {
-                        dispatch(add_KSM_stake_Notice(notice_uuid, amountparam, noticeStatus.Error));
-                      }
+                        if (r == 'failure') {
+                          dispatch(add_KSM_stake_Notice(notice_uuid, amountparam, noticeStatus.Error));
+                        }
 
-                      if (r == 'successful') {
-                        dispatch(add_KSM_stake_Notice(notice_uuid, amountparam, noticeStatus.Confirmed));
-                        cb && cb();
-                        dispatch(reloadData());
-                      }
-                    }),
+                        if (r == 'successful') {
+                          dispatch(add_KSM_stake_Notice(notice_uuid, amountparam, noticeStatus.Confirmed));
+                          cb && cb();
+                          dispatch(reloadData());
+                        }
+                      },
+                    ),
                   );
               }
             });
