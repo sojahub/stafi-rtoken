@@ -64,7 +64,7 @@ export default function Index(props: any) {
   }, [maticAccount && maticAccount.address]);
 
   useEffect(() => {
-    dispatch(connectMetamask(config.goerliChainId(), true));
+    dispatch(connectMetamask(config.ethChainId(), true));
     dispatch(monitoring_Method());
   }, []);
 

@@ -1,4 +1,5 @@
 import HomeCard from '@components/card/homeCard';
+import config from '@config/index';
 import { connectPolkadot_fis } from '@features/globalClice';
 import { connectMetamask, handleMaticAccount, monitoring_Method } from '@features/rMATICClice';
 import metamask from '@images/metamask.png';
@@ -7,8 +8,8 @@ import Button from '@shared/components/button/connect_button';
 import Modal from '@shared/components/modal/connectModal';
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { Redirect } from 'react-router';
 import Page_FIS from '../../rATOM/selectWallet_rFIS/index';
-import {Redirect} from 'react-router'
 import './index.scss';
 
 
@@ -34,7 +35,7 @@ export default function Inde(props:any){
   >
             
             <Button disabled={!!maticAccount } icon={metamask} onClick={()=>{ 
-                dispatch(connectMetamask('0x5'));
+                dispatch(connectMetamask(config.ethChainId()));
                 dispatch(monitoring_Method());
                 maticAccount && dispatch(handleMaticAccount(maticAccount.address));
                 if(fisAccount){

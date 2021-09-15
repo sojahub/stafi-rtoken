@@ -176,7 +176,7 @@ export default function Index(props: any) {
       // dispatch(sol_getUnbondCommission());
       dispatch(matic_getUnbondCommission());
     } else {
-      dispatch(connectMetamask(config.goerliChainId(), true));
+      dispatch(connectMetamask(config.ethChainId(), true));
     }
   };
 
@@ -323,7 +323,7 @@ export default function Index(props: any) {
           <Button
             icon={metamask}
             onClick={() => {
-              dispatch(connectMetamask(config.goerliChainId()));
+              dispatch(connectMetamask(config.ethChainId()));
               dispatch(monitoring_Method());
             }}>
             Connect to Metamask

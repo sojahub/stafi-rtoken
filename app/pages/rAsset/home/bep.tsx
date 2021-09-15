@@ -350,7 +350,7 @@ export default function Index(props: any) {
           <Button
             icon={metamask}
             onClick={() => {
-              dispatch(connectMetamask('0x61'));
+              dispatch(connectMetamask(config.bscChainId()));
               dispatch(monitoring_Method());
             }}>
             Connect to Metamask
