@@ -184,7 +184,7 @@ export default function SwapLoading(props: Props) {
           data = result.data;
         }
       } else {
-        data = await commonClice.query_rBalances_account({ address: swapLoadingParams.address }, rType, (v) => {});
+        data = await commonClice.query_rBalances_account({ address: swapLoadingParams.address }, rType, (v: any) => {});
       }
       if (data) {
         console.log('sdfsdfsdf', Number(data.free));
@@ -205,7 +205,7 @@ export default function SwapLoading(props: Props) {
           swapLoadingParams.address,
           cloneDeep(swapLoadingParams.tokenAbi),
           swapLoadingParams.tokenAddress,
-          (v) => {
+          (v: any) => {
             if (Number(v) === Number(swapLoadingParams.oldBalance) + Number(swapLoadingParams.amount)) {
               setSwapStatus(1);
             }
@@ -218,7 +218,7 @@ export default function SwapLoading(props: Props) {
           swapLoadingParams.address,
           cloneDeep(swapLoadingParams.tokenAbi),
           swapLoadingParams.tokenAddress,
-          (v) => {
+          (v: any) => {
             if (Number(v) === Number(swapLoadingParams.oldBalance) + Number(swapLoadingParams.amount)) {
               setSwapStatus(1);
             }

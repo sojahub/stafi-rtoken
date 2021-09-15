@@ -5,7 +5,11 @@ import Web3 from 'web3';
 
 declare const window: any;
 declare const ethereum: any;
+
 let web3Instance:any=null;
+let ethWeb3Instance:any=null;
+let bscWeb3Instance:any=null;
+
 export default class Index{
   getWeb3(){
     if (web3Instance) {
@@ -25,6 +29,26 @@ export default class Index{
   
     return web3Instance;
   }
+  getETHWeb3() {
+    if (ethWeb3Instance) {
+      return ethWeb3Instance;
+    }
+
+    let provider = new Web3.providers.WebsocketProvider(config.ethProviderUrl());
+    ethWeb3Instance = new Web3(provider);
+    return ethWeb3Instance;
+  }
+
+  getBSCWeb3() {
+    if (bscWeb3Instance) {
+      return bscWeb3Instance;
+    }
+
+    let provider = new Web3.providers.WebsocketProvider(config.bscProviderUrl());
+    bscWeb3Instance = new Web3(provider);
+    return bscWeb3Instance;
+  }
+  
   getRETHTokenAddress(){
     return config.rETHTokenAddress();
   }

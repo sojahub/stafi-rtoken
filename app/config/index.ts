@@ -155,6 +155,20 @@ export default {
   solWalletProviderUrl: () => {
     return 'https://www.sollet.io';
   },
+  ethProviderUrl: () => {
+    if (!isdev()) {
+      return 'wss://eth-mainnet.ws.alchemyapi.io/v2/bkdml_X06uuwFV4-KONSO3NoPHkIIv8Z';
+    } else {
+      return 'wss://eth-goerli.alchemyapi.io/v2/O4w9rgihCPcRvH1IDF2BHLt5YSzSI9oJ';
+    }
+  },
+  bscProviderUrl: () => {
+    if (!isdev()) {
+      return 'wss://bsc-ws-node.nariox.org:443';
+    } else {
+      return 'wss://speedy-nodes-nyc.moralis.io/5a284cffde906505c6eb2af8/bsc/testnet/ws';
+    }
+  },
   api: () => {
     if (!isdev()) {
       return 'https://rtoken-api.stafi.io';
