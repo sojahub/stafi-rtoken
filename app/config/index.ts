@@ -164,7 +164,7 @@ export default {
   },
   bscProviderUrl: () => {
     if (!isdev()) {
-      return 'wss://bsc-ws-node.nariox.org:443';
+      return 'wss://speedy-nodes-nyc.moralis.io/5a284cffde906505c6eb2af8/bsc/mainnet/ws';
     } else {
       return 'wss://speedy-nodes-nyc.moralis.io/5a284cffde906505c6eb2af8/bsc/testnet/ws';
     }
