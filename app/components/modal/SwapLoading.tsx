@@ -2,7 +2,7 @@ import { LoadingOutlined } from '@ant-design/icons';
 import { setSwapLoadingStatus } from '@features/bridgeClice';
 import { getAssetBalance as getBscAssetBalance } from '@features/BSCClice';
 import CommonClice from '@features/commonClice';
-import { getAssetBalance } from '@features/ETHClice';
+import { getAssetBalance as getEthAssetBalance } from '@features/ETHClice';
 import close_bold_svg from '@images/close_bold.svg';
 import complete_svg from '@images/complete.svg';
 import { rSymbol } from '@keyring/defaults';
@@ -201,7 +201,7 @@ export default function SwapLoading(props: Props) {
       }
     } else if (swapLoadingParams.swapType === 1) {
       if (swapLoadingParams.tokenAbi && swapLoadingParams.tokenAddress) {
-        getAssetBalance(
+        getEthAssetBalance(
           swapLoadingParams.address,
           cloneDeep(swapLoadingParams.tokenAbi),
           swapLoadingParams.tokenAddress,
@@ -210,6 +210,7 @@ export default function SwapLoading(props: Props) {
               setSwapStatus(1);
             }
           },
+          true,
         );
       }
     } else if (swapLoadingParams.swapType === 2) {
@@ -223,6 +224,7 @@ export default function SwapLoading(props: Props) {
               setSwapStatus(1);
             }
           },
+          true,
         );
       }
     }

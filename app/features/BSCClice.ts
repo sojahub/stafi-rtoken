@@ -349,8 +349,14 @@ export const getRBNBAssetBalance = (): AppThunk => (dispatch, getState) => {
   }
 };
 
-export const getAssetBalance = (ethAddress: string, getTokenAbi: string, getTokenAddress: string, cb?: Function) => {
-  let web3 = ethServer.getBSCWeb3();
+export const getAssetBalance = (
+  ethAddress: string,
+  getTokenAbi: string,
+  getTokenAddress: string,
+  cb?: Function,
+  useCustomProvider?: boolean,
+) => {
+  let web3 = useCustomProvider ? ethServer.getBSCWeb3() : ethServer.getWeb3();
   let contract = new web3.eth.Contract(getTokenAbi, getTokenAddress, {
     from: ethAddress,
   });
