@@ -51,7 +51,7 @@ export default function Index(props: any) {
             <div className='item_title'>
               <label>TxHash</label>
 
-              <a href={config.txHashAndBlockhashURl.maticURL} target='_blank'>
+              <a href={config.txHashAndBlockhashURl.bnbURL} target='_blank'>
                 How to get TxHash
               </a>
             </div>

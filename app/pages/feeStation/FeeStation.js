@@ -392,7 +392,7 @@ export default function FeeStation() {
       dispatch(connectAtomjs(() => {}));
     }
     if (needConnectWalletName === 'ETH') {
-      dispatch(connectMetamask(config.goerliChainId(), false));
+      dispatch(connectMetamask(config.ethChainId(), false));
     }
   };
 

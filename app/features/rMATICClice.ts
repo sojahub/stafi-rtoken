@@ -21,7 +21,8 @@ import {
   processStatus,
   setLoading,
   setProcessSending,
-  setProcessSlider, setProcessType
+  setProcessSlider,
+  setProcessType
 } from './globalClice';
 import { add_Notice, findUuid, noticeStatus, noticesubType, noticeType } from './noticeClice';
 import { setIsloadMonitoring } from './rETHClice';
@@ -173,6 +174,7 @@ export const reloadData = (): AppThunk => async (dispatch, getState) => {
   dispatch(query_rBalances_account());
   dispatch(getTotalIssuance());
   dispatch(accountUnbonds());
+  dispatch(getPools());
 };
 
 declare const window: any;
@@ -690,10 +692,10 @@ export const getBlock =
       }
 
       let amount = 0;
-    // if (!poolData) {
-    //   // message.error("The destination address in the transaction does not match the pool address");
-    //   return;
-    // }
+      // if (!poolData) {
+      //   // message.error("The destination address in the transaction does not match the pool address");
+      //   return;
+      // }
 
       const decoder = new InputDataDecoder(maticServer.getTokenAbi());
       const result2 = decoder.decodeData(result.input);
@@ -900,10 +902,9 @@ export const rTokenLedger = (): AppThunk => async (dispatch, getState) => {
 };
 const handleStakerApr =
   (currentRate?: any, lastRate?: any): AppThunk =>
-    async (dispatch, getState) => {
+  async (dispatch, getState) => {
     if (currentRate && lastRate) {
-      const apr =
-        NumberUtil.handleEthRoundToFixed(((currentRate - lastRate) / 1000000000000 / 7) * 365.25 * 100) + '%';
+      const apr = NumberUtil.handleEthRoundToFixed(((currentRate - lastRate) / 1000000000000 / 7) * 365.25 * 100) + '%';
       dispatch(setStakerApr(apr));
     } else {
       dispatch(setStakerApr('13.7%'));

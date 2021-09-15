@@ -278,7 +278,7 @@ export default function MintOverview() {
             icon={metamask}
             width={'400px'}
             onClick={() => {
-              dispatch(connectMetamask(config.goerliChainId()));
+              dispatch(connectMetamask(config.ethChainId()));
               dispatch(monitoring_Method());
             }}>
             Connect to MetaMask

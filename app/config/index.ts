@@ -177,6 +177,20 @@ export default {
   solWalletProviderUrl: () => {
     return 'https://www.sollet.io';
   },
+  ethProviderUrl: () => {
+    if (!isdev()) {
+      return 'wss://eth-mainnet.ws.alchemyapi.io/v2/bkdml_X06uuwFV4-KONSO3NoPHkIIv8Z';
+    } else {
+      return 'wss://eth-goerli.alchemyapi.io/v2/O4w9rgihCPcRvH1IDF2BHLt5YSzSI9oJ';
+    }
+  },
+  bscProviderUrl: () => {
+    if (!isdev()) {
+      return 'wss://speedy-nodes-nyc.moralis.io/5a284cffde906505c6eb2af8/bsc/mainnet/ws';
+    } else {
+      return 'wss://speedy-nodes-nyc.moralis.io/5a284cffde906505c6eb2af8/bsc/testnet/ws';
+    }
+  },
   api: () => {
     if (!isdev()) {
       return 'https://rtoken-api.stafi.io';
@@ -413,6 +427,7 @@ export default {
     atomURL: 'https://docs.stafi.io/rtoken-app/ratom-solution/staker-guide/recovery-function#2-the-way-to-get-txhash',
     solURL: 'https://docs.stafi.io/rproduct/ratom-solution/staker-guide/recovery-function#2-the-way-to-get-txhash',
     maticURL: 'https://docs.stafi.io/rtoken-app/rmatic-solution/staker-guide/recovery-function#2-how-to-get-txhash',
+    bnbURL: 'https://docs.stafi.io/rtoken-app/rbnb-solution/staker-guide/recovery-function#2-how-to-get-txhash',
   },
   rAtomChainId: () => {
     if (!isdev()) {
