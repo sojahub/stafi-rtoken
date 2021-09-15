@@ -1,8 +1,9 @@
 import { LoadingOutlined } from '@ant-design/icons';
 import { setSwapLoadingStatus } from '@features/bridgeClice';
-import { getAssetBalance as getBscAssetBalance } from '@features/BSCClice';
+import { getAssetBalance as getBscAssetBalance, getAssetBalanceAll as getBep20AssetBalanceAll } from '@features/BSCClice';
 import CommonClice from '@features/commonClice';
-import { getAssetBalance as getEthAssetBalance } from '@features/ETHClice';
+import { getAssetBalance as getEthAssetBalance, getAssetBalanceAll as getErc20AssetBalanceAll } from '@features/ETHClice';
+import { queryTokenBalances } from '@features/FISClice';
 import close_bold_svg from '@images/close_bold.svg';
 import complete_svg from '@images/complete.svg';
 import { rSymbol } from '@keyring/defaults';
@@ -187,16 +188,12 @@ export default function SwapLoading(props: Props) {
         data = await commonClice.query_rBalances_account({ address: swapLoadingParams.address }, rType, (v: any) => {});
       }
       if (data) {
-        console.log('sdfsdfsdf', Number(data.free));
-        console.log(
-          'sdfsdfsdf',
-          numberUtil.tokenAmountToHuman(Number(data.free) - Number(swapLoadingParams.oldBalance), rType),
-        );
         if (
           numberUtil.tokenAmountToHuman(Number(data.free) - Number(swapLoadingParams.oldBalance), rType) ===
           Number(swapLoadingParams.amount)
         ) {
           setSwapStatus(1);
+          dispatch(queryTokenBalances());
         }
       }
     } else if (swapLoadingParams.swapType === 1) {
@@ -208,6 +205,7 @@ export default function SwapLoading(props: Props) {
           (v: any) => {
             if (Number(v) === Number(swapLoadingParams.oldBalance) + Number(swapLoadingParams.amount)) {
               setSwapStatus(1);
+              dispatch(getErc20AssetBalanceAll());
             }
           },
           true,
@@ -222,6 +220,7 @@ export default function SwapLoading(props: Props) {
           (v: any) => {
             if (Number(v) === Number(swapLoadingParams.oldBalance) + Number(swapLoadingParams.amount)) {
               setSwapStatus(1);
+              dispatch(getBep20AssetBalanceAll());
             }
           },
           true,

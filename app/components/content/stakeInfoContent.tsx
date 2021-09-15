@@ -11,6 +11,7 @@ import rMatic_stafi_svg from '@images/selected_r_matic.svg';
 import rSOL_stafi_svg from '@images/selected_r_sol.svg';
 import Button from '@shared/components/button/button';
 import NumberUtil from '@util/numberUtil';
+import { message } from 'antd';
 import React, { useState } from 'react';
 import Modal from '../modal/swapModal';
 import TradePopover from '../tradePopover';
@@ -77,6 +78,8 @@ export default function Index(props: Props) {
                     window.open(
                       'https://quickswap.exchange/#/swap?inputCurrency=0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270&outputCurrency=0x9f28e2455f9ffcfac9ebd6084853417362bc5dbb',
                     );
+                  } else if (props.type === 'rBNB') {
+                    message.info('DEX Pool for rBNB will be open soon.');
                   } else {
                     setVisibleModal(true);
                   }
