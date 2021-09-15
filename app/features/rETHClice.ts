@@ -246,7 +246,11 @@ export const connectMetamask =
           }
         } else if (ethereum.chainId != targetChainId) {
           if (!isAutoConnect) {
-            message.warning('Please connect to Ethereum Main Network!');
+            if (targetChainId === config.ethChainId()) {
+              message.warning('Please connect to Ethereum Main Network!');
+            } else if (targetChainId === config.bscChainId()) {
+              message.warning('Please connect to BSC Main Network!');
+            }
           }
           return;
         }
