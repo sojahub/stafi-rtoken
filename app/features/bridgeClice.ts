@@ -593,8 +593,8 @@ export const getRtokenPriceList = (): AppThunk => async (dispatch, getState) => 
 };
 
 const updateSwapParamsOfErc = (dispatch: any, tokenType: string, tokenAmount: any, ethAddress: string) => {
-  let tokenAbi;
-  let tokenAddress;
+  let tokenAbi: any;
+  let tokenAddress: any;
   if (tokenType === 'fis') {
     tokenAbi = fisServer.getFISTokenAbi();
     tokenAddress = fisServer.getFISTokenAddress();
@@ -619,7 +619,7 @@ const updateSwapParamsOfErc = (dispatch: any, tokenType: string, tokenAmount: an
   }
 
   if (tokenAbi && tokenAddress) {
-    getAssetBalance(ethAddress, tokenAbi, tokenAddress, (v) => {
+    getAssetBalance(ethAddress, tokenAbi, tokenAddress, (v: any) => {
       dispatch(
         setSwapLoadingParams({
           address: ethAddress,
@@ -636,8 +636,8 @@ const updateSwapParamsOfErc = (dispatch: any, tokenType: string, tokenAmount: an
 };
 
 const updateSwapParamsOfBep = (dispatch: any, tokenType: string, tokenAmount: any, ethAddress: string) => {
-  let tokenAbi;
-  let tokenAddress;
+  let tokenAbi: any;
+  let tokenAddress: any;
   if (tokenType === 'fis') {
     tokenAbi = bscServer.getFISTokenAbi();
     tokenAddress = bscServer.getFISTokenAddress();
@@ -665,7 +665,7 @@ const updateSwapParamsOfBep = (dispatch: any, tokenType: string, tokenAmount: an
   }
 
   if (tokenAbi && tokenAddress) {
-    getBscAssetBalance(ethAddress, tokenAbi, tokenAddress, (v) => {
+    getBscAssetBalance(ethAddress, tokenAbi, tokenAddress, (v: any) => {
       dispatch(
         setSwapLoadingParams({
           address: ethAddress,

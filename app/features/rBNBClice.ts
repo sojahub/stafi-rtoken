@@ -754,7 +754,7 @@ export const rTokenLedger = (): AppThunk => async (dispatch, getState) => {
 const handleStakerApr =
   (currentRate?: any, lastRate?: any): AppThunk =>
   async (dispatch, getState) => {
-    dispatch(setStakerApr('13.4%'));
+    dispatch(setStakerApr('9.7%'));
   };
 
 export const checkAddress = (address: string) => {
