@@ -343,7 +343,7 @@ export default {
   },
   rBNBBep20TokenAddress: () => {
     if (!isdev()) {
-      return '';
+      return '0xf027e525d491ef6ffcc478555fbb3cfabb3406a6';
     } else {
       return '0xa8cc91264ddd4430b3e5b95d1ea701dcee734f14';
     }
