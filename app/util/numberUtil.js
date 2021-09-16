@@ -1,6 +1,31 @@
 import { rSymbol } from '@keyring/defaults';
-import { divide, floor } from 'mathjs';
+import {
+  create,
+  divideDependencies,
+  floorDependencies,
+  maxDependencies,
+  minDependencies,
+  multiplyDependencies,
+  subtractDependencies
+} from 'mathjs';
 import Web3Utils from 'web3-utils';
+
+// mathjs optimization
+const config = {
+  // optionally, you can specify configuration
+}
+// Create just the functions we need
+const { divide, floor, max, min, multiply, subtract } = create(
+  {
+    divideDependencies,
+    floorDependencies,
+    maxDependencies,
+    minDependencies,
+    multiplyDependencies,
+    subtractDependencies,
+  },
+  config,
+);
 
 export default {
   // Add floating point numbers
@@ -67,7 +92,7 @@ export default {
 
     r1 = Number(arg1.toString().replace('.', ''));
     r2 = Number(arg2.toString().replace('.', ''));
-    return (r1 / r2) * pow(10, t2 - t1);
+    return (r1 / r2) * Math.pow(10, t2 - t1);
   },
 
   // Round down to 6 decimal places. Note that the last decimal point of 0 will be discarded
@@ -340,5 +365,20 @@ export default {
       return '--';
     }
     return percentage * 100 + '%';
+  },
+  mul: function (x, y) {
+    return multiply(x, y);
+  },
+  max: function (x, y) {
+    return max(x, y);
+  },
+  min: function (x, y) {
+    return min(x, y);
+  },
+  divide: function (x, y) {
+    return divide(x, y);
+  },
+  sub: function (x, y) {
+    return subtract(x, y);
   },
 };

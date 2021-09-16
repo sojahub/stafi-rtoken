@@ -25,7 +25,6 @@ import Button from '@shared/components/button/connect_button';
 import Modal from '@shared/components/modal/connectModal';
 import numberUtil from '@util/numberUtil';
 import { useInterval } from '@util/utils';
-import { multiply } from 'mathjs';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useParams } from 'react-router-dom';
@@ -95,7 +94,7 @@ export default function MintOverview() {
       });
       if (unitPrice) {
         const rTokenTotalReward = numberUtil.tokenAmountToHuman(actData.total_rtoken_amount, Number(tokenSymbol));
-        res = numberUtil.amount_format(multiply(unitPrice.price, rTokenTotalReward));
+        res = numberUtil.amount_format(numberUtil.mul(unitPrice.price, rTokenTotalReward));
       }
     }
     return res;

@@ -7,7 +7,6 @@ import numberUtil from '@util/numberUtil';
 import rpc from '@util/rpc';
 import web3Util from '@util/web3Util';
 import { cloneDeep } from 'lodash';
-import { divide, max, min, multiply } from 'mathjs';
 
 const stafiServer = new StafiServer();
 const ethServer = new EthServer();
@@ -190,9 +189,9 @@ export default class Index {
           if (act.toJSON()) {
             const actJson = act.toJSON();
             actJson.nowBlock = nowBlock;
-            let days = divide(actJson.end - actJson.begin, 14400);
+            let days: any = numberUtil.divide(actJson.end - actJson.begin, 14400);
             actJson.durationInDays = Math.round(days * 10) / 10;
-            actJson.remainingTime = formatDuration(max(0, actJson.end - nowBlock) * 6);
+            actJson.remainingTime = formatDuration(numberUtil.max(0, actJson.end - nowBlock) * 6);
             actJson.endTimeStamp = Date.now() + (actJson.end - nowBlock) * 6000;
             actJson.mintedValue = '--';
             acts.push(actJson);
@@ -230,9 +229,9 @@ export default class Index {
           if (act.toJSON()) {
             const actJson = act.toJSON();
             actJson.nowBlock = nowBlock;
-            let days = divide(actJson.end - actJson.begin, 14400);
+            let days: any = numberUtil.divide(actJson.end - actJson.begin, 14400);
             actJson.durationInDays = Math.round(days * 10) / 10;
-            actJson.remainingTime = formatDuration(max(0, actJson.end - nowBlock) * 6);
+            actJson.remainingTime = formatDuration(numberUtil.max(0, actJson.end - nowBlock) * 6);
             actJson.endTimeStamp = Date.now() + (actJson.end - nowBlock) * 6000;
             actJson.mintedValue = '--';
             acts.push(actJson);
@@ -351,7 +350,7 @@ export default class Index {
               response.myMintRatio = 0;
             }
           } else {
-            response.myMintRatio = min(
+            response.myMintRatio = numberUtil.min(
               100,
               Math.round(
                 ((response.myMint * 100) /
@@ -362,7 +361,7 @@ export default class Index {
           }
 
           if (fisPrice && fisPrice !== '--' && !isNaN(fisPrice)) {
-            const mintValue = multiply(formatTotalReward, fisPrice);
+            const mintValue = numberUtil.mul(formatTotalReward, fisPrice);
             response.myReward = Math.round(mintValue * 1000000) / 1000000;
           } else {
             response.myReward = '--';
@@ -464,7 +463,7 @@ export default class Index {
               response.myMintRatio = 0;
             }
           } else {
-            response.myMintRatio = min(
+            response.myMintRatio = numberUtil.min(
               100,
               Math.round(
                 ((formatTotalReward * 100) / numberUtil.tokenAmountToHuman(actJson.total_rtoken_amount, rSymbol.Eth)) *
@@ -474,7 +473,7 @@ export default class Index {
           }
 
           if (fisPrice && fisPrice !== '--' && !isNaN(fisPrice)) {
-            const mintValue = multiply(formatTotalReward, fisPrice);
+            const mintValue = numberUtil.mul(formatTotalReward, fisPrice);
             response.myReward = Math.round(mintValue * 1000000) / 1000000;
           } else {
             response.myReward = '--';
@@ -582,7 +581,7 @@ export default class Index {
           response.myMintRatio = 0;
         }
       } else {
-        response.myMintRatio = min(100, Math.round(((response.userStakedAmount * 100) / stakeTokenSupply) * 10) / 10);
+        response.myMintRatio = numberUtil.min(100, Math.round(((response.userStakedAmount * 100) / stakeTokenSupply) * 10) / 10);
       }
 
       const userClaimableReward = await lockContract.methods.getUserClaimableReward(poolIndex, ethAddress).call();
@@ -597,7 +596,7 @@ export default class Index {
         Number(web3.utils.fromWei(userInfo.claimedReward, 'ether'));
 
       // console.log('sdfsdf', web3.utils.fromWei(userInfo.claimedReward, 'ether'));
-      response.fisLockedReward = max(
+      response.fisLockedReward = numberUtil.max(
         0,
         Number(response.fisTotalReward) -
           Number(response.fisClaimableReward) -

@@ -3,9 +3,8 @@ import { reloadData, setProcessSlider } from '@features/globalClice';
 import { rTokenLedger, rTokenRate, transfer } from '@features/rBNBClice';
 import { Symbol } from '@keyring/defaults';
 import { ratioToAmount } from '@util/common';
-import NumberUtil from '@util/numberUtil';
+import { default as numberUtil, default as NumberUtil } from '@util/numberUtil';
 import { message } from 'antd';
-import { max, subtract } from 'mathjs';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import './index.scss';
@@ -30,7 +29,7 @@ export default function Index(props: any) {
       const balance = ethAccount ? ethAccount.balance : '--';
       let transferrableAmount = '--';
       if (!isNaN(balance)) {
-        transferrableAmount = max(0, subtract(balance, 0.0003));
+        transferrableAmount = numberUtil.max(0, numberUtil.sub(balance, 0.0003));
       }
 
       return {
