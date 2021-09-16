@@ -4,7 +4,6 @@ import StafiServer from '@servers/stafi';
 import { formatDuration } from '@util/dateUtil';
 import numberUtil from '@util/numberUtil';
 import rpc from '@util/rpc';
-import { divide, max, min, multiply } from 'mathjs';
 
 const stafiServer = new StafiServer();
 
@@ -32,9 +31,9 @@ export default class Index {
           if (act.toJSON()) {
             const actJson = act.toJSON();
             actJson.nowBlock = nowBlock;
-            let days = divide(actJson.end - actJson.begin, 14400);
+            let days: any = numberUtil.divide(actJson.end - actJson.begin, 14400);
             actJson.durationInDays = Math.round(days * 10) / 10;
-            actJson.remainingTime = formatDuration(max(0, actJson.end - nowBlock) * 6);
+            actJson.remainingTime = formatDuration(numberUtil.max(0, actJson.end - nowBlock) * 6);
             actJson.endTimeStamp = Date.now() + (actJson.end - nowBlock) * 6000;
             actJson.mintedValue = '--';
             acts.push(actJson);
@@ -72,9 +71,9 @@ export default class Index {
           if (act.toJSON()) {
             const actJson = act.toJSON();
             actJson.nowBlock = nowBlock;
-            let days = divide(actJson.end - actJson.begin, 14400);
+            let days: any = numberUtil.divide(actJson.end - actJson.begin, 14400);
             actJson.durationInDays = Math.round(days * 10) / 10;
-            actJson.remainingTime = formatDuration(max(0, actJson.end - nowBlock) * 6);
+            actJson.remainingTime = formatDuration(numberUtil.max(0, actJson.end - nowBlock) * 6);
             actJson.endTimeStamp = Date.now() + (actJson.end - nowBlock) * 6000;
             actJson.mintedValue = '--';
             acts.push(actJson);
@@ -193,7 +192,7 @@ export default class Index {
               response.myMintRatio = 0;
             }
           } else {
-            response.myMintRatio = min(
+            response.myMintRatio = numberUtil.min(
               100,
               Math.round(
                 ((response.myMint * 100) /
@@ -204,7 +203,7 @@ export default class Index {
           }
 
           if (fisPrice && fisPrice !== '--' && !isNaN(fisPrice)) {
-            const mintValue = multiply(formatTotalReward, fisPrice);
+            const mintValue = numberUtil.mul(formatTotalReward, fisPrice);
             response.myReward = Math.round(mintValue * 1000000) / 1000000;
           } else {
             response.myReward = '--';
@@ -306,7 +305,7 @@ export default class Index {
               response.myMintRatio = 0;
             }
           } else {
-            response.myMintRatio = min(
+            response.myMintRatio = numberUtil.min(
               100,
               Math.round(
                 ((formatTotalReward * 100) / numberUtil.tokenAmountToHuman(actJson.total_rtoken_amount, rSymbol.Eth)) *
@@ -316,7 +315,7 @@ export default class Index {
           }
 
           if (fisPrice && fisPrice !== '--' && !isNaN(fisPrice)) {
-            const mintValue = multiply(formatTotalReward, fisPrice);
+            const mintValue = numberUtil.mul(formatTotalReward, fisPrice);
             response.myReward = Math.round(mintValue * 1000000) / 1000000;
           } else {
             response.myReward = '--';
@@ -341,4 +340,5 @@ export default class Index {
       return response;
     }
   }
+  
 }

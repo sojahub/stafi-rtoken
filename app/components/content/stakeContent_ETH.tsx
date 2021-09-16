@@ -5,7 +5,6 @@ import A from '@shared/components/button/a';
 import Button from '@shared/components/button/button';
 import Input from '@shared/components/input/amountInput';
 import numberUtil from '@util/numberUtil';
-import { multiply } from 'mathjs';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 import './index.scss';
@@ -48,7 +47,7 @@ export default function Index(props: Props) {
     }
     return (
       Math.round(
-        multiply(
+        numberUtil.mul(
           Number(props.amount),
           numberUtil.tokenMintRewardRateToHuman(mintRewardAct?.reward_rate, getRsymbolByTokenTitle(props.type)),
         ) * 1000000,
