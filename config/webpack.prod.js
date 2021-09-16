@@ -45,26 +45,6 @@ const options = {
       }),
       new CssMinimizerPlugin(),
     ],
-
-    // splitChunks: {
-    //   cacheGroups: {
-    //     common: {
-    //       chunks: 'initial',
-    //       name: 'commons',
-    //       minSize: 30,
-    //       minChunks: 2,
-    //     },
-
-    //     vender: {
-    //       priority: 1,
-    //       test: /node_modules/,
-    //       chunks: 'initial',
-    //       name: 'vendors',
-    //       minSize: 0,
-    //       minChunks: 1,
-    //     },
-    //   },
-    // },
     splitChunks: {
       chunks: 'all',
       cacheGroups: {
@@ -97,7 +77,7 @@ const plugins = [
     name: 'stafi-rtoken',
     color: 'green',
   }),
-  new BundleAnalyzerPlugin({ analyzerPort: 8919 }),
+  // new BundleAnalyzerPlugin({ analyzerPort: 8919 }),
 ];
 webpackConfig.plugins = [...webpackConfig.plugins, ...plugins];
 
