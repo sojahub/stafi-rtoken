@@ -2,8 +2,11 @@ const WebpackBar = require('webpackbar');
 const webpackConfigCreator = require('./webpack.common-new');
 const TerserJsPlugin = require('terser-webpack-plugin');
 const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
+// bundle analyzer
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
-// const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+// gzip
+const CompressionPlugin = require('compression-webpack-plugin');
+
 // const merge = require("webpack-merge");
 // const optimizeCss = require('optimize-css-assets-webpack-plugin');
 
@@ -30,9 +33,13 @@ const options = {
   optimization: {
     minimizer: [
       new TerserJsPlugin({
+        minify: TerserJsPlugin.uglifyJsMinify,
         terserOptions: {
           compress: {
             drop_console: false,
+          },
+          format: {
+            comments: false,
           },
         },
       }),
@@ -66,6 +73,13 @@ const options = {
 const webpackConfig = webpackConfigCreator(options);
 
 const plugins = [
+  new CompressionPlugin({
+    filename: '[path][base].gz',
+    algorithm: 'gzip',
+    test: new RegExp('\\.(js|css)$'),
+    threshold: 10240,
+    minRatio: 0.8,
+  }),
   new WebpackBar({
     name: 'stafi-rtoken',
     color: 'green',
