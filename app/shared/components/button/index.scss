@@ -29,8 +29,8 @@
   padding: 12px 23px;
   font-size: 16px;
   font-weight: bold;
-  background-color: #00f3ab;
-  color: #23292f;
+  background-color: #00f3ab !important;
+  color: #23292f !important;
   border: 0px;
   display: flex;
   justify-content: center;
@@ -50,8 +50,8 @@
 .stafi_button[disabled]:hover,
 .stafi_button[disabled]:focus,
 .stafi_button[disabled]:active {
-  background-color: #00f3ab;
-  color: #23292f;
+  background-color: #00f3ab !important;
+  color: #23292f !important;
   opacity: 0.4;
 }
 .stafi_button.ellipse {
@@ -81,8 +81,8 @@
 .stafi_ghost_button,
 .stafi_ghost_button:hover {
   border-radius: 13.44px;
-  border-color: #00f3ab;
-  color: #00f3ab;
+  border-color: #00f3ab !important;
+  color: #00f3ab !important;
   font-weight: bold;
   font-size: 12px;
   height: 28px;
@@ -90,8 +90,8 @@
 .stafi_ghost_button:disabled,
 .stafi_ghost_button:disabled:hover {
   border-radius: 13.44px;
-  border-color: #00f3ab;
-  color: #00f3ab;
+  border-color: #00f3ab !important;
+  color: #00f3ab !important;
   font-weight: bold;
   font-size: 12px;
   height: 28px;
