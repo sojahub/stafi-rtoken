@@ -210,9 +210,9 @@ export default function MintPrograms(props: any) {
     setMintDataList(list);
   }, [unitPriceList, rDOTActs, rMaticActs, rFISActs, rKSMActs, rATOMActs, rBNBActs, rETHActs]);
 
-  // useInterval(() => {
-  //   setMintDataList([...mintDataList]);
-  // }, 1000);
+  useInterval(() => {
+    setMintDataList([...mintDataList]);
+  }, 1000);
 
   return (
     <Card className='stafi_rpool_mint'>
