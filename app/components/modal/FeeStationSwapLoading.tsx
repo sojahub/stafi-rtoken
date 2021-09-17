@@ -3,9 +3,9 @@ import { setSwapLoadingStatus } from '@features/feeStationClice';
 import close_bold_svg from '@images/close_bold.svg';
 import complete_svg from '@images/complete.svg';
 import FeeStationServer from '@servers/feeStation';
+import numberUtil from '@util/numberUtil';
 import { useInterval } from '@util/utils';
 import { message, Modal, Progress, Spin } from 'antd';
-import { max } from 'mathjs';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import './SwapLoading.scss';
@@ -64,7 +64,7 @@ export default function FeeStationSwapLoading(props: Props) {
     if (swapLoadingStatus === 1) {
       if (stage1TimeLeft > 0) {
         stage1IntervalId = setTimeout(() => {
-          setStage1TimeLeft(max(stage1TimeLeft - 0.5, 0));
+          setStage1TimeLeft(numberUtil.max(stage1TimeLeft - 0.5, 0));
         }, 500);
       }
     } else if (swapLoadingStatus === 2) {
@@ -72,7 +72,7 @@ export default function FeeStationSwapLoading(props: Props) {
       stage2StartProgress = ((STAGE1_PERIOD - stage1TimeLeft) * STAGE1_MAX_PROGRESS) / STAGE1_PERIOD;
       if (stage2TimeLeft > 0) {
         stage2IntervalId = setTimeout(() => {
-          setStage2TimeLeft(max(stage2TimeLeft - 0.5, 0));
+          setStage2TimeLeft(numberUtil.max(stage2TimeLeft - 0.5, 0));
         }, 500);
       }
     } else if (swapLoadingStatus === 3) {

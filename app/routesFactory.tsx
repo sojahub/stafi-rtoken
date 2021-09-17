@@ -1,112 +1,137 @@
 import authorizedRoute from '@components/route/authorizedRoute';
 import { rSymbol, Symbol } from '@keyring/defaults';
-import FeeStationTemplate from '@servers/feeStation/template';
 import React from 'react';
 import { renderRoutes } from 'react-router-config';
 import { Redirect } from 'react-router-dom';
-import FeeStation from './pages/feeStation/FeeStation';
-import RAssetBep from './pages/rAsset/home/bep';
-import RAssetErc from './pages/rAsset/home/erc';
-import RAssetNative from './pages/rAsset/home/native';
-import RAssetSwap from './pages/rAsset/swap';
-import RAssetTemplate from './pages/rAsset/template';
-import RATOMHome from './pages/rATOM/home';
-import RATOMSeach from './pages/rATOM/search';
-import RATOMType from './pages/rATOM/selectType';
-import RATOMWallet from './pages/rATOM/selectWallet';
-import RATOMWalletFIS from './pages/rATOM/selectWallet_rFIS';
-import RATOMStaker from './pages/rATOM/staker';
-import RATOMStakerIndex from './pages/rATOM/staker/home';
-import RATOMStakerInfo from './pages/rATOM/staker/info';
-import RATOMStakerRedeem from './pages/rATOM/staker/redeem';
-import RATOMStakerReward from './pages/rATOM/staker/reward';
-import RATOMHomeTemplate from './pages/rATOM/template';
-import RATOMValidator from './pages/rATOM/validator';
-import RBnbHome from './pages/rBNB/home';
-import RBnbSeach from './pages/rBNB/search';
-import RBnbType from './pages/rBNB/selectType';
-import RBnbWallet from './pages/rBNB/selectWallet';
-import RBnbWalletFIS from './pages/rBNB/selectWallet_rFIS';
-import RBnbStaker from './pages/rBNB/staker';
-import RBnbStakerIndex from './pages/rBNB/staker/home';
-import RBnbStakerInfo from './pages/rBNB/staker/info';
-import RBnbStakerRedeem from './pages/rBNB/staker/redeem';
-import RBnbStakerReward from './pages/rBNB/staker/reward';
-import RBnbHomeTemplate from './pages/rBNB/template';
-import RBnbValidator from './pages/rBNB/validator';
-import RDOTHome from './pages/rDOT/home';
-import RDOTSeach from './pages/rDOT/search';
-import RDOTType from './pages/rDOT/selectType';
-import RDOTWallet from './pages/rDOT/selectWallet';
-import RDOTWalletFIS from './pages/rDOT/selectWallet_rFIS';
-import RDOTStaker from './pages/rDOT/staker';
-import RDOTStakerIndex from './pages/rDOT/staker/home';
-import RDOTStakerInfo from './pages/rDOT/staker/info';
-import RDOTStakerRedeem from './pages/rDOT/staker/redeem';
-import RDOTStakerReward from './pages/rDOT/staker/reward';
-import DOTHomeTemplate from './pages/rDOT/template';
-import RDOTValidator from './pages/rDOT/validator';
-import RETHHome from './pages/rETH/home';
-import RETHLiquefy from './pages/rETH/liquefy';
-import RETHPoolStatus from './pages/rETH/poolStatus';
-import RETHType from './pages/rETH/selectType';
-import RETHStaker from './pages/rETH/staker';
-import RETHStakerIndex from './pages/rETH/staker/home';
-import RETHStakerInfo from './pages/rETH/staker/info';
-import RETHStakerReward from './pages/rETH/staker/reward';
-import ETHHomeTemplate from './pages/rETH/template';
-import RETHValidator from './pages/rETH/validator';
-import RETHValidatorDeposit from './pages/rETH/validator/deposit';
-import RETHValidatorHome from './pages/rETH/validator/home/validatorContent';
-import RETHPoolContract from './pages/rETH/validator/poolContract';
-import RETHValidatorStake from './pages/rETH/validator/stake';
-import RETHValidatorStatus from './pages/rETH/validator/status';
-import RFISHome from './pages/rFIS/home';
-import RFISType from './pages/rFIS/selectType';
-import RFISWalletFIS from './pages/rFIS/selectWallet_rFIS';
-import RFISStaker from './pages/rFIS/staker';
-import RFISStakerIndex from './pages/rFIS/staker/home';
-import RFISStakerInfo from './pages/rFIS/staker/info';
-import RFISStakerRedeem from './pages/rFIS/staker/redeem';
-import RFISStakerReward from './pages/rFIS/staker/reward';
-import RFISHomeTemplate from './pages/rFIS/template';
-import RFISValidator from './pages/rFIS/validator';
-import RFISValidatorOffboard from './pages/rFIS/validator/offboard';
-import RFISValidatorOnboard from './pages/rFIS/validator/onboard';
-import RKSMHome from './pages/rKSM/home';
-import RKSMSeach from './pages/rKSM/search';
-import RKSMType from './pages/rKSM/selectType';
-import RKSMWallet from './pages/rKSM/selectWallet';
-import RKSMWalletFIS from './pages/rKSM/selectWallet_rFIS';
-import RKSMStaker from './pages/rKSM/staker';
-import RKSMStakerIndex from './pages/rKSM/staker/home';
-import RKSMStakerInfo from './pages/rKSM/staker/info';
-import RKSMStakerRedeem from './pages/rKSM/staker/redeem';
-import RKSMStakerReward from './pages/rKSM/staker/reward';
-import RKSMHomeTemplate from './pages/rKSM/template';
-import RKSMValidator from './pages/rKSM/validator';
-import RMaticHome from './pages/rMATIC/home';
-import RMaticSeach from './pages/rMATIC/search';
-import RMaticType from './pages/rMATIC/selectType';
-import RMaticWallet from './pages/rMATIC/selectWallet';
-import RMaticWalletFIS from './pages/rMATIC/selectWallet_rFIS';
-import RMaticStaker from './pages/rMATIC/staker';
-import RMaticStakerIndex from './pages/rMATIC/staker/home';
-import RMaticStakerInfo from './pages/rMATIC/staker/info';
-import RMaticStakerRedeem from './pages/rMATIC/staker/redeem';
-import RMaticStakerReward from './pages/rMATIC/staker/reward';
-import RMaticHomeTemplate from './pages/rMATIC/template';
-import RMaticValidator from './pages/rMATIC/validator';
-import RPoolHome from './pages/rPool/home';
-import MintOverview from './pages/rPool/mint';
-import RPoolStaker from './pages/rPool/staker';
-import RPoolStakerInsurance from './pages/rPool/staker/insurance';
-import RPoolStakerReward from './pages/rPool/staker/reward';
-import RPoolStakerStatus from './pages/rPool/staker/status';
-import RPoolStakerStatusNativeErc20 from './pages/rPool/staker/status/erc20';
-import RPoolStakerStatusNative from './pages/rPool/staker/status/native';
-import RPoolHomeTemplate from './pages/rPool/template';
-import HomeTemplate from './pages/template/homeTemplate';
+
+const HomeTemplate = React.lazy(() => import('./pages/template/homeTemplate'));
+
+const FeeStationTemplate = React.lazy(() => import('@servers/feeStation/template'));
+const FeeStation = React.lazy(() => import('./pages/feeStation/FeeStation'));
+
+const RAssetBep = React.lazy(() => import('./pages/rAsset/home/bep'));
+const RAssetErc = React.lazy(() => import('./pages/rAsset/home/erc'));
+const RAssetNative = React.lazy(() => import('./pages/rAsset/home/native'));
+const RAssetSwap = React.lazy(() => import('./pages/rAsset/swap'));
+const RAssetTemplate = React.lazy(() => import('./pages/rAsset/template'));
+
+const RPoolHome = React.lazy(() => import('./pages/rPool/home'));
+const RPoolStaker = React.lazy(() => import('./pages/rPool/staker'));
+const RPoolStakerInsurance = React.lazy(() => import('./pages/rPool/staker/insurance'));
+const RPoolStakerReward = React.lazy(() => import('./pages/rPool/staker/reward'));
+const RPoolStakerStatus = React.lazy(() => import('./pages/rPool/staker/status'));
+const RPoolStakerStatusNativeErc20 = React.lazy(() => import('./pages/rPool/staker/status/erc20'));
+const RPoolStakerStatusNative = React.lazy(() => import('./pages/rPool/staker/status/native'));
+const RPoolHomeTemplate = React.lazy(() => import('./pages/rPool/template'));
+const LiquidityOverview = React.lazy(() => import('./pages/rPool/LiquidityOverview'));
+const MintOverview = React.lazy(() => import('./pages/rPool/mint'));
+
+const RETHHome = React.lazy(() => import('./pages/rETH/home'));
+const RETHLiquefy = React.lazy(() => import('./pages/rETH/liquefy'));
+const RETHPoolStatus = React.lazy(() => import('./pages/rETH/poolStatus'));
+const RETHType = React.lazy(() => import('./pages/rETH/selectType'));
+const RETHStaker = React.lazy(() => import('./pages/rETH/staker'));
+const RETHStakerIndex = React.lazy(() => import('./pages/rETH/staker/home'));
+const RETHStakerInfo = React.lazy(() => import('./pages/rETH/staker/info'));
+const RETHStakerReward = React.lazy(() => import('./pages/rETH/staker/reward'));
+const ETHHomeTemplate = React.lazy(() => import('./pages/rETH/template'));
+const RETHValidator = React.lazy(() => import('./pages/rETH/validator'));
+const RETHValidatorDeposit = React.lazy(() => import('./pages/rETH/validator/deposit'));
+const RETHValidatorHome = React.lazy(() => import('./pages/rETH/validator/home/validatorContent'));
+const RETHPoolContract = React.lazy(() => import('./pages/rETH/validator/poolContract'));
+const RETHValidatorStake = React.lazy(() => import('./pages/rETH/validator/stake'));
+const RETHValidatorStatus = React.lazy(() => import('./pages/rETH/validator/status'));
+
+const RFISHome = React.lazy(() => import('./pages/rFIS/home'));
+const RFISType = React.lazy(() => import('./pages/rFIS/selectType'));
+const RFISWalletFIS = React.lazy(() => import('./pages/rFIS/selectWallet_rFIS'));
+const RFISStaker = React.lazy(() => import('./pages/rFIS/staker'));
+const RFISStakerIndex = React.lazy(() => import('./pages/rFIS/staker/home'));
+const RFISStakerInfo = React.lazy(() => import('./pages/rFIS/staker/info'));
+const RFISStakerRedeem = React.lazy(() => import('./pages/rFIS/staker/redeem'));
+const RFISStakerReward = React.lazy(() => import('./pages/rFIS/staker/reward'));
+const RFISHomeTemplate = React.lazy(() => import('./pages/rFIS/template'));
+const RFISValidator = React.lazy(() => import('./pages/rFIS/validator'));
+const RFISValidatorOffboard = React.lazy(() => import('./pages/rFIS/validator/offboard'));
+const RFISValidatorOnboard = React.lazy(() => import('./pages/rFIS/validator/onboard'));
+
+const RBnbHome = React.lazy(() => import('./pages/rBNB/home'));
+const RBnbSeach = React.lazy(() => import('./pages/rBNB/search'));
+const RBnbType = React.lazy(() => import('./pages/rBNB/selectType'));
+const RBnbWallet = React.lazy(() => import('./pages/rBNB/selectWallet'));
+const RBnbWalletFIS = React.lazy(() => import('./pages/rBNB/selectWallet_rFIS'));
+const RBnbStaker = React.lazy(() => import('./pages/rBNB/staker'));
+const RBnbStakerIndex = React.lazy(() => import('./pages/rBNB/staker/home'));
+const RBnbStakerInfo = React.lazy(() => import('./pages/rBNB/staker/info'));
+const RBnbStakerRedeem = React.lazy(() => import('./pages/rBNB/staker/redeem'));
+const RBnbStakerReward = React.lazy(() => import('./pages/rBNB/staker/reward'));
+const RBnbHomeTemplate = React.lazy(() => import('./pages/rBNB/template'));
+const RBnbValidator = React.lazy(() => import('./pages/rBNB/validator'));
+
+const RDOTHome = React.lazy(() => import('./pages/rDOT/home'));
+const RDOTSeach = React.lazy(() => import('./pages/rDOT/search'));
+const RDOTType = React.lazy(() => import('./pages/rDOT/selectType'));
+const RDOTWallet = React.lazy(() => import('./pages/rDOT/selectWallet'));
+const RDOTWalletFIS = React.lazy(() => import('./pages/rDOT/selectWallet_rFIS'));
+const RDOTStaker = React.lazy(() => import('./pages/rDOT/staker'));
+const RDOTStakerIndex = React.lazy(() => import('./pages/rDOT/staker/home'));
+const RDOTStakerInfo = React.lazy(() => import('./pages/rDOT/staker/info'));
+const RDOTStakerRedeem = React.lazy(() => import('./pages/rDOT/staker/redeem'));
+const RDOTStakerReward = React.lazy(() => import('./pages/rDOT/staker/reward'));
+const DOTHomeTemplate = React.lazy(() => import('./pages/rDOT/template'));
+const RDOTValidator = React.lazy(() => import('./pages/rDOT/validator'));
+
+const RATOMHome = React.lazy(() => import('./pages/rATOM/home'));
+const RATOMSeach = React.lazy(() => import('./pages/rATOM/search'));
+const RATOMType = React.lazy(() => import('./pages/rATOM/selectType'));
+const RATOMWallet = React.lazy(() => import('./pages/rATOM/selectWallet'));
+const RATOMWalletFIS = React.lazy(() => import('./pages/rATOM/selectWallet_rFIS'));
+const RATOMStaker = React.lazy(() => import('./pages/rATOM/staker'));
+const RATOMStakerIndex = React.lazy(() => import('./pages/rATOM/staker/home'));
+const RATOMStakerInfo = React.lazy(() => import('./pages/rATOM/staker/info'));
+const RATOMStakerRedeem = React.lazy(() => import('./pages/rATOM/staker/redeem'));
+const RATOMStakerReward = React.lazy(() => import('./pages/rATOM/staker/reward'));
+const RATOMHomeTemplate = React.lazy(() => import('./pages/rATOM/template'));
+const RATOMValidator = React.lazy(() => import('./pages/rATOM/validator'));
+
+const RMaticHome = React.lazy(() => import('./pages/rMATIC/home'));
+const RMaticSeach = React.lazy(() => import('./pages/rMATIC/search'));
+const RMaticType = React.lazy(() => import('./pages/rMATIC/selectType'));
+const RMaticWallet = React.lazy(() => import('./pages/rMATIC/selectWallet'));
+const RMaticWalletFIS = React.lazy(() => import('./pages/rMATIC/selectWallet_rFIS'));
+const RMaticStaker = React.lazy(() => import('./pages/rMATIC/staker'));
+const RMaticStakerIndex = React.lazy(() => import('./pages/rMATIC/staker/home'));
+const RMaticStakerInfo = React.lazy(() => import('./pages/rMATIC/staker/info'));
+const RMaticStakerRedeem = React.lazy(() => import('./pages/rMATIC/staker/redeem'));
+const RMaticStakerReward = React.lazy(() => import('./pages/rMATIC/staker/reward'));
+const RMaticHomeTemplate = React.lazy(() => import('./pages/rMATIC/template'));
+const RMaticValidator = React.lazy(() => import('./pages/rMATIC/validator'));
+
+const RKSMHome = React.lazy(() => import('./pages/rKSM/home'));
+const RKSMSeach = React.lazy(() => import('./pages/rKSM/search'));
+const RKSMType = React.lazy(() => import('./pages/rKSM/selectType'));
+const RKSMWallet = React.lazy(() => import('./pages/rKSM/selectWallet'));
+const RKSMWalletFIS = React.lazy(() => import('./pages/rKSM/selectWallet_rFIS'));
+const RKSMStaker = React.lazy(() => import('./pages/rKSM/staker'));
+const RKSMStakerIndex = React.lazy(() => import('./pages/rKSM/staker/home'));
+const RKSMStakerInfo = React.lazy(() => import('./pages/rKSM/staker/info'));
+const RKSMStakerRedeem = React.lazy(() => import('./pages/rKSM/staker/redeem'));
+const RKSMStakerReward = React.lazy(() => import('./pages/rKSM/staker/reward'));
+const RKSMHomeTemplate = React.lazy(() => import('./pages/rKSM/template'));
+const RKSMValidator = React.lazy(() => import('./pages/rKSM/validator'));
+
+const RSOLHome = React.lazy(() => import('./pages/rSOL/home'));
+const RSOLValidator = React.lazy(() => import('./pages/rSOL/validator'));
+const RSOLHomeTemplate = React.lazy(() => import('./pages/rSOL/template'));
+const RSOLStakerRedeem = React.lazy(() => import('./pages/rSOL/staker/redeem'));
+const RSOLStakerInfo = React.lazy(() => import('./pages/rSOL/staker/info'));
+const RSOLStakerIndex = React.lazy(() => import('./pages/rSOL/staker/home'));
+const RSOLStaker = React.lazy(() => import('./pages/rSOL/staker'));
+const RSOLWalletFIS = React.lazy(() => import('./pages/rSOL/selectWallet_rFIS'));
+const RSOLWallet = React.lazy(() => import('./pages/rSOL/selectWallet'));
+const RSOLType = React.lazy(() => import('./pages/rSOL/selectType'));
+const RSOLSeach = React.lazy(() => import('./pages/rSOL/search'));
+
 
 const routesFactory = (role?: any) => {
   const routes = [
@@ -576,91 +601,91 @@ const routesFactory = (role?: any) => {
             },
           ],
         },
-        // {
-        //   id: 'RSOL_home',
-        //   path: '/rSOL',
-        //   type: 'rSOL',
-        //   rSymbol: rSymbol.Sol,
-        //   component: RSOLHomeTemplate,
-        //   routes: [
-        //     {
-        //       id: 'RSOL_home',
-        //       path: '/rSOL/home',
-        //       rSymbol: rSymbol.Sol,
-        //       component: RSOLHome,
-        //     },
-        //     {
-        //       id: 'RSOL_wallet',
-        //       path: '/rSOL/wallet',
-        //       rSymbol: rSymbol.Sol,
-        //       component: RSOLWallet,
-        //     },
-        //     {
-        //       id: 'RSOL_wallet',
-        //       path: '/rSOL/fiswallet',
-        //       rSymbol: rSymbol.Sol,
-        //       component: RSOLWalletFIS,
-        //     },
-        //     {
-        //       id: 'RSOL_staker',
-        //       type: 'Staker',
-        //       path: '/rSOL/staker',
-        //       rSymbol: rSymbol.Sol,
-        //       component: authorizedRoute(Symbol.Sol)(RSOLStaker),
-        //       routes: [
-        //         {
-        //           id: 'RSOL_staker_index',
-        //           path: '/rSOL/staker/index',
-        //           type: 'Staker',
-        //           rSymbol: rSymbol.Sol,
-        //           component: RSOLStakerIndex,
-        //         },
-        //         {
-        //           id: 'RSOL_staker_index_info',
-        //           path: '/rSOL/staker/info',
-        //           type: '-Status',
-        //           rSymbol: rSymbol.Sol,
-        //           component: RSOLStakerInfo,
-        //         },
-        //         ,
-        //         {
-        //           id: 'RSOL_staker_index_redeem',
-        //           path: '/rSOL/staker/redeem',
-        //           type: 'Staker',
-        //           rSymbol: rSymbol.Sol,
-        //           component: RSOLStakerRedeem,
-        //         },
-        //         {
-        //           path: '*',
-        //           component: () => <Redirect to='/rSOL/staker/index' />,
-        //         },
-        //       ],
-        //     },
-        //     {
-        //       id: 'RSOL_validator',
-        //       type: 'Validator',
-        //       path: '/rSOL/validator',
-        //       rSymbol: rSymbol.Sol,
-        //       component: authorizedRoute(Symbol.Sol)(RSOLValidator),
-        //     },
-        //     {
-        //       id: 'RSOL_search',
-        //       path: '/rSOL/search',
-        //       rSymbol: rSymbol.Sol,
-        //       component: authorizedRoute(Symbol.Sol)(RSOLSeach),
-        //     },
-        //     {
-        //       id: 'RSOL_type',
-        //       path: '/rSOL/type',
-        //       rSymbol: rSymbol.Sol,
-        //       component: authorizedRoute(Symbol.Sol)(RSOLType),
-        //     },
-        //     {
-        //       path: '*',
-        //       component: () => <Redirect to='/rSOL/home' />,
-        //     },
-        //   ],
-        // },
+        {
+          id: 'RSOL_home',
+          path: '/rSOL',
+          type: 'rSOL',
+          rSymbol: rSymbol.Sol,
+          component: RSOLHomeTemplate,
+          routes: [
+            {
+              id: 'RSOL_home',
+              path: '/rSOL/home',
+              rSymbol: rSymbol.Sol,
+              component: RSOLHome,
+            },
+            {
+              id: 'RSOL_wallet',
+              path: '/rSOL/wallet',
+              rSymbol: rSymbol.Sol,
+              component: RSOLWallet,
+            },
+            {
+              id: 'RSOL_wallet',
+              path: '/rSOL/fiswallet',
+              rSymbol: rSymbol.Sol,
+              component: RSOLWalletFIS,
+            },
+            {
+              id: 'RSOL_staker',
+              type: 'Staker',
+              path: '/rSOL/staker',
+              rSymbol: rSymbol.Sol,
+              component: authorizedRoute(Symbol.Sol)(RSOLStaker),
+              routes: [
+                {
+                  id: 'RSOL_staker_index',
+                  path: '/rSOL/staker/index',
+                  type: 'Staker',
+                  rSymbol: rSymbol.Sol,
+                  component: RSOLStakerIndex,
+                },
+                {
+                  id: 'RSOL_staker_index_info',
+                  path: '/rSOL/staker/info',
+                  type: '-Status',
+                  rSymbol: rSymbol.Sol,
+                  component: RSOLStakerInfo,
+                },
+                ,
+                {
+                  id: 'RSOL_staker_index_redeem',
+                  path: '/rSOL/staker/redeem',
+                  type: 'Staker',
+                  rSymbol: rSymbol.Sol,
+                  component: RSOLStakerRedeem,
+                },
+                {
+                  path: '*',
+                  component: () => <Redirect to='/rSOL/staker/index' />,
+                },
+              ],
+            },
+            {
+              id: 'RSOL_validator',
+              type: 'Validator',
+              path: '/rSOL/validator',
+              rSymbol: rSymbol.Sol,
+              component: authorizedRoute(Symbol.Sol)(RSOLValidator),
+            },
+            {
+              id: 'RSOL_search',
+              path: '/rSOL/search',
+              rSymbol: rSymbol.Sol,
+              component: authorizedRoute(Symbol.Sol)(RSOLSeach),
+            },
+            {
+              id: 'RSOL_type',
+              path: '/rSOL/type',
+              rSymbol: rSymbol.Sol,
+              component: authorizedRoute(Symbol.Sol)(RSOLType),
+            },
+            {
+              path: '*',
+              component: () => <Redirect to='/rSOL/home' />,
+            },
+          ],
+        },
         {
           id: 'RPool_index',
           path: '/rPool',
@@ -726,6 +751,12 @@ const routesFactory = (role?: any) => {
               path: '/rPool/mint/:tokenSymbol/:cycle',
               className: 'stafi_content_large',
               component: MintOverview,
+            },
+            {
+              id: 'RPool_Liquidity_Overview',
+              path: '/rPool/lp/:lpPlatform/:poolIndex',
+              className: 'stafi_content_large',
+              component: LiquidityOverview,
             },
             {
               path: '*',

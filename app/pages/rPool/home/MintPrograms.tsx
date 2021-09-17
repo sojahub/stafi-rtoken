@@ -4,6 +4,7 @@ import { getRtokenPriceList } from '@features/bridgeClice';
 import { getMintPrograms } from '@features/mintProgramsClice';
 import no_data_png from '@images/nodata.png';
 import ratom_icon from '@images/r_atom.svg';
+import rbnb_icon from '@images/r_bnb.svg';
 import rdot_icon from '@images/r_dot.svg';
 import reth_icon from '@images/r_eth.svg';
 import rfis_icon from '@images/r_fis.svg';
@@ -14,7 +15,6 @@ import { useInterval } from '@util/utils';
 import { Spin } from 'antd';
 import { RootState } from 'app/store';
 import { cloneDeep } from 'lodash';
-import { multiply } from 'mathjs';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import CardItem from './components/cardItem';
@@ -47,6 +47,10 @@ const rTokenList: Array<any> = [
     token: 'rKSM',
     children: [],
   },
+  {
+    token: 'rBNB',
+    children: [],
+  },
 ];
 
 export default function MintPrograms(props: any) {
@@ -64,20 +68,31 @@ export default function MintPrograms(props: any) {
   const [sortWay, setSortWay] = useState<undefined | string>('asc');
   const [mintDataList, setMintDataList] = useState([]);
 
-  const { unitPriceList, rDOTActs, rMaticActs, rFISActs, rKSMActs, rATOMActs, rETHActs, loading, loadComplete } =
-    useSelector((state: RootState) => {
-      return {
-        unitPriceList: state.bridgeModule.priceList,
-        rDOTActs: state.mintProgramsModule.rDOTActs,
-        rMaticActs: state.mintProgramsModule.rMATICActs,
-        rFISActs: state.mintProgramsModule.rFISActs,
-        rKSMActs: state.mintProgramsModule.rKSMActs,
-        rATOMActs: state.mintProgramsModule.rATOMActs,
-        rETHActs: state.mintProgramsModule.rETHActs,
-        loadComplete: state.mintProgramsModule.loadComplete,
-        loading: state.globalModule.loading,
-      };
-    });
+  const {
+    unitPriceList,
+    rDOTActs,
+    rMaticActs,
+    rFISActs,
+    rKSMActs,
+    rATOMActs,
+    rETHActs,
+    rBNBActs,
+    loading,
+    loadComplete,
+  } = useSelector((state: RootState) => {
+    return {
+      unitPriceList: state.bridgeModule.priceList,
+      rDOTActs: state.mintProgramsModule.rDOTActs,
+      rMaticActs: state.mintProgramsModule.rMATICActs,
+      rFISActs: state.mintProgramsModule.rFISActs,
+      rKSMActs: state.mintProgramsModule.rKSMActs,
+      rATOMActs: state.mintProgramsModule.rATOMActs,
+      rBNBActs: state.mintProgramsModule.rBNBActs,
+      rETHActs: state.mintProgramsModule.rETHActs,
+      loadComplete: state.mintProgramsModule.loadComplete,
+      loading: state.mintProgramsModule.loadingList,
+    };
+  });
 
   const { totalMintedValue, totalFisAmount } = useMemo(() => {
     let total = 0;
@@ -98,7 +113,7 @@ export default function MintPrograms(props: any) {
           getRsymbolByTokenTitle(tokenItem.token),
         );
         if (unitPrice) {
-          total += multiply(unitPrice.price, formatTotalRTokenAmount);
+          total += numberUtil.mul(unitPrice.price, formatTotalRTokenAmount);
         }
         fisAmount += numberUtil.fisAmountToHuman(item.total_reward);
       });
@@ -139,6 +154,9 @@ export default function MintPrograms(props: any) {
       }
       if (item.token === 'rATOM') {
         item.children = cloneDeep(rATOMActs);
+      }
+      if (item.token === 'rBNB') {
+        item.children = cloneDeep(rBNBActs);
       }
       if (item.token === 'rETH') {
         item.children = cloneDeep(rETHActs);
@@ -184,16 +202,16 @@ export default function MintPrograms(props: any) {
           getRsymbolByTokenTitle(tokenItem.token),
         );
         if (unitPrice) {
-          item.mintedValue = multiply(unitPrice.price, formatTotalRTokenAmount);
+          item.mintedValue = numberUtil.mul(unitPrice.price, formatTotalRTokenAmount);
         }
       });
     });
     setMintDataList(list);
-  }, [unitPriceList, rDOTActs, rMaticActs, rFISActs, rKSMActs, rATOMActs, rETHActs]);
+  }, [unitPriceList, rDOTActs, rMaticActs, rFISActs, rKSMActs, rATOMActs, rBNBActs, rETHActs]);
 
-  // useInterval(() => {
-  //   setMintDataList([...mintDataList]);
-  // }, 1000);
+  useInterval(() => {
+    setMintDataList([...mintDataList]);
+  }, 1000);
 
   return (
     <Card className='stafi_rpool_mint'>
@@ -272,7 +290,13 @@ export default function MintPrograms(props: any) {
                       } else if (data.token === 'rFIS') {
                         type = data.token;
                         icon = rfis_icon;
-                        stakeUrl = 'https://app.stafi.io/rKSM';
+                        stakeUrl = 'https://app.stafi.io/rFIS';
+                        liquidityUrl =
+                          'https://app.uniswap.org/#/add/v2/ETH/0x3c3842c4d3037ae121d69ea1e7a0b61413be806c';
+                      } else if (data.token === 'rBNB') {
+                        type = data.token;
+                        icon = rbnb_icon;
+                        stakeUrl = 'https://app.stafi.io/rBNB';
                         liquidityUrl =
                           'https://app.uniswap.org/#/add/v2/ETH/0x3c3842c4d3037ae121d69ea1e7a0b61413be806c';
                       }

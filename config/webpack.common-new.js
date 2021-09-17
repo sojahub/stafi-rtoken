@@ -19,9 +19,6 @@ function webpackCommonConfigCreator(options) {
     mode: options.mode,
     optimization: options.optimization,
     devtool: options.devtool, //'cheap-module-source-map',
-    entry: {
-      main: './app/index.tsx',
-    },
     resolve: {
       extensions: ['.ts', '.tsx', '.js', '.json'],
       fallback: {
@@ -31,13 +28,13 @@ function webpackCommonConfigCreator(options) {
         http: false,
         https: false,
         path: false,
-        fs:false,
+        fs: false,
       },
 
       alias: {
         stream: 'stream-browserify',
         path: false,
-        fs:false,
+        fs: false,
         crypto: 'crypto-browserify',
         '@components': resolve('../app/components'),
         '@images': resolve('../app/assets/images'),
@@ -54,10 +51,13 @@ function webpackCommonConfigCreator(options) {
         }),
       ],
     },
+    entry: {
+      main: './app/index.tsx',
+    },
     output: {
       // filename:"js/[name].[chunkhash].bundle.js",
-      // filename: 'index_bundle.js',
-      filename: 'bundle.[contenthash].js',
+      filename: 'bundle.[name].[contenthash].js',
+      chunkFilename: 'chunk.[name].[contenthash].js',
       path: path.resolve(__dirname, '../build'),
       // assetModuleFilename: 'assets/[hash][ext][query]',
       publicPath: '/',
@@ -129,7 +129,7 @@ function webpackCommonConfigCreator(options) {
               loader: 'ts-loader',
             },
           ],
-        }
+        },
       ],
     },
     plugins: [
@@ -146,7 +146,7 @@ function webpackCommonConfigCreator(options) {
       }),
       new HtmlWebPackPlugin({
         template: 'public/index.html',
-        inject: true,
+        // inject: true,
         // filename:'index.html',
         // dll: `/dll/lib.js`
       }),
@@ -164,7 +164,7 @@ function webpackCommonConfigCreator(options) {
         stream: 'stream',
         // crypto:'crypto',
         path: 'path',
-        fs:'fs'
+        fs: 'fs',
       }),
       // new webpack.DllReferencePlugin({
       //   context: path.join(__dirname, '..'),

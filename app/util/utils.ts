@@ -25,7 +25,7 @@ export const parseInterge = (value: any) => {
   return value.replace(regular.nonInteger, '');
 };
 
-export function useInterval(callback: any, delay: number) {
+export function useInterval(callback: any, delay: number, clearCb?: any) {
   const savedCallback = useRef<Function>();
 
   useEffect(() => {
@@ -40,6 +40,9 @@ export function useInterval(callback: any, delay: number) {
     }
 
     let id = setInterval(tick, delay);
-    return () => clearInterval(id);
+    return () => {
+      clearInterval(id);
+      clearCb && clearCb();
+    };
   }, [delay]);
 }

@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
 import {Upload} from 'antd';
 import './index.scss';
-import { PropertySafetyFilled } from '@ant-design/icons';
-import { Proposal } from '@cosmjs/stargate/build/codec/tendermint/types/types';
 
 const { Dragger } = Upload;
 type Props={

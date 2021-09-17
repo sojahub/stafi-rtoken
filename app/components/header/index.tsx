@@ -22,6 +22,7 @@ import report_icon from '@images/report_icon.svg';
 import wrong_network from '@images/wrong_network.svg';
 import { rSymbol, Symbol } from '@keyring/defaults';
 import Modal from '@shared/components/modal/connectModal';
+import { getLpPlatformFromUrl, getMetaMaskTokenSymbol, liquidityPlatformMatchMetaMask } from '@util/metaMaskUtil';
 import NumberUtil from '@util/numberUtil';
 import StringUtil from '@util/stringUtil';
 import Tool from '@util/toolUtil';
@@ -209,6 +210,13 @@ export default function Index(props: Props) {
       const returnValue: any = { type: 'rPool' };
       if (state.FISModule.fisAccount) {
         returnValue.fisAccount = state.FISModule.fisAccount;
+      }
+      return returnValue;
+    }
+    if (location.pathname.includes('/rPool/lp')) {
+      const returnValue: any = { type: 'rPool/lp' };
+      if (state.rETHModule.ethAccount) {
+        returnValue.ethAccount = state.rETHModule.ethAccount;
       }
       return returnValue;
     }
@@ -404,12 +412,21 @@ export default function Index(props: Props) {
             {account.type !== 'rBNB' && account.ethAccount && (
               <div style={{ display: 'flex', flexDirection: 'column' }}>
                 <div className='header_tool account'>
-                  <div>{account.ethAccount.balance || '--'} ETH</div>
+                  <div>
+                    {account.ethAccount.balance || '--'} {getMetaMaskTokenSymbol(metaMaskNetworkId)}
+                  </div>
                   <div>{StringUtil.replacePkh(account.ethAccount.address, 4, 38)}</div>
                 </div>
-                {metaMaskNetworkId && !config.metaMaskNetworkIsGoerliEth(metaMaskNetworkId) && (
-                  <img src={wrong_network} className={'wrong_network'} />
-                )}
+                {account.type === 'rPool/lp' &&
+                  metaMaskNetworkId &&
+                  !liquidityPlatformMatchMetaMask(metaMaskNetworkId, getLpPlatformFromUrl(location.pathname)) && (
+                    <img src={wrong_network} className={'wrong_network'} />
+                  )}
+                {account.type !== 'rPool/lp' &&
+                  metaMaskNetworkId &&
+                  !config.metaMaskNetworkIsGoerliEth(metaMaskNetworkId) && (
+                    <img src={wrong_network} className={'wrong_network'} />
+                  )}
               </div>
             )}
 

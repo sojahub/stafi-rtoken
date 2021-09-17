@@ -24,6 +24,8 @@ export const getRsymbolByTokenType = (tokenType: string) => {
       return rSymbol.Sol;
     case 'rmatic':
       return rSymbol.Matic;
+    case 'rbnb':
+      return rSymbol.Bnb;
     default:
       return rSymbol.Fis;
   }
@@ -45,6 +47,8 @@ export const getRsymbolByTokenTitle = (tokenType: string) => {
       return rSymbol.Sol;
     case 'rMATIC':
       return rSymbol.Matic;
+    case 'rBNB':
+      return rSymbol.Bnb;
     default:
       return rSymbol.Fis;
   }
@@ -66,6 +70,8 @@ export const getSymbolByRSymbol = (symbol: rSymbol) => {
       return Symbol.Sol;
     case rSymbol.Matic:
       return Symbol.Matic;
+    case rSymbol.Bnb:
+      return Symbol.Bnb;
     default:
       return 'rFIS';
   }
@@ -87,6 +93,8 @@ export const getSymbolRTitle = (symbol: rSymbol) => {
       return 'rSOL';
     case rSymbol.Matic:
       return 'rMATIC';
+    case rSymbol.Bnb:
+      return 'rBNB';
     default:
       return 'rFIS';
   }
@@ -108,6 +116,8 @@ export const getSymbolTitle = (symbol: rSymbol) => {
       return 'SOL';
     case rSymbol.Matic:
       return 'MATIC';
+    case rSymbol.Bnb:
+      return 'BNB';
     default:
       return 'FIS';
   }
@@ -136,7 +146,7 @@ export default {
     }
   },
   solRpcApi: () => {
-    if (process.env.NODE_ENV == 'production' && !isdev()) {
+    if (!isdev()) {
       return clusterApiUrl('mainnet-beta');
     } else {
       // return clusterApiUrl('devnet');
@@ -148,12 +158,10 @@ export default {
       // return clusterApiUrl('mainnet-beta');
       return '';
     } else {
+      // return '';
       // return clusterApiUrl('devnet');
       return 'wss://solana-dev-wss.wetez.io';
     }
-  },
-  solWalletProviderUrl: () => {
-    return 'https://www.sollet.io';
   },
   ethProviderUrl: () => {
     if (!isdev()) {
@@ -168,6 +176,16 @@ export default {
     } else {
       return 'wss://speedy-nodes-nyc.moralis.io/5a284cffde906505c6eb2af8/bsc/testnet/ws';
     }
+  },
+  polygonProviderUrl: () => {
+    if (!isdev()) {
+      return 'wss://rpc-mainnet.matic.network';
+    } else {
+      return 'wss://matic-testnet-archive-ws.bwarelabs.com';
+    }
+  },
+  solWalletProviderUrl: () => {
+    return 'https://www.sollet.io';
   },
   api: () => {
     if (!isdev()) {
@@ -544,6 +562,24 @@ export default {
   stafiScanTxUrl: (txHash: any) => {
     return `https://stafi.subscan.io/extrinsic/${txHash}`;
   },
+  etherScanTxUrl: (txHash: any) => {
+    if (!isdev()) {
+      return `https://etherscan.io/tx/${txHash}`;
+    }
+    return `https://goerli.etherscan.io/tx/${txHash}`;
+  },
+  bscScanTxUrl: (txHash: any) => {
+    if (!isdev()) {
+      return `https://bscscan.com/tx/${txHash}`;
+    }
+    return `https://testnet.bscscan.com/tx/${txHash}`;
+  },
+  polygonScanTxUrl: (txHash: any) => {
+    if (!isdev()) {
+      return `https://polygonscan.com/tx/${txHash}`;
+    }
+    return `https://mumbai.polygonscan.com/tx/${txHash}`;
+  },
   bscChainId: () => {
     if (!isdev()) {
       return '0x38';
@@ -561,6 +597,24 @@ export default {
       return '0x1';
     }
     return '0x5';
+  },
+  metaMaskEthNetworkId: () => {
+    if (!isdev()) {
+      return '0x1';
+    }
+    return '0x5';
+  },
+  metaMaskBscNetworkId: () => {
+    if (!isdev()) {
+      return '0x38';
+    }
+    return '0x61';
+  },
+  metaMaskPolygonNetworkId: () => {
+    if (!isdev()) {
+      return '0x89';
+    }
+    return '0x13881';
   },
   metaMaskNetworkIsEth: (networkChainId: any) => {
     if (!isdev()) {
@@ -580,8 +634,51 @@ export default {
     }
     return networkChainId === '0x61';
   },
+  metaMaskNetworkIsPolygon: (networkChainId: any) => {
+    if (!isdev()) {
+      return networkChainId === '0x89';
+    }
+    return networkChainId === '0x13881';
+  },
+
   swapWaitingTime: () => {
     return 150;
   },
   minReward: 0.000001,
+  lockContractAddress: (platform: any) => {
+    if (platform === 'Ethereum') {
+      if (!isdev()) {
+        return '';
+      } else {
+        return '0x2f34b2be8e739ac24c79bcef0e3504cf8f1f4c10';
+      }
+    }
+    if (platform === 'BSC') {
+      if (!isdev()) {
+        return '';
+      } else {
+        return '0xac5d3b8e3321f9129b8a7509068270ec660702dc';
+      }
+    }
+    if (platform === 'Polygon') {
+      if (!isdev()) {
+        return '';
+      } else {
+        return '0x3ee0f8ac7f001bb6090c7c692003dd78dc3b3fc7';
+      }
+    }
+    return '';
+  },
+  addLiquidityLink: (platform: any) => {
+    if (platform === 'Ethereum') {
+      return 'https://app.uniswap.org/#/add/v2/ETH/0x9559Aaa82d9649C7A7b220E7c461d2E74c9a3593?lng=en-US';
+    }
+    if (platform === 'BSC') {
+      return '';
+    }
+    if (platform === 'Polygon') {
+      return 'https://quickswap.exchange/#/add/ETH/0x9f28e2455f9FFcFac9EBD6084853417362bc5dBb';
+    }
+    return '';
+  },
 };

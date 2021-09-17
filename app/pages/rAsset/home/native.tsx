@@ -27,10 +27,14 @@ import {
   query_rBalances_account as matic_query_rBalances_account,
   rTokenRate as matic_rTokenRate
 } from '@features/rMATICClice';
-// import { getUnbondCommission as sol_getUnbondCommission, query_rBalances_account as sol_query_rBalances_account, rTokenRate as sol_rTokenRate } from '@features/rSOLClice';
+import {
+  getUnbondCommission as sol_getUnbondCommission,
+  query_rBalances_account as sol_query_rBalances_account,
+  rTokenRate as sol_rTokenRate
+} from '@features/rSOLClice';
 import rDOT_svg from '@images/rDOT.svg';
 import rasset_fis_svg from '@images/rFIS.svg';
-// import rasset_rsol_svg from '@images/rSOL.svg';
+import rasset_rsol_svg from '@images/rSOL.svg';
 import rasset_ratom_svg from '@images/r_atom.svg';
 import rasset_rbnb_svg from '@images/r_bnb.svg';
 import rasset_rdot_svg from '@images/r_dot.svg';
@@ -174,21 +178,21 @@ export default function Index(props: any) {
       dispatch(dot_query_rBalances_account());
       dispatch(query_rBalances_account());
       dispatch(atom_query_rBalances_account());
-      // dispatch(sol_query_rBalances_account())
+      dispatch(sol_query_rBalances_account());
       dispatch(matic_query_rBalances_account());
       dispatch(bnb_query_rBalances_account());
       dispatch(ksm_rTokenRate());
       dispatch(fis_rTokenRate());
       dispatch(dot_rTokenRate());
       dispatch(atom_rTokenRate());
-      // dispatch(sol_rTokenRate() );
+      dispatch(sol_rTokenRate());
       dispatch(matic_rTokenRate());
       dispatch(bnb_rTokenRate());
       dispatch(getUnbondCommission());
       dispatch(fis_getUnbondCommission());
       dispatch(dot_getUnbondCommission());
       dispatch(atom_getUnbondCommission());
-      // dispatch(sol_getUnbondCommission());
+      dispatch(sol_getUnbondCommission());
       dispatch(matic_getUnbondCommission());
       dispatch(bnb_getUnbondCommission());
     }
@@ -293,23 +297,23 @@ export default function Index(props: any) {
                 });
               }}
             />
-            {/* <DataItem  
-          rSymbol="rSOL"
-          icon={rasset_rsol_svg}
-          fullName="Solana"
-          balance={sol_tokenAmount=="--" ?"--":NumberUtil.handleFisAmountToFixed(sol_tokenAmount)}
-          willGetBalance={solWillAmount}
-          unit="SOL"
-          operationType="native"
-          onSwapClick={()=>{
-            props.history.push({
-              pathname:"/rAsset/swap/native/default",
-              state:{ 
-                rSymbol:"rSOL"
-              }
-            })
-          }}
-        />*/}
+            <DataItem
+              rSymbol='rSOL'
+              icon={rasset_rsol_svg}
+              fullName='Solana'
+              balance={sol_tokenAmount == '--' ? '--' : NumberUtil.handleFisAmountToFixed(sol_tokenAmount)}
+              willGetBalance={solWillAmount}
+              unit='SOL'
+              operationType='native'
+              onSwapClick={() => {
+                props.history.push({
+                  pathname: '/rAsset/swap/native/default',
+                  state: {
+                    rSymbol: 'rSOL',
+                  },
+                });
+              }}
+            />
             <DataItem
               rSymbol='rMATIC'
               icon={rasset_rmatic_svg}

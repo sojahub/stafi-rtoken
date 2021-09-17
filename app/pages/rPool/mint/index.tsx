@@ -13,6 +13,7 @@ import mintRewardTokenIcon from '@images/mint_reward_token.svg';
 import mintValueIcon from '@images/mint_value.svg';
 import rDOT_svg from '@images/rDOT.svg';
 import ratomIcon from '@images/r_atom.svg';
+import rbnbIcon from '@images/r_bnb.svg';
 import rdotIcon from '@images/r_dot.svg';
 import rethIcon from '@images/r_eth.svg';
 import rfisIcon from '@images/r_fis.svg';
@@ -25,7 +26,6 @@ import Button from '@shared/components/button/connect_button';
 import Modal from '@shared/components/modal/connectModal';
 import numberUtil from '@util/numberUtil';
 import { useInterval } from '@util/utils';
-import { multiply } from 'mathjs';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useParams } from 'react-router-dom';
@@ -95,7 +95,7 @@ export default function MintOverview() {
       });
       if (unitPrice) {
         const rTokenTotalReward = numberUtil.tokenAmountToHuman(actData.total_rtoken_amount, Number(tokenSymbol));
-        res = numberUtil.amount_format(multiply(unitPrice.price, rTokenTotalReward));
+        res = numberUtil.amount_format(numberUtil.mul(unitPrice.price, rTokenTotalReward));
       }
     }
     return res;
@@ -164,7 +164,8 @@ export default function MintOverview() {
     tokenSymbol.toString() !== rSymbol.Ksm.toString() &&
     tokenSymbol.toString() !== rSymbol.Matic.toString() &&
     tokenSymbol.toString() !== rSymbol.Atom.toString() &&
-    tokenSymbol.toString() !== rSymbol.Fis.toString()
+    tokenSymbol.toString() !== rSymbol.Fis.toString() &&
+    tokenSymbol.toString() !== rSymbol.Bnb.toString()
   ) {
     history.replace('/rPool/home');
   }
@@ -189,6 +190,7 @@ export default function MintOverview() {
           {rTokenName === 'rFIS' && <img src={rfisIcon} className='token_icon' />}
           {rTokenName === 'rKSM' && <img src={rksmIcon} className='token_icon' />}
           {rTokenName === 'rETH' && <img src={rethIcon} className='token_icon' />}
+          {rTokenName === 'rBNB' && <img src={rbnbIcon} className='token_icon' />}
 
           <div className='right_content'>
             <div className='title'>Mint {rTokenName}</div>
@@ -252,7 +254,9 @@ export default function MintOverview() {
               </div>
             </div>
 
-            {Number(tokenSymbol) === rSymbol.Eth && <div className='hint'>rETH reward is calculated every 5 minutes</div>}
+            {Number(tokenSymbol) === rSymbol.Eth && (
+              <div className='hint'>rETH reward is calculated every 5 minutes</div>
+            )}
           </div>
         </div>
       ) : (

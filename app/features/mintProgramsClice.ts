@@ -18,17 +18,22 @@ const rPoolServer = new RPoolServer();
 const rPoolClice = createSlice({
   name: 'mintProgramsModule',
   initialState: {
+    loadingList: false,
     rETHActs: [],
     rDOTActs: [],
     rMATICActs: [],
     rFISActs: [],
     rKSMActs: [],
     rATOMActs: [],
+    rBNBActs: [],
     loadComplete: false,
     totalLiquidity: '--',
     apyAvg: '--',
   },
   reducers: {
+    setLoadingList(state, { payload }) {
+      state.loadingList = payload;
+    },
     setTotalLiquidity(state, { payload }) {
       state.totalLiquidity = payload;
     },
@@ -53,6 +58,9 @@ const rPoolClice = createSlice({
     setRATOMActs(state, { payload }) {
       state.rATOMActs = payload;
     },
+    setRBNBActs(state, { payload }) {
+      state.rBNBActs = payload;
+    },
     setLoadComplete(state, { payload }) {
       state.loadComplete = payload;
     },
@@ -60,6 +68,7 @@ const rPoolClice = createSlice({
 });
 
 export const {
+  setLoadingList,
   setTotalLiquidity,
   setApyAvg,
   setRDOTActs,
@@ -68,6 +77,7 @@ export const {
   setRETHActs,
   setRKSMActs,
   setRATOMActs,
+  setRBNBActs,
   setLoadComplete,
 } = rPoolClice.actions;
 
@@ -75,7 +85,7 @@ export const getMintPrograms =
   (showLoading?: boolean): AppThunk =>
   async (dispatch: any, getState: any) => {
     if (showLoading) {
-      dispatch(setLoading(true));
+      dispatch(setLoadingList(true));
     }
 
     Promise.all([
@@ -85,18 +95,19 @@ export const getMintPrograms =
       dispatch(getRSymbolMintInfo(rSymbol.Fis)),
       dispatch(getRSymbolMintInfo(rSymbol.Atom)),
       dispatch(getRSymbolMintInfo(rSymbol.Ksm)),
+      dispatch(getRSymbolMintInfo(rSymbol.Bnb)),
     ])
       .then((values) => {
         delay(() => {
           dispatch(setLoadComplete(true));
         }, 300);
-        dispatch(setLoading(false));
+        dispatch(setLoadingList(false));
       })
       .catch((err) => {
         delay(() => {
           dispatch(setLoadComplete(true));
         }, 300);
-        dispatch(setLoading(false));
+        dispatch(setLoadingList(false));
       });
   };
 
@@ -123,6 +134,9 @@ const getRSymbolMintInfo =
     }
     if (symbol === rSymbol.Atom) {
       dispatch(setRATOMActs(acts));
+    }
+    if (symbol === rSymbol.Bnb) {
+      dispatch(setRBNBActs(acts));
     }
   };
 

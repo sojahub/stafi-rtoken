@@ -2,12 +2,12 @@ import config from '@config/index';
 import { SolKeyring } from '@keyring/SolKeyring';
 import { ApiPromise, WsProvider } from '@polkadot/api';
 import { web3Accounts, web3Enable } from '@polkadot/extension-dapp';
-import Wallet from '@project-serum/sol-wallet-adapter';
 import { Connection, PublicKey, SystemProgram, Transaction } from '@solana/web3.js';
+import { message } from 'antd';
 import Stafi from '../stafi';
+declare const window: any;
 
 let polkadotApi: any = null;
-let wallet = new Wallet(config.solWalletProviderUrl(), config.solRpcApi());
 
 export default class ExtensionDapp extends SolKeyring {
   constructor() {
@@ -15,20 +15,48 @@ export default class ExtensionDapp extends SolKeyring {
     this._symbol = 'sol';
   }
 
-  async connectSolJs() {
-    if (!wallet.connected || !wallet.publicKey) {
-      await wallet.connect();
+  getProvider() {
+    if ('solana' in window) {
+      const provider = window.solana;
+      if (provider.isPhantom) {
+        return provider;
+      }
     }
   }
 
-  getWallet() {
-    return wallet;
+  async connectSolJs(cb: Function) {
+    const solana = this.getProvider();
+    if (solana) {
+      window.solana.on('connect', () => {
+        const account = {
+          name: '',
+          pubkey: solana.publicKey.toString(),
+          address: solana.publicKey.toString(),
+          balance: '--',
+        };
+        cb(account);
+      });
+
+      await solana.connect();
+    } else {
+      window.open('https://phantom.app/', '_blank');
+    }
   }
 
   sendTransaction = async (amount: number, poolAddress: string) => {
+    await this.connectSolJs(() => {});
+    const solana = this.getProvider();
+    if (solana && !solana.isConnected) {
+      message.info('Please connect Phantom extension first');
+      return;
+    }
+    if (!solana) {
+      return;
+    }
+
     let transaction = new Transaction().add(
       SystemProgram.transfer({
-        fromPubkey: wallet.publicKey,
+        fromPubkey: solana.publicKey,
         // toPubkey: wallet.publicKey,
         toPubkey: new PublicKey(poolAddress),
         lamports: amount,
@@ -38,10 +66,10 @@ export default class ExtensionDapp extends SolKeyring {
     const connection = new Connection(config.solRpcApi(), { wsEndpoint: config.solRpcWs() });
     let { blockhash } = await connection.getRecentBlockhash();
     transaction.recentBlockhash = blockhash;
-    transaction.feePayer = wallet.publicKey;
+    transaction.feePayer = solana.publicKey;
 
     try {
-      let signed = await wallet.signTransaction(transaction);
+      let signed = await solana.signTransaction(transaction);
       let txid = await connection.sendRawTransaction(signed.serialize());
       const result = await connection.confirmTransaction(txid);
       const block = await connection.getBlock(result.context.slot);
@@ -64,7 +92,7 @@ export default class ExtensionDapp extends SolKeyring {
 
       if (!parsedTx || !parsedTx.slot) {
         return {};
-      } 
+      }
       const block = await connection.getBlock(parsedTx.slot);
 
       const lamports = this.getTxLamports(parsedTx.transaction.message.instructions[0]);
@@ -74,7 +102,7 @@ export default class ExtensionDapp extends SolKeyring {
         poolAddress: destination,
         blockhash: block.blockhash,
       };
-    } catch (error) { 
+    } catch (error) {
       throw new Error();
     }
   };
