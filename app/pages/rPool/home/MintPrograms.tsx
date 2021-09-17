@@ -202,7 +202,6 @@ export default function MintPrograms(props: any) {
           getRsymbolByTokenTitle(tokenItem.token),
         );
         if (unitPrice) {
-          console.log('sdfsdfsdfsd', unitPrice.symbol, unitPrice.price);
           item.mintedValue = numberUtil.mul(unitPrice.price, formatTotalRTokenAmount);
         }
       });
@@ -210,9 +209,9 @@ export default function MintPrograms(props: any) {
     setMintDataList(list);
   }, [unitPriceList, rDOTActs, rMaticActs, rFISActs, rKSMActs, rATOMActs, rBNBActs, rETHActs]);
 
-  // useInterval(() => {
-  //   setMintDataList([...mintDataList]);
-  // }, 1000);
+  useInterval(() => {
+    setMintDataList([...mintDataList]);
+  }, 1000);
 
   return (
     <Card className='stafi_rpool_mint'>
