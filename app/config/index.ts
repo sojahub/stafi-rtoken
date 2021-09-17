@@ -24,6 +24,8 @@ export const getRsymbolByTokenType = (tokenType: string) => {
       return rSymbol.Sol;
     case 'rmatic':
       return rSymbol.Matic;
+    case 'rbnb':
+      return rSymbol.Bnb;
     default:
       return rSymbol.Fis;
   }
@@ -45,6 +47,8 @@ export const getRsymbolByTokenTitle = (tokenType: string) => {
       return rSymbol.Sol;
     case 'rMATIC':
       return rSymbol.Matic;
+    case 'rBNB':
+      return rSymbol.Bnb;
     default:
       return rSymbol.Fis;
   }
@@ -66,6 +70,8 @@ export const getSymbolByRSymbol = (symbol: rSymbol) => {
       return Symbol.Sol;
     case rSymbol.Matic:
       return Symbol.Matic;
+    case rSymbol.Bnb:
+      return Symbol.Bnb;
     default:
       return 'rFIS';
   }
@@ -87,6 +93,8 @@ export const getSymbolRTitle = (symbol: rSymbol) => {
       return 'rSOL';
     case rSymbol.Matic:
       return 'rMATIC';
+    case rSymbol.Bnb:
+      return 'rBNB';
     default:
       return 'rFIS';
   }
@@ -108,6 +116,8 @@ export const getSymbolTitle = (symbol: rSymbol) => {
       return 'SOL';
     case rSymbol.Matic:
       return 'MATIC';
+    case rSymbol.Bnb:
+      return 'BNB';
     default:
       return 'FIS';
   }
