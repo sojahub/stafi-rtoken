@@ -50,6 +50,8 @@ const options = {
       cacheGroups: {
         vendor: {
           test: /[\\/]node_modules[\\/]/,
+          // name: "vendors",
+          // chunks: "initial",
           name(module) {
             // get the name. E.g. node_modules/packageName/not/this/part.js
             // or node_modules/packageName
@@ -66,18 +68,18 @@ const options = {
 const webpackConfig = webpackConfigCreator(options);
 
 const plugins = [
-  new CompressionPlugin({
-    filename: '[path][base].gz',
-    algorithm: 'gzip',
-    test: new RegExp('\\.(js|css)$'),
-    threshold: 10240,
-    minRatio: 0.8,
-  }),
+  // new CompressionPlugin({
+  //   filename: '[path][base].gz',
+  //   algorithm: 'gzip',
+  //   test: new RegExp('\\.(js|css)$'),
+  //   threshold: 10240,
+  //   minRatio: 0.8,
+  // }),
   new WebpackBar({
     name: 'stafi-rtoken',
     color: 'green',
   }),
-  // new BundleAnalyzerPlugin({ analyzerPort: 8919 }),
+  new BundleAnalyzerPlugin({ analyzerPort: 8919 }),
 ];
 webpackConfig.plugins = [...webpackConfig.plugins, ...plugins];
 
