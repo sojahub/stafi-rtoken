@@ -183,6 +183,9 @@ export default {
       case rSymbol.Matic:
         factor = 1000000;
         break;
+      case rSymbol.Bnb:
+        factor = 10000000000000000n;
+        break;
       default:
         factor = 1000000000000;
         break;

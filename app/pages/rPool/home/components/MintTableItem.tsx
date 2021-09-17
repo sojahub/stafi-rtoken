@@ -38,7 +38,9 @@ export default function MintTableItem(props: Props) {
       symbol = rSymbol.Atom;
     } else if (tokenType === 'rETH') {
       symbol = rSymbol.Eth;
-    } else {
+    } else if (tokenType === 'rBNB') {
+      symbol = rSymbol.Bnb;
+    }else {
       message.error('Unsupported token type');
       return;
     }
