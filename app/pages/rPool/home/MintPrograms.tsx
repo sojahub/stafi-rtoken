@@ -15,7 +15,6 @@ import { useInterval } from '@util/utils';
 import { Spin } from 'antd';
 import { RootState } from 'app/store';
 import { cloneDeep } from 'lodash';
-import { multiply } from 'mathjs';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import CardItem from './components/cardItem';
@@ -114,7 +113,7 @@ export default function MintPrograms(props: any) {
           getRsymbolByTokenTitle(tokenItem.token),
         );
         if (unitPrice) {
-          total += multiply(unitPrice.price, formatTotalRTokenAmount);
+          total += numberUtil.mul(unitPrice.price, formatTotalRTokenAmount);
         }
         fisAmount += numberUtil.fisAmountToHuman(item.total_reward);
       });
@@ -203,7 +202,7 @@ export default function MintPrograms(props: any) {
           getRsymbolByTokenTitle(tokenItem.token),
         );
         if (unitPrice) {
-          item.mintedValue = unitPrice.price * formatTotalRTokenAmount;
+          item.mintedValue = numberUtil.mul(unitPrice.price, formatTotalRTokenAmount);
         }
       });
     });

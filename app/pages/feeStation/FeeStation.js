@@ -39,7 +39,6 @@ import { getLocalStorageItem, Keys } from '@util/common';
 import numberUtil from '@util/numberUtil';
 import { useInterval } from '@util/utils';
 import { message, Spin } from 'antd';
-import { divide, multiply, subtract } from 'mathjs';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useParams } from 'react-router-dom';
@@ -269,17 +268,16 @@ export default function FeeStation() {
       setReceiveFisAmount('');
       setMinReceiveFisAmount('--');
     } else {
-      const fisAmount = divide(multiply(tokenAmount, currentPoolInfo.swapRate), 1000000);
+      const fisAmount = numberUtil.divide(numberUtil.mul(tokenAmount, currentPoolInfo.swapRate), 1000000);
       setReceiveFisAmount(numberUtil.handleFisRoundToFixed(fisAmount));
 
       setMinReceiveFisAmount(
-        divide(
-          multiply(
-            tokenAmount,
-            currentPoolInfo.swapRate,
-            subtract(
+        numberUtil.divide(
+          numberUtil.mul(
+            numberUtil.mul(tokenAmount, currentPoolInfo.swapRate),
+            numberUtil.sub(
               1,
-              divide(
+              numberUtil.divide(
                 customSlippageTolerance && Number(customSlippageTolerance) > Number(0)
                   ? customSlippageTolerance
                   : slippageTolerance,
@@ -301,7 +299,7 @@ export default function FeeStation() {
       setTokenAmount('');
       setMinReceiveFisAmount('--');
     } else {
-      const tokenAmount = divide(multiply(receiveFisAmount, 1000000), currentPoolInfo.swapRate);
+      const tokenAmount = numberUtil.divide(numberUtil.mul(receiveFisAmount, 1000000), currentPoolInfo.swapRate);
       if (!selectedToken || selectedToken.balance === '--' || tokenAmount > selectedToken.balance) {
         setTokenAmount('');
         setTokenAmount('');
@@ -314,11 +312,11 @@ export default function FeeStation() {
       setTokenAmount(numberUtil.handleFisRoundToFixed(tokenAmount));
 
       setMinReceiveFisAmount(
-        multiply(
+        numberUtil.mul(
           receiveFisAmount,
-          subtract(
+          numberUtil.sub(
             1,
-            divide(
+            numberUtil.divide(
               customSlippageTolerance && Number(customSlippageTolerance) > Number(0)
                 ? customSlippageTolerance
                 : slippageTolerance,
@@ -479,7 +477,10 @@ export default function FeeStation() {
       const poolInfo = res.data.poolInfoList?.find((item) => {
         return item.symbol === selectedToken?.title;
       });
-      if (!poolInfo || minReceiveFisAmount > divide(multiply(tokenAmount, poolInfo.swapRate), 1000000)) {
+      if (
+        !poolInfo ||
+        minReceiveFisAmount > numberUtil.divide(numberUtil.mul(tokenAmount, poolInfo.swapRate), 1000000)
+      ) {
         dispatch(setLoading(false));
         message.error('Swap Rate refreshed, please recheck');
         dispatch(setSwapMaxLimit(numberUtil.fisAmountToHuman(res.data.swapMaxLimit)));
