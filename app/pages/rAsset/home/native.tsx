@@ -52,6 +52,7 @@ import DataItem from './components/list/item';
 import './page.scss';
 
 const commonClice = new CommonClice();
+
 export default function Index(props: any) {
   const dispatch = useDispatch();
   const [visible, setVisible] = useState(false);
