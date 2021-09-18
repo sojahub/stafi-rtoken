@@ -23,7 +23,6 @@ const RPoolStakerStatus = React.lazy(() => import('./pages/rPool/staker/status')
 const RPoolStakerStatusNativeErc20 = React.lazy(() => import('./pages/rPool/staker/status/erc20'));
 const RPoolStakerStatusNative = React.lazy(() => import('./pages/rPool/staker/status/native'));
 const RPoolHomeTemplate = React.lazy(() => import('./pages/rPool/template'));
-const LiquidityOverview = React.lazy(() => import('./pages/rPool/LiquidityOverview'));
 const MintOverview = React.lazy(() => import('./pages/rPool/mint'));
 
 const RETHHome = React.lazy(() => import('./pages/rETH/home'));
