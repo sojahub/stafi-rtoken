@@ -11,7 +11,7 @@ import './index.scss';
 type Props = {
   children: any;
   getReward: Function;
-  type: 'DOT' | 'KSM' | 'ATOM' | 'ETH' | 'MATIC' | 'FIS' | 'BNB';
+  type: 'DOT' | 'KSM' | 'ATOM' | 'ETH' | 'MATIC' | 'FIS' | 'BNB' | 'SOL';
   rewardList?: any[];
   hours?: Number;
   address?: string;
@@ -40,7 +40,7 @@ export default function Index(props: Props) {
       );
     }
   }, [hasMore, loading, props.address]);
-  
+
   useEffect(() => {
     if (loading && hasMore) {
       dispatch(
@@ -56,13 +56,13 @@ export default function Index(props: Props) {
       setPageIndex(0);
     }
   }, [props.address]);
-  
+
   const { gloading } = useSelector((state: RootState) => {
     return {
       gloading: state.globalModule.loading,
     };
   });
-  
+
   return (
     <LeftContent className='stafi_reward_card'>
       <div className='title'>

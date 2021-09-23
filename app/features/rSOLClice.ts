@@ -4,6 +4,7 @@ import { web3Enable } from '@polkadot/extension-dapp';
 import { u8aToHex } from '@polkadot/util';
 import { createSlice } from '@reduxjs/toolkit';
 import keyring from '@servers/index';
+import RpcServer, { pageCount } from '@servers/rpc/index';
 import { default as PolkadotServer, default as SolServer } from '@servers/sol/index';
 import Stafi from '@servers/stafi/index';
 import * as solanaWeb3 from '@solana/web3.js';
@@ -14,11 +15,19 @@ import base58 from 'bs58';
 import { AppThunk } from '../store';
 import CommonClice from './commonClice';
 import { bondStates, bound, fisUnbond, rTokenSeries_bondStates } from './FISClice';
-import { initProcess, processStatus, setProcessSending, setProcessSlider, setProcessType } from './globalClice';
+import {
+  initProcess,
+  processStatus,
+  setLoading,
+  setProcessSending,
+  setProcessSlider,
+  setProcessType
+} from './globalClice';
 import { add_Notice, findUuidWithoutBlockhash, noticeStatus, noticesubType, noticeType } from './noticeClice';
 
 const commonClice = new CommonClice();
 const solServer = new SolServer();
+const rpcServer = new RpcServer();
 
 const rSOLClice = createSlice({
   name: 'rSOLModule',
@@ -44,6 +53,8 @@ const rSOLClice = createSlice({
 
     ercBalance: '--',
     totalUnbonding: null,
+    rewardList: [],
+    rewardList_lastdata: null,
   },
   reducers: {
     setSolAccounts(state, { payload }) {
@@ -123,6 +134,12 @@ const rSOLClice = createSlice({
     setUnBondFees(state, { payload }) {
       state.unBondFees = payload;
     },
+    setRewardList(state, { payload }) {
+      state.rewardList = payload;
+    },
+    setRewardList_lastdata(state, { payload }) {
+      state.rewardList_lastdata = payload;
+    },
   },
 });
 const polkadotServer = new PolkadotServer();
@@ -144,6 +161,8 @@ export const {
   setTotalUnbonding,
   setUnBondFees,
   setRatioShow,
+  setRewardList,
+  setRewardList_lastdata,
 } = rSOLClice.actions;
 
 export const reloadData = (): AppThunk => async (dispatch, getState) => {
@@ -286,7 +305,7 @@ export const transfer =
         dispatch(reloadData());
       }
     } catch (error) {
-      if (error == 'Error: Transaction cancelled') {
+      if (error.message === 'Error: Transaction cancelled' || error.message === 'Signature request denied') {
         message.error('cancelled');
         dispatch(setProcessSlider(false));
         dispatch(reloadData());
@@ -717,6 +736,64 @@ export const getPools =
     });
     const data = await commonClice.poolBalanceLimit(rSymbol.Sol);
     dispatch(setPoolLimit(data));
+  };
+
+export const getReward =
+  (pageIndex: Number, cb: Function): AppThunk =>
+  async (dispatch, getState) => {
+    const fisSource = getState().FISModule.fisAccount.address;
+    const ethAccount = getState().rETHModule.ethAccount;
+    const bscAccount = getState().BSCModule.bscAccount;
+    const solAccount = getState().rSOLModule.solAccount;
+    dispatch(setLoading(true));
+    try {
+      if (pageIndex == 0) {
+        dispatch(setRewardList([]));
+        dispatch(setRewardList_lastdata(null));
+      }
+      const result = await rpcServer.getReward(
+        fisSource,
+        ethAccount ? ethAccount.address : '',
+        rSymbol.Sol,
+        pageIndex,
+        bscAccount && bscAccount.address,
+        solAccount && solAccount.address,
+      );
+      if (result.status == 80000) {
+        const rewardList = getState().rSOLModule.rewardList;
+        if (result.data.rewardList.length > 0) {
+          const list = result.data.rewardList.map((item: any) => {
+            const rate = NumberUtil.rTokenRateToHuman(item.rate);
+            const rbalance = NumberUtil.tokenAmountToHuman(item.rbalance, rSymbol.Sol);
+            return {
+              ...item,
+              rbalance: rbalance,
+              rate: rate,
+            };
+          });
+          if (result.data.rewardList.length <= pageCount) {
+            dispatch(setRewardList_lastdata(null));
+          } else {
+            dispatch(setRewardList_lastdata(list[list.length - 1]));
+            list.pop();
+          }
+          dispatch(setRewardList([...rewardList, ...list]));
+          dispatch(setLoading(false));
+          if (result.data.rewardList.length <= pageCount) {
+            cb && cb(false);
+          } else {
+            cb && cb(true);
+          }
+        } else {
+          dispatch(setLoading(false));
+          cb && cb(false);
+        }
+      } else {
+        dispatch(setLoading(false));
+      }
+    } catch (error) {
+      dispatch(setLoading(false));
+    }
   };
 
 export const getUnbondCommission = (): AppThunk => async (dispatch, getState) => {

@@ -659,8 +659,8 @@ export const notice_text = (item: any) => {
       if (item.subData.destSwapType === 'bep20') {
         return `Swap ${item.amount} Native ${item.rSymbol} to BEP20, it may take 2~10 minutes to arrive`;
       }
-      if (item.subData.destSwapType === 'slp20') {
-        return `Swap ${item.amount} Native ${item.rSymbol} to SLP20, it may take 2~10 minutes to arrive`;
+      if (item.subData.destSwapType === 'spl') {
+        return `Swap ${item.amount} Native ${item.rSymbol} to SPL, it may take 2~10 minutes to arrive`;
       }
       return `Swap ${item.amount} Native ${item.rSymbol} to ERC20, it may take 2~10 minutes to arrive`;
     } else if (item.subData.swapType == 'bep20') {
@@ -669,9 +669,9 @@ export const notice_text = (item: any) => {
       } else {
         return `Swap ${item.amount} BEP20 ${item.rSymbol} to Native, it may take 2~10 minutes to arrive`;
       }
-    } else if (item.subData.swapType == 'slp20') {
+    } else if (item.subData.swapType == 'spl') {
       if (item.subData.destSwapType == 'native') {
-        return `Swap ${item.amount} SLP20 ${item.rSymbol} to Native, it may take 2~10 minutes to arrive`;
+        return `Swap ${item.amount} SPL ${item.rSymbol} to Native, it may take 2~10 minutes to arrive`;
       }
     } else {
       if (item.subData.destSwapType == 'bep20') {

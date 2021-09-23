@@ -59,6 +59,7 @@ export const getRSOLAssetBalance = (): AppThunk => (dispatch, getState) => {
 
 export const getAssetBalance = async (address: string, tokenType: string, cb?: Function) => {
   if (!address) {
+    cb('--');
     return;
   }
 
@@ -85,11 +86,15 @@ export const getAssetBalance = async (address: string, tokenType: string, cb?: F
         commitment: 'singleGossip',
       });
       const tokenAccountBalance = await connection.getTokenAccountBalance(result[0]);
-      // console.log('slp20 asset detail: ', tokenAccountBalance.value);
+      // console.log('spl asset detail: ', tokenAccountBalance.value);
       if (tokenAccountBalance && tokenAccountBalance.value) {
         cb && cb(tokenAccountBalance.value.uiAmount);
       }
-    } catch (err) {}
+    } catch (err) {
+      cb && cb('--');
+    }
+  } else {
+    cb && cb('--');
   }
 };
 

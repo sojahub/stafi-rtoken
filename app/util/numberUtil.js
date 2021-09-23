@@ -13,7 +13,7 @@ import Web3Utils from 'web3-utils';
 // mathjs optimization
 const config = {
   // optionally, you can specify configuration
-}
+};
 // Create just the functions we need
 const { divide, floor, max, min, multiply, subtract } = create(
   {
@@ -238,10 +238,10 @@ export default {
         factor = 1000000000;
         break;
       case rSymbol.Eth:
-        factor = 1000000000000000000;
+        factor = 1000000000000000000n;
         break;
       case rSymbol.Matic:
-        factor = 1000000000000000000;
+        factor = 1000000000000000000n;
         break;
       case rSymbol.Bnb:
         factor = 100000000;
@@ -252,7 +252,7 @@ export default {
     }
 
     // console.log(`amount: ${amount} factor: ${factor}`);
-    return divide(Number(amount), factor);
+    return divide(Number(amount), Number(factor));
   },
   tokenAmountToChain(amount, symbol) {
     switch (symbol) {

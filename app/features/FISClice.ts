@@ -515,9 +515,19 @@ export const bound =
           });
         message.info('Signature succeeded, proceeding staking');
       } else if (type == rSymbol.Sol) {
-        signature = await solSignature(address, fisAddress);
-        pubkey = u8aToHex(new PublicKey(getState().rSOLModule.solAccount.address).toBytes());
-        message.info('Signature succeeded, proceeding staking');
+        try {
+          signature = await solSignature(address, fisAddress);
+          pubkey = u8aToHex(new PublicKey(getState().rSOLModule.solAccount.address).toBytes());
+          message.info('Signature succeeded, proceeding staking');
+        } catch (err) {
+          dispatch(
+            setProcessStaking({
+              brocasting: processStatus.failure,
+            }),
+          );
+          message.error(err.message);
+          throw err;
+        }
       } else {
         signature = await stakingSignature(address, u8aToHex(keyringInstance.decodeAddress(fisAddress)));
         pubkey = u8aToHex(keyringInstance.decodeAddress(address));

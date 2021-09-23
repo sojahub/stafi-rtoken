@@ -462,7 +462,7 @@ export default {
     } else if (type == rSymbol.Ksm) {
       return `https://kusama.subscan.io/extrinsic/${txHash}`;
     } else if (type == rSymbol.Sol) {
-      return `https://solanabeach.io/transaction/${txHash}`;
+      return `https://solscan.io/tx/${txHash}`;
     } else if (type == rSymbol.Matic) {
       return `https://etherscan.io/tx/${txHash}`;
     } else if (type == rSymbol.Bnb) {
@@ -603,13 +603,13 @@ export default {
   minReward: 0.000001,
   slpFisTokenAddress: () => {
     if (!isdev()) {
-      return '';
+      return 'FG7x94jPcVbtt4pLXWhyr6sU3iWim8JJ2y215X5yowN5';
     }
     return '7tFoMBHydGVDcgxUpkPiWca2x7hoy9s7oBAhmay8GQLL';
   },
   slpRSolTokenAddress: () => {
     if (!isdev()) {
-      return '';
+      return '7hUdUTkJLwdcmt3jSEeqx4ep91sm1XwBxMDaJae6bD5D';
     }
     return '2FxyeVxhq3rzSPFEkFgmDYprPREwt4fKhqGX84q4m8us';
   },

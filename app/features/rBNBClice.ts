@@ -790,13 +790,23 @@ export const getReward =
   async (dispatch, getState) => {
     const fisSource = getState().FISModule.fisAccount.address;
     const ethAccount = getState().rETHModule.ethAccount;
+    const bscAccount = getState().BSCModule.bscAccount;
+    const solAccount = getState().rSOLModule.solAccount;
+
     dispatch(setLoading(true));
     try {
       if (pageIndex == 0) {
         dispatch(setRewardList([]));
         dispatch(setRewardList_lastdata(null));
       }
-      const result = await rpcServer.getReward(fisSource, ethAccount ? ethAccount.address : '', rSymbol.Bnb, pageIndex);
+      const result = await rpcServer.getReward(
+        fisSource,
+        ethAccount ? ethAccount.address : '',
+        rSymbol.Bnb,
+        pageIndex,
+        bscAccount && bscAccount.address,
+        solAccount && solAccount.address,
+      );
       if (result.status == 80000) {
         const rewardList = getState().rBNBModule.rewardList;
         if (result.data.rewardList.length > 0) {

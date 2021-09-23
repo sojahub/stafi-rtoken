@@ -23,14 +23,14 @@ const rTokenPlatforms = [
   },
   {
     icon: solana_white,
-    title: 'SLP20',
+    title: 'SPL',
     content: 'Solana',
-    type: 'sol',
+    type: 'spl',
   },
 ];
 
 type Props = {
-  type: 'native' | 'erc' | 'bep' | 'sol';
+  type: 'native' | 'erc' | 'bep' | 'spl';
   onClick?: Function;
 };
 

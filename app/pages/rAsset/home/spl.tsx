@@ -10,13 +10,13 @@ import {
   rTokenRate as sol_rTokenRate
 } from '@features/rSOLClice';
 import { getSlp20AssetBalanceAll } from '@features/SOLClice';
-import rasset_fis_svg from '@images/rFIS.svg';
-import rasset_rsol_svg from '@images/rSOL.svg';
 // import {
 //   getUnbondCommission as matic_getUnbondCommission,
 //   rTokenRate as matic_rTokenRate
 // } from '@features/rMATICClice';
-import sollet from '@images/sollet.png';
+import phantom from '@images/phantom.png';
+import rasset_fis_svg from '@images/rFIS.svg';
+import rasset_rsol_svg from '@images/rSOL.svg';
 import Button from '@shared/components/button/connect_button';
 import NumberUtil from '@util/numberUtil';
 import React, { useEffect, useMemo } from 'react';
@@ -100,7 +100,7 @@ export default function Index(props: any) {
   };
 
   const toSwap = (tokenSymbol: string) => {
-    history.push('/rAsset/swap/slp20/native', {
+    history.push('/rAsset/swap/spl/native', {
       rSymbol: tokenSymbol,
     });
   };
@@ -118,7 +118,7 @@ export default function Index(props: any) {
               willGetBalance={0}
               unit='FIS'
               trade={config.uniswapUrl('0xB8c77482e45F1F44dE1745F52C74426C631bDD52', config.FISBep20TokenAddress())}
-              operationType='slp20'
+              operationType='spl'
               onSwapClick={() => toSwap('FIS')}
             />
 
@@ -130,7 +130,7 @@ export default function Index(props: any) {
               willGetBalance={solWillAmount}
               unit='SOL'
               trade={config.uniswap.rsolURL}
-              operationType='slp20'
+              operationType='spl'
               onSwapClick={() => toSwap('rSOL')}
             />
           </DataList>{' '}
@@ -139,7 +139,7 @@ export default function Index(props: any) {
       ) : (
         <div className='rAsset_content'>
           <Button
-            icon={sollet}
+            icon={phantom}
             onClick={() => {
               dispatch(connectSoljs());
             }}>

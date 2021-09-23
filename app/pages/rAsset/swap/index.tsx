@@ -170,8 +170,8 @@ const assetDatas = [
   {
     icon: solana_white,
     title: 'Solana',
-    content: 'SLP20',
-    type: 'slp20',
+    content: 'SPL',
+    type: 'spl',
   },
 ];
 
@@ -237,7 +237,7 @@ export default function Index(props: any) {
         rbnb_balance: NumberUtil.handleFisAmountToFixed(state.BSCModule.bepRBNBBalance),
         estimateBscFee: state.bridgeModule.estimateBscFee,
       };
-    } else if (fromTypeData && fromTypeData.type === 'slp20') {
+    } else if (fromTypeData && fromTypeData.type === 'spl') {
       return {
         fis_balance: NumberUtil.handleFisAmountToFixed(state.SOLModule.fisBalance),
         rsol_balance: NumberUtil.handleFisAmountToFixed(state.SOLModule.rSOLBalance),
@@ -281,7 +281,7 @@ export default function Index(props: any) {
         fromType !== 'native' &&
         fromType !== 'erc20' &&
         fromType !== 'bep20' &&
-        fromType !== 'slp20' &&
+        fromType !== 'spl' &&
         fromType !== 'default'
       ) {
         returnToAsset();
@@ -291,7 +291,7 @@ export default function Index(props: any) {
         destType !== 'native' &&
         destType !== 'erc20' &&
         destType !== 'bep20' &&
-        destType !== 'slp20' &&
+        destType !== 'spl' &&
         destType !== 'default'
       ) {
         returnToAsset();
@@ -376,15 +376,15 @@ export default function Index(props: any) {
     });
     let filterTokenDatas;
     if (
-      (fromType === 'erc20' && destType === 'slp20') ||
-      (fromType === 'slp20' && destType === 'erc20') ||
-      (fromType === 'bep20' && destType === 'slp20') ||
-      (fromType === 'slp20' && destType === 'bep20')
+      (fromType === 'erc20' && destType === 'spl') ||
+      (fromType === 'spl' && destType === 'erc20') ||
+      (fromType === 'bep20' && destType === 'spl') ||
+      (fromType === 'spl' && destType === 'bep20')
     ) {
       filterTokenDatas = allTokenDatas.filter((item: any) => {
         return false;
       });
-    } else if ((fromType === 'native' && destType === 'slp20') || (fromType === 'slp20' && destType === 'native')) {
+    } else if ((fromType === 'native' && destType === 'spl') || (fromType === 'spl' && destType === 'native')) {
       filterTokenDatas = allTokenDatas.filter((item: any) => {
         return item.type === 'fis' || item.type === 'rsol';
       });
@@ -496,7 +496,7 @@ export default function Index(props: any) {
       dispatch(getBep20AssetBalanceAll());
       dispatch(bsc_Monitoring_Method());
     }
-    if (fromType == 'slp20' && solAccount && solAccount.address) {
+    if (fromType == 'spl' && solAccount && solAccount.address) {
       if (solAccount) {
         dispatch(solCreateSubstrate(solAccount));
       }
@@ -699,7 +699,7 @@ export default function Index(props: any) {
 
           {fromTypeData && fromTypeData.type === 'bep20' && `Estimate Fee: ${estimateBscFee} BNB`}
 
-          {fromTypeData && fromTypeData.type === 'slp20' && `Estimate Fee: ${estimateSolFee} SOL`}
+          {fromTypeData && fromTypeData.type === 'spl' && `Estimate Fee: ${estimateSolFee} SOL`}
 
           {fromTypeData &&
             fromTypeData.type === 'native' &&
@@ -716,7 +716,7 @@ export default function Index(props: any) {
           {fromTypeData &&
             fromTypeData.type === 'native' &&
             destTypeData &&
-            destTypeData.type === 'slp20' &&
+            destTypeData.type === 'spl' &&
             `Estimate Fee: ${slp20EstimateFee} FIS`}
         </div>
 
@@ -729,7 +729,7 @@ export default function Index(props: any) {
                 fromTypeData &&
                 destTypeData &&
                 (fromTypeData.type === 'native' ||
-                  fromTypeData.type === 'slp20' ||
+                  fromTypeData.type === 'spl' ||
                   (fromTypeData.type === 'erc20' && config.metaMaskNetworkIsGoerliEth(metaMaskNetworkId)) ||
                   (fromTypeData.type === 'bep20' && config.metaMaskNetworkIsBsc(metaMaskNetworkId)))
               )
@@ -754,7 +754,7 @@ export default function Index(props: any) {
                   return;
                 }
               }
-              if (fromTypeData && fromTypeData.type === 'slp20') {
+              if (fromTypeData && fromTypeData.type === 'spl') {
                 if (!solAccount || Number(solAccount.balance) <= Number(estimateSolFee)) {
                   message.error(`No enough SOL to pay for the fee`);
                   return;
@@ -772,7 +772,7 @@ export default function Index(props: any) {
                   return;
                 }
               }
-              if (fromTypeData.type === 'native' && destTypeData && destTypeData.type === 'slp20') {
+              if (fromTypeData.type === 'native' && destTypeData && destTypeData.type === 'spl') {
                 if (Number(fis_balance) <= Number(slp20EstimateFee)) {
                   message.error(`No enough FIS to pay for the fee`);
                   return;
@@ -790,7 +790,7 @@ export default function Index(props: any) {
                   return;
                 }
               }
-              if (destTypeData.type === 'slp20') {
+              if (destTypeData.type === 'spl') {
                 if (!checkSOLAddress(address)) {
                   message.error('Input address error');
                   return;
@@ -801,7 +801,7 @@ export default function Index(props: any) {
                 setViewTxUrl(config.etherScanErc20TxInAddressUrl(address));
               } else if (destTypeData && destTypeData.type === 'bep20') {
                 setViewTxUrl(config.bscScanBep20TxInAddressUrl(address));
-              } else if (destTypeData && destTypeData.type === 'slp20') {
+              } else if (destTypeData && destTypeData.type === 'spl') {
                 setViewTxUrl(config.solScanSlp20TxInAddressUrl(address));
               }else {
                 setViewTxUrl(config.stafiScanUrl(address));
@@ -812,7 +812,7 @@ export default function Index(props: any) {
                 let chainId = ETH_CHAIN_ID;
                 if (destTypeData && destTypeData.type === 'bep20') {
                   chainId = BSC_CHAIN_ID;
-                } else if (destTypeData && destTypeData.type === 'slp20') {
+                } else if (destTypeData && destTypeData.type === 'spl') {
                   chainId = SOL_CHAIN_ID;
                 }
                 dispatch(
@@ -831,7 +831,7 @@ export default function Index(props: any) {
                   swapFun = bep20ToOtherSwap;
                 } else if (
                   fromTypeData &&
-                  fromTypeData.type === 'slp20' &&
+                  fromTypeData.type === 'spl' &&
                   destTypeData &&
                   destTypeData.type === 'native'
                 ) {

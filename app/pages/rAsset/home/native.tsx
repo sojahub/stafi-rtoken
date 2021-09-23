@@ -27,10 +27,14 @@ import {
   query_rBalances_account as matic_query_rBalances_account,
   rTokenRate as matic_rTokenRate
 } from '@features/rMATICClice';
-// import { getUnbondCommission as sol_getUnbondCommission, query_rBalances_account as sol_query_rBalances_account, rTokenRate as sol_rTokenRate } from '@features/rSOLClice';
+import {
+  getUnbondCommission as sol_getUnbondCommission,
+  query_rBalances_account as sol_query_rBalances_account,
+  rTokenRate as sol_rTokenRate
+} from '@features/rSOLClice';
 import rDOT_svg from '@images/rDOT.svg';
 import rasset_fis_svg from '@images/rFIS.svg';
-// import rasset_rsol_svg from '@images/rSOL.svg';
+import rasset_rsol_svg from '@images/rSOL.svg';
 import rasset_ratom_svg from '@images/r_atom.svg';
 import rasset_rbnb_svg from '@images/r_bnb.svg';
 import rasset_rdot_svg from '@images/r_dot.svg';
@@ -43,7 +47,7 @@ import Modal from '@shared/components/modal/connectModal';
 import NumberUtil from '@util/numberUtil';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useHistory } from 'react-router';
+import { useHistory, useParams } from 'react-router';
 import Page_FIS from '../../rDOT/selectWallet_rFIS/index';
 import CountAmount from './components/countAmount';
 import DataList from './components/list';
@@ -55,6 +59,7 @@ const commonClice = new CommonClice();
 export default function Index(props: any) {
   const dispatch = useDispatch();
   const history = useHistory();
+  const { rTokenPlatform } = useParams<any>();
   const [visible, setVisible] = useState(false);
 
   const {
@@ -175,21 +180,21 @@ export default function Index(props: any) {
       dispatch(dot_query_rBalances_account());
       dispatch(query_rBalances_account());
       dispatch(atom_query_rBalances_account());
-      // dispatch(sol_query_rBalances_account())
+      dispatch(sol_query_rBalances_account());
       dispatch(matic_query_rBalances_account());
       dispatch(bnb_query_rBalances_account());
       dispatch(ksm_rTokenRate());
       dispatch(fis_rTokenRate());
       dispatch(dot_rTokenRate());
       dispatch(atom_rTokenRate());
-      // dispatch(sol_rTokenRate() );
+      dispatch(sol_rTokenRate());
       dispatch(matic_rTokenRate());
       dispatch(bnb_rTokenRate());
       dispatch(getUnbondCommission());
       dispatch(fis_getUnbondCommission());
       dispatch(dot_getUnbondCommission());
       dispatch(atom_getUnbondCommission());
-      // dispatch(sol_getUnbondCommission());
+      dispatch(sol_getUnbondCommission());
       dispatch(matic_getUnbondCommission());
       dispatch(bnb_getUnbondCommission());
     }
@@ -201,6 +206,7 @@ export default function Index(props: any) {
         <>
           <DataList>
             <DataItem
+              disabled={rTokenPlatform === 'bep'}
               rSymbol='FIS'
               icon={rasset_fis_svg}
               fullName='StaFi'
@@ -211,13 +217,20 @@ export default function Index(props: any) {
               unit='FIS'
               operationType='native'
               onSwapClick={() => {
-                history.push('/rAsset/swap/native/erc20', {
+                let targetPlatform = 'default';
+                if (rTokenPlatform === 'sol') {
+                  targetPlatform = 'spl';
+                } else {
+                  targetPlatform = 'erc20';
+                }
+                history.push(`/rAsset/swap/native/${targetPlatform}`, {
                   rSymbol: 'FIS',
                 });
               }}
             />
 
             <DataItem
+              disabled={rTokenPlatform === 'sol'}
               rSymbol='rFIS'
               icon={rasset_rfis_svg}
               fullName='StaFi'
@@ -226,13 +239,20 @@ export default function Index(props: any) {
               unit='FIS'
               operationType='native'
               onSwapClick={() => {
-                history.push('/rAsset/swap/native/default', {
+                let targetPlatform = 'default';
+                if (rTokenPlatform === 'bep') {
+                  targetPlatform = 'bep20';
+                } else if (rTokenPlatform === 'erc') {
+                  targetPlatform = 'erc20';
+                }
+                history.push(`/rAsset/swap/native/${targetPlatform}`, {
                   rSymbol: 'rFIS',
                 });
               }}
             />
 
             <DataItem
+              disabled={rTokenPlatform === 'sol'}
               rSymbol='rDOT'
               icon={rasset_rdot_svg}
               fullName='Polkadot'
@@ -241,13 +261,20 @@ export default function Index(props: any) {
               unit='DOT'
               operationType='native'
               onSwapClick={() => {
-                history.push('/rAsset/swap/native/default', {
+                let targetPlatform = 'default';
+                if (rTokenPlatform === 'bep') {
+                  targetPlatform = 'bep20';
+                } else if (rTokenPlatform === 'erc') {
+                  targetPlatform = 'erc20';
+                }
+                history.push(`/rAsset/swap/native/${targetPlatform}`, {
                   rSymbol: 'rDOT',
                 });
               }}
             />
 
             <DataItem
+              disabled={rTokenPlatform === 'sol'}
               rSymbol='rKSM'
               icon={rasset_rksm_svg}
               fullName='Kusama'
@@ -256,13 +283,20 @@ export default function Index(props: any) {
               unit='KSM'
               operationType='native'
               onSwapClick={() => {
-                history.push('/rAsset/swap/native/default', {
+                let targetPlatform = 'default';
+                if (rTokenPlatform === 'bep') {
+                  targetPlatform = 'bep20';
+                } else if (rTokenPlatform === 'erc') {
+                  targetPlatform = 'erc20';
+                }
+                history.push(`/rAsset/swap/native/${targetPlatform}`, {
                   rSymbol: 'rKSM',
                 });
               }}
             />
 
             <DataItem
+              disabled={rTokenPlatform === 'sol'}
               rSymbol='rATOM'
               icon={rasset_ratom_svg}
               fullName='Cosmos'
@@ -271,29 +305,43 @@ export default function Index(props: any) {
               unit='ATOM'
               operationType='native'
               onSwapClick={() => {
-                history.push('/rAsset/swap/native/default', {
+                let targetPlatform = 'default';
+                if (rTokenPlatform === 'bep') {
+                  targetPlatform = 'bep20';
+                } else if (rTokenPlatform === 'erc') {
+                  targetPlatform = 'erc20';
+                }
+                history.push(`/rAsset/swap/native/${targetPlatform}`, {
                   rSymbol: 'rATOM',
                 });
               }}
             />
-            {/* <DataItem  
-          rSymbol="rSOL"
-          icon={rasset_rsol_svg}
-          fullName="Solana"
-          balance={sol_tokenAmount=="--" ?"--":NumberUtil.handleFisAmountToFixed(sol_tokenAmount)}
-          willGetBalance={solWillAmount}
-          unit="SOL"
-          operationType="native"
-          onSwapClick={()=>{
-            history.push(
-              "/rAsset/swap/native/default",
-              { 
-                rSymbol:"rSOL"
-              }
-            )
-          }}
-        />*/}
+
             <DataItem
+              rSymbol='rSOL'
+              icon={rasset_rsol_svg}
+              fullName='Solana'
+              balance={sol_tokenAmount == '--' ? '--' : NumberUtil.handleFisAmountToFixed(sol_tokenAmount)}
+              willGetBalance={solWillAmount}
+              unit='SOL'
+              operationType='native'
+              onSwapClick={() => {
+                let targetPlatform = 'default';
+                if (rTokenPlatform === 'bep') {
+                  targetPlatform = 'bep20';
+                } else if (rTokenPlatform === 'erc') {
+                  targetPlatform = 'erc20';
+                } else {
+                  targetPlatform = 'spl';
+                }
+                history.push(`/rAsset/swap/native/${targetPlatform}`, {
+                  rSymbol: 'rSOL',
+                });
+              }}
+            />
+
+            <DataItem
+              disabled={rTokenPlatform === 'sol'}
               rSymbol='rMATIC'
               icon={rasset_rmatic_svg}
               fullName='Matic'
@@ -302,13 +350,20 @@ export default function Index(props: any) {
               unit='MATIC'
               operationType='native'
               onSwapClick={() => {
-                history.push('/rAsset/swap/native/default', {
+                let targetPlatform = 'default';
+                if (rTokenPlatform === 'bep') {
+                  targetPlatform = 'bep20';
+                } else if (rTokenPlatform === 'erc') {
+                  targetPlatform = 'erc20';
+                }
+                history.push(`/rAsset/swap/native/${targetPlatform}`, {
                   rSymbol: 'rMATIC',
                 });
               }}
             />
 
             <DataItem
+              disabled={rTokenPlatform !== 'bep'}
               rSymbol='rBNB'
               icon={rasset_rbnb_svg}
               fullName='BSC'

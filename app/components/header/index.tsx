@@ -96,7 +96,7 @@ export default function Index(props: Props) {
           };
         }
       }
-      if (location.pathname.includes('/rAsset/home/sol')) {
+      if (location.pathname.includes('/rAsset/home/spl')) {
         if (state.rSOLModule.solAccount) {
           return {
             solAccount: state.rSOLModule.solAccount,
@@ -125,7 +125,7 @@ export default function Index(props: Props) {
           }
         }
 
-        if (location.pathname.includes('/rAsset/swap/slp20')) {
+        if (location.pathname.includes('/rAsset/swap/spl')) {
           if (state.rSOLModule.solAccount) {
             returnValue.solAccount = state.rSOLModule.solAccount;
             returnValue.type = 'rAsset';

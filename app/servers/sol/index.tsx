@@ -26,7 +26,7 @@ export default class ExtensionDapp extends SolKeyring {
     }
   }
 
-  async connectSolJs(cb: Function) {
+  async connectSolJs(cb?: Function) {
     const solana = this.getProvider();
     if (solana) {
       window.solana.on('connect', () => {
@@ -36,7 +36,7 @@ export default class ExtensionDapp extends SolKeyring {
           address: solana.publicKey.toString(),
           balance: '--',
         };
-        cb(account);
+        cb && cb(account);
       });
 
       await solana.connect();
@@ -80,7 +80,6 @@ export default class ExtensionDapp extends SolKeyring {
         txHash: txid,
       };
     } catch (e) {
-      console.warn(e);
       throw e;
     }
   };

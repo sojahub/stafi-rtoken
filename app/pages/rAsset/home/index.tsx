@@ -5,7 +5,7 @@ import BepPage from './bep';
 import Tag from './components/carTag/index';
 import ErcPage from './erc';
 import NativePage from './native';
-import SlpPage from './slp';
+import SplPage from './spl';
 
 export default function Index() {
   const { selectedPlatform, rTokenPlatform } = useParams<any>();
@@ -14,8 +14,8 @@ export default function Index() {
     (selectedPlatform !== 'native' &&
       selectedPlatform !== 'erc' &&
       selectedPlatform !== 'bep' &&
-      selectedPlatform !== 'sol') ||
-    (rTokenPlatform && rTokenPlatform !== 'erc' && rTokenPlatform !== 'bep' && rTokenPlatform !== 'sol') ||
+      selectedPlatform !== 'spl') ||
+    (rTokenPlatform && rTokenPlatform !== 'erc' && rTokenPlatform !== 'bep' && rTokenPlatform !== 'spl') ||
     selectedPlatform === rTokenPlatform ||
     (selectedPlatform === 'native' && !rTokenPlatform)
   ) {
@@ -29,7 +29,7 @@ export default function Index() {
       {selectedPlatform === 'native' && <NativePage />}
       {selectedPlatform === 'erc' && <ErcPage />}
       {selectedPlatform === 'bep' && <BepPage />}
-      {selectedPlatform === 'sol' && <SlpPage />}
+      {selectedPlatform === 'spl' && <SplPage />}
     </Content>
   );
 }

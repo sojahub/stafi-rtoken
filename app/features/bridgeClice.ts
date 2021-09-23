@@ -28,8 +28,6 @@ import { setLoading } from './globalClice';
 import { add_Notice, noticeStatus, noticesubType, noticeType, update_NoticeNew } from './noticeClice';
 import { getAssetBalance as getSlpAssetBalance } from './SOLClice';
 
-const splToken = require('@solana/spl-token');
-
 export const STAFI_CHAIN_ID = 1;
 export const ETH_CHAIN_ID = 2;
 export const BSC_CHAIN_ID = 3;
@@ -150,6 +148,17 @@ export const nativeToOtherSwap =
   async (dispatch, getState) => {
     try {
       dispatch(setLoading(true));
+
+      let txAddress = destAddress;
+      if (chainId === SOL_CHAIN_ID) {
+        txAddress = u8aToHex(new PublicKey(destAddress).toBytes());
+        const tokenMintPublicKey = await solServer.getTokenAccount(destAddress, tokenType);
+        if (!tokenMintPublicKey) {
+          throw new Error('Please add the SPL token account first.');
+        }
+        txAddress = u8aToHex(tokenMintPublicKey.toBytes());
+      }
+
       dispatch(setSwapLoadingStatus(1));
       dispatch(setSwapWaitingTime(600));
       if (chainId === ETH_CHAIN_ID) {
@@ -166,15 +175,7 @@ export const nativeToOtherSwap =
       const notice_uuid = stafi_uuid();
       let currentAccount = getState().FISModule.fisAccount.address;
       let tx: any = '';
-      let txAddress = destAddress;
-      if (chainId === SOL_CHAIN_ID) {
-        txAddress = u8aToHex(new PublicKey(destAddress).toBytes());
-        const tokenMintPublicKey = await solServer.getTokenAccount(destAddress, tokenType);
-        if (!tokenMintPublicKey) {
-          throw new Error('Token account not found!');
-        }
-        txAddress = u8aToHex(tokenMintPublicKey.toBytes());
-      }
+
       if (tokenType == 'fis') {
         const amount = NumberUtil.tokenAmountToChain(tokenAmount.toString());
         tx = await api.tx.bridgeSwap.transferNative(amount.toString(), txAddress, chainId);
@@ -236,7 +237,7 @@ export const nativeToOtherSwap =
                 dispatch(
                   add_Swap_Notice(notice_uuid, tokenStr, tokenAmount, noticeStatus.Pending, {
                     swapType: 'native',
-                    destSwapType: chainId === BSC_CHAIN_ID ? 'bep20' : chainId === SOL_CHAIN_ID ? 'slp20' : 'erc20',
+                    destSwapType: chainId === BSC_CHAIN_ID ? 'bep20' : chainId === SOL_CHAIN_ID ? 'spl' : 'erc20',
                     address: destAddress,
                   }),
                 );
@@ -621,20 +622,38 @@ export const slp20ToOtherSwap =
     cb?: Function,
   ): AppThunk =>
   async (dispatch, getState) => {
-    dispatch(setLoading(true));
-    dispatch(setSwapLoadingStatus(1));
-    dispatch(setSwapWaitingTime(600));
-    if (destChainId === STAFI_CHAIN_ID) {
-      updateSwapParamsOfNative(dispatch, tokenType, tokenAmount, address);
-    }
-    const notice_uuid = stafi_uuid();
-
     try {
-      // const res = await solServer.connectSolJs();
-      // console.log('sdfsdfsdf', res);
-      // const wallet = solServer.getWallet();
       const solana = solServer.getProvider();
+      if (solana && !solana.isConnected) {
+        message.info('Please connect Phantom extension first');
+        return;
+      }
+      if (!solana) {
+        return;
+      }
+
+      dispatch(setLoading(true));
+
+      // Check token account
       const solAddress = getState().rSOLModule.solAccount && getState().rSOLModule.solAccount.address;
+      let slpTokenMintAddress;
+      if (tokenType === 'fis') {
+        slpTokenMintAddress = config.slpFisTokenAddress();
+      } else if (tokenType === 'rsol') {
+        slpTokenMintAddress = config.slpRSolTokenAddress();
+      }
+      const tokenMintPublicKey = await solServer.getTokenAccount(solAddress, tokenType);
+      if (!tokenMintPublicKey) {
+        throw new Error('Please add the SPL token account first.');
+      }
+
+      dispatch(setSwapLoadingStatus(1));
+      dispatch(setSwapWaitingTime(600));
+      if (destChainId === STAFI_CHAIN_ID) {
+        updateSwapParamsOfNative(dispatch, tokenType, tokenAmount, address);
+      }
+      const notice_uuid = stafi_uuid();
+
       const transaction = new Transaction();
 
       const bf = crypto.createHash('sha256').update('global:transfer_out').digest();
@@ -652,19 +671,7 @@ export const slp20ToOtherSwap =
       const chanIdData = Buffer.from([1]).subarray(0, 1);
 
       const data = Buffer.concat([methodData, amountData, addressLengthData, addressData, chanIdData]);
-      console.log('sdfsdfsdf', u8aToHex(data));
-
-      let slpTokenMintAddress;
-      if (tokenType === 'fis') {
-        slpTokenMintAddress = config.slpFisTokenAddress();
-      } else if (tokenType === 'rsol') {
-        slpTokenMintAddress = config.slpRSolTokenAddress();
-      }
-
-      const tokenMintPublicKey = await solServer.getTokenAccount(solAddress, tokenType);
-      if (!tokenMintPublicKey) {
-        throw new Error('Token account not found!');
-      }
+      // console.log('sdfsdfsdf', u8aToHex(data));
 
       const instruction = new TransactionInstruction({
         keys: [
@@ -702,7 +709,7 @@ export const slp20ToOtherSwap =
       if (result.value && result.value.err === null) {
         dispatch(
           add_Swap_Notice(notice_uuid, tokenStr, tokenAmount, noticeStatus.Pending, {
-            swapType: 'slp20',
+            swapType: 'spl',
             destSwapType: 'native',
             address: address,
           }),

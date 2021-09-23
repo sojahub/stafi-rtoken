@@ -124,6 +124,7 @@ const RSOLHome = React.lazy(() => import('./pages/rSOL/home'));
 const RSOLValidator = React.lazy(() => import('./pages/rSOL/validator'));
 const RSOLHomeTemplate = React.lazy(() => import('./pages/rSOL/template'));
 const RSOLStakerRedeem = React.lazy(() => import('./pages/rSOL/staker/redeem'));
+const RSOLStakerReward = React.lazy(() => import('./pages/rSOL/staker/reward'));
 const RSOLStakerInfo = React.lazy(() => import('./pages/rSOL/staker/info'));
 const RSOLStakerIndex = React.lazy(() => import('./pages/rSOL/staker/home'));
 const RSOLStaker = React.lazy(() => import('./pages/rSOL/staker'));
@@ -660,6 +661,13 @@ const routesFactory = (role?: any) => {
                   component: RSOLStakerRedeem,
                 },
                 {
+                  id: 'RSOL_reward_index',
+                  path: '/rSOL/staker/reward',
+                  type: 'Staker',
+                  rSymbol: rSymbol.Sol,
+                  component: RSOLStakerReward,
+                },
+                {
                   path: '*',
                   component: () => <Redirect to='/rSOL/staker/index' />,
                 },
@@ -1045,7 +1053,7 @@ const routesFactory = (role?: any) => {
         },
         {
           path: '*',
-          component: () => <Redirect to='/rAsset/native' />,
+          component: () => <Redirect to='/rAsset/home' />,
         },
       ],
     },
