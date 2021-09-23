@@ -166,9 +166,11 @@ const queryBalance = async (account: any, dispatch: any, getState: any) => {
   dispatch(setSolAccounts(account));
   let account2: any = { ...account };
 
-  const connection = new solanaWeb3.Connection(config.solRpcApi(), 'singleGossip');
+  const connection = new solanaWeb3.Connection(config.solRpcApi(), {
+    wsEndpoint: config.solRpcWs(),
+    commitment: 'singleGossip',
+  });
   const balance = await connection.getBalance(new solanaWeb3.PublicKey(account2.address));
-
   let solBalance = NumberUtil.tokenAmountToHuman(balance, rSymbol.Sol);
   account2.balance = solBalance ? NumberUtil.handleEthAmountRound(solBalance) : 0;
 

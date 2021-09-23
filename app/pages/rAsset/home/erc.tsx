@@ -25,6 +25,7 @@ import Button from '@shared/components/button/connect_button';
 import NumberUtil from '@util/numberUtil';
 import React, { useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useHistory } from 'react-router';
 import CountAmount from './components/countAmount';
 import DataList from './components/list';
 import DataItem from './components/list/item';
@@ -33,6 +34,7 @@ import './page.scss';
 const commonClice = new CommonClice();
 export default function Index(props: any) {
   const dispatch = useDispatch();
+  const history = useHistory();
 
   const {
     ethAccount,
@@ -185,20 +187,14 @@ export default function Index(props: any) {
   }, []);
 
   const toSwap = (tokenSymbol: string) => {
-    props.history.push({
-      pathname: '/rAsset/swap/erc20/native',
-      state: {
-        rSymbol: tokenSymbol,
-      },
+    history.push('/rAsset/swap/erc20/native', {
+      rSymbol: tokenSymbol,
     });
   };
 
   const toSwapBep20 = (tokenSymbol: string) => {
-    props.history.push({
-      pathname: '/rAsset/swap/erc20/bep20',
-      state: {
-        rSymbol: tokenSymbol,
-      },
+    history.push('/rAsset/swap/erc20/bep20', {
+      rSymbol: tokenSymbol,
     });
   };
 

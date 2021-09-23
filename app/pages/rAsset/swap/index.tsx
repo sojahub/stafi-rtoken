@@ -49,7 +49,7 @@ import {
   rTokenRate as matic_rTokenRate
 } from '@features/rMATICClice';
 import {
-  createSubstrate as solCreateSubstrate,
+  checkAddress as checkSOLAddress, createSubstrate as solCreateSubstrate,
   getUnbondCommission as sol_getUnbondCommission,
   query_rBalances_account as sol_query_rBalances_account,
   rTokenRate as sol_rTokenRate
@@ -333,13 +333,11 @@ export default function Index(props: any) {
 
   useEffect(() => {
     if (location.state) {
-      if (selectDataSource.length > 0) {
-        const data = selectDataSource.find((item) => item.title == location.state.rSymbol);
-        if (data) {
-          setTokenType({ ...data });
-        } else {
-          setTokenType(null);
-        }
+      const data = selectDataSource.find((item) => item.title == location.state.rSymbol);
+      if (data) {
+        setTokenType({ ...data });
+      } else {
+        setTokenType(null);
       }
     } else {
       setTokenType(null);
@@ -377,7 +375,16 @@ export default function Index(props: any) {
       }
     });
     let filterTokenDatas;
-    if ((fromType === 'native' && destType === 'slp20') || (fromType === 'slp20' && destType === 'native')) {
+    if (
+      (fromType === 'erc20' && destType === 'slp20') ||
+      (fromType === 'slp20' && destType === 'erc20') ||
+      (fromType === 'bep20' && destType === 'slp20') ||
+      (fromType === 'slp20' && destType === 'bep20')
+    ) {
+      filterTokenDatas = allTokenDatas.filter((item: any) => {
+        return false;
+      });
+    } else if ((fromType === 'native' && destType === 'slp20') || (fromType === 'slp20' && destType === 'native')) {
       filterTokenDatas = allTokenDatas.filter((item: any) => {
         return item.type === 'fis' || item.type === 'rsol';
       });
@@ -747,6 +754,12 @@ export default function Index(props: any) {
                   return;
                 }
               }
+              if (fromTypeData && fromTypeData.type === 'slp20') {
+                if (!solAccount || Number(solAccount.balance) <= Number(estimateSolFee)) {
+                  message.error(`No enough SOL to pay for the fee`);
+                  return;
+                }
+              }
               if (fromTypeData.type === 'native' && destTypeData && destTypeData.type === 'erc20') {
                 if (Number(fis_balance) <= Number(erc20EstimateFee)) {
                   message.error(`No enough FIS to pay for the fee`);
@@ -755,6 +768,12 @@ export default function Index(props: any) {
               }
               if (fromTypeData.type === 'native' && destTypeData && destTypeData.type === 'bep20') {
                 if (Number(fis_balance) <= Number(bep20EstimateFee)) {
+                  message.error(`No enough FIS to pay for the fee`);
+                  return;
+                }
+              }
+              if (fromTypeData.type === 'native' && destTypeData && destTypeData.type === 'slp20') {
+                if (Number(fis_balance) <= Number(slp20EstimateFee)) {
                   message.error(`No enough FIS to pay for the fee`);
                   return;
                 }
@@ -771,12 +790,20 @@ export default function Index(props: any) {
                   return;
                 }
               }
+              if (destTypeData.type === 'slp20') {
+                if (!checkSOLAddress(address)) {
+                  message.error('Input address error');
+                  return;
+                }
+              }
 
               if (destTypeData && destTypeData.type === 'erc20') {
                 setViewTxUrl(config.etherScanErc20TxInAddressUrl(address));
               } else if (destTypeData && destTypeData.type === 'bep20') {
                 setViewTxUrl(config.bscScanBep20TxInAddressUrl(address));
-              } else {
+              } else if (destTypeData && destTypeData.type === 'slp20') {
+                setViewTxUrl(config.solScanSlp20TxInAddressUrl(address));
+              }else {
                 setViewTxUrl(config.stafiScanUrl(address));
               }
               setTransferDetail(`${fromAoumt} ${tokenType && tokenType.title} ${fromTypeData && fromTypeData.content}`);
@@ -802,7 +829,12 @@ export default function Index(props: any) {
                   swapFun = erc20ToOtherSwap;
                 } else if (fromTypeData && fromTypeData.type === 'bep20') {
                   swapFun = bep20ToOtherSwap;
-                } else if (fromTypeData && fromTypeData.type === 'slp20') {
+                } else if (
+                  fromTypeData &&
+                  fromTypeData.type === 'slp20' &&
+                  destTypeData &&
+                  destTypeData.type === 'native'
+                ) {
                   swapFun = slp20ToOtherSwap;
                 }
                 if (destTypeData.type === 'erc20') {

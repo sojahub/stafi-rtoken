@@ -630,9 +630,10 @@ export const slp20ToOtherSwap =
     const notice_uuid = stafi_uuid();
 
     try {
-      const res = await solServer.connectSolJs();
-      console.log('sdfsdfsdf', res);
-      const wallet = solServer.getWallet();
+      // const res = await solServer.connectSolJs();
+      // console.log('sdfsdfsdf', res);
+      // const wallet = solServer.getWallet();
+      const solana = solServer.getProvider();
       const solAddress = getState().rSOLModule.solAccount && getState().rSOLModule.solAccount.address;
       const transaction = new Transaction();
 
@@ -670,7 +671,7 @@ export const slp20ToOtherSwap =
           // bridge account
           { pubkey: new PublicKey(config.slpBridgeAccount()), isSigner: false, isWritable: true },
           // fee payer
-          { pubkey: wallet.publicKey, isSigner: false, isWritable: true },
+          { pubkey: solana.publicKey, isSigner: false, isWritable: true },
           // token mint account
           { pubkey: new PublicKey(slpTokenMintAddress), isSigner: false, isWritable: true },
           // from account
@@ -690,9 +691,9 @@ export const slp20ToOtherSwap =
       let { blockhash } = await connection.getRecentBlockhash();
       transaction.recentBlockhash = blockhash;
 
-      transaction.feePayer = wallet.publicKey;
+      transaction.feePayer = solana.publicKey;
 
-      let signed = await wallet.signTransaction(transaction);
+      let signed = await solana.signTransaction(transaction);
       let txid = await connection.sendRawTransaction(signed.serialize(), { skipPreflight: true });
       const result = await connection.confirmTransaction(txid);
 

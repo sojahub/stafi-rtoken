@@ -149,8 +149,8 @@ export default {
     if (!isdev()) {
       return clusterApiUrl('mainnet-beta');
     } else {
-      return clusterApiUrl('devnet');
-      // return 'https://solana-dev-rpc.wetez.io';
+      // return clusterApiUrl('devnet');
+      return 'https://solana-dev-rpc.wetez.io';
     }
   },
   solRpcWs: () => {
@@ -159,8 +159,8 @@ export default {
       return '';
     } else {
       // return '';
-      return clusterApiUrl('devnet');
-      // return 'wss://solana-dev-wss.wetez.io';
+      // return clusterApiUrl('devnet');
+      return 'wss://solana-dev-wss.wetez.io';
     }
   },
   solWalletProviderUrl: () => {
@@ -536,6 +536,12 @@ export default {
       return `https://bscscan.com/address/${address}#tokentxns`;
     }
     return `https://testnet.bscscan.com/address/${address}#tokentxns`;
+  },
+  solScanSlp20TxInAddressUrl: (address: any) => {
+    if (!isdev()) {
+      return `https://solscan.io/account/${address}`;
+    }
+    return `https://solscan.io/account/${address}`;
   },
   etherScanTokenUrl: (tokenAddress: any, userAddress: any) => {
     if (!isdev()) {

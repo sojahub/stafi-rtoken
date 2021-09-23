@@ -35,6 +35,7 @@ export default function Index(props: any) {
       dispatch(continueProcess());
     }, 50);
   }, []);
+
   const { loading } = useSelector((state: any) => {
     return {
       loading: state.globalModule.loading,
