@@ -483,7 +483,7 @@ export default {
     } else if (type == Symbol.Fis) {
       return 14;
     } else if (type == Symbol.Sol) {
-      return 10;
+      return 5;
     } else if (type == Symbol.Bnb) {
       return 14;
     } else {

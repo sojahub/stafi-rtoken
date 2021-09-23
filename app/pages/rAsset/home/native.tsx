@@ -1,3 +1,4 @@
+import config from '@config/index';
 import { getRtokenPriceList } from '@features/bridgeClice';
 import CommonClice from '@features/commonClice';
 import {
@@ -216,21 +217,22 @@ export default function Index(props: any) {
               willGetBalance={fisWillAmount}
               unit='FIS'
               operationType='native'
-              onSwapClick={() => {
+              tradeList={[{ label: 'Uniswap', url: config.uniswap.fisURL }]}
+              onSwapClick={(swapModalTarget: any) => {
                 let targetPlatform = 'default';
-                if (rTokenPlatform === 'sol') {
+                if (rTokenPlatform === 'spl') {
                   targetPlatform = 'spl';
                 } else {
                   targetPlatform = 'erc20';
                 }
-                history.push(`/rAsset/swap/native/${targetPlatform}`, {
+                history.push(`/rAsset/swap/native/${swapModalTarget || targetPlatform}`, {
                   rSymbol: 'FIS',
                 });
               }}
             />
 
             <DataItem
-              disabled={rTokenPlatform === 'sol'}
+              disabled={rTokenPlatform === 'spl'}
               rSymbol='rFIS'
               icon={rasset_rfis_svg}
               fullName='StaFi'
@@ -238,21 +240,22 @@ export default function Index(props: any) {
               willGetBalance={fisWillAmount}
               unit='FIS'
               operationType='native'
-              onSwapClick={() => {
+              tradeList={[{ label: 'Uniswap', url: config.uniswap.rfisURL }]}
+              onSwapClick={(swapModalTarget: any) => {
                 let targetPlatform = 'default';
                 if (rTokenPlatform === 'bep') {
                   targetPlatform = 'bep20';
                 } else if (rTokenPlatform === 'erc') {
                   targetPlatform = 'erc20';
                 }
-                history.push(`/rAsset/swap/native/${targetPlatform}`, {
+                history.push(`/rAsset/swap/native/${swapModalTarget || targetPlatform}`, {
                   rSymbol: 'rFIS',
                 });
               }}
             />
 
             <DataItem
-              disabled={rTokenPlatform === 'sol'}
+              disabled={rTokenPlatform === 'spl'}
               rSymbol='rDOT'
               icon={rasset_rdot_svg}
               fullName='Polkadot'
@@ -260,21 +263,22 @@ export default function Index(props: any) {
               willGetBalance={dotWillAmount}
               unit='DOT'
               operationType='native'
-              onSwapClick={() => {
+              tradeList={[{ label: 'Uniswap', url: config.uniswap.rdotURL }]}
+              onSwapClick={(swapModalTarget: any) => {
                 let targetPlatform = 'default';
                 if (rTokenPlatform === 'bep') {
                   targetPlatform = 'bep20';
                 } else if (rTokenPlatform === 'erc') {
                   targetPlatform = 'erc20';
                 }
-                history.push(`/rAsset/swap/native/${targetPlatform}`, {
+                history.push(`/rAsset/swap/native/${swapModalTarget || targetPlatform}`, {
                   rSymbol: 'rDOT',
                 });
               }}
             />
 
             <DataItem
-              disabled={rTokenPlatform === 'sol'}
+              disabled={rTokenPlatform === 'spl'}
               rSymbol='rKSM'
               icon={rasset_rksm_svg}
               fullName='Kusama'
@@ -282,21 +286,22 @@ export default function Index(props: any) {
               willGetBalance={ksmWillAmount}
               unit='KSM'
               operationType='native'
-              onSwapClick={() => {
+              tradeList={[{ label: 'Uniswap', url: config.uniswap.rksmURL }]}
+              onSwapClick={(swapModalTarget: any) => {
                 let targetPlatform = 'default';
                 if (rTokenPlatform === 'bep') {
                   targetPlatform = 'bep20';
                 } else if (rTokenPlatform === 'erc') {
                   targetPlatform = 'erc20';
                 }
-                history.push(`/rAsset/swap/native/${targetPlatform}`, {
+                history.push(`/rAsset/swap/native/${swapModalTarget || targetPlatform}`, {
                   rSymbol: 'rKSM',
                 });
               }}
             />
 
             <DataItem
-              disabled={rTokenPlatform === 'sol'}
+              disabled={rTokenPlatform === 'spl'}
               rSymbol='rATOM'
               icon={rasset_ratom_svg}
               fullName='Cosmos'
@@ -304,14 +309,15 @@ export default function Index(props: any) {
               willGetBalance={atomWillAmount}
               unit='ATOM'
               operationType='native'
-              onSwapClick={() => {
+              tradeList={[{ label: 'Uniswap', url: config.uniswap.ratomURL }]}
+              onSwapClick={(swapModalTarget: any) => {
                 let targetPlatform = 'default';
                 if (rTokenPlatform === 'bep') {
                   targetPlatform = 'bep20';
                 } else if (rTokenPlatform === 'erc') {
                   targetPlatform = 'erc20';
                 }
-                history.push(`/rAsset/swap/native/${targetPlatform}`, {
+                history.push(`/rAsset/swap/native/${swapModalTarget || targetPlatform}`, {
                   rSymbol: 'rATOM',
                 });
               }}
@@ -325,7 +331,8 @@ export default function Index(props: any) {
               willGetBalance={solWillAmount}
               unit='SOL'
               operationType='native'
-              onSwapClick={() => {
+              tradeList={[{ label: 'Uniswap', url: config.uniswap.rsolURL }]}
+              onSwapClick={(swapModalTarget: any) => {
                 let targetPlatform = 'default';
                 if (rTokenPlatform === 'bep') {
                   targetPlatform = 'bep20';
@@ -334,14 +341,14 @@ export default function Index(props: any) {
                 } else {
                   targetPlatform = 'spl';
                 }
-                history.push(`/rAsset/swap/native/${targetPlatform}`, {
+                history.push(`/rAsset/swap/native/${swapModalTarget || targetPlatform}`, {
                   rSymbol: 'rSOL',
                 });
               }}
             />
 
             <DataItem
-              disabled={rTokenPlatform === 'sol'}
+              disabled={rTokenPlatform === 'spl'}
               rSymbol='rMATIC'
               icon={rasset_rmatic_svg}
               fullName='Matic'
@@ -349,14 +356,14 @@ export default function Index(props: any) {
               willGetBalance={maticWillAmount}
               unit='MATIC'
               operationType='native'
-              onSwapClick={() => {
+              onSwapClick={(swapModalTarget: any) => {
                 let targetPlatform = 'default';
                 if (rTokenPlatform === 'bep') {
                   targetPlatform = 'bep20';
                 } else if (rTokenPlatform === 'erc') {
                   targetPlatform = 'erc20';
                 }
-                history.push(`/rAsset/swap/native/${targetPlatform}`, {
+                history.push(`/rAsset/swap/native/${swapModalTarget || targetPlatform}`, {
                   rSymbol: 'rMATIC',
                 });
               }}

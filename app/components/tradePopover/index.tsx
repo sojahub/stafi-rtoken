@@ -1,14 +1,19 @@
 import { Popover } from 'antd';
-import React from 'react';
+import React, { useState } from 'react';
 import './index.scss';
 
 type Props = {
   children: any;
   data: any[];
+  onClick?: Function;
 };
 export default function Index(props: Props) {
+  const [visible, setVisible] = useState(false);
+
   return (
     <Popover
+      visible={visible}
+      onVisibleChange={setVisible}
       overlayClassName={'stafi-popover-link'}
       placement='bottom'
       trigger='click'
@@ -21,7 +26,12 @@ export default function Index(props: Props) {
                   key={index + ''}
                   className='item-link'
                   onClick={() => {
-                    window.open(item.url);
+                    setVisible(false);
+                    if (props.onClick) {
+                      props.onClick(item);
+                    } else {
+                      window.open(item.url);
+                    }
                   }}>
                   {item.label}
                 </div>

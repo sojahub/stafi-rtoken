@@ -11,10 +11,10 @@ import {
   getUnbondCommission as matic_getUnbondCommission,
   rTokenRate as matic_rTokenRate
 } from '@features/rMATICClice';
-// import { getUnbondCommission as sol_getUnbondCommission, rTokenRate as sol_rTokenRate } from '@features/rSOLClice';
+import { getUnbondCommission as sol_getUnbondCommission, rTokenRate as sol_rTokenRate } from '@features/rSOLClice';
 import metamask from '@images/metamask.png';
 import rasset_fis_svg from '@images/rFIS.svg';
-// import rasset_rsol_svg from '@images/rSOL.svg';
+import rasset_rsol_svg from '@images/rSOL.svg';
 import rasset_ratom_svg from '@images/r_atom.svg';
 import rasset_rdot_svg from '@images/r_dot.svg';
 import rasset_reth_svg from '@images/r_eth.svg';
@@ -168,13 +168,13 @@ export default function Index(props: any) {
       dispatch(fis_rTokenRate());
       dispatch(dot_rTokenRate());
       dispatch(atom_rTokenRate());
-      // dispatch(sol_rTokenRate());
+      dispatch(sol_rTokenRate());
       dispatch(matic_rTokenRate());
       dispatch(ksm_getUnbondCommission());
       dispatch(fis_getUnbondCommission());
       dispatch(dot_getUnbondCommission());
       dispatch(atom_getUnbondCommission());
-      // dispatch(sol_getUnbondCommission());
+      dispatch(sol_getUnbondCommission());
       dispatch(matic_getUnbondCommission());
     } else {
       dispatch(connectMetamask(config.ethChainId(), true));
@@ -279,7 +279,7 @@ export default function Index(props: any) {
               onSwapClick={() => toSwap('rATOM')}
             />
 
-            {/* <DataItem
+            <DataItem
               disabled={!config.metaMaskNetworkIsGoerliEth(metaMaskNetworkId)}
               rSymbol='rSOL'
               icon={rasset_rsol_svg}
@@ -290,7 +290,7 @@ export default function Index(props: any) {
               trade={config.uniswap.rsolURL}
               operationType='erc20'
               onSwapClick={() => toSwap('rSOL')}
-            />*/}
+            />
 
             <DataItem
               disabled={!config.metaMaskNetworkIsGoerliEth(metaMaskNetworkId)}

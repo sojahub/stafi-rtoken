@@ -49,7 +49,8 @@ import {
   rTokenRate as matic_rTokenRate
 } from '@features/rMATICClice';
 import {
-  checkAddress as checkSOLAddress, createSubstrate as solCreateSubstrate,
+  checkAddress as checkSOLAddress,
+  createSubstrate as solCreateSubstrate,
   getUnbondCommission as sol_getUnbondCommission,
   query_rBalances_account as sol_query_rBalances_account,
   rTokenRate as sol_rTokenRate
@@ -81,7 +82,7 @@ import { useInterval } from '@util/utils';
 import { message } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useHistory, useLocation, useParams } from 'react-router-dom';
+import { Redirect, useHistory, useLocation, useParams } from 'react-router-dom';
 import './index.scss';
 
 type SelectorType = {
@@ -506,7 +507,7 @@ export default function Index(props: any) {
   };
 
   const reverseExchangeType = () => {
-    history.push(
+    history.replace(
       `/rAsset/swap/${destTypeData ? destTypeData.type : 'default'}/${fromTypeData ? fromTypeData.type : 'default'}`,
       {
         rSymbol: tokenType && tokenType.title,
@@ -518,18 +519,15 @@ export default function Index(props: any) {
   };
 
   if (fromTypeData && fromTypeData.type == 'native' && (!fisAccount || !fisAccount.address)) {
-    history.push('/rAsset/home/native');
-    return null;
+    return <Redirect to='/rAsset/home/native' />;
   }
 
   if (fromTypeData && fromTypeData.type == 'erc20' && (!ethAccount || !ethAccount.address)) {
-    history.push('/rAsset/home/eth');
-    return null;
+    return <Redirect to='/rAsset/home/eth' />;
   }
 
   if (fromTypeData && fromTypeData.type == 'bep20' && (!bscAccount || !bscAccount.address)) {
-    history.push('/rAsset/home/bep');
-    return null;
+    return <Redirect to='/rAsset/home/bep' />;
   }
 
   const checkAddress = (address: string) => {
@@ -550,7 +548,7 @@ export default function Index(props: any) {
     }
     setFormAmount('');
     setAddress('');
-    history.push(`/rAsset/swap/${type.type}/${destType}`, {
+    history.replace(`/rAsset/swap/${type.type}/${destType}`, {
       rSymbol: tokenType && tokenType.title,
     });
   };
@@ -565,7 +563,7 @@ export default function Index(props: any) {
     }
     setFormAmount('');
     setAddress('');
-    history.push(`/rAsset/swap/${fromType}/${type.type}`, {
+    history.replace(`/rAsset/swap/${fromType}/${type.type}`, {
       rSymbol: tokenType && tokenType.title,
     });
   };
@@ -576,7 +574,7 @@ export default function Index(props: any) {
         top={'40px'}
         left={'50px'}
         onClick={() => {
-          history.push('/rAsset/home/native');
+          history.go(-1);
         }}
       />
       <div className={'title_container'}>
@@ -803,7 +801,7 @@ export default function Index(props: any) {
                 setViewTxUrl(config.bscScanBep20TxInAddressUrl(address));
               } else if (destTypeData && destTypeData.type === 'spl') {
                 setViewTxUrl(config.solScanSlp20TxInAddressUrl(address));
-              }else {
+              } else {
                 setViewTxUrl(config.stafiScanUrl(address));
               }
               setTransferDetail(`${fromAoumt} ${tokenType && tokenType.title} ${fromTypeData && fromTypeData.content}`);

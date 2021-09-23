@@ -22,7 +22,7 @@ export default function Index() {
     };
   });
   return (
-    <RewardContent address={address} hours={24} rewardList={rewardList} getReward={getReward} type='SOL'>
+    <RewardContent address={address} hours={66} rewardList={rewardList} getReward={getReward} type='SOL'>
       {rewardList.map((item, index) => {
         let reward: any = '--';
 
