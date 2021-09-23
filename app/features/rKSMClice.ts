@@ -285,7 +285,7 @@ export const transfer =
                       new Uint8Array([mod.index.toNumber(), mod.error.toNumber()]),
                     );
 
-                    let message: string = 'Something is wrong, please try again later!';
+                    let message: string = 'Something is wrong, please try again later';
                     if (error.name == '') {
                       message = '';
                     }
@@ -336,7 +336,7 @@ export const transfer =
                   }),
                 );
                 
-                message.info('Sending succeeded, proceeding signature.');
+                message.info('Sending succeeded, proceeding signature');
 
                 asInBlock &&
                   dispatch(

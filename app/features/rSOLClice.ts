@@ -280,7 +280,7 @@ export const transfer =
           }),
         );
 
-        message.info('Sending succeeded, proceeding signature.');
+        message.info('Sending succeeded, proceeding signature');
 
         dispatch(
           bound(address, hexTxHash, hexBlockHash, amount, selectedPool.poolPubkey, rSymbol.Sol, (r: string) => {
@@ -545,7 +545,7 @@ export const getBlock =
       );
 
       if (!amount || !poolAddress || !blockhash) {
-        message.error('Transaction record not found!');
+        message.error('Transaction record not found');
         return;
       }
 

@@ -415,7 +415,7 @@ export const transfer =
             processParameter: getState().rMATICModule.processParameter,
           }),
         );
-        message.info('Sending succeeded, proceeding signature.');
+        message.info('Sending succeeded, proceeding signature');
 
         blockHash &&
           dispatch(

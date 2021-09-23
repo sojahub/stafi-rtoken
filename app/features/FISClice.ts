@@ -317,7 +317,7 @@ export const transfer =
       amount,
       validPools,
       poolLimit,
-      'The cumulative FIS amount exceeds the pool limit, please try again later!',
+      'The cumulative FIS amount exceeds the pool limit, please try again later',
     );
     if (selectedPool == null) {
       return;
@@ -351,13 +351,13 @@ export const transfer =
                         new Uint8Array([mod.index.toNumber(), mod.error.toNumber()]),
                       );
 
-                      let messageStr = 'Something is wrong, please try again later!';
+                      let messageStr = 'Something is wrong, please try again later';
                       if (error.name == 'NominateSwitchClosed') {
                         messageStr = 'Unable to stake, system is waiting for matching validators';
                       } else if (error.name == 'LiquidityBondZero') {
                         messageStr = 'The amount should be larger than 0';
                       } else if (error.name == 'PoolLimitReached') {
-                        messageStr = 'The cumulative FIS amount exceeds the pool limit, please try again later!';
+                        messageStr = 'The cumulative FIS amount exceeds the pool limit, please try again later';
                       }
                       message.error(message);
                     } catch (error) {
@@ -415,7 +415,7 @@ export const feeStationSignature = async (address: any, data: any) => {
 
 export const solSignature = async (address: any, fisAddress: string) => {
   await timeout(3000);
-  message.info('Please approve sign request in Phantom wallet.', 5);
+  message.info('Please approve sign request in Phantom wallet', 5);
 
   const fisKeyring = keyringInstance.init(Symbol.Fis);
   const solServer = new SolServer();
@@ -586,7 +586,7 @@ export const bound =
                             new Uint8Array([mod.index.toNumber(), mod.error.toNumber()]),
                           );
 
-                          let messageStr: string = 'Something is wrong, please try again later!';
+                          let messageStr: string = 'Something is wrong, please try again later';
                           if (error.name == '') {
                             messageStr = '';
                           }
@@ -877,7 +877,7 @@ export const unbond =
         amount,
         validPools,
         rSymbol.Fis,
-        "'No pool available, please try again later!",
+        "'No pool available, please try again later",
       );
       if (selectedPool == null) {
         dispatch(setLoading(false));
@@ -916,11 +916,11 @@ export const unbond =
                         new Uint8Array([mod.index.toNumber(), mod.error.toNumber()]),
                       );
 
-                      let messageStr = 'Something is wrong, please try again later!';
+                      let messageStr = 'Something is wrong, please try again later';
                       if (error.name == 'LiquidityUnbondZero') {
                         messageStr = 'The input amount should be larger than 0';
                       } else if (error.name == 'InsufficientBalance') {
-                        messageStr = 'Insufficient balance!';
+                        messageStr = 'Insufficient balance';
                       }
                       message.error(messageStr);
                     } catch (error) {

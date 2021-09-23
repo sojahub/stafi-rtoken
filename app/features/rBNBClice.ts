@@ -267,7 +267,7 @@ export const transfer =
         }),
       );
 
-      message.info('Sending succeeded, proceeding signature.');
+      message.info('Sending succeeded, proceeding signature');
 
       blockHash &&
         dispatch(
