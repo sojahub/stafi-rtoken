@@ -10,6 +10,7 @@ import {
   getAssetBalanceAll as getErc20AssetBalanceAll
 } from '@features/ETHClice';
 import { queryTokenBalances } from '@features/FISClice';
+import { getAssetBalance as getSlpAssetBalance } from '@features/SOLClice';
 import close_bold_svg from '@images/close_bold.svg';
 import complete_svg from '@images/complete.svg';
 import { rSymbol } from '@keyring/defaults';
@@ -245,6 +246,14 @@ export default function SwapLoading(props: Props) {
           true,
         );
       }
+    } else if (swapLoadingParams.swapType === 4) {
+      getSlpAssetBalance(swapLoadingParams.address, swapLoadingParams.tokenType, (v: any) => {
+        // console.log('new amount:', v);
+        if (Number(v) === Number(swapLoadingParams.oldBalance) + Number(swapLoadingParams.amount)) {
+          setSwapStatus(1);
+          dispatch(getBep20AssetBalanceAll());
+        }
+      });
     }
   };
 

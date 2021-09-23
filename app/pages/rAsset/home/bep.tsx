@@ -26,11 +26,9 @@ import rasset_rfis_svg from '@images/r_fis.svg';
 import rasset_rksm_svg from '@images/r_ksm.svg';
 import rasset_rmatic_svg from '@images/r_matic.svg';
 import Button from '@shared/components/button/connect_button';
-import Content from '@shared/components/content';
 import NumberUtil from '@util/numberUtil';
 import React, { useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import Tag from './components/carTag/index';
 import CountAmount from './components/countAmount';
 import DataList from './components/list';
 import DataItem from './components/list/item';
@@ -215,13 +213,7 @@ export default function Index(props: any) {
   };
 
   return (
-    <Content>
-      <Tag
-        type='bep'
-        onClick={(type: string) => {
-          props.history.push(`/rAsset/${type}`);
-        }}
-      />
+    <div>
       {bscAccount && bscAccount.address ? (
         <>
           <DataList>
@@ -357,6 +349,6 @@ export default function Index(props: any) {
           </Button>
         </div>
       )}
-    </Content>
+    </div>
   );
 }

@@ -8,7 +8,8 @@ import { getUnbondCommission as dot_getUnbondCommission, rTokenRate as dot_rToke
 import { connectMetamask, handleEthAccount, monitoring_Method } from '@features/rETHClice';
 import { getUnbondCommission as ksm_getUnbondCommission, rTokenRate as ksm_rTokenRate } from '@features/rKSMClice';
 import {
-  getUnbondCommission as matic_getUnbondCommission, rTokenRate as matic_rTokenRate
+  getUnbondCommission as matic_getUnbondCommission,
+  rTokenRate as matic_rTokenRate
 } from '@features/rMATICClice';
 // import { getUnbondCommission as sol_getUnbondCommission, rTokenRate as sol_rTokenRate } from '@features/rSOLClice';
 import metamask from '@images/metamask.png';
@@ -21,11 +22,9 @@ import rasset_rfis_svg from '@images/r_fis.svg';
 import rasset_rksm_svg from '@images/r_ksm.svg';
 import rasset_rmatic_svg from '@images/r_matic.svg';
 import Button from '@shared/components/button/connect_button';
-import Content from '@shared/components/content';
 import NumberUtil from '@util/numberUtil';
 import React, { useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import Tag from './components/carTag/index';
 import CountAmount from './components/countAmount';
 import DataList from './components/list';
 import DataItem from './components/list/item';
@@ -204,13 +203,7 @@ export default function Index(props: any) {
   };
 
   return (
-    <Content>
-      <Tag
-        type='erc'
-        onClick={(type: string) => {
-          props.history.push(`/rAsset/${type}`);
-        }}
-      />
+    <div>
       {ethAccount && ethAccount.address ? (
         <>
           <DataList>
@@ -330,6 +323,6 @@ export default function Index(props: any) {
           </Button>
         </div>
       )}
-    </Content>
+    </div>
   );
 }

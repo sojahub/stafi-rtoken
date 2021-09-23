@@ -19,6 +19,7 @@ import rKSMReducer from './rKSMClice';
 import rMATICReducer from './rMATICClice';
 import rPoolReducer from './rPoolClice';
 import rSOLReducer from './rSOLClice';
+import SOLReducer from './SOLClice';
 
 export default function createRootReducer(history?: History) {
   return combineReducers({
@@ -26,6 +27,7 @@ export default function createRootReducer(history?: History) {
     rDOTModule: rDOTReducer,
     rKSMModule: rKSMReducer,
     rSOLModule: rSOLReducer,
+    SOLModule: SOLReducer,
     FISModule: FISReducer,
     noticeModule: noticeReducer,
     router: connectRouter(history),

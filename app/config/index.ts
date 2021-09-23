@@ -594,4 +594,37 @@ export default {
     return 150;
   },
   minReward: 0.000001,
+  slpFisTokenAddress: () => {
+    if (!isdev()) {
+      return '';
+    }
+    return '7tFoMBHydGVDcgxUpkPiWca2x7hoy9s7oBAhmay8GQLL';
+  },
+  slpRSolTokenAddress: () => {
+    if (!isdev()) {
+      return '';
+    }
+    return '2FxyeVxhq3rzSPFEkFgmDYprPREwt4fKhqGX84q4m8us';
+  },
+  slpBridgeAccount: () => {
+    if (!isdev()) {
+      return '';
+    }
+    return '63ytYLeNDaaUx2u94KHJcoueaLzA7gryB26p2w8E53oh';
+  },
+  slpAssociatedTokenAccountProgramId: () => {
+    return 'ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL';
+  },
+  slpTokenProgramId: () => {
+    if (!isdev()) {
+      return '';
+    }
+    return 'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA';
+  },
+  slpBridgeProgramId: () => {
+    if (!isdev()) {
+      return '';
+    }
+    return 'EPfxck35M3NJwsjreExLLyQAgAL3y5uWfzddY6cHBrGy';
+  },
 };

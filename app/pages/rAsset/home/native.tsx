@@ -39,13 +39,12 @@ import rasset_rksm_svg from '@images/r_ksm.svg';
 import rasset_rmatic_svg from '@images/r_matic.svg';
 import { Symbol } from '@keyring/defaults';
 import Button from '@shared/components/button/connect_button';
-import Content from '@shared/components/content';
 import Modal from '@shared/components/modal/connectModal';
 import NumberUtil from '@util/numberUtil';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useHistory } from 'react-router';
 import Page_FIS from '../../rDOT/selectWallet_rFIS/index';
-import Tag from './components/carTag/index';
 import CountAmount from './components/countAmount';
 import DataList from './components/list';
 import DataItem from './components/list/item';
@@ -55,6 +54,7 @@ const commonClice = new CommonClice();
 
 export default function Index(props: any) {
   const dispatch = useDispatch();
+  const history = useHistory();
   const [visible, setVisible] = useState(false);
 
   const {
@@ -196,14 +196,7 @@ export default function Index(props: any) {
   }, [fisAccount && fisAccount.address]);
 
   return (
-    <Content>
-      <Tag
-        type='native'
-        onClick={(type: string) => {
-          props.history.push(`/rAsset/${type}`);
-        }}
-      />
-
+    <div>
       {fisAccount ? (
         <>
           <DataList>
@@ -218,14 +211,12 @@ export default function Index(props: any) {
               unit='FIS'
               operationType='native'
               onSwapClick={() => {
-                props.history.push({
-                  pathname: '/rAsset/swap/native/erc20',
-                  state: {
-                    rSymbol: 'FIS',
-                  },
+                history.push('/rAsset/swap/native/erc20', {
+                  rSymbol: 'FIS',
                 });
               }}
             />
+
             <DataItem
               rSymbol='rFIS'
               icon={rasset_rfis_svg}
@@ -235,14 +226,12 @@ export default function Index(props: any) {
               unit='FIS'
               operationType='native'
               onSwapClick={() => {
-                props.history.push({
-                  pathname: '/rAsset/swap/native/default',
-                  state: {
-                    rSymbol: 'rFIS',
-                  },
+                history.push('/rAsset/swap/native/default', {
+                  rSymbol: 'rFIS',
                 });
               }}
             />
+
             <DataItem
               rSymbol='rDOT'
               icon={rasset_rdot_svg}
@@ -252,14 +241,12 @@ export default function Index(props: any) {
               unit='DOT'
               operationType='native'
               onSwapClick={() => {
-                props.history.push({
-                  pathname: '/rAsset/swap/native/default',
-                  state: {
-                    rSymbol: 'rDOT',
-                  },
+                history.push('/rAsset/swap/native/default', {
+                  rSymbol: 'rDOT',
                 });
               }}
             />
+
             <DataItem
               rSymbol='rKSM'
               icon={rasset_rksm_svg}
@@ -269,14 +256,12 @@ export default function Index(props: any) {
               unit='KSM'
               operationType='native'
               onSwapClick={() => {
-                props.history.push({
-                  pathname: '/rAsset/swap/native/default',
-                  state: {
-                    rSymbol: 'rKSM',
-                  },
+                history.push('/rAsset/swap/native/default', {
+                  rSymbol: 'rKSM',
                 });
               }}
             />
+
             <DataItem
               rSymbol='rATOM'
               icon={rasset_ratom_svg}
@@ -286,11 +271,8 @@ export default function Index(props: any) {
               unit='ATOM'
               operationType='native'
               onSwapClick={() => {
-                props.history.push({
-                  pathname: '/rAsset/swap/native/default',
-                  state: {
-                    rSymbol: 'rATOM',
-                  },
+                history.push('/rAsset/swap/native/default', {
+                  rSymbol: 'rATOM',
                 });
               }}
             />
@@ -303,12 +285,12 @@ export default function Index(props: any) {
           unit="SOL"
           operationType="native"
           onSwapClick={()=>{
-            props.history.push({
-              pathname:"/rAsset/swap/native/default",
-              state:{ 
+            history.push(
+              "/rAsset/swap/native/default",
+              { 
                 rSymbol:"rSOL"
               }
-            })
+            )
           }}
         />*/}
             <DataItem
@@ -320,14 +302,12 @@ export default function Index(props: any) {
               unit='MATIC'
               operationType='native'
               onSwapClick={() => {
-                props.history.push({
-                  pathname: '/rAsset/swap/native/default',
-                  state: {
-                    rSymbol: 'rMATIC',
-                  },
+                history.push('/rAsset/swap/native/default', {
+                  rSymbol: 'rMATIC',
                 });
               }}
             />
+
             <DataItem
               rSymbol='rBNB'
               icon={rasset_rbnb_svg}
@@ -337,11 +317,8 @@ export default function Index(props: any) {
               unit='BNB'
               operationType='native'
               onSwapClick={() => {
-                props.history.push({
-                  pathname: '/rAsset/swap/native/bep20',
-                  state: {
-                    rSymbol: 'rBNB',
-                  },
+                history.push('/rAsset/swap/native/bep20', {
+                  rSymbol: 'rBNB',
                 });
               }}
             />
@@ -384,6 +361,6 @@ export default function Index(props: any) {
           }}
         />
       </Modal>
-    </Content>
+    </div>
   );
 }

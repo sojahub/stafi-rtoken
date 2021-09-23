@@ -14,7 +14,7 @@ type Props = {
   unit: string;
   onSwapClick?: Function;
   trade?: string;
-  operationType?: 'erc20' | 'bep20' | 'native';
+  operationType?: 'erc20' | 'bep20' | 'native' | 'slp20';
   disabled?: boolean;
 };
 export default function Index(props: Props) {

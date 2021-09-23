@@ -6,6 +6,8 @@ import Wallet from '@project-serum/sol-wallet-adapter';
 import { Connection, PublicKey, SystemProgram, Transaction } from '@solana/web3.js';
 import Stafi from '../stafi';
 
+const splToken = require('@solana/spl-token');
+
 let polkadotApi: any = null;
 let wallet = new Wallet(config.solWalletProviderUrl(), config.solRpcApi());
 
@@ -17,7 +19,7 @@ export default class ExtensionDapp extends SolKeyring {
 
   async connectSolJs() {
     if (!wallet.connected || !wallet.publicKey) {
-      await wallet.connect();
+      return await wallet.connect();
     }
   }
 
@@ -64,7 +66,7 @@ export default class ExtensionDapp extends SolKeyring {
 
       if (!parsedTx || !parsedTx.slot) {
         return {};
-      } 
+      }
       const block = await connection.getBlock(parsedTx.slot);
 
       const lamports = this.getTxLamports(parsedTx.transaction.message.instructions[0]);
@@ -74,9 +76,47 @@ export default class ExtensionDapp extends SolKeyring {
         poolAddress: destination,
         blockhash: block.blockhash,
       };
-    } catch (error) { 
+    } catch (error) {
       throw new Error();
     }
+  };
+
+  getTokenAccount = async (walletAddress: string, tokenType: string) => {
+    try {
+      let slpTokenMintAddress;
+      if (tokenType === 'fis') {
+        slpTokenMintAddress = config.slpFisTokenAddress();
+      } else if (tokenType === 'rsol') {
+        slpTokenMintAddress = config.slpRSolTokenAddress();
+      }
+
+      if (!slpTokenMintAddress) {
+        throw new Error('Unknown slp token');
+      }
+
+      const SPL_ASSOCIATED_TOKEN_ACCOUNT_PROGRAM_ID: PublicKey = new PublicKey(
+        'ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL',
+      );
+
+      const result = await PublicKey.findProgramAddress(
+        [
+          new PublicKey(walletAddress).toBuffer(),
+          splToken.TOKEN_PROGRAM_ID.toBuffer(),
+          new PublicKey(slpTokenMintAddress).toBuffer(),
+        ],
+        SPL_ASSOCIATED_TOKEN_ACCOUNT_PROGRAM_ID,
+      );
+
+      const connection = new Connection(config.solRpcApi(), 'singleGossip');
+      const accountInfo = await connection.getParsedAccountInfo(result[0]);
+      if (result.length >= 1 && accountInfo && accountInfo.value) {
+        return result[0];
+      }
+    } catch (err) {
+      return null;
+    }
+
+    return null;
   };
 
   getTxLamports = (instruction: any) => {

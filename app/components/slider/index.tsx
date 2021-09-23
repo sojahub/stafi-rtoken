@@ -2,7 +2,7 @@ import logo from '@images/logo2.png';
 import rAsset_svg from '@images/rAsset.svg';
 // import selected_rDEX_svg from '@images/rDEX_active.svg';
 // import rDEX_svg from '@images/rDEX_inactive.svg';
-// import rSOL_svg from '@images/rSOL.svg';
+import rSOL_svg from '@images/rSOL.svg';
 import rATOM_svg from '@images/r_atom.svg';
 import rBnb_svg from '@images/r_bnb.svg';
 import rDOT_svg from '@images/r_dot.svg';
@@ -20,7 +20,7 @@ import selected_rFIS_svg from '@images/selected_r_fis.svg';
 import selected_rKSM_svg from '@images/selected_r_ksm.svg';
 import selected_rMatic_svg from '@images/selected_r_matic.svg';
 import selected_rPool_svg from '@images/selected_r_pool.svg';
-// import selected_rSOL_svg from '@images/selected_r_sol.svg';
+import selected_rSOL_svg from '@images/selected_r_sol.svg';
 import React from 'react';
 import { useHistory } from 'react-router-dom';
 import { isdev } from '../../config/index';
@@ -33,7 +33,7 @@ const siderData = [
     selectedIcon: selected_rAsset_svg,
     text: 'rAsset',
     urlKeywords: '/rAsset',
-    url: '/rAsset/native',
+    url: '/rAsset/home/native',
   },
   // {
   //   icon: rDEX_svg,
@@ -93,13 +93,13 @@ const siderData = [
     urlKeywords: '/rATOM',
     url: '/rATOM/home',
   },
-  // {
-  //   icon: rSOL_svg,
-  //   selectedIcon: selected_rSOL_svg,
-  //   text: 'rSOL',
-  //   urlKeywords: '/rSOL',
-  //   url: '/rSOL/home',
-  // },
+  {
+    icon: rSOL_svg,
+    selectedIcon: selected_rSOL_svg,
+    text: 'rSOL',
+    urlKeywords: '/rSOL',
+    url: '/rSOL/home',
+  },
   {
     icon: rMatic_svg,
     selectedIcon: selected_rMatic_svg,

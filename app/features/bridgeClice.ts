@@ -1,3 +1,4 @@
+import config from '@config/index';
 import { rSymbol } from '@keyring/defaults';
 import { web3Enable, web3FromSource } from '@polkadot/extension-dapp';
 import { u8aToHex } from '@polkadot/util';
@@ -13,20 +14,26 @@ import DotServer from '@servers/polkadot';
 import SolServer from '@servers/sol';
 import { default as FisServer, default as StafiServer } from '@servers/stafi';
 import Stafi from '@servers/stafi/index';
+import { Connection, PublicKey, Transaction, TransactionInstruction } from '@solana/web3.js';
 import { stafi_uuid } from '@util/common';
 import { default as NumberUtil } from '@util/numberUtil';
 import rpc from '@util/rpc';
 import { message } from 'antd';
+import * as crypto from 'crypto';
 import { AppThunk } from '../store';
 import { getAssetBalance as getBscAssetBalance } from './BSCClice';
 import CommonClice from './commonClice';
 import { getAssetBalance } from './ETHClice';
 import { setLoading } from './globalClice';
 import { add_Notice, noticeStatus, noticesubType, noticeType, update_NoticeNew } from './noticeClice';
+import { getAssetBalance as getSlpAssetBalance } from './SOLClice';
+
+const splToken = require('@solana/spl-token');
 
 export const STAFI_CHAIN_ID = 1;
 export const ETH_CHAIN_ID = 2;
 export const BSC_CHAIN_ID = 3;
+export const SOL_CHAIN_ID = 4;
 
 const bridgeServer = new BridgeServer();
 const bscServer = new BscServer();
@@ -45,8 +52,10 @@ const bridgeClice = createSlice({
   initialState: {
     erc20EstimateFee: '--',
     bep20EstimateFee: '--',
+    slp20EstimateFee: '--',
     estimateEthFee: '--',
     estimateBscFee: '--',
+    estimateSolFee: '--',
     priceList: [],
     // 0-invisible, 1-start transferring, 2-start minting
     swapLoadingStatus: 0,
@@ -65,11 +74,17 @@ const bridgeClice = createSlice({
     setBep20EstimateFee(state, { payload }) {
       state.bep20EstimateFee = payload;
     },
+    setSlp20EstimateFee(state, { payload }) {
+      state.slp20EstimateFee = payload;
+    },
     setEstimateEthFee(state, { payload }) {
       state.estimateEthFee = payload;
     },
     setEstimateBscFee(state, { payload }) {
       state.estimateBscFee = payload;
+    },
+    setEstimateSolFee(state, { payload }) {
+      state.estimateSolFee = payload;
     },
     setPriceList(state, { payload }) {
       state.priceList = payload;
@@ -89,15 +104,16 @@ const bridgeClice = createSlice({
 export const {
   setErc20EstimateFee,
   setBep20EstimateFee,
+  setSlp20EstimateFee,
   setEstimateEthFee,
   setEstimateBscFee,
+  setEstimateSolFee,
   setPriceList,
   setSwapLoadingStatus,
   setSwapWaitingTime,
   setSwapLoadingParams,
 } = bridgeClice.actions;
 
-//Native to ERC20
 export const bridgeCommon_ChainFees = (): AppThunk => async (dispatch, getState) => {
   try {
     const stafiServer = new Stafi();
@@ -113,6 +129,12 @@ export const bridgeCommon_ChainFees = (): AppThunk => async (dispatch, getState)
       let bepEstimateFee = NumberUtil.fisAmountToHuman(resultBep.toJSON());
       dispatch(setBep20EstimateFee(NumberUtil.handleFisAmountToFixed(bepEstimateFee)));
     }
+
+    const resultSlp = await api.query.bridgeCommon.chainFees(SOL_CHAIN_ID);
+    if (resultSlp.toJSON()) {
+      let slpEstimateFee = NumberUtil.fisAmountToHuman(resultSlp.toJSON());
+      dispatch(setSlp20EstimateFee(NumberUtil.handleFisAmountToFixed(slpEstimateFee)));
+    }
   } catch (e) {}
 };
 
@@ -120,19 +142,22 @@ export const bridgeCommon_ChainFees = (): AppThunk => async (dispatch, getState)
 export const getBridgeEstimateEthFee = (): AppThunk => async (dispatch, getState) => {
   dispatch(setEstimateEthFee(bridgeServer.getBridgeEstimateEthFee()));
   dispatch(setEstimateBscFee(bridgeServer.getBridgeEstimateBscFee()));
+  dispatch(setEstimateSolFee(bridgeServer.getBridgeEstimateSolFee()));
 };
 
 export const nativeToOtherSwap =
-  (chainId: any, tokenStr: string, tokenType: string, tokenAmount: any, ethAddress: string, cb?: Function): AppThunk =>
+  (chainId: any, tokenStr: string, tokenType: string, tokenAmount: any, destAddress: string, cb?: Function): AppThunk =>
   async (dispatch, getState) => {
     try {
       dispatch(setLoading(true));
       dispatch(setSwapLoadingStatus(1));
       dispatch(setSwapWaitingTime(600));
       if (chainId === ETH_CHAIN_ID) {
-        updateSwapParamsOfErc(dispatch, tokenType, tokenAmount, ethAddress);
-      } else {
-        updateSwapParamsOfBep(dispatch, tokenType, tokenAmount, ethAddress);
+        updateSwapParamsOfErc(dispatch, tokenType, tokenAmount, destAddress);
+      } else if (chainId === BSC_CHAIN_ID) {
+        updateSwapParamsOfBep(dispatch, tokenType, tokenAmount, destAddress);
+      } else if (chainId === SOL_CHAIN_ID) {
+        updateSwapParamsOfSlp(dispatch, tokenType, tokenAmount, destAddress);
       }
 
       web3Enable(stafiServer.getWeb3EnalbeName());
@@ -141,13 +166,22 @@ export const nativeToOtherSwap =
       const notice_uuid = stafi_uuid();
       let currentAccount = getState().FISModule.fisAccount.address;
       let tx: any = '';
+      let txAddress = destAddress;
+      if (chainId === SOL_CHAIN_ID) {
+        txAddress = u8aToHex(new PublicKey(destAddress).toBytes());
+        const tokenMintPublicKey = await solServer.getTokenAccount(destAddress, tokenType);
+        if (!tokenMintPublicKey) {
+          throw new Error('Token account not found!');
+        }
+        txAddress = u8aToHex(tokenMintPublicKey.toBytes());
+      }
       if (tokenType == 'fis') {
         const amount = NumberUtil.tokenAmountToChain(tokenAmount.toString());
-        tx = await api.tx.bridgeSwap.transferNative(amount.toString(), ethAddress, chainId);
+        tx = await api.tx.bridgeSwap.transferNative(amount.toString(), txAddress, chainId);
       } else {
         let rsymbol = bridgeServer.getRsymbolByTokenType(tokenType);
         const amount = NumberUtil.tokenAmountToChain(tokenAmount.toString(), rsymbol);
-        tx = await api.tx.bridgeSwap.transferRtoken(rsymbol, amount.toString(), ethAddress, chainId);
+        tx = await api.tx.bridgeSwap.transferRtoken(rsymbol, amount.toString(), txAddress, chainId);
       }
       if (!tx) {
         dispatch(setLoading(false));
@@ -202,8 +236,8 @@ export const nativeToOtherSwap =
                 dispatch(
                   add_Swap_Notice(notice_uuid, tokenStr, tokenAmount, noticeStatus.Pending, {
                     swapType: 'native',
-                    destSwapType: chainId === BSC_CHAIN_ID ? 'bep20' : 'erc20',
-                    address: ethAddress,
+                    destSwapType: chainId === BSC_CHAIN_ID ? 'bep20' : chainId === SOL_CHAIN_ID ? 'slp20' : 'erc20',
+                    address: destAddress,
                   }),
                 );
                 cb && cb();
@@ -573,6 +607,118 @@ export const bep20ToOtherSwap =
     }
   };
 
+declare const window: any;
+
+type Test = {};
+
+export const slp20ToOtherSwap =
+  (
+    destChainId: number,
+    tokenStr: string,
+    tokenType: string,
+    tokenAmount: any,
+    address: string,
+    cb?: Function,
+  ): AppThunk =>
+  async (dispatch, getState) => {
+    dispatch(setLoading(true));
+    dispatch(setSwapLoadingStatus(1));
+    dispatch(setSwapWaitingTime(600));
+    if (destChainId === STAFI_CHAIN_ID) {
+      updateSwapParamsOfNative(dispatch, tokenType, tokenAmount, address);
+    }
+    const notice_uuid = stafi_uuid();
+
+    try {
+      const res = await solServer.connectSolJs();
+      console.log('sdfsdfsdf', res);
+      const wallet = solServer.getWallet();
+      const solAddress = getState().rSOLModule.solAccount && getState().rSOLModule.solAccount.address;
+      const transaction = new Transaction();
+
+      const bf = crypto.createHash('sha256').update('global:transfer_out').digest();
+      const methodData = bf.subarray(0, 8);
+      // amount, LittleEndian
+      const num = Number(Number(tokenAmount) * 1000000000);
+      const ab = new ArrayBuffer(8);
+      new DataView(ab).setInt32(0, num, true);
+      // const amountBf = hexToU8a('0x' + num.toString(16));
+      const amountData = Buffer.from(ab);
+      // hex: 20 00 00 00
+      const addressLengthData = Buffer.from([32, 0, 0, 0]).subarray(0, 4);
+      const keyringInstance = keyring.init('fis');
+      const addressData = keyringInstance.decodeAddress(address);
+      const chanIdData = Buffer.from([1]).subarray(0, 1);
+
+      const data = Buffer.concat([methodData, amountData, addressLengthData, addressData, chanIdData]);
+      console.log('sdfsdfsdf', u8aToHex(data));
+
+      let slpTokenMintAddress;
+      if (tokenType === 'fis') {
+        slpTokenMintAddress = config.slpFisTokenAddress();
+      } else if (tokenType === 'rsol') {
+        slpTokenMintAddress = config.slpRSolTokenAddress();
+      }
+
+      const tokenMintPublicKey = await solServer.getTokenAccount(solAddress, tokenType);
+      if (!tokenMintPublicKey) {
+        throw new Error('Token account not found!');
+      }
+
+      const instruction = new TransactionInstruction({
+        keys: [
+          // bridge account
+          { pubkey: new PublicKey(config.slpBridgeAccount()), isSigner: false, isWritable: true },
+          // fee payer
+          { pubkey: wallet.publicKey, isSigner: false, isWritable: true },
+          // token mint account
+          { pubkey: new PublicKey(slpTokenMintAddress), isSigner: false, isWritable: true },
+          // from account
+          { pubkey: tokenMintPublicKey, isSigner: false, isWritable: true },
+          // token program id
+          { pubkey: new PublicKey(config.slpTokenProgramId()), isSigner: false, isWritable: false },
+        ],
+        programId: new PublicKey(config.slpBridgeProgramId()),
+        data: data,
+      });
+      transaction.add(instruction);
+
+      const connection = new Connection(config.solRpcApi(), {
+        wsEndpoint: config.solRpcWs(),
+        commitment: 'singleGossip',
+      });
+      let { blockhash } = await connection.getRecentBlockhash();
+      transaction.recentBlockhash = blockhash;
+
+      transaction.feePayer = wallet.publicKey;
+
+      let signed = await wallet.signTransaction(transaction);
+      let txid = await connection.sendRawTransaction(signed.serialize(), { skipPreflight: true });
+      const result = await connection.confirmTransaction(txid);
+
+      // console.log('slp bridge swap result:', result);
+
+      if (result.value && result.value.err === null) {
+        dispatch(
+          add_Swap_Notice(notice_uuid, tokenStr, tokenAmount, noticeStatus.Pending, {
+            swapType: 'slp20',
+            destSwapType: 'native',
+            address: address,
+          }),
+        );
+        dispatch(setSwapLoadingStatus(2));
+        cb && cb({});
+      } else {
+        throw new Error('failed');
+      }
+    } catch (error) {
+      dispatch(setSwapLoadingStatus(0));
+      message.error(error.message);
+    } finally {
+      dispatch(setLoading(false));
+    }
+  };
+
 const add_Swap_Notice =
   (uuid: string, token: string, amount: string, status: string, subData: any): AppThunk =>
   async (dispatch, getState) => {
@@ -679,6 +825,20 @@ const updateSwapParamsOfBep = (dispatch: any, tokenType: string, tokenAmount: an
       );
     });
   }
+};
+
+const updateSwapParamsOfSlp = (dispatch: any, tokenType: string, tokenAmount: any, solAddress: string) => {
+  getSlpAssetBalance(solAddress, tokenType, (v: any) => {
+    dispatch(
+      setSwapLoadingParams({
+        address: solAddress,
+        swapType: 4,
+        amount: tokenAmount,
+        tokenType: tokenType,
+        oldBalance: v,
+      }),
+    );
+  });
 };
 
 const updateSwapParamsOfNative = async (dispatch: any, tokenType: string, tokenAmount: any, address: string) => {

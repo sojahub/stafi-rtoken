@@ -74,7 +74,7 @@ export default function Index(props: Props) {
       }
     }
     if (location.pathname.includes('/rAsset')) {
-      if (location.pathname.includes('/rAsset/native')) {
+      if (location.pathname.includes('/rAsset/home/native')) {
         if (state.FISModule.fisAccount) {
           return {
             fisAccount: state.FISModule.fisAccount,
@@ -82,20 +82,29 @@ export default function Index(props: Props) {
         }
       }
 
-      if (location.pathname.includes('/rAsset/erc')) {
+      if (location.pathname.includes('/rAsset/home/erc')) {
         if (state.rETHModule.ethAccount) {
           return {
             ethAccount: state.rETHModule.ethAccount,
           };
         }
       }
-      if (location.pathname.includes('/rAsset/bep')) {
+      if (location.pathname.includes('/rAsset/home/bep')) {
         if (state.BSCModule.bscAccount) {
           return {
             bscAccount: state.BSCModule.bscAccount,
           };
         }
       }
+      if (location.pathname.includes('/rAsset/home/sol')) {
+        if (state.rSOLModule.solAccount) {
+          return {
+            solAccount: state.rSOLModule.solAccount,
+            type: 'rAsset',
+          };
+        }
+      }
+
       if (location.pathname.includes('/rAsset/swap')) {
         const returnValue: any = {};
         if (location.pathname.includes('/rAsset/swap/native')) {
@@ -104,23 +113,25 @@ export default function Index(props: Props) {
           }
         }
 
-        if (
-          // location.pathname.includes('/rAsset/swap/native/erc20') ||
-          location.pathname.includes('/rAsset/swap/erc20')
-        ) {
+        if (location.pathname.includes('/rAsset/swap/erc20')) {
           if (state.rETHModule.ethAccount) {
             returnValue.ethAccount = state.rETHModule.ethAccount;
           }
         }
 
-        if (
-          // location.pathname.includes('/rAsset/swap/native/bep20') ||
-          location.pathname.includes('/rAsset/swap/bep20')
-        ) {
+        if (location.pathname.includes('/rAsset/swap/bep20')) {
           if (state.BSCModule.bscAccount) {
             returnValue.bscAccount = state.BSCModule.bscAccount;
           }
         }
+
+        if (location.pathname.includes('/rAsset/swap/slp20')) {
+          if (state.rSOLModule.solAccount) {
+            returnValue.solAccount = state.rSOLModule.solAccount;
+            returnValue.type = 'rAsset';
+          }
+        }
+
         return returnValue;
       }
     }
@@ -381,7 +392,7 @@ export default function Index(props: Props) {
                 </div>
               ) : null)}
 
-            {account.type == 'rSOL' &&
+            {(account.type == 'rSOL' || account.type == 'rAsset') &&
               (account.solAccount ? (
                 <div
                   className='header_tool account'

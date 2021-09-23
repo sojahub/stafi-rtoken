@@ -4,10 +4,11 @@ import bsc_white from '@images/bsc_white.svg';
 import eth_white from '@images/eth_white.svg';
 import solana_white from '@images/solana_white.svg';
 import { Popover } from 'antd';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useHistory, useParams } from 'react-router';
 import './index.scss';
 
-const rTokens = [
+const rTokenPlatforms = [
   {
     icon: eth_white,
     title: 'ERC20',
@@ -29,32 +30,53 @@ const rTokens = [
 ];
 
 type Props = {
-  type: 'native' | 'erc' | 'bep';
+  type: 'native' | 'erc' | 'bep' | 'sol';
   onClick?: Function;
 };
 
 export default function index(props: Props) {
+  const { selectedPlatform, rTokenPlatform } = useParams<any>();
+  const history = useHistory();
+
   const [showSelect, setShowSelect] = useState(false);
-  const [rTokenList, setRTokenList] = useState(rTokens);
+  const [rTokenList, _] = useState(rTokenPlatforms);
+  const [selectingNative, setSelectingNative] = useState(false);
+  const [selectedRTokenData, setSelectedRTokenData] = useState(null);
+
+  useEffect(() => {
+    let rTokenPlatformType = '';
+    if (selectedPlatform === 'native') {
+      rTokenPlatformType = rTokenPlatform;
+    } else {
+      rTokenPlatformType = selectedPlatform;
+    }
+    const tem = rTokenPlatforms.find((item) => {
+      return item.type === rTokenPlatformType;
+    });
+    setSelectedRTokenData(tem);
+
+    setSelectingNative(selectedPlatform === 'native');
+  }, [selectedPlatform, rTokenPlatform]);
 
   return (
     <div className='rAsset_tag'>
       <div
-        className={`${props.type == 'native' && 'tag_active'}`}
+        className={`${selectingNative && 'tag_active'}`}
         onClick={() => {
-          props.onClick && props.type != 'native' && props.onClick('native');
+          history.push(`/rAsset/home/native/${selectedRTokenData && selectedRTokenData.type}`);
         }}>
         Native<label>/ StaFi</label>
       </div>
 
       <div
-        className={`${props.type == 'erc' && 'tag_active'}`}
+        className={`${!selectingNative && 'tag_active'}`}
         onClick={() => {
-          props.onClick && props.type != 'erc' && props.onClick('erc');
+          history.push(`/rAsset/home/${selectedRTokenData && selectedRTokenData.type}`);
         }}>
         <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
           <div>
-            ERC20<label>/ Ethereum</label>
+            {selectedRTokenData && selectedRTokenData.title}
+            <label>/ {selectedRTokenData && selectedRTokenData.content}</label>
           </div>
 
           <Popover
@@ -74,9 +96,15 @@ export default function index(props: Props) {
             content={
               <Select
                 selectDataSource={rTokenList}
-                selectedData={rTokenList[0]}
-                onSelectChange={(e: any) => {
+                selectedType={selectedRTokenData && selectedRTokenData.type}
+                onSelectChange={(v: any) => {
+                  setSelectedRTokenData(v);
                   setShowSelect(false);
+                  if (selectedPlatform !== 'native') {
+                    history.push(`/rAsset/home/${v.type}`);
+                  } else {
+                    history.push(`/rAsset/home/native/${v.type}`);
+                  }
                 }}
               />
             }>
@@ -125,7 +153,7 @@ function SelectTitle(props: SelectTitleProps) {
 type SelectProps = {
   onSelectChange?: Function;
   selectDataSource?: any[];
-  selectedData?: any;
+  selectedType?: string;
 };
 
 function Select(props: SelectProps) {
@@ -136,7 +164,7 @@ function Select(props: SelectProps) {
           return (
             <div
               key={index}
-              className={`item ${props.selectedData && props.selectedData.title == item.title ? 'active' : ''}`}
+              className={`item ${props.selectedType && props.selectedType == item.type ? 'active' : ''}`}
               onClick={(e) => {
                 if (e.stopPropagation) {
                   e.stopPropagation();
