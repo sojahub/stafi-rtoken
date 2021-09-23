@@ -267,6 +267,8 @@ export const transfer =
         }),
       );
 
+      message.info('Sending succeeded, proceeding signature.');
+
       blockHash &&
         dispatch(
           bound(address, txHash, blockHash, amountInBnb, selectedPool.poolPubkey, rSymbol.Bnb, (r: string) => {
@@ -710,7 +712,6 @@ export const decodeCoin = (input: _m0.Reader | Uint8Array, length?: number): Coi
 export const getPools =
   (cb?: Function): AppThunk =>
   async (dispatch, getState) => {
-    dispatch(setValidPools(null));
     commonClice.getPools(rSymbol.Bnb, Symbol.Bnb, (data: any) => {
       dispatch(setValidPools(data));
       cb && cb();

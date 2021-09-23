@@ -280,6 +280,8 @@ export const transfer =
           }),
         );
 
+        message.info('Sending succeeded, proceeding signature.');
+
         dispatch(
           bound(address, hexTxHash, hexBlockHash, amount, selectedPool.poolPubkey, rSymbol.Sol, (r: string) => {
             if (r == 'loading') {
@@ -729,7 +731,6 @@ export const getBlock =
 export const getPools =
   (cb?: Function): AppThunk =>
   async (dispatch, getState) => {
-    dispatch(setValidPools(null));
     commonClice.getPools(rSymbol.Sol, Symbol.Sol, (data: any) => {
       dispatch(setValidPools(data));
       cb && cb();

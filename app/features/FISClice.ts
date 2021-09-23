@@ -389,7 +389,6 @@ export const transfer =
   };
 
 export const stakingSignature = async (address: any, data: any) => {
-  message.info('Sending succeeded, proceeding signature.');
   await timeout(5000);
   web3Enable(stafiServer.getWeb3EnalbeName());
   const injector = await web3FromSource(stafiServer.getPolkadotJsSource());
@@ -415,7 +414,6 @@ export const feeStationSignature = async (address: any, data: any) => {
 };
 
 export const solSignature = async (address: any, fisAddress: string) => {
-  message.info('Sending succeeded, proceeding signature.');
   await timeout(3000);
   message.info('Please approve sign request in Phantom wallet.', 5);
 
@@ -471,7 +469,6 @@ export const bound =
 
         message.info('Sending succeeded, proceeding staking');
       } else if (type == rSymbol.Matic) {
-        message.info('Sending succeeded, proceeding signature.');
         await timeout(3000);
         const ethAddress = getState().rMATICModule.maticAccount.address;
         const fisPubkey = u8aToHex(keyringInstance.decodeAddress(fisAddress), -1, false);
@@ -493,7 +490,6 @@ export const bound =
           });
         message.info('Signature succeeded, proceeding staking');
       } else if (type === rSymbol.Bnb) {
-        message.info('Sending succeeded, proceeding signature.');
         await timeout(3000);
         const ethAddress = getState().rETHModule.ethAccount.address;
         const fisPubkey = u8aToHex(keyringInstance.decodeAddress(fisAddress), -1, false);
@@ -1100,7 +1096,6 @@ export const unbondFees = (): AppThunk => async (dispatch, getState) => {
 export const getPools =
   (cb?: Function): AppThunk =>
   async (dispatch, getState) => {
-    dispatch(setValidPools(null));
     const data = await commonClice.fis_poolBalanceLimit();
     dispatch(setPoolLimit(data));
 

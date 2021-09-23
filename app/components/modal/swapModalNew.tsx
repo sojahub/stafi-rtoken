@@ -31,7 +31,7 @@ export default function Index(props: Props) {
           <a
             onClick={() => {
               props.onCancel();
-              props.onClickSwap && props.onClickSwap(1);
+              props.onClickSwap && props.onClickSwap();
             }}>
             Swap
           </a>

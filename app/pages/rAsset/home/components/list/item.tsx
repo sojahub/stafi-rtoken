@@ -66,7 +66,7 @@ export default function Index(props: Props) {
             ]}>
             <GhostButton disabled={props.disabled}>
               Trade
-              <img className='dow_svg' src={dow_svg} />
+              {!props.disabled && <img className='dow_svg' src={dow_svg} />}
             </GhostButton>
           </TradePopover>
         )}
@@ -81,7 +81,7 @@ export default function Index(props: Props) {
             }}>
             <GhostButton disabled={props.disabled}>
               Trade
-              <img className='dow_svg' src={dow_svg} />
+              {!props.disabled && <img className='dow_svg' src={dow_svg} />}
             </GhostButton>
           </TradePopover>
         )}

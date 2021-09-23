@@ -335,6 +335,9 @@ export const transfer =
                     processParameter: getState().rKSMModule.processParameter,
                   }),
                 );
+                
+                message.info('Sending succeeded, proceeding signature.');
+
                 asInBlock &&
                   dispatch(
                     bound(

@@ -12,8 +12,9 @@ import rSOL_stafi_svg from '@images/selected_r_sol.svg';
 import Button from '@shared/components/button/button';
 import NumberUtil from '@util/numberUtil';
 import { message } from 'antd';
-import React, { useState } from 'react';
-import Modal from '../modal/swapModal';
+import React, { useMemo, useState } from 'react';
+import { useHistory } from 'react-router';
+import SwapModalNew from '../modal/swapModalNew';
 import TradePopover from '../tradePopover';
 import LeftContent from './leftContent';
 
@@ -31,7 +32,29 @@ type Props = {
 };
 
 export default function Index(props: Props) {
+  const history = useHistory();
+
   const [visibleModal, setVisibleModal] = useState(false);
+  const [tradeLabel, setTradeLabel] = useState('Uniswap');
+
+  const uniswapUrl = useMemo(() => {
+    if (props.type === 'rDOT') {
+      return config.uniswap.rdotURL;
+    }
+    if (props.type === 'rFIS') {
+      return config.uniswap.rfisURL;
+    }
+    if (props.type === 'rKSM') {
+      return config.uniswap.rksmURL;
+    }
+    if (props.type === 'rATOM') {
+      return config.uniswap.ratomURL;
+    }
+    if (props.type === 'rSOL') {
+      return config.uniswap.rsolURL;
+    }
+  }, [props.type]);
+
   return (
     <LeftContent className='stafi_stake_info_context'>
       <div className='item'>
@@ -71,23 +94,43 @@ export default function Index(props: Props) {
                 </Button>{' '}
               </TradePopover>
             )}
-            {props.type != 'rETH' && (
+
+            {props.type === 'rMATIC' && (
               <Button
                 onClick={() => {
-                  if (props.type === 'rMATIC') {
-                    window.open(
-                      'https://quickswap.exchange/#/swap?inputCurrency=0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270&outputCurrency=0x9f28e2455f9ffcfac9ebd6084853417362bc5dbb',
-                    );
-                  } else if (props.type === 'rBNB') {
-                    message.info('DEX Pool for rBNB will be open soon.');
-                  } else {
-                    setVisibleModal(true);
-                  }
+                  window.open(
+                    'https://quickswap.exchange/#/swap?inputCurrency=0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270&outputCurrency=0x9f28e2455f9ffcfac9ebd6084853417362bc5dbb',
+                  );
                 }}
                 size='small'
                 btnType='ellipse'>
                 Trade
               </Button>
+            )}
+
+            {props.type === 'rBNB' && (
+              <Button
+                onClick={() => {
+                  message.info('DEX Pool for rBNB will be open soon.');
+                }}
+                size='small'
+                btnType='ellipse'>
+                Trade
+              </Button>
+            )}
+
+            {props.type !== 'rETH' && props.type !== 'rMATIC' && props.type !== 'rBNB' && (
+              <TradePopover
+                data={[{ label: 'Uniswap', url: uniswapUrl }]}
+                onClick={(item: any) => {
+                  setVisibleModal(true);
+                  setTradeLabel(item.label);
+                }}>
+                <Button size='small' btnType='ellipse'>
+                  Trade
+                  <img className='dow_svg' src={dow_svg} />
+                </Button>
+              </TradePopover>
             )}
           </div>
         </div>
@@ -182,18 +225,18 @@ export default function Index(props: Props) {
         <div className='describe'>Updated every {props.hours} hours</div>
       </div>
 
-      <Modal
+      <SwapModalNew
         type={props.type}
         visible={visibleModal}
+        label={tradeLabel}
+        tradeUrl={uniswapUrl}
         onCancel={() => {
           setVisibleModal(false);
         }}
-        onOk={() => {
-          // message.info("Swap will be available soon");
-          props.onSwapClick && props.onSwapClick();
-        }}
-        onUniswapClick={() => {
-          props.onUniswapClick && props.onUniswapClick();
+        onClickSwap={() => {
+          history.push(`/rAsset/swap/native/erc20`, {
+            rSymbol: props.type,
+          });
         }}
       />
     </LeftContent>

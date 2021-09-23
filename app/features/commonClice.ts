@@ -67,8 +67,11 @@ export default class CommonClice {
           })
           .catch((error: any) => {
             console.log('getPools error: ', error);
+            cb && cb(null);
           });
       });
+    } else {
+      cb && cb(null);
     }
   }
   async getFisPools(cb?: Function) {

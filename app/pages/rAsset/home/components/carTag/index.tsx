@@ -1,4 +1,5 @@
-import arrowDownIcon from '@images/arrow_down_green.svg';
+import arrowDownGreenIcon from '@images/arrow_down_green.svg';
+import arrowDownWhiteIcon from '@images/arrow_down_white.svg';
 import black_close from '@images/black_close.svg';
 import bsc_white from '@images/bsc_white.svg';
 import eth_white from '@images/eth_white.svg';
@@ -38,6 +39,7 @@ export default function index(props: Props) {
   const { selectedPlatform, rTokenPlatform } = useParams<any>();
   const history = useHistory();
 
+  const [hover, setHover] = useState(false);
   const [showSelect, setShowSelect] = useState(false);
   const [rTokenList, _] = useState(rTokenPlatforms);
   const [selectingNative, setSelectingNative] = useState(false);
@@ -59,7 +61,7 @@ export default function index(props: Props) {
   }, [selectedPlatform, rTokenPlatform]);
 
   return (
-    <div className='rAsset_tag'>
+    <div className='rAsset_tag' onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}>
       <div
         className={`${selectingNative && 'tag_active'}`}
         onClick={() => {
@@ -117,7 +119,7 @@ export default function index(props: Props) {
                 }
                 setShowSelect(true);
               }}>
-              <img src={arrowDownIcon} className='arrow_down' />
+              <img src={hover || !selectingNative ? arrowDownGreenIcon : arrowDownWhiteIcon} className='arrow_down' />
             </a>
           </Popover>
         </div>
