@@ -11,7 +11,7 @@ import {
 } from '@features/ETHClice';
 import { queryTokenBalances } from '@features/FISClice';
 import { noticeStatus, update_NoticeStatus } from '@features/noticeClice';
-import { getAssetBalance as getSlpAssetBalance } from '@features/SOLClice';
+import { getAssetBalance as getSlpAssetBalance, getSlp20AssetBalanceAll } from '@features/SOLClice';
 import close_bold_svg from '@images/close_bold.svg';
 import complete_svg from '@images/complete.svg';
 import { rSymbol } from '@keyring/defaults';
@@ -255,7 +255,7 @@ export default function SwapLoading(props: Props) {
         // console.log('new amount:', v);
         if (Number(v) === Number(swapLoadingParams.oldBalance) + Number(swapLoadingParams.amount)) {
           setSwapStatus(1);
-          dispatch(getBep20AssetBalanceAll());
+          dispatch(getSlp20AssetBalanceAll());
           dispatch(update_NoticeStatus(swapLoadingParams.noticeUuid, noticeStatus.Confirmed));
         }
       });

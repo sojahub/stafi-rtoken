@@ -651,7 +651,7 @@ export default function Index(props: any) {
           <div className={'input_container'} style={{ marginTop: '20px' }}>
             <div className={'title'}>Received Address</div>
             <AddressInputEmbed
-              placeholder={destType === 'native' ? '...' : '0x...'}
+              placeholder={destType === 'native' || destType === 'spl' ? '...' : '0x...'}
               value={address}
               onChange={(e: any) => {
                 setAddress(e.target.value);

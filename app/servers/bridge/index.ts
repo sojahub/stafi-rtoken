@@ -69,7 +69,7 @@ export default class Index {
   }
   getBridgeEstimateSolFee() {
     if (isdev()) {
-      return '0.001000';
+      return '0.000200';
     } else {
       return '0.000200';
     }

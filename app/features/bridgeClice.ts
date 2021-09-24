@@ -15,7 +15,7 @@ import SolServer from '@servers/sol';
 import { default as FisServer, default as StafiServer } from '@servers/stafi';
 import Stafi from '@servers/stafi/index';
 import { Connection, PublicKey, Transaction, TransactionInstruction } from '@solana/web3.js';
-import { stafi_uuid } from '@util/common';
+import { stafi_uuid, timeout } from '@util/common';
 import { default as NumberUtil } from '@util/numberUtil';
 import rpc from '@util/rpc';
 import { message } from 'antd';
@@ -609,10 +609,6 @@ export const bep20ToOtherSwap =
     }
   };
 
-declare const window: any;
-
-type Test = {};
-
 export const slp20ToOtherSwap =
   (
     destChainId: number,
@@ -626,8 +622,12 @@ export const slp20ToOtherSwap =
     try {
       const solana = solServer.getProvider();
       if (solana && !solana.isConnected) {
-        message.info('Please connect Phantom extension first');
-        return;
+        solServer.connectSolJs();
+        await timeout(500);
+        if (!solana.isConnected) {
+          message.info('Please connect Phantom extension first');
+          return;
+        }
       }
       if (!solana) {
         return;
@@ -674,28 +674,36 @@ export const slp20ToOtherSwap =
       const data = Buffer.concat([methodData, amountData, addressLengthData, addressData, chanIdData]);
       // console.log('sdfsdfsdf', u8aToHex(data));
 
+      const connection = new Connection(config.solRpcApi(), {
+        wsEndpoint: config.solRpcWs(),
+        commitment: 'singleGossip',
+      });
+
+      const bridgeAccountPubKey = new PublicKey(config.slpBridgeAccount());
+      // const bridgeAccountInfo = await connection.getParsedAccountInfo(bridgeAccountPubKey);
+
       const instruction = new TransactionInstruction({
         keys: [
           // bridge account
-          { pubkey: new PublicKey(config.slpBridgeAccount()), isSigner: false, isWritable: true },
+          { pubkey: bridgeAccountPubKey, isSigner: false, isWritable: true },
           // fee payer
-          { pubkey: solana.publicKey, isSigner: false, isWritable: true },
+          { pubkey: solana.publicKey, isSigner: true, isWritable: false },
           // token mint account
           { pubkey: new PublicKey(slpTokenMintAddress), isSigner: false, isWritable: true },
           // from account
           { pubkey: tokenMintPublicKey, isSigner: false, isWritable: true },
+          // fee receiver
+          { pubkey: new PublicKey(config.slpBridgeFeeReceiver()), isSigner: false, isWritable: true },
           // token program id
           { pubkey: new PublicKey(config.slpTokenProgramId()), isSigner: false, isWritable: false },
+          // system program
+          { pubkey: new PublicKey(config.solanaSystemProgramId()), isSigner: false, isWritable: false },
         ],
         programId: new PublicKey(config.slpBridgeProgramId()),
         data: data,
       });
       transaction.add(instruction);
 
-      const connection = new Connection(config.solRpcApi(), {
-        wsEndpoint: config.solRpcWs(),
-        commitment: 'singleGossip',
-      });
       let { blockhash } = await connection.getRecentBlockhash();
       transaction.recentBlockhash = blockhash;
 

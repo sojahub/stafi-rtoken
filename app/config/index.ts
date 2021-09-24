@@ -619,6 +619,12 @@ export default {
     }
     return '63ytYLeNDaaUx2u94KHJcoueaLzA7gryB26p2w8E53oh';
   },
+  slpBridgeFeeReceiver: () => {
+    if (!isdev()) {
+      return '';
+    }
+    return '9awVcBdEfGTGeKbvGQsrHNwXZ6KaRfXcKN9cpDM2kLn6';
+  },
   slpAssociatedTokenAccountProgramId: () => {
     return 'ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL';
   },
@@ -633,5 +639,11 @@ export default {
       return '';
     }
     return 'EPfxck35M3NJwsjreExLLyQAgAL3y5uWfzddY6cHBrGy';
+  },
+  solanaSystemProgramId: () => {
+    if (!isdev()) {
+      return '11111111111111111111111111111111';
+    }
+    return '11111111111111111111111111111111';
   },
 };
