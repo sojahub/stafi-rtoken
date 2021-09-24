@@ -192,34 +192,33 @@ export const update_Notice =
     );
   };
 
-export const update_NoticeNew =
-  (
-    uuid: string,
-    rSymbol: string,
-    type: string,
-    subType: string,
-    amount: string,
-    status: string,
-    subData?: any,
-  ): AppThunk =>
+export const update_NoticeStatus =
+  (uuid: string, newStatus: any): AppThunk =>
   async (dispatch, getState) => {
-    dispatch(
-      updateNoticeModal({
-        data: {
-          uuid: uuid, //信息唯一标识
-          title: subType,
-          type: type,
-          subType: subType,
-          // content:content,
-          amount: amount,
-          status: status,
-          rSymbol: rSymbol,
-          subData: subData,
-        },
-        showNew: false,
-      }),
-    );
+    const oldNotice = findNoticeByUuid(uuid);
+    if (oldNotice) {
+      dispatch(
+        updateNoticeModal({
+          data: {
+            ...oldNotice,
+            status: newStatus,
+          },
+          showNew: false,
+        }),
+      );
+    }
   };
+
+const findNoticeByUuid = (uuid: any): any => {
+  let data = getLocalStorageItem(Keys.StafiNoticeKey);
+  if (!data || !data.datas) {
+    return null;
+  }
+  const m = data.datas.find((item: any) => {
+    return item.uuid === uuid;
+  });
+  return m;
+};
 
 export const setProcess =
   (item: any, list: any, cb?: Function): AppThunk =>

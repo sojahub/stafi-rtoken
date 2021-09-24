@@ -25,7 +25,7 @@ import { getAssetBalance as getBscAssetBalance } from './BSCClice';
 import CommonClice from './commonClice';
 import { getAssetBalance } from './ETHClice';
 import { setLoading } from './globalClice';
-import { add_Notice, noticeStatus, noticesubType, noticeType, update_NoticeNew } from './noticeClice';
+import { add_Notice, noticeStatus, noticesubType, noticeType } from './noticeClice';
 import { getAssetBalance as getSlpAssetBalance } from './SOLClice';
 
 export const STAFI_CHAIN_ID = 1;
@@ -148,6 +148,7 @@ export const nativeToOtherSwap =
   async (dispatch, getState) => {
     try {
       dispatch(setLoading(true));
+      const notice_uuid = stafi_uuid();
 
       let txAddress = destAddress;
       if (chainId === SOL_CHAIN_ID) {
@@ -162,17 +163,16 @@ export const nativeToOtherSwap =
       dispatch(setSwapLoadingStatus(1));
       dispatch(setSwapWaitingTime(600));
       if (chainId === ETH_CHAIN_ID) {
-        updateSwapParamsOfErc(dispatch, tokenType, tokenAmount, destAddress);
+        updateSwapParamsOfErc(dispatch, notice_uuid, tokenType, tokenAmount, destAddress);
       } else if (chainId === BSC_CHAIN_ID) {
-        updateSwapParamsOfBep(dispatch, tokenType, tokenAmount, destAddress);
+        updateSwapParamsOfBep(dispatch, notice_uuid, tokenType, tokenAmount, destAddress);
       } else if (chainId === SOL_CHAIN_ID) {
-        updateSwapParamsOfSlp(dispatch, tokenType, tokenAmount, destAddress);
+        updateSwapParamsOfSlp(dispatch, notice_uuid, tokenType, tokenAmount, destAddress);
       }
 
       web3Enable(stafiServer.getWeb3EnalbeName());
       const injector: any = await web3FromSource(stafiServer.getPolkadotJsSource());
       const api = await stafiServer.createStafiApi();
-      const notice_uuid = stafi_uuid();
       let currentAccount = getState().FISModule.fisAccount.address;
       let tx: any = '';
 
@@ -274,10 +274,12 @@ export const erc20ToOtherSwap =
     dispatch(setLoading(true));
     dispatch(setSwapLoadingStatus(1));
     dispatch(setSwapWaitingTime(600));
+    const notice_uuid = stafi_uuid();
+
     if (destChainId === BSC_CHAIN_ID) {
-      updateSwapParamsOfBep(dispatch, tokenType, tokenAmount, address);
+      updateSwapParamsOfBep(dispatch, notice_uuid, tokenType, tokenAmount, address);
     } else {
-      updateSwapParamsOfNative(dispatch, tokenType, tokenAmount, address);
+      updateSwapParamsOfNative(dispatch, notice_uuid, tokenType, tokenAmount, address);
     }
 
     let web3 = ethServer.getWeb3();
@@ -332,7 +334,6 @@ export const erc20ToOtherSwap =
       return;
     }
 
-    const notice_uuid = stafi_uuid();
     const amount = web3.utils.toWei(tokenAmount.toString());
     try {
       if (Number(allowance) < Number(amount)) {
@@ -440,13 +441,14 @@ export const bep20ToOtherSwap =
     cb?: Function,
   ): AppThunk =>
   async (dispatch, getState) => {
+    const notice_uuid = stafi_uuid();
     dispatch(setLoading(true));
     dispatch(setSwapLoadingStatus(1));
     dispatch(setSwapWaitingTime(600));
     if (destChainId === ETH_CHAIN_ID) {
-      updateSwapParamsOfErc(dispatch, tokenType, tokenAmount, address);
+      updateSwapParamsOfErc(dispatch, notice_uuid, tokenType, tokenAmount, address);
     } else {
-      updateSwapParamsOfNative(dispatch, tokenType, tokenAmount, address);
+      updateSwapParamsOfNative(dispatch, notice_uuid, tokenType, tokenAmount, address);
     }
 
     let web3 = ethServer.getWeb3();
@@ -506,7 +508,6 @@ export const bep20ToOtherSwap =
       return;
     }
 
-    const notice_uuid = stafi_uuid();
     const amount = web3.utils.toWei(tokenAmount.toString());
     try {
       if (Number(allowance) < Number(amount)) {
@@ -632,6 +633,7 @@ export const slp20ToOtherSwap =
         return;
       }
 
+      const notice_uuid = stafi_uuid();
       dispatch(setLoading(true));
 
       // Check token account
@@ -650,9 +652,8 @@ export const slp20ToOtherSwap =
       dispatch(setSwapLoadingStatus(1));
       dispatch(setSwapWaitingTime(600));
       if (destChainId === STAFI_CHAIN_ID) {
-        updateSwapParamsOfNative(dispatch, tokenType, tokenAmount, address);
+        updateSwapParamsOfNative(dispatch, notice_uuid, tokenType, tokenAmount, address);
       }
-      const notice_uuid = stafi_uuid();
 
       const transaction = new Transaction();
 
@@ -733,12 +734,6 @@ const add_Swap_Notice =
     dispatch(add_Notice(uuid, token, noticeType.Staker, noticesubType.Swap, amount, status, subData));
   };
 
-const update_Swap_Notice =
-  (uuid: string, token: string, amount: string, status: string, subData: any): AppThunk =>
-  async (dispatch, getState) => {
-    dispatch(update_NoticeNew(uuid, token, noticeType.Staker, noticesubType.Swap, amount, status, subData));
-  };
-
 export const getRtokenPriceList = (): AppThunk => async (dispatch, getState) => {
   const result = await rpc.fetchRtokenPriceList();
   if (result && result.status == '80000') {
@@ -746,7 +741,13 @@ export const getRtokenPriceList = (): AppThunk => async (dispatch, getState) => 
   }
 };
 
-const updateSwapParamsOfErc = (dispatch: any, tokenType: string, tokenAmount: any, ethAddress: string) => {
+const updateSwapParamsOfErc = (
+  dispatch: any,
+  notice_uuid: string,
+  tokenType: string,
+  tokenAmount: any,
+  ethAddress: string,
+) => {
   let tokenAbi: any;
   let tokenAddress: any;
   if (tokenType === 'fis') {
@@ -776,6 +777,7 @@ const updateSwapParamsOfErc = (dispatch: any, tokenType: string, tokenAmount: an
     getAssetBalance(ethAddress, tokenAbi, tokenAddress, (v: any) => {
       dispatch(
         setSwapLoadingParams({
+          noticeUuid: notice_uuid,
           address: ethAddress,
           swapType: 1,
           amount: tokenAmount,
@@ -789,7 +791,13 @@ const updateSwapParamsOfErc = (dispatch: any, tokenType: string, tokenAmount: an
   }
 };
 
-const updateSwapParamsOfBep = (dispatch: any, tokenType: string, tokenAmount: any, ethAddress: string) => {
+const updateSwapParamsOfBep = (
+  dispatch: any,
+  notice_uuid: string,
+  tokenType: string,
+  tokenAmount: any,
+  ethAddress: string,
+) => {
   let tokenAbi: any;
   let tokenAddress: any;
   if (tokenType === 'fis') {
@@ -822,6 +830,7 @@ const updateSwapParamsOfBep = (dispatch: any, tokenType: string, tokenAmount: an
     getBscAssetBalance(ethAddress, tokenAbi, tokenAddress, (v: any) => {
       dispatch(
         setSwapLoadingParams({
+          noticeUuid: notice_uuid,
           address: ethAddress,
           swapType: 2,
           amount: tokenAmount,
@@ -835,10 +844,17 @@ const updateSwapParamsOfBep = (dispatch: any, tokenType: string, tokenAmount: an
   }
 };
 
-const updateSwapParamsOfSlp = (dispatch: any, tokenType: string, tokenAmount: any, solAddress: string) => {
+const updateSwapParamsOfSlp = (
+  dispatch: any,
+  notice_uuid: string,
+  tokenType: string,
+  tokenAmount: any,
+  solAddress: string,
+) => {
   getSlpAssetBalance(solAddress, tokenType, (v: any) => {
     dispatch(
       setSwapLoadingParams({
+        noticeUuid: notice_uuid,
         address: solAddress,
         swapType: 4,
         amount: tokenAmount,
@@ -849,7 +865,13 @@ const updateSwapParamsOfSlp = (dispatch: any, tokenType: string, tokenAmount: an
   });
 };
 
-const updateSwapParamsOfNative = async (dispatch: any, tokenType: string, tokenAmount: any, address: string) => {
+const updateSwapParamsOfNative = async (
+  dispatch: any,
+  notice_uuid: string,
+  tokenType: string,
+  tokenAmount: any,
+  address: string,
+) => {
   let rType;
   if (tokenType === 'rfis') {
     rType = rSymbol.Fis;
@@ -883,6 +905,7 @@ const updateSwapParamsOfNative = async (dispatch: any, tokenType: string, tokenA
 
   dispatch(
     setSwapLoadingParams({
+      noticeUuid: notice_uuid,
       address: address,
       swapType: 3,
       amount: tokenAmount,
