@@ -26,6 +26,7 @@ import {
   reloadData,
   rTokenRate as fis_rTokenRate
 } from '@features/FISClice';
+import { setLoading } from '@features/globalClice';
 import {
   getUnbondCommission as atom_getUnbondCommission,
   query_rBalances_account as atom_query_rBalances_account,
@@ -70,6 +71,7 @@ import rasset_rksm_svg from '@images/r_ksm.svg';
 import rasset_rmatic_svg from '@images/r_matic.svg';
 import solana_white from '@images/solana_white.svg';
 import stafi_white from '@images/stafi_white.svg';
+import SolServer from '@servers/sol';
 import Back from '@shared/components/backIcon';
 import Button from '@shared/components/button/button';
 import Title from '@shared/components/cardTitle';
@@ -84,6 +86,8 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Redirect, useHistory, useLocation, useParams } from 'react-router-dom';
 import './index.scss';
+
+const solServer = new SolServer();
 
 type SelectorType = {
   icon: any;
@@ -195,6 +199,8 @@ export default function Index(props: any) {
   const [transferDetail, setTransferDetail] = useState('');
   const [viewTxUrl, setViewTxUrl] = useState('');
 
+  const [showAddSplTokenButton, setShowAddSplTokenButton] = useState(false);
+
   const {
     erc20EstimateFee,
     bep20EstimateFee,
@@ -275,6 +281,10 @@ export default function Index(props: any) {
       metaMaskNetworkId: state.globalModule.metaMaskNetworkId,
     };
   });
+
+  useEffect(() => {
+    updateSplTokenStatus();
+  }, [address, destType, tokenType && tokenType.type]);
 
   useEffect(() => {
     if (fromType && destType) {
@@ -391,7 +401,7 @@ export default function Index(props: any) {
       });
     } else if ((fromType === 'native' && destType === 'erc20') || (fromType === 'erc20' && destType === 'native')) {
       filterTokenDatas = allTokenDatas.filter((item: any) => {
-        return item.type !== 'reth' && item.type !== 'rbnb';
+        return item.type !== 'reth' && item.type !== 'rbnb' && item.type !== 'rsol';
       });
     } else if ((fromType === 'erc20' && destType === 'bep20') || (fromType === 'bep20' && destType === 'erc20')) {
       filterTokenDatas = allTokenDatas.filter((item: any) => {
@@ -568,6 +578,19 @@ export default function Index(props: any) {
     });
   };
 
+  const updateSplTokenStatus = async () => {
+    if (destType !== 'spl' || !tokenType) {
+      setShowAddSplTokenButton(false);
+      return;
+    }
+    if (!address || !checkSOLAddress(address)) {
+      setShowAddSplTokenButton(false);
+      return;
+    }
+    const splTokenAccountPubkey = await solServer.getTokenAccountPubkey(address, tokenType.type);
+    setShowAddSplTokenButton(!splTokenAccountPubkey);
+  };
+
   return (
     <Content className='stafi_rasset_swap '>
       <Back
@@ -732,7 +755,7 @@ export default function Index(props: any) {
                   (fromTypeData.type === 'bep20' && config.metaMaskNetworkIsBsc(metaMaskNetworkId)))
               )
             }
-            onClick={() => {
+            onClick={async () => {
               if (!tokenType) {
                 return;
               }
@@ -791,6 +814,15 @@ export default function Index(props: any) {
               if (destTypeData.type === 'spl') {
                 if (!checkSOLAddress(address)) {
                   message.error('Input address error');
+                  return;
+                }
+                if (showAddSplTokenButton) {
+                  dispatch(setLoading(true));
+                  const createSplTokenAccountResult = await solServer.createTokenAccount(address, tokenType.type);
+                  if (createSplTokenAccountResult) {
+                    setShowAddSplTokenButton(false);
+                  }
+                  dispatch(setLoading(false));
                   return;
                 }
               }
@@ -854,7 +886,7 @@ export default function Index(props: any) {
                 }
               }
             }}>
-            Swap
+            {showAddSplTokenButton ? 'Approve' : 'Swap'}
           </Button>
         </div>
       </div>

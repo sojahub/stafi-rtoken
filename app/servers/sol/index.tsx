@@ -2,7 +2,9 @@ import config from '@config/index';
 import { SolKeyring } from '@keyring/SolKeyring';
 import { ApiPromise, WsProvider } from '@polkadot/api';
 import { web3Accounts, web3Enable } from '@polkadot/extension-dapp';
-import { Connection, PublicKey, SystemProgram, Transaction } from '@solana/web3.js';
+import { AccountLayout } from '@solana/spl-token';
+import { Connection, Keypair, PublicKey, SystemProgram, Transaction } from '@solana/web3.js';
+import { timeout } from '@util/common';
 import { message } from 'antd';
 import Stafi from '../stafi';
 declare const window: any;
@@ -49,8 +51,12 @@ export default class ExtensionDapp extends SolKeyring {
     await this.connectSolJs(() => {});
     const solana = this.getProvider();
     if (solana && !solana.isConnected) {
-      message.info('Please connect Phantom extension first');
-      return;
+      this.connectSolJs();
+      await timeout(500);
+      if (!solana.isConnected) {
+        message.info('Please connect Phantom extension first');
+        return;
+      }
     }
     if (!solana) {
       return;
@@ -108,7 +114,7 @@ export default class ExtensionDapp extends SolKeyring {
     }
   };
 
-  getTokenAccount = async (walletAddress: string, tokenType: string) => {
+  getTokenAccountPubkey = async (walletAddress: string, tokenType: string) => {
     try {
       let slpTokenMintAddress;
       if (tokenType === 'fis') {
@@ -118,32 +124,92 @@ export default class ExtensionDapp extends SolKeyring {
       }
 
       if (!slpTokenMintAddress) {
-        throw new Error('Unknown slp token');
+        throw new Error('Unknown spl token');
       }
 
-      const SPL_ASSOCIATED_TOKEN_ACCOUNT_PROGRAM_ID: PublicKey = new PublicKey(
-        'ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL',
-      );
+      const connection = new Connection(config.solRpcApi(), { wsEndpoint: config.solRpcWs() });
 
-      const result = await PublicKey.findProgramAddress(
-        [
-          new PublicKey(walletAddress).toBuffer(),
-          splToken.TOKEN_PROGRAM_ID.toBuffer(),
-          new PublicKey(slpTokenMintAddress).toBuffer(),
-        ],
-        SPL_ASSOCIATED_TOKEN_ACCOUNT_PROGRAM_ID,
-      );
+      const acc = await connection.getTokenAccountsByOwner(new PublicKey(walletAddress), {
+        mint: new PublicKey(slpTokenMintAddress),
+      });
 
-      const connection = new Connection(config.solRpcApi(), 'singleGossip');
-      const accountInfo = await connection.getParsedAccountInfo(result[0]);
-      if (result.length >= 1 && accountInfo && accountInfo.value) {
-        return result[0];
+      console.log('sfasdfsf=======acc', acc);
+
+      if (acc.value && acc.value.length > 0) {
+        return acc.value[0].pubkey;
       }
     } catch (err) {
       return null;
     }
 
     return null;
+  };
+
+  createTokenAccount = async (walletAddress: string, tokenType: string) => {
+    try {
+      const solana = this.getProvider();
+      if (solana && !solana.isConnected) {
+        this.connectSolJs();
+        await timeout(500);
+        if (!solana.isConnected) {
+          message.info('Please connect Phantom extension first');
+          return;
+        }
+      }
+      if (!solana) {
+        return false;
+      }
+
+      let slpTokenMintAddress;
+      if (tokenType === 'fis') {
+        slpTokenMintAddress = config.slpFisTokenAddress();
+      } else if (tokenType === 'rsol') {
+        slpTokenMintAddress = config.slpRSolTokenAddress();
+      }
+
+      if (!slpTokenMintAddress) {
+        throw new Error('Unknown spl token');
+      }
+
+      const connection = new Connection(config.solRpcApi(), { wsEndpoint: config.solRpcWs() });
+
+      const newTokenAccount = new Keypair();
+      const createTempTokenAccountIx = SystemProgram.createAccount({
+        programId: splToken.TOKEN_PROGRAM_ID,
+        space: AccountLayout.span,
+        lamports: await connection.getMinimumBalanceForRentExemption(AccountLayout.span, 'singleGossip'),
+        fromPubkey: new PublicKey(walletAddress),
+        newAccountPubkey: newTokenAccount.publicKey,
+      });
+
+      // console.log('sdfsdfsdfsdf=======', newTokenAccount.publicKey.toString());
+
+      const initIx = splToken.Token.createInitAccountInstruction(
+        splToken.TOKEN_PROGRAM_ID,
+        new PublicKey(slpTokenMintAddress),
+        newTokenAccount.publicKey,
+        solana.publicKey,
+      );
+
+      let transaction = new Transaction().add(createTempTokenAccountIx, initIx);
+
+      let { blockhash } = await connection.getRecentBlockhash();
+      transaction.recentBlockhash = blockhash;
+      transaction.feePayer = solana.publicKey;
+      transaction.partialSign(newTokenAccount);
+
+      let signed = await solana.signTransaction(transaction);
+      let txid = await connection.sendRawTransaction(signed.serialize(), { skipPreflight: false });
+      const result = await connection.confirmTransaction(txid);
+
+      if (!result.value.err) {
+        message.info('Create token account success');
+        return true;
+      }
+    } catch (err) {
+      message.error(err.message);
+      return false;
+    }
   };
 
   getTxLamports = (instruction: any) => {

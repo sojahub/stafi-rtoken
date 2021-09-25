@@ -630,7 +630,7 @@ export default {
   },
   slpTokenProgramId: () => {
     if (!isdev()) {
-      return '';
+      return 'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA';
     }
     return 'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA';
   },

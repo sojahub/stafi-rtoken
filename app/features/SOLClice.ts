@@ -1,7 +1,7 @@
 import config from '@config/index';
 import { createSlice } from '@reduxjs/toolkit';
 import SolServer from '@servers/sol';
-import { Connection, PublicKey } from '@solana/web3.js';
+import { Connection } from '@solana/web3.js';
 import { AppThunk } from '../store';
 
 const splToken = require('@solana/spl-token');
@@ -63,35 +63,15 @@ export const getAssetBalance = async (address: string, tokenType: string, cb?: F
     return;
   }
 
-  let slpTokenMintAddress;
-  if (tokenType === 'fis') {
-    slpTokenMintAddress = config.slpFisTokenAddress();
-  } else if (tokenType === 'rsol') {
-    slpTokenMintAddress = config.slpRSolTokenAddress();
-  }
-
-  const result = await PublicKey.findProgramAddress(
-    [
-      new PublicKey(address).toBuffer(),
-      splToken.TOKEN_PROGRAM_ID.toBuffer(),
-      new PublicKey(slpTokenMintAddress).toBuffer(),
-    ],
-    new PublicKey(config.slpAssociatedTokenAccountProgramId()),
-  );
-
-  if (result && result.length > 0) {
-    try {
-      const connection = new Connection(config.solRpcApi(), {
-        wsEndpoint: config.solRpcWs(),
-        commitment: 'singleGossip',
-      });
-      const tokenAccountBalance = await connection.getTokenAccountBalance(result[0]);
-      // console.log('spl asset detail: ', tokenAccountBalance.value);
-      if (tokenAccountBalance && tokenAccountBalance.value) {
-        cb && cb(tokenAccountBalance.value.uiAmount);
-      }
-    } catch (err) {
-      cb && cb('--');
+  const tokenAccountPubkey = await solServer.getTokenAccountPubkey(address, tokenType);
+  if (tokenAccountPubkey) {
+    const connection = new Connection(config.solRpcApi(), {
+      wsEndpoint: config.solRpcWs(),
+      commitment: 'singleGossip',
+    });
+    const tokenAccountBalance = await connection.getTokenAccountBalance(tokenAccountPubkey);
+    if (tokenAccountBalance && tokenAccountBalance.value) {
+      cb && cb(tokenAccountBalance.value.uiAmount);
     }
   } else {
     cb && cb('--');

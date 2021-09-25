@@ -153,7 +153,7 @@ export const nativeToOtherSwap =
       let txAddress = destAddress;
       if (chainId === SOL_CHAIN_ID) {
         txAddress = u8aToHex(new PublicKey(destAddress).toBytes());
-        const tokenMintPublicKey = await solServer.getTokenAccount(destAddress, tokenType);
+        const tokenMintPublicKey = await solServer.getTokenAccountPubkey(destAddress, tokenType);
         if (!tokenMintPublicKey) {
           throw new Error('Please add the SPL token account first.');
         }
@@ -644,7 +644,7 @@ export const slp20ToOtherSwap =
       } else if (tokenType === 'rsol') {
         slpTokenMintAddress = config.slpRSolTokenAddress();
       }
-      const tokenMintPublicKey = await solServer.getTokenAccount(solAddress, tokenType);
+      const tokenMintPublicKey = await solServer.getTokenAccountPubkey(solAddress, tokenType);
       if (!tokenMintPublicKey) {
         throw new Error('Please add the SPL token account first.');
       }
