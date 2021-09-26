@@ -210,6 +210,11 @@ export const transfer =
   (amountparam: string, cb?: Function): AppThunk =>
   async (dispatch, getState) => {
     const solana = solServer.getProvider();
+    if (!solana) {
+      return;
+    }
+    await solana.disconnect();
+    await timeout(500);
     if (solana && !solana.isConnected) {
       solServer.connectSolJs();
       await timeout(500);
@@ -218,15 +223,12 @@ export const transfer =
         return;
       }
     }
-    if (!solana) {
-      return;
-    }
 
-    const solAddress = getState().rSOLModule.solAccount && getState().rSOLModule.solAccount.address;
-    if (solana.publicKey.toString() !== solAddress) {
-      message.info('Phantom wallet address switched, please try again');
+    const localSolAddress = getState().rSOLModule.solAccount && getState().rSOLModule.solAccount.address;
+    const solAddress = solana.publicKey.toString();
+    console.log('solana account:', solana.publicKey.toString());
+    if (localSolAddress !== solAddress) {
       dispatch(connectSoljs());
-      return;
     }
 
     const processParameter = getState().rSOLModule.processParameter;
@@ -261,6 +263,7 @@ export const transfer =
 
       let result: any;
       result = await solServer.sendTransaction(Number(amount), selectedPool.address).catch((error) => {
+        dispatch(setProcessSlider(false));
         throw error;
       });
 

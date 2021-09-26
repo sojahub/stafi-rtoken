@@ -621,6 +621,11 @@ export const slp20ToOtherSwap =
   async (dispatch, getState) => {
     try {
       const solana = solServer.getProvider();
+      if (!solana) {
+        return;
+      }
+      await solana.disconnect();
+      await timeout(500);
       if (solana && !solana.isConnected) {
         solServer.connectSolJs();
         await timeout(500);
@@ -629,12 +634,11 @@ export const slp20ToOtherSwap =
           return;
         }
       }
-      if (!solana) {
-        return;
-      }
 
-      const solAddress = getState().rSOLModule.solAccount && getState().rSOLModule.solAccount.address;
-      if (solana.publicKey.toString() !== solAddress) {
+
+      const localSolAddress = getState().rSOLModule.solAccount && getState().rSOLModule.solAccount.address;
+      const solAddress = solana.publicKey.toString();
+      if (localSolAddress !== solAddress) {
         message.info('Phantom wallet address switched, please try again');
         dispatch(connectSoljs());
         return;
