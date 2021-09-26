@@ -635,7 +635,6 @@ export const slp20ToOtherSwap =
         }
       }
 
-
       const localSolAddress = getState().rSOLModule.solAccount && getState().rSOLModule.solAccount.address;
       const solAddress = solana.publicKey.toString();
       if (localSolAddress !== solAddress) {
@@ -670,9 +669,9 @@ export const slp20ToOtherSwap =
       const bf = crypto.createHash('sha256').update('global:transfer_out').digest();
       const methodData = bf.subarray(0, 8);
       // amount, LittleEndian
-      const num = Number(Number(tokenAmount) * 1000000000);
+      const num = BigInt(Number(tokenAmount) * 1000000000);
       const ab = new ArrayBuffer(8);
-      new DataView(ab).setInt32(0, num, true);
+      new DataView(ab).setBigInt64(0, num, true);
       // const amountBf = hexToU8a('0x' + num.toString(16));
       const amountData = Buffer.from(ab);
       // hex: 20 00 00 00

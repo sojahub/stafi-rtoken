@@ -414,8 +414,7 @@ export const feeStationSignature = async (address: any, data: any) => {
 };
 
 export const solSignature = async (address: any, fisAddress: string) => {
-  await timeout(3000);
-  message.info('Please approve sign request in Phantom wallet', 5);
+  await timeout(1000);
 
   const fisKeyring = keyringInstance.init(Symbol.Fis);
   const solServer = new SolServer();
@@ -424,9 +423,6 @@ export const solSignature = async (address: any, fisAddress: string) => {
     return null;
   }
 
-  // fisAddress = '34bwmgT1NtcL8FayGiFSB9F1qZFGPjhbDfTaZRoM2AXgjrpo';
-  // let { signature } = await solServer.getWallet().sign(new TextEncoder().encode(fisAddress), 'utf8');
-  // let { signature } = await solServer.getWallet().sign(fisKeyring.decodeAddress(fisAddress), 'utf8');
   let pubkey = u8aToHex(fisKeyring.decodeAddress(fisAddress), -1, false);
   let { signature } = await solana.signMessage(new TextEncoder().encode(pubkey), 'utf8');
 
