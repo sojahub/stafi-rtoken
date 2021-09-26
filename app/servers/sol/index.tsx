@@ -200,7 +200,7 @@ export default class ExtensionDapp extends SolKeyring {
         solana.publicKey,
       );
 
-      console.log(`ata: ${ata.toBase58()}`);
+      // console.log(`ata: ${ata.toBase58()}`);
 
       const inx = splToken.Token.createAssociatedTokenAccountInstruction(
         splToken.ASSOCIATED_TOKEN_PROGRAM_ID,

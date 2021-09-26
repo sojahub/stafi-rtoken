@@ -11,10 +11,10 @@ import {
   getUnbondCommission as matic_getUnbondCommission,
   rTokenRate as matic_rTokenRate
 } from '@features/rMATICClice';
-import { getUnbondCommission as sol_getUnbondCommission, rTokenRate as sol_rTokenRate } from '@features/rSOLClice';
+// import { getUnbondCommission as sol_getUnbondCommission, rTokenRate as sol_rTokenRate } from '@features/rSOLClice';
 import metamask from '@images/metamask.png';
 import rasset_fis_svg from '@images/rFIS.svg';
-import rasset_rsol_svg from '@images/rSOL.svg';
+// import rasset_rsol_svg from '@images/rSOL.svg';
 import rasset_ratom_svg from '@images/r_atom.svg';
 import rasset_rdot_svg from '@images/r_dot.svg';
 import rasset_reth_svg from '@images/r_eth.svg';
@@ -168,13 +168,13 @@ export default function Index(props: any) {
       dispatch(fis_rTokenRate());
       dispatch(dot_rTokenRate());
       dispatch(atom_rTokenRate());
-      dispatch(sol_rTokenRate());
+      // dispatch(sol_rTokenRate());
       dispatch(matic_rTokenRate());
       dispatch(ksm_getUnbondCommission());
       dispatch(fis_getUnbondCommission());
       dispatch(dot_getUnbondCommission());
       dispatch(atom_getUnbondCommission());
-      dispatch(sol_getUnbondCommission());
+      // dispatch(sol_getUnbondCommission());
       dispatch(matic_getUnbondCommission());
     } else {
       dispatch(connectMetamask(config.ethChainId(), true));
@@ -187,13 +187,13 @@ export default function Index(props: any) {
   }, []);
 
   const toSwap = (tokenSymbol: string) => {
-    history.push('/rAsset/swap/erc20/native', {
+    history.push('/rAsset/swap/erc20/default', {
       rSymbol: tokenSymbol,
     });
   };
 
   const toSwapBep20 = (tokenSymbol: string) => {
-    history.push('/rAsset/swap/erc20/bep20', {
+    history.push('/rAsset/swap/erc20/default', {
       rSymbol: tokenSymbol,
     });
   };
@@ -211,8 +211,8 @@ export default function Index(props: any) {
               balance={fis_ercBalance == '--' ? '--' : NumberUtil.handleFisAmountToFixed(fis_ercBalance)}
               willGetBalance={0}
               unit='FIS'
-              trade={config.uniswap.fisURL}
               operationType='erc20'
+              tradeList={[{ label: 'Uniswap', url: config.uniswap.fisURL }]}
               onSwapClick={() => toSwap('FIS')}
             />
 
@@ -224,10 +224,11 @@ export default function Index(props: any) {
               balance={rfis_ercBalance == '--' ? '--' : NumberUtil.handleFisAmountToFixed(rfis_ercBalance)}
               willGetBalance={fisWillAmount}
               unit='FIS'
-              trade={config.uniswap.rfisURL}
+              tradeList={[{ label: 'Uniswap', url: config.uniswap.rfisURL }]}
               operationType='erc20'
               onSwapClick={() => toSwap('rFIS')}
             />
+
             <DataItem
               disabled={!config.metaMaskNetworkIsGoerliEth(metaMaskNetworkId)}
               rSymbol='rETH'
@@ -237,9 +238,13 @@ export default function Index(props: any) {
               willGetBalance={'0.000000'}
               unit='ETH'
               operationType='erc20'
-              trade={config.uniswap.rethURL}
+              tradeList={[
+                { label: 'Curve', url: config.curve.rethURL },
+                { label: 'Uniswap', url: config.uniswap.rethURL },
+              ]}
               onSwapClick={() => toSwapBep20('rETH')}
             />
+
             <DataItem
               disabled={!config.metaMaskNetworkIsGoerliEth(metaMaskNetworkId)}
               rSymbol='rDOT'
@@ -248,7 +253,7 @@ export default function Index(props: any) {
               balance={dot_ercBalance == '--' ? '--' : NumberUtil.handleFisAmountToFixed(dot_ercBalance)}
               willGetBalance={dotWillAmount}
               unit='DOT'
-              trade={config.uniswap.rdotURL}
+              tradeList={[{ label: 'Uniswap', url: config.uniswap.rdotURL }]}
               operationType='erc20'
               onSwapClick={() => toSwap('rDOT')}
             />
@@ -261,7 +266,7 @@ export default function Index(props: any) {
               balance={ksm_ercBalance == '--' ? '--' : NumberUtil.handleFisAmountToFixed(ksm_ercBalance)}
               willGetBalance={ksmWillAmount}
               unit='KSM'
-              trade={config.uniswap.rksmURL}
+              tradeList={[{ label: 'Uniswap', url: config.uniswap.rksmURL }]}
               operationType='erc20'
               onSwapClick={() => toSwap('rKSM')}
             />
@@ -274,12 +279,12 @@ export default function Index(props: any) {
               balance={atom_ercBalance == '--' ? '--' : NumberUtil.handleFisAmountToFixed(atom_ercBalance)}
               willGetBalance={atomWillAmount}
               unit='ATOM'
-              trade={config.uniswap.ratomURL}
+              tradeList={[{ label: 'Uniswap', url: config.uniswap.ratomURL }]}
               operationType='erc20'
               onSwapClick={() => toSwap('rATOM')}
             />
 
-            <DataItem
+            {/* <DataItem
               disabled={!config.metaMaskNetworkIsGoerliEth(metaMaskNetworkId)}
               rSymbol='rSOL'
               icon={rasset_rsol_svg}
@@ -290,7 +295,7 @@ export default function Index(props: any) {
               trade={config.uniswap.rsolURL}
               operationType='erc20'
               onSwapClick={() => toSwap('rSOL')}
-            />
+            /> */}
 
             <DataItem
               disabled={!config.metaMaskNetworkIsGoerliEth(metaMaskNetworkId)}
@@ -300,7 +305,7 @@ export default function Index(props: any) {
               balance={matic_ercBalance == '--' ? '--' : NumberUtil.handleFisAmountToFixed(matic_ercBalance)}
               willGetBalance={maticWillAmount}
               unit='MATIC'
-              trade={config.uniswap.ratomURL}
+              tradeList={[{ label: 'Quickswap', url: config.quickswap.rmaticURL }]}
               operationType='erc20'
               onSwapClick={() => toSwap('rMATIC')}
             />

@@ -407,6 +407,22 @@ export default function Index(props: any) {
       filterTokenDatas = allTokenDatas.filter((item: any) => {
         return item.type !== 'fis' && item.type !== 'rbnb' && item.type !== 'rsol';
       });
+    } else if (fromType === 'erc20' && destType === 'default') {
+      filterTokenDatas = allTokenDatas.filter((item: any) => {
+        return item.type !== 'rbnb' && item.type !== 'rsol';
+      });
+    } else if (fromType === 'bep20' && destType === 'default') {
+      filterTokenDatas = allTokenDatas.filter((item: any) => {
+        return item.type !== 'fis' && item.type !== 'rsol';
+      });
+    } else if (fromType === 'spl' && destType === 'default') {
+      filterTokenDatas = allTokenDatas.filter((item: any) => {
+        return item.type === 'fis' || item.type === 'rsol';
+      });
+    } else if (fromType === 'native' && destType === 'default') {
+      filterTokenDatas = allTokenDatas.filter((item: any) => {
+        return item.type !== 'reth';
+      });
     } else {
       filterTokenDatas = allTokenDatas.filter((item: any) => {
         return item.type !== 'reth' && item.type !== 'fis' && item.type !== 'rsol';

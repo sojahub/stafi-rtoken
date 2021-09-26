@@ -15,9 +15,9 @@ import {
 //   getUnbondCommission as matic_getUnbondCommission,
 //   rTokenRate as matic_rTokenRate
 // } from '@features/rMATICClice';
-import { getUnbondCommission as sol_getUnbondCommission, rTokenRate as sol_rTokenRate } from '@features/rSOLClice';
+// import { getUnbondCommission as sol_getUnbondCommission, rTokenRate as sol_rTokenRate } from '@features/rSOLClice';
 import metamask from '@images/metamask.png';
-import rasset_rsol_svg from '@images/rSOL.svg';
+// import rasset_rsol_svg from '@images/rSOL.svg';
 import rasset_ratom_svg from '@images/r_atom.svg';
 import rasset_rbnb_svg from '@images/r_bnb.svg';
 import rasset_rdot_svg from '@images/r_dot.svg';
@@ -181,14 +181,14 @@ export default function Index(props: any) {
       dispatch(fis_rTokenRate());
       dispatch(dot_rTokenRate());
       dispatch(atom_rTokenRate());
-      dispatch(sol_rTokenRate());
+      // dispatch(sol_rTokenRate());
       dispatch(matic_rTokenRate());
       dispatch(bnb_rTokenRate());
       dispatch(ksm_getUnbondCommission());
       dispatch(fis_getUnbondCommission());
       dispatch(dot_getUnbondCommission());
       dispatch(atom_getUnbondCommission());
-      dispatch(sol_getUnbondCommission());
+      // dispatch(sol_getUnbondCommission());
       dispatch(matic_getUnbondCommission());
       dispatch(bnb_getUnbondCommission());
     } else {
@@ -197,13 +197,13 @@ export default function Index(props: any) {
   };
 
   const toSwap = (tokenSymbol: string) => {
-    history.push('/rAsset/swap/bep20/native', {
+    history.push('/rAsset/swap/bep20/default', {
       rSymbol: tokenSymbol,
     });
   };
 
   const toSwapErc20 = (tokenSymbol: string) => {
-    history.push('/rAsset/swap/bep20/erc20', {
+    history.push('/rAsset/swap/bep20/default', {
       rSymbol: tokenSymbol,
     });
   };
@@ -221,7 +221,6 @@ export default function Index(props: any) {
               balance={fis_bepBalance == '--' ? '--' : NumberUtil.handleFisAmountToFixed(fis_bepBalance)}
               willGetBalance={0}
               unit='FIS'
-              trade={config.uniswapUrl('0xB8c77482e45F1F44dE1745F52C74426C631bDD52', config.FISBep20TokenAddress())}
               operationType='bep20'
               onSwapClick={() => toSwap('FIS')}
             /> */}
@@ -234,7 +233,6 @@ export default function Index(props: any) {
               balance={rfis_bepBalance == '--' ? '--' : NumberUtil.handleFisAmountToFixed(rfis_bepBalance)}
               willGetBalance={fisWillAmount}
               unit='FIS'
-              trade={config.uniswapUrl('0xB8c77482e45F1F44dE1745F52C74426C631bDD52', config.rFISBep20TokenAddress())}
               operationType='bep20'
               onSwapClick={() => toSwap('rFIS')}
             />
@@ -248,7 +246,6 @@ export default function Index(props: any) {
               willGetBalance={'0.000000'}
               unit='ETH'
               operationType='bep20'
-              trade={config.uniswap.rethURL}
               onSwapClick={() => {
                 toSwapErc20('rETH');
               }}
@@ -262,7 +259,6 @@ export default function Index(props: any) {
               balance={dot_bepBalance == '--' ? '--' : NumberUtil.handleFisAmountToFixed(dot_bepBalance)}
               willGetBalance={dotWillAmount}
               unit='DOT'
-              trade={config.uniswapUrl('0xB8c77482e45F1F44dE1745F52C74426C631bDD52', config.rDOTBep20TokenAddress())}
               operationType='bep20'
               onSwapClick={() => toSwap('rDOT')}
             />
@@ -275,7 +271,6 @@ export default function Index(props: any) {
               balance={ksm_bepBalance == '--' ? '--' : NumberUtil.handleFisAmountToFixed(ksm_bepBalance)}
               willGetBalance={ksmWillAmount}
               unit='KSM'
-              trade={config.uniswapUrl('0xB8c77482e45F1F44dE1745F52C74426C631bDD52', config.rKSMBep20TokenAddress())}
               operationType='bep20'
               onSwapClick={() => toSwap('rKSM')}
             />
@@ -287,12 +282,11 @@ export default function Index(props: any) {
               balance={atom_bepBalance == '--' ? '--' : NumberUtil.handleFisAmountToFixed(atom_bepBalance)}
               willGetBalance={atomWillAmount}
               unit='ATOM'
-              trade={config.uniswapUrl('0xB8c77482e45F1F44dE1745F52C74426C631bDD52', config.rATOMBep20TokenAddress())}
               operationType='bep20'
               onSwapClick={() => toSwap('rATOM')}
             />
 
-            <DataItem
+            {/* <DataItem
               disabled={!config.metaMaskNetworkIsBsc(metaMaskNetworkId)}
               rSymbol='rSOL'
               icon={rasset_rsol_svg}
@@ -300,10 +294,9 @@ export default function Index(props: any) {
               balance={rsol_bepBalance == '--' ? '--' : NumberUtil.handleFisAmountToFixed(rsol_bepBalance)}
               willGetBalance={solWillAmount}
               unit='SOL'
-              trade={config.uniswap.rsolURL}
               operationType='bep20'
               onSwapClick={() => toSwap('rSOL')}
-            />
+            /> */}
 
             <DataItem
               disabled={!config.metaMaskNetworkIsBsc(metaMaskNetworkId)}
@@ -313,7 +306,6 @@ export default function Index(props: any) {
               balance={rmatic_bepBalance == '--' ? '--' : NumberUtil.handleFisAmountToFixed(rmatic_bepBalance)}
               willGetBalance={maticWillAmount}
               unit='MATIC'
-              trade={config.uniswap.ratomURL}
               operationType='bep20'
               onSwapClick={() => toSwap('rMATIC')}
             />
@@ -326,7 +318,6 @@ export default function Index(props: any) {
               balance={rbnb_bepBalance == '--' ? '--' : NumberUtil.handleFisAmountToFixed(rbnb_bepBalance)}
               willGetBalance={bnbWillAmount}
               unit='BNB'
-              trade={config.uniswap.ratomURL}
               operationType='bep20'
               onSwapClick={() => toSwap('rBNB')}
             />

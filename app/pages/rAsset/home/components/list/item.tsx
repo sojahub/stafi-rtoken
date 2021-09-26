@@ -1,8 +1,6 @@
 import TradePopover from '@components/tradePopover';
-import config from '@config/index';
 import dow_svg from '@images/dow_green.svg';
 import GhostButton from '@shared/components/button/ghostButton';
-import { message } from 'antd';
 import React, { useState } from 'react';
 import SwapModalNew from '../../../../../components/modal/swapModalNew';
 
@@ -44,7 +42,7 @@ export default function Index(props: Props) {
       </div>
 
       <div className='col_btns'>
-        {props.operationType == 'erc20' && props.rSymbol != 'rETH' && (
+        {/* {props.operationType == 'erc20' && props.rSymbol != 'rETH' && (
           <GhostButton
             disabled={props.disabled}
             onClick={() => {
@@ -69,9 +67,9 @@ export default function Index(props: Props) {
               {!props.disabled && <img className='dow_svg' src={dow_svg} />}
             </GhostButton>
           </TradePopover>
-        )}
+        )} */}
 
-        {props.operationType == 'native' && props.tradeList && props.tradeList.length > 0 && (
+        {
           <TradePopover
             data={tradeUrlsData}
             onClick={(item: any) => {
@@ -79,12 +77,12 @@ export default function Index(props: Props) {
               setTradeUrl(item.url);
               setTradeModalVisible(true);
             }}>
-            <GhostButton disabled={props.disabled}>
+            <GhostButton disabled={!props.tradeList || props.tradeList.length === 0}>
               Trade
-              {!props.disabled && <img className='dow_svg' src={dow_svg} />}
+              {<img className='dow_svg' src={dow_svg} />}
             </GhostButton>
           </TradePopover>
-        )}
+        }
 
         <GhostButton
           disabled={props.disabled}
