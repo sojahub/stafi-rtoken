@@ -24,7 +24,7 @@ import { AppThunk } from '../store';
 import { getAssetBalance as getBscAssetBalance } from './BSCClice';
 import CommonClice from './commonClice';
 import { getAssetBalance } from './ETHClice';
-import { setLoading } from './globalClice';
+import { connectSoljs, setLoading } from './globalClice';
 import { add_Notice, noticeStatus, noticesubType, noticeType } from './noticeClice';
 import { getAssetBalance as getSlpAssetBalance } from './SOLClice';
 
@@ -633,11 +633,17 @@ export const slp20ToOtherSwap =
         return;
       }
 
+      const solAddress = getState().rSOLModule.solAccount && getState().rSOLModule.solAccount.address;
+      if (solana.publicKey.toString() !== solAddress) {
+        message.info('Phantom wallet address switched, please try again');
+        dispatch(connectSoljs());
+        return;
+      }
+
       const notice_uuid = stafi_uuid();
       dispatch(setLoading(true));
 
       // Check token account
-      const solAddress = getState().rSOLModule.solAccount && getState().rSOLModule.solAccount.address;
       let slpTokenMintAddress;
       if (tokenType === 'fis') {
         slpTokenMintAddress = config.slpFisTokenAddress();

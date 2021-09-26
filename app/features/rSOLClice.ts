@@ -8,7 +8,14 @@ import RpcServer, { pageCount } from '@servers/rpc/index';
 import { default as PolkadotServer, default as SolServer } from '@servers/sol/index';
 import Stafi from '@servers/stafi/index';
 import * as solanaWeb3 from '@solana/web3.js';
-import { getLocalStorageItem, Keys, removeLocalStorageItem, setLocalStorageItem, stafi_uuid } from '@util/common';
+import {
+  getLocalStorageItem,
+  Keys,
+  removeLocalStorageItem,
+  setLocalStorageItem,
+  stafi_uuid,
+  timeout
+} from '@util/common';
 import NumberUtil from '@util/numberUtil';
 import { message } from 'antd';
 import base58 from 'bs58';
@@ -16,6 +23,7 @@ import { AppThunk } from '../store';
 import CommonClice from './commonClice';
 import { bondStates, bound, fisUnbond, rTokenSeries_bondStates } from './FISClice';
 import {
+  connectSoljs,
   initProcess,
   processStatus,
   setLoading,
@@ -201,6 +209,26 @@ const queryBalance = async (account: any, dispatch: any, getState: any) => {
 export const transfer =
   (amountparam: string, cb?: Function): AppThunk =>
   async (dispatch, getState) => {
+    const solana = solServer.getProvider();
+    if (solana && !solana.isConnected) {
+      solServer.connectSolJs();
+      await timeout(500);
+      if (!solana.isConnected) {
+        message.info('Please connect Phantom extension first');
+        return;
+      }
+    }
+    if (!solana) {
+      return;
+    }
+
+    const solAddress = getState().rSOLModule.solAccount && getState().rSOLModule.solAccount.address;
+    if (solana.publicKey.toString() !== solAddress) {
+      message.info('Phantom wallet address switched, please try again');
+      dispatch(connectSoljs());
+      return;
+    }
+
     const processParameter = getState().rSOLModule.processParameter;
     const notice_uuid = (processParameter && processParameter.uuid) || stafi_uuid();
 
@@ -210,7 +238,6 @@ export const transfer =
 
     const validPools = getState().rSOLModule.validPools;
     const poolLimit = getState().rSOLModule.poolLimit;
-    const address = getState().rSOLModule.solAccount.address;
     web3Enable(stafiServer.getWeb3EnalbeName());
 
     const selectedPool = commonClice.getPool(amount, validPools, poolLimit);
@@ -258,14 +285,14 @@ export const transfer =
               amount: amountparam,
               txHash: hexTxHash,
               blockHash: hexBlockHash,
-              address,
+              address: solAddress,
               uuid: notice_uuid,
             },
             staking: {
               amount: amountparam,
               txHash: hexTxHash,
               blockHash: hexBlockHash,
-              address,
+              address: solAddress,
               type: rSymbol.Sol,
               poolAddress: selectedPool.poolPubkey,
             },
@@ -283,7 +310,7 @@ export const transfer =
         message.info('Sending succeeded, proceeding signature');
 
         dispatch(
-          bound(address, hexTxHash, hexBlockHash, amount, selectedPool.poolPubkey, rSymbol.Sol, (r: string) => {
+          bound(solAddress, hexTxHash, hexBlockHash, amount, selectedPool.poolPubkey, rSymbol.Sol, (r: string) => {
             if (r == 'loading') {
               dispatch(add_SOL_stake_Notice(notice_uuid, amountparam, noticeStatus.Pending));
             } else {

@@ -47,7 +47,6 @@ export default class ExtensionDapp extends SolKeyring {
   }
 
   sendTransaction = async (amount: number, poolAddress: string) => {
-    await this.connectSolJs(() => {});
     const solana = this.getProvider();
     if (solana && !solana.isConnected) {
       this.connectSolJs();
