@@ -79,7 +79,7 @@ const plugins = [
     name: 'stafi-rtoken',
     color: 'green',
   }),
-  new BundleAnalyzerPlugin({ analyzerPort: 8919 }),
+  // new BundleAnalyzerPlugin({ analyzerPort: 8919 }),
 ];
 webpackConfig.plugins = [...webpackConfig.plugins, ...plugins];
 
