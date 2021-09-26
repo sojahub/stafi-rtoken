@@ -405,11 +405,11 @@ export default function Index(props: any) {
       });
     } else if ((fromType === 'erc20' && destType === 'bep20') || (fromType === 'bep20' && destType === 'erc20')) {
       filterTokenDatas = allTokenDatas.filter((item: any) => {
-        return item.type !== 'fis' && item.type !== 'rbnb';
+        return item.type !== 'fis' && item.type !== 'rbnb' && item.type !== 'rsol';
       });
     } else {
       filterTokenDatas = allTokenDatas.filter((item: any) => {
-        return item.type !== 'reth' && item.type !== 'fis';
+        return item.type !== 'reth' && item.type !== 'fis' && item.type !== 'rsol';
       });
     }
 
@@ -641,7 +641,7 @@ export default function Index(props: any) {
 
           <div style={{ marginTop: '15px' }}>
             <TypeSelector
-              popTitle={fromTypeData ? 'Select a ' + fromTypeData.type + ' rToken' : ''}
+              popTitle={fromTypeData ? 'Select a ' + fromTypeData.content + ' rToken' : ''}
               selectDataSource={selectDataSource}
               selectedData={tokenType}
               selectedTitle={tokenType ? tokenType.title : ''}

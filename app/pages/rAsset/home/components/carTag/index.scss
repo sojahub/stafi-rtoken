@@ -14,12 +14,14 @@
       font-size: 12px;
     }
 
-    .arrow_down {
-      margin-left: 20px;
-      padding: 10px;
-      width: 36px;
-      height: 30px;
-    }
+    // .arrow_down {
+    //   margin-left: 20px;
+    //   padding: 10px;
+    //   width: 36px;
+    //   height: 30px;
+    //   background-image: url('../../../../../assets/images/arrow_down_white.svg');
+    //   background-repeat: no-repeat;
+    // }
   }
 
   > div:hover {
@@ -48,4 +50,32 @@
     transform: translateX(-50%);
     background-color: #00f3ab;
   }
+}
+
+.rAsset_tag_right {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+
+.rAsset_tag_right .arrow_down {
+  margin-left: 20px;
+  padding: 10px;
+  width: 36px;
+  background: url('../../../../../assets/images/arrow_down_white.svg') no-repeat center center;
+}
+
+.rAsset_tag_right .arrow_down_selected {
+  margin-left: 20px;
+  padding: 10px;
+  width: 36px;
+  background: url('../../../../../assets/images/arrow_down_green.svg') no-repeat center center;
+}
+
+.rAsset_tag_right:hover .arrow_down {
+  margin-left: 20px;
+  padding: 10px;
+  width: 36px;
+  background: url('../../../../../assets/images/arrow_down_green.svg') no-repeat center center;
 }

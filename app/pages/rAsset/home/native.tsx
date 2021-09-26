@@ -324,6 +324,7 @@ export default function Index(props: any) {
             />
 
             <DataItem
+              disabled={rTokenPlatform !== 'spl'}
               rSymbol='rSOL'
               icon={rasset_rsol_svg}
               fullName='Solana'
@@ -331,17 +332,9 @@ export default function Index(props: any) {
               willGetBalance={solWillAmount}
               unit='SOL'
               operationType='native'
-              tradeList={[{ label: 'Uniswap', url: config.uniswap.rsolURL }]}
-              onSwapClick={(swapModalTarget: any) => {
-                let targetPlatform = 'default';
-                if (rTokenPlatform === 'bep') {
-                  targetPlatform = 'bep20';
-                } else if (rTokenPlatform === 'erc') {
-                  targetPlatform = 'erc20';
-                } else {
-                  targetPlatform = 'spl';
-                }
-                history.push(`/rAsset/swap/native/${swapModalTarget || targetPlatform}`, {
+              // tradeList={[{ label: 'Uniswap', url: config.uniswap.rsolURL }]}
+              onSwapClick={() => {
+                history.push(`/rAsset/swap/native/spl`, {
                   rSymbol: 'rSOL',
                 });
               }}

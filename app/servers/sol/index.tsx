@@ -2,8 +2,7 @@ import config from '@config/index';
 import { SolKeyring } from '@keyring/SolKeyring';
 import { ApiPromise, WsProvider } from '@polkadot/api';
 import { web3Accounts, web3Enable } from '@polkadot/extension-dapp';
-import { AccountLayout } from '@solana/spl-token';
-import { Connection, Keypair, PublicKey, SystemProgram, Transaction } from '@solana/web3.js';
+import { Connection, PublicKey, SystemProgram, Transaction } from '@solana/web3.js';
 import { timeout } from '@util/common';
 import { message } from 'antd';
 import Stafi from '../stafi';
@@ -160,6 +159,11 @@ export default class ExtensionDapp extends SolKeyring {
         return false;
       }
 
+      if (solana.publicKey.toString() !== walletAddress) {
+        message.info('Please switch Phantom wallet to the target address first');
+        return false;
+      }
+
       let slpTokenMintAddress;
       if (tokenType === 'fis') {
         slpTokenMintAddress = config.slpFisTokenAddress();
@@ -173,30 +177,47 @@ export default class ExtensionDapp extends SolKeyring {
 
       const connection = new Connection(config.solRpcApi(), { wsEndpoint: config.solRpcWs() });
 
-      const newTokenAccount = new Keypair();
-      const createTempTokenAccountIx = SystemProgram.createAccount({
-        programId: splToken.TOKEN_PROGRAM_ID,
-        space: AccountLayout.span,
-        lamports: await connection.getMinimumBalanceForRentExemption(AccountLayout.span, 'singleGossip'),
-        fromPubkey: new PublicKey(walletAddress),
-        newAccountPubkey: newTokenAccount.publicKey,
-      });
+      // Random generate token amount, deprecated
+      // const newTokenAccount = new Keypair();
+      // const createTempTokenAccountIx = SystemProgram.createAccount({
+      //   programId: splToken.TOKEN_PROGRAM_ID,
+      //   space: AccountLayout.span,
+      //   lamports: await connection.getMinimumBalanceForRentExemption(AccountLayout.span, 'singleGossip'),
+      //   fromPubkey: new PublicKey(walletAddress),
+      //   newAccountPubkey: newTokenAccount.publicKey,
+      // });
 
-      // console.log('sdfsdfsdfsdf=======', newTokenAccount.publicKey.toString());
+      // const initIx = splToken.Token.createInitAccountInstruction(
+      //   splToken.TOKEN_PROGRAM_ID,
+      //   new PublicKey(slpTokenMintAddress),
+      //   newTokenAccount.publicKey,
+      //   solana.publicKey,
+      // );
 
-      const initIx = splToken.Token.createInitAccountInstruction(
+      let ata = await splToken.Token.getAssociatedTokenAddress(
+        splToken.ASSOCIATED_TOKEN_PROGRAM_ID,
         splToken.TOKEN_PROGRAM_ID,
         new PublicKey(slpTokenMintAddress),
-        newTokenAccount.publicKey,
         solana.publicKey,
       );
 
-      let transaction = new Transaction().add(createTempTokenAccountIx, initIx);
+      console.log(`ata: ${ata.toBase58()}`);
+
+      const inx = splToken.Token.createAssociatedTokenAccountInstruction(
+        splToken.ASSOCIATED_TOKEN_PROGRAM_ID,
+        splToken.TOKEN_PROGRAM_ID,
+        new PublicKey(slpTokenMintAddress),
+        ata,
+        solana.publicKey,
+        new PublicKey(walletAddress),
+      );
+
+      let transaction = new Transaction().add(inx);
 
       let { blockhash } = await connection.getRecentBlockhash();
       transaction.recentBlockhash = blockhash;
       transaction.feePayer = solana.publicKey;
-      transaction.partialSign(newTokenAccount);
+      // transaction.partialSign(newTokenAccount);
 
       let signed = await solana.signTransaction(transaction);
       let txid = await connection.sendRawTransaction(signed.serialize(), { skipPreflight: false });
