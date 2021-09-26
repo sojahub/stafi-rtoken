@@ -37,7 +37,7 @@ export default function Index(props: Props) {
   const [visibleModal, setVisibleModal] = useState(false);
   const [tradeLabel, setTradeLabel] = useState('Uniswap');
 
-  const uniswapUrl = useMemo(() => {
+  const tradeUrl = useMemo(() => {
     if (props.type === 'rDOT') {
       return config.uniswap.rdotURL;
     }
@@ -52,6 +52,9 @@ export default function Index(props: Props) {
     }
     if (props.type === 'rSOL') {
       return config.uniswap.rsolURL;
+    }
+    if (props.type === 'rMATIC') {
+      return config.quickswap.rmaticURL;
     }
   }, [props.type]);
 
@@ -95,19 +98,6 @@ export default function Index(props: Props) {
               </TradePopover>
             )}
 
-            {props.type === 'rMATIC' && (
-              <Button
-                onClick={() => {
-                  window.open(
-                    'https://quickswap.exchange/#/swap?inputCurrency=0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270&outputCurrency=0x9f28e2455f9ffcfac9ebd6084853417362bc5dbb',
-                  );
-                }}
-                size='small'
-                btnType='ellipse'>
-                Trade
-              </Button>
-            )}
-
             {props.type === 'rBNB' && (
               <Button
                 onClick={() => {
@@ -119,9 +109,9 @@ export default function Index(props: Props) {
               </Button>
             )}
 
-            {props.type !== 'rETH' && props.type !== 'rMATIC' && props.type !== 'rBNB' && (
+            {props.type !== 'rETH' && props.type !== 'rBNB' && (
               <TradePopover
-                data={[{ label: 'Uniswap', url: uniswapUrl }]}
+                data={[{ label: props.type !== 'rMATIC' ? 'Uniswap' : 'Quickswap', url: tradeUrl }]}
                 onClick={(item: any) => {
                   setVisibleModal(true);
                   setTradeLabel(item.label);
@@ -229,7 +219,7 @@ export default function Index(props: Props) {
         type={props.type}
         visible={visibleModal}
         label={tradeLabel}
-        tradeUrl={uniswapUrl}
+        tradeUrl={tradeUrl}
         onCancel={() => {
           setVisibleModal(false);
         }}

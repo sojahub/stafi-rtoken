@@ -349,6 +349,7 @@ export default function Index(props: any) {
               willGetBalance={maticWillAmount}
               unit='MATIC'
               operationType='native'
+              tradeList={[{ label: 'Quickswap', url: config.quickswap.rmaticURL }]}
               onSwapClick={(swapModalTarget: any) => {
                 let targetPlatform = 'default';
                 if (rTokenPlatform === 'bep') {
