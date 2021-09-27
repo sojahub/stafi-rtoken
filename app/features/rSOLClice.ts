@@ -5,7 +5,7 @@ import { u8aToHex } from '@polkadot/util';
 import { createSlice } from '@reduxjs/toolkit';
 import keyring from '@servers/index';
 import RpcServer, { pageCount } from '@servers/rpc/index';
-import { default as PolkadotServer, default as SolServer } from '@servers/sol/index';
+import { default as SolServer } from '@servers/sol/index';
 import Stafi from '@servers/stafi/index';
 import * as solanaWeb3 from '@solana/web3.js';
 import {
@@ -34,6 +34,7 @@ import {
 import { add_Notice, findUuidWithoutBlockhash, noticeStatus, noticesubType, noticeType } from './noticeClice';
 
 const commonClice = new CommonClice();
+const stafiServer = new Stafi();
 const solServer = new SolServer();
 const rpcServer = new RpcServer();
 
@@ -150,8 +151,7 @@ const rSOLClice = createSlice({
     },
   },
 });
-const polkadotServer = new PolkadotServer();
-const stafiServer = new Stafi();
+
 export const {
   setSolAccounts,
   setSolAccount,
@@ -211,6 +211,7 @@ export const transfer =
   async (dispatch, getState) => {
     const solana = solServer.getProvider();
     if (!solana) {
+      message.info('Please connect your Phantom wallet');
       return;
     }
     await solana.disconnect();

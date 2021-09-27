@@ -223,7 +223,7 @@ export default class ExtensionDapp extends SolKeyring {
       const result = await connection.confirmTransaction(txid);
 
       if (!result.value.err) {
-        message.info('Create token account success');
+        message.info('Transaction approved');
         return true;
       }
     } catch (err) {

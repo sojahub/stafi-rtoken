@@ -622,6 +622,7 @@ export const slp20ToOtherSwap =
     try {
       const solana = solServer.getProvider();
       if (!solana) {
+        message.info('Please connect your Phantom wallet');
         return;
       }
       await solana.disconnect();
