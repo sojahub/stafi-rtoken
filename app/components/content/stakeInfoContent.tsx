@@ -11,7 +11,6 @@ import rMatic_stafi_svg from '@images/selected_r_matic.svg';
 import rSOL_stafi_svg from '@images/selected_r_sol.svg';
 import Button from '@shared/components/button/button';
 import NumberUtil from '@util/numberUtil';
-import { message } from 'antd';
 import React, { useMemo, useState } from 'react';
 import { useHistory } from 'react-router';
 import SwapModalNew from '../modal/swapModalNew';
@@ -36,6 +35,7 @@ export default function Index(props: Props) {
 
   const [visibleModal, setVisibleModal] = useState(false);
   const [tradeLabel, setTradeLabel] = useState('Uniswap');
+  const [selectedExchange, setSelectedExchange] = useState('');
 
   const tradeUrl = useMemo(() => {
     if (props.type === 'rDOT') {
@@ -50,13 +50,18 @@ export default function Index(props: Props) {
     if (props.type === 'rATOM') {
       return config.uniswap.ratomURL;
     }
-    if (props.type === 'rSOL') {
-      return config.uniswap.rsolURL;
-    }
     if (props.type === 'rMATIC') {
       return config.quickswap.rmaticURL;
     }
-  }, [props.type]);
+    if (props.type === 'rETH') {
+      if (selectedExchange === 'Uniswap') {
+        return config.uniswap.rethURL;
+      }
+      if (selectedExchange === 'Curve') {
+        return config.curve.rethURL;
+      }
+    }
+  }, [props.type, selectedExchange]);
 
   return (
     <LeftContent className='stafi_stake_info_context'>
@@ -90,7 +95,12 @@ export default function Index(props: Props) {
                 data={[
                   { label: 'Curve', url: config.curve.rethURL },
                   { label: 'Uniswap', url: config.uniswap.rethURL },
-                ]}>
+                ]}
+                onClick={(item: any) => {
+                  setSelectedExchange(item.label);
+                  setVisibleModal(true);
+                  setTradeLabel(item.label);
+                }}>
                 {' '}
                 <Button size='small' btnType='ellipse'>
                   Trade <img className='dow_svg' src={dow_svg} />{' '}
@@ -98,7 +108,7 @@ export default function Index(props: Props) {
               </TradePopover>
             )}
 
-            {props.type === 'rBNB' && (
+            {/* {props.type === 'rBNB' && (
               <Button
                 onClick={() => {
                   message.info('DEX Pool for rBNB will be open soon.');
@@ -107,16 +117,17 @@ export default function Index(props: Props) {
                 btnType='ellipse'>
                 Trade
               </Button>
-            )}
+            )} */}
 
-            {props.type !== 'rETH' && props.type !== 'rBNB' && (
+            {props.type !== 'rETH' && (
               <TradePopover
                 data={[{ label: props.type !== 'rMATIC' ? 'Uniswap' : 'Quickswap', url: tradeUrl }]}
                 onClick={(item: any) => {
+                  setSelectedExchange(item.label);
                   setVisibleModal(true);
                   setTradeLabel(item.label);
                 }}>
-                <Button size='small' btnType='ellipse'>
+                <Button size='small' btnType='ellipse' disabled={!tradeUrl}>
                   Trade
                   <img className='dow_svg' src={dow_svg} />
                 </Button>
@@ -224,9 +235,15 @@ export default function Index(props: Props) {
           setVisibleModal(false);
         }}
         onClickSwap={() => {
-          history.push(`/rAsset/swap/native/erc20`, {
-            rSymbol: props.type,
-          });
+          if (props.type === 'rETH') {
+            history.push(`/rAsset/swap/erc20/default`, {
+              rSymbol: props.type,
+            });
+          } else {
+            history.push(`/rAsset/swap/native/default`, {
+              rSymbol: props.type,
+            });
+          }
         }}
       />
     </LeftContent>

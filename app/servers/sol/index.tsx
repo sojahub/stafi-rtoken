@@ -131,7 +131,7 @@ export default class ExtensionDapp extends SolKeyring {
         mint: new PublicKey(slpTokenMintAddress),
       });
 
-      console.log('sfasdfsf=======acc', acc);
+      // console.log('sfasdfsf=======acc', acc);
 
       if (acc.value && acc.value.length > 0) {
         return acc.value[0].pubkey;
