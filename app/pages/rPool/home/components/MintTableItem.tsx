@@ -40,7 +40,9 @@ export default function MintTableItem(props: Props) {
       symbol = rSymbol.Eth;
     } else if (tokenType === 'rBNB') {
       symbol = rSymbol.Bnb;
-    }else {
+    } else if (tokenType === 'rSOL') {
+      symbol = rSymbol.Sol;
+    } else {
       message.error('Unsupported token type');
       return;
     }
