@@ -25,9 +25,9 @@ import arrowDownIcon from '@images/arrow_down.svg';
 import doubt from '@images/doubt.svg';
 import left_arrow from '@images/left_arrow.svg';
 import rasset_ratom_svg from '@images/r_atom.svg';
-import rasset_rdot_svg from '@images/r_dot.svg';
-import rasset_rfis_svg from '@images/r_fis.svg';
-import rasset_rksm_svg from '@images/r_ksm.svg';
+// import rasset_rdot_svg from '@images/r_dot.svg';
+// import rasset_rfis_svg from '@images/r_fis.svg';
+// import rasset_rksm_svg from '@images/r_ksm.svg';
 import settingIcon from '@images/setting.svg';
 import { rSymbol } from '@keyring/defaults';
 import AddressInputEmbedNew from '@shared/components/input/addressInputEmbedNew';
@@ -40,24 +40,24 @@ import styled from 'styled-components';
 import SwapRateChart from './SwapRateChart';
 
 const allTokenDatas = [
-  {
-    icon: rasset_rfis_svg,
-    title: 'rFIS',
-    content: '--',
-    type: 'rfis',
-  },
-  {
-    icon: rasset_rdot_svg,
-    title: 'rDOT',
-    content: '--',
-    type: 'rdot',
-  },
-  {
-    icon: rasset_rksm_svg,
-    title: 'rKSM',
-    content: '--',
-    type: 'rksm',
-  },
+  // {
+  //   icon: rasset_rfis_svg,
+  //   title: 'rFIS',
+  //   content: '--',
+  //   type: 'rfis',
+  // },
+  // {
+  //   icon: rasset_rdot_svg,
+  //   title: 'rDOT',
+  //   content: '--',
+  //   type: 'rdot',
+  // },
+  // {
+  //   icon: rasset_rksm_svg,
+  //   title: 'rKSM',
+  //   content: '--',
+  //   type: 'rksm',
+  // },
   {
     icon: rasset_ratom_svg,
     title: 'rATOM',
@@ -351,6 +351,7 @@ export default function RDEXHome() {
                 onSelectChange={(value) => {
                   setSelectedToken(value);
                   setRTokenAmount('');
+                  setScene(0);
                 }}
               />
             </InnerContainer>

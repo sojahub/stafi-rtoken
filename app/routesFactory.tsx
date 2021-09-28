@@ -133,6 +133,8 @@ const RSOLWallet = React.lazy(() => import('./pages/rSOL/selectWallet'));
 const RSOLType = React.lazy(() => import('./pages/rSOL/selectType'));
 const RSOLSeach = React.lazy(() => import('./pages/rSOL/search'));
 
+const RDEXHome = React.lazy(() => import('./pages/rDEX/home'));
+
 const routesFactory = (role?: any) => {
   const routes = [
     {
@@ -572,23 +574,23 @@ const routesFactory = (role?: any) => {
             },
           ],
         },
-        // {
-        //   id: 'rDEX_home',
-        //   path: '/rDEX',
-        //   type: 'rDEX',
-        //   component: RDEXHome,
-        //   routes: [
-        //     {
-        //       id: 'rDEX_home',
-        //       path: '/rDEX/home',
-        //       component: RDEXHome,
-        //     },
-        //     {
-        //       path: '*',
-        //       component: () => <Redirect to='/rDEX/home' />,
-        //     },
-        //   ],
-        // },
+        {
+          id: 'rDEX_home',
+          path: '/rDEX',
+          type: 'rDEX',
+          component: RDEXHome,
+          routes: [
+            {
+              id: 'rDEX_home',
+              path: '/rDEX/home',
+              component: RDEXHome,
+            },
+            {
+              path: '*',
+              component: () => <Redirect to='/rDEX/home' />,
+            },
+          ],
+        },
         {
           id: 'fee_station',
           path: '/feeStation',
