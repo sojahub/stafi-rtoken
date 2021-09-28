@@ -25,6 +25,7 @@ const rPoolClice = createSlice({
     rKSMActs: [],
     rATOMActs: [],
     rBNBActs: [],
+    rSOLActs: [],
     loadComplete: false,
     totalLiquidity: '--',
     apyAvg: '--',
@@ -57,6 +58,9 @@ const rPoolClice = createSlice({
     setRBNBActs(state, { payload }) {
       state.rBNBActs = payload;
     },
+    setRSOLActs(state, { payload }) {
+      state.rSOLActs = payload;
+    },
     setLoadComplete(state, { payload }) {
       state.loadComplete = payload;
     },
@@ -73,6 +77,7 @@ export const {
   setRKSMActs,
   setRATOMActs,
   setRBNBActs,
+  setRSOLActs,
   setLoadComplete,
 } = rPoolClice.actions;
 
@@ -91,6 +96,7 @@ export const getMintPrograms =
       dispatch(getRSymbolMintInfo(rSymbol.Atom)),
       dispatch(getRSymbolMintInfo(rSymbol.Ksm)),
       dispatch(getRSymbolMintInfo(rSymbol.Bnb)),
+      dispatch(getRSymbolMintInfo(rSymbol.Sol)),
     ])
       .then((values) => {
         delay(() => {
@@ -132,6 +138,9 @@ const getRSymbolMintInfo =
     }
     if (symbol === rSymbol.Bnb) {
       dispatch(setRBNBActs(acts));
+    }
+    if (symbol === rSymbol.Sol) {
+      dispatch(setRSOLActs(acts));
     }
   };
 
