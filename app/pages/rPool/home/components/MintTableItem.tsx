@@ -16,7 +16,6 @@ type Props = {
   poolOn: 1 | 2 | 3;
   stakeUrl?: string;
   history: any;
-  liquidityUrl: string;
   wrapFiUrl: string;
 };
 
