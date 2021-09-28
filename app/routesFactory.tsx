@@ -547,21 +547,6 @@ const routesFactory = (role?: any) => {
               component: RAssetHome,
             },
             {
-              id: 'rAssect_native',
-              path: '/rAsset/native',
-              component: RAssetNative,
-            },
-            {
-              id: 'rAssect_erc',
-              path: '/rAsset/erc',
-              component: RAssetErc,
-            },
-            {
-              id: 'rAssect_bep',
-              path: '/rAsset/bep',
-              component: RAssetBep,
-            },
-            {
               id: 'rAssect_swap',
               path: '/rAsset/swap/:fromType/:destType',
               component: RAssetSwap,
