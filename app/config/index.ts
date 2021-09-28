@@ -619,18 +619,15 @@ export default {
   },
   slpBridgeAccount: () => {
     if (!isdev()) {
-      return '';
+      return 'Ev64NXXeKdtBgJbXyuJKEw77pxaw5q4BkUb2eKeV5xDy';
     }
     return '63ytYLeNDaaUx2u94KHJcoueaLzA7gryB26p2w8E53oh';
   },
   slpBridgeFeeReceiver: () => {
     if (!isdev()) {
-      return '';
+      return 'GK4hMS4dBhQZfmo1MYKXKz76aXaKndQJ6YavzfEhc2w7';
     }
     return '9awVcBdEfGTGeKbvGQsrHNwXZ6KaRfXcKN9cpDM2kLn6';
-  },
-  slpAssociatedTokenAccountProgramId: () => {
-    return 'ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL';
   },
   slpTokenProgramId: () => {
     if (!isdev()) {
@@ -640,7 +637,7 @@ export default {
   },
   slpBridgeProgramId: () => {
     if (!isdev()) {
-      return '';
+      return 'H3mPx8i41Zn4dLC6ZQRBzNRe1cqYdbcDP1WpojnaiAVo';
     }
     return 'EPfxck35M3NJwsjreExLLyQAgAL3y5uWfzddY6cHBrGy';
   },
