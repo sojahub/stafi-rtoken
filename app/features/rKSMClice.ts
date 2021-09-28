@@ -285,7 +285,7 @@ export const transfer =
                       new Uint8Array([mod.index.toNumber(), mod.error.toNumber()]),
                     );
 
-                    let message: string = 'Something is wrong, please try again later!';
+                    let message: string = 'Something is wrong, please try again later';
                     if (error.name == '') {
                       message = '';
                     }
@@ -335,6 +335,9 @@ export const transfer =
                     processParameter: getState().rKSMModule.processParameter,
                   }),
                 );
+                
+                message.info('Sending succeeded, proceeding signature');
+
                 asInBlock &&
                   dispatch(
                     bound(

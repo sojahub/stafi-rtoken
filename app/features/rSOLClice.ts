@@ -4,7 +4,8 @@ import { web3Enable } from '@polkadot/extension-dapp';
 import { u8aToHex } from '@polkadot/util';
 import { createSlice } from '@reduxjs/toolkit';
 import keyring from '@servers/index';
-import { default as PolkadotServer, default as SolServer } from '@servers/sol/index';
+import RpcServer, { pageCount } from '@servers/rpc/index';
+import { default as SolServer } from '@servers/sol/index';
 import Stafi from '@servers/stafi/index';
 import * as solanaWeb3 from '@solana/web3.js';
 import {
@@ -21,11 +22,21 @@ import base58 from 'bs58';
 import { AppThunk } from '../store';
 import CommonClice from './commonClice';
 import { bondStates, bound, fisUnbond, rTokenSeries_bondStates } from './FISClice';
-import { initProcess, processStatus, setProcessSending, setProcessSlider, setProcessType } from './globalClice';
+import {
+  connectSoljs,
+  initProcess,
+  processStatus,
+  setLoading,
+  setProcessSending,
+  setProcessSlider,
+  setProcessType
+} from './globalClice';
 import { add_Notice, findUuidWithoutBlockhash, noticeStatus, noticesubType, noticeType } from './noticeClice';
 
 const commonClice = new CommonClice();
+const stafiServer = new Stafi();
 const solServer = new SolServer();
+const rpcServer = new RpcServer();
 
 const rSOLClice = createSlice({
   name: 'rSOLModule',
@@ -51,6 +62,8 @@ const rSOLClice = createSlice({
 
     ercBalance: '--',
     totalUnbonding: null,
+    rewardList: [],
+    rewardList_lastdata: null,
   },
   reducers: {
     setSolAccounts(state, { payload }) {
@@ -130,10 +143,15 @@ const rSOLClice = createSlice({
     setUnBondFees(state, { payload }) {
       state.unBondFees = payload;
     },
+    setRewardList(state, { payload }) {
+      state.rewardList = payload;
+    },
+    setRewardList_lastdata(state, { payload }) {
+      state.rewardList_lastdata = payload;
+    },
   },
 });
-const polkadotServer = new PolkadotServer();
-const stafiServer = new Stafi();
+
 export const {
   setSolAccounts,
   setSolAccount,
@@ -151,6 +169,8 @@ export const {
   setTotalUnbonding,
   setUnBondFees,
   setRatioShow,
+  setRewardList,
+  setRewardList_lastdata,
 } = rSOLClice.actions;
 
 export const reloadData = (): AppThunk => async (dispatch, getState) => {
@@ -173,15 +193,13 @@ const queryBalance = async (account: any, dispatch: any, getState: any) => {
   dispatch(setSolAccounts(account));
   let account2: any = { ...account };
 
-  const connection = new solanaWeb3.Connection(config.solRpcApi(), 'singleGossip');
+  const connection = new solanaWeb3.Connection(config.solRpcApi(), {
+    wsEndpoint: config.solRpcWs(),
+    commitment: 'singleGossip',
+  });
   const balance = await connection.getBalance(new solanaWeb3.PublicKey(account2.address));
-
   let solBalance = NumberUtil.tokenAmountToHuman(balance, rSymbol.Sol);
   account2.balance = solBalance ? NumberUtil.handleEthAmountRound(solBalance) : 0;
-  // const solAccount = getState().rSOLModule.solAccount;
-  // if (solAccount && solAccount.address == account2.address) {
-  // dispatch(setSolAccount(account2));
-  // }
 
   dispatch(setTransferrableAmountShow(account2.balance));
   dispatch(setSolAccount(account2));
@@ -191,6 +209,29 @@ const queryBalance = async (account: any, dispatch: any, getState: any) => {
 export const transfer =
   (amountparam: string, cb?: Function): AppThunk =>
   async (dispatch, getState) => {
+    const solana = solServer.getProvider();
+    if (!solana) {
+      message.info('Please connect your Phantom wallet');
+      return;
+    }
+    await solana.disconnect();
+    await timeout(500);
+    if (solana && !solana.isConnected) {
+      solServer.connectSolJs();
+      await timeout(500);
+      if (!solana.isConnected) {
+        message.info('Please connect Phantom extension first');
+        return;
+      }
+    }
+
+    const localSolAddress = getState().rSOLModule.solAccount && getState().rSOLModule.solAccount.address;
+    const solAddress = solana.publicKey.toString();
+    console.log('solana account:', solana.publicKey.toString());
+    if (localSolAddress !== solAddress) {
+      dispatch(connectSoljs());
+    }
+
     const processParameter = getState().rSOLModule.processParameter;
     const notice_uuid = (processParameter && processParameter.uuid) || stafi_uuid();
 
@@ -200,7 +241,6 @@ export const transfer =
 
     const validPools = getState().rSOLModule.validPools;
     const poolLimit = getState().rSOLModule.poolLimit;
-    const address = getState().rSOLModule.solAccount.address;
     web3Enable(stafiServer.getWeb3EnalbeName());
 
     const selectedPool = commonClice.getPool(amount, validPools, poolLimit);
@@ -219,15 +259,16 @@ export const transfer =
     dispatch(setProcessSlider(true));
 
     try {
-      await timeout(3000);
-      message.info('Please approve transaction in sollet wallet.', 5);
+      // await timeout(3000);
+      // message.info('Please approve transaction in sollet wallet.', 5);
 
       let result: any;
       result = await solServer.sendTransaction(Number(amount), selectedPool.address).catch((error) => {
+        dispatch(setProcessSlider(false));
         throw error;
       });
 
-      if (result.blockHash && result.txHash) {
+      if (result && result.blockHash && result.txHash) {
         const hexBlockHash = u8aToHex(base58.decode(result.blockHash));
         const hexTxHash = u8aToHex(base58.decode(result.txHash));
 
@@ -248,14 +289,14 @@ export const transfer =
               amount: amountparam,
               txHash: hexTxHash,
               blockHash: hexBlockHash,
-              address,
+              address: solAddress,
               uuid: notice_uuid,
             },
             staking: {
               amount: amountparam,
               txHash: hexTxHash,
               blockHash: hexBlockHash,
-              address,
+              address: solAddress,
               type: rSymbol.Sol,
               poolAddress: selectedPool.poolPubkey,
             },
@@ -270,8 +311,10 @@ export const transfer =
           }),
         );
 
+        message.info('Sending succeeded, proceeding signature');
+
         dispatch(
-          bound(address, hexTxHash, hexBlockHash, amount, selectedPool.poolPubkey, rSymbol.Sol, (r: string) => {
+          bound(solAddress, hexTxHash, hexBlockHash, amount, selectedPool.poolPubkey, rSymbol.Sol, (r: string) => {
             if (r == 'loading') {
               dispatch(add_SOL_stake_Notice(notice_uuid, amountparam, noticeStatus.Pending));
             } else {
@@ -295,10 +338,12 @@ export const transfer =
         dispatch(reloadData());
       }
     } catch (error) {
-      if (error == 'Error: Transaction cancelled') {
+      if (error.message === 'Error: Transaction cancelled' || error.message === 'Signature request denied') {
         message.error('cancelled');
         dispatch(setProcessSlider(false));
         dispatch(reloadData());
+      } else {
+        message.error(error.message);
       }
     }
   };
@@ -472,9 +517,9 @@ const _onProceedInternal =
           });
           noticeData && dispatch(add_SOL_stake_Notice(noticeData.uuid, noticeData.amount, noticeStatus.Confirmed));
         } else if (e == 'failure' || e == 'stakingFailure') {
-          const wallet = solServer.getWallet();
-          if (!wallet.connected) {
-            wallet.connect().then((res: any) => {
+          const solana = solServer.getProvider();
+          if (!solana.isConnected) {
+            solana.connect().then((res: any) => {
               if (res) {
                 dispatch(
                   getBlock(txHash, noticeData ? noticeData.uuid : null, () => {
@@ -531,7 +576,7 @@ export const getBlock =
       );
 
       if (!amount || !poolAddress || !blockhash) {
-        message.error('Transaction record not found!');
+        message.error('Transaction record not found');
         return;
       }
 
@@ -717,13 +762,70 @@ export const getBlock =
 export const getPools =
   (cb?: Function): AppThunk =>
   async (dispatch, getState) => {
-    dispatch(setValidPools(null));
     commonClice.getPools(rSymbol.Sol, Symbol.Sol, (data: any) => {
       dispatch(setValidPools(data));
       cb && cb();
     });
     const data = await commonClice.poolBalanceLimit(rSymbol.Sol);
     dispatch(setPoolLimit(data));
+  };
+
+export const getReward =
+  (pageIndex: Number, cb: Function): AppThunk =>
+  async (dispatch, getState) => {
+    const fisSource = getState().FISModule.fisAccount.address;
+    const ethAccount = getState().rETHModule.ethAccount;
+    const bscAccount = getState().BSCModule.bscAccount;
+    const solAccount = getState().rSOLModule.solAccount;
+    dispatch(setLoading(true));
+    try {
+      if (pageIndex == 0) {
+        dispatch(setRewardList([]));
+        dispatch(setRewardList_lastdata(null));
+      }
+      const result = await rpcServer.getReward(
+        fisSource,
+        ethAccount ? ethAccount.address : '',
+        rSymbol.Sol,
+        pageIndex,
+        bscAccount && bscAccount.address,
+        solAccount && solAccount.address,
+      );
+      if (result.status == 80000) {
+        const rewardList = getState().rSOLModule.rewardList;
+        if (result.data.rewardList.length > 0) {
+          const list = result.data.rewardList.map((item: any) => {
+            const rate = NumberUtil.rTokenRateToHuman(item.rate);
+            const rbalance = NumberUtil.tokenAmountToHuman(item.rbalance, rSymbol.Sol);
+            return {
+              ...item,
+              rbalance: rbalance,
+              rate: rate,
+            };
+          });
+          if (result.data.rewardList.length <= pageCount) {
+            dispatch(setRewardList_lastdata(null));
+          } else {
+            dispatch(setRewardList_lastdata(list[list.length - 1]));
+            list.pop();
+          }
+          dispatch(setRewardList([...rewardList, ...list]));
+          dispatch(setLoading(false));
+          if (result.data.rewardList.length <= pageCount) {
+            cb && cb(false);
+          } else {
+            cb && cb(true);
+          }
+        } else {
+          dispatch(setLoading(false));
+          cb && cb(false);
+        }
+      } else {
+        dispatch(setLoading(false));
+      }
+    } catch (error) {
+      dispatch(setLoading(false));
+    }
   };
 
 export const getUnbondCommission = (): AppThunk => async (dispatch, getState) => {

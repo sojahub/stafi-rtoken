@@ -1,36 +1,46 @@
-.rAsset_tag{
+.rAsset_tag {
   display: flex;
-  height:78px;
-  width:100%;
-  >div{
-    flex:1;
-    color:#fff;
+  height: 78px;
+  width: 100%;
+  > div {
+    flex: 1;
+    color: #fff;
     font-weight: bold;
     font-size: 24px;
     line-height: 78px;
     text-align: center;
     cursor: pointer;
-    label{
+    label {
       font-size: 12px;
     }
+
+    // .arrow_down {
+    //   margin-left: 20px;
+    //   padding: 10px;
+    //   width: 36px;
+    //   height: 30px;
+    //   background-image: url('../../../../../assets/images/arrow_down_white.svg');
+    //   background-repeat: no-repeat;
+    // }
   }
-  >div:hover{
+
+  > div:hover {
     background: #343c44;
-    color:#00F3AB;
+    color: #00f3ab;
   }
-  >div:first-child{
+  > div:first-child {
     border-top-left-radius: 19px;
   }
-  >div:last-child{
+  > div:last-child {
     border-top-right-radius: 19px;
   }
-  .tag_active{
+  .tag_active {
     background: #343c44;
-    color:#00F3AB;
+    color: #00f3ab;
     position: relative;
   }
-  .tag_active::after{ 
-    content: "";
+  .tag_active::after {
+    content: '';
     display: block;
     position: absolute;
     height: 1px;
@@ -38,6 +48,34 @@
     bottom: 0px;
     left: 50%;
     transform: translateX(-50%);
-    background-color: #00F3AB;
+    background-color: #00f3ab;
   }
+}
+
+.rAsset_tag_right {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+
+.rAsset_tag_right .arrow_down {
+  margin-left: 20px;
+  padding: 10px;
+  width: 36px;
+  background: url('../../../../../assets/images/arrow_down_white.svg') no-repeat center center;
+}
+
+.rAsset_tag_right .arrow_down_selected {
+  margin-left: 20px;
+  padding: 10px;
+  width: 36px;
+  background: url('../../../../../assets/images/arrow_down_green.svg') no-repeat center center;
+}
+
+.rAsset_tag_right:hover .arrow_down {
+  margin-left: 20px;
+  padding: 10px;
+  width: 36px;
+  background: url('../../../../../assets/images/arrow_down_green.svg') no-repeat center center;
 }

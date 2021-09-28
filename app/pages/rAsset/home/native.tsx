@@ -1,3 +1,4 @@
+import config from '@config/index';
 import { getRtokenPriceList } from '@features/bridgeClice';
 import CommonClice from '@features/commonClice';
 import {
@@ -27,10 +28,14 @@ import {
   query_rBalances_account as matic_query_rBalances_account,
   rTokenRate as matic_rTokenRate
 } from '@features/rMATICClice';
-// import { getUnbondCommission as sol_getUnbondCommission, query_rBalances_account as sol_query_rBalances_account, rTokenRate as sol_rTokenRate } from '@features/rSOLClice';
+import {
+  getUnbondCommission as sol_getUnbondCommission,
+  query_rBalances_account as sol_query_rBalances_account,
+  rTokenRate as sol_rTokenRate
+} from '@features/rSOLClice';
 import rDOT_svg from '@images/rDOT.svg';
 import rasset_fis_svg from '@images/rFIS.svg';
-// import rasset_rsol_svg from '@images/rSOL.svg';
+import rasset_rsol_svg from '@images/rSOL.svg';
 import rasset_ratom_svg from '@images/r_atom.svg';
 import rasset_rbnb_svg from '@images/r_bnb.svg';
 import rasset_rdot_svg from '@images/r_dot.svg';
@@ -39,21 +44,23 @@ import rasset_rksm_svg from '@images/r_ksm.svg';
 import rasset_rmatic_svg from '@images/r_matic.svg';
 import { Symbol } from '@keyring/defaults';
 import Button from '@shared/components/button/connect_button';
-import Content from '@shared/components/content';
 import Modal from '@shared/components/modal/connectModal';
 import NumberUtil from '@util/numberUtil';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useHistory, useParams } from 'react-router';
 import Page_FIS from '../../rDOT/selectWallet_rFIS/index';
-import Tag from './components/carTag/index';
 import CountAmount from './components/countAmount';
 import DataList from './components/list';
 import DataItem from './components/list/item';
 import './page.scss';
 
 const commonClice = new CommonClice();
+
 export default function Index(props: any) {
   const dispatch = useDispatch();
+  const history = useHistory();
+  const { rTokenPlatform } = useParams<any>();
   const [visible, setVisible] = useState(false);
 
   const {
@@ -174,35 +181,28 @@ export default function Index(props: any) {
       dispatch(dot_query_rBalances_account());
       dispatch(query_rBalances_account());
       dispatch(atom_query_rBalances_account());
-      // dispatch(sol_query_rBalances_account())
+      dispatch(sol_query_rBalances_account());
       dispatch(matic_query_rBalances_account());
       dispatch(bnb_query_rBalances_account());
       dispatch(ksm_rTokenRate());
       dispatch(fis_rTokenRate());
       dispatch(dot_rTokenRate());
       dispatch(atom_rTokenRate());
-      // dispatch(sol_rTokenRate() );
+      dispatch(sol_rTokenRate());
       dispatch(matic_rTokenRate());
       dispatch(bnb_rTokenRate());
       dispatch(getUnbondCommission());
       dispatch(fis_getUnbondCommission());
       dispatch(dot_getUnbondCommission());
       dispatch(atom_getUnbondCommission());
-      // dispatch(sol_getUnbondCommission());
+      dispatch(sol_getUnbondCommission());
       dispatch(matic_getUnbondCommission());
       dispatch(bnb_getUnbondCommission());
     }
   }, [fisAccount && fisAccount.address]);
 
   return (
-    <Content>
-      <Tag
-        type='native'
-        onClick={(type: string) => {
-          props.history.push(`/rAsset/${type}`);
-        }}
-      />
-
+    <div>
       {fisAccount ? (
         <>
           <DataList>
@@ -216,15 +216,14 @@ export default function Index(props: any) {
               willGetBalance={fisWillAmount}
               unit='FIS'
               operationType='native'
+              tradeList={[{ label: 'Uniswap', url: config.uniswap.fisURL }]}
               onSwapClick={() => {
-                props.history.push({
-                  pathname: '/rAsset/swap/native/erc20',
-                  state: {
-                    rSymbol: 'FIS',
-                  },
+                history.push(`/rAsset/swap/native/default`, {
+                  rSymbol: 'FIS',
                 });
               }}
             />
+
             <DataItem
               rSymbol='rFIS'
               icon={rasset_rfis_svg}
@@ -233,15 +232,14 @@ export default function Index(props: any) {
               willGetBalance={fisWillAmount}
               unit='FIS'
               operationType='native'
+              tradeList={[{ label: 'Uniswap', url: config.uniswap.rfisURL }]}
               onSwapClick={() => {
-                props.history.push({
-                  pathname: '/rAsset/swap/native/default',
-                  state: {
-                    rSymbol: 'rFIS',
-                  },
+                history.push(`/rAsset/swap/native/default`, {
+                  rSymbol: 'rFIS',
                 });
               }}
             />
+
             <DataItem
               rSymbol='rDOT'
               icon={rasset_rdot_svg}
@@ -250,15 +248,14 @@ export default function Index(props: any) {
               willGetBalance={dotWillAmount}
               unit='DOT'
               operationType='native'
+              tradeList={[{ label: 'Uniswap', url: config.uniswap.rdotURL }]}
               onSwapClick={() => {
-                props.history.push({
-                  pathname: '/rAsset/swap/native/default',
-                  state: {
-                    rSymbol: 'rDOT',
-                  },
+                history.push(`/rAsset/swap/native/default`, {
+                  rSymbol: 'rDOT',
                 });
               }}
             />
+
             <DataItem
               rSymbol='rKSM'
               icon={rasset_rksm_svg}
@@ -267,15 +264,14 @@ export default function Index(props: any) {
               willGetBalance={ksmWillAmount}
               unit='KSM'
               operationType='native'
+              tradeList={[{ label: 'Uniswap', url: config.uniswap.rksmURL }]}
               onSwapClick={() => {
-                props.history.push({
-                  pathname: '/rAsset/swap/native/default',
-                  state: {
-                    rSymbol: 'rKSM',
-                  },
+                history.push(`/rAsset/swap/native/default`, {
+                  rSymbol: 'rKSM',
                 });
               }}
             />
+
             <DataItem
               rSymbol='rATOM'
               icon={rasset_ratom_svg}
@@ -284,32 +280,30 @@ export default function Index(props: any) {
               willGetBalance={atomWillAmount}
               unit='ATOM'
               operationType='native'
+              tradeList={[{ label: 'Uniswap', url: config.uniswap.ratomURL }]}
               onSwapClick={() => {
-                props.history.push({
-                  pathname: '/rAsset/swap/native/default',
-                  state: {
-                    rSymbol: 'rATOM',
-                  },
+                history.push(`/rAsset/swap/native/default`, {
+                  rSymbol: 'rATOM',
                 });
               }}
             />
-            {/* <DataItem  
-          rSymbol="rSOL"
-          icon={rasset_rsol_svg}
-          fullName="Solana"
-          balance={sol_tokenAmount=="--" ?"--":NumberUtil.handleFisAmountToFixed(sol_tokenAmount)}
-          willGetBalance={solWillAmount}
-          unit="SOL"
-          operationType="native"
-          onSwapClick={()=>{
-            props.history.push({
-              pathname:"/rAsset/swap/native/default",
-              state:{ 
-                rSymbol:"rSOL"
-              }
-            })
-          }}
-        />*/}
+
+            <DataItem
+              rSymbol='rSOL'
+              icon={rasset_rsol_svg}
+              fullName='Solana'
+              balance={sol_tokenAmount == '--' ? '--' : NumberUtil.handleFisAmountToFixed(sol_tokenAmount)}
+              willGetBalance={solWillAmount}
+              unit='SOL'
+              operationType='native'
+              // tradeList={[{ label: 'Uniswap', url: config.uniswap.rsolURL }]}
+              onSwapClick={() => {
+                history.push(`/rAsset/swap/native/default`, {
+                  rSymbol: 'rSOL',
+                });
+              }}
+            />
+
             <DataItem
               rSymbol='rMATIC'
               icon={rasset_rmatic_svg}
@@ -318,15 +312,14 @@ export default function Index(props: any) {
               willGetBalance={maticWillAmount}
               unit='MATIC'
               operationType='native'
+              tradeList={[{ label: 'Quickswap', url: config.quickswap.rmaticURL }]}
               onSwapClick={() => {
-                props.history.push({
-                  pathname: '/rAsset/swap/native/default',
-                  state: {
-                    rSymbol: 'rMATIC',
-                  },
+                history.push(`/rAsset/swap/native/default`, {
+                  rSymbol: 'rMATIC',
                 });
               }}
             />
+
             <DataItem
               rSymbol='rBNB'
               icon={rasset_rbnb_svg}
@@ -336,11 +329,8 @@ export default function Index(props: any) {
               unit='BNB'
               operationType='native'
               onSwapClick={() => {
-                props.history.push({
-                  pathname: '/rAsset/swap/native/bep20',
-                  state: {
-                    rSymbol: 'rBNB',
-                  },
+                history.push('/rAsset/swap/native/default', {
+                  rSymbol: 'rBNB',
                 });
               }}
             />
@@ -383,6 +373,6 @@ export default function Index(props: any) {
           }}
         />
       </Modal>
-    </Content>
+    </div>
   );
 }

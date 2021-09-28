@@ -8,6 +8,8 @@ import {
   ETH_CHAIN_ID,
   getBridgeEstimateEthFee,
   nativeToOtherSwap,
+  slp20ToOtherSwap,
+  SOL_CHAIN_ID,
   STAFI_CHAIN_ID
 } from '@features/bridgeClice';
 import {
@@ -24,6 +26,7 @@ import {
   reloadData,
   rTokenRate as fis_rTokenRate
 } from '@features/FISClice';
+import { setLoading } from '@features/globalClice';
 import {
   getUnbondCommission as atom_getUnbondCommission,
   query_rBalances_account as atom_query_rBalances_account,
@@ -46,16 +49,19 @@ import {
   query_rBalances_account as matic_query_rBalances_account,
   rTokenRate as matic_rTokenRate
 } from '@features/rMATICClice';
-// import {
-//   getUnbondCommission as sol_getUnbondCommission,
-//   query_rBalances_account as sol_query_rBalances_account,
-//   rTokenRate as sol_rTokenRate
-// } from '@features/rSOLClice';
+import {
+  checkAddress as checkSOLAddress,
+  createSubstrate as solCreateSubstrate,
+  getUnbondCommission as sol_getUnbondCommission,
+  query_rBalances_account as sol_query_rBalances_account,
+  rTokenRate as sol_rTokenRate
+} from '@features/rSOLClice';
+import { getSlp20Allowances, getSlp20AssetBalanceAll } from '@features/SOLClice';
 import bsc_white from '@images/bsc_white.svg';
 import eth_white from '@images/eth_white.svg';
 import exchange_svg from '@images/exchange.svg';
 import rasset_fis_svg from '@images/rFIS.svg';
-// import rasset_rsol_svg from '@images/rSOL.svg';
+import rasset_rsol_svg from '@images/rSOL.svg';
 import rasset_ratom_svg from '@images/r_atom.svg';
 import rasset_rbnb_svg from '@images/r_bnb.svg';
 import rasset_rdot_svg from '@images/r_dot.svg';
@@ -63,7 +69,9 @@ import rasset_reth_svg from '@images/r_eth.svg';
 import rasset_rfis_svg from '@images/r_fis.svg';
 import rasset_rksm_svg from '@images/r_ksm.svg';
 import rasset_rmatic_svg from '@images/r_matic.svg';
+import solana_white from '@images/solana_white.svg';
 import stafi_white from '@images/stafi_white.svg';
+import SolServer from '@servers/sol';
 import Back from '@shared/components/backIcon';
 import Button from '@shared/components/button/button';
 import Title from '@shared/components/cardTitle';
@@ -76,8 +84,10 @@ import { useInterval } from '@util/utils';
 import { message } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useHistory, useLocation, useParams } from 'react-router-dom';
+import { Redirect, useHistory, useLocation, useParams } from 'react-router-dom';
 import './index.scss';
+
+const solServer = new SolServer();
 
 type SelectorType = {
   icon: any;
@@ -123,12 +133,12 @@ const allTokenDatas = [
     content: '--',
     type: 'ratom',
   },
-  // {
-  //   icon: rasset_rsol_svg,
-  //   title: 'rSOL',
-  //   content: '--',
-  //   type: 'rsol',
-  // },
+  {
+    icon: rasset_rsol_svg,
+    title: 'rSOL',
+    content: '--',
+    type: 'rsol',
+  },
   {
     icon: rasset_rmatic_svg,
     title: 'rMATIC',
@@ -162,6 +172,12 @@ const assetDatas = [
     content: 'BEP20',
     type: 'bep20',
   },
+  {
+    icon: solana_white,
+    title: 'Solana',
+    content: 'SPL',
+    type: 'spl',
+  },
 ];
 
 export default function Index(props: any) {
@@ -183,11 +199,15 @@ export default function Index(props: any) {
   const [transferDetail, setTransferDetail] = useState('');
   const [viewTxUrl, setViewTxUrl] = useState('');
 
+  const [showAddSplTokenButton, setShowAddSplTokenButton] = useState(false);
+
   const {
     erc20EstimateFee,
     bep20EstimateFee,
+    slp20EstimateFee,
     estimateEthFee,
     estimateBscFee,
+    estimateSolFee,
     rksm_balance,
     rfis_balance,
     fis_balance,
@@ -224,6 +244,12 @@ export default function Index(props: any) {
         rbnb_balance: NumberUtil.handleFisAmountToFixed(state.BSCModule.bepRBNBBalance),
         estimateBscFee: state.bridgeModule.estimateBscFee,
       };
+    } else if (fromTypeData && fromTypeData.type === 'spl') {
+      return {
+        fis_balance: NumberUtil.handleFisAmountToFixed(state.SOLModule.fisBalance),
+        rsol_balance: NumberUtil.handleFisAmountToFixed(state.SOLModule.rSOLBalance),
+        estimateSolFee: state.bridgeModule.estimateSolFee,
+      };
     } else {
       return {
         rksm_balance: NumberUtil.handleFisAmountToFixed(state.rKSMModule.tokenAmount),
@@ -236,15 +262,17 @@ export default function Index(props: any) {
         rbnb_balance: NumberUtil.handleFisAmountToFixed(state.rBNBModule.tokenAmount),
         erc20EstimateFee: state.bridgeModule.erc20EstimateFee,
         bep20EstimateFee: state.bridgeModule.bep20EstimateFee,
+        slp20EstimateFee: state.bridgeModule.slp20EstimateFee,
       };
     }
   });
 
-  const { fisAccount, ethAccount, bscAccount } = useSelector((state: any) => {
+  const { fisAccount, ethAccount, bscAccount, solAccount } = useSelector((state: any) => {
     return {
       fisAccount: state.FISModule.fisAccount,
       ethAccount: state.rETHModule.ethAccount,
       bscAccount: state.BSCModule.bscAccount,
+      solAccount: state.rSOLModule.solAccount,
     };
   });
 
@@ -255,12 +283,28 @@ export default function Index(props: any) {
   });
 
   useEffect(() => {
+    updateSplTokenStatus();
+  }, [address, destType, tokenType && tokenType.type]);
+
+  useEffect(() => {
     if (fromType && destType) {
-      if (fromType !== 'native' && fromType !== 'erc20' && fromType !== 'bep20' && fromType !== 'default') {
+      if (
+        fromType !== 'native' &&
+        fromType !== 'erc20' &&
+        fromType !== 'bep20' &&
+        fromType !== 'spl' &&
+        fromType !== 'default'
+      ) {
         returnToAsset();
         return;
       }
-      if (destType !== 'native' && destType !== 'erc20' && destType !== 'bep20' && destType !== 'default') {
+      if (
+        destType !== 'native' &&
+        destType !== 'erc20' &&
+        destType !== 'bep20' &&
+        destType !== 'spl' &&
+        destType !== 'default'
+      ) {
         returnToAsset();
         return;
       }
@@ -284,22 +328,27 @@ export default function Index(props: any) {
   }, []);
 
   useEffect(() => {
-    updateFisData();
+    updateNativePlatformData();
   }, [fisAccount && fisAccount.address]);
 
   useEffect(() => {
-    updateErcBepData();
-  }, [metaMaskNetworkId, fromType, destType, ethAccount && ethAccount.address, bscAccount && bscAccount.address]);
+    update3rdPlatformData();
+  }, [
+    metaMaskNetworkId,
+    fromType,
+    destType,
+    ethAccount && ethAccount.address,
+    bscAccount && bscAccount.address,
+    solAccount && solAccount.address,
+  ]);
 
   useEffect(() => {
     if (location.state) {
-      if (selectDataSource.length > 0) {
-        const data = selectDataSource.find((item) => item.title == location.state.rSymbol);
-        if (data) {
-          setTokenType({ ...data });
-        } else {
-          setTokenType(null);
-        }
+      const data = selectDataSource.find((item) => item.title == location.state.rSymbol);
+      if (data) {
+        setTokenType({ ...data });
+      } else {
+        setTokenType(null);
       }
     } else {
       setTokenType(null);
@@ -337,17 +386,46 @@ export default function Index(props: any) {
       }
     });
     let filterTokenDatas;
-    if ((fromType === 'native' && destType === 'erc20') || (fromType === 'erc20' && destType === 'native')) {
+    if (
+      (fromType === 'erc20' && destType === 'spl') ||
+      (fromType === 'spl' && destType === 'erc20') ||
+      (fromType === 'bep20' && destType === 'spl') ||
+      (fromType === 'spl' && destType === 'bep20')
+    ) {
       filterTokenDatas = allTokenDatas.filter((item: any) => {
-        return item.type !== 'reth' && item.type !== 'rbnb';
+        return false;
+      });
+    } else if ((fromType === 'native' && destType === 'spl') || (fromType === 'spl' && destType === 'native')) {
+      filterTokenDatas = allTokenDatas.filter((item: any) => {
+        return item.type === 'fis' || item.type === 'rsol';
+      });
+    } else if ((fromType === 'native' && destType === 'erc20') || (fromType === 'erc20' && destType === 'native')) {
+      filterTokenDatas = allTokenDatas.filter((item: any) => {
+        return item.type !== 'reth' && item.type !== 'rbnb' && item.type !== 'rsol';
       });
     } else if ((fromType === 'erc20' && destType === 'bep20') || (fromType === 'bep20' && destType === 'erc20')) {
       filterTokenDatas = allTokenDatas.filter((item: any) => {
-        return item.type !== 'fis' && item.type !== 'rbnb';
+        return item.type !== 'fis' && item.type !== 'rbnb' && item.type !== 'rsol';
+      });
+    } else if (fromType === 'erc20' && destType === 'default') {
+      filterTokenDatas = allTokenDatas.filter((item: any) => {
+        return item.type !== 'rbnb' && item.type !== 'rsol';
+      });
+    } else if (fromType === 'bep20' && destType === 'default') {
+      filterTokenDatas = allTokenDatas.filter((item: any) => {
+        return item.type !== 'fis' && item.type !== 'rsol';
+      });
+    } else if (fromType === 'spl' && destType === 'default') {
+      filterTokenDatas = allTokenDatas.filter((item: any) => {
+        return item.type === 'fis' || item.type === 'rsol';
+      });
+    } else if (fromType === 'native' && destType === 'default') {
+      filterTokenDatas = allTokenDatas.filter((item: any) => {
+        return item.type !== 'reth';
       });
     } else {
       filterTokenDatas = allTokenDatas.filter((item: any) => {
-        return item.type !== 'reth' && item.type !== 'fis';
+        return item.type !== 'reth' && item.type !== 'fis' && item.type !== 'rsol';
       });
     }
 
@@ -399,40 +477,40 @@ export default function Index(props: any) {
 
   const updateData = () => {
     if (fromTypeData && fromTypeData.type === 'native') {
-      updateFisData();
+      updateNativePlatformData();
     } else {
-      updateErcBepData();
+      update3rdPlatformData();
     }
   };
 
-  const updateFisData = () => {
+  const updateNativePlatformData = () => {
     if (fisAccount && fisAccount.address) {
       dispatch(reloadData());
       dispatch(query_rBalances_account());
       dispatch(fis_query_rBalances_account());
       dispatch(dot_query_rBalances_account());
       dispatch(atom_query_rBalances_account());
-      // dispatch(sol_query_rBalances_account());
+      dispatch(sol_query_rBalances_account());
       dispatch(matic_query_rBalances_account());
       dispatch(bnb_query_rBalances_account());
       dispatch(ksm_rTokenRate());
       dispatch(fis_rTokenRate());
       dispatch(dot_rTokenRate());
       dispatch(atom_rTokenRate());
-      // dispatch(sol_rTokenRate());
+      dispatch(sol_rTokenRate());
       dispatch(matic_rTokenRate());
       dispatch(bnb_rTokenRate());
       dispatch(getUnbondCommission());
       dispatch(fis_getUnbondCommission());
       dispatch(dot_getUnbondCommission());
       dispatch(atom_getUnbondCommission());
-      // dispatch(sol_getUnbondCommission());
+      dispatch(sol_getUnbondCommission());
       dispatch(matic_getUnbondCommission());
       dispatch(bnb_getUnbondCommission());
     }
   };
 
-  const updateErcBepData = () => {
+  const update3rdPlatformData = () => {
     if (fromType == 'erc20' && ethAccount && ethAccount.address) {
       dispatch(get_eth_getBalance());
       dispatch(getErc20Allowances());
@@ -445,10 +523,17 @@ export default function Index(props: any) {
       dispatch(getBep20AssetBalanceAll());
       dispatch(bsc_Monitoring_Method());
     }
+    if (fromType == 'spl' && solAccount && solAccount.address) {
+      if (solAccount) {
+        dispatch(solCreateSubstrate(solAccount));
+      }
+      dispatch(getSlp20AssetBalanceAll());
+      dispatch(getSlp20Allowances());
+    }
   };
 
   const reverseExchangeType = () => {
-    history.push(
+    history.replace(
       `/rAsset/swap/${destTypeData ? destTypeData.type : 'default'}/${fromTypeData ? fromTypeData.type : 'default'}`,
       {
         rSymbol: tokenType && tokenType.title,
@@ -460,18 +545,15 @@ export default function Index(props: any) {
   };
 
   if (fromTypeData && fromTypeData.type == 'native' && (!fisAccount || !fisAccount.address)) {
-    history.push('/rAsset/native');
-    return null;
+    return <Redirect to='/rAsset/home/native' />;
   }
 
   if (fromTypeData && fromTypeData.type == 'erc20' && (!ethAccount || !ethAccount.address)) {
-    history.push('/rAsset/eth');
-    return null;
+    return <Redirect to='/rAsset/home/eth' />;
   }
 
   if (fromTypeData && fromTypeData.type == 'bep20' && (!bscAccount || !bscAccount.address)) {
-    history.push('/rAsset/bep');
-    return null;
+    return <Redirect to='/rAsset/home/bep' />;
   }
 
   const checkAddress = (address: string) => {
@@ -479,7 +561,7 @@ export default function Index(props: any) {
   };
 
   const returnToAsset = () => {
-    history.push('/rAsset/native');
+    history.push('/rAsset/home/native');
   };
 
   const changeFromChain = (type: SelectorType) => {
@@ -492,7 +574,7 @@ export default function Index(props: any) {
     }
     setFormAmount('');
     setAddress('');
-    history.push(`/rAsset/swap/${type.type}/${destType}`, {
+    history.replace(`/rAsset/swap/${type.type}/${destType}`, {
       rSymbol: tokenType && tokenType.title,
     });
   };
@@ -507,9 +589,22 @@ export default function Index(props: any) {
     }
     setFormAmount('');
     setAddress('');
-    history.push(`/rAsset/swap/${fromType}/${type.type}`, {
+    history.replace(`/rAsset/swap/${fromType}/${type.type}`, {
       rSymbol: tokenType && tokenType.title,
     });
+  };
+
+  const updateSplTokenStatus = async () => {
+    if (destType !== 'spl' || !tokenType) {
+      setShowAddSplTokenButton(false);
+      return;
+    }
+    if (!address || !checkSOLAddress(address)) {
+      setShowAddSplTokenButton(false);
+      return;
+    }
+    const splTokenAccountPubkey = await solServer.getTokenAccountPubkey(address, tokenType.type);
+    setShowAddSplTokenButton(!splTokenAccountPubkey);
   };
 
   return (
@@ -518,7 +613,7 @@ export default function Index(props: any) {
         top={'40px'}
         left={'50px'}
         onClick={() => {
-          history.push('/rAsset/native');
+          history.go(-1);
         }}
       />
       <div className={'title_container'}>
@@ -562,7 +657,7 @@ export default function Index(props: any) {
 
           <div style={{ marginTop: '15px' }}>
             <TypeSelector
-              popTitle={fromTypeData ? 'Select a ' + fromTypeData.type + ' rToken' : ''}
+              popTitle={fromTypeData ? 'Select a ' + fromTypeData.content + ' rToken' : ''}
               selectDataSource={selectDataSource}
               selectedData={tokenType}
               selectedTitle={tokenType ? tokenType.title : ''}
@@ -595,7 +690,7 @@ export default function Index(props: any) {
           <div className={'input_container'} style={{ marginTop: '20px' }}>
             <div className={'title'}>Received Address</div>
             <AddressInputEmbed
-              placeholder={destType === 'native' ? '...' : '0x...'}
+              placeholder={destType === 'native' || destType === 'spl' ? '...' : '0x...'}
               value={address}
               onChange={(e: any) => {
                 setAddress(e.target.value);
@@ -641,6 +736,8 @@ export default function Index(props: any) {
 
           {fromTypeData && fromTypeData.type === 'bep20' && `Estimate Fee: ${estimateBscFee} BNB`}
 
+          {fromTypeData && fromTypeData.type === 'spl' && `Estimate Fee: ${estimateSolFee} SOL`}
+
           {fromTypeData &&
             fromTypeData.type === 'native' &&
             destTypeData &&
@@ -652,6 +749,12 @@ export default function Index(props: any) {
             destTypeData &&
             destTypeData.type === 'bep20' &&
             `Estimate Fee: ${bep20EstimateFee} FIS`}
+
+          {fromTypeData &&
+            fromTypeData.type === 'native' &&
+            destTypeData &&
+            destTypeData.type === 'spl' &&
+            `Estimate Fee: ${slp20EstimateFee} FIS`}
         </div>
 
         <div className='btns'>
@@ -663,11 +766,12 @@ export default function Index(props: any) {
                 fromTypeData &&
                 destTypeData &&
                 (fromTypeData.type === 'native' ||
+                  fromTypeData.type === 'spl' ||
                   (fromTypeData.type === 'erc20' && config.metaMaskNetworkIsGoerliEth(metaMaskNetworkId)) ||
                   (fromTypeData.type === 'bep20' && config.metaMaskNetworkIsBsc(metaMaskNetworkId)))
               )
             }
-            onClick={() => {
+            onClick={async () => {
               if (!tokenType) {
                 return;
               }
@@ -687,6 +791,12 @@ export default function Index(props: any) {
                   return;
                 }
               }
+              if (fromTypeData && fromTypeData.type === 'spl') {
+                if (!solAccount || Number(solAccount.balance) <= Number(estimateSolFee)) {
+                  message.error(`No enough SOL to pay for the fee`);
+                  return;
+                }
+              }
               if (fromTypeData.type === 'native' && destTypeData && destTypeData.type === 'erc20') {
                 if (Number(fis_balance) <= Number(erc20EstimateFee)) {
                   message.error(`No enough FIS to pay for the fee`);
@@ -695,6 +805,12 @@ export default function Index(props: any) {
               }
               if (fromTypeData.type === 'native' && destTypeData && destTypeData.type === 'bep20') {
                 if (Number(fis_balance) <= Number(bep20EstimateFee)) {
+                  message.error(`No enough FIS to pay for the fee`);
+                  return;
+                }
+              }
+              if (fromTypeData.type === 'native' && destTypeData && destTypeData.type === 'spl') {
+                if (Number(fis_balance) <= Number(slp20EstimateFee)) {
                   message.error(`No enough FIS to pay for the fee`);
                   return;
                 }
@@ -711,11 +827,28 @@ export default function Index(props: any) {
                   return;
                 }
               }
+              if (destTypeData.type === 'spl') {
+                if (!checkSOLAddress(address)) {
+                  message.error('Input address error');
+                  return;
+                }
+                if (showAddSplTokenButton) {
+                  dispatch(setLoading(true));
+                  const createSplTokenAccountResult = await solServer.createTokenAccount(address, tokenType.type);
+                  if (createSplTokenAccountResult) {
+                    setShowAddSplTokenButton(false);
+                  }
+                  dispatch(setLoading(false));
+                  return;
+                }
+              }
 
               if (destTypeData && destTypeData.type === 'erc20') {
                 setViewTxUrl(config.etherScanErc20TxInAddressUrl(address));
               } else if (destTypeData && destTypeData.type === 'bep20') {
                 setViewTxUrl(config.bscScanBep20TxInAddressUrl(address));
+              } else if (destTypeData && destTypeData.type === 'spl') {
+                setViewTxUrl(config.solScanSlp20TxInAddressUrl(address));
               } else {
                 setViewTxUrl(config.stafiScanUrl(address));
               }
@@ -725,6 +858,8 @@ export default function Index(props: any) {
                 let chainId = ETH_CHAIN_ID;
                 if (destTypeData && destTypeData.type === 'bep20') {
                   chainId = BSC_CHAIN_ID;
+                } else if (destTypeData && destTypeData.type === 'spl') {
+                  chainId = SOL_CHAIN_ID;
                 }
                 dispatch(
                   nativeToOtherSwap(chainId, tokenType.title, tokenType.type, fromAoumt, address, () => {
@@ -740,6 +875,13 @@ export default function Index(props: any) {
                   swapFun = erc20ToOtherSwap;
                 } else if (fromTypeData && fromTypeData.type === 'bep20') {
                   swapFun = bep20ToOtherSwap;
+                } else if (
+                  fromTypeData &&
+                  fromTypeData.type === 'spl' &&
+                  destTypeData &&
+                  destTypeData.type === 'native'
+                ) {
+                  swapFun = slp20ToOtherSwap;
                 }
                 if (destTypeData.type === 'erc20') {
                   destChainId = ETH_CHAIN_ID;
@@ -760,7 +902,7 @@ export default function Index(props: any) {
                 }
               }
             }}>
-            Swap
+            {showAddSplTokenButton ? 'Approve' : 'Swap'}
           </Button>
         </div>
       </div>

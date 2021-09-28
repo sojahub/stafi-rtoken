@@ -8,6 +8,10 @@ export const rSOL_data = [
         url: '/rSOL/staker/info',
       },
       {
+        text: '-Reward',
+        url: '/rSOL/staker/reward',
+      },
+      {
         text: '-Recovery',
         url: '/rSOL/search',
       },

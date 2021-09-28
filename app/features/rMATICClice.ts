@@ -415,6 +415,8 @@ export const transfer =
             processParameter: getState().rMATICModule.processParameter,
           }),
         );
+        message.info('Sending succeeded, proceeding signature');
+
         blockHash &&
           dispatch(
             bound(address, txHash, blockHash, amount, selectedPool.poolPubkey, rSymbol.Matic, (r: string) => {
@@ -858,7 +860,6 @@ export const decodeCoin = (input: _m0.Reader | Uint8Array, length?: number): Coi
 export const getPools =
   (cb?: Function): AppThunk =>
   async (dispatch, getState) => {
-    dispatch(setValidPools(null));
     commonClice.getPools(rSymbol.Matic, Symbol.Matic, (data: any) => {
       dispatch(setValidPools(data));
       cb && cb();

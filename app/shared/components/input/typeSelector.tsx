@@ -1,5 +1,6 @@
 import black_close from '@images/black_close.svg';
 import downArrowSvg from '@images/ic_arrow_down.svg';
+import icNone from '@images/ic_none.svg';
 import { Popover } from 'antd';
 import React, { useState } from 'react';
 import './index.scss';
@@ -90,7 +91,7 @@ type SelectProps = {
 function Select(props: SelectProps) {
   return (
     <div className='content'>
-      {props.selectDataSource &&
+      {props.selectDataSource && props.selectDataSource.length > 0 ?
         props.selectDataSource.map((item, index) => {
           return (
             <div
@@ -108,7 +109,17 @@ function Select(props: SelectProps) {
               <label className='amount'>{item.content}</label>
             </div>
           );
-        })}
+        }) : (
+          <div className='select_token_empty_container'>
+            <div className='left_container'>
+              <img src={icNone} className='icon' />
+
+              <div className='text'>NONE</div>
+            </div>
+
+            <div className='content'>None</div>
+          </div>
+        )}
     </div>
   );
 }

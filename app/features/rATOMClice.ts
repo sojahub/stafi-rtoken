@@ -149,6 +149,7 @@ const rATOMClice = createSlice({
 const atomServer = new AtomServer();
 const stafiServer = new Stafi();
 const rpcServer = new RpcServer();
+
 export const {
   setAtomAccounts,
   setAtomAccount,
@@ -840,7 +841,6 @@ export const decodeCoin = (input: _m0.Reader | Uint8Array, length?: number): Coi
 export const getPools =
   (cb?: Function): AppThunk =>
   async (dispatch, getState) => {
-    dispatch(setValidPools(null));
     commonClice.getPools(rSymbol.Atom, Symbol.Atom, (data: any) => {
       dispatch(setValidPools(data));
       cb && cb();

@@ -146,7 +146,7 @@ export default {
     }
   },
   solRpcApi: () => {
-    if (process.env.NODE_ENV == 'production' && !isdev()) {
+    if (!isdev()) {
       return clusterApiUrl('mainnet-beta');
     } else {
       // return clusterApiUrl('devnet');
@@ -158,6 +158,7 @@ export default {
       // return clusterApiUrl('mainnet-beta');
       return '';
     } else {
+      // return '';
       // return clusterApiUrl('devnet');
       return 'wss://solana-dev-wss.wetez.io';
     }
@@ -461,7 +462,7 @@ export default {
     } else if (type == rSymbol.Ksm) {
       return `https://kusama.subscan.io/extrinsic/${txHash}`;
     } else if (type == rSymbol.Sol) {
-      return `https://solanabeach.io/transaction/${txHash}`;
+      return `https://solscan.io/tx/${txHash}`;
     } else if (type == rSymbol.Matic) {
       return `https://etherscan.io/tx/${txHash}`;
     } else if (type == rSymbol.Bnb) {
@@ -482,7 +483,7 @@ export default {
     } else if (type == Symbol.Fis) {
       return 14;
     } else if (type == Symbol.Sol) {
-      return 10;
+      return 5;
     } else if (type == Symbol.Bnb) {
       return 14;
     } else {
@@ -508,6 +509,10 @@ export default {
       'https://app.uniswap.org/#/swap?inputCurrency=ETH&outputCurrency=0xd01cb3d113a864763dd3977fe1e725860013b0ed',
     rsolURL:
       'https://app.uniswap.org/#/swap?inputCurrency=ETH&outputCurrency=0x08841b9cbA30e80A0E51df13b174F362F90E3dF1',
+  },
+  quickswap: {
+    rmaticURL:
+      'https://quickswap.exchange/#/swap?inputCurrency=0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270&outputCurrency=0x9f28e2455f9ffcfac9ebd6084853417362bc5dbb',
   },
   commonAbi: () => {
     const abi =
@@ -535,6 +540,12 @@ export default {
       return `https://bscscan.com/address/${address}#tokentxns`;
     }
     return `https://testnet.bscscan.com/address/${address}#tokentxns`;
+  },
+  solScanSlp20TxInAddressUrl: (address: any) => {
+    if (!isdev()) {
+      return `https://solscan.io/account/${address}`;
+    }
+    return `https://solscan.io/account/${address}`;
   },
   etherScanTokenUrl: (tokenAddress: any, userAddress: any) => {
     if (!isdev()) {
@@ -594,4 +605,46 @@ export default {
     return 150;
   },
   minReward: 0.000001,
+  slpFisTokenAddress: () => {
+    if (!isdev()) {
+      return 'FG7x94jPcVbtt4pLXWhyr6sU3iWim8JJ2y215X5yowN5';
+    }
+    return '7tFoMBHydGVDcgxUpkPiWca2x7hoy9s7oBAhmay8GQLL';
+  },
+  slpRSolTokenAddress: () => {
+    if (!isdev()) {
+      return '7hUdUTkJLwdcmt3jSEeqx4ep91sm1XwBxMDaJae6bD5D';
+    }
+    return '2FxyeVxhq3rzSPFEkFgmDYprPREwt4fKhqGX84q4m8us';
+  },
+  slpBridgeAccount: () => {
+    if (!isdev()) {
+      return 'Ev64NXXeKdtBgJbXyuJKEw77pxaw5q4BkUb2eKeV5xDy';
+    }
+    return '63ytYLeNDaaUx2u94KHJcoueaLzA7gryB26p2w8E53oh';
+  },
+  slpBridgeFeeReceiver: () => {
+    if (!isdev()) {
+      return 'GK4hMS4dBhQZfmo1MYKXKz76aXaKndQJ6YavzfEhc2w7';
+    }
+    return '9awVcBdEfGTGeKbvGQsrHNwXZ6KaRfXcKN9cpDM2kLn6';
+  },
+  slpTokenProgramId: () => {
+    if (!isdev()) {
+      return 'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA';
+    }
+    return 'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA';
+  },
+  slpBridgeProgramId: () => {
+    if (!isdev()) {
+      return 'H3mPx8i41Zn4dLC6ZQRBzNRe1cqYdbcDP1WpojnaiAVo';
+    }
+    return 'EPfxck35M3NJwsjreExLLyQAgAL3y5uWfzddY6cHBrGy';
+  },
+  solanaSystemProgramId: () => {
+    if (!isdev()) {
+      return '11111111111111111111111111111111';
+    }
+    return '11111111111111111111111111111111';
+  },
 };

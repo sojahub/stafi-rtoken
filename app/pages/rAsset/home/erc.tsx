@@ -8,7 +8,8 @@ import { getUnbondCommission as dot_getUnbondCommission, rTokenRate as dot_rToke
 import { connectMetamask, handleEthAccount, monitoring_Method } from '@features/rETHClice';
 import { getUnbondCommission as ksm_getUnbondCommission, rTokenRate as ksm_rTokenRate } from '@features/rKSMClice';
 import {
-  getUnbondCommission as matic_getUnbondCommission, rTokenRate as matic_rTokenRate
+  getUnbondCommission as matic_getUnbondCommission,
+  rTokenRate as matic_rTokenRate
 } from '@features/rMATICClice';
 // import { getUnbondCommission as sol_getUnbondCommission, rTokenRate as sol_rTokenRate } from '@features/rSOLClice';
 import metamask from '@images/metamask.png';
@@ -21,11 +22,10 @@ import rasset_rfis_svg from '@images/r_fis.svg';
 import rasset_rksm_svg from '@images/r_ksm.svg';
 import rasset_rmatic_svg from '@images/r_matic.svg';
 import Button from '@shared/components/button/connect_button';
-import Content from '@shared/components/content';
 import NumberUtil from '@util/numberUtil';
 import React, { useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import Tag from './components/carTag/index';
+import { useHistory } from 'react-router';
 import CountAmount from './components/countAmount';
 import DataList from './components/list';
 import DataItem from './components/list/item';
@@ -34,6 +34,7 @@ import './page.scss';
 const commonClice = new CommonClice();
 export default function Index(props: any) {
   const dispatch = useDispatch();
+  const history = useHistory();
 
   const {
     ethAccount,
@@ -186,31 +187,19 @@ export default function Index(props: any) {
   }, []);
 
   const toSwap = (tokenSymbol: string) => {
-    props.history.push({
-      pathname: '/rAsset/swap/erc20/native',
-      state: {
-        rSymbol: tokenSymbol,
-      },
+    history.push('/rAsset/swap/erc20/default', {
+      rSymbol: tokenSymbol,
     });
   };
 
   const toSwapBep20 = (tokenSymbol: string) => {
-    props.history.push({
-      pathname: '/rAsset/swap/erc20/bep20',
-      state: {
-        rSymbol: tokenSymbol,
-      },
+    history.push('/rAsset/swap/erc20/default', {
+      rSymbol: tokenSymbol,
     });
   };
 
   return (
-    <Content>
-      <Tag
-        type='erc'
-        onClick={(type: string) => {
-          props.history.push(`/rAsset/${type}`);
-        }}
-      />
+    <div>
       {ethAccount && ethAccount.address ? (
         <>
           <DataList>
@@ -222,8 +211,8 @@ export default function Index(props: any) {
               balance={fis_ercBalance == '--' ? '--' : NumberUtil.handleFisAmountToFixed(fis_ercBalance)}
               willGetBalance={0}
               unit='FIS'
-              trade={config.uniswap.fisURL}
               operationType='erc20'
+              tradeList={[{ label: 'Uniswap', url: config.uniswap.fisURL }]}
               onSwapClick={() => toSwap('FIS')}
             />
 
@@ -235,10 +224,11 @@ export default function Index(props: any) {
               balance={rfis_ercBalance == '--' ? '--' : NumberUtil.handleFisAmountToFixed(rfis_ercBalance)}
               willGetBalance={fisWillAmount}
               unit='FIS'
-              trade={config.uniswap.rfisURL}
+              tradeList={[{ label: 'Uniswap', url: config.uniswap.rfisURL }]}
               operationType='erc20'
               onSwapClick={() => toSwap('rFIS')}
             />
+
             <DataItem
               disabled={!config.metaMaskNetworkIsGoerliEth(metaMaskNetworkId)}
               rSymbol='rETH'
@@ -248,9 +238,13 @@ export default function Index(props: any) {
               willGetBalance={'0.000000'}
               unit='ETH'
               operationType='erc20'
-              trade={config.uniswap.rethURL}
+              tradeList={[
+                { label: 'Curve', url: config.curve.rethURL },
+                { label: 'Uniswap', url: config.uniswap.rethURL },
+              ]}
               onSwapClick={() => toSwapBep20('rETH')}
             />
+
             <DataItem
               disabled={!config.metaMaskNetworkIsGoerliEth(metaMaskNetworkId)}
               rSymbol='rDOT'
@@ -259,7 +253,7 @@ export default function Index(props: any) {
               balance={dot_ercBalance == '--' ? '--' : NumberUtil.handleFisAmountToFixed(dot_ercBalance)}
               willGetBalance={dotWillAmount}
               unit='DOT'
-              trade={config.uniswap.rdotURL}
+              tradeList={[{ label: 'Uniswap', url: config.uniswap.rdotURL }]}
               operationType='erc20'
               onSwapClick={() => toSwap('rDOT')}
             />
@@ -272,7 +266,7 @@ export default function Index(props: any) {
               balance={ksm_ercBalance == '--' ? '--' : NumberUtil.handleFisAmountToFixed(ksm_ercBalance)}
               willGetBalance={ksmWillAmount}
               unit='KSM'
-              trade={config.uniswap.rksmURL}
+              tradeList={[{ label: 'Uniswap', url: config.uniswap.rksmURL }]}
               operationType='erc20'
               onSwapClick={() => toSwap('rKSM')}
             />
@@ -285,7 +279,7 @@ export default function Index(props: any) {
               balance={atom_ercBalance == '--' ? '--' : NumberUtil.handleFisAmountToFixed(atom_ercBalance)}
               willGetBalance={atomWillAmount}
               unit='ATOM'
-              trade={config.uniswap.ratomURL}
+              tradeList={[{ label: 'Uniswap', url: config.uniswap.ratomURL }]}
               operationType='erc20'
               onSwapClick={() => toSwap('rATOM')}
             />
@@ -301,7 +295,7 @@ export default function Index(props: any) {
               trade={config.uniswap.rsolURL}
               operationType='erc20'
               onSwapClick={() => toSwap('rSOL')}
-            />*/}
+            /> */}
 
             <DataItem
               disabled={!config.metaMaskNetworkIsGoerliEth(metaMaskNetworkId)}
@@ -311,7 +305,7 @@ export default function Index(props: any) {
               balance={matic_ercBalance == '--' ? '--' : NumberUtil.handleFisAmountToFixed(matic_ercBalance)}
               willGetBalance={maticWillAmount}
               unit='MATIC'
-              trade={config.uniswap.ratomURL}
+              tradeList={[{ label: 'Quickswap', url: config.quickswap.rmaticURL }]}
               operationType='erc20'
               onSwapClick={() => toSwap('rMATIC')}
             />
@@ -330,6 +324,6 @@ export default function Index(props: any) {
           </Button>
         </div>
       )}
-    </Content>
+    </div>
   );
 }

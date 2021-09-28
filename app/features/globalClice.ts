@@ -201,7 +201,9 @@ export const connectSoljs =
   (cb?: Function): AppThunk =>
   async (dispatch, getState) => {
     try {
-      solServer.connectSolJs();
+      solServer.connectSolJs((account: any) => {
+        dispatch(clice(Symbol.Sol).createSubstrate(account));
+      });
     } catch (e) {
       // message.error('Please create an account');
     }

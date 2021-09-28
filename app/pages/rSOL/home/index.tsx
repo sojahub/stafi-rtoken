@@ -1,8 +1,7 @@
 import HomeCard from '@components/card/homeCard';
-import { clice, connectPolkadot_sol, connectSoljs } from '@features/globalClice';
+import { connectPolkadot_sol, connectSoljs } from '@features/globalClice';
+import phantom from '@images/phantom.png';
 import rFIS_svg from '@images/rFIS.svg';
-import sollet from '@images/sollet.png';
-import { Symbol } from '@keyring/defaults';
 import SolServer from '@servers/sol/index';
 import Button from '@shared/components/button/connect_button';
 import Modal from '@shared/components/modal/connectModal';
@@ -11,6 +10,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Redirect } from 'react-router';
 import Page_FIS from '../../rATOM/selectWallet_rFIS/index';
 import './index.scss';
+
+declare const window:any;
 
 const solServer = new SolServer();
 
@@ -26,35 +27,17 @@ export default function Inde(props: any) {
     };
   });
 
-  const wallet = solServer.getWallet();
   useEffect(() => {
-    if (wallet) {
-      wallet.on('connect', (publicKey) => { 
-        if (fisAccount) {
-          props.history.push('/rSOL/type');
-        } else if (fisAccounts && fisAccounts.length > 0) {
-          props.history.push({
-            pathname: '/rSOL/fiswallet',
-            state: {
-              showBackIcon: false,
-            },
-          });
-        }
-
-        const account = {
-          name: '',
-          pubkey: publicKey.toBase58(),
-          address: publicKey.toBase58(),
-          balance: '--',
-        };
-        dispatch(clice(Symbol.Sol).createSubstrate(account));
-      });
+    const solana = solServer.getProvider();
+    if (solana) {
+      solana.connect({ onlyIfTrusted: true });
     }
-  }, [wallet]);
+  }, []);
 
   if (fisAccount && solAccount) {
     return <Redirect to='/rSOL/type' />;
   }
+
   return (
     <HomeCard
       title={
@@ -65,15 +48,18 @@ export default function Inde(props: any) {
       subTitle={'Staking via StaFi Staking Contract and get rSOL in return'}
       onIntroUrl=''>
       <Button
+        width={'370px'}
         disabled={!!solAccount}
-        icon={sollet}
+        icon={phantom}
         onClick={() => {
           dispatch(connectSoljs());
         }}>
-        Connect to Sollet extension
+        Connect to Phantom extension
       </Button>
+
       {
         <Button
+          width={'370px'}
           disabled={!!fisAccount}
           icon={rFIS_svg}
           onClick={() => {

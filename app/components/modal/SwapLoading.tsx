@@ -10,6 +10,8 @@ import {
   getAssetBalanceAll as getErc20AssetBalanceAll
 } from '@features/ETHClice';
 import { queryTokenBalances } from '@features/FISClice';
+import { noticeStatus, update_NoticeStatus } from '@features/noticeClice';
+import { getAssetBalance as getSlpAssetBalance, getSlp20AssetBalanceAll } from '@features/SOLClice';
 import close_bold_svg from '@images/close_bold.svg';
 import complete_svg from '@images/complete.svg';
 import { rSymbol } from '@keyring/defaults';
@@ -213,6 +215,7 @@ export default function SwapLoading(props: Props) {
         ) {
           setSwapStatus(1);
           dispatch(queryTokenBalances());
+          dispatch(update_NoticeStatus(swapLoadingParams.noticeUuid, noticeStatus.Confirmed));
         }
       }
     } else if (swapLoadingParams.swapType === 1) {
@@ -225,6 +228,7 @@ export default function SwapLoading(props: Props) {
             if (Number(v) === Number(swapLoadingParams.oldBalance) + Number(swapLoadingParams.amount)) {
               setSwapStatus(1);
               dispatch(getErc20AssetBalanceAll());
+              dispatch(update_NoticeStatus(swapLoadingParams.noticeUuid, noticeStatus.Confirmed));
             }
           },
           true,
@@ -240,11 +244,21 @@ export default function SwapLoading(props: Props) {
             if (Number(v) === Number(swapLoadingParams.oldBalance) + Number(swapLoadingParams.amount)) {
               setSwapStatus(1);
               dispatch(getBep20AssetBalanceAll());
+              dispatch(update_NoticeStatus(swapLoadingParams.noticeUuid, noticeStatus.Confirmed));
             }
           },
           true,
         );
       }
+    } else if (swapLoadingParams.swapType === 4) {
+      getSlpAssetBalance(swapLoadingParams.address, swapLoadingParams.tokenType, (v: any) => {
+        // console.log('new amount:', v);
+        if (Number(v) === Number(swapLoadingParams.oldBalance) + Number(swapLoadingParams.amount)) {
+          setSwapStatus(1);
+          dispatch(getSlp20AssetBalanceAll());
+          dispatch(update_NoticeStatus(swapLoadingParams.noticeUuid, noticeStatus.Confirmed));
+        }
+      });
     }
   };
 

@@ -9,9 +9,7 @@ import moment from 'moment';
 import { AppThunk } from '../store';
 import { bondStates, getMinting } from './FISClice';
 import { initProcess, processStatus, setProcessSending, setProcessSlider, setProcessStaking } from './globalClice';
-import {
-  setProcessParameter as atomSetProcessParameter
-} from './rATOMClice';
+import { setProcessParameter as atomSetProcessParameter } from './rATOMClice';
 import { setProcessParameter as bnbSetProcessParameter } from './rBNBClice';
 import { setProcessParameter } from './rDOTClice';
 import { setProcessParameter as krmSetProcessParameter } from './rKSMClice';
@@ -194,34 +192,33 @@ export const update_Notice =
     );
   };
 
-export const update_NoticeNew =
-  (
-    uuid: string,
-    rSymbol: string,
-    type: string,
-    subType: string,
-    amount: string,
-    status: string,
-    subData?: any,
-  ): AppThunk =>
+export const update_NoticeStatus =
+  (uuid: string, newStatus: any): AppThunk =>
   async (dispatch, getState) => {
-    dispatch(
-      updateNoticeModal({
-        data: {
-          uuid: uuid, //信息唯一标识
-          title: subType,
-          type: type,
-          subType: subType,
-          // content:content,
-          amount: amount,
-          status: status,
-          rSymbol: rSymbol,
-          subData: subData,
-        },
-        showNew: false,
-      }),
-    );
+    const oldNotice = findNoticeByUuid(uuid);
+    if (oldNotice) {
+      dispatch(
+        updateNoticeModal({
+          data: {
+            ...oldNotice,
+            status: newStatus,
+          },
+          showNew: false,
+        }),
+      );
+    }
   };
+
+const findNoticeByUuid = (uuid: any): any => {
+  let data = getLocalStorageItem(Keys.StafiNoticeKey);
+  if (!data || !data.datas) {
+    return null;
+  }
+  const m = data.datas.find((item: any) => {
+    return item.uuid === uuid;
+  });
+  return m;
+};
 
 export const setProcess =
   (item: any, list: any, cb?: Function): AppThunk =>
@@ -661,18 +658,25 @@ export const notice_text = (item: any) => {
       if (item.subData.destSwapType === 'bep20') {
         return `Swap ${item.amount} Native ${item.rSymbol} to BEP20, it may take 2~10 minutes to arrive`;
       }
+      if (item.subData.destSwapType === 'spl') {
+        return `Swap ${item.amount} Native ${item.rSymbol} to SPL, it may take 2~10 minutes to arrive`;
+      }
       return `Swap ${item.amount} Native ${item.rSymbol} to ERC20, it may take 2~10 minutes to arrive`;
     } else if (item.subData.swapType == 'bep20') {
       if (item.subData.destSwapType == 'erc20') {
-        return `Swap ${item.amount}  BEP20 ${item.rSymbol} to ERC20, it may take 2~10 minutes to arrive`;
+        return `Swap ${item.amount} BEP20 ${item.rSymbol} to ERC20, it may take 2~10 minutes to arrive`;
       } else {
-        return `Swap ${item.amount}  BEP20 ${item.rSymbol} to Native, it may take 2~10 minutes to arrive`;
+        return `Swap ${item.amount} BEP20 ${item.rSymbol} to Native, it may take 2~10 minutes to arrive`;
+      }
+    } else if (item.subData.swapType == 'spl') {
+      if (item.subData.destSwapType == 'native') {
+        return `Swap ${item.amount} SPL ${item.rSymbol} to Native, it may take 2~10 minutes to arrive`;
       }
     } else {
       if (item.subData.destSwapType == 'bep20') {
-        return `Swap ${item.amount}  ERC20 ${item.rSymbol} to BEP20, it may take 2~10 minutes to arrive`;
+        return `Swap ${item.amount} ERC20 ${item.rSymbol} to BEP20, it may take 2~10 minutes to arrive`;
       } else {
-        return `Swap ${item.amount}  ERC20 ${item.rSymbol} to Native, it may take 2~10 minutes to arrive`;
+        return `Swap ${item.amount} ERC20 ${item.rSymbol} to Native, it may take 2~10 minutes to arrive`;
       }
     }
   } else if (item.subType == noticesubType.Deposit) {

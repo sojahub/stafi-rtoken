@@ -67,8 +67,11 @@ export default class CommonClice {
           })
           .catch((error: any) => {
             console.log('getPools error: ', error);
+            cb && cb(null);
           });
       });
+    } else {
+      cb && cb(null);
     }
   }
   async getFisPools(cb?: Function) {
@@ -198,7 +201,7 @@ export default class CommonClice {
     if (data) {
       return data;
     } else {
-      message.error(errorMessage ? errorMessage : 'There is no matching pool, please try again later.');
+      message.error(errorMessage ? errorMessage : 'There is no matching pool, please try again later');
       return null;
     }
   }
@@ -211,7 +214,7 @@ export default class CommonClice {
     if (data) {
       return data;
     } else {
-      message.error(errorMessage ? errorMessage : 'There is no matching pool, please try again later.');
+      message.error(errorMessage ? errorMessage : 'There is no matching pool, please try again later');
       return null;
     }
   }
@@ -225,7 +228,7 @@ export default class CommonClice {
     if (data) {
       return data;
     } else {
-      message.error(messageStr || 'There is no matching pool, please try again later.');
+      message.error(messageStr || 'There is no matching pool, please try again later');
       return null;
     }
   }

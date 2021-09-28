@@ -56,6 +56,8 @@ export default function Index(props: Props) {
                 viewTxUrl = config.etherScanErc20TxInAddressUrl(address);
               } else if (destSwapType === 'bep20') {
                 viewTxUrl = config.bscScanBep20TxInAddressUrl(address);
+              }else if (destSwapType === 'spl') {
+                viewTxUrl = config.solScanSlp20TxInAddressUrl(address);
               }
               viewTxUrl && window.open(viewTxUrl);
               props.hideNoticePopover && props.hideNoticePopover();

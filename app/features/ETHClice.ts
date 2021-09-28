@@ -116,7 +116,7 @@ export const getAssetBalanceAll = (): AppThunk => (dispatch, getState) => {
   dispatch(getRKSMAssetBalance());
   dispatch(getRDOTAssetBalance());
   dispatch(getRATOMAssetBalance());
-  // dispatch(getRSOLAssetBalance());
+  dispatch(getRSOLAssetBalance());
   dispatch(getRMaticAssetBalance());
 };
 export const getErc20Allowances = (): AppThunk => (dispatch, getState) => {
@@ -125,7 +125,7 @@ export const getErc20Allowances = (): AppThunk => (dispatch, getState) => {
   dispatch(getRKSMErc20Allowance());
   dispatch(getRDOTErc20Allowance());
   dispatch(getRATOMErc20Allowance());
-  // dispatch(getRSOLErc20Allowance());
+  dispatch(getRSOLErc20Allowance());
   dispatch(getRMaticErc20Allowance());
   dispatch(getRETHErc20Allowance());
 };

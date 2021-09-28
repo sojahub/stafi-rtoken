@@ -317,7 +317,7 @@ export const transfer =
       amount,
       validPools,
       poolLimit,
-      'The cumulative FIS amount exceeds the pool limit, please try again later!',
+      'The cumulative FIS amount exceeds the pool limit, please try again later',
     );
     if (selectedPool == null) {
       return;
@@ -351,13 +351,13 @@ export const transfer =
                         new Uint8Array([mod.index.toNumber(), mod.error.toNumber()]),
                       );
 
-                      let messageStr = 'Something is wrong, please try again later!';
+                      let messageStr = 'Something is wrong, please try again later';
                       if (error.name == 'NominateSwitchClosed') {
                         messageStr = 'Unable to stake, system is waiting for matching validators';
                       } else if (error.name == 'LiquidityBondZero') {
                         messageStr = 'The amount should be larger than 0';
                       } else if (error.name == 'PoolLimitReached') {
-                        messageStr = 'The cumulative FIS amount exceeds the pool limit, please try again later!';
+                        messageStr = 'The cumulative FIS amount exceeds the pool limit, please try again later';
                       }
                       message.error(message);
                     } catch (error) {
@@ -389,7 +389,6 @@ export const transfer =
   };
 
 export const stakingSignature = async (address: any, data: any) => {
-  message.info('Sending succeeded, proceeding signature.');
   await timeout(5000);
   web3Enable(stafiServer.getWeb3EnalbeName());
   const injector = await web3FromSource(stafiServer.getPolkadotJsSource());
@@ -415,16 +414,18 @@ export const feeStationSignature = async (address: any, data: any) => {
 };
 
 export const solSignature = async (address: any, fisAddress: string) => {
-  message.info('Sending succeeded, proceeding signature.');
-  await timeout(3000);
-  message.info('Please approve sign request in sollet wallet.', 5);
+  await timeout(1000);
 
   const fisKeyring = keyringInstance.init(Symbol.Fis);
   const solServer = new SolServer();
+  const solana = solServer.getProvider();
+  if (!solana) {
+    return null;
+  }
 
-  // fisAddress = '34bwmgT1NtcL8FayGiFSB9F1qZFGPjhbDfTaZRoM2AXgjrpo';
-  // let { signature } = await solServer.getWallet().sign(new TextEncoder().encode(fisAddress), 'utf8');
-  let { signature } = await solServer.getWallet().sign(fisKeyring.decodeAddress(fisAddress), 'utf8');
+  let pubkey = u8aToHex(fisKeyring.decodeAddress(fisAddress), -1, false);
+  let { signature } = await solana.signMessage(new TextEncoder().encode(pubkey), 'utf8');
+
   if (!signature) {
     return null;
   }
@@ -464,7 +465,6 @@ export const bound =
 
         message.info('Sending succeeded, proceeding staking');
       } else if (type == rSymbol.Matic) {
-        message.info('Sending succeeded, proceeding signature.');
         await timeout(3000);
         const ethAddress = getState().rMATICModule.maticAccount.address;
         const fisPubkey = u8aToHex(keyringInstance.decodeAddress(fisAddress), -1, false);
@@ -486,7 +486,6 @@ export const bound =
           });
         message.info('Signature succeeded, proceeding staking');
       } else if (type === rSymbol.Bnb) {
-        message.info('Sending succeeded, proceeding signature.');
         await timeout(3000);
         const ethAddress = getState().rETHModule.ethAccount.address;
         const fisPubkey = u8aToHex(keyringInstance.decodeAddress(fisAddress), -1, false);
@@ -508,9 +507,19 @@ export const bound =
           });
         message.info('Signature succeeded, proceeding staking');
       } else if (type == rSymbol.Sol) {
-        signature = await solSignature(address, fisAddress);
-        pubkey = u8aToHex(new PublicKey(getState().rSOLModule.solAccount.address).toBytes());
-        message.info('Signature succeeded, proceeding staking');
+        try {
+          signature = await solSignature(address, fisAddress);
+          pubkey = u8aToHex(new PublicKey(getState().rSOLModule.solAccount.address).toBytes());
+          message.info('Signature succeeded, proceeding staking');
+        } catch (err) {
+          dispatch(
+            setProcessStaking({
+              brocasting: processStatus.failure,
+            }),
+          );
+          message.error(err.message);
+          throw err;
+        }
       } else {
         signature = await stakingSignature(address, u8aToHex(keyringInstance.decodeAddress(fisAddress)));
         pubkey = u8aToHex(keyringInstance.decodeAddress(address));
@@ -573,7 +582,7 @@ export const bound =
                             new Uint8Array([mod.index.toNumber(), mod.error.toNumber()]),
                           );
 
-                          let messageStr: string = 'Something is wrong, please try again later!';
+                          let messageStr: string = 'Something is wrong, please try again later';
                           if (error.name == '') {
                             messageStr = '';
                           }
@@ -864,7 +873,7 @@ export const unbond =
         amount,
         validPools,
         rSymbol.Fis,
-        "'No pool available, please try again later!",
+        "'No pool available, please try again later",
       );
       if (selectedPool == null) {
         dispatch(setLoading(false));
@@ -903,11 +912,11 @@ export const unbond =
                         new Uint8Array([mod.index.toNumber(), mod.error.toNumber()]),
                       );
 
-                      let messageStr = 'Something is wrong, please try again later!';
+                      let messageStr = 'Something is wrong, please try again later';
                       if (error.name == 'LiquidityUnbondZero') {
                         messageStr = 'The input amount should be larger than 0';
                       } else if (error.name == 'InsufficientBalance') {
-                        messageStr = 'Insufficient balance!';
+                        messageStr = 'Insufficient balance';
                       }
                       message.error(messageStr);
                     } catch (error) {
@@ -1083,7 +1092,6 @@ export const unbondFees = (): AppThunk => async (dispatch, getState) => {
 export const getPools =
   (cb?: Function): AppThunk =>
   async (dispatch, getState) => {
-    dispatch(setValidPools(null));
     const data = await commonClice.fis_poolBalanceLimit();
     dispatch(setPoolLimit(data));
 

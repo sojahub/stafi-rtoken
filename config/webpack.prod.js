@@ -33,13 +33,13 @@ const options = {
   optimization: {
     minimizer: [
       new TerserJsPlugin({
-        minify: TerserJsPlugin.uglifyJsMinify,
+        // minify: TerserJsPlugin.uglifyJsMinify,
         terserOptions: {
           compress: {
-            drop_console: false,
+            // drop_console: false,
           },
           format: {
-            comments: false,
+            // comments: false,
           },
         },
       }),

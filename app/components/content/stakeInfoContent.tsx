@@ -11,9 +11,9 @@ import rMatic_stafi_svg from '@images/selected_r_matic.svg';
 import rSOL_stafi_svg from '@images/selected_r_sol.svg';
 import Button from '@shared/components/button/button';
 import NumberUtil from '@util/numberUtil';
-import { message } from 'antd';
-import React, { useState } from 'react';
-import Modal from '../modal/swapModal';
+import React, { useMemo, useState } from 'react';
+import { useHistory } from 'react-router';
+import SwapModalNew from '../modal/swapModalNew';
 import TradePopover from '../tradePopover';
 import LeftContent from './leftContent';
 
@@ -31,7 +31,38 @@ type Props = {
 };
 
 export default function Index(props: Props) {
+  const history = useHistory();
+
   const [visibleModal, setVisibleModal] = useState(false);
+  const [tradeLabel, setTradeLabel] = useState('Uniswap');
+  const [selectedExchange, setSelectedExchange] = useState('');
+
+  const tradeUrl = useMemo(() => {
+    if (props.type === 'rDOT') {
+      return config.uniswap.rdotURL;
+    }
+    if (props.type === 'rFIS') {
+      return config.uniswap.rfisURL;
+    }
+    if (props.type === 'rKSM') {
+      return config.uniswap.rksmURL;
+    }
+    if (props.type === 'rATOM') {
+      return config.uniswap.ratomURL;
+    }
+    if (props.type === 'rMATIC') {
+      return config.quickswap.rmaticURL;
+    }
+    if (props.type === 'rETH') {
+      if (selectedExchange === 'Uniswap') {
+        return config.uniswap.rethURL;
+      }
+      if (selectedExchange === 'Curve') {
+        return config.curve.rethURL;
+      }
+    }
+  }, [props.type, selectedExchange]);
+
   return (
     <LeftContent className='stafi_stake_info_context'>
       <div className='item'>
@@ -64,30 +95,43 @@ export default function Index(props: Props) {
                 data={[
                   { label: 'Curve', url: config.curve.rethURL },
                   { label: 'Uniswap', url: config.uniswap.rethURL },
-                ]}>
+                ]}
+                onClick={(item: any) => {
+                  setSelectedExchange(item.label);
+                  setVisibleModal(true);
+                  setTradeLabel(item.label);
+                }}>
                 {' '}
                 <Button size='small' btnType='ellipse'>
                   Trade <img className='dow_svg' src={dow_svg} />{' '}
                 </Button>{' '}
               </TradePopover>
             )}
-            {props.type != 'rETH' && (
+
+            {/* {props.type === 'rBNB' && (
               <Button
                 onClick={() => {
-                  if (props.type === 'rMATIC') {
-                    window.open(
-                      'https://quickswap.exchange/#/swap?inputCurrency=0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270&outputCurrency=0x9f28e2455f9ffcfac9ebd6084853417362bc5dbb',
-                    );
-                  } else if (props.type === 'rBNB') {
-                    message.info('DEX Pool for rBNB will be open soon.');
-                  } else {
-                    setVisibleModal(true);
-                  }
+                  message.info('DEX Pool for rBNB will be open soon.');
                 }}
                 size='small'
                 btnType='ellipse'>
                 Trade
               </Button>
+            )} */}
+
+            {props.type !== 'rETH' && (
+              <TradePopover
+                data={[{ label: props.type !== 'rMATIC' ? 'Uniswap' : 'Quickswap', url: tradeUrl }]}
+                onClick={(item: any) => {
+                  setSelectedExchange(item.label);
+                  setVisibleModal(true);
+                  setTradeLabel(item.label);
+                }}>
+                <Button size='small' btnType='ellipse' disabled={!tradeUrl}>
+                  Trade
+                  <img className='dow_svg' src={dow_svg} />
+                </Button>
+              </TradePopover>
             )}
           </div>
         </div>
@@ -182,18 +226,24 @@ export default function Index(props: Props) {
         <div className='describe'>Updated every {props.hours} hours</div>
       </div>
 
-      <Modal
+      <SwapModalNew
         type={props.type}
         visible={visibleModal}
+        label={tradeLabel}
+        tradeUrl={tradeUrl}
         onCancel={() => {
           setVisibleModal(false);
         }}
-        onOk={() => {
-          // message.info("Swap will be available soon");
-          props.onSwapClick && props.onSwapClick();
-        }}
-        onUniswapClick={() => {
-          props.onUniswapClick && props.onUniswapClick();
+        onClickSwap={() => {
+          if (props.type === 'rETH') {
+            history.push(`/rAsset/swap/erc20/default`, {
+              rSymbol: props.type,
+            });
+          } else {
+            history.push(`/rAsset/swap/native/default`, {
+              rSymbol: props.type,
+            });
+          }
         }}
       />
     </LeftContent>

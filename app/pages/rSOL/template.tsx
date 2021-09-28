@@ -1,14 +1,17 @@
 import { bondSwitch } from '@features/FISClice';
 import { reloadData } from '@features/globalClice';
-import { bondFees, continueProcess, getPools, getTotalIssuance } from '@features/rSOLClice';
+import { bondFees, continueProcess, getPools, getTotalIssuance, setSolAccount } from '@features/rSOLClice';
 import { Symbol } from '@keyring/defaults';
+import SolServer from '@servers/sol/index';
 import Content from '@shared/components/content';
-import { getLocalStorageItem, Keys } from '@util/common';
+import { getLocalStorageItem, Keys, removeLocalStorageItem } from '@util/common';
 import { Spin } from 'antd';
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { renderRoutes } from 'react-router-config';
 import '../template/index.scss';
+
+const solServer = new SolServer();
 
 export default function Index(props: any) {
   const dispatch = useDispatch();
@@ -21,8 +24,17 @@ export default function Index(props: any) {
   });
 
   useEffect(() => {
+    const solana = solServer.getProvider();
+    if (!solana) {
+      dispatch(setSolAccount(null));
+      removeLocalStorageItem(Keys.SolAccountKey);
+    }
+  }, []);
+
+  useEffect(() => {
     dispatch(getTotalIssuance());
   }, [fisAccount, solAccount]);
+
   useEffect(() => {
     dispatch(bondFees());
     dispatch(bondSwitch());
@@ -35,6 +47,7 @@ export default function Index(props: any) {
       dispatch(continueProcess());
     }, 50);
   }, []);
+
   const { loading } = useSelector((state: any) => {
     return {
       loading: state.globalModule.loading,
