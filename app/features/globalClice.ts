@@ -12,7 +12,7 @@ import { reloadData as bnbReloadData } from './rBNBClice';
 import { createSubstrate as dotCreateSubstrate, reloadData as dotReloadData } from './rDOTClice';
 import { createSubstrate as ksmCreateSubstrate, reloadData as ksmReloadData } from './rKSMClice';
 import { reloadData as maticReloadData } from './rMATICClice';
-import { createSubstrate as solCreateSubstrate, reloadData as solReloadData } from './rSOLClice';
+import { createSubstrate as solCreateSubstrate, reloadData as solReloadData, setSolAccount } from './rSOLClice';
 export enum processStatus {
   default = 0,
   success = 1,
@@ -202,6 +202,7 @@ export const connectSoljs =
   async (dispatch, getState) => {
     try {
       solServer.connectSolJs((account: any) => {
+        dispatch(setSolAccount(account));
         dispatch(clice(Symbol.Sol).createSubstrate(account));
       });
     } catch (e) {

@@ -165,7 +165,8 @@ export default function MintOverview() {
     tokenSymbol.toString() !== rSymbol.Matic.toString() &&
     tokenSymbol.toString() !== rSymbol.Atom.toString() &&
     tokenSymbol.toString() !== rSymbol.Fis.toString() &&
-    tokenSymbol.toString() !== rSymbol.Bnb.toString()
+    tokenSymbol.toString() !== rSymbol.Bnb.toString() &&
+    tokenSymbol.toString() !== rSymbol.Sol.toString() 
   ) {
     history.replace('/rPool/home');
   }

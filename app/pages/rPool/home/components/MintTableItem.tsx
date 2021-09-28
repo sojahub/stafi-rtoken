@@ -16,7 +16,6 @@ type Props = {
   poolOn: 1 | 2 | 3;
   stakeUrl?: string;
   history: any;
-  liquidityUrl: string;
   wrapFiUrl: string;
 };
 
@@ -40,7 +39,9 @@ export default function MintTableItem(props: Props) {
       symbol = rSymbol.Eth;
     } else if (tokenType === 'rBNB') {
       symbol = rSymbol.Bnb;
-    }else {
+    } else if (tokenType === 'rSOL') {
+      symbol = rSymbol.Sol;
+    } else {
       message.error('Unsupported token type');
       return;
     }

@@ -3,6 +3,7 @@ import { getRsymbolByTokenTitle } from '@config/index';
 import { getRtokenPriceList } from '@features/bridgeClice';
 import { getMintPrograms } from '@features/mintProgramsClice';
 import no_data_png from '@images/nodata.png';
+import rsol_icon from '@images/rSOL.svg';
 import ratom_icon from '@images/r_atom.svg';
 import rbnb_icon from '@images/r_bnb.svg';
 import rdot_icon from '@images/r_dot.svg';
@@ -51,6 +52,10 @@ const rTokenList: Array<any> = [
     token: 'rBNB',
     children: [],
   },
+  {
+    token: 'rSOL',
+    children: [],
+  },
 ];
 
 export default function MintPrograms(props: any) {
@@ -77,6 +82,7 @@ export default function MintPrograms(props: any) {
     rATOMActs,
     rETHActs,
     rBNBActs,
+    rSOLActs,
     loading,
     loadComplete,
   } = useSelector((state: RootState) => {
@@ -88,6 +94,7 @@ export default function MintPrograms(props: any) {
       rKSMActs: state.mintProgramsModule.rKSMActs,
       rATOMActs: state.mintProgramsModule.rATOMActs,
       rBNBActs: state.mintProgramsModule.rBNBActs,
+      rSOLActs: state.mintProgramsModule.rSOLActs,
       rETHActs: state.mintProgramsModule.rETHActs,
       loadComplete: state.mintProgramsModule.loadComplete,
       loading: state.globalModule.loading,
@@ -161,6 +168,9 @@ export default function MintPrograms(props: any) {
       if (item.token === 'rETH') {
         item.children = cloneDeep(rETHActs);
       }
+      if (item.token === 'rSOL') {
+        item.children = cloneDeep(rSOLActs);
+      }
     });
 
     let list = [...rTokenList];
@@ -207,7 +217,7 @@ export default function MintPrograms(props: any) {
       });
     });
     setMintDataList(list);
-  }, [unitPriceList, rDOTActs, rMaticActs, rFISActs, rKSMActs, rATOMActs, rBNBActs, rETHActs]);
+  }, [unitPriceList, rDOTActs, rMaticActs, rFISActs, rKSMActs, rATOMActs, rBNBActs, rETHActs, rSOLActs]);
 
   useInterval(() => {
     setMintDataList([...mintDataList]);
@@ -256,49 +266,38 @@ export default function MintPrograms(props: any) {
                       let type = '';
                       let icon = null;
                       let stakeUrl = '';
-                      let liquidityUrl = '';
                       if (data.token === 'rETH') {
                         type = data.token;
                         icon = reth_icon;
                         stakeUrl = 'https://app.stafi.io/rETH';
-                        liquidityUrl =
-                          'https://app.uniswap.org/#/add/v2/0x9559aaa82d9649c7a7b220e7c461d2e74c9a3593/ETH';
                       } else if (data.token === 'rDOT') {
                         type = data.token;
                         icon = rdot_icon;
                         stakeUrl = 'https://app.stafi.io/rFIS';
-                        liquidityUrl =
-                          'https://app.uniswap.org/#/add/v2/ETH/0xc82eb6dea0c93edb8b697b89ad1b13d19469d635';
                       } else if (data.token === 'rKSM') {
                         type = data.token;
                         icon = rksm_icon;
                         stakeUrl = 'https://app.stafi.io/rATOM';
-                        liquidityUrl =
-                          'https://app.uniswap.org/#/add/v2/ETH/0xd01cb3d113a864763dd3977fe1e725860013b0ed';
                       } else if (data.token === 'rATOM') {
                         type = data.token;
                         icon = ratom_icon;
                         stakeUrl = 'https://app.stafi.io/rDOT';
-                        liquidityUrl =
-                          'https://app.uniswap.org/#/add/v2/ETH/0x505f5a4ff10985fe9f93f2ae3501da5fe665f08a';
                       } else if (data.token === 'rMATIC') {
                         type = data.token;
                         icon = rmatic_icon;
                         stakeUrl = 'https://app.stafi.io/rKSM';
-                        liquidityUrl =
-                          'https://app.uniswap.org/#/add/v2/ETH/0x3c3842c4d3037ae121d69ea1e7a0b61413be806c';
                       } else if (data.token === 'rFIS') {
                         type = data.token;
                         icon = rfis_icon;
                         stakeUrl = 'https://app.stafi.io/rFIS';
-                        liquidityUrl =
-                          'https://app.uniswap.org/#/add/v2/ETH/0x3c3842c4d3037ae121d69ea1e7a0b61413be806c';
                       } else if (data.token === 'rBNB') {
                         type = data.token;
                         icon = rbnb_icon;
                         stakeUrl = 'https://app.stafi.io/rBNB';
-                        liquidityUrl =
-                          'https://app.uniswap.org/#/add/v2/ETH/0x3c3842c4d3037ae121d69ea1e7a0b61413be806c';
+                      } else if (data.token === 'rSOL') {
+                        type = data.token;
+                        icon = rsol_icon;
+                        stakeUrl = 'https://app.stafi.io/rSOL';
                       }
                       if (type == '') {
                         return <></>;
@@ -309,7 +308,6 @@ export default function MintPrograms(props: any) {
                           tokenType={type}
                           actData={item}
                           wrapFiUrl={'https://drop.wrapfi.io'}
-                          liquidityUrl={liquidityUrl}
                           history={props.history}
                           stakeUrl={stakeUrl}
                           pairIcon={index == 0 ? icon : null}
