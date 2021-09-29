@@ -2,12 +2,14 @@ import CommonButton from '@components/CommonButton';
 import { CardContainer, HContainer, Text } from '@components/commonComponents';
 import DexSwapLoading from '@components/modal/DexSwapLoading';
 import TokenSelector from '@components/selector/TokenSelector';
+import config from '@config/index';
 import { swap } from '@features/dexClice';
 import {
   fetchRTokenStatDetail as fis_fetchRTokenStatDetail,
   reloadData as fis_reloadData,
   rTokenRate as fis_rTokenRate
 } from '@features/FISClice';
+import { connectPolkadot_fis } from '@features/globalClice';
 import {
   checkAddress as atom_checkAddress,
   fetchRTokenStatDetail as atomFetchRTokenStatDetail,
@@ -35,11 +37,13 @@ import Stafi from '@servers/stafi';
 import AddressInputEmbedNew from '@shared/components/input/addressInputEmbedNew';
 import SlippageToleranceInputEmbed from '@shared/components/input/slippageToleranceInputEmbed';
 import TypeSelectorInput from '@shared/components/input/TypeSelectorInput';
+import Modal from '@shared/components/modal/connectModal';
 import numberUtil from '@util/numberUtil';
 import { message, Tooltip } from 'antd';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
+import Page_FIS from '../../rATOM/selectWallet_rFIS/index';
 import SwapRateChart from './SwapRateChart';
 
 const stafiServer = new Stafi();
@@ -101,6 +105,11 @@ export default function RDEXHome() {
   const [slippageTolerance, setSlippageTolerance] = useState(1);
   const [customSlippageTolerance, setCustomSlippageTolerance] = useState();
   const [currentNativeTokenReserves, setCurrentNativeTokenReserves] = useState('--');
+
+  const [transferDetail, setTransferDetail] = useState('');
+  const [viewTxUrl, setViewTxUrl] = useState('');
+
+  const [fisAccountModalVisible, setFisAccountModalVisible] = useState(false);
 
   const {
     fisAccount,
@@ -169,26 +178,28 @@ export default function RDEXHome() {
   }, [selectedToken, rFISStatDetailData, rATOMStatDetailData, rFISRatio, rATOMRatio]);
 
   useEffect(() => {
-    if (fisAccount && fisAccount.address) {
-      dispatch(fis_reloadData());
-      dispatch(fis_rTokenRate());
-      dispatch(fis_fetchRTokenStatDetail());
-      // dispatch(dot_query_rBalances_account());
-      // dispatch(dot_rTokenRate());
-      // dispatch(dot_rLiquidityRate());
-      dispatch(atom_query_rBalances_account());
-      dispatch(atom_rSwapFee());
-      dispatch(atom_rTokenRate());
-      dispatch(atom_rLiquidityRate());
-      dispatch(atomFetchRTokenStatDetail());
-      // dispatch(query_rBalances_account());
-      // dispatch(ksm_rTokenRate());
-      // dispatch(sol_query_rBalances_account());
-      // dispatch(matic_query_rBalances_account());
-      // dispatch(sol_rTokenRate());
-      // dispatch(matic_rTokenRate());
-    }
+    updateAllData();
   }, [fisAccount && fisAccount.address]);
+
+  const updateAllData = () => {
+    dispatch(fis_reloadData());
+    dispatch(fis_rTokenRate());
+    dispatch(fis_fetchRTokenStatDetail());
+    // dispatch(dot_query_rBalances_account());
+    // dispatch(dot_rTokenRate());
+    // dispatch(dot_rLiquidityRate());
+    dispatch(atom_query_rBalances_account());
+    dispatch(atom_rSwapFee());
+    dispatch(atom_rTokenRate());
+    dispatch(atom_rLiquidityRate());
+    dispatch(atomFetchRTokenStatDetail());
+    // dispatch(query_rBalances_account());
+    // dispatch(ksm_rTokenRate());
+    // dispatch(sol_query_rBalances_account());
+    // dispatch(matic_query_rBalances_account());
+    // dispatch(sol_rTokenRate());
+    // dispatch(matic_rTokenRate());
+  };
 
   useEffect(() => {
     if (!selectedToken) {
@@ -331,11 +342,14 @@ export default function RDEXHome() {
       message.error('Insufficient available FIS balance, at least ' + leastFeeStr + 'FIS');
       return;
     }
+    setTransferDetail(numberUtil.handleFisRoundToFixed(receiveTokenAmount) + ' ' + getTokenName());
+
     if (selectedToken.type === 'ratom') {
       if (!atom_checkAddress(address)) {
         message.error('address input error');
         return;
       }
+      setViewTxUrl(config.atomScanAddressUrl(address));
       dispatch(
         swap(
           rSymbol.Atom,
@@ -344,12 +358,10 @@ export default function RDEXHome() {
           numberUtil.handleFisRoundToFixed(minReceiveTokenAmount),
           numberUtil.handleFisRoundToFixed(receiveTokenAmount),
           () => {
-            message.success('swap success');
             setScene(0);
             setRTokenAmount('');
             setAddress('');
-            fis_reloadData();
-            updateTokenReserves();
+            updateAllData();
           },
         ),
       );
@@ -452,6 +464,7 @@ export default function RDEXHome() {
                     <>
                       <TypeSelectorInput
                         selectDataSource={tokenTypes}
+                        showMax={true}
                         title='From'
                         maxInput={selectedToken && selectedToken.content !== '--' ? selectedToken.content : 0}
                         value={rTokenAmount}
@@ -584,16 +597,27 @@ export default function RDEXHome() {
 
                 {scene === 0 && (
                   <CommonButton
-                    text={'Next'}
-                    onClick={() => {}}
+                    text={fisAccount && fisAccount.address ? 'Next' : 'Connect Wallet'}
                     disabled={
-                      !selectedToken ||
-                      Number(rTokenAmount) <= Number(0) ||
-                      isNaN(currentNativeTokenReserves) ||
-                      (!isNaN(receiveTokenAmount) && Number(receiveTokenAmount) > Number(currentNativeTokenReserves))
+                      fisAccount &&
+                      fisAccount.address &&
+                      (!selectedToken ||
+                        Number(rTokenAmount) <= Number(0) ||
+                        isNaN(currentNativeTokenReserves) ||
+                        (!isNaN(receiveTokenAmount) && Number(receiveTokenAmount) > Number(currentNativeTokenReserves)))
                     }
                     mt='25px'
-                    onClick={() => setScene(1)}
+                    onClick={() => {
+                      if (fisAccount && fisAccount.address) {
+                        setScene(1);
+                      } else {
+                        dispatch(
+                          connectPolkadot_fis(() => {
+                            setFisAccountModalVisible(true);
+                          }),
+                        );
+                      }
+                    }}
                   />
                 )}
 
@@ -628,18 +652,39 @@ export default function RDEXHome() {
                   </HContainer>
 
                   <HContainer mb='8px'>
-                    <Text size='10px' color='#a5a5a5' sameLineHeight>
-                      Fee :
-                    </Text>
+                    <HContainer alignItems='flex-start'>
+                      <Text size='10px' color='#a5a5a5' mr='2px' sameLineHeight>
+                        Fee :
+                      </Text>
+
+                      <Tooltip
+                        overlayClassName='doubt_overlay'
+                        placement='topLeft'
+                        overlayInnerStyle={{ color: '#A4A4A4' }}
+                        title={'Fee charged by the rDEX, it will be distributed to the Treasury.'}>
+                        <img src={doubt} />
+                      </Tooltip>
+                    </HContainer>
+
                     <Text size='10px' color='white' sameLineHeight>
                       {currentSwapFee} FIS
                     </Text>
                   </HContainer>
 
                   <HContainer>
-                    <Text size='10px' color='#a5a5a5' sameLineHeight>
-                      Liquidity Rate :
-                    </Text>
+                    <HContainer alignItems='flex-start'>
+                      <Text size='10px' color='#a5a5a5' mr='2px' sameLineHeight>
+                        Liquidity Rate :
+                      </Text>
+                      <Tooltip
+                        overlayClassName='doubt_overlay'
+                        placement='topLeft'
+                        overlayInnerStyle={{ color: '#A4A4A4' }}
+                        title={'Liquidity Rate is used to cover the risk and potential loss of holding rTokens.'}>
+                        <img src={doubt} />
+                      </Tooltip>
+                    </HContainer>
+
                     <Text size='10px' color='white' sameLineHeight>
                       {numberUtil.percentageAmountToHuman(currentLiquidityRate)}
                     </Text>
@@ -686,7 +731,17 @@ export default function RDEXHome() {
         />
       </div>
 
-      <DexSwapLoading transferDetail={numberUtil.handleFisRoundToFixed(receiveTokenAmount) + ' ' + getTokenName()} />
+      <DexSwapLoading transferDetail={transferDetail} viewTxUrl={viewTxUrl} />
+
+      <Modal visible={fisAccountModalVisible}>
+        <Page_FIS
+          location={{}}
+          type='header'
+          onClose={() => {
+            setFisAccountModalVisible(false);
+          }}
+        />
+      </Modal>
     </HContainer>
   );
 }

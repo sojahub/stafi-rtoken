@@ -559,6 +559,9 @@ export default {
     }
     return `https://testnet.bscscan.com/token/${tokenAddress}?a=${userAddress}`;
   },
+  atomScanAddressUrl: (address: any) => {
+    return `https://www.mintscan.io/cosmos/account/${address}`;
+  },
   stafiScanUrl: (address: any) => {
     return `https://stafi.subscan.io/account/${address}?tab=transfer`;
   },

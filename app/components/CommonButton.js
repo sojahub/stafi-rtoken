@@ -37,5 +37,5 @@ const Button = styled.div((props) => ({
   alignSelf: 'stretch',
   backgroundColor: '#00F3AB',
   borderRadius: '4px',
-  cursor: 'pointer',
+  cursor: props.disabled ? 'no-drop' : 'pointer',
 }));
