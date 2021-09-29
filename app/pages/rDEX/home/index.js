@@ -31,9 +31,9 @@ import rasset_ratom_svg from '@images/r_atom.svg';
 // import rasset_rksm_svg from '@images/r_ksm.svg';
 import settingIcon from '@images/setting.svg';
 import { rSymbol } from '@keyring/defaults';
-import RpcServer from '@servers/rpc';
 import Stafi from '@servers/stafi';
 import AddressInputEmbedNew from '@shared/components/input/addressInputEmbedNew';
+import SlippageToleranceInputEmbed from '@shared/components/input/slippageToleranceInputEmbed';
 import TypeSelectorInput from '@shared/components/input/TypeSelectorInput';
 import numberUtil from '@util/numberUtil';
 import { message, Tooltip } from 'antd';
@@ -43,7 +43,6 @@ import styled from 'styled-components';
 import SwapRateChart from './SwapRateChart';
 
 const stafiServer = new Stafi();
-const rpcServer = new RpcServer();
 
 const allTokenDatas = [
   // {
@@ -100,6 +99,7 @@ export default function RDEXHome() {
   const [currentTotalRate, setCurrentTotalRate] = useState('--');
   const [address, setAddress] = useState('');
   const [slippageTolerance, setSlippageTolerance] = useState(1);
+  const [customSlippageTolerance, setCustomSlippageTolerance] = useState();
   const [currentNativeTokenReserves, setCurrentNativeTokenReserves] = useState('--');
 
   const {
@@ -204,6 +204,14 @@ export default function RDEXHome() {
     updateTokenReserves();
   }, [selectedToken]);
 
+  useEffect(() => {
+    if (!isNaN(receiveTokenAmount) && !isNaN(currentNativeTokenReserves)) {
+      if (Number(receiveTokenAmount) > Number(currentNativeTokenReserves)) {
+        message.error(`Max native amount is ${currentNativeTokenReserves}`);
+      }
+    }
+  }, [receiveTokenAmount, currentNativeTokenReserves]);
+
   const updateTokenReserves = async () => {
     if (!selectedToken) {
       return;
@@ -216,8 +224,11 @@ export default function RDEXHome() {
       return;
     }
     const stafiApi = await stafiServer.createStafiApi();
-    const reserves = await stafiApi.query.nativeTokenReserves(rTokenSymbol);
-    console.log('sdfsdfsdf', reserves.toJSON());
+    const reserves = await stafiApi.query.rDexnSwap.nativeTokenReserves(rTokenSymbol);
+    // setCurrentNativeTokenReserves(1);
+    if (reserves) {
+      setCurrentNativeTokenReserves(reserves.toJSON());
+    }
   };
 
   useEffect(() => {
@@ -253,8 +264,15 @@ export default function RDEXHome() {
       result = rTokenAmount * currentTotalRate;
     }
     setReceiveTokenAmount(result);
-    setMinReceiveTokenAmount((result * (100 - slippageTolerance)) / 100);
-  }, [rTokenAmount, currentTotalRate, slippageTolerance]);
+    setMinReceiveTokenAmount(
+      (result *
+        (100 -
+          (customSlippageTolerance && Number(customSlippageTolerance) > Number(0)
+            ? customSlippageTolerance
+            : slippageTolerance))) /
+        100,
+    );
+  }, [rTokenAmount, currentTotalRate, slippageTolerance, customSlippageTolerance]);
 
   useEffect(() => {
     allTokenDatas.forEach((item) => {
@@ -331,6 +349,7 @@ export default function RDEXHome() {
             setRTokenAmount('');
             setAddress('');
             fis_reloadData();
+            updateTokenReserves();
           },
         ),
       );
@@ -348,7 +367,7 @@ export default function RDEXHome() {
           <span style={{ color: '#00F3AB', cursor: 'pointer', textDecoration: 'underline' }}>Mechanism</span>
         </Text>
 
-        <CardContainer width={'340px'} mt={'50px'} pt={'17px'} pb={'8px'} style={{ minHeight: '468px' }}>
+        <CardContainer width={'342px'} mt={'50px'} pt={'17px'} pb={'8px'} style={{ minHeight: '468px' }}>
           <HContainer mb={'20px'} ml={'20px'} mr={'20px'}>
             <div style={{ height: '20px', display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
               {scene === 0 && (
@@ -516,22 +535,48 @@ export default function RDEXHome() {
 
                       <SlippageToleranceContainer>
                         <SlippageToleranceItem
-                          active={slippageTolerance.toString() === '0.1'}
-                          onClick={() => setSlippageTolerance(0.1)}>
+                          active={
+                            slippageTolerance.toString() === '0.1' &&
+                            (!customSlippageTolerance || Number(customSlippageTolerance) <= Number(0))
+                          }
+                          onClick={() => {
+                            setCustomSlippageTolerance('');
+                            setSlippageTolerance(0.1);
+                          }}>
                           0.1%
                         </SlippageToleranceItem>
 
                         <SlippageToleranceItem
-                          active={slippageTolerance.toString() === '0.5'}
-                          onClick={() => setSlippageTolerance(0.5)}>
+                          active={
+                            slippageTolerance.toString() === '0.5' &&
+                            (!customSlippageTolerance || Number(customSlippageTolerance) <= Number(0))
+                          }
+                          onClick={() => {
+                            setCustomSlippageTolerance('');
+                            setSlippageTolerance(0.5);
+                          }}>
                           0.5%
                         </SlippageToleranceItem>
 
                         <SlippageToleranceItem
-                          active={slippageTolerance.toString() === '1'}
-                          onClick={() => setSlippageTolerance(1)}>
+                          active={
+                            slippageTolerance.toString() === '1' &&
+                            (!customSlippageTolerance || Number(customSlippageTolerance) <= Number(0))
+                          }
+                          onClick={() => {
+                            setCustomSlippageTolerance('');
+                            setSlippageTolerance(1);
+                          }}>
                           1%
                         </SlippageToleranceItem>
+
+                        <HContainer mt={'8px'}>
+                          <SlippageToleranceInputEmbed
+                            onChange={setCustomSlippageTolerance}
+                            value={customSlippageTolerance}
+                          />
+                          <Text size={'14px'}>%</Text>
+                        </HContainer>
                       </SlippageToleranceContainer>
                     </>
                   )}
@@ -541,21 +586,19 @@ export default function RDEXHome() {
                   <CommonButton
                     text={'Next'}
                     onClick={() => {}}
-                    disabled={!selectedToken || Number(rTokenAmount) <= Number(0)}
+                    disabled={
+                      !selectedToken ||
+                      Number(rTokenAmount) <= Number(0) ||
+                      isNaN(currentNativeTokenReserves) ||
+                      (!isNaN(receiveTokenAmount) && Number(receiveTokenAmount) > Number(currentNativeTokenReserves))
+                    }
                     mt='25px'
                     onClick={() => setScene(1)}
                   />
                 )}
 
                 {scene === 1 && (
-                  <CommonButton
-                    text={'Swap'}
-                    onClick={() => {}}
-                    disabled={!address}
-                    mt='25px'
-                    onClick={() => setScene(1)}
-                    onClick={startSwap}
-                  />
+                  <CommonButton text={'Swap'} onClick={() => {}} disabled={!address} mt='25px' onClick={startSwap} />
                 )}
               </InnerContainer>
 
