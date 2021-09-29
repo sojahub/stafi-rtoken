@@ -178,6 +178,7 @@ export default function RDEXHome() {
   }, [selectedToken, rFISStatDetailData, rATOMStatDetailData, rFISRatio, rATOMRatio]);
 
   useEffect(() => {
+    clearInput();
     updateAllData();
   }, [fisAccount && fisAccount.address]);
 
@@ -238,7 +239,7 @@ export default function RDEXHome() {
     const reserves = await stafiApi.query.rDexnSwap.nativeTokenReserves(rTokenSymbol);
     // setCurrentNativeTokenReserves(1);
     if (reserves) {
-      setCurrentNativeTokenReserves(reserves.toJSON());
+      setCurrentNativeTokenReserves(numberUtil.tokenAmountToHuman(reserves.toJSON(), rTokenSymbol));
     }
   };
 
@@ -358,14 +359,18 @@ export default function RDEXHome() {
           numberUtil.handleFisRoundToFixed(minReceiveTokenAmount),
           numberUtil.handleFisRoundToFixed(receiveTokenAmount),
           () => {
-            setScene(0);
-            setRTokenAmount('');
-            setAddress('');
+            clearInput();
             updateAllData();
           },
         ),
       );
     }
+  };
+
+  const clearInput = () => {
+    setScene(0);
+    setRTokenAmount('');
+    setAddress('');
   };
 
   return (
