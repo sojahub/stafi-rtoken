@@ -49,7 +49,7 @@ export default function SwapRateChart(props) {
         {
           show: false,
           type: 'value',
-          min: 'dataMin',
+          min: 1,
           axisLabel: {
             formatter: (value) => {
               return value;
