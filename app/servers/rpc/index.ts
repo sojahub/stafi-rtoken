@@ -2,6 +2,7 @@
 import config from '@config/index';
 import { rSymbol } from '@keyring/defaults';
 import { api } from '@util/http';
+import moment from 'moment';
 
 export const pageCount = 20;
 
@@ -23,6 +24,15 @@ export default class Index {
       pageCount: pageCount,
       bscSource: bscSource || '',
       solSource: solSource || '',
+    });
+  }
+
+  getRTokenStatDetail(rsymbol: string, cycle: number) {
+    const url = 'v1/webapi/rtoken/statdetail';
+    return api.post(url, {
+      timestamp: moment().valueOf(),
+      rsymbol,
+      cycle,
     });
   }
 }

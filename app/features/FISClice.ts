@@ -83,6 +83,8 @@ const FISClice = createSlice({
 
     rewardList: [],
     rewardList_lastdata: null,
+
+    rTokenStatDetail: null,
   },
   reducers: {
     setFisAccounts(state, { payload }) {
@@ -211,6 +213,9 @@ const FISClice = createSlice({
     setRewardList_lastdata(state, { payload }) {
       state.rewardList_lastdata = payload;
     },
+    setRTokenStatDetail(state, { payload }) {
+      state.rTokenStatDetail = payload;
+    },
   },
 });
 
@@ -252,6 +257,7 @@ export const {
 
   setRewardList,
   setRewardList_lastdata,
+  setRTokenStatDetail,
 } = FISClice.actions;
 
 export const reloadData = (): AppThunk => async (dispatch, getState) => {
@@ -678,6 +684,11 @@ export const balancesAll = (): AppThunk => async (dispatch, getState) => {
 export const rTokenRate = (): AppThunk => async (dispatch, getState) => {
   const ratio = await commonClice.rTokenRate(rSymbol.Fis);
   dispatch(setRatio(ratio));
+};
+
+export const fetchRTokenStatDetail = (): AppThunk => async (dispatch, getState) => {
+  const data = await commonClice.rTokenStatDetail('Rfis');
+  dispatch(setRTokenStatDetail(data));
 };
 
 export const rTokenLedger = (): AppThunk => async (dispatch, getState) => {

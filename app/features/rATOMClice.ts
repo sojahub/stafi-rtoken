@@ -21,7 +21,8 @@ import {
   processStatus,
   setLoading,
   setProcessSending,
-  setProcessSlider, setProcessType
+  setProcessSlider,
+  setProcessType
 } from './globalClice';
 import { add_Notice, findUuid, noticeStatus, noticesubType, noticeType } from './noticeClice';
 
@@ -55,6 +56,8 @@ const rATOMClice = createSlice({
     totalUnbonding: null,
     rewardList: [],
     rewardList_lastdata: null,
+
+    rTokenStatDetail: null,
   },
   reducers: {
     setAtomAccounts(state, { payload }) {
@@ -144,6 +147,9 @@ const rATOMClice = createSlice({
     setRewardList_lastdata(state, { payload }) {
       state.rewardList_lastdata = payload;
     },
+    setRTokenStatDetail(state, { payload }) {
+      state.rTokenStatDetail = payload;
+    },
   },
 });
 const atomServer = new AtomServer();
@@ -171,6 +177,7 @@ export const {
   setRatioShow,
   setRewardList,
   setRewardList_lastdata,
+  setRTokenStatDetail,
 } = rATOMClice.actions;
 
 export const reloadData = (): AppThunk => async (dispatch, getState) => {
@@ -242,7 +249,12 @@ export const transfer =
       );
       dispatch(setProcessType(rSymbol.Atom));
       dispatch(setProcessSlider(true));
-      const sendTokens: any = await client.sendTokens(address, selectedPool.address, coins(Number(amount), demon), memo);
+      const sendTokens: any = await client.sendTokens(
+        address,
+        selectedPool.address,
+        coins(Number(amount), demon),
+        memo,
+      );
       if (sendTokens.code == 0) {
         const block = await client.getBlock(sendTokens.height);
         const txHash = sendTokens.transactionHash;
@@ -294,7 +306,6 @@ export const transfer =
               }
 
               if (r == 'failure') {
-
                 dispatch(add_ATOM_stake_Notice(notice_uuid, amountparam, noticeStatus.Error));
               }
 
@@ -1008,6 +1019,12 @@ export const rSwapFee = (): AppThunk => async (dispatch, getState) => {
   const fee = await commonClice.rSwapFee(rSymbol.Atom);
   dispatch(setSwapFee(fee));
 };
+
+export const fetchRTokenStatDetail = (): AppThunk => async (dispatch, getState) => {
+  const data = await commonClice.rTokenStatDetail('Ratom');
+  dispatch(setRTokenStatDetail(data));
+};
+
 const add_ATOM_unbond_Notice =
   (uuid: string, amount: string, status: string, subData?: any): AppThunk =>
   async (dispatch, getState) => {

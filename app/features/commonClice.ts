@@ -1,11 +1,14 @@
 import { rSymbol, Symbol } from '@keyring/defaults';
 import { hexToU8a } from '@polkadot/util';
 import keyring from '@servers/index';
+import RpcServer from '@servers/rpc';
 import StafiServer from '@servers/stafi';
 import NumberUtil from '@util/numberUtil';
 import { message } from 'antd';
 
 const stafiServer = new StafiServer();
+const rpcServer = new RpcServer();
+
 export default class CommonClice {
   getWillAmount(ratio: any, unbondCommission: any, amounts: any) {
     let willAmount: any = 0;
@@ -116,6 +119,14 @@ export default class CommonClice {
       ratio = 1;
     }
     return ratio;
+  }
+
+  async rTokenStatDetail(tokenType: string) {
+    const result = await rpcServer.getRTokenStatDetail(tokenType, 1);
+    if (result.status === '80000') {
+      return result.data;
+    }
+    return null;
   }
 
   async rLiquidityRate(type: rSymbol) {
