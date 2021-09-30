@@ -414,7 +414,7 @@ export default {
     ksmURL:
       'https://docs.stafi.io/rtoken-app/rksm-solution/staker-guide/recovery-function#2-the-way-to-get-txhash-and-blockhash',
     atomURL: 'https://docs.stafi.io/rtoken-app/ratom-solution/staker-guide/recovery-function#2-the-way-to-get-txhash',
-    solURL: 'https://docs.stafi.io/rproduct/ratom-solution/staker-guide/recovery-function#2-the-way-to-get-txhash',
+    solURL: 'https://docs.stafi.io/rtoken-app/rsol-solution/staker-guide/recovery-function#2-how-to-get-txhash',
     maticURL: 'https://docs.stafi.io/rtoken-app/rmatic-solution/staker-guide/recovery-function#2-how-to-get-txhash',
     bnbURL: 'https://docs.stafi.io/rtoken-app/rbnb-solution/staker-guide/recovery-function#2-how-to-get-txhash',
   },
