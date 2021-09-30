@@ -92,7 +92,7 @@ export default function Index(props: any) {
           if (checkEthAddress(recipient)) {
             setVisible(true);
           } else {
-            message.error('address input error');
+            message.error('Address input error');
           }
         }}
         type='rBNB'

@@ -121,8 +121,8 @@ export default class CommonClice {
     return ratio;
   }
 
-  async rTokenStatDetail(tokenType: string) {
-    const result = await rpcServer.getRTokenStatDetail(tokenType, 1);
+  async rTokenStatDetail(tokenType: string, cycle: number) {
+    const result = await rpcServer.getRTokenStatDetail(tokenType, cycle);
     if (result.status === '80000') {
       return result.data;
     }

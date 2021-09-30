@@ -689,10 +689,12 @@ export const rTokenRate = (): AppThunk => async (dispatch, getState) => {
   dispatch(setRatio(ratio));
 };
 
-export const fetchRTokenStatDetail = (): AppThunk => async (dispatch, getState) => {
-  const data = await commonClice.rTokenStatDetail('Rfis');
-  dispatch(setRTokenStatDetail(data));
-};
+export const fetchRTokenStatDetail =
+  (cycle: number): AppThunk =>
+  async (dispatch, getState) => {
+    const data = await commonClice.rTokenStatDetail('Rfis', cycle);
+    dispatch(setRTokenStatDetail(data));
+  };
 
 export const rTokenLedger = (): AppThunk => async (dispatch, getState) => {
   const stafiApi = await stafiServer.createStafiApi();

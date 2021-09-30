@@ -111,6 +111,8 @@ export default function RDEXHome() {
 
   const [fisAccountModalVisible, setFisAccountModalVisible] = useState(false);
 
+  const [chartTimeUnit, setChartTimeUnit] = useState('d');
+
   const {
     fisAccount,
     transferrableAmount,
@@ -185,7 +187,6 @@ export default function RDEXHome() {
   const updateAllData = () => {
     dispatch(fis_reloadData());
     dispatch(fis_rTokenRate());
-    dispatch(fis_fetchRTokenStatDetail());
     // dispatch(dot_query_rBalances_account());
     // dispatch(dot_rTokenRate());
     // dispatch(dot_rLiquidityRate());
@@ -193,13 +194,14 @@ export default function RDEXHome() {
     dispatch(atom_rSwapFee());
     dispatch(atom_rTokenRate());
     dispatch(atom_rLiquidityRate());
-    dispatch(atomFetchRTokenStatDetail());
     // dispatch(query_rBalances_account());
     // dispatch(ksm_rTokenRate());
     // dispatch(sol_query_rBalances_account());
     // dispatch(matic_query_rBalances_account());
     // dispatch(sol_rTokenRate());
     // dispatch(matic_rTokenRate());
+
+    updateChartData();
   };
 
   useEffect(() => {
@@ -309,6 +311,16 @@ export default function RDEXHome() {
     });
   }, [rFISTokenAmount, rKSMTokenAmount, rDOTTokenAmount, rATOMTokenAmount]);
 
+  useEffect(() => {
+    updateChartData();
+  }, [chartTimeUnit]);
+
+  const updateChartData = () => {
+    const cycle = chartTimeUnit === 'd' ? 1 : chartTimeUnit === 'w' ? 2 : 3;
+    dispatch(fis_fetchRTokenStatDetail(cycle));
+    dispatch(atomFetchRTokenStatDetail(cycle));
+  };
+
   const getTokenName = () => {
     if (!selectedToken) {
       return '';
@@ -347,7 +359,7 @@ export default function RDEXHome() {
 
     if (selectedToken.type === 'ratom') {
       if (!atom_checkAddress(address)) {
-        message.error('address input error');
+        message.error('Address input error');
         return;
       }
       setViewTxUrl(config.atomScanAddressUrl(address));
@@ -428,7 +440,7 @@ export default function RDEXHome() {
                   />
 
                   <Text size={'18px'} ml={'12px'} sameLineHeight bold>
-                    Select a native token
+                    Select a rToken
                   </Text>
                 </HContainer>
               )}
@@ -712,11 +724,17 @@ export default function RDEXHome() {
           </Text>
 
           <ChartPeriodContainer>
-            <ChartPeriodItem>24h</ChartPeriodItem>
+            <ChartPeriodItem active={chartTimeUnit === 'd'} onClick={() => setChartTimeUnit('d')}>
+              24h
+            </ChartPeriodItem>
 
-            <ChartPeriodItem active={true}>1W</ChartPeriodItem>
+            <ChartPeriodItem active={chartTimeUnit === 'w'} onClick={() => setChartTimeUnit('w')}>
+              1W
+            </ChartPeriodItem>
 
-            <ChartPeriodItem>1M</ChartPeriodItem>
+            <ChartPeriodItem active={chartTimeUnit === 'm'} onClick={() => setChartTimeUnit('m')}>
+              1M
+            </ChartPeriodItem>
           </ChartPeriodContainer>
         </HContainer>
 

@@ -1020,10 +1020,12 @@ export const rSwapFee = (): AppThunk => async (dispatch, getState) => {
   dispatch(setSwapFee(fee));
 };
 
-export const fetchRTokenStatDetail = (): AppThunk => async (dispatch, getState) => {
-  const data = await commonClice.rTokenStatDetail('Ratom');
-  dispatch(setRTokenStatDetail(data));
-};
+export const fetchRTokenStatDetail =
+  (cycle: number): AppThunk =>
+  async (dispatch, getState) => {
+    const data = await commonClice.rTokenStatDetail('Ratom', cycle);
+    dispatch(setRTokenStatDetail(data));
+  };
 
 const add_ATOM_unbond_Notice =
   (uuid: string, amount: string, status: string, subData?: any): AppThunk =>
