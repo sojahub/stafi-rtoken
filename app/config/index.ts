@@ -543,9 +543,9 @@ export default {
   },
   solScanSlp20TxInAddressUrl: (address: any) => {
     if (!isdev()) {
-      return `https://solscan.io/account/${address}`;
+      return `https://solscan.io/account/${address}#tokenAccounts`;
     }
-    return `https://solscan.io/account/${address}`;
+    return `https://solscan.io/account/${address}#tokenAccounts`;
   },
   etherScanTokenUrl: (tokenAddress: any, userAddress: any) => {
     if (!isdev()) {
