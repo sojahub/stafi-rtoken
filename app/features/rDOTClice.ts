@@ -671,7 +671,7 @@ export const continueProcess = (): AppThunk => async (dispatch, getState) => {
     dispatch(
       bondStates(rSymbol.Atom, stakeHash.txHash, stakeHash.blockHash, (e: string) => {
         if (e == 'successful') {
-          message.success('minting succeeded', 3, () => {
+          message.success('Minting succeeded', 3, () => {
             dispatch(setStakeHash(null));
           });
         } else {
@@ -681,7 +681,7 @@ export const continueProcess = (): AppThunk => async (dispatch, getState) => {
     );
     // dispatch(rTokenSeries_bondStates(rSymbol.Dot, bondSuccessParamArr,statusObj,(e:string)=>{
     //   if(e=="successful"){
-    //     message.success("minting succeeded",3,()=>{
+    //     message.success("Minting succeeded",3,()=>{
     //       dispatch(setStakeHash(null));
     //     });
     //   }else if(e=="failure" || e=="stakingFailure"){

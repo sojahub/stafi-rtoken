@@ -786,7 +786,7 @@ export const getMinting =
     dispatch(
       rTokenSeries_bondStates(type, bondSuccessParamArr, statusObj, (e: any) => {
         if (e == 'successful') {
-          message.success('minting succeeded', 3, () => {
+          message.success('Minting succeeded', 3, () => {
             cb && cb(e);
           });
         } else {

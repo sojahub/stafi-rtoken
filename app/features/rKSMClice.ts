@@ -664,7 +664,7 @@ export const continueProcess = (): AppThunk => async (dispatch, getState) => {
     dispatch(
       bondStates(rSymbol.Atom, stakeHash.txHash, stakeHash.blockHash, (e: string) => {
         if (e == 'successful') {
-          message.success('minting succeeded', 3, () => {
+          message.success('Minting succeeded', 3, () => {
             dispatch(setStakeHash(null));
           });
         } else {
