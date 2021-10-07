@@ -4,7 +4,7 @@ import { bondFees, continueProcess, getPools, getTotalIssuance, setSolAccount } 
 import { Symbol } from '@keyring/defaults';
 import SolServer from '@servers/sol/index';
 import Content from '@shared/components/content';
-import { getLocalStorageItem, Keys, removeLocalStorageItem } from '@util/common';
+import { getLocalStorageItem, Keys, removeLocalStorageItem, timeout } from '@util/common';
 import { Spin } from 'antd';
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -24,12 +24,17 @@ export default function Index(props: any) {
   });
 
   useEffect(() => {
+    checkSolanaWallet();
+  }, []);
+
+  const checkSolanaWallet = async () => {
+    await timeout(500);
     const solana = solServer.getProvider();
     if (!solana) {
       dispatch(setSolAccount(null));
       removeLocalStorageItem(Keys.SolAccountKey);
     }
-  }, []);
+  };
 
   useEffect(() => {
     dispatch(getTotalIssuance());
