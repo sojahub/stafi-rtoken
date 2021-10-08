@@ -78,10 +78,11 @@ export default class ExtensionDapp extends SolKeyring {
       let signed = await solana.signTransaction(transaction);
       let txid = await connection.sendRawTransaction(signed.serialize());
       const result = await connection.confirmTransaction(txid);
+      await timeout(1000);
       const tx = await connection.getConfirmedTransaction(txid);
       // const block = await connection.getBlock(result.context.slot);
       const block = await connection.getBlock(tx.slot);
-      
+
       return {
         blockHash: block.blockhash,
         txHash: txid,
