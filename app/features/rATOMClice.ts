@@ -888,24 +888,13 @@ const handleStakerApr =
   async (dispatch, getState) => {
     if (currentRate && lastRate) {
       const apr =
-        NumberUtil.handleEthRoundToFixed(((currentRate - lastRate) / 1000000000000 / 7.2) * 365.25 * 100) + '%';
+        NumberUtil.handleEthRoundToFixed(((currentRate - lastRate) / 1000000000000 / 8.4) * 365.25 * 100) + '%';
       dispatch(setStakerApr(apr));
     } else {
       dispatch(setStakerApr('9.8%'));
     }
   };
-// };
-// const handleStakerApr =
-//   (currentRate?: any, lastRate?: any): AppThunk =>
-//   async (dispatch, getState) => {
-//     dispatch(setStakerApr('9.8%'));
-//     //  if (currentRate && lastRate) {
-//     //     const apr = NumberUtil.handleEthRoundToFixed((currentRate - lastRate)/lastRate * 365.25 * 100) + '%';
-//     //     dispatch(setStakerApr(apr));
-//     //   } else {
-//     //     dispatch(setStakerApr('9.8%'));
-//     //   }
-//   };
+
 export const checkAddress = (address: string) => {
   const keyringInstance = keyring.init(Symbol.Atom);
   return keyringInstance.checkAddress(address);
