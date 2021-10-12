@@ -6,7 +6,7 @@
   "scripts": {
     "dll": "webpack --config config/webpack.dll.js -p",
     "build": "rimraf build && webpack --config config/webpack.prod.js ",
-    "start": "webpack serve --inline --hot --config config/webpack.dev.js ",
+    "start": "node --max-old-space-size=8192 node_modules/webpack/bin/webpack.js serve --inline --hot --config config/webpack.dev.js ",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -79,7 +79,7 @@
     "@types/react-router-config": "^5.0.2",
     "@types/react-router-dom": "^5.1.7",
     "@types/redux-logger": "^3.0.8",
-    "@types/styled-components": "^5.1.12",
+    "@types/styled-components": "^5.1.15",
     "autoprefixer": "9.0.0",
     "babel-loader": "^8.2.2",
     "babel-plugin-import": "^1.13.3",

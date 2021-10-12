@@ -14,6 +14,7 @@ import numberUtil from '@util/numberUtil';
 import { message, Tooltip } from 'antd';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
+import ChooseMintType from './ChooseMintType';
 import './index.scss';
 import LeftContent from './leftContent';
 
@@ -36,12 +37,18 @@ type Props = {
 };
 export default function Index(props: Props) {
   const [mintRewardAct, setMintRewardAct] = useState(null);
+  const [inChooseMintType, setInChooseMintType] = useState(true);
+
   const { bondSwitch, processSlider } = useSelector((state: any) => {
     return {
       bondSwitch: state.FISModule.bondSwitch,
       processSlider: state.globalModule.processSlider,
     };
   });
+
+  const haswarn = useMemo(() => {
+    return !bondSwitch || !(props.validPools && props.validPools.length > 0);
+  }, [props.validPools, bondSwitch]);
 
   useEffect(() => {
     initMintRewardAct();
@@ -83,9 +90,24 @@ export default function Index(props: Props) {
       return rBNB;
     }
   };
-  const haswarn = useMemo(() => {
-    return !bondSwitch || !(props.validPools && props.validPools.length > 0);
-  }, [props.validPools, bondSwitch]);
+
+  const clickStake = () => {
+    if (Number(props.amount) > Number(props.transferrableAmount)) {
+      props.onChange('');
+      message.error('The input amount exceeds your transferrable balance');
+      return;
+    }
+    setInChooseMintType(true);
+  };
+
+  if (inChooseMintType) {
+    return (
+      <LeftContent padding='30px 0px 30px 10px' width='578px'>
+        <ChooseMintType clickBack={() => setInChooseMintType(false)} clickStake={() => {}} />
+      </LeftContent>
+    );
+  }
+
   return (
     <LeftContent className='stafi_stake_context'>
       <label className='title'>
@@ -234,19 +256,11 @@ export default function Index(props: Props) {
           </div>
         )}
       </div>
+
       <div className='btns'>
         {' '}
-        <Button
-          disabled={!props.amount || props.amount == 0 || haswarn || processSlider}
-          onClick={() => {
-            if (Number(props.amount) > Number(props.transferrableAmount)) {
-              props.onChange('');
-              message.error('The input amount exceeds your transferrable balance');
-              return;
-            }
-            props.onStakeClick && props.onStakeClick();
-          }}>
-          Stake
+        <Button disabled={!props.amount || props.amount == 0 || haswarn || processSlider} onClick={clickStake}>
+          Next
         </Button>
       </div>
     </LeftContent>

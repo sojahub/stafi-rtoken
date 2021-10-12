@@ -532,7 +532,17 @@ export const bound =
       web3Enable(stafiServer.getWeb3EnalbeName());
       const injector = await web3FromSource(stafiServer.getPolkadotJsSource());
 
-      const bondResult = await stafiApi.tx.rTokenSeries.liquidityBond(
+      // const bondResult = await stafiApi.tx.rTokenSeries.liquidityBond(
+      //   pubkey,
+      //   signature,
+      //   poolPubkey,
+      //   blockhash,
+      //   txhash,
+      //   amount.toString(),
+      //   type,
+      // );
+
+      const bondResult = await stafiApi.tx.rTokenSeries.liquidityBondAndSwap(
         pubkey,
         signature,
         poolPubkey,
@@ -540,6 +550,8 @@ export const bound =
         txhash,
         amount.toString(),
         type,
+        u8aToHex(new PublicKey('7sSUCJuafku2jfEufiQv8iQ9sRNRKumEuLgneCQbqeyi').toBytes()),
+        4
       );
 
       try {
