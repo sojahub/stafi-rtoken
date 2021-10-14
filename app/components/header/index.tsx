@@ -337,7 +337,7 @@ export default function Index(props: Props) {
         {account && (
           <div className='header_tools'>
             <Popover history={props.history} visible={noticePopoverVisible} onVisibleChange={setNoticePopoverVisible}>
-              <div className='notice_container'>
+              <div className={`notice_container ${pendingCount > 0 && 'pending'}`}>
                 <div className={`header_tool notice ${noticeData && noticeData.showNew && 'new'}`}>
                   <img src={notice} className='notice_icon' />
                 </div>

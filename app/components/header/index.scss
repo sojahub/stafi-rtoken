@@ -87,15 +87,17 @@
     .notice_container {
       margin-top: 6px;
       cursor: pointer;
-      background-color: #2b3239;
       border-radius: 6px;
       height: 30px;
       display: flex;
       flex-direction: row;
       align-items: center;
       justify-content: flex-end;
-      padding-right: 12.5px;
       width: 110px;
+    }
+    .notice_container.pending {
+      background-color: #2b3239;
+      padding-right: 12.5px;
     }
     .notice_icon {
       width: 19px;

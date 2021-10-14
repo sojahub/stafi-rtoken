@@ -14,6 +14,9 @@ import React from 'react';
 import styled from 'styled-components';
 
 interface MintTypeCardProps {
+  tokenType: 'rDOT' | 'rFIS' | 'rKSM' | 'rATOM' | 'rSOL' | 'rMATIC' | 'rBNB';
+  relayFee: any;
+  swapFee?: any;
   selected: boolean;
   chainId: number;
   onClick: Function;
@@ -56,7 +59,9 @@ export default function MintTypeCard(props: MintTypeCardProps) {
         </Text>
       </HeadContainer>
 
-      <Text size='12px' scale={0.83} transformOrigin='top center' whiteSpace='nowrap'>
+      <Divider />
+
+      <Text bold size='12px' scale={0.83} transformOrigin='top center' whiteSpace='nowrap' mt='6px'>
         {props.chainId === ETH_CHAIN_ID
           ? 'Used for DeFi on Ethereum'
           : props.chainId === BSC_CHAIN_ID
@@ -69,29 +74,31 @@ export default function MintTypeCard(props: MintTypeCardProps) {
       </Text>
 
       <StakeDetailContainer>
-        <HContainer alignItems='flex-start'>
-          <Text size='12px' scale={0.83} transformOrigin='top center' color='#C4C4C4' sameLineHeight>
-            Relay Fee: 3 FIS
-          </Text>
+        {props.tokenType !== 'rFIS' && (
+          <HContainer alignItems='flex-start'>
+            <Text size='12px' scale={0.83} transformOrigin='top center' color='#C4C4C4' sameLineHeight mb='2px'>
+              Relay Fee: {props.relayFee} FIS
+            </Text>
 
-          <Tooltip
-            overlayClassName='doubt_overlay'
-            placement='topLeft'
-            title={
-              'Fee charged by the relayers to pay for the cross-chain contract interaction service fee between StaFi chain and designated chain.'
-            }>
-            <img src={doubt} style={{ width: '6px', height: '6px', marginLeft: '-6px' }} />
-          </Tooltip>
-        </HContainer>
+            <Tooltip
+              overlayClassName='doubt_overlay'
+              placement='topLeft'
+              title={
+                'Fee charged by the relayers to pay for the cross-chain contract interaction service fee between StaFi chain and designated chain.'
+              }>
+              <img src={doubt} style={{ width: '6px', height: '6px', marginLeft: '-6px' }} />
+            </Tooltip>
+          </HContainer>
+        )}
 
         {props.chainId !== STAFI_CHAIN_ID && (
-          <Text size='12px' scale={0.83} transformOrigin='top center' color='#C4C4C4' sameLineHeight mt='2px'>
-            Bridge Fee: 30 FIS
+          <Text size='12px' scale={0.83} transformOrigin='top center' color='#C4C4C4' sameLineHeight mb='2px'>
+            Bridge Fee: {isNaN(props.swapFee) ? '--' : Math.round(props.swapFee * 1000000) / 1000000} FIS
           </Text>
         )}
 
-        <Text size='12px' scale={0.83} transformOrigin='top center' color='#C4C4C4' sameLineHeight mt='2px'>
-          Time: 1~2 minutes
+        <Text size='12px' scale={0.83} transformOrigin='top center' color='#C4C4C4' sameLineHeight>
+          Time: {props.tokenType === 'rFIS' && props.chainId === STAFI_CHAIN_ID ? '<1 minute' : '1~2 minutes'}
         </Text>
       </StakeDetailContainer>
     </CardContainer>
@@ -108,6 +115,7 @@ export const CardContainer = styled.div<CardContainerProps>`
   height: 220px;
   border-radius: 4px;
   border: 1px solid #696367;
+  border-width: ${(props) => (props.selected ? '2px' : '1px')};
   border-color: ${(props) => (props.selected ? '#159272' : '#696367')};
   margin: 0 15px;
   display: flex;
@@ -124,7 +132,7 @@ type HeadContainerProps = {
 export const HeadContainer = styled.div<HeadContainerProps>`
   background: url(${(props) => props.img}) center center no-repeat;
   width: 148px;
-  height: 140px;
+  height: 130px;
   padding-top: 32px;
   padding-left: 74px;
 `;
@@ -135,4 +143,11 @@ export const StakeDetailContainer = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
+`;
+
+export const Divider = styled.div`
+  height: 1px;
+  background-color: rgba(71, 71, 71, 0.5);
+  margin: 0 4px;
+  align-self: stretch;
 `;

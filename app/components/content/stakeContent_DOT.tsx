@@ -108,10 +108,11 @@ export default function Index(props: Props) {
       <LeftContent padding='30px 0px 30px 10px' width='578px'>
         <ChooseMintType
           type={props.type}
+          relayFee={props.bondFees}
           clickBack={() => setInChooseMintType(false)}
           clickStake={(chainId: number, targetAddress: string) => {
             props.onStakeClick(chainId, targetAddress);
-            
+
             const destPlatform =
               chainId === ETH_CHAIN_ID
                 ? 'ERC20'
@@ -190,7 +191,7 @@ export default function Index(props: Props) {
         <Input
           placeholder='AMOUNT'
           value={props.amount}
-          maxInput={props.transferrableAmount}
+          maxInput={isNaN(props.transferrableAmount) ? 0 : props.transferrableAmount}
           onChange={(e: any) => {
             props.onChange && props.onChange(e);
           }}

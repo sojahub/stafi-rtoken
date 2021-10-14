@@ -1,58 +1,30 @@
-import { BSC_CHAIN_ID, ETH_CHAIN_ID, SOL_CHAIN_ID, STAFI_CHAIN_ID } from '@features/bridgeClice';
+import {
+  bridgeCommon_ChainFees,
+  BSC_CHAIN_ID,
+  ETH_CHAIN_ID,
+  SOL_CHAIN_ID,
+  STAFI_CHAIN_ID
+} from '@features/bridgeClice';
 import { setLoading } from '@features/globalClice';
 import { checkEthAddress } from '@features/rETHClice';
 import { checkAddress as checkSOLAddress } from '@features/rSOLClice';
 import leftArrowSvg from '@images/left_arrow.svg';
-import ethIcon from '@images/stake_overview_eth.svg';
-import polkadotIcon from '@images/stake_overview_polkadot.svg';
 import SolServer from '@servers/sol';
 import Button from '@shared/components/button/button';
 import AddressInputEmbed from '@shared/components/input/addressInputEmbed';
 import { message } from 'antd';
 import StakeOverviewModal from 'app/modal/StakeOverviewModal';
 import { isEmpty } from 'lodash';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import './index.scss';
 import MintTypeCard from './MintTypeCard';
 
 const solServer = new SolServer();
 
-const maticStakeFees = [
-  {
-    icon: ethIcon,
-    title: 'Approve fund',
-    amount: 0.002,
-    unit: 'ETH',
-  },
-  {
-    icon: ethIcon,
-    title: 'Sending fund',
-    amount: 0.012,
-    unit: 'ETH',
-  },
-  {
-    icon: polkadotIcon,
-    title: 'Signature',
-    amount: 0.122,
-    unit: 'ETH',
-  },
-  {
-    icon: polkadotIcon,
-    title: 'Staking',
-    amount: 1.115,
-    unit: 'ETH',
-  },
-  {
-    icon: polkadotIcon,
-    title: 'Swapping',
-    amount: 23.221,
-    unit: 'ETH',
-  },
-];
-
 type ChooseMintTypeProps = {
-  type: string;
+  type: 'rDOT' | 'rFIS' | 'rKSM' | 'rATOM' | 'rSOL' | 'rMATIC' | 'rBNB';
+  relayFee: any;
   clickBack: Function;
   clickStake: Function;
 };
@@ -64,11 +36,142 @@ export default function ChooseMintType(props: ChooseMintTypeProps) {
   const [stakeOverviewModalVisible, setStakeOverviewModalVisible] = useState(false);
   const [showAddSplTokenButton, setShowAddSplTokenButton] = useState(false);
 
-  const { processSlider } = useSelector((state: any) => {
+  const { processSlider, erc20SwapFee, bep20SwapFee, slp20SwapFee } = useSelector((state: any) => {
     return {
       processSlider: state.globalModule.processSlider,
+      erc20SwapFee: state.bridgeModule.erc20EstimateFee,
+      bep20SwapFee: state.bridgeModule.bep20EstimateFee,
+      slp20SwapFee: state.bridgeModule.slp20EstimateFee,
     };
   });
+
+  const { sendingFund, stakingFee, stakingAndSwapFee } = useMemo(() => {
+    if (props.type === 'rFIS') {
+      if (selectedChainId === STAFI_CHAIN_ID) {
+        return {
+          stakingFee: '0.004 FIS',
+        };
+      } else if (selectedChainId === ETH_CHAIN_ID) {
+        return {
+          stakingAndSwapFee:
+            Math.round((0.004 + Number(isNaN(erc20SwapFee) ? 0 : erc20SwapFee)) * 1000000) / 1000000 + ' FIS',
+        };
+      } else if (selectedChainId === BSC_CHAIN_ID) {
+        return {
+          stakingAndSwapFee:
+            Math.round((0.004 + Number(isNaN(bep20SwapFee) ? 0 : bep20SwapFee)) * 1000000) / 1000000 + ' FIS',
+        };
+      }
+    } else if (props.type === 'rDOT') {
+      if (selectedChainId === STAFI_CHAIN_ID) {
+        return {
+          sendingFund: '0.015 DOT',
+          stakingFee: '0.003 FIS',
+        };
+      } else if (selectedChainId === ETH_CHAIN_ID) {
+        return {
+          sendingFund: '0.015 DOT',
+          stakingAndSwapFee:
+            Math.round((0.003 + Number(isNaN(erc20SwapFee) ? 0 : erc20SwapFee)) * 1000000) / 1000000 + ' FIS',
+        };
+      } else if (selectedChainId === BSC_CHAIN_ID) {
+        return {
+          sendingFund: '0.015 DOT',
+          stakingAndSwapFee:
+            Math.round((0.003 + Number(isNaN(bep20SwapFee) ? 0 : bep20SwapFee)) * 1000000) / 1000000 + ' FIS',
+        };
+      }
+    } else if (props.type === 'rKSM') {
+      if (selectedChainId === STAFI_CHAIN_ID) {
+        return {
+          sendingFund: '0.00005 KSM',
+          stakingFee: '0.003 FIS',
+        };
+      } else if (selectedChainId === ETH_CHAIN_ID) {
+        return {
+          sendingFund: '0.00005 KSM',
+          stakingAndSwapFee:
+            Math.round((0.003 + Number(isNaN(erc20SwapFee) ? 0 : erc20SwapFee)) * 1000000) / 1000000 + ' FIS',
+        };
+      } else if (selectedChainId === BSC_CHAIN_ID) {
+        return {
+          sendingFund: '0.00005 KSM',
+          stakingAndSwapFee:
+            Math.round((0.003 + Number(isNaN(bep20SwapFee) ? 0 : bep20SwapFee)) * 1000000) / 1000000 + ' FIS',
+        };
+      }
+    } else if (props.type === 'rATOM') {
+      if (selectedChainId === STAFI_CHAIN_ID) {
+        return {
+          sendingFund: '0.002 ATOM',
+          stakingFee: '0.003 FIS',
+        };
+      } else if (selectedChainId === ETH_CHAIN_ID) {
+        return {
+          sendingFund: '0.002 ATOM',
+          stakingAndSwapFee:
+            Math.round((0.003 + Number(isNaN(erc20SwapFee) ? 0 : erc20SwapFee)) * 1000000) / 1000000 + ' FIS',
+        };
+      } else if (selectedChainId === BSC_CHAIN_ID) {
+        return {
+          sendingFund: '0.002 ATOM',
+          stakingAndSwapFee:
+            Math.round((0.003 + Number(isNaN(bep20SwapFee) ? 0 : bep20SwapFee)) * 1000000) / 1000000 + ' FIS',
+        };
+      }
+    } else if (props.type === 'rMATIC') {
+      if (selectedChainId === STAFI_CHAIN_ID) {
+        return {
+          sendingFund: '0.00000012 ETH',
+          stakingFee: '0.003 FIS',
+        };
+      } else if (selectedChainId === ETH_CHAIN_ID) {
+        return {
+          sendingFund: '0.00000012 ETH',
+          stakingAndSwapFee:
+            Math.round((0.003 + Number(isNaN(erc20SwapFee) ? 0 : erc20SwapFee)) * 1000000) / 1000000 + ' FIS',
+        };
+      } else if (selectedChainId === BSC_CHAIN_ID) {
+        return {
+          sendingFund: '0.00000012 ETH',
+          stakingAndSwapFee:
+            Math.round((0.003 + Number(isNaN(bep20SwapFee) ? 0 : bep20SwapFee)) * 1000000) / 1000000 + ' FIS',
+        };
+      }
+    } else if (props.type === 'rBNB') {
+      if (selectedChainId === STAFI_CHAIN_ID) {
+        return {
+          sendingFund: '0.0001 BNB',
+          stakingFee: '0.003 FIS',
+        };
+      } else if (selectedChainId === ETH_CHAIN_ID) {
+        return {
+          sendingFund: '0.0001 BNB',
+          stakingAndSwapFee:
+            Math.round((0.003 + Number(isNaN(erc20SwapFee) ? 0 : erc20SwapFee)) * 1000000) / 1000000 + ' FIS',
+        };
+      } else if (selectedChainId === BSC_CHAIN_ID) {
+        return {
+          sendingFund: '0.0001 BNB',
+          stakingAndSwapFee:
+            Math.round((0.003 + Number(isNaN(bep20SwapFee) ? 0 : bep20SwapFee)) * 1000000) / 1000000 + ' FIS',
+        };
+      }
+    } else if (props.type === 'rSOL') {
+      if (selectedChainId === STAFI_CHAIN_ID) {
+        return {
+          sendingFund: '0.00001 SOL',
+          stakingFee: '0.003 FIS',
+        };
+      } else if (selectedChainId === SOL_CHAIN_ID) {
+        return {
+          sendingFund: '0.00001 SOL',
+          stakingAndSwapFee:
+            Math.round((0.003 + Number(isNaN(slp20SwapFee) ? 0 : slp20SwapFee)) * 1000000) / 1000000 + ' FIS',
+        };
+      }
+    }
+  }, [props.type, selectedChainId, erc20SwapFee, bep20SwapFee, slp20SwapFee]);
 
   const showNative = true;
   const showErc20 =
@@ -76,7 +179,7 @@ export default function ChooseMintType(props: ChooseMintTypeProps) {
     props.type === 'rKSM' ||
     props.type === 'rDOT' ||
     props.type === 'rATOM' ||
-    props.type === 'rMatic';
+    props.type === 'rMATIC';
   const showBep20 =
     props.type === 'rFIS' ||
     props.type === 'rKSM' ||
@@ -85,6 +188,10 @@ export default function ChooseMintType(props: ChooseMintTypeProps) {
     props.type === 'rMATIC' ||
     props.type === 'rBNB';
   const showSpl = props.type === 'rSOL';
+
+  useEffect(() => {
+    dispatch(bridgeCommon_ChainFees());
+  }, []);
 
   useEffect(() => {
     setTargetAddress('');
@@ -120,6 +227,8 @@ export default function ChooseMintType(props: ChooseMintTypeProps) {
       <div className='types_container'>
         {showNative && (
           <MintTypeCard
+            tokenType={props.type}
+            relayFee={props.relayFee}
             selected={selectedChainId === STAFI_CHAIN_ID}
             chainId={STAFI_CHAIN_ID}
             onClick={(chainId: number) => setSelectedChainId(chainId)}
@@ -128,6 +237,9 @@ export default function ChooseMintType(props: ChooseMintTypeProps) {
 
         {showErc20 && (
           <MintTypeCard
+            tokenType={props.type}
+            relayFee={props.relayFee}
+            swapFee={erc20SwapFee}
             selected={selectedChainId === ETH_CHAIN_ID}
             chainId={ETH_CHAIN_ID}
             onClick={(chainId: number) => setSelectedChainId(chainId)}
@@ -136,6 +248,9 @@ export default function ChooseMintType(props: ChooseMintTypeProps) {
 
         {showBep20 && (
           <MintTypeCard
+            tokenType={props.type}
+            relayFee={props.relayFee}
+            swapFee={bep20SwapFee}
             selected={selectedChainId === BSC_CHAIN_ID}
             chainId={BSC_CHAIN_ID}
             onClick={(chainId: number) => setSelectedChainId(chainId)}
@@ -144,6 +259,9 @@ export default function ChooseMintType(props: ChooseMintTypeProps) {
 
         {showSpl && (
           <MintTypeCard
+            tokenType={props.type}
+            relayFee={props.relayFee}
+            swapFee={slp20SwapFee}
             selected={selectedChainId === SOL_CHAIN_ID}
             chainId={SOL_CHAIN_ID}
             onClick={(chainId: number) => setSelectedChainId(chainId)}
@@ -169,7 +287,7 @@ export default function ChooseMintType(props: ChooseMintTypeProps) {
           <div className='divider' />
 
           <div className='note'>
-            Note: Make sure you have the right address, otherwise you will not receive the token If you provide a wrong
+            Note: Make sure you have the right address, otherwise you will not receive the token if you provide a wrong
             address.
           </div>
         </div>
@@ -208,7 +326,10 @@ export default function ChooseMintType(props: ChooseMintTypeProps) {
 
       <StakeOverviewModal
         visible={stakeOverviewModalVisible}
-        feeList={maticStakeFees}
+        tokenType={props.type}
+        sendingFund={sendingFund}
+        stakingFee={stakingFee}
+        stakingAndSwapFee={stakingAndSwapFee}
         onOk={() => {
           setStakeOverviewModalVisible(false);
           props.clickStake(selectedChainId, targetAddress);

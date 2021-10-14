@@ -1,6 +1,12 @@
 import { HContainer, Text } from '@components/commonComponents';
 import closeIcon from '@images/ic_close_black.svg';
 import stakeOverviewIcon from '@images/stake_overview.png';
+import atomIcon from '@images/stake_overview_atom.svg';
+import bnbIcon from '@images/stake_overview_bnb.svg';
+import ethIcon from '@images/stake_overview_eth.svg';
+import ksmIcon from '@images/stake_overview_ksm.svg';
+import polkadotIcon from '@images/stake_overview_polkadot.svg';
+import solIcon from '@images/stake_overview_sol.svg';
 import { Modal } from 'antd';
 import React from 'react';
 import styled, { CSSProperties } from 'styled-components';
@@ -14,12 +20,30 @@ export interface StakeFeeItem {
 
 interface StakeOverviewModalProps {
   visible: boolean;
-  feeList: Array<StakeFeeItem>;
+  tokenType: 'rDOT' | 'rFIS' | 'rKSM' | 'rATOM' | 'rSOL' | 'rMATIC' | 'rBNB';
+  sendingFund?: string;
+  stakingFee?: string;
+  stakingAndSwapFee?: string;
   onOk: Function;
   onCancel: Function;
 }
 
 export default function StakeOverviewModal(props: StakeOverviewModalProps) {
+  let sendingFundIcon;
+  if (props.tokenType === 'rMATIC') {
+    sendingFundIcon = ethIcon;
+  } else if (props.tokenType === 'rDOT') {
+    sendingFundIcon = polkadotIcon;
+  } else if (props.tokenType === 'rKSM') {
+    sendingFundIcon = ksmIcon;
+  } else if (props.tokenType === 'rATOM') {
+    sendingFundIcon = atomIcon;
+  } else if (props.tokenType === 'rSOL') {
+    sendingFundIcon = solIcon;
+  } else if (props.tokenType === 'rBNB') {
+    sendingFundIcon = bnbIcon;
+  }
+
   return (
     <Modal
       footer={false}
@@ -51,21 +75,53 @@ export default function StakeOverviewModal(props: StakeOverviewModalProps) {
       </Text>
 
       <FeeListContainer>
-        {props.feeList.map((item) => (
-          <HContainer mb='6px' key={item.title}>
+        {props.sendingFund && (
+          <HContainer mb='6px'>
             <HContainer>
-              <FeeIcon src={item.icon} />
+              <FeeIcon src={sendingFundIcon} />
 
               <Text size='12px' color='23292F' sameLineHeight>
-                {item.title}
+                Sending fund
               </Text>
             </HContainer>
 
             <Text size='12px' color='23292F' sameLineHeight>
-              {item.amount} {item.unit}
+              {props.sendingFund}
             </Text>
           </HContainer>
-        ))}
+        )}
+
+        {props.stakingFee && (
+          <HContainer mb='6px'>
+            <HContainer>
+              <FeeIcon src={polkadotIcon} />
+
+              <Text size='12px' color='23292F' sameLineHeight>
+                Staking
+              </Text>
+            </HContainer>
+
+            <Text size='12px' color='23292F' sameLineHeight>
+              {props.stakingFee}
+            </Text>
+          </HContainer>
+        )}
+
+        {props.stakingAndSwapFee && (
+          <HContainer mb='6px'>
+            <HContainer>
+              <FeeIcon src={polkadotIcon} />
+
+              <Text size='12px' color='23292F' sameLineHeight>
+                {'Staking & Swap'}
+              </Text>
+            </HContainer>
+
+            <Text size='12px' color='23292F' sameLineHeight>
+              {props.stakingAndSwapFee}
+            </Text>
+          </HContainer>
+        )}
       </FeeListContainer>
 
       <Divider />
