@@ -57,7 +57,15 @@ export default function MintTypeCard(props: MintTypeCardProps) {
       </HeadContainer>
 
       <Text size='12px' scale={0.83} transformOrigin='top center' whiteSpace='nowrap'>
-        Used for DeFi on Ethereum
+        {props.chainId === ETH_CHAIN_ID
+          ? 'Used for DeFi on Ethereum'
+          : props.chainId === BSC_CHAIN_ID
+          ? 'Used for DeFi on BSC'
+          : props.chainId === STAFI_CHAIN_ID
+          ? 'Used on StaFi Ecosystem'
+          : props.chainId === SOL_CHAIN_ID
+          ? 'Used for DeFi on Solana'
+          : ''}
       </Text>
 
       <StakeDetailContainer>
