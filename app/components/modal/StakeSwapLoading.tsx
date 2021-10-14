@@ -1,4 +1,5 @@
 import { LoadingOutlined } from '@ant-design/icons';
+import { getRsymbolByTokenType, getSymbolRTitle } from '@config/index';
 import { BSC_CHAIN_ID, ETH_CHAIN_ID, SOL_CHAIN_ID } from '@features/bridgeClice';
 import {
   getAssetBalance as getBscAssetBalance,
@@ -13,6 +14,7 @@ import { noticeStatus, update_NoticeStatus } from '@features/noticeClice';
 import { getAssetBalance as getSlpAssetBalance, getSlp20AssetBalanceAll } from '@features/SOLClice';
 import close_bold_svg from '@images/close_bold.svg';
 import complete_svg from '@images/complete.svg';
+import { requestAddERC20TokenToMetaMask } from '@util/metamaskUtil';
 import numberUtil from '@util/numberUtil';
 import { useInterval } from '@util/utils';
 import { message, Modal, Progress, Spin } from 'antd';
@@ -31,10 +33,11 @@ const swapWaitingTime = 300;
 export default function StakeSwapLoading(props: Props) {
   const dispatch = useDispatch();
 
-  const { swapLoadingStatus, swapLoadingParams } = useSelector((state: any) => {
+  const { swapLoadingStatus, swapLoadingParams, metaMaskNetworkId } = useSelector((state: any) => {
     return {
       swapLoadingStatus: state.globalModule.stakeSwapLoadingStatus,
       swapLoadingParams: state.globalModule.stakeSwapLoadingParams,
+      metaMaskNetworkId: state.globalModule.metaMaskNetworkId,
     };
   });
 
@@ -253,6 +256,16 @@ export default function StakeSwapLoading(props: Props) {
                 }>
                 VIEW YOUR TRANSACTION
               </div>
+
+              {(swapLoadingParams.destChainId === ETH_CHAIN_ID || swapLoadingParams.destChainId === BSC_CHAIN_ID) && (
+                <div
+                  className='add_token_text'
+                  onClick={() => {
+                    requestAddERC20TokenToMetaMask(swapLoadingParams.tokenType, swapLoadingParams.destChainId);
+                  }}>
+                  Add {getSymbolRTitle(getRsymbolByTokenType(swapLoadingParams.tokenType))} to Metamask
+                </div>
+              )}
             </div>
           </>
         ) : (
