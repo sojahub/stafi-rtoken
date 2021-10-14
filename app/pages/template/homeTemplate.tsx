@@ -1,4 +1,5 @@
 import Header from '@components/header';
+import StakeSwapLoading from '@components/modal/StakeSwapLoading';
 import Sider from '@components/slider';
 import LiquidingProcesSlider from '@components/slider/liquidingProcessSlider';
 import React from 'react';
@@ -15,6 +16,8 @@ export default function index(props: any) {
         <Header route={props.route} history={props.history} />
         {renderRoutes(props.route.routes)}
       </div>
+
+      <StakeSwapLoading />
     </div>
   );
 }

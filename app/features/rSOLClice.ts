@@ -20,6 +20,15 @@ import NumberUtil from '@util/numberUtil';
 import { message } from 'antd';
 import base58 from 'bs58';
 import { AppThunk } from '../store';
+import {
+  BSC_CHAIN_ID,
+  ETH_CHAIN_ID,
+  SOL_CHAIN_ID,
+  STAFI_CHAIN_ID,
+  updateSwapParamsOfBep,
+  updateSwapParamsOfErc,
+  updateSwapParamsOfSlp
+} from './bridgeClice';
 import CommonClice from './commonClice';
 import { bondStates, bound, fisUnbond, rTokenSeries_bondStates } from './FISClice';
 import {
@@ -27,9 +36,11 @@ import {
   initProcess,
   processStatus,
   setLoading,
+  setProcessDestChainId,
   setProcessSending,
   setProcessSlider,
-  setProcessType
+  setProcessType,
+  setStakeSwapLoadingStatus
 } from './globalClice';
 import { add_Notice, findUuidWithoutBlockhash, noticeStatus, noticesubType, noticeType } from './noticeClice';
 
@@ -207,7 +218,7 @@ const queryBalance = async (account: any, dispatch: any, getState: any) => {
 };
 
 export const transfer =
-  (amountparam: string, cb?: Function): AppThunk =>
+  (amountparam: string, destChainId: number, targetAddress: string, cb?: Function): AppThunk =>
   async (dispatch, getState) => {
     const solana = solServer.getProvider();
     if (!solana) {
@@ -256,6 +267,7 @@ export const transfer =
       }),
     );
     dispatch(setProcessType(rSymbol.Sol));
+    dispatch(setProcessDestChainId(destChainId));
     dispatch(setProcessSlider(true));
 
     try {
@@ -301,6 +313,8 @@ export const transfer =
               poolAddress: selectedPool.poolPubkey,
             },
             href: cb ? '/rSOL/staker/info' : null,
+            destChainId,
+            targetAddress,
           }),
         );
 
@@ -314,24 +328,49 @@ export const transfer =
         message.info('Sending succeeded, proceeding signature');
 
         dispatch(
-          bound(solAddress, hexTxHash, hexBlockHash, amount, selectedPool.poolPubkey, rSymbol.Sol, (r: string) => {
-            if (r == 'loading') {
-              dispatch(add_SOL_stake_Notice(notice_uuid, amountparam, noticeStatus.Pending));
-            } else {
-              dispatch(setStakeHash(null));
-            }
+          bound(
+            solAddress,
+            hexTxHash,
+            hexBlockHash,
+            amount,
+            selectedPool.poolPubkey,
+            rSymbol.Sol,
+            destChainId,
+            targetAddress,
+            (r: string) => {
+              if (r == 'loading') {
+                dispatch(add_SOL_stake_Notice(notice_uuid, amountparam, noticeStatus.Pending));
+              } else {
+                dispatch(setStakeHash(null));
+              }
 
-            if (r == 'failure') {
-              dispatch(add_SOL_stake_Notice(notice_uuid, amountparam, noticeStatus.Error));
-            }
+              if (r == 'failure') {
+                dispatch(add_SOL_stake_Notice(notice_uuid, amountparam, noticeStatus.Error));
+              }
 
-            if (r == 'successful') {
-              dispatch(add_SOL_stake_Notice(notice_uuid, amountparam, noticeStatus.Confirmed));
-              cb && cb();
-              dispatch(reloadData());
-              dispatch(setProcessSlider(false));
-            }
-          }),
+              if (r == 'successful') {
+                dispatch(
+                  add_SOL_stake_Notice(
+                    notice_uuid,
+                    amountparam,
+                    destChainId === STAFI_CHAIN_ID ? noticeStatus.Confirmed : noticeStatus.Swapping,
+                  ),
+                );
+                // Set swap loading params for loading modal.
+                if (destChainId === ETH_CHAIN_ID) {
+                  updateSwapParamsOfErc(dispatch, notice_uuid, 'rsol', 0, targetAddress, true);
+                } else if (destChainId === BSC_CHAIN_ID) {
+                  updateSwapParamsOfBep(dispatch, notice_uuid, 'rsol', 0, targetAddress, true);
+                } else if (destChainId === SOL_CHAIN_ID) {
+                  updateSwapParamsOfSlp(dispatch, notice_uuid, 'rsol', 0, targetAddress, true);
+                }
+                dispatch(setStakeSwapLoadingStatus(destChainId === STAFI_CHAIN_ID ? 0 : 2));
+                cb && cb();
+                dispatch(reloadData());
+                dispatch(setProcessSlider(false));
+              }
+            },
+          ),
         );
       } else {
         dispatch(setProcessSlider(false));
@@ -374,9 +413,9 @@ export const reSending =
   async (dispatch, getState) => {
     const processParameter = getState().rSOLModule.processParameter;
     if (processParameter) {
-      const href = processParameter.href;
+      const { href, destChainId, targetAddress } = processParameter;
       dispatch(
-        transfer(processParameter.sending.amount, () => {
+        transfer(processParameter.sending.amount, destChainId, targetAddress, () => {
           cb && href && cb(href);
         }),
       );
@@ -389,8 +428,7 @@ export const reStaking =
     const processParameter = getState().rSOLModule.processParameter;
 
     if (processParameter) {
-      const staking = processParameter.staking;
-      const href = processParameter.href;
+      const { href, staking, destChainId, targetAddress } = processParameter;
       processParameter &&
         dispatch(
           bound(
@@ -400,6 +438,8 @@ export const reStaking =
             NumberUtil.solAmountToChain(staking.amount).toString(),
             staking.poolAddress,
             staking.type,
+            destChainId,
+            targetAddress,
             (r: string) => {
               // if (r != "failure") {
               //   (href && cb) && cb(href);
@@ -553,6 +593,9 @@ const _onProceedInternal =
                 minting: {
                   minting: processStatus.loading,
                 },
+                swapping: {
+                  brocasting: processStatus.default,
+                },
               }),
             );
             dispatch(setProcessSlider(true));
@@ -568,6 +611,8 @@ export const getBlock =
     try {
       const address = getState().rSOLModule.solAccount.address;
       const validPools = getState().rSOLModule.validPools;
+      const processParameter = getState().rSOLModule.processParameter;
+      const { destChainId, targetAddress } = processParameter;
 
       const solServer = new SolServer();
       const { amount, poolAddress, blockhash } = await solServer.getTransactionDetail(
@@ -610,6 +655,9 @@ export const getBlock =
           minting: {
             minting: processStatus.default,
           },
+          swapping: {
+            brocasting: processStatus.default,
+          },
         }),
       );
       dispatch(setProcessSlider(true));
@@ -626,134 +674,42 @@ export const getBlock =
         }),
       );
       dispatch(
-        bound(address, hexTxHash, hexBlockHash, amount, poolData.poolPubkey, rSymbol.Sol, (r: string) => {
-          if (r == 'loading') {
-            uuid &&
-              dispatch(
-                add_SOL_stake_Notice(uuid, NumberUtil.solAmountToHuman(amount).toString(), noticeStatus.Pending),
-              );
-          } else {
-            dispatch(setStakeHash(null));
-          }
+        bound(
+          address,
+          hexTxHash,
+          hexBlockHash,
+          amount,
+          poolData.poolPubkey,
+          rSymbol.Sol,
+          destChainId,
+          targetAddress,
+          (r: string) => {
+            if (r == 'loading') {
+              uuid &&
+                dispatch(
+                  add_SOL_stake_Notice(uuid, NumberUtil.solAmountToHuman(amount).toString(), noticeStatus.Pending),
+                );
+            } else {
+              dispatch(setStakeHash(null));
+            }
 
-          if (r == 'failure') {
-            uuid &&
-              dispatch(add_SOL_stake_Notice(uuid, NumberUtil.solAmountToHuman(amount).toString(), noticeStatus.Error));
-          }
-          if (r == 'successful') {
-            uuid &&
-              dispatch(
-                add_SOL_stake_Notice(uuid, NumberUtil.solAmountToHuman(amount).toString(), noticeStatus.Confirmed),
-              );
-            cb && cb();
-            dispatch(setProcessSlider(false));
-          }
-        }),
+            if (r == 'failure') {
+              uuid &&
+                dispatch(
+                  add_SOL_stake_Notice(uuid, NumberUtil.solAmountToHuman(amount).toString(), noticeStatus.Error),
+                );
+            }
+            if (r == 'successful') {
+              uuid &&
+                dispatch(
+                  add_SOL_stake_Notice(uuid, NumberUtil.solAmountToHuman(amount).toString(), noticeStatus.Confirmed),
+                );
+              cb && cb();
+              dispatch(setProcessSlider(false));
+            }
+          },
+        ),
       );
-
-      // let u = false;
-      // result.block.extrinsics.forEach((ex: any) => {
-      // if (ex.hash.toHex() == txHash) {
-      //   const {
-      //     method: { args, method, section },
-      //   } = ex;
-      //   if (section == 'balances' && (method == 'transfer' || method == 'transferKeepAlive')) {
-      //     u = true;
-
-      //     const keyringInstance = keyring.init(Symbol.Sol);
-      //     if (
-      //       u8aToHex(keyringInstance.decodeAddress(ex.signer.toString())) !=
-      //       u8aToHex(keyringInstance.decodeAddress(address))
-      //     ) {
-      //       message.error('Please select your SOL account that sent the transaction');
-      //       return;
-      //     }
-
-      //     let amount = args[1].toJSON();
-      //     const poolAddress = args[0].toJSON().id;
-      //     let poolPubkey = u8aToHex(keyringInstance.decodeAddress(poolAddress));
-
-      //     const poolData = validPools.find((item: any) => {
-      //       if (item.poolPubkey == poolPubkey) {
-      //         return true;
-      //       }
-      //     });
-
-      //     if (!poolData) {
-      //       message.error('The destination address in the transaction does not match the pool address');
-      //       return;
-      //     }
-
-      //     dispatch(
-      //       initProcess({
-      //         sending: {
-      //           packing: processStatus.success,
-      //           brocasting: processStatus.success,
-      //           finalizing: processStatus.success,
-      //           checkTx: txHash,
-      //         },
-      //         staking: {
-      //           packing: processStatus.default,
-      //           brocasting: processStatus.default,
-      //           finalizing: processStatus.default,
-      //         },
-      //         minting: {
-      //           minting: processStatus.default,
-      //         },
-      //       }),
-      //     );
-      //     dispatch(setProcessSlider(true));
-      //     dispatch(
-      //       setProcessParameter({
-      //         staking: {
-      //           amount: NumberUtil.fisAmountToHuman(amount),
-      //           txHash,
-      //           blockHash,
-      //           address,
-      //           type: rSymbol.Sol,
-      //           poolAddress: poolPubkey,
-      //         },
-      //       }),
-      //     );
-      //     dispatch(
-      //       bound(address, txHash, blockHash, amount, poolPubkey, rSymbol.Sol, (r: string) => {
-      //         // dispatch(setStakeHash(null));
-
-      //         if (r == 'loading') {
-      //           uuid &&
-      //             dispatch(
-      //               add_SOL_stake_Notice(uuid, NumberUtil.fisAmountToHuman(amount).toString(), noticeStatus.Pending),
-      //             );
-      //         } else {
-      //           dispatch(setStakeHash(null));
-      //         }
-
-      //         if (r == 'failure') {
-      //           uuid &&
-      //             dispatch(
-      //               add_SOL_stake_Notice(uuid, NumberUtil.fisAmountToHuman(amount).toString(), noticeStatus.Error),
-      //             );
-      //         }
-      //         if (r == 'successful') {
-      //           uuid &&
-      //             dispatch(
-      //               add_SOL_stake_Notice(
-      //                 uuid,
-      //                 NumberUtil.fisAmountToHuman(amount).toString(),
-      //                 noticeStatus.Confirmed,
-      //               ),
-      //             );
-      //           cb && cb();
-      //         }
-      //       }),
-      //     );
-      //   }
-      // }
-      // });
-
-      // if (!u) {
-      // message.error('No results were found');
-      // }
     } catch (e) {
       message.error(e.message);
     }

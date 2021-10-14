@@ -223,7 +223,7 @@ export default class ExtensionDapp extends SolKeyring {
       // transaction.partialSign(newTokenAccount);
 
       let signed = await solana.signTransaction(transaction);
-      let txid = await connection.sendRawTransaction(signed.serialize(), { skipPreflight: false });
+      let txid = await connection.sendRawTransaction(signed.serialize(), { skipPreflight: true });
       const result = await connection.confirmTransaction(txid);
 
       if (!result.value.err) {

@@ -1,4 +1,5 @@
 import { HContainer, Text } from '@components/commonComponents';
+import { BSC_CHAIN_ID, ETH_CHAIN_ID, SOL_CHAIN_ID, STAFI_CHAIN_ID } from '@features/bridgeClice';
 import doubt from '@images/doubt.svg';
 import bep20Icon from '@images/mint_type_bep20.svg';
 import bep20SelectedIcon from '@images/mint_type_bep20_selected.svg';
@@ -14,37 +15,42 @@ import styled from 'styled-components';
 
 interface MintTypeCardProps {
   selected: boolean;
-  type: string;
+  chainId: number;
   onClick: Function;
 }
 
 export default function MintTypeCard(props: MintTypeCardProps) {
   let platformIcon;
-  if (props.type === 'erc20') {
-    platformIcon = props.selected ? erc20SelectedIcon : erc20Icon;
-  } else if (props.type === 'bep20') {
-    platformIcon = props.selected ? bep20SelectedIcon : bep20Icon;
-  } else if (props.type === 'native') {
+  let title;
+  if (props.chainId === STAFI_CHAIN_ID) {
     platformIcon = props.selected ? nativeSelectedIcon : nativeIcon;
-  } else if (props.type === 'spl') {
+    title = 'NATIVE';
+  } else if (props.chainId === ETH_CHAIN_ID) {
+    platformIcon = props.selected ? erc20SelectedIcon : erc20Icon;
+    title = 'ERC20';
+  } else if (props.chainId === BSC_CHAIN_ID) {
+    platformIcon = props.selected ? bep20SelectedIcon : bep20Icon;
+    title = 'BEP20';
+  } else if (props.chainId === SOL_CHAIN_ID) {
     platformIcon = props.selected ? splSelectedIcon : splIcon;
+    title = 'SPL';
   }
 
   return (
-    <CardContainer selected={props.selected} onClick={() => props.onClick(props.type)}>
+    <CardContainer selected={props.selected} onClick={() => props.onClick(props.chainId)}>
       <HeadContainer selected={props.selected} type='erc20' img={platformIcon}>
         <Text color={props.selected ? '#00F3AB' : '#fff'} size='14px' sameLineHeight>
-          {props.type.toUpperCase()}
+          {title}
         </Text>
 
         <Text color='#ffffff' size='12px' sameLineHeight mt='3px' scale={0.6}>
-          {props.type === 'erc20'
+          {props.chainId === ETH_CHAIN_ID
             ? 'Ethereum'
-            : props.type === 'bep20'
+            : props.chainId === BSC_CHAIN_ID
             ? 'BSC'
-            : props.type === 'native'
+            : props.chainId === STAFI_CHAIN_ID
             ? 'StaFi Chain'
-            : props.type === 'spl'
+            : props.chainId === SOL_CHAIN_ID
             ? 'Solana'
             : ''}
         </Text>
@@ -70,7 +76,7 @@ export default function MintTypeCard(props: MintTypeCardProps) {
           </Tooltip>
         </HContainer>
 
-        {props.type !== 'native' && (
+        {props.chainId !== STAFI_CHAIN_ID && (
           <Text size='12px' scale={0.83} transformOrigin='top center' color='#C4C4C4' sameLineHeight mt='2px'>
             Bridge Fee: 30 FIS
           </Text>

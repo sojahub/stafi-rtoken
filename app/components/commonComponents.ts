@@ -13,10 +13,12 @@ interface TextProps {
   scale?: any;
   transformOrigin?: any;
   whiteSpace?: any;
+  clickable?: boolean;
 }
 
 export const Text = styled.div<TextProps>`
   font-size: ${(props) => props.size};
+  cursor: ${(props) => (props.clickable ? 'pointer' : 'default')};
   color: ${(props) => props.color || '#fff'};
   font-family: ${(props) => (props.bold ? 'Helvetica-Bold' : 'Helvetica')};
   line-height: ${(props) => (props.sameLineHeight ? props.size : '')};

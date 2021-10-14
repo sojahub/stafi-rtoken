@@ -24,7 +24,7 @@ import { AppThunk } from '../store';
 import { getAssetBalance as getBscAssetBalance } from './BSCClice';
 import CommonClice from './commonClice';
 import { getAssetBalance } from './ETHClice';
-import { connectSoljs, setLoading } from './globalClice';
+import { connectSoljs, setLoading, setStakeSwapLoadingParams } from './globalClice';
 import { add_Notice, noticeStatus, noticesubType, noticeType } from './noticeClice';
 import { getAssetBalance as getSlpAssetBalance } from './SOLClice';
 
@@ -59,8 +59,7 @@ const bridgeClice = createSlice({
     swapLoadingStatus: 0,
     swapWaitingTime: 150,
     swapLoadingParams: {
-      // 1: xx=>erc, 2: xx=>bep, 3: xx=>native
-      swapType: 0,
+      destChainId: 0,
       tokenType: '',
       amount: '',
     },
@@ -759,12 +758,13 @@ export const getRtokenPriceList = (): AppThunk => async (dispatch, getState) => 
   }
 };
 
-const updateSwapParamsOfErc = (
+export const updateSwapParamsOfErc = (
   dispatch: any,
   notice_uuid: string,
   tokenType: string,
   tokenAmount: any,
   ethAddress: string,
+  isInStake?: boolean,
 ) => {
   let tokenAbi: any;
   let tokenAddress: any;
@@ -792,29 +792,50 @@ const updateSwapParamsOfErc = (
   }
 
   if (tokenAbi && tokenAddress) {
-    getAssetBalance(ethAddress, tokenAbi, tokenAddress, (v: any) => {
-      dispatch(
-        setSwapLoadingParams({
-          noticeUuid: notice_uuid,
-          address: ethAddress,
-          swapType: 1,
-          amount: tokenAmount,
-          tokenType: tokenType,
-          oldBalance: v,
-          tokenAbi,
-          tokenAddress,
-        }),
-      );
-    });
+    getAssetBalance(
+      ethAddress,
+      tokenAbi,
+      tokenAddress,
+      (v: any) => {
+        if (isInStake) {
+          dispatch(
+            setStakeSwapLoadingParams({
+              noticeUuid: notice_uuid,
+              address: ethAddress,
+              destChainId: ETH_CHAIN_ID,
+              tokenType: tokenType,
+              oldBalance: v,
+              tokenAbi,
+              tokenAddress,
+            }),
+          );
+        } else {
+          dispatch(
+            setSwapLoadingParams({
+              noticeUuid: notice_uuid,
+              address: ethAddress,
+              destChainId: ETH_CHAIN_ID,
+              amount: tokenAmount,
+              tokenType: tokenType,
+              oldBalance: v,
+              tokenAbi,
+              tokenAddress,
+            }),
+          );
+        }
+      },
+      true,
+    );
   }
 };
 
-const updateSwapParamsOfBep = (
+export const updateSwapParamsOfBep = (
   dispatch: any,
   notice_uuid: string,
   tokenType: string,
   tokenAmount: any,
   ethAddress: string,
+  isInStake?: boolean,
 ) => {
   let tokenAbi: any;
   let tokenAddress: any;
@@ -845,41 +866,74 @@ const updateSwapParamsOfBep = (
   }
 
   if (tokenAbi && tokenAddress) {
-    getBscAssetBalance(ethAddress, tokenAbi, tokenAddress, (v: any) => {
-      dispatch(
-        setSwapLoadingParams({
-          noticeUuid: notice_uuid,
-          address: ethAddress,
-          swapType: 2,
-          amount: tokenAmount,
-          tokenType: tokenType,
-          oldBalance: v,
-          tokenAbi,
-          tokenAddress,
-        }),
-      );
-    });
+    getBscAssetBalance(
+      ethAddress,
+      tokenAbi,
+      tokenAddress,
+      (v: any) => {
+        if (isInStake) {
+          dispatch(
+            setStakeSwapLoadingParams({
+              noticeUuid: notice_uuid,
+              address: ethAddress,
+              destChainId: BSC_CHAIN_ID,
+              tokenType: tokenType,
+              oldBalance: v,
+              tokenAbi,
+              tokenAddress,
+            }),
+          );
+        } else {
+          dispatch(
+            setSwapLoadingParams({
+              noticeUuid: notice_uuid,
+              address: ethAddress,
+              destChainId: BSC_CHAIN_ID,
+              amount: tokenAmount,
+              tokenType: tokenType,
+              oldBalance: v,
+              tokenAbi,
+              tokenAddress,
+            }),
+          );
+        }
+      },
+      true,
+    );
   }
 };
 
-const updateSwapParamsOfSlp = (
+export const updateSwapParamsOfSlp = (
   dispatch: any,
   notice_uuid: string,
   tokenType: string,
   tokenAmount: any,
   solAddress: string,
+  isInStake?: boolean,
 ) => {
   getSlpAssetBalance(solAddress, tokenType, (v: any) => {
-    dispatch(
-      setSwapLoadingParams({
-        noticeUuid: notice_uuid,
-        address: solAddress,
-        swapType: 4,
-        amount: tokenAmount,
-        tokenType: tokenType,
-        oldBalance: v,
-      }),
-    );
+    if (isInStake) {
+      dispatch(
+        setStakeSwapLoadingParams({
+          noticeUuid: notice_uuid,
+          address: solAddress,
+          destChainId: SOL_CHAIN_ID,
+          tokenType: tokenType,
+          oldBalance: v,
+        }),
+      );
+    } else {
+      dispatch(
+        setSwapLoadingParams({
+          noticeUuid: notice_uuid,
+          address: solAddress,
+          destChainId: SOL_CHAIN_ID,
+          amount: tokenAmount,
+          tokenType: tokenType,
+          oldBalance: v,
+        }),
+      );
+    }
   });
 };
 
@@ -925,7 +979,7 @@ const updateSwapParamsOfNative = async (
     setSwapLoadingParams({
       noticeUuid: notice_uuid,
       address: address,
-      swapType: 3,
+      destChainId: STAFI_CHAIN_ID,
       amount: tokenAmount,
       tokenType: tokenType,
       oldBalance,

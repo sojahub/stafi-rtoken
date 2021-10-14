@@ -6,6 +6,7 @@ import keyring from '@servers/index';
 import PolkadotServer from '@servers/polkadot/index';
 import SolServer from '@servers/sol/index';
 import { AppThunk } from '../store';
+import { STAFI_CHAIN_ID } from './bridgeClice';
 import { createSubstrate as fisCreateSubstrate, reloadData as fisReloadData } from './FISClice';
 import { createSubstrate as atomCreateSubstrate, reloadData as atomReloadData } from './rATOMClice';
 import { reloadData as bnbReloadData } from './rBNBClice';
@@ -24,8 +25,10 @@ const polkadotServer = new PolkadotServer();
 
 const atomServer = new AtomServer();
 const solServer = new SolServer();
+
 export const process = {
   rSymbol: '',
+  destChainId: STAFI_CHAIN_ID,
   sending: {
     brocasting: processStatus.default, // 0|1|2|3
     packing: processStatus.default, // 0|1|2|3
@@ -42,7 +45,12 @@ export const process = {
     minting: processStatus.default, // 0|1|2|3
     checkTx: '', //
   },
+  swapping: {
+    swapping: processStatus.default, // 0|1|2|3
+    checkTx: '', //
+  },
 };
+
 const globalClice = createSlice({
   name: 'globalModule',
   initialState: {
@@ -56,6 +64,17 @@ const globalClice = createSlice({
     loading: false,
     metaMaskNetworkId: null,
     isload_monitoring: false,
+
+    // 0-invisible, 1-start transferring, 2-start minting
+    stakeSwapLoadingStatus: 0,
+    stakeSwapLoadingParams: {
+      destChainId: 0,
+      tokenType: '',
+      amount: '',
+      oldBalance: '',
+      transferDetail: '',
+      viewTxUrl: '',
+    },
   },
   reducers: {
     setProcessSlider(state, { payload }) {
@@ -82,6 +101,9 @@ const globalClice = createSlice({
     setProcessType(state, { payload }) {
       state.process.rSymbol = payload;
     },
+    setProcessDestChainId(state, { payload }) {
+      state.process.destChainId = payload;
+    },
     setProcessSending(state, { payload }) {
       state.process.sending = { ...state.process.sending, ...payload };
     },
@@ -90,6 +112,9 @@ const globalClice = createSlice({
     },
     setProcessMinting(state, { payload }) {
       state.process.minting = { ...state.process.minting, ...payload };
+    },
+    setProcessSwapping(state, { payload }) {
+      state.process.swapping = { ...state.process.swapping, ...payload };
     },
     setTimeOutFunc(state, { payload }) {
       state.timeOutFunc = payload;
@@ -103,8 +128,15 @@ const globalClice = createSlice({
     setIsloadMonitoring(state, { payload }) {
       state.isload_monitoring = payload;
     },
+    setStakeSwapLoadingStatus(state, { payload }) {
+      state.stakeSwapLoadingStatus = payload;
+    },
+    setStakeSwapLoadingParams(state, { payload }) {
+      state.stakeSwapLoadingParams = { ...state.stakeSwapLoadingParams, ...payload };
+    },
   },
 });
+
 export const {
   setAccounts,
   setProcessSlider,
@@ -112,12 +144,16 @@ export const {
   setProcessSending,
   setProcessStaking,
   setProcessMinting,
+  setProcessSwapping,
   setProcessType,
+  setProcessDestChainId,
   setTimeOutFunc,
   initProcess,
   setMetaMaskNetworkId,
   setLoading,
   setIsloadMonitoring,
+  setStakeSwapLoadingStatus,
+  setStakeSwapLoadingParams,
 } = globalClice.actions;
 
 declare const window: any;

@@ -21,6 +21,7 @@ const feeStationServer = new FeeStationServer();
 export enum noticeStatus {
   Confirmed = 'Confirmed',
   Pending = 'Pending',
+  Swapping = 'Swapping',
   Error = 'Error',
   Empty = '',
 }

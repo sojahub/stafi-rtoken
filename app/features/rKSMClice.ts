@@ -11,6 +11,7 @@ import { getLocalStorageItem, Keys, removeLocalStorageItem, setLocalStorageItem,
 import NumberUtil from '@util/numberUtil';
 import { message as M, message } from 'antd';
 import { AppThunk } from '../store';
+import { ETH_CHAIN_ID, STAFI_CHAIN_ID, updateSwapParamsOfBep, updateSwapParamsOfErc } from './bridgeClice';
 import CommonClice from './commonClice';
 import { setSwapLoadingStatus } from './feeStationClice';
 import { bondStates, bound, feeStationSignature, fisUnbond, rTokenSeries_bondStates } from './FISClice';
@@ -18,9 +19,11 @@ import {
   initProcess,
   processStatus,
   setLoading,
+  setProcessDestChainId,
   setProcessSending,
   setProcessSlider,
-  setProcessType
+  setProcessType,
+  setStakeSwapLoadingStatus
 } from './globalClice';
 import { add_Notice, findUuid, noticeStatus, noticesubType, noticeType } from './noticeClice';
 
@@ -196,7 +199,7 @@ const queryBalance = async (account: any, dispatch: any, getState: any) => {
 };
 
 export const transfer =
-  (amountparam: string, cb?: Function): AppThunk =>
+  (amountparam: string, destChainId: number, targetAddress: string, cb?: Function): AppThunk =>
   async (dispatch, getState) => {
     const processParameter = getState().rKSMModule.processParameter;
     const notice_uuid = (processParameter && processParameter.uuid) || stafi_uuid();
@@ -228,6 +231,7 @@ export const transfer =
           }),
         );
         dispatch(setProcessType(rSymbol.Ksm));
+        dispatch(setProcessDestChainId(destChainId));
         dispatch(setProcessSlider(true));
         index = index + 1;
       }
@@ -250,6 +254,8 @@ export const transfer =
                 uuid: notice_uuid,
               },
               href: cb ? '/rKSM/staker/info' : null,
+              destChainId,
+              targetAddress,
             }),
           );
           dispatch(
@@ -257,6 +263,8 @@ export const transfer =
               txHash: tx,
               blockHash: asInBlock,
               notice_uuid: notice_uuid,
+              destChainId,
+              targetAddress,
             }),
           );
         }
@@ -335,7 +343,7 @@ export const transfer =
                     processParameter: getState().rKSMModule.processParameter,
                   }),
                 );
-                
+
                 message.info('Sending succeeded, proceeding signature');
 
                 asInBlock &&
@@ -347,6 +355,8 @@ export const transfer =
                       amount.toString(),
                       selectedPool.poolPubkey,
                       rSymbol.Ksm,
+                      destChainId,
+                      targetAddress,
                       (r: string) => {
                         if (r == 'loading') {
                           dispatch(add_KSM_stake_Notice(notice_uuid, amountparam, noticeStatus.Pending));
@@ -359,7 +369,20 @@ export const transfer =
                         }
 
                         if (r == 'successful') {
-                          dispatch(add_KSM_stake_Notice(notice_uuid, amountparam, noticeStatus.Confirmed));
+                          dispatch(
+                            add_KSM_stake_Notice(
+                              notice_uuid,
+                              amountparam,
+                              destChainId === STAFI_CHAIN_ID ? noticeStatus.Confirmed : noticeStatus.Swapping,
+                            ),
+                          );
+                          // Set swap loading params for loading modal.
+                          if (destChainId === ETH_CHAIN_ID) {
+                            updateSwapParamsOfErc(dispatch, notice_uuid, 'rksm', 0, targetAddress, true);
+                          } else {
+                            updateSwapParamsOfBep(dispatch, notice_uuid, 'rksm', 0, targetAddress, true);
+                          }
+                          dispatch(setStakeSwapLoadingStatus(destChainId === STAFI_CHAIN_ID ? 0 : 2));
                           cb && cb();
                           dispatch(reloadData());
                         }
@@ -447,15 +470,15 @@ export const swapKsmForFis =
         } catch (e) {
           // do nothing
         }
-        if (asInBlock) {
-          dispatch(
-            setStakeHash({
-              txHash: tx,
-              blockHash: asInBlock,
-              notice_uuid: notice_uuid,
-            }),
-          );
-        }
+        // if (asInBlock) {
+        //   dispatch(
+        //     setStakeHash({
+        //       txHash: tx,
+        //       blockHash: asInBlock,
+        //       notice_uuid: notice_uuid,
+        //     }),
+        //   );
+        // }
 
         if (result.status.isInBlock) {
           const noticeSubData = {
@@ -570,9 +593,9 @@ export const reSending =
   async (dispatch, getState) => {
     const processParameter = getState().rKSMModule.processParameter;
     if (processParameter) {
-      const href = processParameter.href;
+      const { href, destChainId, targetAddress } = processParameter;
       dispatch(
-        transfer(processParameter.sending.amount, () => {
+        transfer(processParameter.sending.amount, destChainId, targetAddress, () => {
           cb && href && cb(href);
         }),
       );
@@ -584,8 +607,7 @@ export const reStaking =
   async (dispatch, getState) => {
     const processParameter = getState().rKSMModule.processParameter;
     if (processParameter) {
-      const staking = processParameter.staking;
-      const href = processParameter.href;
+      const { staking, href, destChainId, targetAddress } = processParameter.href;
       processParameter &&
         dispatch(
           bound(
@@ -595,6 +617,8 @@ export const reStaking =
             NumberUtil.fisAmountToChain(staking.amount).toString(),
             staking.poolAddress,
             staking.type,
+            destChainId,
+            targetAddress,
             (r: string) => {
               // if (r != "failure") {
               //   (href && cb) && cb(href);
@@ -660,7 +684,7 @@ export const unbond =
 
 export const continueProcess = (): AppThunk => async (dispatch, getState) => {
   const stakeHash = getState().rKSMModule.stakeHash;
-  if (stakeHash && stakeHash.blockHash && stakeHash.txHash) {
+  if (stakeHash && stakeHash.blockHash && stakeHash.txHash && stakeHash.destChainId) {
     dispatch(
       bondStates(rSymbol.Atom, stakeHash.txHash, stakeHash.blockHash, (e: string) => {
         if (e == 'successful') {
@@ -668,7 +692,15 @@ export const continueProcess = (): AppThunk => async (dispatch, getState) => {
             dispatch(setStakeHash(null));
           });
         } else {
-          dispatch(getBlock(stakeHash.blockHash, stakeHash.txHash, stakeHash.notice_uuid));
+          dispatch(
+            getBlock(
+              stakeHash.blockHash,
+              stakeHash.txHash,
+              stakeHash.notice_uuid,
+              stakeHash.destChainId,
+              stakeHash.targetAddress,
+            ),
+          );
         }
       }),
     );
@@ -696,7 +728,7 @@ export const onProceed =
           noticeData && dispatch(add_KSM_stake_Notice(noticeData.uuid, noticeData.amount, noticeStatus.Confirmed));
         } else if (e == 'failure' || e == 'stakingFailure') {
           dispatch(
-            getBlock(blockHash, txHash, noticeData ? noticeData.uuid : null, () => {
+            getBlock(blockHash, txHash, noticeData ? noticeData.uuid : null, STAFI_CHAIN_ID, '', () => {
               cb && cb('successful');
             }),
           );
@@ -718,6 +750,9 @@ export const onProceed =
                 minting: {
                   minting: processStatus.loading,
                 },
+                swapping: {
+                  brocasting: processStatus.default,
+                },
               }),
             );
             dispatch(setProcessSlider(true));
@@ -728,7 +763,14 @@ export const onProceed =
   };
 
 export const getBlock =
-  (blockHash: string, txHash: string, uuid?: string, cb?: Function): AppThunk =>
+  (
+    blockHash: string,
+    txHash: string,
+    uuid: string,
+    destChainId: number,
+    targetAddress: string,
+    cb?: Function,
+  ): AppThunk =>
   async (dispatch, getState) => {
     try {
       const api = await polkadotServer.createPolkadotApi();
@@ -736,6 +778,7 @@ export const getBlock =
       const validPools = getState().rKSMModule.validPools;
       const result = await api.rpc.chain.getBlock(blockHash);
       let u = false;
+
       result.block.extrinsics.forEach((ex: any) => {
         if (ex.hash.toHex() == txHash) {
           const {
@@ -784,6 +827,9 @@ export const getBlock =
                 minting: {
                   minting: processStatus.default,
                 },
+                swapping: {
+                  brocasting: processStatus.default,
+                },
               }),
             );
             dispatch(setProcessSlider(true));
@@ -800,36 +846,50 @@ export const getBlock =
               }),
             );
             dispatch(
-              bound(address, txHash, blockHash, amount, poolPubkey, rSymbol.Ksm, (r: string) => {
-                // dispatch(setStakeHash(null));
+              bound(
+                address,
+                txHash,
+                blockHash,
+                amount,
+                poolPubkey,
+                rSymbol.Ksm,
+                destChainId,
+                targetAddress,
+                (r: string) => {
+                  // dispatch(setStakeHash(null));
 
-                if (r == 'loading') {
-                  uuid &&
-                    dispatch(
-                      add_KSM_stake_Notice(uuid, NumberUtil.fisAmountToHuman(amount).toString(), noticeStatus.Pending),
-                    );
-                } else {
-                  dispatch(setStakeHash(null));
-                }
+                  if (r == 'loading') {
+                    uuid &&
+                      dispatch(
+                        add_KSM_stake_Notice(
+                          uuid,
+                          NumberUtil.fisAmountToHuman(amount).toString(),
+                          noticeStatus.Pending,
+                        ),
+                      );
+                  } else {
+                    dispatch(setStakeHash(null));
+                  }
 
-                if (r == 'failure') {
-                  uuid &&
-                    dispatch(
-                      add_KSM_stake_Notice(uuid, NumberUtil.fisAmountToHuman(amount).toString(), noticeStatus.Error),
-                    );
-                }
-                if (r == 'successful') {
-                  uuid &&
-                    dispatch(
-                      add_KSM_stake_Notice(
-                        uuid,
-                        NumberUtil.fisAmountToHuman(amount).toString(),
-                        noticeStatus.Confirmed,
-                      ),
-                    );
-                  cb && cb();
-                }
-              }),
+                  if (r == 'failure') {
+                    uuid &&
+                      dispatch(
+                        add_KSM_stake_Notice(uuid, NumberUtil.fisAmountToHuman(amount).toString(), noticeStatus.Error),
+                      );
+                  }
+                  if (r == 'successful') {
+                    uuid &&
+                      dispatch(
+                        add_KSM_stake_Notice(
+                          uuid,
+                          NumberUtil.fisAmountToHuman(amount).toString(),
+                          noticeStatus.Confirmed,
+                        ),
+                      );
+                    cb && cb();
+                  }
+                },
+              ),
             );
           }
         }

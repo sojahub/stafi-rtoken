@@ -1,21 +1,18 @@
 import { LoadingOutlined } from '@ant-design/icons';
-import { BSC_CHAIN_ID, ETH_CHAIN_ID, setSwapLoadingStatus, SOL_CHAIN_ID, STAFI_CHAIN_ID } from '@features/bridgeClice';
+import { BSC_CHAIN_ID, ETH_CHAIN_ID, SOL_CHAIN_ID } from '@features/bridgeClice';
 import {
   getAssetBalance as getBscAssetBalance,
   getAssetBalanceAll as getBep20AssetBalanceAll
 } from '@features/BSCClice';
-import CommonClice from '@features/commonClice';
 import {
   getAssetBalance as getEthAssetBalance,
   getAssetBalanceAll as getErc20AssetBalanceAll
 } from '@features/ETHClice';
-import { queryTokenBalances } from '@features/FISClice';
+import { setStakeSwapLoadingStatus } from '@features/globalClice';
 import { noticeStatus, update_NoticeStatus } from '@features/noticeClice';
 import { getAssetBalance as getSlpAssetBalance, getSlp20AssetBalanceAll } from '@features/SOLClice';
 import close_bold_svg from '@images/close_bold.svg';
 import complete_svg from '@images/complete.svg';
-import { rSymbol } from '@keyring/defaults';
-import Stafi from '@servers/stafi/index';
 import numberUtil from '@util/numberUtil';
 import { useInterval } from '@util/utils';
 import { message, Modal, Progress, Spin } from 'antd';
@@ -24,27 +21,20 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import './SwapLoading.scss';
 
-const commonClice = new CommonClice();
-const stafiServer = new Stafi();
 const antIcon = <LoadingOutlined style={{ fontSize: '60px', color: '#fff' }} spin />;
 
-type Props = {
-  destChainName: string;
-  destChainType: string;
-  transferDetail: string;
-  viewTxUrl: string;
-};
+type Props = {};
 
 const STAGE1_MAX_PROGRESS = 15;
+const swapWaitingTime = 300;
 
-export default function SwapLoading(props: Props) {
+export default function StakeSwapLoading(props: Props) {
   const dispatch = useDispatch();
 
-  const { swapLoadingStatus, swapWaitingTime, swapLoadingParams } = useSelector((state: any) => {
+  const { swapLoadingStatus, swapLoadingParams } = useSelector((state: any) => {
     return {
-      swapLoadingStatus: state.bridgeModule.swapLoadingStatus,
-      swapWaitingTime: state.bridgeModule.swapWaitingTime,
-      swapLoadingParams: state.bridgeModule.swapLoadingParams,
+      swapLoadingStatus: state.globalModule.stakeSwapLoadingStatus,
+      swapLoadingParams: state.globalModule.stakeSwapLoadingParams,
     };
   });
 
@@ -115,7 +105,7 @@ export default function SwapLoading(props: Props) {
         );
         if (stage2TimeLeft === 0) {
           message.info('We are tranferring tokens to the received address, please check your wallet later.');
-          dispatch(setSwapLoadingStatus(0));
+          dispatch(setStakeSwapLoadingStatus(0));
         }
       } else {
         newProgress = Math.min(
@@ -177,54 +167,17 @@ export default function SwapLoading(props: Props) {
       return;
     }
 
-    if (swapLoadingParams.destChainId === STAFI_CHAIN_ID) {
-      let rType;
-      if (swapLoadingParams.tokenType === 'rfis' || swapLoadingParams.tokenType === 'fis') {
-        rType = rSymbol.Fis;
-      } else if (swapLoadingParams.tokenType === 'rksm') {
-        rType = rSymbol.Ksm;
-      } else if (swapLoadingParams.tokenType === 'rdot') {
-        rType = rSymbol.Dot;
-      } else if (swapLoadingParams.tokenType === 'ratom') {
-        rType = rSymbol.Atom;
-      } else if (swapLoadingParams.tokenType === 'rsol') {
-        rType = rSymbol.Sol;
-      } else if (swapLoadingParams.tokenType === 'rmatic') {
-        rType = rSymbol.Matic;
-      } else if (swapLoadingParams.tokenType === 'reth') {
-        rType = rSymbol.Eth;
-      } else if (swapLoadingParams.tokenType === 'rbnb') {
-        rType = rSymbol.Bnb;
-      }
+    const targetBalance = Number(swapLoadingParams.oldBalance) + Number(swapLoadingParams.amount);
 
-      let data;
-      if (swapLoadingParams.tokenType === 'fis') {
-        const api = await stafiServer.createStafiApi();
-        const result = await api.query.system.account(swapLoadingParams.address);
-        if (result) {
-          data = result.data;
-        }
-      } else {
-        data = await commonClice.query_rBalances_account({ address: swapLoadingParams.address }, rType, (v: any) => {});
-      }
-      if (data) {
-        if (
-          numberUtil.tokenAmountToHuman(Number(data.free) - Number(swapLoadingParams.oldBalance), rType) ===
-          Number(swapLoadingParams.amount)
-        ) {
-          setSwapStatus(1);
-          dispatch(queryTokenBalances());
-          dispatch(update_NoticeStatus(swapLoadingParams.noticeUuid, noticeStatus.Confirmed));
-        }
-      }
-    } else if (swapLoadingParams.destChainId === ETH_CHAIN_ID) {
+    if (swapLoadingParams.destChainId === ETH_CHAIN_ID) {
       if (swapLoadingParams.tokenAbi && swapLoadingParams.tokenAddress) {
         getEthAssetBalance(
           swapLoadingParams.address,
           cloneDeep(swapLoadingParams.tokenAbi),
           swapLoadingParams.tokenAddress,
           (v: any) => {
-            if (Number(v) === Number(swapLoadingParams.oldBalance) + Number(swapLoadingParams.amount)) {
+            // console.log('sdfsdfsdf', Number(v), targetBalance * 1.1, targetBalance * 0.9);
+            if (Number(v) <= targetBalance * 1.1 && Number(v) >= targetBalance * 0.9) {
               setSwapStatus(1);
               dispatch(getErc20AssetBalanceAll());
               dispatch(update_NoticeStatus(swapLoadingParams.noticeUuid, noticeStatus.Confirmed));
@@ -240,7 +193,7 @@ export default function SwapLoading(props: Props) {
           cloneDeep(swapLoadingParams.tokenAbi),
           swapLoadingParams.tokenAddress,
           (v: any) => {
-            if (Number(v) === Number(swapLoadingParams.oldBalance) + Number(swapLoadingParams.amount)) {
+            if (Number(v) <= targetBalance * 1.1 && Number(v) >= targetBalance * 0.9) {
               setSwapStatus(1);
               dispatch(getBep20AssetBalanceAll());
               dispatch(update_NoticeStatus(swapLoadingParams.noticeUuid, noticeStatus.Confirmed));
@@ -252,7 +205,7 @@ export default function SwapLoading(props: Props) {
     } else if (swapLoadingParams.destChainId === SOL_CHAIN_ID) {
       getSlpAssetBalance(swapLoadingParams.address, swapLoadingParams.tokenType, (v: any) => {
         // console.log('new amount:', v);
-        if (Number(v) === Number(swapLoadingParams.oldBalance) + Number(swapLoadingParams.amount)) {
+        if (Number(v) <= targetBalance * 1.1 && Number(v) >= targetBalance * 0.9) {
           setSwapStatus(1);
           dispatch(getSlp20AssetBalanceAll());
           dispatch(update_NoticeStatus(swapLoadingParams.noticeUuid, noticeStatus.Confirmed));
@@ -277,7 +230,7 @@ export default function SwapLoading(props: Props) {
       }}>
       <div>
         <div className={'icon_container_outer'}>
-          <a className={'icon_container_inner'} onClick={() => dispatch(setSwapLoadingStatus(0))}>
+          <a className={'icon_container_inner'} onClick={() => dispatch(setStakeSwapLoadingStatus(0))}>
             <img src={close_bold_svg} className={'close_icon'} />
           </a>
         </div>
@@ -286,17 +239,18 @@ export default function SwapLoading(props: Props) {
           <>
             <div className='title'>Congratulations!</div>
 
-            <div className='context'>
-              You have successfully transferred your tokens.Please check your{' '}
-              {props.destChainType === 'native' ? 'Polkadot.js wallet' : 'wallet'}
-            </div>
+            <div className='context'>You have successfully transferred your tokens.Please check your wallet</div>
 
             <div className={'center_container'}>
               <img src={complete_svg} className={'success_icon'} />
             </div>
 
             <div className={'center_container'}>
-              <div className={'success_btn'} onClick={() => props.viewTxUrl && window.open(props.viewTxUrl)}>
+              <div
+                className={'success_btn'}
+                onClick={() =>
+                  swapLoadingParams && swapLoadingParams.viewTxUrl && window.open(swapLoadingParams.viewTxUrl)
+                }>
                 VIEW YOUR TRANSACTION
               </div>
             </div>
@@ -305,9 +259,9 @@ export default function SwapLoading(props: Props) {
           <>
             <div className='title'>Transferring</div>
 
-            <div className='context'>We are transferring your tokens to {props.destChainName}</div>
+            <div className='context'>We are transferring your tokens to your received address</div>
 
-            <div className='transfer_detail'>{props.transferDetail}</div>
+            <div className='transfer_detail'>{swapLoadingParams && swapLoadingParams.transferDetail}</div>
 
             <div style={{ margin: 'auto', marginTop: '20px', width: '594px' }}>
               <Progress percent={progress} showInfo={false} strokeColor={'#00F3AB'} />
@@ -317,7 +271,11 @@ export default function SwapLoading(props: Props) {
               <Spin indicator={antIcon} />
             </div>
 
-            <div className='view_tx_text' onClick={() => props.viewTxUrl && window.open(props.viewTxUrl)}>
+            <div
+              className='view_tx_text'
+              onClick={() =>
+                swapLoadingParams && swapLoadingParams.viewTxUrl && window.open(swapLoadingParams.viewTxUrl)
+              }>
               View your transaction
             </div>
           </>

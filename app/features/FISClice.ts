@@ -1,4 +1,4 @@
-import config from '@config/index';
+import config, { getSymbolRTitle } from '@config/index';
 import { query_rBalances_account as fis_query_rBalances_account } from '@features/FISClice';
 import { query_rBalances_account as atom_query_rBalances_account } from '@features/rATOMClice';
 import { query_rBalances_account as bnb_query_rBalances_account } from '@features/rBNBClice';
@@ -27,6 +27,13 @@ import NumberUtil from '@util/numberUtil';
 import StringUtil from '@util/stringUtil';
 import { message } from 'antd';
 import { AppThunk } from '../store';
+import {
+  ETH_CHAIN_ID,
+  SOL_CHAIN_ID,
+  STAFI_CHAIN_ID,
+  updateSwapParamsOfBep,
+  updateSwapParamsOfErc
+} from './bridgeClice';
 import CommonClice from './commonClice';
 import {
   initProcess,
@@ -35,11 +42,16 @@ import {
   setProcessMinting,
   setProcessSlider,
   setProcessStaking,
-  setProcessType
+  setProcessSwapping,
+  setProcessType,
+  setStakeSwapLoadingStatus
 } from './globalClice';
 import { add_Notice, noticeStatus, noticesubType, noticeType } from './noticeClice';
 
 declare const ethereum: any;
+
+const solServer = new SolServer();
+
 const FISClice = createSlice({
   name: 'FISModule',
   initialState: {
@@ -308,8 +320,9 @@ export const queryTokenBalances = (): AppThunk => async (dispatch, getState) => 
 };
 
 export const transfer =
-  (amountparam: number, cb?: Function): AppThunk =>
+  (amountparam: number, destChainId: number, targetAddress: string, cb?: Function): AppThunk =>
   async (dispatch, getState) => {
+    const notice_uuid = stafi_uuid();
     const amount = NumberUtil.fisAmountToChain(amountparam);
     const poolLimit = getState().FISModule.poolLimit;
     const validPools = getState().FISModule.validPools;
@@ -324,13 +337,31 @@ export const transfer =
     }
 
     try {
+      dispatch(
+        setProcessParameter({
+          destChainId,
+          targetAddress,
+        }),
+      );
       dispatch(setLoading(true));
       web3Enable(stafiServer.getWeb3EnalbeName());
       const injector = await web3FromSource(stafiServer.getPolkadotJsSource());
       const stafiApi = await stafiServer.createStafiApi();
       let currentAccount = getState().FISModule.fisAccount.address;
-      stafiApi.tx.rFis
-        .liquidityBond(selectedPool.address, amount.toString())
+
+      let bondResult;
+      if (destChainId === STAFI_CHAIN_ID) {
+        bondResult = stafiApi.tx.rFis.liquidityBond(selectedPool.address, amount.toString());
+      } else {
+        bondResult = stafiApi.tx.rFis.liquidityBondAndSwap(
+          selectedPool.address,
+          amount.toString(),
+          targetAddress,
+          destChainId,
+        );
+      }
+
+      bondResult
         .signAndSend(currentAccount, { signer: injector.signer }, (result: any) => {
           if (result.status.isInBlock) {
             dispatch(setLoading(false));
@@ -367,7 +398,24 @@ export const transfer =
                 } else if (method === 'ExtrinsicSuccess') {
                   message.success('Stake successfully');
                   dispatch(reloadData());
-                  dispatch(add_FIS_stake_Notice(stafi_uuid(), amountparam.toString(), noticeStatus.Confirmed));
+                  dispatch(
+                    add_FIS_stake_Notice(
+                      notice_uuid,
+                      amountparam.toString(),
+                      destChainId === STAFI_CHAIN_ID ? noticeStatus.Confirmed : noticeStatus.Swapping,
+                      {
+                        process: getState().globalModule.process,
+                        processParameter: getState().FISModule.processParameter,
+                      },
+                    ),
+                  );
+                  // Set swap loading params for loading modal.
+                  if (destChainId === ETH_CHAIN_ID) {
+                    updateSwapParamsOfErc(dispatch, notice_uuid, 'rfis', 0, targetAddress, true);
+                  } else {
+                    updateSwapParamsOfBep(dispatch, notice_uuid, 'rfis', 0, targetAddress, true);
+                  }
+                  dispatch(setStakeSwapLoadingStatus(destChainId === STAFI_CHAIN_ID ? 0 : 2));
                   cb && cb();
                 }
               });
@@ -417,7 +465,6 @@ export const solSignature = async (address: any, fisAddress: string) => {
   await timeout(1000);
 
   const fisKeyring = keyringInstance.init(Symbol.Fis);
-  const solServer = new SolServer();
   const solana = solServer.getProvider();
   if (!solana) {
     return null;
@@ -440,6 +487,8 @@ export const bound =
     amount: string,
     pooladdress: string,
     type: rSymbol,
+    destChainId: number,
+    targetAddress: string, // used in swap to erc20, bep20, spl
     cb?: Function,
   ): AppThunk =>
   async (dispatch, getState) => {
@@ -532,27 +581,41 @@ export const bound =
       web3Enable(stafiServer.getWeb3EnalbeName());
       const injector = await web3FromSource(stafiServer.getPolkadotJsSource());
 
-      // const bondResult = await stafiApi.tx.rTokenSeries.liquidityBond(
-      //   pubkey,
-      //   signature,
-      //   poolPubkey,
-      //   blockhash,
-      //   txhash,
-      //   amount.toString(),
-      //   type,
-      // );
-
-      const bondResult = await stafiApi.tx.rTokenSeries.liquidityBondAndSwap(
-        pubkey,
-        signature,
-        poolPubkey,
-        blockhash,
-        txhash,
-        amount.toString(),
-        type,
-        u8aToHex(new PublicKey('7sSUCJuafku2jfEufiQv8iQ9sRNRKumEuLgneCQbqeyi').toBytes()),
-        4
-      );
+      let bondResult: any;
+      if (destChainId === STAFI_CHAIN_ID) {
+        bondResult = await stafiApi.tx.rTokenSeries.liquidityBond(
+          pubkey,
+          signature,
+          poolPubkey,
+          blockhash,
+          txhash,
+          amount.toString(),
+          type,
+        );
+      } else {
+        let swapAddress;
+        if (destChainId === SOL_CHAIN_ID) {
+          const tokenAccount = await solServer.getTokenAccountPubkey(
+            targetAddress,
+            getSymbolRTitle(type).toLowerCase(),
+          );
+          console.log('spl token account', tokenAccount.toString());
+          swapAddress = u8aToHex(tokenAccount.toBytes());
+        } else {
+          swapAddress = targetAddress;
+        }
+        bondResult = await stafiApi.tx.rTokenSeries.liquidityBondAndSwap(
+          pubkey,
+          signature,
+          poolPubkey,
+          blockhash,
+          txhash,
+          amount.toString(),
+          type,
+          swapAddress,
+          destChainId,
+        );
+      }
 
       try {
         let index = 0;
@@ -724,6 +787,7 @@ export const continueProcess = (): AppThunk => async (dispatch, getState) => {
     dispatch(getBlock(stakeHash.blockHash, stakeHash.txHash));
   }
 };
+
 export const getBlock =
   (blockHash: string, txHash: string, cb?: Function): AppThunk =>
   async (dispatch, getState) => {
@@ -734,6 +798,10 @@ export const getBlock =
       const poolLimit = getState().FISModule.poolLimit;
       const result = await api.rpc.chain.getBlock(blockHash);
       let u = false;
+
+      const processParameter = getState().FISModule.processParameter;
+      const { destChainId, targetAddress } = processParameter;
+
       result.block.extrinsics.forEach((ex: any) => {
         if (ex.hash.toHex() == txHash) {
           const {
@@ -768,7 +836,7 @@ export const getBlock =
                 },
               }),
             );
-            bound(address, txHash, blockHash, amount, selectedPool.poolPubkey, 0);
+            bound(address, txHash, blockHash, amount, selectedPool.poolPubkey, rSymbol.Fis, destChainId, targetAddress);
           }
         }
       });
@@ -798,6 +866,11 @@ export const getMinting =
     dispatch(
       rTokenSeries_bondStates(type, bondSuccessParamArr, statusObj, (e: any) => {
         if (e == 'successful') {
+          dispatch(
+            setProcessSwapping({
+              brocasting: processStatus.loading,
+            }),
+          );
           message.success('Minting succeeded', 3, () => {
             cb && cb(e);
           });
@@ -1515,7 +1588,7 @@ export const onboardValidators =
 const add_FIS_stake_Notice =
   (uuid: string, amount: string, status: string, subData?: any): AppThunk =>
   async (dispatch, getState) => {
-    dispatch(add_FIS_Notice(uuid, noticeType.Staker, noticesubType.Stake, amount, status));
+    dispatch(add_FIS_Notice(uuid, noticeType.Staker, noticesubType.Stake, amount, status, subData));
   };
 const add_FIS_unbond_Notice =
   (uuid: string, amount: string, status: string, subData?: any): AppThunk =>

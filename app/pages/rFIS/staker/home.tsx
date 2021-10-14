@@ -1,4 +1,5 @@
 import Content from '@components/content/stakeContent_DOT';
+import { BSC_CHAIN_ID, ETH_CHAIN_ID, SOL_CHAIN_ID, STAFI_CHAIN_ID } from '@features/bridgeClice';
 import { balancesAll, rTokenLedger, rTokenRate, transfer } from '@features/FISClice';
 import { ratioToAmount } from '@util/common';
 import NumberUtil from '@util/numberUtil';
@@ -50,15 +51,23 @@ export default function Index(props: any) {
       }}
       validPools={validPools}
       totalStakedToken={NumberUtil.handleFisAmountToFixed(Number(totalIssuance) * Number(ratio)) || '--'}
-      onStakeClick={() => {
+      onStakeClick={(chainId: number, targetAddress: string) => {
         if (amount) {
           if (fisCompare) {
             message.error('No enough FIS to pay for the fee');
             return;
           }
           dispatch(
-            transfer(amount, () => {
-              props.history.push('/rFIS/staker/info');
+            transfer(amount, chainId, targetAddress, () => {
+              if (chainId === STAFI_CHAIN_ID) {
+                props.history.push('/rFIS/staker/info');
+              } else if (chainId === ETH_CHAIN_ID) {
+                props.history.push('/rAsset/home/erc');
+              } else if (chainId === BSC_CHAIN_ID) {
+                props.history.push('/rAsset/home/bep');
+              } else if (chainId === SOL_CHAIN_ID) {
+                props.history.push('/rAsset/home/spl');
+              }
             }),
           );
         } else {

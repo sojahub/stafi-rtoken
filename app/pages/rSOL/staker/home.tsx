@@ -71,41 +71,21 @@ export default function Index(props: any) {
     return new PublicKey(result._bn);
   };
 
-  const checkWalletAddress = (publicKey: PublicKey) => {
-    if (publicKey.toBase58() == solAccount.address) {
-      startStake();
-    } else {
-      message.warn('Sollet address mismatch, please resubmit', 5);
-      setAmount('');
-      const account = {
-        name: '',
-        pubkey: publicKey.toBase58(),
-        address: publicKey.toBase58(),
-        balance: '--',
-      };
-      dispatch(clice(Symbol.Sol).createSubstrate(account));
-    }
-  };
-
-  const startStake = () => {
-    dispatch(
-      transfer(amount, () => {
-        dispatch(setProcessSlider(false));
-        props.history.push('/rSOL/staker/info');
-      }),
-    );
-  };
-
-  const clickStake = () => {
+  const clickStake = (chainId: number, targetAddress: string) => {
     if (amount) {
       if (fisCompare) {
         message.error('No enough FIS to pay for the fee');
         return;
       }
 
-    startStake();
+      dispatch(
+        transfer(amount, chainId, targetAddress, () => {
+          dispatch(setProcessSlider(false));
+          props.history.push('/rSOL/staker/info');
+        }),
+      );
+    }
   };
-}
 
   return (
     <Content

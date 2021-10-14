@@ -13,6 +13,7 @@ import { message } from 'antd';
 import InputDataDecoder from 'ethereum-input-data-decoder';
 import _m0 from 'protobufjs/minimal';
 import { AppThunk } from '../store';
+import { ETH_CHAIN_ID, STAFI_CHAIN_ID, updateSwapParamsOfBep, updateSwapParamsOfErc } from './bridgeClice';
 import CommonClice from './commonClice';
 import { getAssetBalance } from './ETHClice';
 import { bondStates, bound, fisUnbond, rTokenSeries_bondStates } from './FISClice';
@@ -20,9 +21,11 @@ import {
   initProcess,
   processStatus,
   setLoading,
+  setProcessDestChainId,
   setProcessSending,
   setProcessSlider,
-  setProcessType
+  setProcessType,
+  setStakeSwapLoadingStatus
 } from './globalClice';
 import { add_Notice, findUuid, noticeStatus, noticesubType, noticeType } from './noticeClice';
 import { setIsloadMonitoring } from './rETHClice';
@@ -291,7 +294,7 @@ export const balancesAll = (): AppThunk => (dispatch, getState) => {
 };
 
 export const transfer =
-  (amountparam: string, cb?: Function): AppThunk =>
+  (amountparam: string, destChainId: number, targetAddress: string, cb?: Function): AppThunk =>
   async (dispatch, getState) => {
     const processParameter = getState().rMATICModule.processParameter;
     const notice_uuid = (processParameter && processParameter.uuid) || stafi_uuid();
@@ -321,7 +324,9 @@ export const transfer =
         }),
       );
       dispatch(setProcessType(rSymbol.Matic));
+      dispatch(setProcessDestChainId(destChainId));
       dispatch(setProcessSlider(true));
+
       const sendTokens: any = await contract.methods.transfer(selectedPool.address, amount).send();
       if (sendTokens && sendTokens.status) {
         const txHash = sendTokens.transactionHash;
@@ -365,6 +370,8 @@ export const transfer =
                 uuid: notice_uuid,
               },
               href: cb ? '/rMATIC/staker/info' : null,
+              destChainId,
+              targetAddress,
             }),
           );
           dispatch(reloadData());
@@ -406,6 +413,8 @@ export const transfer =
               poolAddress: selectedPool.poolPubkey,
             },
             href: cb ? '/rMATIC/staker/info' : null,
+            destChainId,
+            targetAddress,
           }),
         );
 
@@ -419,23 +428,46 @@ export const transfer =
 
         blockHash &&
           dispatch(
-            bound(address, txHash, blockHash, amount, selectedPool.poolPubkey, rSymbol.Matic, (r: string) => {
-              if (r == 'loading') {
-                dispatch(add_Matic_stake_Notice(notice_uuid, amountparam, noticeStatus.Pending));
-              } else {
-                dispatch(setStakeHash(null));
-              }
+            bound(
+              address,
+              txHash,
+              blockHash,
+              amount,
+              selectedPool.poolPubkey,
+              rSymbol.Matic,
+              destChainId,
+              targetAddress,
+              (r: string) => {
+                if (r == 'loading') {
+                  dispatch(add_Matic_stake_Notice(notice_uuid, amountparam, noticeStatus.Pending));
+                } else {
+                  dispatch(setStakeHash(null));
+                }
 
-              if (r == 'failure') {
-                dispatch(add_Matic_stake_Notice(notice_uuid, amountparam, noticeStatus.Error));
-              }
+                if (r == 'failure') {
+                  dispatch(add_Matic_stake_Notice(notice_uuid, amountparam, noticeStatus.Error));
+                }
 
-              if (r == 'successful') {
-                dispatch(add_Matic_stake_Notice(notice_uuid, amountparam, noticeStatus.Confirmed));
-                cb && cb();
-                dispatch(reloadData());
-              }
-            }),
+                if (r == 'successful') {
+                  dispatch(
+                    add_Matic_stake_Notice(
+                      notice_uuid,
+                      amountparam,
+                      destChainId === STAFI_CHAIN_ID ? noticeStatus.Confirmed : noticeStatus.Swapping,
+                    ),
+                  );
+                  // Set swap loading params for loading modal.
+                  if (destChainId === ETH_CHAIN_ID) {
+                    updateSwapParamsOfErc(dispatch, notice_uuid, 'rmatic', 0, targetAddress, true);
+                  } else {
+                    updateSwapParamsOfBep(dispatch, notice_uuid, 'rmatic', 0, targetAddress, true);
+                  }
+                  dispatch(setStakeSwapLoadingStatus(destChainId === STAFI_CHAIN_ID ? 0 : 2));
+                  cb && cb();
+                  dispatch(reloadData());
+                }
+              },
+            ),
           );
       } else {
         message.error('Error! Please try again');
@@ -453,6 +485,8 @@ export const transfer =
               uuid: notice_uuid,
             },
             href: cb ? '/rMATIC/staker/info' : null,
+            destChainId,
+            targetAddress,
           }),
         );
         dispatch(reloadData());
@@ -476,6 +510,8 @@ export const transfer =
               uuid: notice_uuid,
             },
             href: cb ? '/rMATIC/staker/info' : null,
+            destChainId,
+            targetAddress,
           }),
         );
         dispatch(
@@ -507,9 +543,9 @@ export const reSending =
   async (dispatch, getState) => {
     const processParameter = getState().rMATICModule.processParameter;
     if (processParameter) {
-      const href = processParameter.href;
+      const { href, destChainId, targetAddress } = processParameter;
       dispatch(
-        transfer(processParameter.sending.amount, () => {
+        transfer(processParameter.sending.amount, destChainId, targetAddress, () => {
           cb && href && cb(href);
         }),
       );
@@ -521,8 +557,7 @@ export const reStaking =
   async (dispatch, getState) => {
     const processParameter = getState().rMATICModule.processParameter;
     if (processParameter) {
-      const staking = processParameter.staking;
-      const href = processParameter.href;
+      const { href, staking, destChainId, targetAddress } = processParameter.href;
       processParameter &&
         dispatch(
           bound(
@@ -532,6 +567,8 @@ export const reStaking =
             NumberUtil.tokenAmountToChain(staking.amount, rSymbol.Matic),
             staking.poolAddress,
             staking.type,
+            destChainId,
+            targetAddress,
             (r: string) => {
               // if (r != "failure") {
               //   (href && cb) && cb(href);
@@ -665,6 +702,9 @@ export const onProceed =
                   minting: {
                     minting: processStatus.loading,
                   },
+                  swapping: {
+                    brocasting: processStatus.default,
+                  },
                 }),
               );
               dispatch(setProcessSlider(true));
@@ -683,6 +723,9 @@ export const getBlock =
     try {
       const address = getState().rMATICModule.maticAccount.address;
       const validPools = getState().rMATICModule.validPools;
+
+      const processParameter = getState().rMATICModule.processParameter;
+      const { destChainId, targetAddress } = processParameter;
 
       const result = await ethereum.request({
         method: 'eth_getTransactionByHash',
@@ -736,6 +779,9 @@ export const getBlock =
           minting: {
             minting: processStatus.default,
           },
+          swapping: {
+            brocasting: processStatus.default,
+          },
         }),
       );
       dispatch(setProcessSlider(true));
@@ -752,44 +798,54 @@ export const getBlock =
         }),
       );
       dispatch(
-        bound(address, txHash, blockHash, amount.toString(), poolPubkey, rSymbol.Matic, (r: string) => {
-          // dispatch(setStakeHash(null));
+        bound(
+          address,
+          txHash,
+          blockHash,
+          amount.toString(),
+          poolPubkey,
+          rSymbol.Matic,
+          destChainId,
+          targetAddress,
+          (r: string) => {
+            // dispatch(setStakeHash(null));
 
-          if (r == 'loading') {
-            uuid &&
-              dispatch(
-                add_Matic_stake_Notice(
-                  uuid,
-                  NumberUtil.tokenAmountToHuman(amount, rSymbol.Matic).toString(),
-                  noticeStatus.Pending,
-                ),
-              );
-          } else {
-            dispatch(setStakeHash(null));
-          }
+            if (r == 'loading') {
+              uuid &&
+                dispatch(
+                  add_Matic_stake_Notice(
+                    uuid,
+                    NumberUtil.tokenAmountToHuman(amount, rSymbol.Matic).toString(),
+                    noticeStatus.Pending,
+                  ),
+                );
+            } else {
+              dispatch(setStakeHash(null));
+            }
 
-          if (r == 'failure') {
-            uuid &&
-              dispatch(
-                add_Matic_stake_Notice(
-                  uuid,
-                  NumberUtil.tokenAmountToHuman(amount, rSymbol.Matic).toString(),
-                  noticeStatus.Error,
-                ),
-              );
-          }
-          if (r == 'successful') {
-            uuid &&
-              dispatch(
-                add_Matic_stake_Notice(
-                  uuid,
-                  NumberUtil.tokenAmountToHuman(amount, rSymbol.Matic).toString(),
-                  noticeStatus.Confirmed,
-                ),
-              );
-            cb && cb();
-          }
-        }),
+            if (r == 'failure') {
+              uuid &&
+                dispatch(
+                  add_Matic_stake_Notice(
+                    uuid,
+                    NumberUtil.tokenAmountToHuman(amount, rSymbol.Matic).toString(),
+                    noticeStatus.Error,
+                  ),
+                );
+            }
+            if (r == 'successful') {
+              uuid &&
+                dispatch(
+                  add_Matic_stake_Notice(
+                    uuid,
+                    NumberUtil.tokenAmountToHuman(amount, rSymbol.Matic).toString(),
+                    noticeStatus.Confirmed,
+                  ),
+                );
+              cb && cb();
+            }
+          },
+        ),
       );
     } catch (e) {
       message.error(e.message);
