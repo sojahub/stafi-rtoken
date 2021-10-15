@@ -10,6 +10,7 @@ import solIcon from '@images/stake_overview_sol.svg';
 import { Modal } from 'antd';
 import React from 'react';
 import styled, { CSSProperties } from 'styled-components';
+import './index.scss';
 
 export interface StakeFeeItem {
   icon: any;
@@ -44,6 +45,17 @@ export default function StakeOverviewModal(props: StakeOverviewModalProps) {
     sendingFundIcon = bnbIcon;
   }
 
+  let txCount = 0;
+  if (!!props.sendingFund) {
+    txCount++;
+  }
+  if (!props.stakingFee) {
+    txCount++;
+  }
+  if (!props.stakingAndSwapFee) {
+    txCount++;
+  }
+
   return (
     <Modal
       footer={false}
@@ -51,8 +63,10 @@ export default function StakeOverviewModal(props: StakeOverviewModalProps) {
       visible={props.visible}
       width={390}
       bodyStyle={modalBodyStyle}
+      wrapClassName='stake_overview'
       style={{
         left: '88px',
+        borderRadius: '10px',
       }}>
       <HeadContainer>
         <CloseIcon style={{ visibility: 'hidden' }} />
@@ -67,7 +81,7 @@ export default function StakeOverviewModal(props: StakeOverviewModalProps) {
       <StakeOverviewIcon src={stakeOverviewIcon} />
 
       <Text size='16px' color='#23292F' bold mt='26px'>
-        Stake process consists of 5 transactions
+        Stake process consists of {txCount} transactions
       </Text>
 
       <Text size='12px' color='#4D4D4D' mt='5px'>
@@ -75,7 +89,7 @@ export default function StakeOverviewModal(props: StakeOverviewModalProps) {
       </Text>
 
       <FeeListContainer>
-        {props.sendingFund && (
+        {!!props.sendingFund && (
           <HContainer mb='6px'>
             <HContainer>
               <FeeIcon src={sendingFundIcon} />
@@ -91,7 +105,7 @@ export default function StakeOverviewModal(props: StakeOverviewModalProps) {
           </HContainer>
         )}
 
-        {props.stakingFee && (
+        {!!props.stakingFee && (
           <HContainer mb='6px'>
             <HContainer>
               <FeeIcon src={polkadotIcon} />
@@ -107,7 +121,7 @@ export default function StakeOverviewModal(props: StakeOverviewModalProps) {
           </HContainer>
         )}
 
-        {props.stakingAndSwapFee && (
+        {!!props.stakingAndSwapFee && (
           <HContainer mb='6px'>
             <HContainer>
               <FeeIcon src={polkadotIcon} />

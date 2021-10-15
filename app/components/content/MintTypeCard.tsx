@@ -98,7 +98,12 @@ export default function MintTypeCard(props: MintTypeCardProps) {
         )}
 
         <Text size='12px' scale={0.83} transformOrigin='top center' color='#C4C4C4' sameLineHeight>
-          Time: {props.tokenType === 'rFIS' && props.chainId === STAFI_CHAIN_ID ? '<1 minute' : '1~2 minutes'}
+          Time:{' '}
+          {props.tokenType === 'rFIS' && props.chainId === STAFI_CHAIN_ID
+            ? '<1 minute'
+            : props.tokenType === 'rFIS'
+            ? '1~2 minutes'
+            : '2~4 minutes'}
         </Text>
       </StakeDetailContainer>
     </CardContainer>
