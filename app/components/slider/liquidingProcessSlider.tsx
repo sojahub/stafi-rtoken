@@ -184,7 +184,7 @@ export default function Index(props: Props) {
             rSymbol={process.rSymbol}
             index={4}
             title='Swapping'
-            tooltipText='Staked proof gets validated, contract is issuing rToken to your address'
+            tooltipText='rToken is swapped to designate version'
             data={process.swapping}
             showButton={false}
           />
