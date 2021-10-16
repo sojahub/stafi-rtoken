@@ -261,7 +261,7 @@ export const monitoring_Method = (): AppThunk => (dispatch, getState) => {
 
         setTimeout(() => {
           dispatch(reloadData());
-        }, 20);
+        }, 200);
       } else {
         // dispatch(handleMaticAccount(null));
       }
