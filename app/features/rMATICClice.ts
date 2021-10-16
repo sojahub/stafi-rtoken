@@ -341,7 +341,7 @@ export const transfer =
 
         let txDetail;
         while (true) {
-          await sleep(1000);
+          await sleep(3000);
           txDetail = await ethereum
             .request({
               method: 'eth_getTransactionByHash',
