@@ -167,11 +167,9 @@ export default function StakeSwapLoading(props: Props) {
       !swapLoadingParams.tokenType ||
       swapStatus === 1
     ) {
-      console.log('invalid swapLoadingParams');
+      // console.log('invalid swapLoadingParams');
       return;
     }
-
-    const targetBalance = Number(swapLoadingParams.oldBalance) + Number(swapLoadingParams.amount);
 
     if (swapLoadingParams.destChainId === ETH_CHAIN_ID) {
       if (swapLoadingParams.tokenAbi && swapLoadingParams.tokenAddress) {
@@ -181,7 +179,10 @@ export default function StakeSwapLoading(props: Props) {
           swapLoadingParams.tokenAddress,
           (v: any) => {
             // console.log('sdfsdfsdf', Number(v), targetBalance * 1.1, targetBalance * 0.9);
-            if (Number(v) <= targetBalance * 1.1 && Number(v) >= targetBalance * 0.9) {
+            if (
+              Number(v) - Number(swapLoadingParams.oldBalance) <= Number(swapLoadingParams.amount) * 1.01 &&
+              Number(v) - Number(swapLoadingParams.oldBalance) >= Number(swapLoadingParams.amount) * 0.99
+            ) {
               setSwapStatus(1);
               dispatch(getErc20AssetBalanceAll());
               dispatch(update_NoticeStatus(swapLoadingParams.noticeUuid, noticeStatus.Confirmed));
@@ -197,7 +198,10 @@ export default function StakeSwapLoading(props: Props) {
           cloneDeep(swapLoadingParams.tokenAbi),
           swapLoadingParams.tokenAddress,
           (v: any) => {
-            if (Number(v) <= targetBalance * 1.1 && Number(v) >= targetBalance * 0.9) {
+            if (
+              Number(v) - Number(swapLoadingParams.oldBalance) <= Number(swapLoadingParams.amount) * 1.01 &&
+              Number(v) - Number(swapLoadingParams.oldBalance) >= Number(swapLoadingParams.amount) * 0.99
+            ) {
               setSwapStatus(1);
               dispatch(getBep20AssetBalanceAll());
               dispatch(update_NoticeStatus(swapLoadingParams.noticeUuid, noticeStatus.Confirmed));
@@ -207,11 +211,14 @@ export default function StakeSwapLoading(props: Props) {
         );
       }
     } else if (swapLoadingParams.destChainId === SOL_CHAIN_ID) {
-      console.log('check spl token balance');
+      // console.log('check spl token balance');
       getSlpAssetBalance(swapLoadingParams.address, swapLoadingParams.tokenType, (v: any) => {
         // console.log('new amount:', v);
-        if (Number(v) <= targetBalance * 1.1 && Number(v) >= targetBalance * 0.9) {
-          console.log('check splt token balance success');
+        if (
+          Number(v) - Number(swapLoadingParams.oldBalance) <= Number(swapLoadingParams.amount) * 1.01 &&
+          Number(v) - Number(swapLoadingParams.oldBalance) >= Number(swapLoadingParams.amount) * 0.99
+        ) {
+          // console.log('check splt token balance success');
           setSwapStatus(1);
           dispatch(getSlp20AssetBalanceAll());
           dispatch(update_NoticeStatus(swapLoadingParams.noticeUuid, noticeStatus.Confirmed));
