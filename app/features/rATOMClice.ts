@@ -13,6 +13,7 @@ import NumberUtil from '@util/numberUtil';
 import { message } from 'antd';
 import _m0 from 'protobufjs/minimal';
 import { AppThunk } from '../store';
+import { ETH_CHAIN_ID, STAFI_CHAIN_ID, updateSwapParamsOfBep, updateSwapParamsOfErc } from './bridgeClice';
 import CommonClice from './commonClice';
 import { setSwapLoadingStatus } from './feeStationClice';
 import { bondStates, bound, fisUnbond, rTokenSeries_bondStates } from './FISClice';
@@ -20,8 +21,11 @@ import {
   initProcess,
   processStatus,
   setLoading,
+  setProcessDestChainId,
   setProcessSending,
-  setProcessSlider, setProcessType
+  setProcessSlider,
+  setProcessType,
+  setStakeSwapLoadingStatus
 } from './globalClice';
 import { add_Notice, findUuid, noticeStatus, noticesubType, noticeType } from './noticeClice';
 
@@ -212,7 +216,7 @@ const queryBalance = async (account: any, dispatch: any, getState: any) => {
 };
 
 export const transfer =
-  (amountparam: string, cb?: Function): AppThunk =>
+  (amountparam: string, destChainId: number, targetAddress: string, cb?: Function): AppThunk =>
   async (dispatch, getState) => {
     const processParameter = getState().rATOMModule.processParameter;
     const notice_uuid = (processParameter && processParameter.uuid) || stafi_uuid();
@@ -241,8 +245,15 @@ export const transfer =
         }),
       );
       dispatch(setProcessType(rSymbol.Atom));
+      dispatch(setProcessDestChainId(destChainId));
       dispatch(setProcessSlider(true));
-      const sendTokens: any = await client.sendTokens(address, selectedPool.address, coins(Number(amount), demon), memo);
+
+      const sendTokens: any = await client.sendTokens(
+        address,
+        selectedPool.address,
+        coins(Number(amount), demon),
+        memo,
+      );
       if (sendTokens.code == 0) {
         const block = await client.getBlock(sendTokens.height);
         const txHash = sendTokens.transactionHash;
@@ -275,6 +286,8 @@ export const transfer =
               poolAddress: selectedPool.poolPubkey,
             },
             href: cb ? '/rATOM/staker/info' : null,
+            destChainId,
+            targetAddress,
           }),
         );
 
@@ -286,24 +299,46 @@ export const transfer =
         );
         blockHash &&
           dispatch(
-            bound(address, txHash, blockHash, amount, selectedPool.poolPubkey, rSymbol.Atom, (r: string) => {
-              if (r == 'loading') {
-                dispatch(add_ATOM_stake_Notice(notice_uuid, amountparam, noticeStatus.Pending));
-              } else {
-                dispatch(setStakeHash(null));
-              }
+            bound(
+              address,
+              txHash,
+              blockHash,
+              amount,
+              selectedPool.poolPubkey,
+              rSymbol.Atom,
+              destChainId,
+              targetAddress,
+              (r: string) => {
+                if (r == 'loading') {
+                  dispatch(add_ATOM_stake_Notice(notice_uuid, amountparam, noticeStatus.Pending));
+                } else {
+                  dispatch(setStakeHash(null));
+                }
 
-              if (r == 'failure') {
+                if (r == 'failure') {
+                  dispatch(add_ATOM_stake_Notice(notice_uuid, amountparam, noticeStatus.Error));
+                }
 
-                dispatch(add_ATOM_stake_Notice(notice_uuid, amountparam, noticeStatus.Error));
-              }
-
-              if (r == 'successful') {
-                dispatch(add_ATOM_stake_Notice(notice_uuid, amountparam, noticeStatus.Confirmed));
-                cb && cb();
-                dispatch(reloadData());
-              }
-            }),
+                if (r == 'successful') {
+                  dispatch(
+                    add_ATOM_stake_Notice(
+                      notice_uuid,
+                      amountparam,
+                      destChainId === STAFI_CHAIN_ID ? noticeStatus.Confirmed : noticeStatus.Swapping,
+                    ),
+                  );
+                  // Set swap loading params for loading modal.
+                  if (destChainId === ETH_CHAIN_ID) {
+                    updateSwapParamsOfErc(dispatch, notice_uuid, 'ratom', 0, targetAddress, true);
+                  } else {
+                    updateSwapParamsOfBep(dispatch, notice_uuid, 'ratom', 0, targetAddress, true);
+                  }
+                  dispatch(setStakeSwapLoadingStatus(destChainId === STAFI_CHAIN_ID ? 0 : 2));
+                  cb && cb();
+                  dispatch(reloadData());
+                }
+              },
+            ),
           );
       } else {
         dispatch(
@@ -320,6 +355,8 @@ export const transfer =
               uuid: notice_uuid,
             },
             href: cb ? '/rATOM/staker/info' : null,
+            destChainId,
+            targetAddress,
           }),
         );
         dispatch(reloadData());
@@ -339,6 +376,8 @@ export const transfer =
             uuid: notice_uuid,
           },
           href: cb ? '/rATOM/staker/info' : null,
+          destChainId,
+          targetAddress,
         }),
       );
       dispatch(
@@ -452,9 +491,9 @@ export const reSending =
   async (dispatch, getState) => {
     const processParameter = getState().rATOMModule.processParameter;
     if (processParameter) {
-      const href = processParameter.href;
+      const { href, destChainId, targetAddress } = processParameter;
       dispatch(
-        transfer(processParameter.sending.amount, () => {
+        transfer(processParameter.sending.amount, destChainId, targetAddress, () => {
           cb && href && cb(href);
         }),
       );
@@ -466,8 +505,7 @@ export const reStaking =
   async (dispatch, getState) => {
     const processParameter = getState().rATOMModule.processParameter;
     if (processParameter) {
-      const staking = processParameter.staking;
-      const href = processParameter.href;
+      const { staking, href, destChainId, targetAddress } = processParameter;
       processParameter &&
         dispatch(
           bound(
@@ -477,6 +515,8 @@ export const reStaking =
             NumberUtil.tokenAmountToChain(staking.amount, rSymbol.Atom),
             staking.poolAddress,
             staking.type,
+            destChainId,
+            targetAddress,
             (r: string) => {
               // if (r != "failure") {
               //   (href && cb) && cb(href);
@@ -639,6 +679,9 @@ export const getBlock =
       const address = getState().rATOMModule.atomAccount.address;
       const validPools = getState().rATOMModule.validPools;
 
+      const processParameter = getState().rATOMModule.processParameter;
+      const { destChainId, targetAddress } = processParameter;
+
       const client = await atomServer.createApi();
       const indexedTx = await client.getTx(txHash);
       if (!indexedTx) {
@@ -717,6 +760,9 @@ export const getBlock =
           minting: {
             minting: processStatus.default,
           },
+          swapping: {
+            brocasting: processStatus.default,
+          },
         }),
       );
       dispatch(setProcessSlider(true));
@@ -733,44 +779,54 @@ export const getBlock =
         }),
       );
       dispatch(
-        bound(address, txHash, blockHash, amount.toString(), poolPubkey, rSymbol.Atom, (r: string) => {
-          // dispatch(setStakeHash(null));
+        bound(
+          address,
+          txHash,
+          blockHash,
+          amount.toString(),
+          poolPubkey,
+          rSymbol.Atom,
+          destChainId,
+          targetAddress,
+          (r: string) => {
+            // dispatch(setStakeHash(null));
 
-          if (r == 'loading') {
-            uuid &&
-              dispatch(
-                add_ATOM_stake_Notice(
-                  uuid,
-                  NumberUtil.tokenAmountToHuman(amount, rSymbol.Atom).toString(),
-                  noticeStatus.Pending,
-                ),
-              );
-          } else {
-            dispatch(setStakeHash(null));
-          }
+            if (r == 'loading') {
+              uuid &&
+                dispatch(
+                  add_ATOM_stake_Notice(
+                    uuid,
+                    NumberUtil.tokenAmountToHuman(amount, rSymbol.Atom).toString(),
+                    noticeStatus.Pending,
+                  ),
+                );
+            } else {
+              dispatch(setStakeHash(null));
+            }
 
-          if (r == 'failure') {
-            uuid &&
-              dispatch(
-                add_ATOM_stake_Notice(
-                  uuid,
-                  NumberUtil.tokenAmountToHuman(amount, rSymbol.Atom).toString(),
-                  noticeStatus.Error,
-                ),
-              );
-          }
-          if (r == 'successful') {
-            uuid &&
-              dispatch(
-                add_ATOM_stake_Notice(
-                  uuid,
-                  NumberUtil.tokenAmountToHuman(amount, rSymbol.Atom).toString(),
-                  noticeStatus.Confirmed,
-                ),
-              );
-            cb && cb();
-          }
-        }),
+            if (r == 'failure') {
+              uuid &&
+                dispatch(
+                  add_ATOM_stake_Notice(
+                    uuid,
+                    NumberUtil.tokenAmountToHuman(amount, rSymbol.Atom).toString(),
+                    noticeStatus.Error,
+                  ),
+                );
+            }
+            if (r == 'successful') {
+              uuid &&
+                dispatch(
+                  add_ATOM_stake_Notice(
+                    uuid,
+                    NumberUtil.tokenAmountToHuman(amount, rSymbol.Atom).toString(),
+                    noticeStatus.Confirmed,
+                  ),
+                );
+              cb && cb();
+            }
+          },
+        ),
       );
     } catch (e) {
       message.error(e.message);

@@ -1,4 +1,6 @@
 import Content from '@components/content/stakeContent_DOT';
+import { BSC_CHAIN_ID, ETH_CHAIN_ID, SOL_CHAIN_ID, STAFI_CHAIN_ID } from '@features/bridgeClice';
+import { getGasPrice } from '@features/ETHClice';
 import { setProcessSlider } from '@features/globalClice';
 import { rTokenLedger, rTokenRate, transfer } from '@features/rMATICClice';
 import { ratioToAmount } from '@util/common';
@@ -15,6 +17,7 @@ export default function Index(props: any) {
   useEffect(() => {
     dispatch(rTokenRate());
     dispatch(rTokenLedger());
+    dispatch(getGasPrice());
   }, []);
   const { transferrableAmount, ratio, stafiStakerApr, fisCompare, validPools, totalIssuance, bondFees } = useSelector(
     (state: any) => {
@@ -51,7 +54,7 @@ export default function Index(props: any) {
         validPools={validPools}
         bondFees={NumberUtil.fisAmountToHuman(bondFees) || '--'}
         totalStakedToken={NumberUtil.handleFisAmountToFixed(totalIssuance * ratio)}
-        onStakeClick={() => {
+        onStakeClick={(chainId: number, targetAddress: string) => {
           if (amount) {
             if (fisCompare) {
               message.error('No enough FIS to pay for the fee');
@@ -59,9 +62,17 @@ export default function Index(props: any) {
             }
 
             dispatch(
-              transfer(amount, () => {
+              transfer(amount, chainId, targetAddress, () => {
                 dispatch(setProcessSlider(false));
-                props.history.push('/rMATIC/staker/info');
+                if (chainId === STAFI_CHAIN_ID) {
+                  props.history.push('/rMATIC/staker/info');
+                } else if (chainId === ETH_CHAIN_ID) {
+                  props.history.push('/rAsset/home/erc');
+                } else if (chainId === BSC_CHAIN_ID) {
+                  props.history.push('/rAsset/home/bep');
+                } else if (chainId === SOL_CHAIN_ID) {
+                  props.history.push('/rAsset/home/spl');
+                }
               }),
             );
             // if(getSessionStorageItem("atom_stake_tips_modal")){

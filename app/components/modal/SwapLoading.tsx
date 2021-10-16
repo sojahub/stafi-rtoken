@@ -1,5 +1,5 @@
 import { LoadingOutlined } from '@ant-design/icons';
-import { setSwapLoadingStatus } from '@features/bridgeClice';
+import { BSC_CHAIN_ID, ETH_CHAIN_ID, setSwapLoadingStatus, SOL_CHAIN_ID, STAFI_CHAIN_ID } from '@features/bridgeClice';
 import {
   getAssetBalance as getBscAssetBalance,
   getAssetBalanceAll as getBep20AssetBalanceAll
@@ -169,7 +169,6 @@ export default function SwapLoading(props: Props) {
   const updateSwapStatus = async () => {
     if (
       !swapLoadingParams ||
-      !swapLoadingParams.swapType ||
       isNaN(swapLoadingParams.amount) ||
       isNaN(swapLoadingParams.oldBalance) ||
       !swapLoadingParams.tokenType ||
@@ -178,7 +177,7 @@ export default function SwapLoading(props: Props) {
       return;
     }
 
-    if (swapLoadingParams.swapType === 3) {
+    if (swapLoadingParams.destChainId === STAFI_CHAIN_ID) {
       let rType;
       if (swapLoadingParams.tokenType === 'rfis' || swapLoadingParams.tokenType === 'fis') {
         rType = rSymbol.Fis;
@@ -218,7 +217,7 @@ export default function SwapLoading(props: Props) {
           dispatch(update_NoticeStatus(swapLoadingParams.noticeUuid, noticeStatus.Confirmed));
         }
       }
-    } else if (swapLoadingParams.swapType === 1) {
+    } else if (swapLoadingParams.destChainId === ETH_CHAIN_ID) {
       if (swapLoadingParams.tokenAbi && swapLoadingParams.tokenAddress) {
         getEthAssetBalance(
           swapLoadingParams.address,
@@ -234,7 +233,7 @@ export default function SwapLoading(props: Props) {
           true,
         );
       }
-    } else if (swapLoadingParams.swapType === 2) {
+    } else if (swapLoadingParams.destChainId === BSC_CHAIN_ID) {
       if (swapLoadingParams.tokenAbi && swapLoadingParams.tokenAddress) {
         getBscAssetBalance(
           swapLoadingParams.address,
@@ -250,7 +249,7 @@ export default function SwapLoading(props: Props) {
           true,
         );
       }
-    } else if (swapLoadingParams.swapType === 4) {
+    } else if (swapLoadingParams.destChainId === SOL_CHAIN_ID) {
       getSlpAssetBalance(swapLoadingParams.address, swapLoadingParams.tokenType, (v: any) => {
         // console.log('new amount:', v);
         if (Number(v) === Number(swapLoadingParams.oldBalance) + Number(swapLoadingParams.amount)) {

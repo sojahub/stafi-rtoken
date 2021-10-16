@@ -8,6 +8,7 @@ import {
   connectSoljs,
   monitorMetaMaskChainChange
 } from '@features/globalClice';
+import { noticeStatus } from '@features/noticeClice';
 import {
   query_rBalances_account as dotquery_rBalances_account,
   reloadData as dotReloadData
@@ -25,7 +26,7 @@ import Modal from '@shared/components/modal/connectModal';
 import NumberUtil from '@util/numberUtil';
 import StringUtil from '@util/stringUtil';
 import Tool from '@util/toolUtil';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Page from '../../pages/rDOT/selectWallet/index';
 import Page_FIS from '../../pages/rDOT/selectWallet_rFIS/index';
@@ -237,6 +238,15 @@ export default function Index(props: Props) {
     };
   });
 
+  const pendingCount = useMemo(() => {
+    if (noticeData && noticeData.datas) {
+      return noticeData.datas.reduce((total: number, item: any) => {
+        return total + (item.status === noticeStatus.Pending || item.status === noticeStatus.Swapping ? 1 : 0);
+      }, 0);
+    }
+    return 0;
+  }, [noticeData]);
+
   useEffect(() => {
     dispatch(checkMetaMaskNetworkId());
     dispatch(monitorMetaMaskChainChange());
@@ -326,11 +336,16 @@ export default function Index(props: Props) {
 
         {account && (
           <div className='header_tools'>
-            <div className={`header_tool notice ${noticeData && noticeData.showNew && 'new'}`}>
-              <Popover history={props.history} visible={noticePopoverVisible} onVisibleChange={setNoticePopoverVisible}>
-                <img src={notice} />
-              </Popover>
-            </div>
+            <Popover history={props.history} visible={noticePopoverVisible} onVisibleChange={setNoticePopoverVisible}>
+              <div className={`notice_container ${pendingCount > 0 && 'pending'}`}>
+                <div className={`header_tool notice ${noticeData && noticeData.showNew && 'new'}`}>
+                  <img src={notice} className='notice_icon' />
+                </div>
+
+                {pendingCount > 0 && <div className='notice_pending_text'>{pendingCount} Pending</div>}
+              </div>
+            </Popover>
+
             {account.fisAccount && (
               <div
                 onClick={() => {

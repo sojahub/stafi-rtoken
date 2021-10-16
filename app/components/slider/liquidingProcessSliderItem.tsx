@@ -21,6 +21,7 @@ type Props = {
   tooltipText?: string;
   rSymbol?: any;
 };
+
 export default function Index(props: Props) {
   return (
     <div className='liquidingProcesSliderItem'>
@@ -39,7 +40,7 @@ export default function Index(props: Props) {
         {props.data && props.data.brocasting == processStatus.loading && <SyncOutlined type='spin' spin={true} />}
       </div>
 
-      {props.index != 3 && (
+      {props.index != 3 && props.index != 4 && (
         <div className='item'>
           <label>Packing...</label>
           {props.data && props.data.packing == processStatus.success && <img src={success} />}

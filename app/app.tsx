@@ -1,6 +1,8 @@
 import React, { Fragment, Suspense } from 'react';
 import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
+import './css/antd.scss';
+import './index.scss';
 import MyErrorBoundary from './MyErrorBoundary';
 import routesFactory from './routesFactory';
 import { configuredStore } from './store';

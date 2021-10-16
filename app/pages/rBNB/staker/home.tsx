@@ -1,4 +1,5 @@
 import Content from '@components/content/stakeContent_DOT';
+import { BSC_CHAIN_ID, ETH_CHAIN_ID, SOL_CHAIN_ID, STAFI_CHAIN_ID } from '@features/bridgeClice';
 import { reloadData, setProcessSlider } from '@features/globalClice';
 import { rTokenLedger, rTokenRate, transfer } from '@features/rBNBClice';
 import { Symbol } from '@keyring/defaults';
@@ -64,7 +65,7 @@ export default function Index(props: any) {
         validPools={validPools}
         bondFees={NumberUtil.fisAmountToHuman(bondFees) || '--'}
         totalStakedToken={NumberUtil.handleFisAmountToFixed(totalIssuance * ratio)}
-        onStakeClick={() => {
+        onStakeClick={(chainId: number, targetAddress: string) => {
           if (amount) {
             if (fisCompare) {
               message.error('No enough FIS to pay for the fee');
@@ -72,10 +73,18 @@ export default function Index(props: any) {
             }
 
             dispatch(
-              transfer(amount, () => {
+              transfer(amount, chainId, targetAddress, () => {
                 dispatch(reloadData(Symbol.Bnb));
                 dispatch(setProcessSlider(false));
-                props.history.push('/rBNB/staker/info');
+                if (chainId === STAFI_CHAIN_ID) {
+                  props.history.push('/rBNB/staker/info');
+                } else if (chainId === ETH_CHAIN_ID) {
+                  props.history.push('/rAsset/home/erc');
+                } else if (chainId === BSC_CHAIN_ID) {
+                  props.history.push('/rAsset/home/bep');
+                } else if (chainId === SOL_CHAIN_ID) {
+                  props.history.push('/rAsset/home/spl');
+                }
               }),
             );
           } else {

@@ -1,3 +1,4 @@
+import { STAFI_CHAIN_ID } from '@features/bridgeClice';
 import { setProcessSlider } from '@features/globalClice';
 import { reSending as atomReSending, reStaking as atomReStaking } from '@features/rATOMClice';
 import { reSending as bnbReSending, reStaking as bnbReStaking } from '@features/rBNBClice';
@@ -147,6 +148,7 @@ export default function Index(props: Props) {
         />
         <img className='logo' src={Liquiding_heard} /> Liquiding Process
       </div>
+
       <div className='body'>
         <Item
           rSymbol={process.rSymbol}
@@ -157,6 +159,7 @@ export default function Index(props: Props) {
           onClick={reSendingClick}
           showButton={true}
         />
+
         <Item
           rSymbol={process.rSymbol}
           index={2}
@@ -166,6 +169,7 @@ export default function Index(props: Props) {
           onClick={reStakingClick}
           showButton={true}
         />
+
         <Item
           rSymbol={process.rSymbol}
           index={3}
@@ -174,6 +178,17 @@ export default function Index(props: Props) {
           data={process.minting}
           showButton={false}
         />
+
+        {process.destChainId !== STAFI_CHAIN_ID && (
+          <Item
+            rSymbol={process.rSymbol}
+            index={4}
+            title='Swapping'
+            tooltipText='rToken is swapped to designate version'
+            data={process.swapping}
+            showButton={false}
+          />
+        )}
       </div>
     </div>
   );

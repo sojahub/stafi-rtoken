@@ -11,15 +11,18 @@ import { default as numberUtil, default as NumberUtil } from '@util/numberUtil';
 import { message } from 'antd';
 import _m0 from 'protobufjs/minimal';
 import { AppThunk } from '../store';
+import { ETH_CHAIN_ID, STAFI_CHAIN_ID, updateSwapParamsOfBep, updateSwapParamsOfErc } from './bridgeClice';
 import CommonClice from './commonClice';
 import { bondStates, bound, fisUnbond, rTokenSeries_bondStates } from './FISClice';
 import {
   initProcess,
   processStatus,
   setLoading,
+  setProcessDestChainId,
   setProcessSending,
   setProcessSlider,
-  setProcessType
+  setProcessType,
+  setStakeSwapLoadingStatus
 } from './globalClice';
 import { add_Notice, findUuid, noticeStatus, noticesubType, noticeType } from './noticeClice';
 import { connectMetamask, get_eth_getBalance } from './rETHClice';
@@ -149,7 +152,7 @@ export const reloadData = (): AppThunk => async (dispatch, getState) => {
 declare const ethereum: any;
 
 export const transfer =
-  (amountparam: string, cb?: Function): AppThunk =>
+  (amountparam: string, destChainId: number, targetAddress: string, cb?: Function): AppThunk =>
   async (dispatch, getState) => {
     const isUnlocked = await ethereum._metamask.isUnlocked();
     if (!isUnlocked) {
@@ -182,6 +185,7 @@ export const transfer =
         }),
       );
       dispatch(setProcessType(rSymbol.Bnb));
+      dispatch(setProcessDestChainId(destChainId));
       dispatch(setProcessSlider(true));
 
       const amountHex = web3.utils.toHex(amount);
@@ -258,6 +262,8 @@ export const transfer =
             poolAddress: selectedPool.poolPubkey,
           },
           href: cb ? '/rBNB/staker/info' : null,
+          destChainId,
+          targetAddress,
         }),
       );
       dispatch(
@@ -271,23 +277,40 @@ export const transfer =
 
       blockHash &&
         dispatch(
-          bound(address, txHash, blockHash, amountInBnb, selectedPool.poolPubkey, rSymbol.Bnb, (r: string) => {
-            if (r == 'loading') {
-              dispatch(add_Matic_stake_Notice(notice_uuid, amountparam, noticeStatus.Pending));
-            } else {
-              dispatch(setStakeHash(null));
-            }
+          bound(
+            address,
+            txHash,
+            blockHash,
+            amountInBnb,
+            selectedPool.poolPubkey,
+            rSymbol.Bnb,
+            destChainId,
+            targetAddress,
+            (r: string) => {
+              if (r == 'loading') {
+                dispatch(add_Matic_stake_Notice(notice_uuid, amountparam, noticeStatus.Pending));
+              } else {
+                dispatch(setStakeHash(null));
+              }
 
-            if (r == 'failure') {
-              dispatch(add_Matic_stake_Notice(notice_uuid, amountparam, noticeStatus.Error));
-            }
+              if (r == 'failure') {
+                dispatch(add_Matic_stake_Notice(notice_uuid, amountparam, noticeStatus.Error));
+              }
 
-            if (r == 'successful') {
-              dispatch(add_Matic_stake_Notice(notice_uuid, amountparam, noticeStatus.Confirmed));
-              cb && cb();
-              dispatch(reloadData());
-            }
-          }),
+              if (r == 'successful') {
+                dispatch(add_Matic_stake_Notice(notice_uuid, amountparam, noticeStatus.Confirmed));
+                // Set swap loading params for loading modal.
+                if (destChainId === ETH_CHAIN_ID) {
+                  updateSwapParamsOfErc(dispatch, notice_uuid, 'rdot', 0, targetAddress, true);
+                } else {
+                  updateSwapParamsOfBep(dispatch, notice_uuid, 'rdot', 0, targetAddress, true);
+                }
+                dispatch(setStakeSwapLoadingStatus(destChainId === STAFI_CHAIN_ID ? 0 : 2));
+                cb && cb();
+                dispatch(reloadData());
+              }
+            },
+          ),
         );
     } catch (error) {
       if (error.message === 'MetaMask Tx Signature: User denied transaction signature.' || error.code === 4001) {
@@ -326,6 +349,8 @@ export const transfer =
               uuid: notice_uuid,
             },
             href: cb ? '/rBNB/staker/info' : null,
+            destChainId,
+            targetAddress,
           }),
         );
         dispatch(
@@ -357,9 +382,9 @@ export const reSending =
   async (dispatch, getState) => {
     const processParameter = getState().rBNBModule.processParameter;
     if (processParameter) {
-      const href = processParameter.href;
+      const { href, destChainId, targetAddress } = processParameter;
       dispatch(
-        transfer(processParameter.sending.amount, () => {
+        transfer(processParameter.sending.amount, destChainId, targetAddress, () => {
           cb && href && cb(href);
         }),
       );
@@ -371,8 +396,7 @@ export const reStaking =
   async (dispatch, getState) => {
     const processParameter = getState().rBNBModule.processParameter;
     if (processParameter) {
-      const staking = processParameter.staking;
-      const href = processParameter.href;
+      const { staking, href, destChainId, targetAddress } = processParameter;
       processParameter &&
         dispatch(
           bound(
@@ -382,6 +406,8 @@ export const reStaking =
             NumberUtil.tokenAmountToChain(staking.amount, rSymbol.Bnb),
             staking.poolAddress,
             staking.type,
+            destChainId,
+            targetAddress,
             (r: string) => {
               // if (r != "failure") {
               //   (href && cb) && cb(href);
@@ -515,6 +541,9 @@ export const onProceed =
                   minting: {
                     minting: processStatus.loading,
                   },
+                  swapping: {
+                    brocasting: processStatus.default,
+                  },
                 }),
               );
               dispatch(setProcessSlider(true));
@@ -535,6 +564,9 @@ export const getBlock =
       const address = getState().rETHModule.ethAccount && getState().rETHModule.ethAccount.address;
       const validPools = getState().rBNBModule.validPools;
 
+      const processParameter = getState().rBNBModule.processParameter;
+      const { destChainId, targetAddress } = processParameter;
+
       const result = await ethereum.request({
         method: 'eth_getTransactionByHash',
         params: [txHash],
@@ -552,8 +584,8 @@ export const getBlock =
 
       const transferAmount = web3.utils.fromWei(result.value.toString(10), 'ether');
       amount = numberUtil.tokenAmountToChain(transferAmount, rSymbol.Bnb);
-      console.log('sfsdfsdf', transferAmount);
-      console.log('sfsdfsdf', amount);
+      // console.log('sfsdfsdf', transferAmount);
+      // console.log('sfsdfsdf', amount);
       if (Number(amount) <= 0) {
         message.error('Wrong amount. Please Check your TxHash');
         return;
@@ -587,6 +619,9 @@ export const getBlock =
           minting: {
             minting: processStatus.default,
           },
+          swapping: {
+            brocasting: processStatus.default,
+          },
         }),
       );
       dispatch(setProcessSlider(true));
@@ -604,44 +639,54 @@ export const getBlock =
       );
       console.log('recovery amount', amount.toString());
       dispatch(
-        bound(address, txHash, blockHash, amount.toString(), poolPubkey, rSymbol.Bnb, (r: string) => {
-          // dispatch(setStakeHash(null));
+        bound(
+          address,
+          txHash,
+          blockHash,
+          amount.toString(),
+          poolPubkey,
+          rSymbol.Bnb,
+          destChainId,
+          targetAddress,
+          (r: string) => {
+            // dispatch(setStakeHash(null));
 
-          if (r == 'loading') {
-            uuid &&
-              dispatch(
-                add_Matic_stake_Notice(
-                  uuid,
-                  NumberUtil.tokenAmountToHuman(amount, rSymbol.Bnb).toString(),
-                  noticeStatus.Pending,
-                ),
-              );
-          } else {
-            dispatch(setStakeHash(null));
-          }
+            if (r == 'loading') {
+              uuid &&
+                dispatch(
+                  add_Matic_stake_Notice(
+                    uuid,
+                    NumberUtil.tokenAmountToHuman(amount, rSymbol.Bnb).toString(),
+                    noticeStatus.Pending,
+                  ),
+                );
+            } else {
+              dispatch(setStakeHash(null));
+            }
 
-          if (r == 'failure') {
-            uuid &&
-              dispatch(
-                add_Matic_stake_Notice(
-                  uuid,
-                  NumberUtil.tokenAmountToHuman(amount, rSymbol.Bnb).toString(),
-                  noticeStatus.Error,
-                ),
-              );
-          }
-          if (r == 'successful') {
-            uuid &&
-              dispatch(
-                add_Matic_stake_Notice(
-                  uuid,
-                  NumberUtil.tokenAmountToHuman(amount, rSymbol.Bnb).toString(),
-                  noticeStatus.Confirmed,
-                ),
-              );
-            cb && cb();
-          }
-        }),
+            if (r == 'failure') {
+              uuid &&
+                dispatch(
+                  add_Matic_stake_Notice(
+                    uuid,
+                    NumberUtil.tokenAmountToHuman(amount, rSymbol.Bnb).toString(),
+                    noticeStatus.Error,
+                  ),
+                );
+            }
+            if (r == 'successful') {
+              uuid &&
+                dispatch(
+                  add_Matic_stake_Notice(
+                    uuid,
+                    NumberUtil.tokenAmountToHuman(amount, rSymbol.Bnb).toString(),
+                    noticeStatus.Confirmed,
+                  ),
+                );
+              cb && cb();
+            }
+          },
+        ),
       );
     } catch (e) {
       message.error(e.message);

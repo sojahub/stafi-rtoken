@@ -1,4 +1,6 @@
-import { getRsymbolByTokenTitle } from '@config/index';
+import config, { getRsymbolByTokenTitle } from '@config/index';
+import { BSC_CHAIN_ID, ETH_CHAIN_ID, SOL_CHAIN_ID } from '@features/bridgeClice';
+import { setStakeSwapLoadingParams } from '@features/globalClice';
 import doubt from '@images/doubt.svg';
 import rBNB from '@images/selected_bnb.svg';
 import rATOM from '@images/selected_rATOM.svg';
@@ -13,7 +15,8 @@ import Input from '@shared/components/input/amountInput';
 import numberUtil from '@util/numberUtil';
 import { message, Tooltip } from 'antd';
 import React, { useEffect, useMemo, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import ChooseMintType from './ChooseMintType';
 import './index.scss';
 import LeftContent from './leftContent';
 
@@ -35,13 +38,20 @@ type Props = {
   histroy?: any;
 };
 export default function Index(props: Props) {
+  const dispatch = useDispatch();
   const [mintRewardAct, setMintRewardAct] = useState(null);
+  const [inChooseMintType, setInChooseMintType] = useState(false);
+
   const { bondSwitch, processSlider } = useSelector((state: any) => {
     return {
       bondSwitch: state.FISModule.bondSwitch,
       processSlider: state.globalModule.processSlider,
     };
   });
+
+  const haswarn = useMemo(() => {
+    return !bondSwitch || !(props.validPools && props.validPools.length > 0);
+  }, [props.validPools, bondSwitch]);
 
   useEffect(() => {
     initMintRewardAct();
@@ -83,9 +93,50 @@ export default function Index(props: Props) {
       return rBNB;
     }
   };
-  const haswarn = useMemo(() => {
-    return !bondSwitch || !(props.validPools && props.validPools.length > 0);
-  }, [props.validPools, bondSwitch]);
+
+  const clickNext = () => {
+    if (Number(props.amount) > Number(props.transferrableAmount)) {
+      props.onChange('');
+      message.error('The input amount exceeds your transferrable balance');
+      return;
+    }
+    setInChooseMintType(true);
+  };
+
+  if (inChooseMintType) {
+    return (
+      <LeftContent padding='30px 0px 30px 10px' width='578px'>
+        <ChooseMintType
+          type={props.type}
+          relayFee={props.bondFees}
+          clickBack={() => setInChooseMintType(false)}
+          clickStake={(chainId: number, targetAddress: string) => {
+            props.onStakeClick(chainId, targetAddress);
+
+            const destPlatform =
+              chainId === ETH_CHAIN_ID
+                ? 'ERC20'
+                : chainId === BSC_CHAIN_ID
+                ? 'BEP20'
+                : chainId === SOL_CHAIN_ID
+                ? 'SPL'
+                : 'NATIVE';
+            const transferDetail = `${props.willAmount} ${props.type} ${destPlatform}`;
+            let viewTxUrl;
+            if (chainId === ETH_CHAIN_ID) {
+              viewTxUrl = config.etherScanErc20TxInAddressUrl(targetAddress);
+            } else if (chainId === BSC_CHAIN_ID) {
+              viewTxUrl = config.bscScanBep20TxInAddressUrl(targetAddress);
+            } else if (chainId === SOL_CHAIN_ID) {
+              viewTxUrl = config.solScanSlp20TxInAddressUrl(targetAddress);
+            }
+            dispatch(setStakeSwapLoadingParams({ amount: props.willAmount, transferDetail, viewTxUrl }));
+          }}
+        />
+      </LeftContent>
+    );
+  }
+
   return (
     <LeftContent className='stafi_stake_context'>
       <label className='title'>
@@ -140,7 +191,7 @@ export default function Index(props: Props) {
         <Input
           placeholder='AMOUNT'
           value={props.amount}
-          maxInput={props.transferrableAmount}
+          maxInput={isNaN(props.transferrableAmount) ? 0 : props.transferrableAmount}
           onChange={(e: any) => {
             props.onChange && props.onChange(e);
           }}
@@ -234,19 +285,11 @@ export default function Index(props: Props) {
           </div>
         )}
       </div>
+
       <div className='btns'>
         {' '}
-        <Button
-          disabled={!props.amount || props.amount == 0 || haswarn || processSlider}
-          onClick={() => {
-            if (Number(props.amount) > Number(props.transferrableAmount)) {
-              props.onChange('');
-              message.error('The input amount exceeds your transferrable balance');
-              return;
-            }
-            props.onStakeClick && props.onStakeClick();
-          }}>
-          Stake
+        <Button disabled={!props.amount || props.amount == 0 || haswarn || processSlider} onClick={clickNext}>
+          Next
         </Button>
       </div>
     </LeftContent>
