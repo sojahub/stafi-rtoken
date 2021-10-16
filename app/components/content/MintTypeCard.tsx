@@ -101,7 +101,7 @@ export default function MintTypeCard(props: MintTypeCardProps) {
           Time:{' '}
           {props.tokenType === 'rFIS' && props.chainId === STAFI_CHAIN_ID
             ? '<1 minute'
-            : props.tokenType === 'rFIS'
+            : props.tokenType === 'rFIS' || props.chainId === STAFI_CHAIN_ID
             ? '1~2 minutes'
             : '2~4 minutes'}
         </Text>
