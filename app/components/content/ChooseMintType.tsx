@@ -17,6 +17,7 @@ import StakeOverviewModal from 'app/modal/StakeOverviewModal';
 import { isEmpty } from 'lodash';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import web3Utils from 'web3-utils';
 import './index.scss';
 import MintTypeCard from './MintTypeCard';
 
@@ -35,15 +36,26 @@ export default function ChooseMintType(props: ChooseMintTypeProps) {
   const [targetAddress, setTargetAddress] = useState('');
   const [stakeOverviewModalVisible, setStakeOverviewModalVisible] = useState(false);
   const [showAddSplTokenButton, setShowAddSplTokenButton] = useState(false);
+  const [maticStakeEthFee, setMaticStakeEthFee] = useState('-- ETH');
 
-  const { processSlider, erc20SwapFee, bep20SwapFee, slp20SwapFee } = useSelector((state: any) => {
+  const { processSlider, erc20SwapFee, bep20SwapFee, slp20SwapFee, gasPrice } = useSelector((state: any) => {
     return {
       processSlider: state.globalModule.processSlider,
       erc20SwapFee: state.bridgeModule.erc20EstimateFee,
       bep20SwapFee: state.bridgeModule.bep20EstimateFee,
       slp20SwapFee: state.bridgeModule.slp20EstimateFee,
+      gasPrice: state.ETHModule.gasPrice,
     };
   });
+
+  useEffect(() => {
+    if (props.type === 'rMATIC') {
+      if (!isNaN(gasPrice)) {
+        const feeInEth = web3Utils.fromWei(web3Utils.toBN(36928).mul(web3Utils.toBN(gasPrice)), 'ether');
+        setMaticStakeEthFee(Math.round(Number(feeInEth)*100000000)/100000000 + ' ETH');
+      }
+    }
+  }, [gasPrice]);
 
   const { sendingFund, stakingFee, stakingAndSwapFee } = useMemo(() => {
     if (props.type === 'rFIS') {
@@ -122,18 +134,18 @@ export default function ChooseMintType(props: ChooseMintTypeProps) {
     } else if (props.type === 'rMATIC') {
       if (selectedChainId === STAFI_CHAIN_ID) {
         return {
-          sendingFund: '0.00000012 ETH',
+          sendingFund: maticStakeEthFee,
           stakingFee: '0.003 FIS',
         };
       } else if (selectedChainId === ETH_CHAIN_ID) {
         return {
-          sendingFund: '0.00000012 ETH',
+          sendingFund: maticStakeEthFee,
           stakingAndSwapFee:
             Math.round((0.003 + Number(isNaN(erc20SwapFee) ? 0 : erc20SwapFee)) * 1000000) / 1000000 + ' FIS',
         };
       } else if (selectedChainId === BSC_CHAIN_ID) {
         return {
-          sendingFund: '0.00000012 ETH',
+          sendingFund: maticStakeEthFee,
           stakingAndSwapFee:
             Math.round((0.003 + Number(isNaN(bep20SwapFee) ? 0 : bep20SwapFee)) * 1000000) / 1000000 + ' FIS',
         };

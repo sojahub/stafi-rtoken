@@ -1,5 +1,6 @@
 import Content from '@components/content/stakeContent_DOT';
 import { BSC_CHAIN_ID, ETH_CHAIN_ID, SOL_CHAIN_ID, STAFI_CHAIN_ID } from '@features/bridgeClice';
+import { getGasPrice } from '@features/ETHClice';
 import { setProcessSlider } from '@features/globalClice';
 import { rTokenLedger, rTokenRate, transfer } from '@features/rMATICClice';
 import { ratioToAmount } from '@util/common';
@@ -16,6 +17,7 @@ export default function Index(props: any) {
   useEffect(() => {
     dispatch(rTokenRate());
     dispatch(rTokenLedger());
+    dispatch(getGasPrice());
   }, []);
   const { transferrableAmount, ratio, stafiStakerApr, fisCompare, validPools, totalIssuance, bondFees } = useSelector(
     (state: any) => {

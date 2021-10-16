@@ -10,6 +10,8 @@ import SolServer from '@servers/sol';
 import FisServer from '@servers/stafi';
 import { AppThunk } from '../store';
 
+declare const ethereum: any;
+
 const ethServer = new EthServer();
 const fisServer = new FisServer();
 const ksmServer = new KsmServer();
@@ -18,6 +20,7 @@ const dotServer = new DotServer();
 const atomServer = new AtomServer();
 const solServer = new SolServer();
 const maticServer = new MaticServer();
+
 const ETHClice = createSlice({
   name: 'ETHModule',
   initialState: {
@@ -37,6 +40,7 @@ const ETHClice = createSlice({
     RSOLErc20Allowance: '--',
     RMaticErc20Allowance: '--',
     RETHErc20Allowance: '--',
+    gasPrice: '--',
   },
   reducers: {
     setErcETHBalance(state, { payload }) {
@@ -87,6 +91,9 @@ const ETHClice = createSlice({
     setRETHErc20Allowance(state, { payload }) {
       state.RETHErc20Allowance = payload;
     },
+    setGasPrice(state, { payload }) {
+      state.gasPrice = payload;
+    },
   },
 });
 
@@ -107,7 +114,21 @@ export const {
   setRSOLErc20Allowance,
   setRMaticErc20Allowance,
   setRETHErc20Allowance,
+  setGasPrice,
 } = ETHClice.actions;
+
+export const getGasPrice = (): AppThunk => async (dispatch, getState) => {
+  try {
+    let web3 = ethServer.getWeb3();
+    if (!web3 || !web3.eth) {
+      return;
+    }
+    var gasPrice = await web3.eth.getGasPrice();
+    dispatch(setGasPrice(gasPrice));
+  } catch (err: any) {
+    console.error('getGasPrice Error:', err.message);
+  }
+};
 
 export const getAssetBalanceAll = (): AppThunk => (dispatch, getState) => {
   dispatch(getETHAssetBalance());

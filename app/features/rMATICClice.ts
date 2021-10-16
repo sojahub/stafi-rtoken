@@ -30,7 +30,14 @@ import {
 import { add_Notice, findUuid, noticeStatus, noticesubType, noticeType } from './noticeClice';
 import { setIsloadMonitoring } from './rETHClice';
 
+declare const window: any;
+declare const ethereum: any;
+
 const commonClice = new CommonClice();
+const maticServer = new MaticServer();
+const stafiServer = new Stafi();
+const rpcServer = new RpcServer();
+const ethServer = new EthServer();
 
 const rMATICClice = createSlice({
   name: 'rMATICModule',
@@ -143,10 +150,7 @@ const rMATICClice = createSlice({
     },
   },
 });
-const maticServer = new MaticServer();
-const stafiServer = new Stafi();
-const rpcServer = new RpcServer();
-const ethServer = new EthServer();
+
 export const {
   setMaticAccounts,
   setMaticAccount,
@@ -167,6 +171,7 @@ export const {
   setRewardList,
   setRewardList_lastdata,
 } = rMATICClice.actions;
+
 export const reloadData = (): AppThunk => async (dispatch, getState) => {
   //const account = getState().rMATICModule.maticAccount;
   // if(account){
@@ -180,8 +185,6 @@ export const reloadData = (): AppThunk => async (dispatch, getState) => {
   dispatch(getPools());
 };
 
-declare const window: any;
-declare const ethereum: any;
 export const connectMetamask =
   (chainId: string, isAutoConnect?: boolean): AppThunk =>
   async (dispatch, getState) => {
