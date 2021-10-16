@@ -17,10 +17,12 @@ type Props = {
   selectedTitle?: any;
   popTitle?: string;
   disabled?: boolean;
+  showMax?: boolean;
 };
 
 export default function Index(props: Props) {
   const [showSelect, setShowSelect] = useState(false);
+
   return (
     <div className='type_selector_input_container'>
       <div className='title'>{props.title}</div>
@@ -36,27 +38,41 @@ export default function Index(props: Props) {
           />
         </div>
 
-        <HContainer
-          style={{ cursor: props.selectable ? 'pointer' : '' }}
-          onClick={() => {
-            if (props.selectable) {
-              props.onClickSelect && props.onClickSelect();
-              // setShowSelect(true);
-            }
-          }}>
-          {props.selectable ? (
-            props.selectedData ? (
-              <div className='title'>{props.selectedData.title}</div>
-            ) : (
-              <div className='select_token_hint'>Select a token</div>
-            )
-          ) : (
-            <div className='title'>{props.selectedTitle || '--'}</div>
+        <HContainer style={{ alignItems: 'flex-end' }}>
+          {props.showMax && props.selectedData && (
+            <div
+              className='max'
+              onClick={() => {
+                if (props.maxInput) {
+                  props.onChange(props.maxInput);
+                }
+              }}>
+              Max
+            </div>
           )}
 
-          <div className='icon_last_container'>
-            {props.selectable && <img className='icon_last' src={downArrowSvg} />}
-          </div>
+          <HContainer
+            style={{ cursor: props.selectable ? 'pointer' : '' }}
+            onClick={() => {
+              if (props.selectable) {
+                props.onClickSelect && props.onClickSelect();
+                // setShowSelect(true);
+              }
+            }}>
+            {props.selectable ? (
+              props.selectedData ? (
+                <div className='title'>{props.selectedData.title}</div>
+              ) : (
+                <div className='select_token_hint'>Select a token</div>
+              )
+            ) : (
+              <div className='title'>{props.selectedTitle || '--'}</div>
+            )}
+
+            <div className='icon_last_container'>
+              {props.selectable && <img className='icon_last' src={downArrowSvg} />}
+            </div>
+          </HContainer>
         </HContainer>
       </div>
     </div>
@@ -67,6 +83,7 @@ type SelectTitleProps = {
   onClose?: Function;
   title?: string;
 };
+
 function SelectTitle(props: SelectTitleProps) {
   return (
     <div className='title'>

@@ -1,7 +1,7 @@
 import logo from '@images/logo2.png';
 import rAsset_svg from '@images/rAsset.svg';
-// import selected_rDEX_svg from '@images/rDEX_active.svg';
-// import rDEX_svg from '@images/rDEX_inactive.svg';
+import selected_rDEX_svg from '@images/rDEX_active.svg';
+import rDEX_svg from '@images/rDEX_inactive.svg';
 import rSOL_svg from '@images/rSOL.svg';
 import rATOM_svg from '@images/r_atom.svg';
 import rBnb_svg from '@images/r_bnb.svg';
@@ -35,13 +35,13 @@ const siderData = [
     urlKeywords: '/rAsset',
     url: '/rAsset/home/native',
   },
-  // {
-  //   icon: rDEX_svg,
-  //   selectedIcon: selected_rDEX_svg,
-  //   text: 'rDEX',
-  //   urlKeywords: '/rDEX',
-  //   url: '/rDEX/home',
-  // },
+  {
+    icon: rDEX_svg,
+    selectedIcon: selected_rDEX_svg,
+    text: 'rDEX',
+    urlKeywords: '/rDEX',
+    url: '/rDEX/home',
+  },
   {
     icon: rPool_svg,
     selectedIcon: selected_rPool_svg,

@@ -1,4 +1,4 @@
-import { getSymbolByRSymbol, getSymbolRTitle, getSymbolTitle, isdev } from '@config/index';
+import { getSymbolByRSymbol, getSymbolRTitle, getSymbolTitle } from '@config/index';
 import { rSymbol } from '@keyring/defaults';
 import { web3Enable, web3FromSource } from '@polkadot/extension-dapp';
 import { u8aToHex } from '@polkadot/util';
@@ -19,6 +19,7 @@ const dexClice = createSlice({
     // 0-invisible, 1-start transferring, 2-start minting
     swapLoadingStatus: 0,
     swapWaitingTime: 150,
+    swapLoadingParams: null,
   },
   reducers: {
     setSwapLoadingStatus(state, { payload }) {
@@ -27,21 +28,27 @@ const dexClice = createSlice({
     setSwapWaitingTime(state, { payload }) {
       state.swapWaitingTime = payload;
     },
+    setSwapLoadingParams(state, { payload }) {
+      state.swapLoadingParams = payload;
+    },
   },
 });
 
-export const { setSwapLoadingStatus, setSwapWaitingTime } = dexClice.actions;
+export const { setSwapLoadingStatus, setSwapWaitingTime, setSwapLoadingParams } = dexClice.actions;
 
 export const swap =
-  (tokenSymbol: rSymbol, tokenAmount: any, address: string, minReceived: any, shouldReceived:any, cb?: Function): AppThunk =>
+  (
+    tokenSymbol: rSymbol,
+    tokenAmount: any,
+    address: string,
+    minReceived: any,
+    shouldReceived: any,
+    cb?: Function,
+  ): AppThunk =>
   async (dispatch: any, getState: any) => {
     try {
       dispatch(setSwapLoadingStatus(1));
-      if (isdev()) {
-        dispatch(setSwapWaitingTime(30));
-      } else {
-        dispatch(setSwapWaitingTime(30));
-      }
+      dispatch(setSwapWaitingTime(300));
       web3Enable(stafiServer.getWeb3EnalbeName());
       const injector: any = await web3FromSource(stafiServer.getPolkadotJsSource());
       const api = await stafiServer.createStafiApi();
@@ -57,9 +64,14 @@ export const swap =
       const grade = 0;
 
       api.tx.rDexnSwap
-        .swapRtokenForNativeToken(receiver, tokenSymbol, tokenAmountChain.toString(), minReceivedChain.toString(), grade)
+        .swapRtokenForNativeToken(
+          receiver,
+          tokenSymbol,
+          tokenAmountChain.toString(),
+          minReceivedChain.toString(),
+          grade,
+        )
         .signAndSend(currentAccount, { signer: injector.signer }, (result: any) => {
-          // console.log('xxxxxxxxxxxx', result);
           if (result.status.isInBlock) {
             result.events
               .filter((obj: any) => obj.event.section === 'system')
@@ -98,12 +110,24 @@ export const swap =
                     }
                   }
                 } else if (method === 'ExtrinsicSuccess') {
+                  api.rpc.chain.getBlock(result.status.asInBlock.toString()).then((res: any) => {
+                    dispatch(
+                      setSwapLoadingParams({
+                        noticeUuid: notice_uuid,
+                        blockHeight: res.block.header.number.toString(),
+                        tokenSymbol: tokenSymbol,
+                      }),
+                    );
+                  });
+
                   dispatch(setSwapLoadingStatus(2));
                   dispatch(
                     add_Swap_Notice(notice_uuid, getSymbolRTitle(tokenSymbol), tokenAmount, noticeStatus.Pending, {
                       destTokenName: getSymbolTitle(tokenSymbol),
                       receivedAmount: shouldReceived,
                       address: address,
+                      block: result.status.asInBlock.toString(),
+                      tokenSymbol: tokenSymbol,
                     }),
                   );
                   cb && cb();

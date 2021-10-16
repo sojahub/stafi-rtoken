@@ -1,6 +1,6 @@
 import config from '@config/index';
 import { noticesubType, noticeType, notice_text } from '@features/noticeClice';
-import { Symbol } from '@keyring/defaults';
+import { rSymbol, Symbol } from '@keyring/defaults';
 import { Empty } from 'antd';
 import React from 'react';
 
@@ -37,6 +37,7 @@ export default function Index(props: Props) {
           style={
             props.data.type == noticeType.Staker &&
             (props.data.subType == noticesubType.FeeStation ||
+              props.data.subType == noticesubType.DexSwap ||
               props.data.subType == noticesubType.Claim ||
               props.data.subType == noticesubType.Unbond)
               ? { cursor: 'pointer', textDecoration: 'underline' }
@@ -56,8 +57,21 @@ export default function Index(props: Props) {
                 viewTxUrl = config.etherScanErc20TxInAddressUrl(address);
               } else if (destSwapType === 'bep20') {
                 viewTxUrl = config.bscScanBep20TxInAddressUrl(address);
-              }else if (destSwapType === 'spl') {
+              } else if (destSwapType === 'spl') {
                 viewTxUrl = config.solScanSlp20TxInAddressUrl(address);
+              }
+              viewTxUrl && window.open(viewTxUrl);
+              props.hideNoticePopover && props.hideNoticePopover();
+            }
+            if (
+              props.data.type == noticeType.Staker &&
+              props.data.subType == noticesubType.DexSwap &&
+              props.data.subData
+            ) {
+              const { address, tokenSymbol } = props.data.subData;
+              let viewTxUrl;
+              if (tokenSymbol === rSymbol.Atom) {
+                viewTxUrl = config.atomScanAddressUrl(address);
               }
               viewTxUrl && window.open(viewTxUrl);
               props.hideNoticePopover && props.hideNoticePopover();

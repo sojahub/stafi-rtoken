@@ -20,6 +20,10 @@ export default class Index extends SubstrateKeyring {
   }
 
   createStafiApi() {
+    if (stafiApi) {
+      return stafiApi;
+    }
+    
     const types = {
       Address: 'IndicesLookupSource',
       LookupSource: 'IndicesLookupSource',
@@ -161,12 +165,9 @@ export default class Index extends SubstrateKeyring {
         dest_id: 'ChainId',
         expire: 'BlockNumber',
         bond_state: 'BondState',
-        refunded: 'bool'
-      }
+        refunded: 'bool',
+      },
     };
-    if (stafiApi) {
-      return stafiApi;
-    }
 
     stafiApi = this.createSubstrateApi(config.stafiChain(), types);
     return stafiApi;

@@ -1,13 +1,11 @@
-import React, { useEffect, useState } from 'react'; 
-import {useSelector} from 'react-redux';
-import Content from '@components/content/redeemContent';  
-import {rSymbol} from '@keyring/defaults'
-import {rTokenRate,unbond,getUnbondCommission,query_rBalances_account,checkAddress,unbondFees} from '@features/rDOTClice';
-import {setLoading} from '@features/globalClice'
-import {useDispatch} from 'react-redux';
-import UnbondModal from '@components/modal/unbondModal'
-import NumberUtil from '@util/numberUtil'
-import { message,Spin } from 'antd';
+import Content from '@components/content/redeemContent';
+import UnbondModal from '@components/modal/unbondModal';
+import { setLoading } from '@features/globalClice';
+import { checkAddress, getUnbondCommission, query_rBalances_account, rTokenRate, unbond, unbondFees } from '@features/rDOTClice';
+import NumberUtil from '@util/numberUtil';
+import { message } from 'antd';
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
 export default function Index(props:any){ 
   const dispatch=useDispatch();
@@ -64,7 +62,7 @@ export default function Index(props:any){
     onInputConfirm={(e:boolean)=>{
       if(!e){
         if(!checkAddress(recipient)){ 
-          message.error("address input error");
+          message.error("Address input error");
           return false;
         } 
       }
@@ -77,7 +75,7 @@ export default function Index(props:any){
       if(checkAddress(recipient)){  
           setVisible(true);
       }else{
-        message.error("address input error");
+        message.error("Address input error");
       } 
     }}
     type="rDOT"

@@ -92,7 +92,7 @@ export default function Index(props: any) {
         onInputConfirm={(e: boolean) => {
           if (!e) {
             if (!checkAddress(recipient)) {
-              message.error('address input error');
+              message.error('Address input error');
               return false;
             }
           }
@@ -105,7 +105,7 @@ export default function Index(props: any) {
           if (checkAddress(recipient)) {
             setVisible(true);
           } else {
-            message.error('address input error');
+            message.error('Address input error');
           }
         }}
         type='rSOL'

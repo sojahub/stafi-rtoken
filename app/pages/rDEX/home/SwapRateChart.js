@@ -1,12 +1,90 @@
+import ReactEcharts from 'echarts-for-react';
 import React from 'react';
-import { AreaSeries, HorizontalGridLines, makeWidthFlexible, XAxis, XYPlot } from 'react-vis';
 
-const FlexibleWidthXYPlot = makeWidthFlexible(XYPlot);
+export default function SwapRateChart(props) {
+  const getChartOption = () => {
+    return {
+      color: ['#40CB92'],
+      lenend: {
+        height: '300px',
+      },
+      tooltip: {
+        trigger: 'axis',
+        axisPointer: {
+          type: 'line',
+        },
+        // formatter:(params:any)=>{
+        //     console.log(params,"======params");
+        //     return
+        // }
+      },
+      xAxis: [
+        {
+          type: 'category',
+          data: props.xData,
+          boundaryGap: false,
+          axisTick: {
+            show: false,
+            alignWithLabel: true,
+          },
+          axisLabel: {
+            // padding: [0, 100, 0, 100],
+            interval: 0,
+            // rotate: -40,
+            color: '#A5A5A5',
+            formatter: (value) => {
+              if (value && value.length >= 8) {
+                return value.substring(value.length - 4);
+              }
+              return value;
+            },
+          },
+        },
+      ],
+      grid: {
+        left: '3%',
+        right: '3%',
+      },
+      yAxis: [
+        {
+          show: false,
+          type: 'value',
+          min: function (value) {
+            return value.min - (value.max - value.min);
+          },
+          max: 'dataMax',
+          axisLabel: {
+            formatter: (value) => {
+              return value;
+            },
+            color: '#FFFFFF',
+          },
+          splitLine: {
+            show: false,
+            lineStyle: {
+              color: '#444755',
+              width: 2,
+            },
+          },
+        },
+      ],
+      series: [
+        {
+          name: 'value',
+          type: 'line',
+          areaStyle: {
+            color: '#40CB92',
+          },
+          barWidth: '60%',
+          data: props.data,
+        },
+      ],
+    };
+  };
 
-export default function SwapRateChart() {
   return (
-    <div style={{ width: '585px', maxWidth: '585px' }}>
-      <FlexibleWidthXYPlot height={370}>
+    <div style={{ width: '607px', maxWidth: '607px', height: '370px' }}>
+      {/* <FlexibleWidthXYPlot height={370}>
         <HorizontalGridLines />
         <XAxis />
         <AreaSeries
@@ -21,7 +99,9 @@ export default function SwapRateChart() {
             { x: 5, y: 15 },
           ]}
         />
-      </FlexibleWidthXYPlot>
+      </FlexibleWidthXYPlot> */}
+
+      <ReactEcharts option={getChartOption()}></ReactEcharts>
     </div>
   );
 }

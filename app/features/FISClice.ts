@@ -95,6 +95,8 @@ const FISClice = createSlice({
 
     rewardList: [],
     rewardList_lastdata: null,
+
+    rTokenStatDetail: null,
   },
   reducers: {
     setFisAccounts(state, { payload }) {
@@ -223,6 +225,9 @@ const FISClice = createSlice({
     setRewardList_lastdata(state, { payload }) {
       state.rewardList_lastdata = payload;
     },
+    setRTokenStatDetail(state, { payload }) {
+      state.rTokenStatDetail = payload;
+    },
   },
 });
 
@@ -264,6 +269,7 @@ export const {
 
   setRewardList,
   setRewardList_lastdata,
+  setRTokenStatDetail,
 } = FISClice.actions;
 
 export const reloadData = (): AppThunk => async (dispatch, getState) => {
@@ -500,7 +506,7 @@ export const bound =
           finalizing: processStatus.default,
         }),
       );
-      let fisAddress = getState().FISModule.fisAccount.address;
+      let fisAddress = getState().FISModule.fisAccount && getState().FISModule.fisAccount.address;
       const keyringInstance = keyring.init(Symbol.Fis);
       let signature = '';
       const stafiApi = await stafiServer.createStafiApi();
@@ -741,6 +747,9 @@ export const bound =
   };
 
 export const balancesAll = (): AppThunk => async (dispatch, getState) => {
+  if (!getState().FISModule.fisAccount) {
+    return;
+  }
   const api = await stafiServer.createStafiApi();
   const address = getState().FISModule.fisAccount.address;
   const result = await api.derive.balances.all(address);
@@ -754,6 +763,13 @@ export const rTokenRate = (): AppThunk => async (dispatch, getState) => {
   const ratio = await commonClice.rTokenRate(rSymbol.Fis);
   dispatch(setRatio(ratio));
 };
+
+export const fetchRTokenStatDetail =
+  (cycle: number): AppThunk =>
+  async (dispatch, getState) => {
+    const data = await commonClice.rTokenStatDetail('Rfis', cycle);
+    dispatch(setRTokenStatDetail(data));
+  };
 
 export const rTokenLedger = (): AppThunk => async (dispatch, getState) => {
   const stafiApi = await stafiServer.createStafiApi();
@@ -793,7 +809,7 @@ export const getBlock =
   async (dispatch, getState) => {
     try {
       const api = await stafiServer.createStafiApi();
-      const address = getState().FISModule.fisAccount.address;
+      const address = getState().FISModule.fisAccount && getState().FISModule.fisAccount.address;
       const validPools = getState().FISModule.validPools;
       const poolLimit = getState().FISModule.poolLimit;
       const result = await api.rpc.chain.getBlock(blockHash);
@@ -964,7 +980,7 @@ export const unbond =
         dispatch(setLoading(false));
         return;
       }
-      let address = getState().FISModule.fisAccount.address;
+      let address = getState().FISModule.fisAccount && getState().FISModule.fisAccount.address;
 
       const stafiApi = await stafiServer.createStafiApi();
 
@@ -1043,7 +1059,7 @@ export const fisUnbond =
   (amount: string, rSymbol: number, recipient: string, selectedPool: string, topstr: string, cb?: Function): AppThunk =>
   async (dispatch, getState) => {
     try {
-      const address = getState().FISModule.fisAccount.address;
+      const address = getState().FISModule.fisAccount && getState().FISModule.fisAccount.address;
       const stafiApi = await stafiServer.createStafiApi();
       web3Enable(stafiServer.getWeb3EnalbeName());
 
@@ -1187,7 +1203,7 @@ export const getPools =
   };
 
 export const RefreshUnbonding = (): AppThunk => async (dispatch, getState) => {
-  let currentAccount = getState().FISModule.fisAccount.address;
+  let currentAccount = getState().FISModule.fisAccount && getState().FISModule.fisAccount.address;
   const api = await stafiServer.createStafiApi();
   const eraResult = await api.query.staking.currentEra();
   let validPools: any[] = [];
@@ -1271,7 +1287,7 @@ export const withdraw =
       const eraResult = await api.query.staking.currentEra();
       let currentEra = eraResult.toJSON();
 
-      let currentAccount = getState().FISModule.fisAccount.address;
+      let currentAccount = getState().FISModule.fisAccount && getState().FISModule.fisAccount.address;
 
       let txs: any[] = [];
 
@@ -1341,6 +1357,9 @@ export const withdraw =
   };
 
 export const getCurrentLedgerData = (): AppThunk => async (dispatch, getState) => {
+  if (!getState().FISModule.fisAccount) {
+    return;
+  }
   let currentAccount = getState().FISModule.fisAccount.address;
   const api = await stafiServer.createStafiApi();
   const ledgerData = await api.query.staking.ledger(currentAccount);
@@ -1357,7 +1376,7 @@ export const handleOnboard =
     const injector = await web3FromSource(stafiServer.getPolkadotJsSource());
     try {
       const api = await stafiServer.createStafiApi();
-      let currentAccount = getState().FISModule.fisAccount.address;
+      let currentAccount = getState().FISModule.fisAccount && getState().FISModule.fisAccount.address;
 
       api.tx.rFis
         .onboard()
@@ -1428,7 +1447,7 @@ export const handleOnboard =
   };
 
 export const initValidatorStatus = (): AppThunk => async (dispatch, getState) => {
-  const currentAddress = getState().FISModule.fisAccount.address;
+  const currentAddress = getState().FISModule.fisAccount && getState().FISModule.fisAccount.address;
   dispatch(setNominateStatus(0));
   const api = await stafiServer.createStafiApi();
   const eraData = await api.query.staking.currentEra();
@@ -1614,7 +1633,7 @@ const add_FIS_Notice =
 export const getReward =
   (pageIndex: Number, cb: Function): AppThunk =>
   async (dispatch, getState) => {
-    const stafiSource = getState().FISModule.fisAccount.address;
+    const stafiSource = getState().FISModule.fisAccount && getState().FISModule.fisAccount.address;
     const ethSource = getState().rETHModule.ethAccount;
     dispatch(setLoading(true));
     try {

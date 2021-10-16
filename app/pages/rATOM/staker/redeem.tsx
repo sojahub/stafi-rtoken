@@ -1,14 +1,12 @@
-import React, { useEffect, useState } from 'react'; 
-import {message,Spin} from 'antd';
-import {useSelector} from 'react-redux';
-import Content from '@components/content/redeemContent';  
-import {rSymbol} from '@keyring/defaults'
-import {rTokenRate,unbond,getUnbondCommission,query_rBalances_account,checkAddress,unbondFees} from '@features/rATOMClice';
-import {useDispatch} from 'react-redux';
-import UnbondModal from '@components/modal/unbondModal'
-import NumberUtil from '@util/numberUtil'
-import {setLoading} from '@features/globalClice';
-import CommonClice from '@features/commonClice'
+import Content from '@components/content/redeemContent';
+import UnbondModal from '@components/modal/unbondModal';
+import CommonClice from '@features/commonClice';
+import { setLoading } from '@features/globalClice';
+import { checkAddress, getUnbondCommission, query_rBalances_account, rTokenRate, unbond, unbondFees } from '@features/rATOMClice';
+import NumberUtil from '@util/numberUtil';
+import { message } from 'antd';
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
 const commonClice=new CommonClice();
 export default function Index(props:any){ 
@@ -61,7 +59,7 @@ export default function Index(props:any){
     onInputConfirm={(e:boolean)=>{
       if(!e){
         if(!checkAddress(recipient)){ 
-          message.error("address input error");
+          message.error("Address input error");
           return false;
         } 
       }
@@ -75,7 +73,7 @@ export default function Index(props:any){
         
         setVisible(true);
       }else{
-        message.error("address input error");
+        message.error("Address input error");
       } 
     }}
     type="rATOM"

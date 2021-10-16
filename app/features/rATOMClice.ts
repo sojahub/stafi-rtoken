@@ -24,6 +24,7 @@ import {
   setProcessDestChainId,
   setProcessSending,
   setProcessSlider,
+
   setProcessType,
   setStakeSwapLoadingStatus
 } from './globalClice';
@@ -59,6 +60,8 @@ const rATOMClice = createSlice({
     totalUnbonding: null,
     rewardList: [],
     rewardList_lastdata: null,
+
+    rTokenStatDetail: null,
   },
   reducers: {
     setAtomAccounts(state, { payload }) {
@@ -148,6 +151,9 @@ const rATOMClice = createSlice({
     setRewardList_lastdata(state, { payload }) {
       state.rewardList_lastdata = payload;
     },
+    setRTokenStatDetail(state, { payload }) {
+      state.rTokenStatDetail = payload;
+    },
   },
 });
 const atomServer = new AtomServer();
@@ -175,6 +181,7 @@ export const {
   setRatioShow,
   setRewardList,
   setRewardList_lastdata,
+  setRTokenStatDetail,
 } = rATOMClice.actions;
 
 export const reloadData = (): AppThunk => async (dispatch, getState) => {
@@ -247,7 +254,6 @@ export const transfer =
       dispatch(setProcessType(rSymbol.Atom));
       dispatch(setProcessDestChainId(destChainId));
       dispatch(setProcessSlider(true));
-
       const sendTokens: any = await client.sendTokens(
         address,
         selectedPool.address,
@@ -1053,6 +1059,14 @@ export const rSwapFee = (): AppThunk => async (dispatch, getState) => {
   const fee = await commonClice.rSwapFee(rSymbol.Atom);
   dispatch(setSwapFee(fee));
 };
+
+export const fetchRTokenStatDetail =
+  (cycle: number): AppThunk =>
+  async (dispatch, getState) => {
+    const data = await commonClice.rTokenStatDetail('Ratom', cycle);
+    dispatch(setRTokenStatDetail(data));
+  };
+
 const add_ATOM_unbond_Notice =
   (uuid: string, amount: string, status: string, subData?: any): AppThunk =>
   async (dispatch, getState) => {
