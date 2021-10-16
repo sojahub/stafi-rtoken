@@ -261,6 +261,7 @@ export default function StakeSwapLoading(props: Props) {
             <div className={'center_container'}>
               <div
                 className={'success_btn'}
+                style={{ marginBottom: 0 }}
                 onClick={() =>
                   swapLoadingParams && swapLoadingParams.viewTxUrl && window.open(swapLoadingParams.viewTxUrl)
                 }>

@@ -789,6 +789,9 @@ export const updateSwapParamsOfErc = (
   } else if (tokenType === 'reth') {
     tokenAbi = ethServer.getRETHTokenAbi();
     tokenAddress = ethServer.getRETHTokenAddress();
+  } else if (tokenType === 'rmatic') {
+    tokenAbi = maticServer.getTokenAbi();
+    tokenAddress = maticServer.getTokenAddress();
   }
 
   if (tokenAbi && tokenAddress) {
@@ -863,6 +866,9 @@ export const updateSwapParamsOfBep = (
   } else if (tokenType === 'rbnb') {
     tokenAbi = bscServer.getRTokenAbi();
     tokenAddress = bscServer.getRBNBTokenAddress();
+  } else if (tokenType === 'rmatic') {
+    tokenAbi = bscServer.getRMATICTokenAbi();
+    tokenAddress = bscServer.getRMATICTokenAddress();
   }
 
   if (tokenAbi && tokenAddress) {
