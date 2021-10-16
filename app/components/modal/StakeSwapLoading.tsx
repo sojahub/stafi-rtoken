@@ -14,7 +14,7 @@ import { noticeStatus, update_NoticeStatus } from '@features/noticeClice';
 import { getAssetBalance as getSlpAssetBalance, getSlp20AssetBalanceAll } from '@features/SOLClice';
 import close_bold_svg from '@images/close_bold.svg';
 import complete_svg from '@images/complete.svg';
-import { requestAddERC20TokenToMetaMask } from '@util/metamaskUtil';
+import { requestAddTokenToMetaMask } from '@util/metamaskUtil';
 import numberUtil from '@util/numberUtil';
 import { useInterval } from '@util/utils';
 import { message, Modal, Progress, Spin } from 'antd';
@@ -272,7 +272,7 @@ export default function StakeSwapLoading(props: Props) {
                 <div
                   className='add_token_text'
                   onClick={() => {
-                    requestAddERC20TokenToMetaMask(swapLoadingParams.tokenType, swapLoadingParams.destChainId);
+                    requestAddTokenToMetaMask(swapLoadingParams.tokenType, swapLoadingParams.destChainId);
                   }}>
                   Add {getSymbolRTitle(getRsymbolByTokenType(swapLoadingParams.tokenType))} to Metamask
                 </div>

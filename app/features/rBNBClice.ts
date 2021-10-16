@@ -301,9 +301,9 @@ export const transfer =
                 dispatch(add_Matic_stake_Notice(notice_uuid, amountparam, noticeStatus.Confirmed));
                 // Set swap loading params for loading modal.
                 if (destChainId === ETH_CHAIN_ID) {
-                  updateSwapParamsOfErc(dispatch, notice_uuid, 'rdot', 0, targetAddress, true);
+                  updateSwapParamsOfErc(dispatch, notice_uuid, 'rbnb', 0, targetAddress, true);
                 } else {
-                  updateSwapParamsOfBep(dispatch, notice_uuid, 'rdot', 0, targetAddress, true);
+                  updateSwapParamsOfBep(dispatch, notice_uuid, 'rbnb', 0, targetAddress, true);
                 }
                 dispatch(setStakeSwapLoadingStatus(destChainId === STAFI_CHAIN_ID ? 0 : 2));
                 cb && cb();

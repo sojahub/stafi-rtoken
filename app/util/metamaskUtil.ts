@@ -136,7 +136,7 @@ export const requestSwitchMetaMaskNetwork = async (platform: any) => {
   }
 };
 
-export const requestAddERC20TokenToMetaMask = async (tokenType: string, destChainId: number) => {
+export const requestAddTokenToMetaMask = async (tokenType: string, destChainId: number) => {
   let parameters: any;
   if (destChainId === ETH_CHAIN_ID) {
     if (tokenType === 'rfis') {
@@ -161,6 +161,8 @@ export const requestAddERC20TokenToMetaMask = async (tokenType: string, destChai
       parameters = metaMaskBEP20TokenParameters.rMATIC;
     } else if (tokenType === 'ratom') {
       parameters = metaMaskBEP20TokenParameters.rATOM;
+    }else if (tokenType === 'rbnb') {
+      parameters = metaMaskBEP20TokenParameters.rBNB;
     }
   }
 
