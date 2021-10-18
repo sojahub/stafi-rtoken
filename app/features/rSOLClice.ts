@@ -320,7 +320,17 @@ export const transfer =
 
         dispatch(
           add_SOL_stake_Notice(notice_uuid, amountparam, noticeStatus.Pending, {
-            process: getState().globalModule.process,
+            process: {
+              ...getState().globalModule.process,
+              rSymbol: rSymbol.Sol,
+              destChainId: destChainId,
+              sending: {
+                brocasting: processStatus.success,
+                packing: processStatus.success,
+                finalizing: processStatus.success,
+                checkTx: result.txHash,
+              },
+            },
             processParameter: getState().rSOLModule.processParameter,
           }),
         );

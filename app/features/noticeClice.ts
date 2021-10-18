@@ -562,7 +562,10 @@ export const check_swap_status = (): AppThunk => async (dispatch, getState) => {
     return;
   }
   data.datas.forEach((item: any) => {
-    if (item.type == noticeType.Staker && item.subType == noticesubType.Swap) {
+    if (
+      (item.type == noticeType.Staker && item.subType == noticesubType.Swap) ||
+      (item.type == noticeType.Staker && item.subType == noticesubType.Stake && item.status === noticeStatus.Swapping)
+    ) {
       if (moment().isAfter(moment(item.dateTime, formatStr).add((config.swapWaitingTime() * 3) / 2, 's'))) {
         dispatch(
           updateNoticeModal({

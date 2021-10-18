@@ -339,7 +339,17 @@ export const transfer =
 
                 dispatch(
                   add_KSM_stake_Notice(notice_uuid, amountparam, noticeStatus.Pending, {
-                    process: getState().globalModule.process,
+                    process: {
+                      ...getState().globalModule.process,
+                      rSymbol: rSymbol.Ksm,
+                      destChainId: destChainId,
+                      sending: {
+                        brocasting: processStatus.success,
+                        packing: processStatus.success,
+                        finalizing: processStatus.loading,
+                        checkTx: tx,
+                      },
+                    },
                     processParameter: getState().rKSMModule.processParameter,
                   }),
                 );
