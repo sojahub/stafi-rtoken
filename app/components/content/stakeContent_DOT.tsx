@@ -52,6 +52,18 @@ export default function Index(props: Props) {
     };
   });
 
+  const { fisTransferrableAmount, estimateBondTxFees, erc20SwapFee, bep20SwapFee, splSwapFee } = useSelector(
+    (state: any) => {
+      return {
+        fisTransferrableAmount: state.FISModule.transferrableAmountShow,
+        estimateBondTxFees: state.FISModule.estimateBondTxFees,
+        erc20SwapFee: state.bridgeModule.erc20EstimateFee,
+        bep20SwapFee: state.bridgeModule.bep20EstimateFee,
+        splSwapFee: state.bridgeModule.slp20EstimateFee,
+      };
+    },
+  );
+
   const haswarn = useMemo(() => {
     return !bondSwitch || !(props.validPools && props.validPools.length > 0);
   }, [props.validPools, bondSwitch]);
@@ -121,7 +133,26 @@ export default function Index(props: Props) {
           relayFee={props.bondFees}
           clickBack={() => setInChooseMintType(false)}
           clickStake={(chainId: number, targetAddress: string) => {
-            props.onStakeClick(chainId, targetAddress);
+            let extraFee = 0;
+            if (chainId === ETH_CHAIN_ID) {
+              extraFee += Number(erc20SwapFee);
+            } else if (chainId === BSC_CHAIN_ID) {
+              extraFee += Number(bep20SwapFee);
+            } else if (chainId === SOL_CHAIN_ID) {
+              extraFee += Number(splSwapFee);
+            }
+            console.log('1', fisTransferrableAmount);
+            console.log('2', props.bondFees);
+            console.log('3', numberUtil.fisAmountToHuman(estimateBondTxFees));
+            console.log('4', extraFee);
+
+            if (
+              Number(fisTransferrableAmount) <
+              Number(props.bondFees) + Number(numberUtil.fisAmountToHuman(estimateBondTxFees)) + Number(extraFee)
+            ) {
+              message.error('No enough FIS to pay for the fee');
+              return;
+            }
 
             const destPlatform =
               chainId === ETH_CHAIN_ID
@@ -141,6 +172,8 @@ export default function Index(props: Props) {
               viewTxUrl = config.solScanSlp20TxInAddressUrl(targetAddress);
             }
             dispatch(setStakeSwapLoadingParams({ amount: props.willAmount, transferDetail, viewTxUrl }));
+
+            props.onStakeClick(chainId, targetAddress);
           }}
         />
       </LeftContent>

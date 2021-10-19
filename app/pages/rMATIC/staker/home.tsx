@@ -4,7 +4,7 @@ import { getGasPrice } from '@features/ETHClice';
 import { setProcessSlider } from '@features/globalClice';
 import { rTokenLedger, rTokenRate, transfer } from '@features/rMATICClice';
 import { ratioToAmount } from '@util/common';
-import NumberUtil from '@util/numberUtil';
+import { default as NumberUtil } from '@util/numberUtil';
 import { message } from 'antd';
 import PubSub from 'pubsub-js';
 import React, { useEffect, useState } from 'react';
@@ -21,6 +21,7 @@ export default function Index(props: any) {
     dispatch(rTokenLedger());
     dispatch(getGasPrice());
   }, []);
+
   const { transferrableAmount, ratio, stafiStakerApr, fisCompare, validPools, totalIssuance, bondFees } = useSelector(
     (state: any) => {
       const fisCompare =
@@ -58,11 +59,6 @@ export default function Index(props: any) {
         totalStakedToken={NumberUtil.handleFisAmountToFixed(totalIssuance * ratio)}
         onStakeClick={(chainId: number, targetAddress: string) => {
           if (amount) {
-            if (fisCompare) {
-              message.error('No enough FIS to pay for the fee');
-              return;
-            }
-
             dispatch(
               transfer(amount, chainId, targetAddress, () => {
                 dispatch(setProcessSlider(false));

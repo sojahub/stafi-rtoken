@@ -2,7 +2,7 @@ import Content from '@components/content/stakeContent_DOT';
 import { STAFI_CHAIN_ID } from '@features/bridgeClice';
 import { balancesAll, rTokenLedger, rTokenRate, transfer } from '@features/FISClice';
 import { ratioToAmount } from '@util/common';
-import NumberUtil from '@util/numberUtil';
+import { default as NumberUtil } from '@util/numberUtil';
 import { message } from 'antd';
 import { RootState } from 'app/store';
 import PubSub from 'pubsub-js';
@@ -54,10 +54,6 @@ export default function Index(props: any) {
       totalStakedToken={NumberUtil.handleFisAmountToFixed(Number(totalIssuance) * Number(ratio)) || '--'}
       onStakeClick={(chainId: number, targetAddress: string) => {
         if (amount) {
-          if (fisCompare) {
-            message.error('No enough FIS to pay for the fee');
-            return;
-          }
           dispatch(
             transfer(amount, chainId, targetAddress, () => {
               if (chainId === STAFI_CHAIN_ID) {
