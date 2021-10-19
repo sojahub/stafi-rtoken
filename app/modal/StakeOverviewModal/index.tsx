@@ -72,7 +72,7 @@ export default function StakeOverviewModal(props: StakeOverviewModalProps) {
         <CloseIcon style={{ visibility: 'hidden' }} />
 
         <Text size='20px' color='#23292F' bold>
-          Stake Overview
+          Staking Overview
         </Text>
 
         <CloseIcon src={closeIcon} onClick={() => props.onCancel()} />
@@ -81,7 +81,7 @@ export default function StakeOverviewModal(props: StakeOverviewModalProps) {
       <StakeOverviewIcon src={stakeOverviewIcon} />
 
       <Text size='16px' color='#23292F' bold mt='26px'>
-        Stake process consists of {txCount} transactions
+        Stake process consists of {txCount} {txCount > 1 ? 'transactions' : 'transaction'}
       </Text>
 
       <Text size='12px' color='#4D4D4D' mt='5px'>
@@ -92,7 +92,7 @@ export default function StakeOverviewModal(props: StakeOverviewModalProps) {
         {!!props.sendingFund && (
           <HContainer mb='6px'>
             <HContainer>
-              <FeeIcon src={sendingFundIcon} />
+              <FeeIcon src={sendingFundIcon} style={{ padding: '2px' }} />
 
               <Text size='12px' color='23292F' sameLineHeight>
                 Sending fund
@@ -158,6 +158,8 @@ const modalBodyStyle: CSSProperties = {
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
+  height: '450px',
+  position: 'relative',
 };
 
 const HeadContainer = styled.div`
@@ -196,7 +198,10 @@ const Divider = styled.div`
   height: 1px;
   align-self: stretch;
   background-color: #e7e7e7;
-  margin-top: 28px;
+  position: absolute;
+  bottom: 75px;
+  left: 0;
+  right: 0;
 `;
 
 const ButtonsContainer = styled.div`
@@ -204,7 +209,9 @@ const ButtonsContainer = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
-  margin: 13px 20px 27px 0;
+  margin: 13px 20px 0 0;
+  position: absolute;
+  bottom: 20px;
 `;
 
 const ContinueButton = styled.div`

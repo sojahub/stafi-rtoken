@@ -887,9 +887,8 @@ export const getMinting =
               brocasting: processStatus.loading,
             }),
           );
-          message.success('Minting succeeded', 3, () => {
-            cb && cb(e);
-          });
+          message.success('Minting succeeded', 3);
+          cb && cb(e);
         } else {
           cb && cb(e);
         }

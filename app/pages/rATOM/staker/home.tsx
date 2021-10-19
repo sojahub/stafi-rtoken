@@ -1,5 +1,5 @@
 import Content from '@components/content/stakeContent_DOT';
-import { BSC_CHAIN_ID, ETH_CHAIN_ID, SOL_CHAIN_ID, STAFI_CHAIN_ID } from '@features/bridgeClice';
+import { STAFI_CHAIN_ID } from '@features/bridgeClice';
 import { setProcessSlider } from '@features/globalClice';
 import { rTokenLedger, rTokenRate, transfer } from '@features/rATOMClice';
 import atom_stake_tips from '@images/atom_stake_tips.png';
@@ -7,6 +7,7 @@ import Button from '@shared/components/button/button';
 import { getSessionStorageItem, ratioToAmount, setSessionStorageItem } from '@util/common';
 import NumberUtil from '@util/numberUtil';
 import { message, Modal } from 'antd';
+import PubSub from 'pubsub-js';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import './index.scss';
@@ -70,12 +71,8 @@ export default function Index(props: any) {
                   dispatch(setProcessSlider(false));
                   if (chainId === STAFI_CHAIN_ID) {
                     props.history.push('/rATOM/staker/info');
-                  } else if (chainId === ETH_CHAIN_ID) {
-                    props.history.push('/rAsset/home/erc');
-                  } else if (chainId === BSC_CHAIN_ID) {
-                    props.history.push('/rAsset/home/bep');
-                  } else if (chainId === SOL_CHAIN_ID) {
-                    props.history.push('/rAsset/home/spl');
+                  } else {
+                    PubSub.publish('stakeSuccess');
                   }
                 }),
               );

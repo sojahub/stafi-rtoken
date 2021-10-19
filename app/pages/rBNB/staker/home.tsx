@@ -1,11 +1,12 @@
 import Content from '@components/content/stakeContent_DOT';
-import { BSC_CHAIN_ID, ETH_CHAIN_ID, SOL_CHAIN_ID, STAFI_CHAIN_ID } from '@features/bridgeClice';
+import { STAFI_CHAIN_ID } from '@features/bridgeClice';
 import { reloadData, setProcessSlider } from '@features/globalClice';
 import { rTokenLedger, rTokenRate, transfer } from '@features/rBNBClice';
 import { Symbol } from '@keyring/defaults';
 import { ratioToAmount } from '@util/common';
 import { default as numberUtil, default as NumberUtil } from '@util/numberUtil';
 import { message } from 'antd';
+import PubSub from 'pubsub-js';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import './index.scss';
@@ -78,12 +79,8 @@ export default function Index(props: any) {
                 dispatch(setProcessSlider(false));
                 if (chainId === STAFI_CHAIN_ID) {
                   props.history.push('/rBNB/staker/info');
-                } else if (chainId === ETH_CHAIN_ID) {
-                  props.history.push('/rAsset/home/erc');
-                } else if (chainId === BSC_CHAIN_ID) {
-                  props.history.push('/rAsset/home/bep');
-                } else if (chainId === SOL_CHAIN_ID) {
-                  props.history.push('/rAsset/home/spl');
+                } else {
+                  PubSub.publish('stakeSuccess');
                 }
               }),
             );

@@ -14,8 +14,10 @@ import Button from '@shared/components/button/button';
 import Input from '@shared/components/input/amountInput';
 import numberUtil from '@util/numberUtil';
 import { message, Tooltip } from 'antd';
+import PubSub from 'pubsub-js';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useHistory } from 'react-router';
 import ChooseMintType from './ChooseMintType';
 import './index.scss';
 import LeftContent from './leftContent';
@@ -39,6 +41,7 @@ type Props = {
 };
 export default function Index(props: Props) {
   const dispatch = useDispatch();
+  const history = useHistory();
   const [mintRewardAct, setMintRewardAct] = useState(null);
   const [inChooseMintType, setInChooseMintType] = useState(false);
 
@@ -55,6 +58,13 @@ export default function Index(props: Props) {
 
   useEffect(() => {
     initMintRewardAct();
+    let token = PubSub.subscribe('stakeSuccess', (message: string, data?: any) => {
+      props.onChange && props.onChange('');
+      setInChooseMintType(false);
+    });
+    return () => {
+      PubSub.unsubscribe(token);
+    };
   }, []);
 
   const initMintRewardAct = async () => {
