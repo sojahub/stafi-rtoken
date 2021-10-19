@@ -1,6 +1,6 @@
 # stafi-rtoken
 
-StaFi App for staking and minting rTokens.
+StaFi App for staking and minting rTokens. Hosted application can be accessed via [https://app.stafi.io/](https://app.stafi.io/)
 
 ### Development
 
