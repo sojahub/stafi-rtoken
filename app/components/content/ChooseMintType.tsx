@@ -52,7 +52,7 @@ export default function ChooseMintType(props: ChooseMintTypeProps) {
     if (props.type === 'rMATIC') {
       if (!isNaN(gasPrice)) {
         const feeInEth = web3Utils.fromWei(web3Utils.toBN(36928).mul(web3Utils.toBN(gasPrice)), 'ether');
-        setMaticStakeEthFee(Math.round(Number(feeInEth)*100000000)/100000000 + ' ETH');
+        setMaticStakeEthFee(Math.round(Number(feeInEth) * 100000000) / 100000000 + ' ETH');
       }
     }
   }, [gasPrice]);
@@ -71,115 +71,115 @@ export default function ChooseMintType(props: ChooseMintTypeProps) {
       } else if (selectedChainId === BSC_CHAIN_ID) {
         return {
           stakingAndSwapFee:
-            Math.round((0.004 + Number(isNaN(bep20SwapFee) ? 0 : bep20SwapFee)) * 1000000) / 1000000 + ' FIS',
+            Math.round((props.relayFee + Number(isNaN(bep20SwapFee) ? 0 : bep20SwapFee)) * 1000000) / 1000000 + ' FIS',
         };
       }
     } else if (props.type === 'rDOT') {
       if (selectedChainId === STAFI_CHAIN_ID) {
         return {
           sendingFund: '0.015 DOT',
-          stakingFee: '0.003 FIS',
+          stakingFee: props.relayFee + ' FIS',
         };
       } else if (selectedChainId === ETH_CHAIN_ID) {
         return {
           sendingFund: '0.015 DOT',
           stakingAndSwapFee:
-            Math.round((0.003 + Number(isNaN(erc20SwapFee) ? 0 : erc20SwapFee)) * 1000000) / 1000000 + ' FIS',
+            Math.round((props.relayFee + Number(isNaN(erc20SwapFee) ? 0 : erc20SwapFee)) * 1000000) / 1000000 + ' FIS',
         };
       } else if (selectedChainId === BSC_CHAIN_ID) {
         return {
           sendingFund: '0.015 DOT',
           stakingAndSwapFee:
-            Math.round((0.003 + Number(isNaN(bep20SwapFee) ? 0 : bep20SwapFee)) * 1000000) / 1000000 + ' FIS',
+            Math.round((props.relayFee + Number(isNaN(bep20SwapFee) ? 0 : bep20SwapFee)) * 1000000) / 1000000 + ' FIS',
         };
       }
     } else if (props.type === 'rKSM') {
       if (selectedChainId === STAFI_CHAIN_ID) {
         return {
           sendingFund: '0.00005 KSM',
-          stakingFee: '0.003 FIS',
+          stakingFee: props.relayFee + ' FIS',
         };
       } else if (selectedChainId === ETH_CHAIN_ID) {
         return {
           sendingFund: '0.00005 KSM',
           stakingAndSwapFee:
-            Math.round((0.003 + Number(isNaN(erc20SwapFee) ? 0 : erc20SwapFee)) * 1000000) / 1000000 + ' FIS',
+            Math.round((props.relayFee + Number(isNaN(erc20SwapFee) ? 0 : erc20SwapFee)) * 1000000) / 1000000 + ' FIS',
         };
       } else if (selectedChainId === BSC_CHAIN_ID) {
         return {
           sendingFund: '0.00005 KSM',
           stakingAndSwapFee:
-            Math.round((0.003 + Number(isNaN(bep20SwapFee) ? 0 : bep20SwapFee)) * 1000000) / 1000000 + ' FIS',
+            Math.round((props.relayFee + Number(isNaN(bep20SwapFee) ? 0 : bep20SwapFee)) * 1000000) / 1000000 + ' FIS',
         };
       }
     } else if (props.type === 'rATOM') {
       if (selectedChainId === STAFI_CHAIN_ID) {
         return {
           sendingFund: '0.002 ATOM',
-          stakingFee: '0.003 FIS',
+          stakingFee: props.relayFee + ' FIS',
         };
       } else if (selectedChainId === ETH_CHAIN_ID) {
         return {
           sendingFund: '0.002 ATOM',
           stakingAndSwapFee:
-            Math.round((0.003 + Number(isNaN(erc20SwapFee) ? 0 : erc20SwapFee)) * 1000000) / 1000000 + ' FIS',
+            Math.round((props.relayFee + Number(isNaN(erc20SwapFee) ? 0 : erc20SwapFee)) * 1000000) / 1000000 + ' FIS',
         };
       } else if (selectedChainId === BSC_CHAIN_ID) {
         return {
           sendingFund: '0.002 ATOM',
           stakingAndSwapFee:
-            Math.round((0.003 + Number(isNaN(bep20SwapFee) ? 0 : bep20SwapFee)) * 1000000) / 1000000 + ' FIS',
+            Math.round((props.relayFee + Number(isNaN(bep20SwapFee) ? 0 : bep20SwapFee)) * 1000000) / 1000000 + ' FIS',
         };
       }
     } else if (props.type === 'rMATIC') {
       if (selectedChainId === STAFI_CHAIN_ID) {
         return {
           sendingFund: maticStakeEthFee,
-          stakingFee: '0.003 FIS',
+          stakingFee: props.relayFee + ' FIS',
         };
       } else if (selectedChainId === ETH_CHAIN_ID) {
         return {
           sendingFund: maticStakeEthFee,
           stakingAndSwapFee:
-            Math.round((0.003 + Number(isNaN(erc20SwapFee) ? 0 : erc20SwapFee)) * 1000000) / 1000000 + ' FIS',
+            Math.round((props.relayFee + Number(isNaN(erc20SwapFee) ? 0 : erc20SwapFee)) * 1000000) / 1000000 + ' FIS',
         };
       } else if (selectedChainId === BSC_CHAIN_ID) {
         return {
           sendingFund: maticStakeEthFee,
           stakingAndSwapFee:
-            Math.round((0.003 + Number(isNaN(bep20SwapFee) ? 0 : bep20SwapFee)) * 1000000) / 1000000 + ' FIS',
+            Math.round((props.relayFee + Number(isNaN(bep20SwapFee) ? 0 : bep20SwapFee)) * 1000000) / 1000000 + ' FIS',
         };
       }
     } else if (props.type === 'rBNB') {
       if (selectedChainId === STAFI_CHAIN_ID) {
         return {
           sendingFund: '0.0001 BNB',
-          stakingFee: '0.003 FIS',
+          stakingFee: props.relayFee + ' FIS',
         };
       } else if (selectedChainId === ETH_CHAIN_ID) {
         return {
           sendingFund: '0.0001 BNB',
           stakingAndSwapFee:
-            Math.round((0.003 + Number(isNaN(erc20SwapFee) ? 0 : erc20SwapFee)) * 1000000) / 1000000 + ' FIS',
+            Math.round((props.relayFee + Number(isNaN(erc20SwapFee) ? 0 : erc20SwapFee)) * 1000000) / 1000000 + ' FIS',
         };
       } else if (selectedChainId === BSC_CHAIN_ID) {
         return {
           sendingFund: '0.0001 BNB',
           stakingAndSwapFee:
-            Math.round((0.003 + Number(isNaN(bep20SwapFee) ? 0 : bep20SwapFee)) * 1000000) / 1000000 + ' FIS',
+            Math.round((props.relayFee + Number(isNaN(bep20SwapFee) ? 0 : bep20SwapFee)) * 1000000) / 1000000 + ' FIS',
         };
       }
     } else if (props.type === 'rSOL') {
       if (selectedChainId === STAFI_CHAIN_ID) {
         return {
           sendingFund: '0.00001 SOL',
-          stakingFee: '0.003 FIS',
+          stakingFee: props.relayFee + ' FIS',
         };
       } else if (selectedChainId === SOL_CHAIN_ID) {
         return {
           sendingFund: '0.00001 SOL',
           stakingAndSwapFee:
-            Math.round((0.003 + Number(isNaN(slp20SwapFee) ? 0 : slp20SwapFee)) * 1000000) / 1000000 + ' FIS',
+            Math.round((props.relayFee + Number(isNaN(slp20SwapFee) ? 0 : slp20SwapFee)) * 1000000) / 1000000 + ' FIS',
         };
       }
     }
