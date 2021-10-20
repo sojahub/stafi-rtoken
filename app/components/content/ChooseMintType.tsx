@@ -51,6 +51,14 @@ export default function ChooseMintType(props: ChooseMintTypeProps) {
     },
   );
 
+  const { ethAddress, bscAddress, solAddress } = useSelector((state: any) => {
+    return {
+      ethAddress: state.rETHModule.ethAccount && state.rETHModule.ethAccount.address,
+      bscAddress: state.BSCModule.bscAccount && state.BSCModule.bscAccount.address,
+      solAddress: state.rSOLModule.solAccount && state.rSOLModule.solAccount.address,
+    };
+  });
+
   useEffect(() => {
     if (props.type === 'rMATIC') {
       if (!isNaN(gasPrice)) {
@@ -315,15 +323,43 @@ export default function ChooseMintType(props: ChooseMintTypeProps) {
           style={{ display: selectedChainId === STAFI_CHAIN_ID ? 'block' : 'block' }}>
           <div className='title'>Received address</div>
 
-          <AddressInputEmbed
-            disabled={processSlider || selectedChainId === STAFI_CHAIN_ID}
-            backgroundcolor='#2B3239'
-            placeholder={'...'}
-            value={selectedChainId === STAFI_CHAIN_ID ? fisAccountAddress : targetAddress}
-            onChange={(e: any) => {
-              setTargetAddress(e.target.value);
-            }}
-          />
+          <div className='input_address_container'>
+            <div className='left_content'>
+              <AddressInputEmbed
+                disabled={processSlider || selectedChainId === STAFI_CHAIN_ID}
+                backgroundcolor='#2B3239'
+                placeholder={'...'}
+                value={selectedChainId === STAFI_CHAIN_ID ? fisAccountAddress : targetAddress}
+                onChange={(e: any) => {
+                  setTargetAddress(e.target.value);
+                }}
+              />
+            </div>
+
+            <div
+              className='connected_addr'
+              style={{
+                display:
+                  !!targetAddress ||
+                  selectedChainId === STAFI_CHAIN_ID ||
+                  (selectedChainId === ETH_CHAIN_ID && !ethAddress) ||
+                  (selectedChainId === BSC_CHAIN_ID && !bscAddress) ||
+                  (selectedChainId === SOL_CHAIN_ID && !solAddress)
+                    ? 'none'
+                    : 'flex',
+              }}
+              onClick={() => {
+                if (selectedChainId === ETH_CHAIN_ID) {
+                  setTargetAddress(ethAddress);
+                } else if (selectedChainId === BSC_CHAIN_ID) {
+                  setTargetAddress(bscAddress);
+                } else if (selectedChainId === SOL_CHAIN_ID) {
+                  setTargetAddress(solAddress);
+                }
+              }}>
+              Connected Addr
+            </div>
+          </div>
 
           <div className='divider' />
 

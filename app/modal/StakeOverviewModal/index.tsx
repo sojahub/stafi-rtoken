@@ -82,7 +82,7 @@ export default function StakeOverviewModal(props: StakeOverviewModalProps) {
               <FeeIcon src={sendingIcon} style={{ padding: '2px' }} />
 
               <Text size='12px' color='23292F' sameLineHeight>
-                Sending fund
+                Send fund
               </Text>
             </HContainer>
 
