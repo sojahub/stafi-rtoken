@@ -1,3 +1,4 @@
+import config from '@config/index';
 import {
   bridgeCommon_ChainFees,
   BSC_CHAIN_ID,
@@ -5,7 +6,7 @@ import {
   SOL_CHAIN_ID,
   STAFI_CHAIN_ID
 } from '@features/bridgeClice';
-import { setLoading } from '@features/globalClice';
+import { connectSoljs, setLoading } from '@features/globalClice';
 import { checkEthAddress } from '@features/rETHClice';
 import { checkAddress as checkSOLAddress } from '@features/rSOLClice';
 import leftArrowSvg from '@images/left_arrow.svg';
@@ -21,6 +22,8 @@ import web3Utils from 'web3-utils';
 import './index.scss';
 import MintTypeCard from './MintTypeCard';
 
+declare const ethereum: any;
+declare const solana: any;
 const solServer = new SolServer();
 
 type ChooseMintTypeProps = {
@@ -51,10 +54,10 @@ export default function ChooseMintType(props: ChooseMintTypeProps) {
     },
   );
 
-  const { ethAddress, bscAddress, solAddress } = useSelector((state: any) => {
+  const { metaMaskNetworkId, metaMaskAccount, solAddress } = useSelector((state: any) => {
     return {
-      ethAddress: state.rETHModule.ethAccount && state.rETHModule.ethAccount.address,
-      bscAddress: state.BSCModule.bscAccount && state.BSCModule.bscAccount.address,
+      metaMaskAccount: state.globalModule.metaMaskAccount,
+      metaMaskNetworkId: state.globalModule.metaMaskNetworkId,
       solAddress: state.rSOLModule.solAccount && state.rSOLModule.solAccount.address,
     };
   });
@@ -264,6 +267,19 @@ export default function ChooseMintType(props: ChooseMintTypeProps) {
     setShowAddSplTokenButton(!splTokenAccountPubkey);
   };
 
+  const fillSolAddress = () => {
+    if (solana && solana.isPhantom) {
+      if (solana.isConnected) {
+        setTargetAddress(solana.publicKey.toString());
+      } else {
+        solana.on('connect', () => {
+          setTargetAddress(solana.publicKey.toString());
+        });
+        dispatch(connectSoljs());
+      }
+    }
+  };
+
   return (
     <div className='stafi_stake_mint_type'>
       <div className='title_container'>
@@ -342,19 +358,21 @@ export default function ChooseMintType(props: ChooseMintTypeProps) {
                 display:
                   !!targetAddress ||
                   selectedChainId === STAFI_CHAIN_ID ||
-                  (selectedChainId === ETH_CHAIN_ID && !ethAddress) ||
-                  (selectedChainId === BSC_CHAIN_ID && !bscAddress) ||
+                  (selectedChainId === ETH_CHAIN_ID &&
+                    (!metaMaskAccount || !config.metaMaskNetworkIsGoerliEth(metaMaskNetworkId))) ||
+                  (selectedChainId === BSC_CHAIN_ID &&
+                    (!metaMaskAccount || !config.metaMaskNetworkIsBsc(metaMaskNetworkId))) ||
                   (selectedChainId === SOL_CHAIN_ID && !solAddress)
                     ? 'none'
                     : 'flex',
               }}
               onClick={() => {
                 if (selectedChainId === ETH_CHAIN_ID) {
-                  setTargetAddress(ethAddress);
+                  setTargetAddress(metaMaskAccount);
                 } else if (selectedChainId === BSC_CHAIN_ID) {
-                  setTargetAddress(bscAddress);
+                  setTargetAddress(metaMaskAccount);
                 } else if (selectedChainId === SOL_CHAIN_ID) {
-                  setTargetAddress(solAddress);
+                  fillSolAddress();
                 }
               }}>
               Connected Addr

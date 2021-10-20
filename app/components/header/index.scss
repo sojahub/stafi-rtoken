@@ -58,9 +58,10 @@
       }
     }
     .wrong_network {
-      align-self: stretch;
       margin-top: 4px;
       margin-left: 10px;
+      max-width: 120px;
+      align-self: center;
     }
     .header_tool.account.fis {
       background-image: linear-gradient(to right, #3dddc4, #37bfa5, #00eba2);

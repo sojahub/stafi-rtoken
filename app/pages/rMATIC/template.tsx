@@ -22,8 +22,9 @@ import '../template/index.scss';
 export default function Index(props: any) {
   const dispatch = useDispatch();
 
-  const { fisAccount } = useSelector((state: any) => {
+  const { fisAccount, metaMaskNetworkId } = useSelector((state: any) => {
     return {
+      metaMaskNetworkId: state.globalModule.metaMaskNetworkId,
       fisAccount: state.FISModule.fisAccount,
     };
   });
@@ -61,7 +62,7 @@ export default function Index(props: any) {
 
   useEffect(() => {
     maticAccount && maticAccount.address && dispatch(reloadData(Symbol.Matic));
-  }, [maticAccount && maticAccount.address]);
+  }, [maticAccount && maticAccount.address, metaMaskNetworkId]);
 
   useEffect(() => {
     dispatch(connectMetamask(config.ethChainId(), true));
