@@ -82,6 +82,23 @@ export default function Index(props: Props) {
           </div>
         )}
 
+        {props.data && props.data.checkAddr && (
+          <div className='item'>
+            <label>
+              Check Addr
+              {props.index == 4 && (
+                <a
+                  target='_blank'
+                  href={props.data.checkAddr}
+                  className='address'>
+                  {StringUtil.replacePkhRemain6(props.data.checkAddr)}
+                </a>
+              )}
+              {/* ”https://kusama.subscan.io/extrinsic/" + txHash */}
+            </label>
+          </div>
+        )}
+
         {props.data && (props.data.brocasting == processStatus.failure || props.data.packing == processStatus.failure) && (
           <div className='item failure'>
             <label>{props.title} is fail</label>

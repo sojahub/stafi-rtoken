@@ -3,10 +3,10 @@ import { rSymbol } from '@keyring/defaults';
 import { createSlice } from '@reduxjs/toolkit';
 import FeeStationServer from '@servers/feeStation';
 import { getLocalStorageItem, Keys, setLocalStorageItem } from '@util/common';
-import { Modal } from 'antd';
 import { cloneDeep } from 'lodash';
 import moment from 'moment';
 import { AppThunk } from '../store';
+import { BSC_CHAIN_ID, ETH_CHAIN_ID, SOL_CHAIN_ID } from './bridgeClice';
 import { bondStates, getMinting } from './FISClice';
 import { initProcess, processStatus, setProcessSending, setProcessSlider, setProcessStaking } from './globalClice';
 import { setProcessParameter as atomSetProcessParameter } from './rATOMClice';
@@ -210,6 +210,31 @@ export const update_NoticeStatus =
     }
   };
 
+export const update_NoticeProcessSwppingStatus =
+  (uuid: string, payload: any): AppThunk =>
+  async (dispatch, getState) => {
+    const oldNotice = findNoticeByUuid(uuid);
+    if (oldNotice && oldNotice.subData && oldNotice.subData.process) {
+      dispatch(
+        updateNoticeModal({
+          data: {
+            ...oldNotice,
+            subData: {
+              ...oldNotice.subData,
+              process: {
+                ...oldNotice.subData.process,
+                swapping: {
+                  ...payload,
+                },
+              },
+            },
+          },
+          showNew: false,
+        }),
+      );
+    }
+  };
+
 const findNoticeByUuid = (uuid: any): any => {
   let data = getLocalStorageItem(Keys.StafiNoticeKey);
   if (!data || !data.datas) {
@@ -228,50 +253,50 @@ export const setProcess =
       const o = list.filter((i: any) => {
         return i.status == noticeStatus.Pending;
       });
-      if (o && o.length > 0) {
-        if (o.length == 1) {
-          Modal.confirm({
-            title: 'message',
-            content: 'There is a pending transation, please check it later after the pending tx finalizes.',
-            className: 'stafi_modal_confirm',
-            onOk: () => {
-              dispatch(setProcessSlider(true));
-              dispatch(initProcess(o[0].subData.process));
-              dispatch(setProcessParameter(o[0].subData.processParameter));
-              dispatch(re_Minting(o[0]));
-            },
-          });
-        } else {
-          dispatch(re_Minting(o[0]));
-          Modal.warning({
-            title: 'message',
-            content: 'Transactions are pending, please check it later.',
-            className: 'stafi_modal_warning',
-          });
-        }
-      } else {
-        dispatch(setProcessSlider(true));
-        dispatch(initProcess(item.subData.process));
-        if (item.subData.process.rSymbol == rSymbol.Ksm) {
-          dispatch(krmSetProcessParameter(item.subData.processParameter));
-        }
-        if (item.subData.process.rSymbol == rSymbol.Dot) {
-          dispatch(setProcessParameter(item.subData.processParameter));
-        }
-        if (item.subData.process.rSymbol == rSymbol.Atom) {
-          dispatch(atomSetProcessParameter(item.subData.processParameter));
-        }
-        if (item.subData.process.rSymbol == rSymbol.Sol) {
-          dispatch(solSetProcessParameter(item.subData.processParameter));
-        }
-        if (item.subData.process.rSymbol == rSymbol.Matic) {
-          dispatch(maticSetProcessParameter(item.subData.processParameter));
-        }
-        if (item.subData.process.rSymbol == rSymbol.Bnb) {
-          dispatch(bnbSetProcessParameter(item.subData.processParameter));
-        }
+      // if (o && o.length > 0) {
+      //   if (o.length == 1) {
+      //     Modal.confirm({
+      //       title: 'message',
+      //       content: 'There is a pending transation, please check it later after the pending tx finalizes.',
+      //       className: 'stafi_modal_confirm',
+      //       onOk: () => {
+      //         dispatch(setProcessSlider(true));
+      //         dispatch(initProcess(o[0].subData.process));
+      //         dispatch(setProcessParameter(o[0].subData.processParameter));
+      //         dispatch(re_Minting(o[0]));
+      //       },
+      //     });
+      //   } else {
+      //     dispatch(re_Minting(o[0]));
+      //     Modal.warning({
+      //       title: 'message',
+      //       content: 'Transactions are pending, please check it later.',
+      //       className: 'stafi_modal_warning',
+      //     });
+      //   }
+      // } else {
+      dispatch(setProcessSlider(true));
+      dispatch(initProcess(item.subData.process));
+      if (item.subData.process.rSymbol == rSymbol.Ksm) {
+        dispatch(krmSetProcessParameter(item.subData.processParameter));
+      }
+      if (item.subData.process.rSymbol == rSymbol.Dot) {
+        dispatch(setProcessParameter(item.subData.processParameter));
+      }
+      if (item.subData.process.rSymbol == rSymbol.Atom) {
+        dispatch(atomSetProcessParameter(item.subData.processParameter));
+      }
+      if (item.subData.process.rSymbol == rSymbol.Sol) {
+        dispatch(solSetProcessParameter(item.subData.processParameter));
+      }
+      if (item.subData.process.rSymbol == rSymbol.Matic) {
+        dispatch(maticSetProcessParameter(item.subData.processParameter));
+      }
+      if (item.subData.process.rSymbol == rSymbol.Bnb) {
+        dispatch(bnbSetProcessParameter(item.subData.processParameter));
       }
     }
+    // }
   };
 
 const re_Minting =
@@ -398,7 +423,7 @@ export const checkAll_minting =
   (dispatch, getState) => {
     if (list) {
       const arryList = list.filter((i: any) => {
-        return i.status != noticeStatus.Confirmed;
+        return i.status != noticeStatus.Confirmed && i.status != noticeStatus.Swapping;
       });
       arryList.forEach((item: any) => {
         if (!item.subData || !item.subData.processParameter || !item.subData.processParameter.staking) {
@@ -562,10 +587,7 @@ export const check_swap_status = (): AppThunk => async (dispatch, getState) => {
     return;
   }
   data.datas.forEach((item: any) => {
-    if (
-      (item.type == noticeType.Staker && item.subType == noticesubType.Swap) ||
-      (item.type == noticeType.Staker && item.subType == noticesubType.Stake && item.status === noticeStatus.Swapping)
-    ) {
+    if (item.type == noticeType.Staker && item.subType == noticesubType.Swap) {
       if (moment().isAfter(moment(item.dateTime, formatStr).add((config.swapWaitingTime() * 3) / 2, 's'))) {
         dispatch(
           updateNoticeModal({
@@ -575,6 +597,36 @@ export const check_swap_status = (): AppThunk => async (dispatch, getState) => {
         );
       }
     }
+
+    if (
+      item.type == noticeType.Staker &&
+      item.subType == noticesubType.Stake &&
+      item.status === noticeStatus.Swapping
+    ) {
+      if (moment().isAfter(moment(item.dateTime, formatStr).add((config.swapWaitingTime() * 3) / 2, 's'))) {
+        dispatch(
+          updateNoticeModal({
+            data: { ...item, status: noticeStatus.Confirmed },
+            showNew: false,
+          }),
+        );
+        let viewTxUrl;
+        if (item.subData?.process?.destChainId === ETH_CHAIN_ID) {
+          viewTxUrl = config.etherScanErc20TxInAddressUrl(item.subData?.processParameter?.targetAddress);
+        } else if (item.subData?.process?.destChainId === BSC_CHAIN_ID) {
+          viewTxUrl = config.bscScanBep20TxInAddressUrl(item.subData?.processParameter?.targetAddress);
+        } else if (item.subData?.process?.destChainId === SOL_CHAIN_ID) {
+          viewTxUrl = config.solScanSlp20TxInAddressUrl(item.subData?.processParameter?.targetAddress);
+        }
+        dispatch(
+          update_NoticeProcessSwppingStatus(item.uuid, {
+            brocasting: processStatus.success,
+            checkAddr: viewTxUrl,
+          }),
+        );
+      }
+    }
+
     if (
       item.type == noticeType.Staker &&
       item.subType == noticesubType.FeeStation &&

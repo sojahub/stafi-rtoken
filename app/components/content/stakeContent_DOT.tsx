@@ -1,7 +1,6 @@
 import config, { getRsymbolByTokenTitle } from '@config/index';
 import { BSC_CHAIN_ID, ETH_CHAIN_ID, SOL_CHAIN_ID } from '@features/bridgeClice';
 import { setStakeSwapLoadingParams } from '@features/globalClice';
-import doubt from '@images/doubt.svg';
 import rBNB from '@images/selected_bnb.svg';
 import rATOM from '@images/selected_rATOM.svg';
 import rDOT from '@images/selected_rDOT.svg';
@@ -13,7 +12,7 @@ import RPoolServer from '@servers/rpool';
 import Button from '@shared/components/button/button';
 import Input from '@shared/components/input/amountInput';
 import numberUtil from '@util/numberUtil';
-import { message, Tooltip } from 'antd';
+import { message } from 'antd';
 import PubSub from 'pubsub-js';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -141,10 +140,6 @@ export default function Index(props: Props) {
             } else if (chainId === SOL_CHAIN_ID) {
               extraFee += Number(splSwapFee);
             }
-            console.log('1', fisTransferrableAmount);
-            console.log('2', props.bondFees);
-            console.log('3', numberUtil.fisAmountToHuman(estimateBondTxFees));
-            console.log('4', extraFee);
 
             if (
               Number(fisTransferrableAmount) <
@@ -315,16 +310,18 @@ export default function Index(props: Props) {
               fontSize: '14px',
               color: '#d5d5d5',
             }}>
-            <div className='relay_fee'>Relay Fee: {props.bondFees} FIS</div>
+            <div className='relay_fee' style={{ visibility: 'hidden' }}>
+              Relay Fee: {props.bondFees} FIS
+            </div>
 
-            <Tooltip
+            {/* <Tooltip
               overlayClassName='doubt_overlay'
               placement='topLeft'
               title={
                 'Fee charged by the relayers to pay for the cross-chain contract interaction service fee between StaFi chain and designated chain.'
               }>
               <img src={doubt} style={{ marginLeft: '2px' }} />
-            </Tooltip>
+            </Tooltip> */}
           </div>
         )}
       </div>
