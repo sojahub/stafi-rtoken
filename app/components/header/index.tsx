@@ -1,4 +1,5 @@
 import config from '@config/index';
+import { balancesAll } from '@features/FISClice';
 import {
   checkMetaMaskNetworkId,
   connectAtomjs,
@@ -284,6 +285,7 @@ export default function Index(props: Props) {
               setVisible(false);
               dispatch(dotquery_rBalances_account());
               dispatch(ksmquery_rBalances_account());
+              dispatch(balancesAll());
             }}
           />
         )}

@@ -33,10 +33,13 @@ export default function StakeOverviewModal(props: StakeOverviewModalProps) {
   if (!!props.sendingFund) {
     txCount++;
   }
-  if (!props.stakingFee) {
+  if (!!props.signatureFee) {
     txCount++;
   }
-  if (!props.stakingAndSwapFee) {
+  if (!!props.stakingFee) {
+    txCount++;
+  }
+  if (!!props.stakingAndSwapFee) {
     txCount++;
   }
 
