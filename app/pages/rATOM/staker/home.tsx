@@ -61,13 +61,9 @@ export default function Index(props: any) {
         totalStakedToken={NumberUtil.handleFisAmountToFixed(totalIssuance * ratio)}
         onStakeClick={(chainId: number, targetAddress: string) => {
           if (amount) {
-            if (fisCompare) {
-              message.error('No enough FIS to pay for the fee');
-              return;
-            }
             if (getSessionStorageItem('atom_stake_tips_modal')) {
               dispatch(
-                transfer(amount, chainId, targetAddress, () => {
+                transfer(Number(amount).toString(), chainId, targetAddress, () => {
                   dispatch(setProcessSlider(false));
                   if (chainId === STAFI_CHAIN_ID) {
                     props.history.push('/rATOM/staker/info');

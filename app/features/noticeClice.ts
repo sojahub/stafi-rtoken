@@ -469,12 +469,56 @@ export const checkAll_minting =
                     minting: processStatus.success,
                   },
                 };
-                dispatch(
-                  update_Notice(item.uuid, item.rSymbol, item.type, item.subType, item.amount, noticeStatus.Confirmed, {
-                    process: process,
-                    processParameter: item.subData.processParameter,
-                  }),
-                );
+
+                if (
+                  item.type == noticeType.Staker &&
+                  item.subType == noticesubType.Stake &&
+                  item.status === noticeStatus.Swapping
+                ) {
+                  // let viewTxUrl;
+                  // if (item.subData?.process?.destChainId === ETH_CHAIN_ID) {
+                  //   viewTxUrl = config.etherScanErc20TxInAddressUrl(item.subData?.processParameter?.targetAddress);
+                  // } else if (item.subData?.process?.destChainId === BSC_CHAIN_ID) {
+                  //   viewTxUrl = config.bscScanBep20TxInAddressUrl(item.subData?.processParameter?.targetAddress);
+                  // } else if (item.subData?.process?.destChainId === SOL_CHAIN_ID) {
+                  //   viewTxUrl = config.solScanSlp20TxInAddressUrl(item.subData?.processParameter?.targetAddress);
+                  // }
+                  // dispatch(
+                  //   update_NoticeProcessSwppingStatus(item.uuid, {
+                  //     brocasting: processStatus.success,
+                  //     checkAddr: viewTxUrl,
+                  //   }),
+                  // );
+                  dispatch(
+                    update_Notice(
+                      item.uuid,
+                      item.rSymbol,
+                      item.type,
+                      item.subType,
+                      item.amount,
+                      noticeStatus.Swapping,
+                      {
+                        process: process,
+                        processParameter: item.subData.processParameter,
+                      },
+                    ),
+                  );
+                } else {
+                  dispatch(
+                    update_Notice(
+                      item.uuid,
+                      item.rSymbol,
+                      item.type,
+                      item.subType,
+                      item.amount,
+                      noticeStatus.Confirmed,
+                      {
+                        process: process,
+                        processParameter: item.subData.processParameter,
+                      },
+                    ),
+                  );
+                }
               } else if (e == 'stakingFailure') {
                 if (item.status == noticeStatus.Pending) {
                   process.sending = {

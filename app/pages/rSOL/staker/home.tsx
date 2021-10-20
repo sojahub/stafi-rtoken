@@ -7,7 +7,6 @@ import SolServer from '@servers/sol/index';
 import { PublicKey } from '@solana/web3.js';
 import { ratioToAmount } from '@util/common';
 import NumberUtil from '@util/numberUtil';
-import { message } from 'antd';
 import PubSub from 'pubsub-js';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -75,13 +74,9 @@ export default function Index(props: any) {
 
   const clickStake = (chainId: number, targetAddress: string) => {
     if (amount) {
-      if (fisCompare) {
-        message.error('No enough FIS to pay for the fee');
-        return;
-      }
 
       dispatch(
-        transfer(amount, chainId, targetAddress, () => {
+        transfer(Number(amount).toString(), chainId, targetAddress, () => {
           dispatch(setProcessSlider(false));
           if (chainId === STAFI_CHAIN_ID) {
             props.history.push('/rSOL/staker/info');

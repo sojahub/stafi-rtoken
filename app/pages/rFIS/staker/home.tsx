@@ -55,7 +55,7 @@ export default function Index(props: any) {
       onStakeClick={(chainId: number, targetAddress: string) => {
         if (amount) {
           dispatch(
-            transfer(amount, chainId, targetAddress, () => {
+            transfer(Number(amount), chainId, targetAddress, () => {
               if (chainId === STAFI_CHAIN_ID) {
                 props.history.push('/rFIS/staker/info');
               } else {

@@ -60,7 +60,7 @@ export default function Index(props: any) {
         onStakeClick={(chainId: number, targetAddress: string) => {
           if (amount) {
             dispatch(
-              transfer(amount, chainId, targetAddress, () => {
+              transfer(Number(amount).toString(), chainId, targetAddress, () => {
                 dispatch(setProcessSlider(false));
                 if (chainId === STAFI_CHAIN_ID) {
                   props.history.push('/rMATIC/staker/info');

@@ -68,13 +68,8 @@ export default function Index(props: any) {
         totalStakedToken={NumberUtil.handleFisAmountToFixed(totalIssuance * ratio)}
         onStakeClick={(chainId: number, targetAddress: string) => {
           if (amount) {
-            if (fisCompare) {
-              message.error('No enough FIS to pay for the fee');
-              return;
-            }
-
             dispatch(
-              transfer(amount, chainId, targetAddress, () => {
+              transfer(Number(amount).toString(), chainId, targetAddress, () => {
                 dispatch(reloadData(Symbol.Bnb));
                 dispatch(setProcessSlider(false));
                 if (chainId === STAFI_CHAIN_ID) {
