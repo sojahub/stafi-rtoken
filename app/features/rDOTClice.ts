@@ -344,7 +344,17 @@ export const transfer =
                 // Pending
                 dispatch(
                   add_DOT_stake_Notice(notice_uuid, amountparam, noticeStatus.Pending, {
-                    process: getState().globalModule.process,
+                    process: {
+                      ...getState().globalModule.process,
+                      rSymbol: rSymbol.Dot,
+                      destChainId: destChainId,
+                      sending: {
+                        brocasting: processStatus.success,
+                        packing: processStatus.success,
+                        finalizing: processStatus.loading,
+                        checkTx: tx,
+                      },
+                    },
                     processParameter: getState().rDOTModule.processParameter,
                   }),
                 );

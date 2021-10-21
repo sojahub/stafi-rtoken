@@ -1,4 +1,5 @@
 import Content from '@components/content/stakeContent_DOT';
+import { STAFI_CHAIN_ID } from '@features/bridgeClice';
 import { clice, setProcessSlider } from '@features/globalClice';
 import { balancesAll, rTokenLedger, rTokenRate, transfer } from '@features/rSOLClice';
 import { Symbol } from '@keyring/defaults';
@@ -6,7 +7,7 @@ import SolServer from '@servers/sol/index';
 import { PublicKey } from '@solana/web3.js';
 import { ratioToAmount } from '@util/common';
 import NumberUtil from '@util/numberUtil';
-import { message } from 'antd';
+import PubSub from 'pubsub-js';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Redirect } from 'react-router-dom';
@@ -73,15 +74,15 @@ export default function Index(props: any) {
 
   const clickStake = (chainId: number, targetAddress: string) => {
     if (amount) {
-      if (fisCompare) {
-        message.error('No enough FIS to pay for the fee');
-        return;
-      }
 
       dispatch(
-        transfer(amount, chainId, targetAddress, () => {
+        transfer(Number(amount).toString(), chainId, targetAddress, () => {
           dispatch(setProcessSlider(false));
-          props.history.push('/rSOL/staker/info');
+          if (chainId === STAFI_CHAIN_ID) {
+            props.history.push('/rSOL/staker/info');
+          } else {
+            PubSub.publish('stakeSuccess');
+          }
         }),
       );
     }

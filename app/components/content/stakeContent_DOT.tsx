@@ -1,7 +1,6 @@
 import config, { getRsymbolByTokenTitle } from '@config/index';
 import { BSC_CHAIN_ID, ETH_CHAIN_ID, SOL_CHAIN_ID } from '@features/bridgeClice';
 import { setStakeSwapLoadingParams } from '@features/globalClice';
-import doubt from '@images/doubt.svg';
 import rBNB from '@images/selected_bnb.svg';
 import rATOM from '@images/selected_rATOM.svg';
 import rDOT from '@images/selected_rDOT.svg';
@@ -13,9 +12,11 @@ import RPoolServer from '@servers/rpool';
 import Button from '@shared/components/button/button';
 import Input from '@shared/components/input/amountInput';
 import numberUtil from '@util/numberUtil';
-import { message, Tooltip } from 'antd';
+import { message } from 'antd';
+import PubSub from 'pubsub-js';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useHistory } from 'react-router';
 import ChooseMintType from './ChooseMintType';
 import './index.scss';
 import LeftContent from './leftContent';
@@ -39,6 +40,7 @@ type Props = {
 };
 export default function Index(props: Props) {
   const dispatch = useDispatch();
+  const history = useHistory();
   const [mintRewardAct, setMintRewardAct] = useState(null);
   const [inChooseMintType, setInChooseMintType] = useState(false);
 
@@ -49,12 +51,31 @@ export default function Index(props: Props) {
     };
   });
 
+  const { fisTransferrableAmount, estimateBondTxFees, erc20SwapFee, bep20SwapFee, splSwapFee } = useSelector(
+    (state: any) => {
+      return {
+        fisTransferrableAmount: state.FISModule.transferrableAmountShow,
+        estimateBondTxFees: state.FISModule.estimateBondTxFees,
+        erc20SwapFee: state.bridgeModule.erc20EstimateFee,
+        bep20SwapFee: state.bridgeModule.bep20EstimateFee,
+        splSwapFee: state.bridgeModule.slp20EstimateFee,
+      };
+    },
+  );
+
   const haswarn = useMemo(() => {
     return !bondSwitch || !(props.validPools && props.validPools.length > 0);
   }, [props.validPools, bondSwitch]);
 
   useEffect(() => {
     initMintRewardAct();
+    let token = PubSub.subscribe('stakeSuccess', (message: string, data?: any) => {
+      props.onChange && props.onChange('');
+      setInChooseMintType(false);
+    });
+    return () => {
+      PubSub.unsubscribe(token);
+    };
   }, []);
 
   const initMintRewardAct = async () => {
@@ -111,7 +132,22 @@ export default function Index(props: Props) {
           relayFee={props.bondFees}
           clickBack={() => setInChooseMintType(false)}
           clickStake={(chainId: number, targetAddress: string) => {
-            props.onStakeClick(chainId, targetAddress);
+            let extraFee = 0;
+            if (chainId === ETH_CHAIN_ID) {
+              extraFee += Number(erc20SwapFee);
+            } else if (chainId === BSC_CHAIN_ID) {
+              extraFee += Number(bep20SwapFee);
+            } else if (chainId === SOL_CHAIN_ID) {
+              extraFee += Number(splSwapFee);
+            }
+
+            if (
+              Number(fisTransferrableAmount) <
+              Number(props.bondFees) + Number(numberUtil.fisAmountToHuman(estimateBondTxFees)) + Number(extraFee)
+            ) {
+              message.error('No enough FIS to pay for the fee');
+              return;
+            }
 
             const destPlatform =
               chainId === ETH_CHAIN_ID
@@ -131,6 +167,8 @@ export default function Index(props: Props) {
               viewTxUrl = config.solScanSlp20TxInAddressUrl(targetAddress);
             }
             dispatch(setStakeSwapLoadingParams({ amount: props.willAmount, transferDetail, viewTxUrl }));
+
+            props.onStakeClick(chainId, targetAddress);
           }}
         />
       </LeftContent>
@@ -272,16 +310,18 @@ export default function Index(props: Props) {
               fontSize: '14px',
               color: '#d5d5d5',
             }}>
-            <div className='relay_fee'>Relay Fee: {props.bondFees} FIS</div>
+            <div className='relay_fee' style={{ visibility: 'hidden' }}>
+              Relay Fee: {props.bondFees} FIS
+            </div>
 
-            <Tooltip
+            {/* <Tooltip
               overlayClassName='doubt_overlay'
               placement='topLeft'
               title={
                 'Fee charged by the relayers to pay for the cross-chain contract interaction service fee between StaFi chain and designated chain.'
               }>
               <img src={doubt} style={{ marginLeft: '2px' }} />
-            </Tooltip>
+            </Tooltip> */}
           </div>
         )}
       </div>

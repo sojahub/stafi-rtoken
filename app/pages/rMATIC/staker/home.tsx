@@ -1,14 +1,16 @@
 import Content from '@components/content/stakeContent_DOT';
-import { BSC_CHAIN_ID, ETH_CHAIN_ID, SOL_CHAIN_ID, STAFI_CHAIN_ID } from '@features/bridgeClice';
+import { STAFI_CHAIN_ID } from '@features/bridgeClice';
 import { getGasPrice } from '@features/ETHClice';
 import { setProcessSlider } from '@features/globalClice';
 import { rTokenLedger, rTokenRate, transfer } from '@features/rMATICClice';
 import { ratioToAmount } from '@util/common';
-import NumberUtil from '@util/numberUtil';
+import { default as NumberUtil } from '@util/numberUtil';
 import { message } from 'antd';
+import PubSub from 'pubsub-js';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import './index.scss';
+
 export default function Index(props: any) {
   const dispatch = useDispatch();
 
@@ -19,6 +21,7 @@ export default function Index(props: any) {
     dispatch(rTokenLedger());
     dispatch(getGasPrice());
   }, []);
+
   const { transferrableAmount, ratio, stafiStakerApr, fisCompare, validPools, totalIssuance, bondFees } = useSelector(
     (state: any) => {
       const fisCompare =
@@ -56,22 +59,13 @@ export default function Index(props: any) {
         totalStakedToken={NumberUtil.handleFisAmountToFixed(totalIssuance * ratio)}
         onStakeClick={(chainId: number, targetAddress: string) => {
           if (amount) {
-            if (fisCompare) {
-              message.error('No enough FIS to pay for the fee');
-              return;
-            }
-
             dispatch(
-              transfer(amount, chainId, targetAddress, () => {
+              transfer(Number(amount).toString(), chainId, targetAddress, () => {
                 dispatch(setProcessSlider(false));
                 if (chainId === STAFI_CHAIN_ID) {
                   props.history.push('/rMATIC/staker/info');
-                } else if (chainId === ETH_CHAIN_ID) {
-                  props.history.push('/rAsset/home/erc');
-                } else if (chainId === BSC_CHAIN_ID) {
-                  props.history.push('/rAsset/home/bep');
-                } else if (chainId === SOL_CHAIN_ID) {
-                  props.history.push('/rAsset/home/spl');
+                } else {
+                  PubSub.publish('stakeSuccess');
                 }
               }),
             );

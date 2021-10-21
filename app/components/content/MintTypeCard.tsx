@@ -11,6 +11,7 @@ import splIcon from '@images/mint_type_spl.svg';
 import splSelectedIcon from '@images/mint_type_spl_selected.svg';
 import { Tooltip } from 'antd';
 import React from 'react';
+import { useSelector } from 'react-redux';
 import styled from 'styled-components';
 
 interface MintTypeCardProps {
@@ -39,14 +40,27 @@ export default function MintTypeCard(props: MintTypeCardProps) {
     title = 'SPL';
   }
 
+  const { processSlider } = useSelector((state: any) => {
+    return {
+      processSlider: state.globalModule.processSlider,
+    };
+  });
+
   return (
-    <CardContainer selected={props.selected} onClick={() => props.onClick(props.chainId)}>
+    <CardContainer
+      selected={props.selected}
+      disabled={processSlider}
+      onClick={() => {
+        if (!processSlider) {
+          props.onClick(props.chainId);
+        }
+      }}>
       <HeadContainer selected={props.selected} type='erc20' img={platformIcon}>
-        <Text color={props.selected ? '#00F3AB' : '#fff'} size='14px' sameLineHeight>
+        <Text color={props.selected ? '#00F3AB' : '#fff'} size='14px' sameLineHeight bold>
           {title}
         </Text>
 
-        <Text color='#ffffff' size='12px' sameLineHeight mt='3px' scale={0.6}>
+        <Text color='#ffffff' size='12px' sameLineHeight mt='3px' scale={0.7}>
           {props.chainId === ETH_CHAIN_ID
             ? 'Ethereum'
             : props.chainId === BSC_CHAIN_ID
@@ -112,10 +126,11 @@ export default function MintTypeCard(props: MintTypeCardProps) {
 
 type CardContainerProps = {
   selected: boolean;
+  disabled: boolean;
 };
 
 export const CardContainer = styled.div<CardContainerProps>`
-  cursor: pointer;
+  cursor: ${(props) => (props.disabled ? 'no-drop' : 'pointer')};
   width: 148px;
   height: 220px;
   border-radius: 4px;

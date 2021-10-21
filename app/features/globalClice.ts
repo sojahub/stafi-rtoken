@@ -63,6 +63,7 @@ const globalClice = createSlice({
 
     loading: false,
     metaMaskNetworkId: null,
+    metaMaskAccount: null,
     isload_monitoring: false,
 
     // 0-invisible, 1-start transferring, 2-start minting
@@ -125,6 +126,9 @@ const globalClice = createSlice({
     setMetaMaskNetworkId(state, { payload }) {
       state.metaMaskNetworkId = payload;
     },
+    setMetaMaskAccount(state, { payload }) {
+      state.metaMaskAccount = payload;
+    },
     setIsloadMonitoring(state, { payload }) {
       state.isload_monitoring = payload;
     },
@@ -150,6 +154,7 @@ export const {
   setTimeOutFunc,
   initProcess,
   setMetaMaskNetworkId,
+  setMetaMaskAccount,
   setLoading,
   setIsloadMonitoring,
   setStakeSwapLoadingStatus,
@@ -205,6 +210,25 @@ export const monitorMetaMaskChainChange = (): AppThunk => (dispatch, getState) =
       dispatch(setMetaMaskNetworkId(chainId));
     });
   }
+};
+
+export const initMetaMaskAccount = (): AppThunk => (dispatch, getState) => {
+  if (typeof window.ethereum !== 'undefined' && ethereum.isMetaMask) {
+    ethereum
+      .request({ method: 'eth_requestAccounts' })
+      .then((accounts: any) => {
+        if (accounts && accounts.length > 0) {
+          dispatch(setMetaMaskAccount(accounts[0]));
+        }
+      })
+      .catch((error: any) => {});
+  }
+
+  ethereum.on('accountsChanged', (accounts: any) => {
+    if (accounts.length > 0) {
+      dispatch(setMetaMaskAccount(accounts[0]));
+    }
+  });
 };
 
 export const keplr_keystorechange =

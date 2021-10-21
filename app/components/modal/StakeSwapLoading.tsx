@@ -9,12 +9,12 @@ import {
   getAssetBalance as getEthAssetBalance,
   getAssetBalanceAll as getErc20AssetBalanceAll
 } from '@features/ETHClice';
-import { setStakeSwapLoadingStatus } from '@features/globalClice';
-import { noticeStatus, update_NoticeStatus } from '@features/noticeClice';
+import { processStatus, setStakeSwapLoadingStatus } from '@features/globalClice';
+import { noticeStatus, update_NoticeProcessSwppingStatus, update_NoticeStatus } from '@features/noticeClice';
 import { getAssetBalance as getSlpAssetBalance, getSlp20AssetBalanceAll } from '@features/SOLClice';
 import close_bold_svg from '@images/close_bold.svg';
 import complete_svg from '@images/complete.svg';
-import { requestAddERC20TokenToMetaMask } from '@util/metamaskUtil';
+import { requestAddTokenToMetaMask } from '@util/metamaskUtil';
 import numberUtil from '@util/numberUtil';
 import { useInterval } from '@util/utils';
 import { message, Modal, Progress, Spin } from 'antd';
@@ -179,13 +179,20 @@ export default function StakeSwapLoading(props: Props) {
           swapLoadingParams.tokenAddress,
           (v: any) => {
             // console.log('sdfsdfsdf', Number(v), targetBalance * 1.1, targetBalance * 0.9);
+            // console.log('new amount', v);
             if (
-              Number(v) - Number(swapLoadingParams.oldBalance) <= Number(swapLoadingParams.amount) * 1.01 &&
-              Number(v) - Number(swapLoadingParams.oldBalance) >= Number(swapLoadingParams.amount) * 0.99
+              Number(v) - Number(swapLoadingParams.oldBalance) <= Number(swapLoadingParams.amount) * 1.05 &&
+              Number(v) - Number(swapLoadingParams.oldBalance) >= Number(swapLoadingParams.amount) * 0.95
             ) {
               setSwapStatus(1);
               dispatch(getErc20AssetBalanceAll());
               dispatch(update_NoticeStatus(swapLoadingParams.noticeUuid, noticeStatus.Confirmed));
+              dispatch(
+                update_NoticeProcessSwppingStatus(swapLoadingParams.noticeUuid, {
+                  brocasting: processStatus.success,
+                  checkAddr: swapLoadingParams.viewTxUrl,
+                }),
+              );
             }
           },
           true,
@@ -199,12 +206,18 @@ export default function StakeSwapLoading(props: Props) {
           swapLoadingParams.tokenAddress,
           (v: any) => {
             if (
-              Number(v) - Number(swapLoadingParams.oldBalance) <= Number(swapLoadingParams.amount) * 1.01 &&
-              Number(v) - Number(swapLoadingParams.oldBalance) >= Number(swapLoadingParams.amount) * 0.99
+              Number(v) - Number(swapLoadingParams.oldBalance) <= Number(swapLoadingParams.amount) * 1.05 &&
+              Number(v) - Number(swapLoadingParams.oldBalance) >= Number(swapLoadingParams.amount) * 0.95
             ) {
               setSwapStatus(1);
               dispatch(getBep20AssetBalanceAll());
               dispatch(update_NoticeStatus(swapLoadingParams.noticeUuid, noticeStatus.Confirmed));
+              dispatch(
+                update_NoticeProcessSwppingStatus(swapLoadingParams.noticeUuid, {
+                  brocasting: processStatus.success,
+                  checkAddr: swapLoadingParams.viewTxUrl,
+                }),
+              );
             }
           },
           true,
@@ -215,13 +228,19 @@ export default function StakeSwapLoading(props: Props) {
       getSlpAssetBalance(swapLoadingParams.address, swapLoadingParams.tokenType, (v: any) => {
         // console.log('new amount:', v);
         if (
-          Number(v) - Number(swapLoadingParams.oldBalance) <= Number(swapLoadingParams.amount) * 1.01 &&
-          Number(v) - Number(swapLoadingParams.oldBalance) >= Number(swapLoadingParams.amount) * 0.99
+          Number(v) - Number(swapLoadingParams.oldBalance) <= Number(swapLoadingParams.amount) * 1.05 &&
+          Number(v) - Number(swapLoadingParams.oldBalance) >= Number(swapLoadingParams.amount) * 0.95
         ) {
           // console.log('check splt token balance success');
           setSwapStatus(1);
           dispatch(getSlp20AssetBalanceAll());
           dispatch(update_NoticeStatus(swapLoadingParams.noticeUuid, noticeStatus.Confirmed));
+          dispatch(
+            update_NoticeProcessSwppingStatus(swapLoadingParams.noticeUuid, {
+              brocasting: processStatus.success,
+              checkAddr: swapLoadingParams.viewTxUrl,
+            }),
+          );
         }
       });
     }
@@ -261,6 +280,7 @@ export default function StakeSwapLoading(props: Props) {
             <div className={'center_container'}>
               <div
                 className={'success_btn'}
+                style={{ marginBottom: 0 }}
                 onClick={() =>
                   swapLoadingParams && swapLoadingParams.viewTxUrl && window.open(swapLoadingParams.viewTxUrl)
                 }>
@@ -271,7 +291,7 @@ export default function StakeSwapLoading(props: Props) {
                 <div
                   className='add_token_text'
                   onClick={() => {
-                    requestAddERC20TokenToMetaMask(swapLoadingParams.tokenType, swapLoadingParams.destChainId);
+                    requestAddTokenToMetaMask(swapLoadingParams.tokenType, swapLoadingParams.destChainId);
                   }}>
                   Add {getSymbolRTitle(getRsymbolByTokenType(swapLoadingParams.tokenType))} to Metamask
                 </div>

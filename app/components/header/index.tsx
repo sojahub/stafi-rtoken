@@ -1,12 +1,11 @@
 import config from '@config/index';
+import { balancesAll } from '@features/FISClice';
 import {
-  checkMetaMaskNetworkId,
   connectAtomjs,
   connectPolkadot,
   connectPolkadotjs,
   connectPolkadot_ksm,
-  connectSoljs,
-  monitorMetaMaskChainChange
+  connectSoljs
 } from '@features/globalClice';
 import { noticeStatus } from '@features/noticeClice';
 import {
@@ -248,11 +247,6 @@ export default function Index(props: Props) {
   }, [noticeData]);
 
   useEffect(() => {
-    dispatch(checkMetaMaskNetworkId());
-    dispatch(monitorMetaMaskChainChange());
-  }, [location.pathname]);
-
-  useEffect(() => {
     if (account && account.ethAccount) {
       dispatch(eth_monitoring_method());
     }
@@ -284,6 +278,7 @@ export default function Index(props: Props) {
               setVisible(false);
               dispatch(dotquery_rBalances_account());
               dispatch(ksmquery_rBalances_account());
+              dispatch(balancesAll());
             }}
           />
         )}
@@ -466,9 +461,14 @@ export default function Index(props: Props) {
             )}
 
             {account.maticAccount && (
-              <div className='header_tool account'>
-                <div>{NumberUtil.handleFisAmountToFixed(account.maticAccount.balance)} MATIC</div>
-                <div>{StringUtil.replacePkh(account.maticAccount.address, 4, 38)}</div>
+              <div style={{ display: 'flex', flexDirection: 'column' }}>
+                <div className='header_tool account'>
+                  <div>{NumberUtil.handleFisAmountToFixed(account.maticAccount.balance)} MATIC</div>
+                  <div>{StringUtil.replacePkh(account.maticAccount.address, 4, 38)}</div>
+                </div>
+                {metaMaskNetworkId && !config.metaMaskNetworkIsGoerliEth(metaMaskNetworkId) && (
+                  <img src={wrong_network} className={'wrong_network'} />
+                )}
               </div>
             )}
           </div>

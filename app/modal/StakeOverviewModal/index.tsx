@@ -1,12 +1,10 @@
 import { HContainer, Text } from '@components/commonComponents';
 import closeIcon from '@images/ic_close_black.svg';
 import stakeOverviewIcon from '@images/stake_overview.png';
-import atomIcon from '@images/stake_overview_atom.svg';
-import bnbIcon from '@images/stake_overview_bnb.svg';
-import ethIcon from '@images/stake_overview_eth.svg';
-import ksmIcon from '@images/stake_overview_ksm.svg';
-import polkadotIcon from '@images/stake_overview_polkadot.svg';
-import solIcon from '@images/stake_overview_sol.svg';
+import sendingIcon from '@images/stake_overview_send.svg';
+import signatureIcon from '@images/stake_overview_signature.svg';
+import stakeIcon from '@images/stake_overview_stake.png';
+import stakeSwapIcon from '@images/stake_overview_stake_swap.png';
 import { Modal } from 'antd';
 import React from 'react';
 import styled, { CSSProperties } from 'styled-components';
@@ -23,6 +21,7 @@ interface StakeOverviewModalProps {
   visible: boolean;
   tokenType: 'rDOT' | 'rFIS' | 'rKSM' | 'rATOM' | 'rSOL' | 'rMATIC' | 'rBNB';
   sendingFund?: string;
+  signatureFee?: string;
   stakingFee?: string;
   stakingAndSwapFee?: string;
   onOk: Function;
@@ -30,29 +29,17 @@ interface StakeOverviewModalProps {
 }
 
 export default function StakeOverviewModal(props: StakeOverviewModalProps) {
-  let sendingFundIcon;
-  if (props.tokenType === 'rMATIC') {
-    sendingFundIcon = ethIcon;
-  } else if (props.tokenType === 'rDOT') {
-    sendingFundIcon = polkadotIcon;
-  } else if (props.tokenType === 'rKSM') {
-    sendingFundIcon = ksmIcon;
-  } else if (props.tokenType === 'rATOM') {
-    sendingFundIcon = atomIcon;
-  } else if (props.tokenType === 'rSOL') {
-    sendingFundIcon = solIcon;
-  } else if (props.tokenType === 'rBNB') {
-    sendingFundIcon = bnbIcon;
-  }
-
   let txCount = 0;
   if (!!props.sendingFund) {
     txCount++;
   }
-  if (!props.stakingFee) {
+  if (!!props.signatureFee) {
     txCount++;
   }
-  if (!props.stakingAndSwapFee) {
+  if (!!props.stakingFee) {
+    txCount++;
+  }
+  if (!!props.stakingAndSwapFee) {
     txCount++;
   }
 
@@ -72,16 +59,16 @@ export default function StakeOverviewModal(props: StakeOverviewModalProps) {
         <CloseIcon style={{ visibility: 'hidden' }} />
 
         <Text size='20px' color='#23292F' bold>
-          Stake Overview
+          Staking Overview
         </Text>
 
         <CloseIcon src={closeIcon} onClick={() => props.onCancel()} />
       </HeadContainer>
 
-      <StakeOverviewIcon src={stakeOverviewIcon} />
+      <StakeOverviewIcon img={stakeOverviewIcon} />
 
       <Text size='16px' color='#23292F' bold mt='26px'>
-        Stake process consists of {txCount} transactions
+        Stake process consists of {txCount} {txCount > 1 ? 'transactions' : 'transaction'}
       </Text>
 
       <Text size='12px' color='#4D4D4D' mt='5px'>
@@ -92,10 +79,10 @@ export default function StakeOverviewModal(props: StakeOverviewModalProps) {
         {!!props.sendingFund && (
           <HContainer mb='6px'>
             <HContainer>
-              <FeeIcon src={sendingFundIcon} />
+              <FeeIcon src={sendingIcon} style={{ padding: '2px' }} />
 
               <Text size='12px' color='23292F' sameLineHeight>
-                Sending fund
+                Send fund
               </Text>
             </HContainer>
 
@@ -105,10 +92,26 @@ export default function StakeOverviewModal(props: StakeOverviewModalProps) {
           </HContainer>
         )}
 
+        {!!props.signatureFee && (
+          <HContainer mb='6px'>
+            <HContainer>
+              <FeeIcon src={signatureIcon} />
+
+              <Text size='12px' color='23292F' sameLineHeight>
+                Signature
+              </Text>
+            </HContainer>
+
+            <Text size='12px' color='23292F' sameLineHeight>
+              {props.signatureFee}
+            </Text>
+          </HContainer>
+        )}
+
         {!!props.stakingFee && (
           <HContainer mb='6px'>
             <HContainer>
-              <FeeIcon src={polkadotIcon} />
+              <FeeIcon src={stakeIcon} />
 
               <Text size='12px' color='23292F' sameLineHeight>
                 Staking
@@ -124,7 +127,7 @@ export default function StakeOverviewModal(props: StakeOverviewModalProps) {
         {!!props.stakingAndSwapFee && (
           <HContainer mb='6px'>
             <HContainer>
-              <FeeIcon src={polkadotIcon} />
+              <FeeIcon src={stakeSwapIcon} />
 
               <Text size='12px' color='23292F' sameLineHeight>
                 {'Staking & Swap'}
@@ -158,6 +161,8 @@ const modalBodyStyle: CSSProperties = {
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
+  height: '450px',
+  position: 'relative',
 };
 
 const HeadContainer = styled.div`
@@ -176,10 +181,16 @@ const CloseIcon = styled.img`
   cursor: pointer;
 `;
 
-const StakeOverviewIcon = styled.img`
+type StakeOverviewIconProps = {
+  img: any;
+};
+
+const StakeOverviewIcon = styled.div<StakeOverviewIconProps>`
   width: 50px;
   height: 50px;
   margin-top: 25px;
+  background: url(${(props) => props.img}) center center no-repeat;
+  background-size: contain;
 `;
 
 const FeeListContainer = styled.div`
@@ -188,15 +199,19 @@ const FeeListContainer = styled.div`
 `;
 
 const FeeIcon = styled.img`
-  width: 18px;
-  height: 18px;
+  width: 20px;
+  height: 20px;
+  padding: 2px;
 `;
 
 const Divider = styled.div`
   height: 1px;
   align-self: stretch;
   background-color: #e7e7e7;
-  margin-top: 28px;
+  position: absolute;
+  bottom: 75px;
+  left: 0;
+  right: 0;
 `;
 
 const ButtonsContainer = styled.div`
@@ -204,7 +219,9 @@ const ButtonsContainer = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
-  margin: 13px 20px 27px 0;
+  margin: 13px 20px 0 0;
+  position: absolute;
+  bottom: 20px;
 `;
 
 const ContinueButton = styled.div`

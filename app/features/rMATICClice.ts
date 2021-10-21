@@ -341,7 +341,7 @@ export const transfer =
 
         let txDetail;
         while (true) {
-          await sleep(3000);
+          await sleep(5000);
           txDetail = await ethereum
             .request({
               method: 'eth_getTransactionByHash',
@@ -380,21 +380,20 @@ export const transfer =
           dispatch(reloadData());
           dispatch(
             add_Matic_stake_Notice(notice_uuid, amountparam, noticeStatus.Error, {
-              process: getState().globalModule.process,
+              process: { ...getState().globalModule.process, rSymbol: rSymbol.Matic, destChainId: destChainId },
               processParameter: getState().rMATICModule.processParameter,
             }),
           );
         }
 
         // console.log('tx, block:', txHash, blockHash);
+        const processSendingParams = {
+          brocasting: processStatus.success,
+          packing: processStatus.success,
+          checkTx: txHash,
+        };
 
-        dispatch(
-          setProcessSending({
-            brocasting: processStatus.success,
-            packing: processStatus.success,
-            checkTx: txHash,
-          }),
-        );
+        dispatch(setProcessSending(processSendingParams));
 
         dispatch(reloadData());
 
@@ -423,7 +422,12 @@ export const transfer =
 
         dispatch(
           add_Matic_stake_Notice(notice_uuid, amountparam, noticeStatus.Pending, {
-            process: getState().globalModule.process,
+            process: {
+              ...getState().globalModule.process,
+              rSymbol: rSymbol.Matic,
+              destChainId: destChainId,
+              sending: processSendingParams,
+            },
             processParameter: getState().rMATICModule.processParameter,
           }),
         );

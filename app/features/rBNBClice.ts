@@ -234,13 +234,12 @@ export const transfer =
 
       dispatch(get_eth_getBalance());
 
-      dispatch(
-        setProcessSending({
-          brocasting: processStatus.success,
-          packing: processStatus.success,
-          checkTx: txHash,
-        }),
-      );
+      const processSendingParams = {
+        brocasting: processStatus.success,
+        packing: processStatus.success,
+        checkTx: txHash,
+      };
+      dispatch(setProcessSending(processSendingParams));
 
       dispatch(reloadData());
 
@@ -268,7 +267,12 @@ export const transfer =
       );
       dispatch(
         add_Matic_stake_Notice(notice_uuid, amountparam, noticeStatus.Pending, {
-          process: getState().globalModule.process,
+          process: {
+            ...getState().globalModule.process,
+            rSymbol: rSymbol.Bnb,
+            destChainId: destChainId,
+            sending: processSendingParams,
+          },
           processParameter: getState().rBNBModule.processParameter,
         }),
       );
@@ -298,12 +302,18 @@ export const transfer =
               }
 
               if (r == 'successful') {
-                dispatch(add_Matic_stake_Notice(notice_uuid, amountparam, noticeStatus.Confirmed));
+                dispatch(
+                  add_Matic_stake_Notice(
+                    notice_uuid,
+                    amountparam,
+                    destChainId === STAFI_CHAIN_ID ? noticeStatus.Confirmed : noticeStatus.Swapping,
+                  ),
+                );
                 // Set swap loading params for loading modal.
                 if (destChainId === ETH_CHAIN_ID) {
-                  updateSwapParamsOfErc(dispatch, notice_uuid, 'rdot', 0, targetAddress, true);
+                  updateSwapParamsOfErc(dispatch, notice_uuid, 'rbnb', 0, targetAddress, true);
                 } else {
-                  updateSwapParamsOfBep(dispatch, notice_uuid, 'rdot', 0, targetAddress, true);
+                  updateSwapParamsOfBep(dispatch, notice_uuid, 'rbnb', 0, targetAddress, true);
                 }
                 dispatch(setStakeSwapLoadingStatus(destChainId === STAFI_CHAIN_ID ? 0 : 2));
                 cb && cb();

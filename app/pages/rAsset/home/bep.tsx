@@ -26,6 +26,7 @@ import rasset_rfis_svg from '@images/r_fis.svg';
 import rasset_rksm_svg from '@images/r_ksm.svg';
 import rasset_rmatic_svg from '@images/r_matic.svg';
 import Button from '@shared/components/button/connect_button';
+import { requestSwitchMetaMaskNetwork } from '@util/metamaskUtil';
 import NumberUtil from '@util/numberUtil';
 import React, { useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -170,6 +171,12 @@ export default function Index(props: any) {
     dispatch(getRtokenPriceList());
     dispatch(monitoring_Method());
   }, []);
+
+  useEffect(() => {
+    if (metaMaskNetworkId !== config.bscChainId()) {
+      requestSwitchMetaMaskNetwork('BSC');
+    }
+  }, [metaMaskNetworkId]);
 
   const updateData = () => {
     if (bscAccount && bscAccount.address) {

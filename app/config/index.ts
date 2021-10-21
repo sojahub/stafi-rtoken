@@ -135,7 +135,8 @@ export default {
     if (!isdev()) {
       return 'wss://mainnet-rpc.stafi.io';
     } else {
-      return 'wss://stafi-seiya.stafi.io';
+      // return 'wss://stafi-seiya.stafi.io';
+      return 'wss://stafi-seiya-rewrite.stafi.io';
     }
   },
   kusamaChain: () => {

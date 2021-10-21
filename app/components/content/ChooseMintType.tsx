@@ -1,3 +1,4 @@
+import config from '@config/index';
 import {
   bridgeCommon_ChainFees,
   BSC_CHAIN_ID,
@@ -5,7 +6,7 @@ import {
   SOL_CHAIN_ID,
   STAFI_CHAIN_ID
 } from '@features/bridgeClice';
-import { setLoading } from '@features/globalClice';
+import { connectSoljs, setLoading } from '@features/globalClice';
 import { checkEthAddress } from '@features/rETHClice';
 import { checkAddress as checkSOLAddress } from '@features/rSOLClice';
 import leftArrowSvg from '@images/left_arrow.svg';
@@ -21,6 +22,8 @@ import web3Utils from 'web3-utils';
 import './index.scss';
 import MintTypeCard from './MintTypeCard';
 
+declare const ethereum: any;
+declare const solana: any;
 const solServer = new SolServer();
 
 type ChooseMintTypeProps = {
@@ -38,13 +41,24 @@ export default function ChooseMintType(props: ChooseMintTypeProps) {
   const [showAddSplTokenButton, setShowAddSplTokenButton] = useState(false);
   const [maticStakeEthFee, setMaticStakeEthFee] = useState('-- ETH');
 
-  const { processSlider, erc20SwapFee, bep20SwapFee, slp20SwapFee, gasPrice } = useSelector((state: any) => {
+  const { processSlider, erc20SwapFee, bep20SwapFee, slp20SwapFee, gasPrice, fisAccountAddress } = useSelector(
+    (state: any) => {
+      return {
+        processSlider: state.globalModule.processSlider,
+        erc20SwapFee: state.bridgeModule.erc20EstimateFee,
+        bep20SwapFee: state.bridgeModule.bep20EstimateFee,
+        slp20SwapFee: state.bridgeModule.slp20EstimateFee,
+        gasPrice: state.ETHModule.gasPrice,
+        fisAccountAddress: state.FISModule.fisAccount && state.FISModule.fisAccount.address,
+      };
+    },
+  );
+
+  const { metaMaskNetworkId, metaMaskAccount, solAddress } = useSelector((state: any) => {
     return {
-      processSlider: state.globalModule.processSlider,
-      erc20SwapFee: state.bridgeModule.erc20EstimateFee,
-      bep20SwapFee: state.bridgeModule.bep20EstimateFee,
-      slp20SwapFee: state.bridgeModule.slp20EstimateFee,
-      gasPrice: state.ETHModule.gasPrice,
+      metaMaskAccount: state.globalModule.metaMaskAccount,
+      metaMaskNetworkId: state.globalModule.metaMaskNetworkId,
+      solAddress: state.rSOLModule.solAccount && state.rSOLModule.solAccount.address,
     };
   });
 
@@ -52,12 +66,12 @@ export default function ChooseMintType(props: ChooseMintTypeProps) {
     if (props.type === 'rMATIC') {
       if (!isNaN(gasPrice)) {
         const feeInEth = web3Utils.fromWei(web3Utils.toBN(36928).mul(web3Utils.toBN(gasPrice)), 'ether');
-        setMaticStakeEthFee(Math.round(Number(feeInEth)*100000000)/100000000 + ' ETH');
+        setMaticStakeEthFee(Math.round(Number(feeInEth) * 100000000) / 100000000 + ' ETH');
       }
     }
   }, [gasPrice]);
 
-  const { sendingFund, stakingFee, stakingAndSwapFee } = useMemo(() => {
+  const { sendingFund, signatureFee, stakingFee, stakingAndSwapFee } = useMemo(() => {
     if (props.type === 'rFIS') {
       if (selectedChainId === STAFI_CHAIN_ID) {
         return {
@@ -78,108 +92,133 @@ export default function ChooseMintType(props: ChooseMintTypeProps) {
       if (selectedChainId === STAFI_CHAIN_ID) {
         return {
           sendingFund: '0.015 DOT',
-          stakingFee: '0.003 FIS',
+          signatureFee: '0',
+          stakingFee: props.relayFee + 0.003 + ' FIS',
         };
       } else if (selectedChainId === ETH_CHAIN_ID) {
         return {
           sendingFund: '0.015 DOT',
+          signatureFee: '0',
           stakingAndSwapFee:
-            Math.round((0.003 + Number(isNaN(erc20SwapFee) ? 0 : erc20SwapFee)) * 1000000) / 1000000 + ' FIS',
+            Math.round((props.relayFee + 0.003 + Number(isNaN(erc20SwapFee) ? 0 : erc20SwapFee)) * 1000000) / 1000000 +
+            ' FIS',
         };
       } else if (selectedChainId === BSC_CHAIN_ID) {
         return {
           sendingFund: '0.015 DOT',
+          signatureFee: '0',
           stakingAndSwapFee:
-            Math.round((0.003 + Number(isNaN(bep20SwapFee) ? 0 : bep20SwapFee)) * 1000000) / 1000000 + ' FIS',
+            Math.round((props.relayFee + 0.003 + Number(isNaN(bep20SwapFee) ? 0 : bep20SwapFee)) * 1000000) / 1000000 +
+            ' FIS',
         };
       }
     } else if (props.type === 'rKSM') {
       if (selectedChainId === STAFI_CHAIN_ID) {
         return {
           sendingFund: '0.00005 KSM',
-          stakingFee: '0.003 FIS',
+          signatureFee: '0',
+          stakingFee: props.relayFee + 0.003 + ' FIS',
         };
       } else if (selectedChainId === ETH_CHAIN_ID) {
         return {
           sendingFund: '0.00005 KSM',
+          signatureFee: '0',
           stakingAndSwapFee:
-            Math.round((0.003 + Number(isNaN(erc20SwapFee) ? 0 : erc20SwapFee)) * 1000000) / 1000000 + ' FIS',
+            Math.round((props.relayFee + 0.003 + Number(isNaN(erc20SwapFee) ? 0 : erc20SwapFee)) * 1000000) / 1000000 +
+            ' FIS',
         };
       } else if (selectedChainId === BSC_CHAIN_ID) {
         return {
           sendingFund: '0.00005 KSM',
+          signatureFee: '0',
           stakingAndSwapFee:
-            Math.round((0.003 + Number(isNaN(bep20SwapFee) ? 0 : bep20SwapFee)) * 1000000) / 1000000 + ' FIS',
+            Math.round((props.relayFee + 0.003 + Number(isNaN(bep20SwapFee) ? 0 : bep20SwapFee)) * 1000000) / 1000000 +
+            ' FIS',
         };
       }
     } else if (props.type === 'rATOM') {
       if (selectedChainId === STAFI_CHAIN_ID) {
         return {
           sendingFund: '0.002 ATOM',
-          stakingFee: '0.003 FIS',
+          stakingFee: props.relayFee + 0.003 + ' FIS',
         };
       } else if (selectedChainId === ETH_CHAIN_ID) {
         return {
           sendingFund: '0.002 ATOM',
           stakingAndSwapFee:
-            Math.round((0.003 + Number(isNaN(erc20SwapFee) ? 0 : erc20SwapFee)) * 1000000) / 1000000 + ' FIS',
+            Math.round((props.relayFee + 0.003 + Number(isNaN(erc20SwapFee) ? 0 : erc20SwapFee)) * 1000000) / 1000000 +
+            ' FIS',
         };
       } else if (selectedChainId === BSC_CHAIN_ID) {
         return {
           sendingFund: '0.002 ATOM',
           stakingAndSwapFee:
-            Math.round((0.003 + Number(isNaN(bep20SwapFee) ? 0 : bep20SwapFee)) * 1000000) / 1000000 + ' FIS',
+            Math.round((props.relayFee + 0.003 + Number(isNaN(bep20SwapFee) ? 0 : bep20SwapFee)) * 1000000) / 1000000 +
+            ' FIS',
         };
       }
     } else if (props.type === 'rMATIC') {
       if (selectedChainId === STAFI_CHAIN_ID) {
         return {
           sendingFund: maticStakeEthFee,
-          stakingFee: '0.003 FIS',
+          signatureFee: '0',
+          stakingFee: props.relayFee + 0.003 + ' FIS',
         };
       } else if (selectedChainId === ETH_CHAIN_ID) {
         return {
           sendingFund: maticStakeEthFee,
+          signatureFee: '0',
           stakingAndSwapFee:
-            Math.round((0.003 + Number(isNaN(erc20SwapFee) ? 0 : erc20SwapFee)) * 1000000) / 1000000 + ' FIS',
+            Math.round((props.relayFee + 0.003 + Number(isNaN(erc20SwapFee) ? 0 : erc20SwapFee)) * 1000000) / 1000000 +
+            ' FIS',
         };
       } else if (selectedChainId === BSC_CHAIN_ID) {
         return {
           sendingFund: maticStakeEthFee,
+          signatureFee: '0',
           stakingAndSwapFee:
-            Math.round((0.003 + Number(isNaN(bep20SwapFee) ? 0 : bep20SwapFee)) * 1000000) / 1000000 + ' FIS',
+            Math.round((props.relayFee + 0.003 + Number(isNaN(bep20SwapFee) ? 0 : bep20SwapFee)) * 1000000) / 1000000 +
+            ' FIS',
         };
       }
     } else if (props.type === 'rBNB') {
       if (selectedChainId === STAFI_CHAIN_ID) {
         return {
           sendingFund: '0.0001 BNB',
-          stakingFee: '0.003 FIS',
+          signatureFee: '0',
+          stakingFee: props.relayFee + 0.003 + ' FIS',
         };
       } else if (selectedChainId === ETH_CHAIN_ID) {
         return {
           sendingFund: '0.0001 BNB',
+          signatureFee: '0',
           stakingAndSwapFee:
-            Math.round((0.003 + Number(isNaN(erc20SwapFee) ? 0 : erc20SwapFee)) * 1000000) / 1000000 + ' FIS',
+            Math.round((props.relayFee + 0.003 + Number(isNaN(erc20SwapFee) ? 0 : erc20SwapFee)) * 1000000) / 1000000 +
+            ' FIS',
         };
       } else if (selectedChainId === BSC_CHAIN_ID) {
         return {
           sendingFund: '0.0001 BNB',
+          signatureFee: '0',
           stakingAndSwapFee:
-            Math.round((0.003 + Number(isNaN(bep20SwapFee) ? 0 : bep20SwapFee)) * 1000000) / 1000000 + ' FIS',
+            Math.round((props.relayFee + 0.003 + Number(isNaN(bep20SwapFee) ? 0 : bep20SwapFee)) * 1000000) / 1000000 +
+            ' FIS',
         };
       }
     } else if (props.type === 'rSOL') {
       if (selectedChainId === STAFI_CHAIN_ID) {
         return {
           sendingFund: '0.00001 SOL',
-          stakingFee: '0.003 FIS',
+          signatureFee: '0',
+          stakingFee: props.relayFee + 0.003 + ' FIS',
         };
       } else if (selectedChainId === SOL_CHAIN_ID) {
         return {
           sendingFund: '0.00001 SOL',
+          signatureFee: '0',
           stakingAndSwapFee:
-            Math.round((0.003 + Number(isNaN(slp20SwapFee) ? 0 : slp20SwapFee)) * 1000000) / 1000000 + ' FIS',
+            Math.round((props.relayFee + 0.003 + Number(isNaN(slp20SwapFee) ? 0 : slp20SwapFee)) * 1000000) / 1000000 +
+            ' FIS',
         };
       }
     }
@@ -226,6 +265,19 @@ export default function ChooseMintType(props: ChooseMintTypeProps) {
     }
     const splTokenAccountPubkey = await solServer.getTokenAccountPubkey(targetAddress, 'rsol');
     setShowAddSplTokenButton(!splTokenAccountPubkey);
+  };
+
+  const fillSolAddress = () => {
+    if (solana && solana.isPhantom) {
+      if (solana.isConnected) {
+        setTargetAddress(solana.publicKey.toString());
+      } else {
+        solana.on('connect', () => {
+          setTargetAddress(solana.publicKey.toString());
+        });
+        dispatch(connectSoljs());
+      }
+    }
   };
 
   return (
@@ -284,23 +336,53 @@ export default function ChooseMintType(props: ChooseMintTypeProps) {
       <div style={{ height: '110px', marginTop: '12px' }}>
         <div
           className='address_input_container'
-          style={{ display: selectedChainId === STAFI_CHAIN_ID ? 'none' : 'block' }}>
+          style={{ display: selectedChainId === STAFI_CHAIN_ID ? 'block' : 'block' }}>
           <div className='title'>Received address</div>
 
-          <AddressInputEmbed
-            backgroundcolor='#2B3239'
-            placeholder={'...'}
-            value={targetAddress}
-            onChange={(e: any) => {
-              setTargetAddress(e.target.value);
-            }}
-          />
+          <div className='input_address_container'>
+            <div className='left_content'>
+              <AddressInputEmbed
+                disabled={processSlider || selectedChainId === STAFI_CHAIN_ID}
+                backgroundcolor='#2B3239'
+                placeholder={'...'}
+                value={selectedChainId === STAFI_CHAIN_ID ? fisAccountAddress : targetAddress}
+                onChange={(e: any) => {
+                  setTargetAddress(e.target.value);
+                }}
+              />
+            </div>
+
+            <div
+              className='connected_addr'
+              style={{
+                display:
+                  !!targetAddress ||
+                  selectedChainId === STAFI_CHAIN_ID ||
+                  (selectedChainId === ETH_CHAIN_ID &&
+                    (!metaMaskAccount || !config.metaMaskNetworkIsGoerliEth(metaMaskNetworkId))) ||
+                  (selectedChainId === BSC_CHAIN_ID &&
+                    (!metaMaskAccount || !config.metaMaskNetworkIsBsc(metaMaskNetworkId))) ||
+                  (selectedChainId === SOL_CHAIN_ID && !solAddress)
+                    ? 'none'
+                    : 'flex',
+              }}
+              onClick={() => {
+                if (selectedChainId === ETH_CHAIN_ID) {
+                  setTargetAddress(metaMaskAccount);
+                } else if (selectedChainId === BSC_CHAIN_ID) {
+                  setTargetAddress(metaMaskAccount);
+                } else if (selectedChainId === SOL_CHAIN_ID) {
+                  fillSolAddress();
+                }
+              }}>
+              Connected Addr
+            </div>
+          </div>
 
           <div className='divider' />
 
           <div className='note'>
-            Note: Make sure you have the right address, otherwise you will not receive the token if you provide a wrong
-            address.
+            Note: Make sure you have the right address, otherwise you will not receive the token.
           </div>
         </div>
       </div>
@@ -340,6 +422,7 @@ export default function ChooseMintType(props: ChooseMintTypeProps) {
         visible={stakeOverviewModalVisible}
         tokenType={props.type}
         sendingFund={sendingFund}
+        signatureFee={signatureFee}
         stakingFee={stakingFee}
         stakingAndSwapFee={stakingAndSwapFee}
         onOk={() => {
