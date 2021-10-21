@@ -6,7 +6,7 @@ import { getLocalStorageItem, Keys, setLocalStorageItem } from '@util/common';
 import { cloneDeep } from 'lodash';
 import moment from 'moment';
 import { AppThunk } from '../store';
-import { BSC_CHAIN_ID, ETH_CHAIN_ID, SOL_CHAIN_ID } from './bridgeClice';
+import { BSC_CHAIN_ID, ETH_CHAIN_ID, SOL_CHAIN_ID, STAFI_CHAIN_ID } from './bridgeClice';
 import { bondStates, getMinting } from './FISClice';
 import { initProcess, processStatus, setProcessSending, setProcessSlider, setProcessStaking } from './globalClice';
 import { setProcessParameter as atomSetProcessParameter } from './rATOMClice';
@@ -473,7 +473,9 @@ export const checkAll_minting =
                 if (
                   item.type == noticeType.Staker &&
                   item.subType == noticesubType.Stake &&
-                  item.status === noticeStatus.Swapping
+                  item.subData &&
+                  item.subData.process &&
+                  item.subData.process.destChainId !== STAFI_CHAIN_ID
                 ) {
                   // let viewTxUrl;
                   // if (item.subData?.process?.destChainId === ETH_CHAIN_ID) {

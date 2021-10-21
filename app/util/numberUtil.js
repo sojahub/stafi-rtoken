@@ -355,10 +355,10 @@ export default {
     return multiply(x, y);
   },
   max: function (x, y) {
-    return max(x, y);
+    return max([x, y]);
   },
   min: function (x, y) {
-    return min(x, y);
+    return min([x, y]);
   },
   divide: function (x, y) {
     return divide(x, y);
