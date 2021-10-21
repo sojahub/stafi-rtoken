@@ -8,7 +8,7 @@ import { rSymbol } from '@keyring/defaults';
 //   multiplyDependencies,
 //   subtractDependencies
 // } from 'mathjs';
-import { divide, floor, max, min, multiply, subtract } from 'mathjs';
+import { divide, floor, max, min, multiply, subtract } from 'lodash';
 import Web3Utils from 'web3-utils';
 
 // mathjs optimization
