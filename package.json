@@ -61,7 +61,8 @@
     "stream-browserify": "^3.0.0",
     "styled-components": "^5.3.0",
     "web3": "1.5.2",
-    "web3-utils": "1.5.2"
+    "web3-utils": "1.5.2",
+    "mathjs": "9.4.3"
   },
   "devDependencies": {
     "@babel/core": "^7.12.10",
@@ -118,7 +119,8 @@
     "webpackbar": "^5.0.0-3"
   },
   "resolutions": {
-    "elliptic": "file:./libs/elliptic"
+    "elliptic": "file:./libs/elliptic",
+    "decimal.js": "10.3.0"
   },
   "sideEffects": [
     "*.css"

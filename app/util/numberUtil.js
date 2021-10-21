@@ -1,14 +1,13 @@
 import { rSymbol } from '@keyring/defaults';
-// import {
-//   create,
-//   divideDependencies,
-//   floorDependencies,
-//   maxDependencies,
-//   minDependencies,
-//   multiplyDependencies,
-//   subtractDependencies
-// } from 'mathjs';
-import { divide, floor, max, min, multiply, subtract } from 'lodash';
+import {
+  create,
+  divideDependencies,
+  floorDependencies,
+  maxDependencies,
+  minDependencies,
+  multiplyDependencies,
+  subtractDependencies
+} from 'mathjs';
 import Web3Utils from 'web3-utils';
 
 // mathjs optimization
@@ -16,17 +15,17 @@ const config = {
   // optionally, you can specify configuration
 };
 // Create just the functions we need
-// const { divide, floor, max, min, multiply, subtract } = create(
-//   {
-//     divideDependencies,
-//     floorDependencies,
-//     maxDependencies,
-//     minDependencies,
-//     multiplyDependencies,
-//     subtractDependencies,
-//   },
-//   config,
-// );
+const { divide, floor, max, min, multiply, subtract } = create(
+  {
+    divideDependencies,
+    floorDependencies,
+    maxDependencies,
+    minDependencies,
+    multiplyDependencies,
+    subtractDependencies,
+  },
+  config,
+);
 
 export default {
   // Add floating point numbers
@@ -355,10 +354,10 @@ export default {
     return multiply(x, y);
   },
   max: function (x, y) {
-    return max([x, y]);
+    return max(x, y);
   },
   min: function (x, y) {
-    return min([x, y]);
+    return min(x, y);
   },
   divide: function (x, y) {
     return divide(x, y);
