@@ -9,6 +9,7 @@ import nativeIcon from '@images/mint_type_native.svg';
 import nativeSelectedIcon from '@images/mint_type_native_selected.svg';
 import splIcon from '@images/mint_type_spl.svg';
 import splSelectedIcon from '@images/mint_type_spl_selected.svg';
+import numberUtil from '@util/numberUtil';
 import { Tooltip } from 'antd';
 import React from 'react';
 import { useSelector } from 'react-redux';
@@ -107,7 +108,7 @@ export default function MintTypeCard(props: MintTypeCardProps) {
 
         {props.chainId !== STAFI_CHAIN_ID && (
           <Text size='12px' scale={0.83} transformOrigin='top center' color='#C4C4C4' sameLineHeight mb='2px'>
-            Bridge Fee: {isNaN(props.swapFee) ? '--' : Math.round(props.swapFee * 1000000) / 1000000} FIS
+            Bridge Fee: {isNaN(props.swapFee) ? '--' : Math.ceil(numberUtil.mul(props.swapFee * 1, 100)) / 100} FIS
           </Text>
         )}
 

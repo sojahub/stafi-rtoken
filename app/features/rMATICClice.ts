@@ -564,7 +564,7 @@ export const reStaking =
   async (dispatch, getState) => {
     const processParameter = getState().rMATICModule.processParameter;
     if (processParameter) {
-      const { href, staking, destChainId, targetAddress } = processParameter.href;
+      const { href, staking, destChainId, targetAddress } = processParameter;
       processParameter &&
         dispatch(
           bound(

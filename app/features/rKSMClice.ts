@@ -617,7 +617,7 @@ export const reStaking =
   async (dispatch, getState) => {
     const processParameter = getState().rKSMModule.processParameter;
     if (processParameter) {
-      const { staking, href, destChainId, targetAddress } = processParameter.href;
+      const { staking, href, destChainId, targetAddress } = processParameter;
       processParameter &&
         dispatch(
           bound(
