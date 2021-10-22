@@ -553,7 +553,11 @@ export const reSending =
       const { href, destChainId, targetAddress } = processParameter;
       dispatch(
         transfer(processParameter.sending.amount, destChainId, targetAddress, () => {
-          cb && href && cb(href);
+          if (destChainId === STAFI_CHAIN_ID) {
+            href && cb && cb(href);
+          } else {
+            PubSub.publish('stakeSuccess');
+          }
         }),
       );
     }
@@ -592,8 +596,27 @@ export const reStaking =
               }
 
               if (r == 'successful') {
-                dispatch(add_Matic_stake_Notice(processParameter.sending.uuid, staking.amount, noticeStatus.Confirmed));
-                href && cb && cb(href);
+                dispatch(
+                  add_Matic_stake_Notice(
+                    processParameter.sending.uuid,
+                    staking.amount,
+                    destChainId === STAFI_CHAIN_ID ? noticeStatus.Confirmed : noticeStatus.Swapping,
+                  ),
+                );
+
+                // Set swap loading params for loading modal.
+                if (destChainId === ETH_CHAIN_ID) {
+                  updateSwapParamsOfErc(dispatch, processParameter.sending.uuid, 'rmatic', 0, targetAddress, true);
+                } else {
+                  updateSwapParamsOfBep(dispatch, processParameter.sending.uuid, 'rmatic', 0, targetAddress, true);
+                }
+                dispatch(setStakeSwapLoadingStatus(destChainId === STAFI_CHAIN_ID ? 0 : 2));
+
+                if (destChainId === STAFI_CHAIN_ID) {
+                  href && cb && cb(href);
+                } else {
+                  PubSub.publish('stakeSuccess');
+                }
                 dispatch(reloadData());
               }
             },
