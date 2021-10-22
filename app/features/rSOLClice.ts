@@ -19,6 +19,7 @@ import {
 import NumberUtil from '@util/numberUtil';
 import { message } from 'antd';
 import base58 from 'bs58';
+import PubSub from 'pubsub-js';
 import { AppThunk } from '../store';
 import {
   BSC_CHAIN_ID,
@@ -466,8 +467,28 @@ export const reStaking =
               }
 
               if (r == 'successful') {
-                dispatch(add_SOL_stake_Notice(processParameter.sending.uuid, staking.amount, noticeStatus.Confirmed));
-                href && cb && cb(href);
+                dispatch(
+                  add_SOL_stake_Notice(
+                    processParameter.sending.uuid,
+                    staking.amount,
+                    destChainId === STAFI_CHAIN_ID ? noticeStatus.Confirmed : noticeStatus.Swapping,
+                  ),
+                );
+                // Set swap loading params for loading modal.
+                if (destChainId === ETH_CHAIN_ID) {
+                  updateSwapParamsOfErc(dispatch, processParameter.sending.uuid, 'rsol', 0, targetAddress, true);
+                } else if (destChainId === BSC_CHAIN_ID) {
+                  updateSwapParamsOfBep(dispatch, processParameter.sending.uuid, 'rsol', 0, targetAddress, true);
+                } else if (destChainId === SOL_CHAIN_ID) {
+                  updateSwapParamsOfSlp(dispatch, processParameter.sending.uuid, 'rsol', 0, targetAddress, true);
+                }
+                dispatch(setStakeSwapLoadingStatus(destChainId === STAFI_CHAIN_ID ? 0 : 2));
+
+                if (destChainId === STAFI_CHAIN_ID) {
+                  href && cb && cb(href);
+                } else {
+                  PubSub.publish('stakeSuccess');
+                }
                 dispatch(reloadData());
                 dispatch(setProcessSlider(false));
               }

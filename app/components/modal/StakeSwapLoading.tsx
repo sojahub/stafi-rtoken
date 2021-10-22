@@ -9,7 +9,7 @@ import {
   getAssetBalance as getEthAssetBalance,
   getAssetBalanceAll as getErc20AssetBalanceAll
 } from '@features/ETHClice';
-import { processStatus, setStakeSwapLoadingStatus } from '@features/globalClice';
+import { processStatus, setProcessSwapping, setStakeSwapLoadingStatus } from '@features/globalClice';
 import { noticeStatus, update_NoticeProcessSwppingStatus, update_NoticeStatus } from '@features/noticeClice';
 import { getAssetBalance as getSlpAssetBalance, getSlp20AssetBalanceAll } from '@features/SOLClice';
 import close_bold_svg from '@images/close_bold.svg';
@@ -157,6 +157,19 @@ export default function StakeSwapLoading(props: Props) {
     clearTimeout(successTimeoutId);
     setStage1TimeLeft(STAGE1_PERIOD);
     setStage2TimeLeft(STAGE2_PERIOD);
+
+    dispatch(update_NoticeStatus(swapLoadingParams.noticeUuid, noticeStatus.Confirmed));
+    dispatch(
+      update_NoticeProcessSwppingStatus(swapLoadingParams.noticeUuid, {
+        brocasting: processStatus.success,
+        checkAddr: swapLoadingParams.viewTxUrl,
+      }),
+    );
+    dispatch(
+      setProcessSwapping({
+        brocasting: processStatus.success,
+      }),
+    );
   };
 
   const updateSwapStatus = async () => {
@@ -181,18 +194,11 @@ export default function StakeSwapLoading(props: Props) {
             // console.log('sdfsdfsdf', Number(v), targetBalance * 1.1, targetBalance * 0.9);
             // console.log('new amount', v);
             if (
-              Number(v) - Number(swapLoadingParams.oldBalance) <= Number(swapLoadingParams.amount) * 1.05 &&
-              Number(v) - Number(swapLoadingParams.oldBalance) >= Number(swapLoadingParams.amount) * 0.95
+              Number(v) - Number(swapLoadingParams.oldBalance) <= Number(swapLoadingParams.amount) * 1.1 &&
+              Number(v) - Number(swapLoadingParams.oldBalance) >= Number(swapLoadingParams.amount) * 0.9
             ) {
               setSwapStatus(1);
               dispatch(getErc20AssetBalanceAll());
-              dispatch(update_NoticeStatus(swapLoadingParams.noticeUuid, noticeStatus.Confirmed));
-              dispatch(
-                update_NoticeProcessSwppingStatus(swapLoadingParams.noticeUuid, {
-                  brocasting: processStatus.success,
-                  checkAddr: swapLoadingParams.viewTxUrl,
-                }),
-              );
             }
           },
           true,
@@ -206,18 +212,11 @@ export default function StakeSwapLoading(props: Props) {
           swapLoadingParams.tokenAddress,
           (v: any) => {
             if (
-              Number(v) - Number(swapLoadingParams.oldBalance) <= Number(swapLoadingParams.amount) * 1.05 &&
-              Number(v) - Number(swapLoadingParams.oldBalance) >= Number(swapLoadingParams.amount) * 0.95
+              Number(v) - Number(swapLoadingParams.oldBalance) <= Number(swapLoadingParams.amount) * 1.1 &&
+              Number(v) - Number(swapLoadingParams.oldBalance) >= Number(swapLoadingParams.amount) * 0.9
             ) {
               setSwapStatus(1);
               dispatch(getBep20AssetBalanceAll());
-              dispatch(update_NoticeStatus(swapLoadingParams.noticeUuid, noticeStatus.Confirmed));
-              dispatch(
-                update_NoticeProcessSwppingStatus(swapLoadingParams.noticeUuid, {
-                  brocasting: processStatus.success,
-                  checkAddr: swapLoadingParams.viewTxUrl,
-                }),
-              );
             }
           },
           true,
@@ -228,19 +227,12 @@ export default function StakeSwapLoading(props: Props) {
       getSlpAssetBalance(swapLoadingParams.address, swapLoadingParams.tokenType, (v: any) => {
         // console.log('new amount:', v);
         if (
-          Number(v) - Number(swapLoadingParams.oldBalance) <= Number(swapLoadingParams.amount) * 1.05 &&
-          Number(v) - Number(swapLoadingParams.oldBalance) >= Number(swapLoadingParams.amount) * 0.95
+          Number(v) - Number(swapLoadingParams.oldBalance) <= Number(swapLoadingParams.amount) * 1.1 &&
+          Number(v) - Number(swapLoadingParams.oldBalance) >= Number(swapLoadingParams.amount) * 0.9
         ) {
           // console.log('check splt token balance success');
           setSwapStatus(1);
           dispatch(getSlp20AssetBalanceAll());
-          dispatch(update_NoticeStatus(swapLoadingParams.noticeUuid, noticeStatus.Confirmed));
-          dispatch(
-            update_NoticeProcessSwppingStatus(swapLoadingParams.noticeUuid, {
-              brocasting: processStatus.success,
-              checkAddr: swapLoadingParams.viewTxUrl,
-            }),
-          );
         }
       });
     }

@@ -10,6 +10,7 @@ import Stafi from '@servers/stafi/index';
 import { getLocalStorageItem, Keys, removeLocalStorageItem, setLocalStorageItem, stafi_uuid } from '@util/common';
 import NumberUtil from '@util/numberUtil';
 import { message as M, message } from 'antd';
+import PubSub from 'pubsub-js';
 import { AppThunk } from '../store';
 import { ETH_CHAIN_ID, STAFI_CHAIN_ID, updateSwapParamsOfBep, updateSwapParamsOfErc } from './bridgeClice';
 import CommonClice from './commonClice';
@@ -652,8 +653,27 @@ export const reStaking =
               }
 
               if (r == 'successful') {
-                dispatch(add_DOT_stake_Notice(processParameter.sending.uuid, staking.amount, noticeStatus.Confirmed));
-                href && cb && cb(href);
+                dispatch(reloadData());
+                dispatch(
+                  add_DOT_stake_Notice(
+                    processParameter.sending.uuid,
+                    staking.amount,
+                    destChainId === STAFI_CHAIN_ID ? noticeStatus.Confirmed : noticeStatus.Swapping,
+                  ),
+                );
+                // Set swap loading params for loading modal.
+                if (destChainId === ETH_CHAIN_ID) {
+                  updateSwapParamsOfErc(dispatch, processParameter.sending.uuid, 'rdot', 0, targetAddress, true);
+                } else {
+                  updateSwapParamsOfBep(dispatch, processParameter.sending.uuid, 'rdot', 0, targetAddress, true);
+                }
+                dispatch(setStakeSwapLoadingStatus(destChainId === STAFI_CHAIN_ID ? 0 : 2));
+
+                if (destChainId === STAFI_CHAIN_ID) {
+                  href && cb && cb(href);
+                } else {
+                  PubSub.publish('stakeSuccess');
+                }
                 dispatch(reloadData());
               }
             },

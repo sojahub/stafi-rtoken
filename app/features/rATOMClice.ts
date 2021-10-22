@@ -12,6 +12,7 @@ import { getLocalStorageItem, Keys, removeLocalStorageItem, setLocalStorageItem,
 import NumberUtil from '@util/numberUtil';
 import { message } from 'antd';
 import _m0 from 'protobufjs/minimal';
+import PubSub from 'pubsub-js';
 import { AppThunk } from '../store';
 import { ETH_CHAIN_ID, STAFI_CHAIN_ID, updateSwapParamsOfBep, updateSwapParamsOfErc } from './bridgeClice';
 import CommonClice from './commonClice';
@@ -548,8 +549,26 @@ export const reStaking =
               }
 
               if (r == 'successful') {
-                dispatch(add_ATOM_stake_Notice(processParameter.sending.uuid, staking.amount, noticeStatus.Confirmed));
-                href && cb && cb(href);
+                dispatch(
+                  add_ATOM_stake_Notice(
+                    processParameter.sending.uuid,
+                    staking.amount,
+                    destChainId === STAFI_CHAIN_ID ? noticeStatus.Confirmed : noticeStatus.Swapping,
+                  ),
+                );
+                // Set swap loading params for loading modal.
+                if (destChainId === ETH_CHAIN_ID) {
+                  updateSwapParamsOfErc(dispatch, processParameter.sending.uuid, 'ratom', 0, targetAddress, true);
+                } else {
+                  updateSwapParamsOfBep(dispatch, processParameter.sending.uuid, 'ratom', 0, targetAddress, true);
+                }
+                dispatch(setStakeSwapLoadingStatus(destChainId === STAFI_CHAIN_ID ? 0 : 2));
+
+                if (destChainId === STAFI_CHAIN_ID) {
+                  href && cb && cb(href);
+                } else {
+                  PubSub.publish('stakeSuccess');
+                }
                 dispatch(reloadData());
               }
             },

@@ -12,6 +12,7 @@ import NumberUtil from '@util/numberUtil';
 import { message } from 'antd';
 import InputDataDecoder from 'ethereum-input-data-decoder';
 import _m0 from 'protobufjs/minimal';
+import PubSub from 'pubsub-js';
 import { AppThunk } from '../store';
 import { ETH_CHAIN_ID, STAFI_CHAIN_ID, updateSwapParamsOfBep, updateSwapParamsOfErc } from './bridgeClice';
 import CommonClice from './commonClice';
