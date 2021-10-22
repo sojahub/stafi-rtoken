@@ -5,13 +5,13 @@ import rFIS_svg from '@images/rFIS.svg';
 import SolServer from '@servers/sol/index';
 import Button from '@shared/components/button/connect_button';
 import Modal from '@shared/components/modal/connectModal';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Redirect } from 'react-router';
 import Page_FIS from '../../rATOM/selectWallet_rFIS/index';
 import './index.scss';
 
-declare const window:any;
+declare const window: any;
 
 const solServer = new SolServer();
 
@@ -26,13 +26,6 @@ export default function Inde(props: any) {
       solAccounts: state.rSOLModule.solAccounts,
     };
   });
-
-  useEffect(() => {
-    const solana = solServer.getProvider();
-    if (solana) {
-      solana.connect({ onlyIfTrusted: true });
-    }
-  }, []);
 
   if (fisAccount && solAccount) {
     return <Redirect to='/rSOL/type' />;

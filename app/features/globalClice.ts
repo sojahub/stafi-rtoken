@@ -213,8 +213,8 @@ export const monitorMetaMaskChainChange = (): AppThunk => (dispatch, getState) =
 };
 
 export const initMetaMaskAccount = (): AppThunk => (dispatch, getState) => {
-  if (typeof window.ethereum !== 'undefined' && ethereum.isMetaMask) {
-    ethereum
+  if (window.ethereum && typeof window.ethereum !== 'undefined' && window.ethereum.isMetaMask) {
+    window.ethereum
       .request({ method: 'eth_requestAccounts' })
       .then((accounts: any) => {
         if (accounts && accounts.length > 0) {
@@ -222,13 +222,13 @@ export const initMetaMaskAccount = (): AppThunk => (dispatch, getState) => {
         }
       })
       .catch((error: any) => {});
-  }
 
-  ethereum.on('accountsChanged', (accounts: any) => {
-    if (accounts.length > 0) {
-      dispatch(setMetaMaskAccount(accounts[0]));
-    }
-  });
+    window.ethereum.on('accountsChanged', (accounts: any) => {
+      if (accounts.length > 0) {
+        dispatch(setMetaMaskAccount(accounts[0]));
+      }
+    });
+  }
 };
 
 export const keplr_keystorechange =
