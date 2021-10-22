@@ -136,7 +136,7 @@ export default function StakeSwapLoading(props: Props) {
     if (swapStatus === 1) {
       successTimeoutId = setTimeout(() => {
         setStatusToSuccess();
-      }, 20000);
+      }, 10000);
     }
   }, [swapStatus]);
 
