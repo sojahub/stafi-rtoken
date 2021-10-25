@@ -7,7 +7,9 @@ import mintMyMintIcon from '@images/mint_my_mint.svg';
 import mintMyRewardIcon from '@images/mint_my_reward.svg';
 import mintRewardTokenIcon from '@images/mint_reward_token.svg';
 import mintValueIcon from '@images/mint_value.svg';
+import mintVestingIcon from '@images/mint_vesting.svg';
 import rpool_ratom_Icon from '@images/rpool_ratom_atom.svg';
+import rpool_rbnb_Icon from '@images/rpool_rbnb_bnb.svg';
 import rpool_rdot_Icon from '@images/rpool_rdot_dot.svg';
 import rpool_reth_Icon from '@images/rpool_reth.svg';
 import rpool_rfis_Icon from '@images/rpool_rfis_fis.svg';
@@ -56,6 +58,7 @@ export default function LiquidityOverview() {
   const [fisClaimableReward, setFisClaimableReward] = useState<any>('--');
   const [fisLockedReward, setFisLockedReward] = useState<any>('--');
   const [claimIndexs, setClaimIndexs] = useState([]);
+  const [vesting, setVesting] = useState('--');
   const [claimModalVisible, setClaimModalVisible] = useState(false);
   const [fisAccountModalVisible, setFisAccountModalVisible] = useState(false);
 
@@ -163,6 +166,11 @@ export default function LiquidityOverview() {
         setFisClaimableReward(response.fisClaimableReward);
         setFisLockedReward(response.fisLockedReward);
         setClaimIndexs(response.claimIndexs);
+        if (isNaN(response.vesting)) {
+          setVesting('--');
+        } else if (response.vesting * 1 > 0) {
+          setVesting(Math.ceil(response.vesting * 1) + 'D');
+        } else setVesting('0');
       }
     }
   };
@@ -206,6 +214,7 @@ export default function LiquidityOverview() {
             {rTokenName === 'rFIS' && <img src={rpool_rfis_Icon} className='token_icon' />}
             {rTokenName === 'rKSM' && <img src={rpool_rksm_Icon} className='token_icon' />}
             {rTokenName === 'rETH' && <img src={rpool_reth_Icon} className='token_icon' />}
+            {rTokenName === 'rBNB' && <img src={rpool_rbnb_Icon} className='token_icon' />}
 
             <div className='right_content'>
               <div className='title'>{lpNameWithPrefix}</div>
@@ -254,6 +263,14 @@ export default function LiquidityOverview() {
                 <div className='content_text'>
                   {userMintReward !== '--' && metaMaskNetworkMatched ? `$${userMintReward}` : '--'}
                 </div>
+              </div>
+
+              <div className='content_row'>
+                <img src={mintVestingIcon} className='icon_small' />
+
+                <div className='label'>Vesting</div>
+
+                <div className='content_text'>{vesting}</div>
               </div>
 
               <div className='button_container'>
@@ -306,7 +323,12 @@ export default function LiquidityOverview() {
 
         {showContent && showStaker && (
           <>
-            <LiquidityStaker disabled={false} lpData={overviewData} initData={initData} lpNameWithPrefix={lpNameWithPrefix}/>
+            <LiquidityStaker
+              disabled={false}
+              lpData={overviewData}
+              initData={initData}
+              lpNameWithPrefix={lpNameWithPrefix}
+            />
           </>
         )}
 

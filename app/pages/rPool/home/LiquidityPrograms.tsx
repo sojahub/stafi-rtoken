@@ -1,6 +1,7 @@
 import Card from '@components/card/index';
 import { getLPList, getRPoolList } from '@features/rPoolClice';
 import rpool_ratom_Icon from '@images/rpool_ratom_atom.svg';
+import rpool_rbnb_Icon from '@images/rpool_rbnb_bnb.svg';
 import rpool_rdot_Icon from '@images/rpool_rdot_dot.svg';
 import rpool_reth_Icon from '@images/rpool_reth.svg';
 import rpool_rfis_Icon from '@images/rpool_rfis_fis.svg';
@@ -14,6 +15,7 @@ import { RootState } from 'app/store';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import CardItem from './components/cardItem';
+import OldTableItem from './components/OldTableItem';
 import TableHead from './components/tableHead';
 import TableItem from './components/tableItem';
 import './index.scss';
@@ -114,6 +116,12 @@ export default function LiquidityPrograms(props: any) {
     };
   });
 
+  const ethCurveData = useMemo(() => {
+    return rPoolList.find((item) => {
+      return item.platform == 2 && item.contract == '0xF9440930043eb3997fc70e1339dBb11F341de7A8';
+    });
+  }, [rPoolList]);
+
   const totalApy = useMemo(() => {
     let count = 0;
     let total = 0;
@@ -130,6 +138,16 @@ export default function LiquidityPrograms(props: any) {
     }
     return '--';
   }, [lpList]);
+
+  let type = '';
+  let icon = null;
+  let stakeUrl = '';
+  let liquidityUrl = '';
+  // let wrapFiUrl="";
+  type = 'rETH/ETH';
+  icon = rpool_reth_Icon;
+  stakeUrl = 'https://app.stafi.io/rETH';
+  liquidityUrl = 'https://app.uniswap.org/#/add/v2/0x9559aaa82d9649c7a7b220e7c461d2e74c9a3593/ETH';
 
   return (
     <Card className='stafi_rpool_home_card'>
@@ -168,51 +186,46 @@ export default function LiquidityPrograms(props: any) {
 
         <Spin spinning={loadingLpList} size='large' tip='loading'>
           <div className='table_body' style={{ minHeight: '300px' }}>
+            <OldTableItem
+              wrapFiUrl={'https://drop.wrapfi.io'}
+              liquidityUrl={liquidityUrl}
+              history={props.history}
+              stakeUrl={stakeUrl}
+              pairIcon={rpool_reth_Icon}
+              pairValue='rETH/ETH'
+              apyList={ethCurveData ? ethCurveData.apy : []}
+              liquidity={ethCurveData && ethCurveData.liquidity}
+              slippage={ethCurveData && ethCurveData.slippage}
+              poolOn={ethCurveData && ethCurveData.platform}
+            />
+
             {lpList.map((data: any, i: number) => {
               return (
                 <div key={`${data.name}${i}`} className='rtoken_type'>
                   {data.children.map((item: any, index: number) => {
                     let type = '';
                     let icon = null;
-                    let stakeUrl = '';
-                    let liquidityUrl = '';
-                    // let wrapFiUrl="";
                     if (data.extraName === 'rETH') {
                       type = 'rETH/ETH';
                       icon = rpool_reth_Icon;
-                      stakeUrl = 'https://app.stafi.io/rETH';
-                      liquidityUrl = 'https://app.uniswap.org/#/add/v2/0x9559aaa82d9649c7a7b220e7c461d2e74c9a3593/ETH';
-                      // wrapFiUrl="https://drop.wrapfi.io/phase2/staker?pid=2";
                     } else if (data.extraName === 'rFIS') {
                       type = 'rFIS/FIS';
                       icon = rpool_rfis_Icon;
-                      stakeUrl = 'https://app.stafi.io/rFIS';
-                      liquidityUrl = 'https://app.uniswap.org/#/add/v2/ETH/0xc82eb6dea0c93edb8b697b89ad1b13d19469d635';
-                      // wrapFiUrl="https://drop.wrapfi.io/phase2/staker?pid=1";
                     } else if (data.extraName === 'rDOT') {
                       type = 'rDOT/DOT';
                       icon = rpool_rdot_Icon;
-                      stakeUrl = 'https://app.stafi.io/rATOM';
-                      liquidityUrl = 'https://app.uniswap.org/#/add/v2/ETH/0xd01cb3d113a864763dd3977fe1e725860013b0ed';
-                      // wrapFiUrl="https://drop.wrapfi.io/phase2/staker?pid=5";
                     } else if (data.extraName === 'rKSM') {
                       type = 'rKSM/KSM';
                       icon = rpool_rksm_Icon;
-                      stakeUrl = 'https://app.stafi.io/rDOT';
-                      liquidityUrl = 'https://app.uniswap.org/#/add/v2/ETH/0x505f5a4ff10985fe9f93f2ae3501da5fe665f08a';
-                      // wrapFiUrl="https://drop.wrapfi.io/phase2/staker?pid=3";
                     } else if (data.extraName === 'rATOM') {
                       type = 'rATOM/ATOM';
                       icon = rpool_ratom_Icon;
-                      stakeUrl = 'https://app.stafi.io/rKSM';
-                      liquidityUrl = 'https://app.uniswap.org/#/add/v2/ETH/0x3c3842c4d3037ae121d69ea1e7a0b61413be806c';
-                      // wrapFiUrl="https://drop.wrapfi.io/phase2/staker?pid=4";
                     } else if (data.extraName === 'rMATIC') {
                       type = 'rMATIC/MATIC';
                       icon = rpool_rmatic_Icon;
-                      stakeUrl = 'https://app.stafi.io/rKSM';
-                      liquidityUrl = 'https://app.uniswap.org/#/add/v2/ETH/0x3c3842c4d3037ae121d69ea1e7a0b61413be806c';
-                      // wrapFiUrl="https://drop.wrapfi.io/phase2/staker?pid=4";
+                    } else if (data.extraName === 'rBNB') {
+                      type = 'rBNB/BNB';
+                      icon = rpool_rbnb_Icon;
                     }
                     if (type === '') {
                       return <div key={`${data.name}${item.platform}${index}`}></div>;
@@ -220,10 +233,7 @@ export default function LiquidityPrograms(props: any) {
                     return (
                       <TableItem
                         key={`${data.name}${item.platform}${index}`}
-                        wrapFiUrl={'https://drop.wrapfi.io'}
-                        liquidityUrl={liquidityUrl}
                         history={props.history}
-                        stakeUrl={stakeUrl}
                         pairIcon={index == 0 ? icon : null}
                         pairValue={index == 0 ? type : null}
                         apr={item.apr}

@@ -15,10 +15,7 @@ type Props = {
   poolOn: 1 | 2 | 3;
   platform: string;
   poolIndex: number;
-  stakeUrl?: string;
   history: any;
-  liquidityUrl: string;
-  wrapFiUrl: string;
   lpName: string;
   rTokenName: string;
 };
@@ -68,13 +65,14 @@ export default function Index(props: Props) {
         <div style={{ fontSize: '14px', lineHeight: '14px' }}>{props.apr !== '--' ? `+${props.apr}%` : '--'}</div>
         <div
           style={{
-            lineHeight: '10px',
-            fontSize: '10px',
+            lineHeight: '12px',
+            fontSize: '12px',
             color: '#7c7c7c',
-            marginLeft: '12px',
             transform: 'scale(0.8)',
             transformOrigin: 'bottom',
+            marginLeft: '2px',
             marginRight: '6px',
+            marginBottom: '1px',
           }}>
           FIS
         </div>

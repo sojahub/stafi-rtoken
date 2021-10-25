@@ -277,6 +277,7 @@ export default class Index {
       fisClaimableReward: '--',
       fisLockedReward: '--',
       claimIndexs: [],
+      vesting: '--',
     };
     try {
       const stafiApi = await stafiServer.createStafiApi();
@@ -291,6 +292,9 @@ export default class Index {
       }
 
       const actJson = act.toJSON();
+
+      response.vesting = (actJson.locked_blocks * 6) / 60 / 60 / 24;
+
       let arr2 = [];
       arr2.push(fisAddress);
       arr2.push(Number(tokenSymbol));
@@ -514,6 +518,7 @@ export default class Index {
       lpBalance: '--',
       lpAllowance: '--',
       userStakedAmount: '--',
+      vesting: '--',
     };
     try {
       let wraPrice = '';
@@ -540,6 +545,8 @@ export default class Index {
         return;
       }
       // const totalReward = web3.utils.fromWei(poolInfo.totalReward, 'ether');
+
+      response.vesting = ((poolInfo.lockedEndBlock - poolInfo.claimableStartBlock) * 3) / 60 / 60 / 24;
 
       const stakeTokenAddress = poolInfo.stakeToken;
       if (!stakeTokenAddress) {
@@ -581,7 +588,10 @@ export default class Index {
           response.myMintRatio = 0;
         }
       } else {
-        response.myMintRatio = numberUtil.min(100, Math.round(((response.userStakedAmount * 100) / stakeTokenSupply) * 10) / 10);
+        response.myMintRatio = numberUtil.min(
+          100,
+          Math.round(((response.userStakedAmount * 100) / stakeTokenSupply) * 10) / 10,
+        );
       }
 
       const userClaimableReward = await lockContract.methods.getUserClaimableReward(poolIndex, ethAddress).call();
