@@ -166,7 +166,7 @@ export default class Index {
       }
       apr = numberUtil.handleAmountRoundToFixed(ratio, 2);
     } catch (err) {
-      console.log('sdfsd error', err.message);
+      // console.log('sdfsd error', err.message);
     }
     return apr;
   }

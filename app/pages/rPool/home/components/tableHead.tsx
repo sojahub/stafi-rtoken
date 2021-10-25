@@ -1,5 +1,3 @@
-import sort_arrow from '@images/sort_arrow.svg';
-import sort_arrow_white from '@images/sort_arrow_white.svg';
 import React from 'react';
 
 type Props = {
@@ -19,7 +17,13 @@ export default function Index(props: Props) {
 
       <div className='col  col5'>Platform</div>
 
-      <div
+      <div className='col  col2'>APY</div>
+
+      <div className='col  col4'>Liquidity</div>
+
+      <div className='col  col5'>Slippage</div>
+
+      {/* <div
         className='col col2 sort_field'
         onClick={() => {
           props.onClick && props.onClick('apy');
@@ -56,7 +60,7 @@ export default function Index(props: Props) {
         ) : (
           <img src={sort_arrow} />
         )}
-      </div>
+      </div> */}
 
       <div className='col col2'>Farm</div>
     </div>
