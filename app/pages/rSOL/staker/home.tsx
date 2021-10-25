@@ -88,6 +88,17 @@ export default function Index(props: any) {
     }
   };
 
+  const clickStake = () => {
+    if (amount) {
+      if (fisCompare) {
+        message.error('No enough FIS to pay for the fee');
+        return;
+      }
+
+    startStake();
+  };
+}
+
   return (
     <Content
       amount={amount}

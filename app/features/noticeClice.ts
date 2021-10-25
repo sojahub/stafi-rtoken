@@ -29,10 +29,12 @@ export enum noticeStatus {
 export enum noticeType {
   Staker = 'Staker',
   Validator = 'Validator',
+  Lp = 'Lp',
 }
 
 export enum noticesubType {
   Stake = 'Stake',
+  Unstake = 'Unstake',
   Unbond = 'Unbond',
   Withdraw = 'Withdraw',
   Swap = 'Swap',
@@ -793,6 +795,14 @@ export const notice_text = (item: any) => {
     } FIS.`;
   } else if (item.type == noticeType.Staker && item.subType == noticesubType.Claim) {
     return `Claim ${item.amount} FIS from the Mint Program.`;
+  } else if (item.type === noticeType.Lp) {
+    if (item.subType === noticesubType.Stake) {
+      return `Staked ${item.amount} ${item.subData.lpNameWithPrefix}`;
+    } else if (item.subType === noticesubType.Unstake) {
+      return `Unstaked ${item.amount} ${item.subData.lpNameWithPrefix}`;
+    } else if (item.subType === noticesubType.Claim) {
+      return `Claim ${item.amount} FIS from ${item.subData.lpNameWithPrefix}`;
+    }
   }
   return '';
 };

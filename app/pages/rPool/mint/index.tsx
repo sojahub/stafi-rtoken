@@ -11,6 +11,7 @@ import mintMyMintIcon from '@images/mint_my_mint.svg';
 import mintMyRewardIcon from '@images/mint_my_reward.svg';
 import mintRewardTokenIcon from '@images/mint_reward_token.svg';
 import mintValueIcon from '@images/mint_value.svg';
+import mintVestingIcon from '@images/mint_vesting.svg';
 import rDOT_svg from '@images/rDOT.svg';
 import ratomIcon from '@images/r_atom.svg';
 import rbnbIcon from '@images/r_bnb.svg';
@@ -48,6 +49,7 @@ export default function MintOverview() {
   const [fisTotalReward, setFisTotalReward] = useState<any>('--');
   const [fisClaimableReward, setFisClaimableReward] = useState<any>('--');
   const [fisLockedReward, setFisLockedReward] = useState<any>('--');
+  const [vesting, setVesting] = useState('--');
   const [claimIndexs, setClaimIndexs] = useState([]);
   const [claimModalVisible, setClaimModalVisible] = useState(false);
   const [fisAccountModalVisible, setFisAccountModalVisible] = useState(false);
@@ -136,6 +138,11 @@ export default function MintOverview() {
         setFisClaimableReward(response.fisClaimableReward);
         setFisLockedReward(response.fisLockedReward);
         setClaimIndexs(response.claimIndexs);
+        if (isNaN(response.vesting)) {
+          setVesting('--');
+        } else if (response.vesting * 1 > 0) {
+          setVesting(Math.ceil(response.vesting * 1) + 'D');
+        } else setVesting('0');
       }
     }
   };
@@ -240,6 +247,14 @@ export default function MintOverview() {
               <div className='label'>My Reward</div>
 
               <div className='content_text'>{userMintReward !== '--' ? `$${userMintReward}` : '--'}</div>
+            </div>
+
+            <div className='content_row'>
+              <img src={mintVestingIcon} className='icon_small' />
+
+              <div className='label'>Vesting</div>
+
+              <div className='content_text'>{vesting}</div>
             </div>
 
             <div className='button_container'>

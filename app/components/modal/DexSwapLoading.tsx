@@ -64,7 +64,6 @@ export default function DexSwapLoading(props: Props) {
     if (swapLoadingStatus === 1) {
       if (stage1TimeLeft > 0) {
         stage1IntervalId = setTimeout(() => {
-          // console.log('tik tik tik tik tik tik tik tik tik tik tik tik tik tik: ', stage1TimeLeft);
           setStage1TimeLeft(numberUtil.max(stage1TimeLeft - 0.5, 0));
         }, 500);
       }

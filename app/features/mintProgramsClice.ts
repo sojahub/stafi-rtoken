@@ -18,6 +18,7 @@ const rPoolServer = new RPoolServer();
 const rPoolClice = createSlice({
   name: 'mintProgramsModule',
   initialState: {
+    loadingList: false,
     rETHActs: [],
     rDOTActs: [],
     rMATICActs: [],
@@ -31,6 +32,9 @@ const rPoolClice = createSlice({
     apyAvg: '--',
   },
   reducers: {
+    setLoadingList(state, { payload }) {
+      state.loadingList = payload;
+    },
     setTotalLiquidity(state, { payload }) {
       state.totalLiquidity = payload;
     },
@@ -68,6 +72,7 @@ const rPoolClice = createSlice({
 });
 
 export const {
+  setLoadingList,
   setTotalLiquidity,
   setApyAvg,
   setRDOTActs,
@@ -85,7 +90,7 @@ export const getMintPrograms =
   (showLoading?: boolean): AppThunk =>
   async (dispatch: any, getState: any) => {
     if (showLoading) {
-      dispatch(setLoading(true));
+      dispatch(setLoadingList(true));
     }
 
     Promise.all([
@@ -102,13 +107,13 @@ export const getMintPrograms =
         delay(() => {
           dispatch(setLoadComplete(true));
         }, 300);
-        dispatch(setLoading(false));
+        dispatch(setLoadingList(false));
       })
       .catch((err) => {
         delay(() => {
           dispatch(setLoadComplete(true));
         }, 300);
-        dispatch(setLoading(false));
+        dispatch(setLoadingList(false));
       });
   };
 

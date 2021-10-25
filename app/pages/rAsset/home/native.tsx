@@ -287,7 +287,6 @@ export default function Index(props: any) {
                 });
               }}
             />
-
             <DataItem
               rSymbol='rSOL'
               icon={rasset_rsol_svg}
@@ -303,7 +302,7 @@ export default function Index(props: any) {
                 });
               }}
             />
-
+            
             <DataItem
               rSymbol='rMATIC'
               icon={rasset_rmatic_svg}

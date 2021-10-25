@@ -24,6 +24,7 @@ const RPoolStakerStatus = React.lazy(() => import('./pages/rPool/staker/status')
 const RPoolStakerStatusNativeErc20 = React.lazy(() => import('./pages/rPool/staker/status/erc20'));
 const RPoolStakerStatusNative = React.lazy(() => import('./pages/rPool/staker/status/native'));
 const RPoolHomeTemplate = React.lazy(() => import('./pages/rPool/template'));
+const LiquidityOverview = React.lazy(() => import('./pages/rPool/LiquidityOverview'));
 const MintOverview = React.lazy(() => import('./pages/rPool/mint'));
 
 const RETHHome = React.lazy(() => import('./pages/rETH/home'));
@@ -750,6 +751,12 @@ const routesFactory = (role?: any) => {
               path: '/rPool/mint/:tokenSymbol/:cycle',
               className: 'stafi_content_large',
               component: MintOverview,
+            },
+            {
+              id: 'RPool_Liquidity_Overview',
+              path: '/rPool/lp/:lpPlatform/:poolIndex',
+              className: 'stafi_content_large',
+              component: LiquidityOverview,
             },
             {
               path: '*',
