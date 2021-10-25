@@ -29,7 +29,7 @@ const config = {
 
 const options = {
   mode: 'production',
-  devtool: 'eval',
+  // devtool: 'eval',
   optimization: {
     minimizer: [
       new TerserJsPlugin({

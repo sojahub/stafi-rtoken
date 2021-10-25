@@ -5,6 +5,7 @@ import AtomServer from '@servers/atom/index';
 import keyring from '@servers/index';
 import PolkadotServer from '@servers/polkadot/index';
 import SolServer from '@servers/sol/index';
+import mixpanel from 'mixpanel-browser';
 import { AppThunk } from '../store';
 import { STAFI_CHAIN_ID } from './bridgeClice';
 import { createSubstrate as fisCreateSubstrate, reloadData as fisReloadData } from './FISClice';
@@ -361,5 +362,20 @@ export const gClearTimeOut = (): AppThunk => (dispatch, getState) => {
     clearTimeout(time);
   }
 };
+
+export const traceEvent =
+  (eventName: string, params: {}): AppThunk =>
+  (dispatch, getState) => {
+    mixpanel.track(eventName, {
+      stafi_address: getState().FISModule.fisAccount ? getState().FISModule.fisAccount.address : 'unknown',
+      ...params,
+    });
+
+    // const analytics = getAnalytics();
+    // logEvent(analytics, eventName, {
+    //   stafi_address: getState().FISModule.fisAccount ? getState().FISModule.fisAccount.address : 'unknown',
+    //   ...params,
+    // });
+  };
 
 export default globalClice.reducer;

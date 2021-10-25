@@ -1,3 +1,4 @@
+import { traceEvent } from '@features/globalClice';
 import logo from '@images/logo2.png';
 import rAsset_svg from '@images/rAsset.svg';
 // import selected_rDEX_svg from '@images/rDEX_active.svg';
@@ -22,6 +23,7 @@ import selected_rMatic_svg from '@images/selected_r_matic.svg';
 import selected_rPool_svg from '@images/selected_r_pool.svg';
 import selected_rSOL_svg from '@images/selected_r_sol.svg';
 import React from 'react';
+import { useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { isdev } from '../../config/index';
 import './index.scss';
@@ -113,8 +115,10 @@ type Props = {
   history: any;
 };
 export default function Index(props: Props) {
+  const dispatch = useDispatch();
   const history = useHistory();
   // const [selectIndex,setSelectIndex]=useState(0);
+
   return (
     <div className='stafi_left_master_sider'>
       <div className='logo_panel'>
@@ -134,6 +138,11 @@ export default function Index(props: Props) {
               url={item.url}
               selected={location.pathname.includes(item.urlKeywords)}
               onClick={() => {
+                dispatch(
+                  traceEvent('clik_nav_link', {
+                    url: item.url,
+                  }),
+                );
                 props.history.push(item.url);
               }}
             />

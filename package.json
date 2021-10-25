@@ -43,6 +43,8 @@
     "fs": "0.0.1-security",
     "history": "^5.0.0",
     "lodash": "^4.17.20",
+    "mathjs": "9.4.3",
+    "mixpanel-browser": "^2.41.0",
     "moment": "^2.29.1",
     "os": "^0.1.1",
     "process": "^0.11.10",
@@ -61,8 +63,7 @@
     "stream-browserify": "^3.0.0",
     "styled-components": "^5.3.0",
     "web3": "1.5.2",
-    "web3-utils": "1.5.2",
-    "mathjs": "9.4.3"
+    "web3-utils": "1.5.2"
   },
   "devDependencies": {
     "@babel/core": "^7.12.10",
@@ -71,6 +72,7 @@
     "@types/bs58": "^4.0.1",
     "@types/crypto-js": "^4.0.1",
     "@types/lodash": "^4.14.168",
+    "@types/mixpanel-browser": "^2.35.7",
     "@types/node": "^15.0.0",
     "@types/pubsub-js": "^1.8.3",
     "@types/react": "^17.0.21",
