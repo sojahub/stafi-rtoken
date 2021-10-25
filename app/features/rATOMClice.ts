@@ -16,7 +16,7 @@ import PubSub from 'pubsub-js';
 import { AppThunk } from '../store';
 import { ETH_CHAIN_ID, STAFI_CHAIN_ID, updateSwapParamsOfBep, updateSwapParamsOfErc } from './bridgeClice';
 import CommonClice from './commonClice';
-import { setSwapLoadingStatus } from './feeStationClice';
+import { setSwapLoadingStatus, uploadSwapInfo } from './feeStationClice';
 import { bondStates, bound, fisUnbond, rTokenSeries_bondStates } from './FISClice';
 import {
   initProcess,
@@ -460,19 +460,19 @@ export const swapAtomForFis =
             }),
           );
 
-          blockHash &&
-            cb &&
-            cb({
-              stafiAddress,
-              symbol: 'ATOM',
-              blockHash: '0x' + blockHash,
-              txHash: '0x' + txHash,
-              poolAddress,
-              signature: config.rAtomAignature,
-              pubKey: getState().rATOMModule.atomAccount && getState().rATOMModule.atomAccount.pubkey,
-              inAmount: amount.toString(),
-              minOutAmount: minOutFisAmount.toString(),
-            });
+          const params = {
+            stafiAddress,
+            symbol: 'ATOM',
+            blockHash: '0x' + blockHash,
+            txHash: '0x' + txHash,
+            poolAddress,
+            signature: config.rAtomAignature,
+            pubKey: getState().rATOMModule.atomAccount && getState().rATOMModule.atomAccount.pubkey,
+            inAmount: amount.toString(),
+            minOutAmount: minOutFisAmount.toString(),
+          };
+          dispatch(uploadSwapInfo(params));
+          blockHash && cb && cb(params);
         } else {
           dispatch(reloadData());
           dispatch(setSwapLoadingStatus(0));

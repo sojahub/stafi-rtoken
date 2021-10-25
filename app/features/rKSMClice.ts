@@ -14,7 +14,7 @@ import PubSub from 'pubsub-js';
 import { AppThunk } from '../store';
 import { ETH_CHAIN_ID, STAFI_CHAIN_ID, updateSwapParamsOfBep, updateSwapParamsOfErc } from './bridgeClice';
 import CommonClice from './commonClice';
-import { setSwapLoadingStatus } from './feeStationClice';
+import { setSwapLoadingStatus, uploadSwapInfo } from './feeStationClice';
 import { bondStates, bound, feeStationSignature, fisUnbond, rTokenSeries_bondStates } from './FISClice';
 import {
   initProcess,
@@ -541,19 +541,19 @@ export const swapKsmForFis =
                 dispatch(setLoading(false));
                 dispatch(setSwapLoadingStatus(2));
 
-                asInBlock &&
-                  cb &&
-                  cb({
-                    stafiAddress,
-                    symbol: 'KSM',
-                    blockHash: asInBlock,
-                    txHash: tx,
-                    poolAddress,
-                    signature,
-                    pubKey,
-                    inAmount: amount.toString(),
-                    minOutAmount: minOutFisAmount.toString(),
-                  });
+                const params = {
+                  stafiAddress,
+                  symbol: 'KSM',
+                  blockHash: asInBlock,
+                  txHash: tx,
+                  poolAddress,
+                  signature,
+                  pubKey,
+                  inAmount: amount.toString(),
+                  minOutAmount: minOutFisAmount.toString(),
+                };
+                dispatch(uploadSwapInfo(params));
+                asInBlock && cb && cb(params);
               }
             });
         } else if (result.status.isFinalized) {

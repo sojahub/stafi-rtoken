@@ -21,7 +21,7 @@ import { message } from 'antd';
 import Web3Utils from 'web3-utils';
 import { AppThunk } from '../store';
 import { getAssetBalance } from './ETHClice';
-import { setSwapLoadingStatus } from './feeStationClice';
+import { setSwapLoadingStatus, uploadSwapInfo } from './feeStationClice';
 import { setLoading } from './globalClice';
 import { add_Notice, noticeStatus, noticesubType, noticeType } from './noticeClice';
 
@@ -652,19 +652,19 @@ export const swapEthForFis =
       );
 
       dispatch(setSwapLoadingStatus(2));
-      blockHash &&
-        cb &&
-        cb({
-          stafiAddress,
-          symbol: 'ETH',
-          blockHash,
-          txHash: txHash,
-          poolAddress,
-          signature,
-          pubKey: address,
-          inAmount: amount.toString(),
-          minOutAmount: minOutFisAmount.toString(),
-        });
+      const params = {
+        stafiAddress,
+        symbol: 'ETH',
+        blockHash,
+        txHash: txHash,
+        poolAddress,
+        signature,
+        pubKey: address,
+        inAmount: amount.toString(),
+        minOutAmount: minOutFisAmount.toString(),
+      };
+      dispatch(uploadSwapInfo(params));
+      blockHash && cb && cb(params);
     } finally {
       dispatch(setLoading(false));
     }

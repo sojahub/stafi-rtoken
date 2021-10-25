@@ -7,8 +7,7 @@ import {
   reloadData as feeStation_reloadData,
   setPoolInfoList,
   setSwapMaxLimit,
-  setSwapMinLimit,
-  uploadSwapInfo
+  setSwapMinLimit
 } from '@features/feeStationClice';
 import { queryBalance as fis_queryBalance } from '@features/FISClice';
 import {
@@ -408,7 +407,6 @@ export default function FeeStation() {
             setInputFromReceive(false);
             setTokenAmount('');
             setSwapInfoParams(params);
-            dispatch(uploadSwapInfo(params));
           }
         }),
       );
@@ -420,7 +418,6 @@ export default function FeeStation() {
             setInputFromReceive(false);
             setTokenAmount('');
             setSwapInfoParams(params);
-            dispatch(uploadSwapInfo(params));
           }
         }),
       );
@@ -432,7 +429,6 @@ export default function FeeStation() {
             setInputFromReceive(false);
             setTokenAmount('');
             setSwapInfoParams(params);
-            dispatch(uploadSwapInfo(params));
           }
         }),
       );
@@ -444,7 +440,6 @@ export default function FeeStation() {
             setInputFromReceive(false);
             setTokenAmount('');
             setSwapInfoParams(params);
-            dispatch(uploadSwapInfo(params));
           }
         }),
       );
