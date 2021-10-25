@@ -8,7 +8,7 @@ import RpcServer, { pageCount } from '@servers/rpc/index';
 import { default as SolServer } from '@servers/sol/index';
 import Stafi from '@servers/stafi/index';
 import * as solanaWeb3 from '@solana/web3.js';
-import { getLocalStorageItem, Keys, removeLocalStorageItem, setLocalStorageItem, stafi_uuid } from '@util/common';
+import { getLocalStorageItem, Keys, removeLocalStorageItem, setLocalStorageItem, stafi_uuid, timeout } from '@util/common';
 import NumberUtil from '@util/numberUtil';
 import { message } from 'antd';
 import base58 from 'bs58';

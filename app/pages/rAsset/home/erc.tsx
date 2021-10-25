@@ -7,11 +7,13 @@ import { getUnbondCommission as atom_getUnbondCommission, rTokenRate as atom_rTo
 import { getUnbondCommission as dot_getUnbondCommission, rTokenRate as dot_rTokenRate } from '@features/rDOTClice';
 import { connectMetamask, handleEthAccount, monitoring_Method } from '@features/rETHClice';
 import { getUnbondCommission as ksm_getUnbondCommission, rTokenRate as ksm_rTokenRate } from '@features/rKSMClice';
-import { getUnbondCommission as matic_getUnbondCommission, rTokenRate as matic_rTokenRate } from '@features/rMATICClice';
+import {
+  getUnbondCommission as matic_getUnbondCommission,
+  rTokenRate as matic_rTokenRate
+} from '@features/rMATICClice';
 import { getUnbondCommission as sol_getUnbondCommission, rTokenRate as sol_rTokenRate } from '@features/rSOLClice';
 import metamask from '@images/metamask.png';
 import rasset_fis_svg from '@images/rFIS.svg';
-import rasset_rsol_svg from '@images/rSOL.svg';
 import rasset_ratom_svg from '@images/r_atom.svg';
 import rasset_rdot_svg from '@images/r_dot.svg';
 import rasset_reth_svg from '@images/r_eth.svg';
@@ -19,7 +21,7 @@ import rasset_rfis_svg from '@images/r_fis.svg';
 import rasset_rksm_svg from '@images/r_ksm.svg';
 import rasset_rmatic_svg from '@images/r_matic.svg';
 import Button from '@shared/components/button/connect_button';
-import { requestSwitchMetaMaskNetwork } from '@util/metamaskUtil';
+import { requestSwitchMetaMaskNetwork } from '@util/metaMaskUtil';
 import NumberUtil from '@util/numberUtil';
 import React, { useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -42,13 +44,11 @@ export default function Index(props: any) {
     rfis_ercBalance,
     dot_ercBalance,
     atom_ercBalance,
-    sol_ercBalance,
     ksmWillAmount,
     fisWillAmount,
     dotWillAmount,
     unitPriceList,
     atomWillAmount,
-    solWillAmount,
     matic_ercBalance,
     maticWillAmount,
   } = useSelector((state: any) => {
@@ -61,7 +61,6 @@ export default function Index(props: any) {
       eth_ercBalance: state.ETHModule.ercETHBalance,
       dot_ercBalance: state.ETHModule.ercRDOTBalance,
       atom_ercBalance: state.ETHModule.ercRATOMBalance,
-      sol_ercBalance: state.ETHModule.ercRSOLBalance,
       matic_ercBalance: state.ETHModule.ercRMaticBalance,
       ksmWillAmount: commonClice.getWillAmount(
         state.rKSMModule.ratio,
@@ -82,11 +81,6 @@ export default function Index(props: any) {
         state.rATOMModule.ratio,
         state.rATOMModule.unbondCommission,
         state.ETHModule.ercRATOMBalance,
-      ),
-      solWillAmount: commonClice.getWillAmount(
-        state.rSOLModule.ratio,
-        state.rSOLModule.unbondCommission,
-        state.ETHModule.ercRSOLBalance,
       ),
       maticWillAmount: commonClice.getWillAmount(
         state.rMATICModule.ratio,
@@ -119,23 +113,12 @@ export default function Index(props: any) {
         count = count + item.price * eth_ercBalance;
       } else if (item.symbol == 'rATOM' && atom_ercBalance && atom_ercBalance != '--') {
         count = count + item.price * atom_ercBalance;
-      } else if (item.symbol == 'rSOL' && sol_ercBalance && sol_ercBalance != '--') {
-        count = count + item.price * sol_ercBalance;
       } else if (item.symbol == 'rMATIC' && matic_ercBalance && matic_ercBalance != '--') {
         count = count + item.price * matic_ercBalance;
       }
     });
     return count;
-  }, [
-    unitPriceList,
-    ksm_ercBalance,
-    fis_ercBalance,
-    rfis_ercBalance,
-    eth_ercBalance,
-    dot_ercBalance,
-    atom_ercBalance,
-    sol_ercBalance,
-  ]);
+  }, [unitPriceList, ksm_ercBalance, fis_ercBalance, rfis_ercBalance, eth_ercBalance, dot_ercBalance, atom_ercBalance]);
 
   let time: any;
   useEffect(() => {
@@ -156,7 +139,6 @@ export default function Index(props: any) {
     dispatch(monitoring_Method());
   }, []);
 
-  
   useEffect(() => {
     if (metaMaskNetworkId !== config.ethChainId()) {
       requestSwitchMetaMaskNetwork('Ethereum');
@@ -287,19 +269,6 @@ export default function Index(props: any) {
               tradeList={[{ label: 'Uniswap', url: config.uniswap.ratomURL }]}
               operationType='erc20'
               onSwapClick={() => toSwap('rATOM')}
-            />
-
-            <DataItem
-              disabled={!config.metaMaskNetworkIsGoerliEth(metaMaskNetworkId)}
-              rSymbol='rSOL'
-              icon={rasset_rsol_svg}
-              fullName='Solana'
-              balance={sol_ercBalance == '--' ? '--' : NumberUtil.handleFisAmountToFixed(sol_ercBalance)}
-              willGetBalance={solWillAmount}
-              unit='SOL'
-              trade={config.uniswap.rsolURL}
-              operationType='erc20'
-              onSwapClick={() => toSwap('rSOL')}
             />
 
             <DataItem

@@ -1,4 +1,4 @@
-import { traceEvent } from '@features/globalClice';
+import { trackEvent } from '@features/globalClice';
 import logo from '@images/logo2.png';
 import rAsset_svg from '@images/rAsset.svg';
 // import selected_rDEX_svg from '@images/rDEX_active.svg';
@@ -139,7 +139,7 @@ export default function Index(props: Props) {
               selected={location.pathname.includes(item.urlKeywords)}
               onClick={() => {
                 dispatch(
-                  traceEvent('clik_nav_link', {
+                  trackEvent('clik_nav_link', {
                     url: item.url,
                   }),
                 );
@@ -153,7 +153,16 @@ export default function Index(props: Props) {
         <div className='text'>Run out of FIS fee?</div>
         <div className='text'>
           Try{' '}
-          <span className='link' onClick={() => history.push('/feeStation/default')}>
+          <span
+            className='link'
+            onClick={() => {
+              dispatch(
+                trackEvent('clik_nav_link', {
+                  url: '/feeStation/default',
+                }),
+              );
+              history.push('/feeStation/default');
+            }}>
             Fee Station
           </span>
         </div>

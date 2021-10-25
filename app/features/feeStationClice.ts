@@ -5,6 +5,7 @@ import StafiServer from '@servers/stafi';
 import numberUtil from '@util/numberUtil';
 import { message } from 'antd';
 import { AppThunk } from '../store';
+import { trackEvent } from './globalClice';
 import { add_Notice, noticesubType, noticeType } from './noticeClice';
 
 const stafiServer = new StafiServer();
@@ -57,6 +58,7 @@ export const uploadSwapInfo =
   (params: any): AppThunk =>
   async (dispatch: any, getState: any) => {
     // console.log('uploadSwapInfo params:', params);
+    dispatch(trackEvent('fee_station_upload_swap_info', { upload_params: params }));
     const res = await feeStationServer.postSwapInfo(params);
     if (res.status === '80014') {
       dispatch(setSwapLoadingStatus(0));

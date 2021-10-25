@@ -11,9 +11,8 @@ import {
   getUnbondCommission as matic_getUnbondCommission,
   rTokenRate as matic_rTokenRate
 } from '@features/rMATICClice';
-import { getUnbondCommission as sol_getUnbondCommission, rTokenRate as sol_rTokenRate } from '@features/rSOLClice';
+import { getUnbondCommission as sol_getUnbondCommission } from '@features/rSOLClice';
 import metamask from '@images/metamask.png';
-import rasset_rsol_svg from '@images/rSOL.svg';
 import rasset_ratom_svg from '@images/r_atom.svg';
 import rasset_rbnb_svg from '@images/r_bnb.svg';
 import rasset_rdot_svg from '@images/r_dot.svg';
@@ -22,7 +21,7 @@ import rasset_rfis_svg from '@images/r_fis.svg';
 import rasset_rksm_svg from '@images/r_ksm.svg';
 import rasset_rmatic_svg from '@images/r_matic.svg';
 import Button from '@shared/components/button/connect_button';
-import { requestSwitchMetaMaskNetwork } from '@util/metamaskUtil';
+import { requestSwitchMetaMaskNetwork } from '@util/metaMaskUtil';
 import NumberUtil from '@util/numberUtil';
 import React, { useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -44,14 +43,12 @@ export default function Index(props: any) {
     rfis_bepBalance,
     dot_bepBalance,
     atom_bepBalance,
-    rsol_bepBalance,
     rmatic_bepBalance,
     reth_bepBalance,
     rbnb_bepBalance,
     ksmWillAmount,
     fisWillAmount,
     dotWillAmount,
-    solWillAmount,
     maticWillAmount,
     atomWillAmount,
     bnbWillAmount,
@@ -65,7 +62,6 @@ export default function Index(props: any) {
       rfis_bepBalance: state.BSCModule.bepRFISBalance,
       dot_bepBalance: state.BSCModule.bepRDOTBalance,
       atom_bepBalance: state.BSCModule.bepRATOMBalance,
-      rsol_bepBalance: state.BSCModule.bepRSOLBalance,
       rmatic_bepBalance: state.BSCModule.bepRMATICBalance,
       reth_bepBalance: state.BSCModule.bepRETHBalance,
       rbnb_bepBalance: state.BSCModule.bepRBNBBalance,
@@ -88,11 +84,6 @@ export default function Index(props: any) {
         state.rATOMModule.ratio,
         state.rATOMModule.unbondCommission,
         state.BSCModule.bepRATOMBalance,
-      ),
-      solWillAmount: commonClice.getWillAmount(
-        state.rSOLModule.ratio,
-        state.rSOLModule.unbondCommission,
-        state.BSCModule.bepRSOLBalance,
       ),
       maticWillAmount: commonClice.getWillAmount(
         state.rMATICModule.ratio,
@@ -131,8 +122,6 @@ export default function Index(props: any) {
         count = count + item.price * atom_bepBalance;
       } else if (item.symbol == 'rETH' && reth_bepBalance && reth_bepBalance != '--') {
         count = count + item.price * reth_bepBalance;
-      } else if (item.symbol == 'rSOL' && rsol_bepBalance && rsol_bepBalance != '--') {
-        count = count + item.price * rsol_bepBalance;
       } else if (item.symbol == 'rBNB' && rbnb_bepBalance && rbnb_bepBalance != '--') {
         count = count + item.price * rbnb_bepBalance;
       }
@@ -146,7 +135,6 @@ export default function Index(props: any) {
     dot_bepBalance,
     atom_bepBalance,
     reth_bepBalance,
-    rsol_bepBalance,
   ]);
 
   let time: any;
@@ -184,7 +172,6 @@ export default function Index(props: any) {
       dispatch(fis_rTokenRate());
       dispatch(dot_rTokenRate());
       dispatch(atom_rTokenRate());
-      dispatch(sol_rTokenRate());
       dispatch(matic_rTokenRate());
       dispatch(bnb_rTokenRate());
       dispatch(ksm_getUnbondCommission());
@@ -287,18 +274,6 @@ export default function Index(props: any) {
               unit='ATOM'
               operationType='bep20'
               onSwapClick={() => toSwap('rATOM')}
-            />
-
-            <DataItem
-              disabled={!config.metaMaskNetworkIsBsc(metaMaskNetworkId)}
-              rSymbol='rSOL'
-              icon={rasset_rsol_svg}
-              fullName='Solana'
-              balance={rsol_bepBalance == '--' ? '--' : NumberUtil.handleFisAmountToFixed(rsol_bepBalance)}
-              willGetBalance={solWillAmount}
-              unit='SOL'
-              operationType='bep20'
-              onSwapClick={() => toSwap('rSOL')}
             />
 
             <DataItem

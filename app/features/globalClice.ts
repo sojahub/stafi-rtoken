@@ -365,19 +365,13 @@ export const gClearTimeOut = (): AppThunk => (dispatch, getState) => {
   }
 };
 
-export const traceEvent =
-  (eventName: string, params: {}): AppThunk =>
+export const trackEvent =
+  (eventName: string, params?: {}): AppThunk =>
   (dispatch, getState) => {
     mixpanel.track(eventName, {
       stafi_address: getState().FISModule.fisAccount ? getState().FISModule.fisAccount.address : 'unknown',
-      ...params,
+      extra: params,
     });
-
-    // const analytics = getAnalytics();
-    // logEvent(analytics, eventName, {
-    //   stafi_address: getState().FISModule.fisAccount ? getState().FISModule.fisAccount.address : 'unknown',
-    //   ...params,
-    // });
   };
 
 export default globalClice.reducer;

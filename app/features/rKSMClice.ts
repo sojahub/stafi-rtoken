@@ -24,7 +24,8 @@ import {
   setProcessSending,
   setProcessSlider,
   setProcessType,
-  setStakeSwapLoadingStatus
+  setStakeSwapLoadingStatus,
+  trackEvent
 } from './globalClice';
 import { add_Notice, findUuid, noticeStatus, noticesubType, noticeType } from './noticeClice';
 
@@ -468,6 +469,12 @@ export const swapKsmForFis =
 
     dispatch(setSwapLoadingStatus(1));
     message.info('Signature completed, proceeding to transfer');
+    dispatch(
+      trackEvent('fee_station_signature_success', {
+        tokenType: 'ksm',
+      }),
+    );
+
     const ex = await dotApi.tx.balances.transferKeepAlive(poolAddress, amount.toString());
     let index = 0;
     ex.signAndSend(address, { signer: injector.signer }, (result: any) => {
@@ -537,6 +544,11 @@ export const swapKsmForFis =
                 dispatch(setStakeHash(null));
                 dispatch(add_KSM_stake_Notice(notice_uuid, amountparam, noticeStatus.Error, noticeSubData));
               } else if (data.event.method === 'ExtrinsicSuccess') {
+                dispatch(
+                  trackEvent('fee_station_transfer_success', {
+                    tokenType: 'ksm',
+                  }),
+                );
                 dispatch(reloadData());
                 dispatch(setLoading(false));
                 dispatch(setSwapLoadingStatus(2));

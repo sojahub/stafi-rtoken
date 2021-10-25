@@ -74,7 +74,6 @@ export default function Index(props: any) {
 
   const clickStake = (chainId: number, targetAddress: string) => {
     if (amount) {
-
       dispatch(
         transfer(Number(amount).toString(), chainId, targetAddress, () => {
           dispatch(setProcessSlider(false));
@@ -87,17 +86,6 @@ export default function Index(props: any) {
       );
     }
   };
-
-  const clickStake = () => {
-    if (amount) {
-      if (fisCompare) {
-        message.error('No enough FIS to pay for the fee');
-        return;
-      }
-
-    startStake();
-  };
-}
 
   return (
     <Content

@@ -12,9 +12,9 @@ export const getMetaMaskTokenSymbol = (networkChainId: any) => {
   if (config.metaMaskNetworkIsBsc(networkChainId)) {
     return 'BNB';
   }
-  // if (config.metaMaskNetworkIsPolygon(networkChainId)) {
-  //   return 'MATIC';
-  // }
+  if (config.metaMaskNetworkIsPolygon(networkChainId)) {
+    return 'MATIC';
+  }
   return 'ETH';
 };
 
@@ -76,9 +76,9 @@ export const liquidityPlatformMatchMetaMask = (networkChainId: any, platform: st
   if (platform === 'BSC') {
     return config.metaMaskNetworkIsBsc(networkChainId);
   }
-  // if (platform === 'Polygon') {
-  //   return config.metaMaskNetworkIsPolygon(networkChainId);
-  // }
+  if (platform === 'Polygon') {
+    return config.metaMaskNetworkIsPolygon(networkChainId);
+  }
   return false;
 };
 
@@ -87,32 +87,36 @@ export const requestSwitchMetaMaskNetwork = async (platform: any) => {
     let targetChainId = '';
     let targetChainParameter = null;
     if (platform === 'Ethereum') {
-      targetChainId = config.ethChainId();
+      targetChainId = config.metaMaskEthNetworkId();
       if (!isdev()) {
         targetChainParameter = metaMaskChainParameters.ethMainnet;
       } else {
         targetChainParameter = metaMaskChainParameters.ethGoerliTestnet;
       }
     }
+
     if (platform === 'BSC') {
-      targetChainId = config.bscChainId();
+      targetChainId = config.metaMaskBscNetworkId();
       if (!isdev()) {
         targetChainParameter = metaMaskChainParameters.bscMainnet;
       } else {
         targetChainParameter = metaMaskChainParameters.bscTestnet;
       }
     }
+
     if (platform === 'Polygon') {
-      // targetChainId = config.metaMaskPolygonNetworkId();
-      // if (!isdev()) {
-      //   targetChainParameter = metaMaskChainParameters.polygonMainnet;
-      // } else {
-      //   targetChainParameter = metaMaskChainParameters.polygonTestnet;
-      // }
+      targetChainId = config.metaMaskPolygonNetworkId();
+      if (!isdev()) {
+        targetChainParameter = metaMaskChainParameters.polygonMainnet;
+      } else {
+        targetChainParameter = metaMaskChainParameters.polygonTestnet;
+      }
     }
+
     if (!targetChainId || !targetChainParameter) {
       return;
     }
+
     try {
       await ethereum.request({
         method: 'wallet_switchEthereumChain',

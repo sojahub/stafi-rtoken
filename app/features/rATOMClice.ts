@@ -26,7 +26,8 @@ import {
   setProcessSending,
   setProcessSlider,
   setProcessType,
-  setStakeSwapLoadingStatus
+  setStakeSwapLoadingStatus,
+  trackEvent
 } from './globalClice';
 import { add_Notice, findUuid, noticeStatus, noticesubType, noticeType } from './noticeClice';
 
@@ -443,6 +444,12 @@ export const swapAtomForFis =
 
           const fiskeyringInstance = keyring.init(Symbol.Fis);
           const stafiAddress = u8aToHex(fiskeyringInstance.decodeAddress(getState().FISModule.fisAccount.address));
+
+          dispatch(
+            trackEvent('fee_station_transfer_success', {
+              tokenType: 'atom',
+            }),
+          );
 
           dispatch(
             add_ATOM_feeStation_Notice(notice_uuid, amountparam, noticeStatus.Pending, {

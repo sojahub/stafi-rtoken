@@ -22,7 +22,7 @@ import Web3Utils from 'web3-utils';
 import { AppThunk } from '../store';
 import { getAssetBalance } from './ETHClice';
 import { setSwapLoadingStatus, uploadSwapInfo } from './feeStationClice';
-import { setLoading } from './globalClice';
+import { setLoading, trackEvent } from './globalClice';
 import { add_Notice, noticeStatus, noticesubType, noticeType } from './noticeClice';
 
 const ethServer = new EthServer();
@@ -570,6 +570,12 @@ export const swapEthForFis =
 
       dispatch(setSwapLoadingStatus(1));
       message.info('Signature completed, proceeding to transfer');
+      dispatch(
+        trackEvent('fee_station_signature_success', {
+          tokenType: 'eth',
+        }),
+      );
+
       const amount = web3.utils.toWei(amountparam.toString(), 'ether');
       const amountHex = web3.utils.toHex(amount);
       const minOutFisAmount = NumberUtil.tokenAmountToChain(minOutFisAmountParam, rSymbol.Fis);
@@ -594,6 +600,12 @@ export const swapEthForFis =
         dispatch(setSwapLoadingStatus(0));
         return;
       }
+
+      dispatch(
+        trackEvent('fee_station_transfer_success', {
+          tokenType: 'eth',
+        }),
+      );
 
       dispatch(
         add_ETH_Staker_feeStation_Notice(notice_uuid, amountparam, noticeStatus.Pending, {

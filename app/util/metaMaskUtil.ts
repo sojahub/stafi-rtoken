@@ -1,5 +1,7 @@
 import config, { isdev } from '@config/index';
-import { metaMaskChainParameters } from './constants';
+import { BSC_CHAIN_ID, ETH_CHAIN_ID } from '@features/bridgeClice';
+import { message } from 'antd';
+import { metaMaskBEP20TokenParameters, metaMaskChainParameters, metaMaskERC20TokenParameters } from './constants';
 
 declare const ethereum: any;
 
@@ -134,6 +136,82 @@ export const requestSwitchMetaMaskNetwork = async (platform: any) => {
       } else {
         console.error('switchError:', switchError.message);
       }
+    }
+  }
+};
+
+export const requestAddTokenToMetaMask = async (tokenType: string, destChainId: number) => {
+  let parameters: any;
+  if (destChainId === ETH_CHAIN_ID) {
+    if (tokenType === 'rfis') {
+      parameters = metaMaskERC20TokenParameters.rFIS;
+    } else if (tokenType === 'rdot') {
+      parameters = metaMaskERC20TokenParameters.rDOT;
+    } else if (tokenType === 'rksm') {
+      parameters = metaMaskERC20TokenParameters.rKSM;
+    } else if (tokenType === 'rmatic') {
+      parameters = metaMaskERC20TokenParameters.rMATIC;
+    } else if (tokenType === 'ratom') {
+      parameters = metaMaskERC20TokenParameters.rATOM;
+    }
+  } else if (destChainId === BSC_CHAIN_ID) {
+    if (tokenType === 'rfis') {
+      parameters = metaMaskBEP20TokenParameters.rFIS;
+    } else if (tokenType === 'rdot') {
+      parameters = metaMaskBEP20TokenParameters.rDOT;
+    } else if (tokenType === 'rksm') {
+      parameters = metaMaskBEP20TokenParameters.rKSM;
+    } else if (tokenType === 'rmatic') {
+      parameters = metaMaskBEP20TokenParameters.rMATIC;
+    } else if (tokenType === 'ratom') {
+      parameters = metaMaskBEP20TokenParameters.rATOM;
+    }else if (tokenType === 'rbnb') {
+      parameters = metaMaskBEP20TokenParameters.rBNB;
+    }
+  }
+
+  if (!parameters) {
+    return;
+  }
+
+  if (typeof ethereum !== 'undefined' && ethereum.isMetaMask) {
+    try {
+      ethereum.request({ method: 'eth_chainId' }).then((chainId: any) => {
+        if (destChainId === ETH_CHAIN_ID && chainId !== config.ethChainId()) {
+          message.warn('Please switch MetaMask to Ethereum Mainnet first');
+          requestSwitchMetaMaskNetwork('Ethereum');
+          return;
+        }
+        if (destChainId === BSC_CHAIN_ID && chainId !== config.bscChainId()) {
+          message.warn('Please switch MetaMask to BSC Mainnet first');
+          requestSwitchMetaMaskNetwork('BSC');
+          return;
+        }
+
+        // wasAdded is a boolean. Like any RPC method, an error may be thrown.
+        ethereum
+          .request({
+            method: 'wallet_watchAsset',
+            params: {
+              type: 'ERC20', // Initially only supports ERC20, but eventually more!
+              options: {
+                address: parameters.tokenAddress, // The address that the token is at.
+                symbol: parameters.tokenSymbol, // A ticker symbol or shorthand, up to 5 chars.
+                decimals: parameters.tokenDecimals, // The number of decimals in the token
+                image: parameters.tokenImage, // A string url of the token logo
+              },
+            },
+          })
+          .then((wasAdded: boolean) => {
+            if (wasAdded) {
+              console.log('Thanks for your interest!');
+            } else {
+              console.log('Your loss!');
+            }
+          });
+      });
+    } catch (error: any) {
+      console.log(error);
     }
   }
 };

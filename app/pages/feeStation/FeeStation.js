@@ -16,7 +16,8 @@ import {
   connectPolkadot_fis,
   connectPolkadot_ksm,
   reloadData,
-  setLoading
+  setLoading,
+  trackEvent
 } from '@features/globalClice';
 import { swapAtomForFis } from '@features/rATOMClice';
 import { getPools as dot_getPools, swapDotForFis } from '@features/rDOTClice';
@@ -399,6 +400,13 @@ export default function FeeStation() {
       return;
     }
 
+    dispatch(
+      trackEvent('fee_station_click_swap', {
+        token_type: selectedToken.type,
+        fis_amount: receiveFisAmount,
+      }),
+    );
+
     setTransferDetail(numberUtil.handleFisRoundToFixed(receiveFisAmount) + ' FIS');
     if (selectedToken.type === Symbol.Dot) {
       dispatch(
@@ -561,6 +569,11 @@ export default function FeeStation() {
                 onSelectChange={(value) => {
                   value && history.replace(`/feeStation/${value.type}`);
                   setScene(0);
+                  dispatch(
+                    trackEvent('fee_station_select_token', {
+                      token_type: value.type,
+                    }),
+                  );
                 }}
               />
             </InnerContainer>

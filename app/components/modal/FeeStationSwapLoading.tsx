@@ -1,5 +1,6 @@
 import { LoadingOutlined } from '@ant-design/icons';
 import { setSwapLoadingStatus } from '@features/feeStationClice';
+import { trackEvent } from '@features/globalClice';
 import close_bold_svg from '@images/close_bold.svg';
 import complete_svg from '@images/complete.svg';
 import FeeStationServer from '@servers/feeStation';
@@ -129,6 +130,7 @@ export default function FeeStationSwapLoading(props: Props) {
         if (res.data.swapStatus === 0 || res.data.swapStatus === 1 || res.data.swapStatus === 2) {
           setSwapStatus(res.data.swapStatus);
           if (res.data.swapStatus === 2) {
+            dispatch(trackEvent('fee_station_swap_success', {}));
             props.onSwapSuccess && props.onSwapSuccess();
           }
         } else {
@@ -164,7 +166,12 @@ export default function FeeStationSwapLoading(props: Props) {
       }}>
       <div>
         <div className={'icon_container_outer'}>
-          <a className={'icon_container_inner'} onClick={() => dispatch(setSwapLoadingStatus(0))}>
+          <a
+            className={'icon_container_inner'}
+            onClick={() => {
+              dispatch(trackEvent('fee_station_close_loading_modal', {}));
+              dispatch(setSwapLoadingStatus(0));
+            }}>
             <img src={close_bold_svg} className={'close_icon'} />
           </a>
         </div>
