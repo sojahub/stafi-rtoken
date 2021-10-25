@@ -1,5 +1,5 @@
 import Card from '@components/card/index';
-import { getLPList } from '@features/rPoolClice';
+import { getLPList, getRPoolList } from '@features/rPoolClice';
 import rpool_ratom_Icon from '@images/rpool_ratom_atom.svg';
 import rpool_rdot_Icon from '@images/rpool_rdot_dot.svg';
 import rpool_reth_Icon from '@images/rpool_reth.svg';
@@ -22,6 +22,7 @@ export default function LiquidityPrograms(props: any) {
   const dispatch = useDispatch();
 
   useEffect(() => {
+    dispatch(getRPoolList());
     dispatch(getLPList(true));
   }, []);
 
@@ -32,7 +33,7 @@ export default function LiquidityPrograms(props: any) {
   const [sortField, setSortField] = useState('liquidity');
   const [sortWay, setSortWay] = useState<undefined | string>('asc');
 
-  const { lpList, loadingLpList, totalLiquidity, slippageAvg } = useSelector((state: RootState) => {
+  const { rPoolList, lpList, loadingLpList, totalLiquidity, slippageAvg } = useSelector((state: RootState) => {
     // let rPoolList = [...state.rPoolModule.rPoolList];
     // if (sortField || sortWay) {
     //   rPoolList = rPoolList.sort((a: any, b: any) => {
@@ -105,6 +106,7 @@ export default function LiquidityPrograms(props: any) {
     // });
 
     return {
+      rPoolList: state.rPoolModule.rPoolList,
       lpList: state.rPoolModule.lpList,
       loadingLpList: state.rPoolModule.loadingLpList,
       totalLiquidity: state.rPoolModule.totalLiquidity,
