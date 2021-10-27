@@ -1,4 +1,3 @@
-@@ -1,217 +0,0 @@
 import config, { isdev } from '@config/index';
 import { BSC_CHAIN_ID, ETH_CHAIN_ID } from '@features/bridgeClice';
 import { message } from 'antd';
