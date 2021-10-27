@@ -695,7 +695,7 @@ const routesFactory = (role?: any) => {
           routes: [
             {
               id: 'RPool_home',
-              path: '/rPool/home',
+              path: '/rPool/home/:tab',
               // width:920,
               className: 'stafi_content_full',
               // rSymbol:rSymbol.Atom,
@@ -760,7 +760,7 @@ const routesFactory = (role?: any) => {
             },
             {
               path: '*',
-              component: () => <Redirect to='/rPool/home' />,
+              component: () => <Redirect to='/rPool/home/mp' />,
             },
           ],
         },

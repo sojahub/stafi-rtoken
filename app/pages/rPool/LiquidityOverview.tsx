@@ -181,11 +181,11 @@ export default function LiquidityOverview() {
   };
 
   if (!lpPlatform || !lpName || !rTokenName) {
-    history.replace('/rPool/home');
+    history.replace('/rPool/home/lp');
   }
 
   if (isNaN(poolIndex) || poolIndex < 0) {
-    history.replace('/rPool/home');
+    history.replace('/rPool/home/lp');
   }
 
   return (
@@ -199,7 +199,7 @@ export default function LiquidityOverview() {
               if (showStaker) {
                 setShowStaker(false);
               } else {
-                history.replace('/rPool/home', {
+                history.replace('/rPool/home/lp', {
                   index: 1,
                 });
               }

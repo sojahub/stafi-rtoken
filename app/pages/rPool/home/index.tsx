@@ -1,21 +1,18 @@
 import classNames from 'classnames';
 import React, { useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
 import './index.scss';
 import LiquidityPrograms from './LiquidityPrograms';
 import MintPrograms from './MintPrograms';
 
 export default function Inde(props: any) {
   const [index, setIndex] = useState(0);
+  const { tab } = useParams<any>();
 
   const location = useLocation();
 
   useEffect(() => {
-    if (location.state) {
-      if (location.state.index !== index) {
-        setIndex(location.state.index);
-      }
-    }
+    setIndex(tab === 'lp' ? 1 : 0);
   }, []);
 
   return (

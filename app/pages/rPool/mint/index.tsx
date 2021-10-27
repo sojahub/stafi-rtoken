@@ -175,17 +175,17 @@ export default function MintOverview() {
     tokenSymbol.toString() !== rSymbol.Bnb.toString() &&
     tokenSymbol.toString() !== rSymbol.Sol.toString() 
   ) {
-    history.replace('/rPool/home');
+    history.replace('/rPool/home/mp');
   }
 
   if (isNaN(cycle) || cycle <= 0) {
-    history.replace('/rPool/home');
+    history.replace('/rPool/home/mp');
   }
 
   return (
     <div className='rpool_mint_overview'>
       <div className='title_container'>
-        <img src={backIcon} className='back_icon' onClick={() => history.replace('/rPool/home')} />
+        <img src={backIcon} className='back_icon' onClick={() => history.replace('/rPool/home/mp')} />
 
         <div className='title'>{showContent ? 'rPool' : 'Connect'}</div>
       </div>
