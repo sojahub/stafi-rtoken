@@ -539,7 +539,8 @@ export default class Index {
       vesting: '--',
     };
     try {
-      const web3 = ethServer.getWeb3FromPlatform(platform);
+      // const web3 = ethServer.getWeb3FromPlatform(platform);
+      const web3 = ethServer.getWeb3();
       if (!web3) {
         throw new Error('unknown platform');
       }

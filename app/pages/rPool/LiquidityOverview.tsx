@@ -158,13 +158,28 @@ export default function LiquidityOverview() {
       }
       if (response && isMounted) {
         setOverviewData(response);
-        setUserMintToken(numberUtil.amount_format(numberUtil.handleAmountRoundToFixed(response.userStakedAmount, 2)));
-        setUserMintRatio(response.myMintRatio);
-        setUserMintReward(numberUtil.amount_format(response.myReward));
-        setFisTotalReward(response.fisTotalReward);
-        setFisClaimableReward(response.fisClaimableReward);
-        setFisLockedReward(response.fisLockedReward);
-        setClaimIndexs(response.claimIndexs);
+        if(!isNaN(Number(response.userStakedAmount))){
+          setUserMintToken(numberUtil.amount_format(numberUtil.handleAmountRoundToFixed(response.userStakedAmount, 2)));
+        }
+        if(!isNaN(Number(response.myMintRatio))){
+          setUserMintRatio(response.myMintRatio);
+        }
+        if(!isNaN(Number(response.myReward))){
+          setUserMintReward(numberUtil.amount_format(response.myReward));
+        }
+        if(!isNaN(Number(response.fisTotalReward))){
+          setFisTotalReward(response.fisTotalReward);
+        }
+        if(!isNaN(Number(response.fisClaimableReward))){
+          setFisClaimableReward(response.fisClaimableReward);
+        }
+        if(!isNaN(Number(response.fisLockedReward))){
+          setFisLockedReward(response.fisLockedReward);
+        }
+        if(!isNaN(Number(response.claimIndexs))){
+          setClaimIndexs(response.claimIndexs);
+        }
+
         if (isNaN(response.vesting)) {
           setVesting('--');
         } else if (response.vesting * 1 > 0) {

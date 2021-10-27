@@ -329,11 +329,12 @@ export const monitoring_Method = (): AppThunk => (dispatch, getState) => {
           // message.warning('Please connect to Goerli Test Network!');
           dispatch(setEthAccount(null));
         }
-      } else if (ethereum.chainId != '0x1') {
-        // message.warning('Please connect to Ethereum Main Network!');
+      } 
+      // else if (ethereum.chainId != '0x1') {
+      //   // message.warning('Please connect to Ethereum Main Network!');
 
-        dispatch(setEthAccount(null));
-      }
+      //   dispatch(setEthAccount(null));
+      // }
     });
   }
 };
