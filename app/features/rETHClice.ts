@@ -231,7 +231,7 @@ export const connectMetamask =
 
       ethereum.request({ method: 'eth_chainId' }).then((chainId: any) => {
         if (isdev()) {
-          if (ethereum.chainId != targetChainId) {
+          if (chainId != targetChainId) {
             if (targetChainId === '0x3') {
               if (!isAutoConnect) {
                 message.warning('Please connect to Ropsten Test Network!');
@@ -244,7 +244,7 @@ export const connectMetamask =
             }
             return;
           }
-        } else if (ethereum.chainId != targetChainId) {
+        } else if (chainId != targetChainId) {
           if (!isAutoConnect) {
             if (targetChainId === config.ethChainId()) {
               message.warning('Please connect to Ethereum Main Network!');

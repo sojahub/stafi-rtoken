@@ -169,7 +169,9 @@ export default function LiquidityOverview() {
           setVesting('--');
         } else if (response.vesting * 1 > 0) {
           setVesting(Math.ceil(response.vesting * 1) + 'D');
-        } else setVesting('0');
+        } else {
+          setVesting('0');
+        }
       }
     }
   };
@@ -338,7 +340,17 @@ export default function LiquidityOverview() {
               icon={metamask}
               width={'400px'}
               onClick={() => {
-                dispatch(connectMetamask(config.goerliChainId()));
+                dispatch(
+                  connectMetamask(
+                    lpPlatform === 'Ethereum'
+                      ? config.metaMaskEthNetworkId()
+                      : lpPlatform === 'BSC'
+                      ? config.metaMaskBscNetworkId()
+                      : lpPlatform === 'Polygon'
+                      ? config.metaMaskPolygonNetworkId()
+                      : '',
+                  ),
+                );
                 dispatch(monitoring_Method());
               }}>
               Connect to MetaMask

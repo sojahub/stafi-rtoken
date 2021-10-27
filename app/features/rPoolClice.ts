@@ -294,7 +294,9 @@ export const getLPList =
       //   dispatch(setLoadingLpList(true));
       // }
       const newList = await rPoolServer.fillLpData(lpActs, '');
-      dispatch(setLpList(newList));
+      if (newList) {
+        dispatch(setLpList(newList));
+      }
     } finally {
       dispatch(setLoadingLpList(false));
     }

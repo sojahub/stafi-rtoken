@@ -5,7 +5,6 @@ import StafiServer from '@servers/stafi';
 import { formatDuration } from '@util/dateUtil';
 import numberUtil from '@util/numberUtil';
 import rpc from '@util/rpc';
-import web3Util from '@util/web3Util';
 import { cloneDeep } from 'lodash';
 
 const stafiServer = new StafiServer();
@@ -48,10 +47,15 @@ export default class Index {
       rPoolList = rPoolListRes.data.list;
     }
 
-    let wraPrice = '';
-    const lpPriceRes = await this.getLpPriceList(web3Util.getLpContractList());
-    if (lpPriceRes.status === '80000' && lpPriceRes.data) {
-      wraPrice = lpPriceRes.data.wraPrice;
+    let fisPrice = '';
+    const tokenPriceListRes = await rpc.fetchRtokenPriceList();
+    if (tokenPriceListRes && tokenPriceListRes.status == '80000') {
+      const fisObj = tokenPriceListRes.data?.find((item: any) => {
+        return item.symbol === 'FIS';
+      });
+      if (fisObj) {
+        fisPrice = fisObj.price;
+      }
     }
 
     try {
@@ -119,17 +123,18 @@ export default class Index {
               poolItem.stakeTokenAddress,
               poolItem.rewardPerBlockValue,
               poolItem.lpPrice,
-              wraPrice,
+              Number(fisPrice),
             );
           } catch (err) {
-            console.error(err.message);
+            console.error('get LPList error:', err.message);
+            throw new Error('fillLpData Error');
           }
         }
       }
 
       return lpActs;
     } catch (err) {
-      console.error(err.message);
+      console.error('get LPList error2:', err.message);
     }
   }
 
@@ -139,14 +144,15 @@ export default class Index {
     stakeTokenAddress: any,
     rewardPerBlock: any,
     stakeTokenPrice: any,
-    wraPrice: any,
+    fisPrice: number,
   ) {
     let apr = '--';
 
-    if (isNaN(wraPrice)) {
+    if (isNaN(fisPrice)) {
       return apr;
     }
-    const totalBlocks = 2254114;
+    const totalBlocks =
+      platform === 'Ethereum' ? 2254114 : platform === 'BSC' ? 10519200 : platform === 'Polygon' ? 2103840 : 1;
 
     try {
       const web3 = ethServer.getWeb3FromPlatform(platform);
@@ -163,16 +169,16 @@ export default class Index {
       }
       const poolStakeTokenSupply = await tokenContract.methods.balanceOf(contractAddress).call();
       let stakeTokenSupply = web3.utils.fromWei(poolStakeTokenSupply, 'ether');
-      // console.log('sdfsdfsd', rewardPerBlock, totalBlocks, wraPrice, stakeTokenPrice, stakeTokenSupply);
+      console.log('sdfsdfsd', rewardPerBlock, totalBlocks, fisPrice, stakeTokenPrice, stakeTokenSupply);
       // Temp fix backend missing lpPrice
       if (Number(stakeTokenPrice) === 0) {
         stakeTokenPrice = 1;
       }
       let ratio: number;
       if (stakeTokenSupply > 0) {
-        ratio = (rewardPerBlock * totalBlocks * wraPrice * 100) / (stakeTokenPrice * stakeTokenSupply);
+        ratio = (rewardPerBlock * totalBlocks * fisPrice * 100) / (stakeTokenPrice * stakeTokenSupply);
       } else {
-        ratio = (rewardPerBlock * totalBlocks * wraPrice * 100) / stakeTokenPrice;
+        ratio = (rewardPerBlock * totalBlocks * fisPrice * 100) / stakeTokenPrice;
       }
       apr = numberUtil.handleAmountRoundToFixed(ratio, 2);
     } catch (err) {
@@ -554,11 +560,9 @@ export default class Index {
         return;
       }
 
-      let wraPrice = '';
       let lpPrice: number;
       const lpPriceRes = await this.getLpPriceList([lpContract]);
       if (lpPriceRes.status === '80000' && lpPriceRes.data) {
-        wraPrice = lpPriceRes.data.wraPrice;
         const item = lpPriceRes.data.list.find((priceObj: any) => {
           return priceObj.contract === lpContract;
         });
@@ -582,7 +586,14 @@ export default class Index {
       response.lpAllowance = allowance;
 
       const rewardPerBlock = web3.utils.fromWei(poolInfo.rewardPerBlock, 'ether');
-      response.apr = await this.getLpApr(platform, ethAddress, stakeTokenAddress, rewardPerBlock, lpPrice, wraPrice);
+      response.apr = await this.getLpApr(
+        platform,
+        ethAddress,
+        stakeTokenAddress,
+        rewardPerBlock,
+        lpPrice,
+        Number(fisPrice),
+      );
 
       const userInfo = await lockContract.methods.userInfo(poolIndex, ethAddress).call();
       // console.log('userInfo: ', userInfo);
