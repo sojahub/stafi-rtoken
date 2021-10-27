@@ -49,6 +49,7 @@
     "os": "^0.1.1",
     "process": "^0.11.10",
     "pubsub-js": "^1.9.3",
+    "query-string": "^7.0.1",
     "react": "^17.0.1",
     "react-custom-scrollbars": "^4.2.1",
     "react-dev-utils": "^11.0.4",

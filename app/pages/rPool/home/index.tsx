@@ -1,28 +1,35 @@
 import classNames from 'classnames';
+import qs from 'query-string';
 import React, { useEffect, useState } from 'react';
-import { useLocation, useParams } from 'react-router-dom';
+import { useHistory, useLocation, useRouteMatch } from 'react-router-dom';
 import './index.scss';
 import LiquidityPrograms from './LiquidityPrograms';
 import MintPrograms from './MintPrograms';
 
 export default function Inde(props: any) {
   const [index, setIndex] = useState(0);
-  const { tab } = useParams<any>();
-
+  const history = useHistory();
   const location = useLocation();
+  const match = useRouteMatch();
+
 
   useEffect(() => {
+    const { tab } = qs.parse(location.search.slice(1));
     setIndex(tab === 'lp' ? 1 : 0);
-  }, []);
+  });
 
   return (
     <div>
       <div className='rpool_tab_container'>
-        <div className={classNames('tab_title', index === 0 ? 'active' : '')} onClick={() => setIndex(0)}>
+        <div
+          className={classNames('tab_title', index === 0 ? 'active' : '')}
+          onClick={() => history.replace('/rPool/home?tab=mp')}>
           Mint Programs
         </div>
 
-        <div className={classNames('tab_title', index === 1 ? 'active' : '')} onClick={() => setIndex(1)}>
+        <div
+          className={classNames('tab_title', index === 1 ? 'active' : '')}
+          onClick={() => history.replace('/rPool/home?tab=lp')}>
           Liquidity Programs
         </div>
       </div>
@@ -40,6 +47,7 @@ export default function Inde(props: any) {
 
       {index === 0 && <MintPrograms />}
       {index === 1 && <LiquidityPrograms />}
+
     </div>
   );
 }

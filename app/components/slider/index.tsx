@@ -49,7 +49,7 @@ const siderData = [
     selectedIcon: selected_rPool_svg,
     text: 'rPool',
     urlKeywords: '/rPool',
-    url: '/rPool/home/mp',
+    url: '/rPool/home?tab=mp',
   },
   {
     icon: rETH_svg,
