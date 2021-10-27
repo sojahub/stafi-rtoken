@@ -754,7 +754,7 @@ const routesFactory = (role?: any) => {
             },
             {
               id: 'RPool_Liquidity_Overview',
-              path: '/rPool/lp/:lpPlatform/:poolIndex',
+              path: '/rPool/lp/:lpPlatform/:poolIndex/:lpContract',
               className: 'stafi_content_large',
               component: LiquidityOverview,
             },

@@ -101,6 +101,7 @@ const lpActs: Array<any> = [
       {
         platform: 'BSC',
         poolIndex: 0,
+        lpContract: '0xbdc8ee55d888784fb90b4d3d6632e19db72cd992',
         stakeTokenAddress: '',
         apr: '--',
         toDate: '--',
@@ -125,6 +126,7 @@ const lpActs: Array<any> = [
       {
         platform: 'BSC',
         poolIndex: 1,
+        lpContract: '0xc1f6d716d5d3a6cc53ce9387b03cf2d777779502',
         stakeTokenAddress: '',
         apr: '--',
         toDate: '--',
@@ -336,7 +338,7 @@ export const stakeLp =
 
     try {
       const lockDropContract = new web3.eth.Contract(
-        rPoolServer.getStakingLockDropAbi(),
+        rPoolServer.getStakingLockDropAbi(platform),
         config.lockContractAddress(platform),
         {
           from: getState().rETHModule.ethAccount.address,
@@ -374,7 +376,7 @@ export const unstakeLp =
 
     try {
       const lockDropContract = new web3.eth.Contract(
-        rPoolServer.getStakingLockDropAbi(),
+        rPoolServer.getStakingLockDropAbi(platform),
         config.lockContractAddress(platform),
         {
           from: getState().rETHModule.ethAccount.address,
@@ -418,7 +420,7 @@ export const claimLpReward =
 
     try {
       const lockDropContract = new web3.eth.Contract(
-        rPoolServer.getStakingLockDropAbi(),
+        rPoolServer.getStakingLockDropAbi(platform),
         config.lockContractAddress(platform),
         {
           from: getState().rETHModule.ethAccount.address,

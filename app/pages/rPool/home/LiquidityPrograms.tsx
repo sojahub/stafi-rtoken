@@ -1,4 +1,5 @@
 import Card from '@components/card/index';
+import config from '@config/index';
 import { getLPList, getRPoolList } from '@features/rPoolClice';
 import rpool_ratom_Icon from '@images/rpool_ratom_atom.svg';
 import rpool_rbnb_Icon from '@images/rpool_rbnb_bnb.svg';
@@ -35,136 +36,80 @@ export default function LiquidityPrograms(props: any) {
   const [sortField, setSortField] = useState('liquidity');
   const [sortWay, setSortWay] = useState<undefined | string>('asc');
 
-  const { rPoolList, lpList, loadingLpList, totalLiquidity, slippageAvg } = useSelector((state: RootState) => {
-    // let rPoolList = [...state.rPoolModule.rPoolList];
-    // if (sortField || sortWay) {
-    //   rPoolList = rPoolList.sort((a: any, b: any) => {
-    //     if (sortField == 'apy') {
-    //       let apy_a: number = 0;
-    //       let apy_b: number = 0;
-    //       // a[sortField]
-    //       a[sortField].forEach((item: any) => {
-    //         apy_a = apy_a + Number(item.apy ? item.apy : 0);
-    //       });
-    //       b[sortField].forEach((item: any) => {
-    //         apy_b = apy_b + Number(item.apy ? item.apy : 0);
-    //       });
-    //       if (apy_a > apy_b) {
-    //         return sortWay == 'asc' ? -1 : 1;
-    //       } else if (apy_a < apy_b) {
-    //         return sortWay == 'asc' ? 1 : -1;
-    //       } else {
-    //         return 0;
-    //       }
-    //     } else {
-    //       if (Number(a[sortField]) > Number(b[sortField])) {
-    //         return sortWay == 'asc' ? -1 : 1;
-    //       } else if (Number(a[sortField]) < Number(b[sortField])) {
-    //         return sortWay == 'asc' ? 1 : -1;
-    //       } else {
-    //         return 0;
-    //       }
-    //     }
-    //   });
-    // }
-
-    // let rTokenDatas = [...rTokenList];
-    // rTokenDatas[0].children = rPoolList.filter((item) => {
-    //   if ((item.platform == 1 || item.platform == 3) && item.contract == '0x5f49da032defe35489ddb205f3dc66d8a76318b3') {
-    //     return true;
-    //   } else if (item.platform == 2 && item.contract == '0xF9440930043eb3997fc70e1339dBb11F341de7A8') {
-    //     return true;
-    //   } else {
-    //     return false;
-    //   }
-    // });
-    // rTokenDatas[1].children = rPoolList.filter((item) => {
-    //   if ((item.platform == 1 || item.platform == 3) && item.contract == '0xec736f21bea3d34f222ba101af231b57699760f3') {
-    //     return true;
-    //   } else {
-    //     return false;
-    //   }
-    // });
-    // rTokenDatas[2].children = rPoolList.filter((item) => {
-    //   if ((item.platform == 1 || item.platform == 3) && item.contract == '0x53e73e10b0315601c938e4d9454e8c7cf72e1236') {
-    //     return true;
-    //   } else {
-    //     return false;
-    //   }
-    // });
-    // rTokenDatas[3].children = rPoolList.filter((item) => {
-    //   if ((item.platform == 1 || item.platform == 3) && item.contract == '0xe5d71d5ea5729eceee5d246ced3cbecb2226a8ed') {
-    //     return true;
-    //   } else {
-    //     return false;
-    //   }
-    // });
-    // rTokenDatas[4].children = rPoolList.filter((item) => {
-    //   if ((item.platform == 1 || item.platform == 3) && item.contract == '0x80693274615464086132e0751435e954a7dc687f') {
-    //     return true;
-    //   } else {
-    //     return false;
-    //   }
-    // });
-
+  const { rPoolList, lpList, loadingLpList } = useSelector((state: RootState) => {
     return {
       rPoolList: state.rPoolModule.rPoolList,
       lpList: state.rPoolModule.lpList,
       loadingLpList: state.rPoolModule.loadingLpList,
-      totalLiquidity: state.rPoolModule.totalLiquidity,
-      slippageAvg: state.rPoolModule.slippageAvg,
     };
   });
 
-  const ethCurveData = useMemo(() => {
-    return rPoolList.find((item) => {
-      return item.platform == 2 && item.contract == '0xF9440930043eb3997fc70e1339dBb11F341de7A8';
+  const { ethCurveData, atomSifData } = useMemo(() => {
+    const ethCurveData = rPoolList.find((item) => {
+      return item.platform == 2 && item.contract == config.rETHLpContract();
     });
+    const atomSifData = rPoolList.find((item) => {
+      return false;
+    });
+    return {
+      ethCurveData,
+      atomSifData,
+    };
   }, [rPoolList]);
 
-  const totalApy = useMemo(() => {
+  const { avgApy, avgSlippage, totalLiquidity } = useMemo(() => {
     let count = 0;
-    let total = 0;
-    lpList?.forEach((item: any) => {
-      item.children?.forEach((poolItem: any) => {
-        if (!isNaN(Number(poolItem.apr))) {
+    let apySum = 0;
+    let slippageSum = 0;
+    let liquiditySum = 0;
+    if (ethCurveData) {
+      count++;
+      ethCurveData?.apy?.forEach((apyitem: any) => {
+        apySum += Number(apyitem.apy);
+      });
+      slippageSum += Number(ethCurveData.slippage);
+      liquiditySum += Number(ethCurveData.liquidity);
+    }
+    if (atomSifData) {
+      count++;
+      atomSifData?.apy?.forEach((apyitem: any) => {
+        apySum += Number(apyitem.apy);
+      });
+      slippageSum += Number(atomSifData.slippage);
+      liquiditySum += Number(atomSifData.liquidity);
+    }
+    lpList.forEach((data: any) => {
+      data.children.forEach((item: any) => {
+        if (!isNaN(Number(item.apr))) {
           count++;
-          total += Number(poolItem.apr);
+          apySum += Number(item.apr);
+          slippageSum += Number(item.slippage);
+          liquiditySum += Number(item.liquidity);
         }
       });
     });
-    if (count > 0) {
-      return numberUtil.handleAmountRoundToFixed(Number(total) / Number(count), 2);
-    }
-    return '--';
-  }, [lpList]);
 
-  let type = '';
-  let icon = null;
-  let stakeUrl = '';
-  let liquidityUrl = '';
-  // let wrapFiUrl="";
-  type = 'rETH/ETH';
-  icon = rpool_reth_Icon;
-  stakeUrl = 'https://app.stafi.io/rETH';
-  liquidityUrl = 'https://app.uniswap.org/#/add/v2/0x9559aaa82d9649c7a7b220e7c461d2e74c9a3593/ETH';
+    return {
+      avgApy: count > 0 ? numberUtil.handleAmountRoundToFixed(apySum / count, 2) : '--',
+      avgSlippage: count > 0 ? numberUtil.handleAmountRoundToFixed(slippageSum / count, 2) : '--',
+      totalLiquidity: count > 0 ? numberUtil.handleAmountRoundToFixed(liquiditySum, 2) : '--',
+    };
+  }, [ethCurveData, atomSifData, lpList]);
 
   return (
     <Card className='stafi_rpool_home_card'>
-      {/* <div className="title">
-        <label>Provide liquidity and earn reward</label><A onClick={()=>{
-          window.open("https://docs.stafi.io/rproduct/rpool/the-guide-for-rpool")
-        }}>How to earn</A>
-      </div> */}
       <div className='card_list'>
         <CardItem label='Total Liquidity' value={`$${numberUtil.amount_format(totalLiquidity)}`} />
-        <CardItem label='Farming APY. avg' value={`${totalApy}%`} />
+
+        <CardItem label='Farming APY. avg' value={`${avgApy}%`} />
+
         <CardItem
           label='rToken Price Slippage. avg'
           doubt={<Doubt tip='This stats indicates average slippage of rTokens.'></Doubt>}
-          value={`${slippageAvg}%`}
+          value={`${avgSlippage}%`}
         />
       </div>
+
       <div className='table'>
         <TableHead
           sortField={sortField}
@@ -188,16 +133,29 @@ export default function LiquidityPrograms(props: any) {
           <div className='table_body' style={{ minHeight: '300px' }}>
             <OldTableItem
               wrapFiUrl={'https://drop.wrapfi.io'}
-              liquidityUrl={liquidityUrl}
+              liquidityUrl='https://curve.fi/reth'
               history={props.history}
-              stakeUrl={stakeUrl}
               pairIcon={rpool_reth_Icon}
               pairValue='rETH/ETH'
               apyList={ethCurveData ? ethCurveData.apy : []}
               liquidity={ethCurveData && ethCurveData.liquidity}
               slippage={ethCurveData && ethCurveData.slippage}
               poolOn={ethCurveData && ethCurveData.platform}
+              platform='Ethereum'
             />
+
+            {/* <OldTableItem
+              wrapFiUrl={'https://drop.wrapfi.io'}
+              liquidityUrl='https://dex.sifchain.finance/#/pool/add-liquidity/setup/cratom'
+              history={props.history}
+              pairIcon={rpool_ratom_rowan_Icon}
+              pairValue='rATOM/ROWAN'
+              apyList={atomSifData ? atomSifData.apy : []}
+              liquidity={atomSifData && atomSifData.liquidity}
+              slippage={atomSifData && atomSifData.slippage}
+              poolOn={atomSifData && atomSifData.platform}
+              platform='Cosmos'
+            /> */}
 
             {lpList.map((data: any, i: number) => {
               return (
@@ -243,6 +201,7 @@ export default function LiquidityPrograms(props: any) {
                         poolOn={1}
                         platform={item.platform}
                         poolIndex={item.poolIndex}
+                        lpContract={item.lpContract}
                         rTokenName={data.extraName}
                       />
                     );

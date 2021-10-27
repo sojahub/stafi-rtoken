@@ -36,7 +36,7 @@ let isMounted = false;
 export default function LiquidityOverview() {
   const history = useHistory();
   const location = useLocation();
-  const { lpPlatform, poolIndex } = useParams<any>();
+  const { lpPlatform, poolIndex, lpContract } = useParams<any>();
   const refreshInterval = lpPlatform === 'BSC' || lpPlatform === 'Polygon' ? 3000 : 15000;
 
   let lpName = null,
@@ -49,7 +49,6 @@ export default function LiquidityOverview() {
 
   const [showStaker, setShowStaker] = useState(false);
 
-  const [lpPrice, setLpPrice] = useState(1);
   const [overviewData, setOverviewData] = useState<any>(null);
   const [userMintToken, setUserMintToken] = useState<any>('--');
   const [userMintRatio, setUserMintRatio] = useState<any>('--');
@@ -92,7 +91,7 @@ export default function LiquidityOverview() {
 
   useEffect(() => {
     initData();
-  }, [ethAccount && ethAccount.address, unitPriceList, lpPrice, metaMaskNetworkId]);
+  }, [ethAccount && ethAccount.address, unitPriceList, metaMaskNetworkId]);
 
   useInterval(() => {
     initData();
@@ -152,7 +151,7 @@ export default function LiquidityOverview() {
           ethAccount.address,
           lpPlatform,
           poolIndex,
-          lpPrice,
+          lpContract,
           fisPrice && fisPrice.price,
         );
         // console.log('response:', response);
@@ -297,8 +296,8 @@ export default function LiquidityOverview() {
                   }}
                   onClick={() => {
                     metaMaskNetworkMatched &&
-                      config.addLiquidityLink(lpPlatform) &&
-                      window.open(config.addLiquidityLink(lpPlatform));
+                      config.addLiquidityLink(lpPlatform, rTokenName) &&
+                      window.open(config.addLiquidityLink(lpPlatform, rTokenName));
                   }}>
                   Add Liquidity
                 </div>

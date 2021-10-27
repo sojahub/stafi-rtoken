@@ -711,7 +711,7 @@ export default {
     }
     if (platform === 'BSC') {
       if (!isdev()) {
-        return '';
+        return '0x54896f542f044709807f0d79033934d661d39fc1';
       } else {
         return '0xac5d3b8e3321f9129b8a7509068270ec660702dc';
       }
@@ -725,16 +725,29 @@ export default {
     }
     return '';
   },
-  addLiquidityLink: (platform: any) => {
+  addLiquidityLink: (platform: any, rTokenName: string) => {
     if (platform === 'Ethereum') {
       return 'https://app.uniswap.org/#/add/v2/ETH/0x9559Aaa82d9649C7A7b220E7c461d2E74c9a3593?lng=en-US';
     }
     if (platform === 'BSC') {
+      if (rTokenName === 'rDOT') {
+        return 'https://pancakeswap.finance/add/0x1dab2a526c8ac1ddea86838a7b968626988d33de/0x7083609fce4d1d8dc0c979aab8c869ea2c873402';
+      }
+      if (rTokenName === 'rBNB') {
+        return 'https://pancakeswap.finance/add/0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c/0xf027e525d491ef6ffcc478555fbb3cfabb3406a6';
+      }
       return '';
     }
     if (platform === 'Polygon') {
       return 'https://quickswap.exchange/#/add/ETH/0x9f28e2455f9FFcFac9EBD6084853417362bc5dBb';
     }
     return '';
+  },
+  rETHLpContract: () => {
+    if (!isdev()) {
+      return '0xF9440930043eb3997fc70e1339dBb11F341de7A8';
+    } else {
+      return '0xF9440930043eb3997fc70e1339dBb11F341de7A8';
+    }
   },
 };

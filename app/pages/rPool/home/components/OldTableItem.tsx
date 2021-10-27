@@ -10,10 +10,10 @@ type Props = {
   liquidity: any;
   slippage: any;
   poolOn: 1 | 2 | 3;
-  stakeUrl?: string;
   history: any;
   liquidityUrl: string;
   wrapFiUrl: string;
+  platform: string;
 };
 
 export default function OldTableItem(props: Props) {
@@ -43,7 +43,7 @@ export default function OldTableItem(props: Props) {
         </div>
       </div>
 
-      <div className='col col5'>Ethereum</div>
+      <div className='col col5'>{props.platform}</div>
 
       <div className='col col2'>
         {props.apyList.length == 0 && '0.00%'}
@@ -71,7 +71,9 @@ export default function OldTableItem(props: Props) {
 
       <div className='col  col4'>${numberUtil.amount_format(props.liquidity)}</div>
 
-      <div className='col col5'>{props.slippage ? `${Number(props.slippage).toFixed(2)}%` : '//'}</div>
+      <div className='col col5'>
+        {props.slippage && !isNaN(Number(props.slippage)) ? `${Number(props.slippage).toFixed(2)}%` : '--'}
+      </div>
 
       <div className='col col2'>
         <GhostButton
