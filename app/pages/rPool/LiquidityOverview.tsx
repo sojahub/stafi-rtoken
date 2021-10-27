@@ -24,7 +24,7 @@ import { useInterval } from '@util/utils';
 import { Spin } from 'antd';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useHistory, useLocation, useParams } from 'react-router-dom';
+import { useHistory, useParams } from 'react-router-dom';
 import Page_FIS from '../rATOM/selectWallet_rFIS/index';
 import './LiquidityOverview.scss';
 import LiquidityStaker from './LiquidityStaker';
@@ -34,18 +34,20 @@ const rPoolServer = new RPoolServer();
 let isMounted = false;
 
 export default function LiquidityOverview() {
+  const dispatch = useDispatch();
   const history = useHistory();
-  const location = useLocation();
   const { lpPlatform, poolIndex, lpContract } = useParams<any>();
   const refreshInterval = lpPlatform === 'BSC' || lpPlatform === 'Polygon' ? 3000 : 15000;
 
   let lpName = null,
     rTokenName = null;
-  if (location.state) {
-    lpName = location.state.lpName;
-    rTokenName = location.state.rTokenName;
+  if (lpContract === config.rBNBBSCLpContract()) {
+    lpName = 'rBNB/BNB LP';
+    rTokenName = 'rBNB';
+  } else if (lpContract === config.rDOTBSCLpContract()) {
+    lpName = 'rDOT/DOT LP';
+    rTokenName = 'rDOT';
   }
-  const dispatch = useDispatch();
 
   const [showStaker, setShowStaker] = useState(false);
 
@@ -158,25 +160,25 @@ export default function LiquidityOverview() {
       }
       if (response && isMounted) {
         setOverviewData(response);
-        if(!isNaN(Number(response.userStakedAmount))){
+        if (!isNaN(Number(response.userStakedAmount))) {
           setUserMintToken(numberUtil.amount_format(numberUtil.handleAmountRoundToFixed(response.userStakedAmount, 2)));
         }
-        if(!isNaN(Number(response.myMintRatio))){
+        if (!isNaN(Number(response.myMintRatio))) {
           setUserMintRatio(response.myMintRatio);
         }
-        if(!isNaN(Number(response.myReward))){
+        if (!isNaN(Number(response.myReward))) {
           setUserMintReward(numberUtil.amount_format(response.myReward));
         }
-        if(!isNaN(Number(response.fisTotalReward))){
+        if (!isNaN(Number(response.fisTotalReward))) {
           setFisTotalReward(response.fisTotalReward);
         }
-        if(!isNaN(Number(response.fisClaimableReward))){
+        if (!isNaN(Number(response.fisClaimableReward))) {
           setFisClaimableReward(response.fisClaimableReward);
         }
-        if(!isNaN(Number(response.fisLockedReward))){
+        if (!isNaN(Number(response.fisLockedReward))) {
           setFisLockedReward(response.fisLockedReward);
         }
-        if(!isNaN(Number(response.claimIndexs))){
+        if (!isNaN(Number(response.claimIndexs))) {
           setClaimIndexs(response.claimIndexs);
         }
 

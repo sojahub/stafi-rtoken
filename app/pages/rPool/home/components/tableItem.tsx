@@ -17,8 +17,6 @@ type Props = {
   poolIndex: number;
   lpContract: string;
   history: any;
-  lpName: string;
-  rTokenName: string;
 };
 
 export default function Index(props: Props) {
@@ -87,10 +85,7 @@ export default function Index(props: Props) {
         <GhostButton
           className='liquidity_btn'
           onClick={() => {
-            history.push(`/rPool/lp/${props.platform}/${props.poolIndex}/${props.lpContract}`, {
-              lpName: props.lpName,
-              rTokenName: props.rTokenName,
-            });
+            history.push(`/rPool/lp/${props.platform}/${props.poolIndex}/${props.lpContract}`);
           }}>
           {' '}
           Earn

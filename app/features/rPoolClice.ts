@@ -101,7 +101,7 @@ const lpActs: Array<any> = [
       {
         platform: 'BSC',
         poolIndex: 0,
-        lpContract: '0xbdc8ee55d888784fb90b4d3d6632e19db72cd992',
+        lpContract: config.rBNBBSCLpContract(),
         stakeTokenAddress: '',
         apr: '--',
         toDate: '--',
@@ -126,7 +126,7 @@ const lpActs: Array<any> = [
       {
         platform: 'BSC',
         poolIndex: 1,
-        lpContract: '0xc1f6d716d5d3a6cc53ce9387b03cf2d777779502',
+        lpContract: config.rDOTBSCLpContract(),
         stakeTokenAddress: '',
         apr: '--',
         toDate: '--',

@@ -197,12 +197,10 @@ export default function LiquidityPrograms(props: any) {
                         apr={item.apr}
                         liquidity={item.liquidity}
                         slippage={item.slippage}
-                        lpName={data.name}
                         poolOn={1}
                         platform={item.platform}
                         poolIndex={item.poolIndex}
                         lpContract={item.lpContract}
-                        rTokenName={data.extraName}
                       />
                     );
                   })}
