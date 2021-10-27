@@ -169,12 +169,12 @@ export default function LiquidityOverview() {
           setVesting('--');
         } else if (response.vesting * 1 > 0) {
           if (Number(response.vesting) < 0.042) {
-            setVesting('0D');
+            setVesting('0');
           } else {
             setVesting(Math.ceil(response.vesting * 1) + 'D');
           }
         } else {
-          setVesting('0D');
+          setVesting('0');
         }
       }
     }
