@@ -169,7 +169,7 @@ export default class Index {
       }
       const poolStakeTokenSupply = await tokenContract.methods.balanceOf(contractAddress).call();
       let stakeTokenSupply = web3.utils.fromWei(poolStakeTokenSupply, 'ether');
-      console.log('sdfsdfsd', rewardPerBlock, totalBlocks, fisPrice, stakeTokenPrice, stakeTokenSupply);
+      // console.log('sdfsdfsd', rewardPerBlock, totalBlocks, fisPrice, stakeTokenPrice, stakeTokenSupply);
       // Temp fix backend missing lpPrice
       if (Number(stakeTokenPrice) === 0) {
         stakeTokenPrice = 1;
@@ -308,7 +308,6 @@ export default class Index {
       }
 
       const actJson = act.toJSON();
-
       response.vesting = (actJson.locked_blocks * 6) / 60 / 60 / 24;
 
       let arr2 = [];
@@ -418,6 +417,7 @@ export default class Index {
       fisClaimableReward: '--',
       fisLockedReward: '--',
       claimIndexs: [],
+      vesting: '--',
     };
     try {
       const stafiApi = await stafiServer.createStafiApi();
@@ -429,6 +429,8 @@ export default class Index {
       }
 
       const actJson = act.toJSON();
+      response.vesting = (actJson.locked_blocks * 6) / 60 / 60 / 24;
+      
       let arr2 = [];
       arr2.push(ethAddress);
       arr2.push(Number(cycle));

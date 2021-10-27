@@ -168,9 +168,13 @@ export default function LiquidityOverview() {
         if (isNaN(response.vesting)) {
           setVesting('--');
         } else if (response.vesting * 1 > 0) {
-          setVesting(Math.ceil(response.vesting * 1) + 'D');
+          if (Number(response.vesting) < 0.042) {
+            setVesting('0D');
+          } else {
+            setVesting(Math.ceil(response.vesting * 1) + 'D');
+          }
         } else {
-          setVesting('0');
+          setVesting('0D');
         }
       }
     }
