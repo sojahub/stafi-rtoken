@@ -30,7 +30,6 @@ import {
 } from './globalClice';
 import { add_Notice, findUuid, noticeStatus, noticesubType, noticeType } from './noticeClice';
 
-
 const commonClice = new CommonClice();
 const feeStationServer = new FeeStationServer();
 
@@ -477,17 +476,19 @@ export const swapKsmForFis =
       }),
     );
 
-    const res = await feeStationServer.postBundleAddress({
-      stafiAddress,
-      symbol: 'KSM',
-      poolAddress,
-      signature,
-      pubKey,
-    });
     let bundleAddressId: string;
-    if (res.status === '80000' && res.data) {
-      bundleAddressId = res.data.bundleAddressId;
-    }
+    try {
+      const res = await feeStationServer.postBundleAddress({
+        stafiAddress,
+        symbol: 'KSM',
+        poolAddress,
+        signature,
+        pubKey,
+      });
+      if (res.status === '80000' && res.data) {
+        bundleAddressId = res.data.bundleAddressId;
+      }
+    } catch (err: any) {}
 
     if (!bundleAddressId) {
       dispatch(setLoading(false));
@@ -539,7 +540,7 @@ export const swapKsmForFis =
             pubKey,
             inAmount: amount.toString(),
             minOutAmount: minOutFisAmount.toString(),
-            bundleAddressId
+            bundleAddressId,
           };
           dispatch(add_KSM_feeStation_Notice(notice_uuid, amountparam, noticeStatus.Pending, noticeSubData));
 
@@ -591,7 +592,7 @@ export const swapKsmForFis =
                   pubKey,
                   inAmount: amount.toString(),
                   minOutAmount: minOutFisAmount.toString(),
-                  bundleAddressId
+                  bundleAddressId,
                 };
                 dispatch(uploadSwapInfo(params));
                 asInBlock && cb && cb({ ...params, noticeUuid: notice_uuid });

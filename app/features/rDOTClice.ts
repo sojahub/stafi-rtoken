@@ -483,17 +483,19 @@ export const swapDotForFis =
       }),
     );
 
-    const res = await feeStationServer.postBundleAddress({
-      stafiAddress,
-      symbol: 'DOT',
-      poolAddress,
-      signature,
-      pubKey,
-    });
     let bundleAddressId: string;
-    if (res.status === '80000' && res.data) {
-      bundleAddressId = res.data.bundleAddressId;
-    }
+    try {
+      const res = await feeStationServer.postBundleAddress({
+        stafiAddress,
+        symbol: 'DOT',
+        poolAddress,
+        signature,
+        pubKey,
+      });
+      if (res.status === '80000' && res.data) {
+        bundleAddressId = res.data.bundleAddressId;
+      }
+    } catch (err: any) {}
 
     if (!bundleAddressId) {
       dispatch(setLoading(false));

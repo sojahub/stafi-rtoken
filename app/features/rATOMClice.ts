@@ -436,17 +436,19 @@ export const swapAtomForFis =
       const fiskeyringInstance = keyring.init(Symbol.Fis);
       const stafiAddress = u8aToHex(fiskeyringInstance.decodeAddress(getState().FISModule.fisAccount.address));
 
-      const res = await feeStationServer.postBundleAddress({
-        stafiAddress,
-        symbol: 'ATOM',
-        poolAddress,
-        signature: config.rAtomAignature,
-        pubKey: getState().rATOMModule.atomAccount && getState().rATOMModule.atomAccount.pubkey,
-      });
       let bundleAddressId: string;
-      if (res.status === '80000' && res.data) {
-        bundleAddressId = res.data.bundleAddressId;
-      }
+      try {
+        const res = await feeStationServer.postBundleAddress({
+          stafiAddress,
+          symbol: 'ATOM',
+          poolAddress,
+          signature: config.rAtomAignature,
+          pubKey: getState().rATOMModule.atomAccount && getState().rATOMModule.atomAccount.pubkey,
+        });
+        if (res.status === '80000' && res.data) {
+          bundleAddressId = res.data.bundleAddressId;
+        }
+      } catch (error: any) {}
 
       if (!bundleAddressId) {
         dispatch(setLoading(false));
@@ -491,7 +493,7 @@ export const swapAtomForFis =
               minOutAmount: minOutFisAmount.toString(),
               stafiAddress,
               poolAddress,
-              bundleAddressId
+              bundleAddressId,
             }),
           );
 
@@ -505,7 +507,7 @@ export const swapAtomForFis =
             pubKey: getState().rATOMModule.atomAccount && getState().rATOMModule.atomAccount.pubkey,
             inAmount: amount.toString(),
             minOutAmount: minOutFisAmount.toString(),
-            bundleAddressId
+            bundleAddressId,
           };
           dispatch(uploadSwapInfo(params));
           blockHash && cb && cb({ ...params, noticeUuid: notice_uuid });

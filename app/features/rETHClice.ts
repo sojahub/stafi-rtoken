@@ -332,7 +332,7 @@ export const monitoring_Method = (): AppThunk => (dispatch, getState) => {
           // message.warning('Please connect to Goerli Test Network!');
           dispatch(setEthAccount(null));
         }
-      } 
+      }
       // else if (ethereum.chainId != '0x1') {
       //   // message.warning('Please connect to Ethereum Main Network!');
 
@@ -580,16 +580,19 @@ export const swapEthForFis =
         }),
       );
 
-      const res = await feeStationServer.postBundleAddress({
-        stafiAddress,
-        symbol: 'ETH',
-        poolAddress,
-        signature,
-        pubKey: address,
-      });
       let bundleAddressId: string;
-      if (res.status === '80000' && res.data) {
-        bundleAddressId = res.data.bundleAddressId;
+      try {
+        const res = await feeStationServer.postBundleAddress({
+          stafiAddress,
+          symbol: 'ETH',
+          poolAddress,
+          signature,
+          pubKey: address,
+        });
+        if (res.status === '80000' && res.data) {
+          bundleAddressId = res.data.bundleAddressId;
+        }
+      } catch (err: any) {
       }
 
       if (!bundleAddressId) {
@@ -648,7 +651,7 @@ export const swapEthForFis =
           minOutAmount: minOutFisAmount.toString(),
           stafiAddress,
           poolAddress,
-          bundleAddressId
+          bundleAddressId,
         }),
       );
 
@@ -690,7 +693,7 @@ export const swapEthForFis =
           minOutAmount: minOutFisAmount.toString(),
           stafiAddress,
           poolAddress,
-          bundleAddressId
+          bundleAddressId,
         }),
       );
 
@@ -705,7 +708,7 @@ export const swapEthForFis =
         pubKey: address,
         inAmount: amount.toString(),
         minOutAmount: minOutFisAmount.toString(),
-        bundleAddressId
+        bundleAddressId,
       };
       dispatch(uploadSwapInfo(params));
       blockHash && cb && cb({ ...params, noticeUuid: notice_uuid });
