@@ -345,7 +345,7 @@ export default class Index {
                   if (nowBlock < finalBlock) {
                     let duBlocks = nowBlock - claimInfoJson.latest_claimed_block;
                     let lockedDuBlocks = finalBlock - claimInfoJson.latest_claimed_block;
-                    shouldClaimAmount = (leftClaimAmount * duBlocks) / lockedDuBlocks;
+                    shouldClaimAmount = leftClaimAmount * (duBlocks / lockedDuBlocks);
                   } else {
                     shouldClaimAmount = leftClaimAmount;
                   }
@@ -470,7 +470,7 @@ export default class Index {
                   if (nowBlock < finalBlock) {
                     let duBlocks = nowBlock - claimInfoJson.latest_claimed_block;
                     let lockedDuBlocks = finalBlock - claimInfoJson.latest_claimed_block;
-                    shouldClaimAmount = (leftClaimAmount * duBlocks) / lockedDuBlocks;
+                    shouldClaimAmount = leftClaimAmount * (duBlocks / lockedDuBlocks);
                   } else {
                     shouldClaimAmount = leftClaimAmount;
                   }
