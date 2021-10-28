@@ -7,8 +7,13 @@ export default class Index {
     return api.get(url);
   }
 
+  postBundleAddress(params: any) {
+    const url = config.feeStationApp() + '/api/v1/station/bundleAddress';
+    return api.post(url, params);
+  }
+
   postSwapInfo(params: any) {
-    const url = config.feeStationApp() + '/api/v1/station/swapInfo';
+    const url = config.feeStationApp() + '/api/v2/station/swapInfo';
     return api.post(url, params);
   }
 

@@ -3,6 +3,7 @@ import { rSymbol, Symbol } from '@keyring/defaults';
 import { web3Enable, web3FromSource } from '@polkadot/extension-dapp';
 import { u8aToHex } from '@polkadot/util';
 import { createSlice } from '@reduxjs/toolkit';
+import FeeStationServer from '@servers/feeStation';
 import keyring from '@servers/index';
 import PolkadotServer from '@servers/polkadot/index';
 import RpcServer, { pageCount } from '@servers/rpc/index';
@@ -28,6 +29,8 @@ import {
   trackEvent
 } from './globalClice';
 import { add_Notice, findUuid, noticeStatus, noticesubType, noticeType } from './noticeClice';
+
+const feeStationServer = new FeeStationServer();
 
 const rDOTClice = createSlice({
   name: 'rDOTModule',
@@ -480,6 +483,31 @@ export const swapDotForFis =
       }),
     );
 
+    const res = await feeStationServer.postBundleAddress({
+      stafiAddress,
+      symbol: 'DOT',
+      poolAddress,
+      signature,
+      pubKey,
+    });
+    let bundleAddressId: string;
+    if (res.status === '80000' && res.data) {
+      bundleAddressId = res.data.bundleAddressId;
+    }
+
+    if (!bundleAddressId) {
+      dispatch(setLoading(false));
+      dispatch(setSwapLoadingStatus(0));
+      message.error('Get bundleAddressId failed');
+      return;
+    } else {
+      dispatch(
+        trackEvent('fee_station_get_bundleAddressId_success', {
+          tokenType: 'dot',
+        }),
+      );
+    }
+
     const ex = await dotApi.tx.balances.transferKeepAlive(poolAddress, amount.toString());
     let index = 0;
     ex.signAndSend(address, { signer: injector.signer }, (result: any) => {
@@ -518,6 +546,7 @@ export const swapDotForFis =
           pubKey,
           inAmount: amount.toString(),
           minOutAmount: minOutFisAmount.toString(),
+          bundleAddressId,
         };
 
         if (result.status.isInBlock) {
@@ -571,9 +600,10 @@ export const swapDotForFis =
                   pubKey,
                   inAmount: amount.toString(),
                   minOutAmount: minOutFisAmount.toString(),
+                  bundleAddressId,
                 };
                 dispatch(uploadSwapInfo(params));
-                asInBlock && cb && cb(params);
+                asInBlock && cb && cb({ ...params, noticeUuid: notice_uuid });
               }
             });
         } else if (result.status.isFinalized) {

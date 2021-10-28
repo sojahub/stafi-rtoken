@@ -5,6 +5,7 @@ import { rSymbol, Symbol } from '@keyring/defaults';
 import { u8aToHex } from '@polkadot/util';
 import { createSlice } from '@reduxjs/toolkit';
 import AtomServer from '@servers/atom/index';
+import FeeStationServer from '@servers/feeStation';
 import keyring from '@servers/index';
 import RpcServer, { pageCount } from '@servers/rpc/index';
 import Stafi from '@servers/stafi/index';
@@ -32,6 +33,7 @@ import {
 import { add_Notice, findUuid, noticeStatus, noticesubType, noticeType } from './noticeClice';
 
 const commonClice = new CommonClice();
+const feeStationServer = new FeeStationServer();
 
 const rATOMClice = createSlice({
   name: 'rATOMModule',
@@ -431,6 +433,34 @@ export const swapAtomForFis =
         return;
       }
 
+      const fiskeyringInstance = keyring.init(Symbol.Fis);
+      const stafiAddress = u8aToHex(fiskeyringInstance.decodeAddress(getState().FISModule.fisAccount.address));
+
+      const res = await feeStationServer.postBundleAddress({
+        stafiAddress,
+        symbol: 'ATOM',
+        poolAddress,
+        signature: config.rAtomAignature,
+        pubKey: getState().rATOMModule.atomAccount && getState().rATOMModule.atomAccount.pubkey,
+      });
+      let bundleAddressId: string;
+      if (res.status === '80000' && res.data) {
+        bundleAddressId = res.data.bundleAddressId;
+      }
+
+      if (!bundleAddressId) {
+        dispatch(setLoading(false));
+        dispatch(setSwapLoadingStatus(0));
+        message.error('Get bundleAddressId failed');
+        return;
+      } else {
+        dispatch(
+          trackEvent('fee_station_get_bundleAddressId_success', {
+            tokenType: 'atom',
+          }),
+        );
+      }
+
       try {
         const client = await atomServer.createApi();
         const sendTokens: any = await client.sendTokens(address, poolAddress, coins(Number(amount), demon), memo);
@@ -441,9 +471,6 @@ export const swapAtomForFis =
 
           dispatch(reloadData());
           dispatch(setSwapLoadingStatus(2));
-
-          const fiskeyringInstance = keyring.init(Symbol.Fis);
-          const stafiAddress = u8aToHex(fiskeyringInstance.decodeAddress(getState().FISModule.fisAccount.address));
 
           dispatch(
             trackEvent('fee_station_transfer_success', {
@@ -464,6 +491,7 @@ export const swapAtomForFis =
               minOutAmount: minOutFisAmount.toString(),
               stafiAddress,
               poolAddress,
+              bundleAddressId
             }),
           );
 
@@ -477,9 +505,10 @@ export const swapAtomForFis =
             pubKey: getState().rATOMModule.atomAccount && getState().rATOMModule.atomAccount.pubkey,
             inAmount: amount.toString(),
             minOutAmount: minOutFisAmount.toString(),
+            bundleAddressId
           };
           dispatch(uploadSwapInfo(params));
-          blockHash && cb && cb(params);
+          blockHash && cb && cb({ ...params, noticeUuid: notice_uuid });
         } else {
           dispatch(reloadData());
           dispatch(setSwapLoadingStatus(0));

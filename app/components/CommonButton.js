@@ -17,7 +17,7 @@ export default function CommonButton(props) {
       right={props.mr}
       disabled={props.disabled}
       onClick={handleClick}>
-      <Text color={'#23292F'} size={'18px'} sameLineHeight bold>
+      <Text color={'#23292F'} size={'18px'} sameLineHeight bold clickable={!props.disabled}>
         {props.text}
       </Text>
     </Button>

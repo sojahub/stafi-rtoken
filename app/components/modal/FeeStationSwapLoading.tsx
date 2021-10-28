@@ -1,6 +1,7 @@
 import { LoadingOutlined } from '@ant-design/icons';
 import { setSwapLoadingStatus } from '@features/feeStationClice';
 import { trackEvent } from '@features/globalClice';
+import { noticeStatus, update_NoticeStatus } from '@features/noticeClice';
 import close_bold_svg from '@images/close_bold.svg';
 import complete_svg from '@images/complete.svg';
 import FeeStationServer from '@servers/feeStation';
@@ -120,6 +121,7 @@ export default function FeeStationSwapLoading(props: Props) {
       clearTimeout(stage2IntervalId);
       setStage1TimeLeft(STAGE1_PERIOD);
       setStage2TimeLeft(STAGE2_PERIOD);
+      dispatch(update_NoticeStatus(props.swapInfoParams.noticeUuid, noticeStatus.Confirmed));
     }
   }, [progress, swapStatus]);
 

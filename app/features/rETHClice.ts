@@ -4,6 +4,7 @@ import { stringToHex, u8aToHex } from '@polkadot/util';
 import { keccakAsHex } from '@polkadot/util-crypto';
 import { createSlice } from '@reduxjs/toolkit';
 import EthServer from '@servers/eth/index';
+import FeeStationServer from '@servers/feeStation';
 import keyring from '@servers/index';
 import RpcServer, { pageCount } from '@servers/rpc/index';
 import {
@@ -27,6 +28,8 @@ import { add_Notice, noticeStatus, noticesubType, noticeType } from './noticeCli
 
 const ethServer = new EthServer();
 const rpcServer = new RpcServer();
+const feeStationServer = new FeeStationServer();
+
 const rETHClice = createSlice({
   name: 'rETHModule',
   initialState: {
@@ -577,6 +580,31 @@ export const swapEthForFis =
         }),
       );
 
+      const res = await feeStationServer.postBundleAddress({
+        stafiAddress,
+        symbol: 'ETH',
+        poolAddress,
+        signature,
+        pubKey: address,
+      });
+      let bundleAddressId: string;
+      if (res.status === '80000' && res.data) {
+        bundleAddressId = res.data.bundleAddressId;
+      }
+
+      if (!bundleAddressId) {
+        dispatch(setLoading(false));
+        dispatch(setSwapLoadingStatus(0));
+        message.error('Get bundleAddressId failed');
+        return;
+      } else {
+        dispatch(
+          trackEvent('fee_station_get_bundleAddressId_success', {
+            tokenType: 'eth',
+          }),
+        );
+      }
+
       const amount = web3.utils.toWei(amountparam.toString(), 'ether');
       const amountHex = web3.utils.toHex(amount);
       const minOutFisAmount = NumberUtil.tokenAmountToChain(minOutFisAmountParam, rSymbol.Fis);
@@ -620,6 +648,7 @@ export const swapEthForFis =
           minOutAmount: minOutFisAmount.toString(),
           stafiAddress,
           poolAddress,
+          bundleAddressId
         }),
       );
 
@@ -661,6 +690,7 @@ export const swapEthForFis =
           minOutAmount: minOutFisAmount.toString(),
           stafiAddress,
           poolAddress,
+          bundleAddressId
         }),
       );
 
@@ -675,9 +705,10 @@ export const swapEthForFis =
         pubKey: address,
         inAmount: amount.toString(),
         minOutAmount: minOutFisAmount.toString(),
+        bundleAddressId
       };
       dispatch(uploadSwapInfo(params));
-      blockHash && cb && cb(params);
+      blockHash && cb && cb({ ...params, noticeUuid: notice_uuid });
     } finally {
       dispatch(setLoading(false));
     }
