@@ -595,7 +595,7 @@ export const swapEthForFis =
       if (!bundleAddressId) {
         dispatch(setLoading(false));
         dispatch(setSwapLoadingStatus(0));
-        message.error('Get bundleAddressId failed');
+        message.error('The service is temporarily unavailable, please try again later');
         return;
       } else {
         dispatch(
