@@ -699,12 +699,33 @@ export const check_swap_status = (): AppThunk => async (dispatch, getState) => {
           );
         } else {
           // console.log('xcvsd', item.subData);
-          if (moment().isBefore(moment(item.dateTime, formatStr).add(14, 'd'))) {
+          if (moment().isBefore(moment(item.dateTime, formatStr).add(3, 'd'))) {
             reHandleFeeStation(item.subData);
+          } else {
+            updateNoticeModal({
+              data: { ...item, status: noticeStatus.Error },
+              showNew: false,
+            });
           }
         }
       });
     }
+
+    if (
+      item.type == noticeType.Staker &&
+      item.subType == noticesubType.DexSwap &&
+      item.status === noticeStatus.Pending
+    ) {
+      if (moment().isAfter(moment(item.dateTime, formatStr).add((config.swapWaitingTime() * 3) / 2, 's'))) {
+        dispatch(
+          updateNoticeModal({
+            data: { ...item, status: noticeStatus.Confirmed },
+            showNew: false,
+          }),
+        );
+      }
+    }
+
   });
 };
 
