@@ -313,12 +313,15 @@ export default function RDEXHome() {
 
   useEffect(() => {
     updateChartData();
-  }, [chartTimeUnit]);
+  }, [chartTimeUnit, selectedToken && selectedToken.type]);
 
   const updateChartData = () => {
     const cycle = chartTimeUnit === 'd' ? 1 : chartTimeUnit === 'w' ? 2 : 3;
-    dispatch(fis_fetchRTokenStatDetail(cycle));
-    dispatch(atomFetchRTokenStatDetail(cycle));
+    if (selectedToken && selectedToken.type === 'ratom') {
+      dispatch(atomFetchRTokenStatDetail(cycle));
+    } else {
+      dispatch(fis_fetchRTokenStatDetail(cycle));
+    }
   };
 
   const getTokenName = () => {
