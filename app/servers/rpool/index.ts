@@ -339,16 +339,22 @@ export default class Index {
                 const lastHeader = await stafiApi.rpc.chain.getHeader();
                 const nowBlock = lastHeader && lastHeader.toJSON() && lastHeader.toJSON().number;
 
-                let shouldClaimAmount = claimInfoJson.total_reward - claimInfoJson.total_claimed;
-                if (nowBlock < finalBlock) {
-                  let duBlocks = nowBlock - claimInfoJson.latest_claimed_block;
-                  shouldClaimAmount = (claimInfoJson.total_reward * duBlocks) / actJson.locked_blocks;
+                let shouldClaimAmount = 0;
+                let leftClaimAmount = claimInfoJson.total_reward - claimInfoJson.total_claimed;
+                if (leftClaimAmount > 0) {
+                  if (nowBlock < finalBlock) {
+                    let duBlocks = nowBlock - claimInfoJson.latest_claimed_block;
+                    let lockedDuBlocks = finalBlock - claimInfoJson.latest_claimed_block;
+                    shouldClaimAmount = (leftClaimAmount * duBlocks) / lockedDuBlocks;
+                  } else {
+                    shouldClaimAmount = leftClaimAmount;
+                  }
                 }
-
                 if (Number(shouldClaimAmount) > Number(0)) {
                   claimIndexs.push(i);
                   fisClaimableReward += shouldClaimAmount;
                 }
+
                 fisClaimedReward += claimInfoJson.total_claimed;
                 userMint += BigInt(BigInt(claimInfoJson.mint_amount).toString(10));
               }
@@ -430,7 +436,7 @@ export default class Index {
 
       const actJson = act.toJSON();
       response.vesting = (actJson.locked_blocks * 6) / 60 / 60 / 24;
-      
+
       let arr2 = [];
       arr2.push(ethAddress);
       arr2.push(Number(cycle));
@@ -458,16 +464,22 @@ export default class Index {
                 const lastHeader = await stafiApi.rpc.chain.getHeader();
                 const nowBlock = lastHeader && lastHeader.toJSON() && lastHeader.toJSON().number;
 
-                let shouldClaimAmount = claimInfoJson.total_reward - claimInfoJson.total_claimed;
-                if (nowBlock < finalBlock) {
-                  let duBlocks = nowBlock - claimInfoJson.latest_claimed_block;
-                  shouldClaimAmount = (claimInfoJson.total_reward * duBlocks) / actJson.locked_blocks;
+                let shouldClaimAmount = 0;
+                let leftClaimAmount = claimInfoJson.total_reward - claimInfoJson.total_claimed;
+                if (leftClaimAmount > 0) {
+                  if (nowBlock < finalBlock) {
+                    let duBlocks = nowBlock - claimInfoJson.latest_claimed_block;
+                    let lockedDuBlocks = finalBlock - claimInfoJson.latest_claimed_block;
+                    shouldClaimAmount = (leftClaimAmount * duBlocks) / lockedDuBlocks;
+                  } else {
+                    shouldClaimAmount = leftClaimAmount;
+                  }
                 }
-
                 if (Number(shouldClaimAmount) > Number(0)) {
                   claimIndexs.push(i);
                   fisClaimableReward += shouldClaimAmount;
                 }
+
                 fisClaimedReward += claimInfoJson.total_claimed;
                 userMint += parseInt(claimInfoJson.mint_amount, 16);
               }
