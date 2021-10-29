@@ -394,7 +394,7 @@ export default function RDEXHome() {
         return;
       }
       symbol = rSymbol.Dot;
-      setViewTxUrl(config.atomScanAddressUrl(address));
+      setViewTxUrl(config.dotScanAddressUrl(address));
     } else if (selectedToken.type === 'rbnb') {
       if (!bnb_checkAddress(address)) {
         message.error('Address input error');
