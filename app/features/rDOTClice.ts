@@ -57,6 +57,7 @@ const rDOTClice = createSlice({
     rewardList: [],
     rewardList_lastdata: null,
     liquidityRate: '--',
+    swapFee: '--',
   },
   reducers: {
     setDotAccounts(state, { payload }) {
@@ -145,6 +146,9 @@ const rDOTClice = createSlice({
     setLiquidityRate(state, { payload }) {
       state.liquidityRate = payload;
     },
+    setSwapFee(state, { payload }) {
+      state.swapFee = payload;
+    },
   },
 });
 const polkadotServer = new PolkadotServer();
@@ -171,6 +175,7 @@ export const {
   setRewardList,
   setRewardList_lastdata,
   setLiquidityRate,
+  setSwapFee,
 } = rDOTClice.actions;
 
 export const reloadData = (): AppThunk => async (dispatch, getState) => {
@@ -1070,6 +1075,11 @@ export const rTokenRate = (): AppThunk => async (dispatch, getState) => {
 export const rLiquidityRate = (): AppThunk => async (dispatch, getState) => {
   const rate = await commonClice.rLiquidityRate(rSymbol.Dot);
   dispatch(setLiquidityRate(rate));
+};
+
+export const rSwapFee = (): AppThunk => async (dispatch, getState) => {
+  const fee = await commonClice.rSwapFee(rSymbol.Dot);
+  dispatch(setSwapFee(fee));
 };
 
 const add_DOT_stake_Notice =

@@ -71,9 +71,11 @@ export default function Index(props: Props) {
               props.data.subData
             ) {
               const { address, tokenSymbol } = props.data.subData;
-              let viewTxUrl;
+              let viewTxUrl: string;
               if (tokenSymbol === rSymbol.Atom) {
                 viewTxUrl = config.atomScanAddressUrl(address);
+              } else if (tokenSymbol === rSymbol.Dot) {
+                viewTxUrl = config.dotScanAddressUrl(address);
               }
               viewTxUrl && window.open(viewTxUrl);
               props.hideNoticePopover && props.hideNoticePopover();

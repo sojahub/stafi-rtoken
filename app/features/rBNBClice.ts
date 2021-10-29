@@ -37,6 +37,8 @@ const rBNBClice = createSlice({
     poolLimit: 0,
     transferrableAmountShow: '--',
     ratio: '--',
+    liquidityRate: '--',
+    swapFee: '--',
     ratioShow: '--',
     tokenAmount: '--',
     processParameter: null,
@@ -58,6 +60,12 @@ const rBNBClice = createSlice({
     },
     setRatio(state, { payload }) {
       state.ratio = payload;
+    },
+    setLiquidityRate(state, { payload }) {
+      state.liquidityRate = payload;
+    },
+    setSwapFee(state, { payload }) {
+      state.swapFee = payload;
     },
     setRatioShow(state, { payload }) {
       state.ratioShow = payload;
@@ -126,6 +134,8 @@ const ethServer = new EthServer();
 export const {
   setTransferrableAmountShow,
   setRatio,
+  setLiquidityRate,
+  setSwapFee,
   setTokenAmount,
   setProcessParameter,
   setStakeHash,
@@ -928,6 +938,16 @@ export const getReward =
 export const rTokenRate = (): AppThunk => async (dispatch, getState) => {
   const ratio = await commonClice.rTokenRate(rSymbol.Bnb);
   dispatch(setRatio(ratio));
+};
+
+export const rLiquidityRate = (): AppThunk => async (dispatch, getState) => {
+  const rate = await commonClice.rLiquidityRate(rSymbol.Bnb);
+  dispatch(setLiquidityRate(rate));
+};
+
+export const rSwapFee = (): AppThunk => async (dispatch, getState) => {
+  const fee = await commonClice.rSwapFee(rSymbol.Bnb);
+  dispatch(setSwapFee(fee));
 };
 
 const add_Matic_unbond_Notice =

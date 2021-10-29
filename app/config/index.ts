@@ -570,6 +570,9 @@ export default {
   atomScanAddressUrl: (address: any) => {
     return `https://www.mintscan.io/cosmos/account/${address}`;
   },
+  dotScanAddressUrl: (address: any) => {
+    return `https://polkadot.subscan.io/account/${address}?tab=transfer`;
+  },
   stafiScanUrl: (address: any) => {
     return `https://stafi.subscan.io/account/${address}?tab=transfer`;
   },

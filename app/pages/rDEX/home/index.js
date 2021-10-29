@@ -18,19 +18,29 @@ import {
   rSwapFee as atom_rSwapFee,
   rTokenRate as atom_rTokenRate
 } from '@features/rATOMClice';
-// import {
-//   query_rBalances_account as dot_query_rBalances_account,
-//   rLiquidityRate as dot_rLiquidityRate,
-//   rTokenRate as dot_rTokenRate
-// } from '@features/rDOTClice';
+import {
+  checkAddress as bnb_checkAddress,
+  query_rBalances_account as bnb_query_rBalances_account,
+  rLiquidityRate as bnb_rLiquidityRate,
+  rSwapFee as bnb_rSwapFee,
+  rTokenRate as bnb_rTokenRate
+} from '@features/rBNBClice';
+import {
+  checkAddress as dot_checkAddress,
+  query_rBalances_account as dot_query_rBalances_account,
+  rLiquidityRate as dot_rLiquidityRate,
+  rSwapFee as dot_rSwapFee,
+  rTokenRate as dot_rTokenRate
+} from '@features/rDOTClice';
 // import { query_rBalances_account, rTokenRate as ksm_rTokenRate } from '@features/rKSMClice';
 import arrowDownIcon from '@images/arrow_down.svg';
 import doubt from '@images/doubt.svg';
 import left_arrow from '@images/left_arrow.svg';
 import rasset_ratom_svg from '@images/r_atom.svg';
-// import rasset_rdot_svg from '@images/r_dot.svg';
 // import rasset_rfis_svg from '@images/r_fis.svg';
 // import rasset_rksm_svg from '@images/r_ksm.svg';
+import rasset_rbnb_svg from '@images/r_bnb.svg';
+import rasset_rdot_svg from '@images/r_dot.svg';
 import settingIcon from '@images/setting.svg';
 import { rSymbol } from '@keyring/defaults';
 import Stafi from '@servers/stafi';
@@ -40,11 +50,11 @@ import TypeSelectorInput from '@shared/components/input/TypeSelectorInput';
 import Modal from '@shared/components/modal/connectModal';
 import numberUtil from '@util/numberUtil';
 import { message, Tooltip } from 'antd';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
 import Page_FIS from '../../rATOM/selectWallet_rFIS/index';
-import SwapRateChart from './SwapRateChart';
+import DexTokenItem from './DexTokenItem';
 
 const stafiServer = new Stafi();
 
@@ -55,23 +65,29 @@ const allTokenDatas = [
   //   content: '--',
   //   type: 'rfis',
   // },
-  // {
-  //   icon: rasset_rdot_svg,
-  //   title: 'rDOT',
-  //   content: '--',
-  //   type: 'rdot',
-  // },
-  // {
-  //   icon: rasset_rksm_svg,
-  //   title: 'rKSM',
-  //   content: '--',
-  //   type: 'rksm',
-  // },
   {
     icon: rasset_ratom_svg,
     title: 'rATOM',
-    content: '--',
     type: 'ratom',
+    content: '--',
+    ratio: '--',
+    totalRate: '--',
+  },
+  {
+    icon: rasset_rbnb_svg,
+    title: 'rBNB',
+    type: 'rbnb',
+    content: '--',
+    ratio: '--',
+    totalRate: '--',
+  },
+  {
+    icon: rasset_rdot_svg,
+    title: 'rDOT',
+    type: 'rdot',
+    content: '--',
+    ratio: '--',
+    totalRate: '--',
   },
   // {
   //   icon: rasset_rsol_svg,
@@ -95,7 +111,7 @@ export default function RDEXHome() {
   const [rTokenAmount, setRTokenAmount] = useState();
   const [receiveTokenAmount, setReceiveTokenAmount] = useState();
   const [minReceiveTokenAmount, setMinReceiveTokenAmount] = useState('--');
-  const [tokenTypes, setTokenTypes] = useState(allTokenDatas);
+  const [tokenTypes, setTokenTypes] = useState([]);
   const [selectedToken, setSelectedToken] = useState();
   const [currentSwapFee, setCurrentSwapFee] = useState('--');
   const [currentRatio, setCurrentRatio] = useState('--');
@@ -120,8 +136,7 @@ export default function RDEXHome() {
     rKSMTokenAmount,
     rDOTTokenAmount,
     rATOMTokenAmount,
-    // rSOLTokenAmount,
-    // rMATICTokenAmount,
+    rBNBTokenAmount,
   } = useSelector((state) => {
     return {
       fisAccount: state.FISModule.fisAccount,
@@ -130,54 +145,33 @@ export default function RDEXHome() {
       rKSMTokenAmount: numberUtil.handleFisAmountToFixed(state.rKSMModule.tokenAmount),
       rDOTTokenAmount: numberUtil.handleFisAmountToFixed(state.rDOTModule.tokenAmount),
       rATOMTokenAmount: numberUtil.handleFisAmountToFixed(state.rATOMModule.tokenAmount),
-      // rSOLTokenAmount: numberUtil.handleFisAmountToFixed(state.rSOLModule.tokenAmount),
-      // rMATICTokenAmount: numberUtil.handleFisAmountToFixed(state.rMATICModule.tokenAmount),
+      rBNBTokenAmount: numberUtil.handleFisAmountToFixed(state.rBNBModule.tokenAmount),
     };
   });
 
   const {
-    rFISRatio,
-    rFISStatDetailData,
+    rDOTSwapFee,
     rDOTRatio,
     rDOTLiquidityRate,
     rATOMSwapFee,
     rATOMRatio,
     rATOMLiquidityRate,
-    rATOMStatDetailData,
+    rBNBSwapFee,
+    rBNBRatio,
+    rBNBLiquidityRate,
   } = useSelector((state) => {
     return {
-      rFISRatio: state.FISModule.ratio,
-      rFISStatDetailData: state.FISModule.rTokenStatDetail,
+      rDOTSwapFee: state.rDOTModule.swapFee,
       rDOTRatio: state.rDOTModule.ratio,
       rDOTLiquidityRate: state.rDOTModule.liquidityRate,
       rATOMSwapFee: state.rATOMModule.swapFee,
       rATOMRatio: state.rATOMModule.ratio,
       rATOMLiquidityRate: state.rATOMModule.liquidityRate,
-      rATOMStatDetailData: state.rATOMModule.rTokenStatDetail,
+      rBNBSwapFee: state.rBNBModule.swapFee,
+      rBNBRatio: state.rBNBModule.ratio,
+      rBNBLiquidityRate: state.rBNBModule.liquidityRate,
     };
   });
-
-  const { chatTitle, chatRatio, chatData } = useMemo(() => {
-    if (!selectedToken) {
-      return {
-        chatTitle: 'rFIS / FIS',
-        chatRatio: rFISRatio,
-        chatData: rFISStatDetailData,
-      };
-    }
-    if (selectedToken.type === 'ratom') {
-      return {
-        chatTitle: 'rATOM / ATOM',
-        chatRatio: rATOMRatio,
-        chatData: rATOMStatDetailData,
-      };
-    }
-    return {
-      chatTitle: '--',
-      chatRatio: '--',
-      chatData: null,
-    };
-  }, [selectedToken, rFISStatDetailData, rATOMStatDetailData, rFISRatio, rATOMRatio]);
 
   useEffect(() => {
     clearInput();
@@ -187,21 +181,21 @@ export default function RDEXHome() {
   const updateAllData = () => {
     dispatch(fis_reloadData());
     dispatch(fis_rTokenRate());
-    // dispatch(dot_query_rBalances_account());
-    // dispatch(dot_rTokenRate());
-    // dispatch(dot_rLiquidityRate());
+    // atom
     dispatch(atom_query_rBalances_account());
     dispatch(atom_rSwapFee());
     dispatch(atom_rTokenRate());
     dispatch(atom_rLiquidityRate());
-    // dispatch(query_rBalances_account());
-    // dispatch(ksm_rTokenRate());
-    // dispatch(sol_query_rBalances_account());
-    // dispatch(matic_query_rBalances_account());
-    // dispatch(sol_rTokenRate());
-    // dispatch(matic_rTokenRate());
-
-    updateChartData();
+    // dot
+    dispatch(dot_query_rBalances_account());
+    dispatch(dot_rSwapFee());
+    dispatch(dot_rTokenRate());
+    dispatch(dot_rLiquidityRate());
+    // bnb
+    dispatch(bnb_query_rBalances_account());
+    dispatch(bnb_rSwapFee());
+    dispatch(bnb_rTokenRate());
+    dispatch(bnb_rLiquidityRate());
   };
 
   useEffect(() => {
@@ -212,7 +206,13 @@ export default function RDEXHome() {
     if (selectedToken.type === 'ratom') {
       setCurrentSwapFee(rATOMSwapFee);
     }
-  }, [selectedToken, rATOMSwapFee]);
+    if (selectedToken.type === 'rdot') {
+      setCurrentSwapFee(rDOTSwapFee);
+    }
+    if (selectedToken.type === 'rbnb') {
+      setCurrentSwapFee(rBNBSwapFee);
+    }
+  }, [selectedToken, rATOMSwapFee, rDOTSwapFee, rBNBSwapFee]);
 
   useEffect(() => {
     updateTokenReserves();
@@ -233,13 +233,16 @@ export default function RDEXHome() {
     let rTokenSymbol;
     if (selectedToken.type === 'ratom') {
       rTokenSymbol = rSymbol.Atom;
+    } else if (selectedToken.type === 'rdot') {
+      rTokenSymbol = rSymbol.Dot;
+    } else if (selectedToken.type === 'rbnb') {
+      rTokenSymbol = rSymbol.Bnb;
     }
     if (!rTokenSymbol) {
       return;
     }
     const stafiApi = await stafiServer.createStafiApi();
     const reserves = await stafiApi.query.rDexnSwap.nativeTokenReserves(rTokenSymbol);
-    // setCurrentNativeTokenReserves(1);
     if (reserves) {
       setCurrentNativeTokenReserves(numberUtil.tokenAmountToHuman(reserves.toJSON(), rTokenSymbol));
     }
@@ -258,7 +261,11 @@ export default function RDEXHome() {
       setCurrentRatio(rATOMRatio);
       setCurrentLiquidityRate(rATOMLiquidityRate);
     }
-  }, [selectedToken, rDOTLiquidityRate, rATOMLiquidityRate]);
+    if (selectedToken.type === 'rbnb') {
+      setCurrentRatio(rBNBRatio);
+      setCurrentLiquidityRate(rBNBLiquidityRate);
+    }
+  }, [selectedToken, rDOTLiquidityRate, rATOMLiquidityRate, rBNBLiquidityRate, rDOTRatio, rATOMRatio, rBNBRatio]);
 
   useEffect(() => {
     if (!currentRatio || isNaN(currentRatio) || !currentLiquidityRate || isNaN(currentLiquidityRate)) {
@@ -290,30 +297,40 @@ export default function RDEXHome() {
 
   useEffect(() => {
     allTokenDatas.forEach((item) => {
-      if (item.type === 'rfis') {
-        item.content = rFISTokenAmount;
-      }
-      if (item.type === 'rksm') {
-        item.content = rKSMTokenAmount;
-      }
       if (item.type === 'rdot') {
         item.content = rDOTTokenAmount;
+        item.ratio = isNaN(Number(rDOTRatio)) ? '--' : numberUtil.handleFisAmountToFixed(rDOTRatio);
+        item.totalRate = isNaN(Number(rDOTRatio * rDOTLiquidityRate))
+          ? '--'
+          : numberUtil.handleFisAmountToFixed(rDOTRatio * rDOTLiquidityRate);
       }
       if (item.type === 'ratom') {
         item.content = rATOMTokenAmount;
+        item.ratio = isNaN(Number(rATOMRatio)) ? '--' : numberUtil.handleFisAmountToFixed(rATOMRatio);
+        item.totalRate = isNaN(Number(rATOMRatio * rATOMLiquidityRate))
+          ? '--'
+          : numberUtil.handleFisAmountToFixed(rATOMRatio * rATOMLiquidityRate);
       }
-      // if (item.type === 'rsol') {
-      //   item.content = rSOLTokenAmount;
-      // }
-      // if (item.type === 'rmatic') {
-      //   item.content = rMATICTokenAmount;
-      // }
+      if (item.type === 'rbnb') {
+        item.content = rBNBTokenAmount;
+        item.ratio = isNaN(Number(rBNBRatio)) ? '--' : numberUtil.handleFisAmountToFixed(rBNBRatio);
+        item.totalRate = isNaN(Number(rBNBRatio * rBNBLiquidityRate))
+          ? '--'
+          : numberUtil.handleFisAmountToFixed(rBNBRatio * rBNBLiquidityRate);
+      }
     });
-  }, [rFISTokenAmount, rKSMTokenAmount, rDOTTokenAmount, rATOMTokenAmount]);
-
-  useEffect(() => {
-    updateChartData();
-  }, [chartTimeUnit, selectedToken && selectedToken.type]);
+    setTokenTypes([...allTokenDatas]);
+  }, [
+    rDOTTokenAmount,
+    rATOMTokenAmount,
+    rBNBTokenAmount,
+    rDOTRatio,
+    rATOMRatio,
+    rBNBRatio,
+    rDOTLiquidityRate,
+    rATOMLiquidityRate,
+    rBNBLiquidityRate,
+  ]);
 
   const updateChartData = () => {
     const cycle = chartTimeUnit === 'd' ? 1 : chartTimeUnit === 'w' ? 2 : 3;
@@ -346,6 +363,9 @@ export default function RDEXHome() {
     if (selectedToken.type === 'rmatic') {
       return 'MATIC';
     }
+    if (selectedToken.type === 'rbnb') {
+      return 'BNB';
+    }
   };
 
   const startSwap = () => {
@@ -360,26 +380,43 @@ export default function RDEXHome() {
     }
     setTransferDetail(numberUtil.handleFisRoundToFixed(receiveTokenAmount) + ' ' + getTokenName());
 
+    let symbol;
     if (selectedToken.type === 'ratom') {
       if (!atom_checkAddress(address)) {
         message.error('Address input error');
         return;
       }
+      symbol = rSymbol.Atom;
       setViewTxUrl(config.atomScanAddressUrl(address));
-      dispatch(
-        swap(
-          rSymbol.Atom,
-          rTokenAmount,
-          address,
-          numberUtil.handleFisRoundToFixed(minReceiveTokenAmount),
-          numberUtil.handleFisRoundToFixed(receiveTokenAmount),
-          () => {
-            clearInput();
-            updateAllData();
-          },
-        ),
-      );
+    } else if (selectedToken.type === 'rdot') {
+      if (!dot_checkAddress(address)) {
+        message.error('Address input error');
+        return;
+      }
+      symbol = rSymbol.Dot;
+      setViewTxUrl(config.atomScanAddressUrl(address));
+    } else if (selectedToken.type === 'rbnb') {
+      if (!bnb_checkAddress(address)) {
+        message.error('Address input error');
+        return;
+      }
+      symbol = rSymbol.Bnb;
+      setViewTxUrl(config.atomScanAddressUrl(address));
     }
+
+    dispatch(
+      swap(
+        symbol,
+        rTokenAmount,
+        address,
+        numberUtil.handleFisRoundToFixed(minReceiveTokenAmount),
+        numberUtil.handleFisRoundToFixed(receiveTokenAmount),
+        () => {
+          clearInput();
+          updateAllData();
+        },
+      ),
+    );
   };
 
   const clearInput = () => {
@@ -394,7 +431,8 @@ export default function RDEXHome() {
         <Text size={'30px'} sameLineHeight bold>
           rDEX
         </Text>
-        <Text size={'14px'} color={'#a5a5a5'} sameLineHeight marginTop={'1px'}>
+
+        <Text size={'14px'} color={'#a5a5a5'} sameLineHeight mt={'5px'}>
           Protocol Liquidity for rTokens. Read{' '}
           <span style={{ color: '#00F3AB', cursor: 'pointer', textDecoration: 'underline' }}>Mechanism</span>
         </Text>
@@ -716,45 +754,10 @@ export default function RDEXHome() {
         </CardContainer>
       </Container>
 
-      <div style={{ flex: 1, marginTop: '90px', marginLeft: '40px', marginRight: '50px' }}>
-        <Text size={'20px'} bold>
-          {chatTitle}
-        </Text>
-
-        <HContainer>
-          <Text color='#00F3AB' size='22px' bold>
-            {numberUtil.handleFisRoundToFixed(chatRatio)}
-          </Text>
-
-          <ChartPeriodContainer>
-            <ChartPeriodItem active={chartTimeUnit === 'd'} onClick={() => setChartTimeUnit('d')}>
-              24h
-            </ChartPeriodItem>
-
-            <ChartPeriodItem active={chartTimeUnit === 'w'} onClick={() => setChartTimeUnit('w')}>
-              1W
-            </ChartPeriodItem>
-
-            <ChartPeriodItem active={chartTimeUnit === 'm'} onClick={() => setChartTimeUnit('m')}>
-              1M
-            </ChartPeriodItem>
-          </ChartPeriodContainer>
-        </HContainer>
-
-        <Divider />
-
-        <SwapRateChart
-          data={
-            chatData ? (chatData.list.rate.data <= 7 ? chatData.list.rate.data : chatData.list.rate.data.slice(-7)) : []
-          }
-          xData={
-            chatData
-              ? chatData.list.rate.yData.length <= 7
-                ? chatData.list.rate.yData
-                : chatData.list.rate.yData.slice(-7)
-              : []
-          }
-        />
+      <div style={{ flex: 1, marginTop: '140px', marginLeft: '100px', marginRight: '50px' }}>
+        {tokenTypes.map((tokenData) => (
+          <DexTokenItem key={tokenData.type} {...tokenData} />
+        ))}
       </div>
 
       <DexSwapLoading transferDetail={transferDetail} viewTxUrl={viewTxUrl} />
