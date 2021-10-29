@@ -129,25 +129,19 @@ export default function RDEXHome() {
 
   const [chartTimeUnit, setChartTimeUnit] = useState('d');
 
-  const {
-    fisAccount,
-    transferrableAmount,
-    rFISTokenAmount,
-    rKSMTokenAmount,
-    rDOTTokenAmount,
-    rATOMTokenAmount,
-    rBNBTokenAmount,
-  } = useSelector((state) => {
-    return {
-      fisAccount: state.FISModule.fisAccount,
-      transferrableAmount: state.FISModule.transferrableAmountShow,
-      rFISTokenAmount: numberUtil.handleFisAmountToFixed(state.FISModule.tokenAmount),
-      rKSMTokenAmount: numberUtil.handleFisAmountToFixed(state.rKSMModule.tokenAmount),
-      rDOTTokenAmount: numberUtil.handleFisAmountToFixed(state.rDOTModule.tokenAmount),
-      rATOMTokenAmount: numberUtil.handleFisAmountToFixed(state.rATOMModule.tokenAmount),
-      rBNBTokenAmount: numberUtil.handleFisAmountToFixed(state.rBNBModule.tokenAmount),
-    };
-  });
+  const { fisAccount, transferrableAmount, rDOTTokenAmount, rATOMTokenAmount, rBNBTokenAmount } = useSelector(
+    (state) => {
+      return {
+        fisAccount: state.FISModule.fisAccount,
+        transferrableAmount: state.FISModule.transferrableAmountShow,
+        rFISTokenAmount: numberUtil.handleFisAmountToFixed(state.FISModule.tokenAmount),
+        rKSMTokenAmount: numberUtil.handleFisAmountToFixed(state.rKSMModule.tokenAmount),
+        rDOTTokenAmount: numberUtil.handleFisAmountToFixed(state.rDOTModule.tokenAmount),
+        rATOMTokenAmount: numberUtil.handleFisAmountToFixed(state.rATOMModule.tokenAmount),
+        rBNBTokenAmount: numberUtil.handleFisAmountToFixed(state.rBNBModule.tokenAmount),
+      };
+    },
+  );
 
   const {
     rDOTSwapFee,
@@ -299,24 +293,24 @@ export default function RDEXHome() {
     allTokenDatas.forEach((item) => {
       if (item.type === 'rdot') {
         item.content = rDOTTokenAmount;
-        item.ratio = isNaN(Number(rDOTRatio)) ? '--' : numberUtil.handleFisAmountToFixed(rDOTRatio);
+        item.ratio = isNaN(Number(rDOTRatio)) ? '--' : numberUtil.handleAmountRoundToFixed(rDOTRatio, 2);
         item.totalRate = isNaN(Number(rDOTRatio * rDOTLiquidityRate))
           ? '--'
-          : numberUtil.handleFisAmountToFixed(rDOTRatio * rDOTLiquidityRate);
+          : numberUtil.handleAmountRoundToFixed(rDOTRatio * rDOTLiquidityRate, 2);
       }
       if (item.type === 'ratom') {
         item.content = rATOMTokenAmount;
-        item.ratio = isNaN(Number(rATOMRatio)) ? '--' : numberUtil.handleFisAmountToFixed(rATOMRatio);
+        item.ratio = isNaN(Number(rATOMRatio)) ? '--' : numberUtil.handleAmountRoundToFixed(rATOMRatio, 2);
         item.totalRate = isNaN(Number(rATOMRatio * rATOMLiquidityRate))
           ? '--'
-          : numberUtil.handleFisAmountToFixed(rATOMRatio * rATOMLiquidityRate);
+          : numberUtil.handleAmountRoundToFixed(rATOMRatio * rATOMLiquidityRate, 2);
       }
       if (item.type === 'rbnb') {
         item.content = rBNBTokenAmount;
-        item.ratio = isNaN(Number(rBNBRatio)) ? '--' : numberUtil.handleFisAmountToFixed(rBNBRatio);
+        item.ratio = isNaN(Number(rBNBRatio)) ? '--' : numberUtil.handleAmountRoundToFixed(rBNBRatio, 2);
         item.totalRate = isNaN(Number(rBNBRatio * rBNBLiquidityRate))
           ? '--'
-          : numberUtil.handleFisAmountToFixed(rBNBRatio * rBNBLiquidityRate);
+          : numberUtil.handleAmountRoundToFixed(rBNBRatio * rBNBLiquidityRate, 2);
       }
     });
     setTokenTypes([...allTokenDatas]);
@@ -712,6 +706,25 @@ export default function RDEXHome() {
                   <HContainer mb='8px'>
                     <HContainer alignItems='flex-start'>
                       <Text size='10px' color='#a5a5a5' mr='2px' sameLineHeight>
+                        Liquidity Rate :
+                      </Text>
+                      <Tooltip
+                        overlayClassName='doubt_overlay'
+                        placement='topLeft'
+                        overlayInnerStyle={{ color: '#A4A4A4' }}
+                        title={'Liquidity Rate is used to cover the risk and potential loss of holding rTokens.'}>
+                        <img src={doubt} />
+                      </Tooltip>
+                    </HContainer>
+
+                    <Text size='10px' color='white' sameLineHeight>
+                      {numberUtil.percentageAmountToHuman(currentLiquidityRate)}
+                    </Text>
+                  </HContainer>
+
+                  <HContainer>
+                    <HContainer alignItems='flex-start'>
+                      <Text size='10px' color='#a5a5a5' mr='2px' sameLineHeight>
                         Fee :
                       </Text>
 
@@ -726,25 +739,6 @@ export default function RDEXHome() {
 
                     <Text size='10px' color='white' sameLineHeight>
                       {currentSwapFee} FIS
-                    </Text>
-                  </HContainer>
-
-                  <HContainer>
-                    <HContainer alignItems='flex-start'>
-                      <Text size='10px' color='#a5a5a5' mr='2px' sameLineHeight>
-                        Liquidity Rate :
-                      </Text>
-                      <Tooltip
-                        overlayClassName='doubt_overlay'
-                        placement='topLeft'
-                        overlayInnerStyle={{ color: '#A4A4A4' }}
-                        title={'Liquidity Rate is used to cover the risk and potential loss of holding rTokens.'}>
-                        <img src={doubt} />
-                      </Tooltip>
-                    </HContainer>
-
-                    <Text size='10px' color='white' sameLineHeight>
-                      {numberUtil.percentageAmountToHuman(currentLiquidityRate)}
                     </Text>
                   </HContainer>
                 </InnerContainer>

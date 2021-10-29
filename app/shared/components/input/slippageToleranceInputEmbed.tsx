@@ -13,7 +13,7 @@ export default function Index(props: any) {
           value = value.replace(/^\./g, '');
           value = value.replace(/\.{2,}/g, '.');
           value = value.replace('.', '$#$').replace(/\./g, '').replace('$#$', '.');
-          value = value.replace(/^(-)*(\d+)\.(\d\d\d\d\d\d).*$/, '$1$2.$3');
+          value = value.replace(/^(\-)*(\d+)\.(\d\d).*$/, '$1$2.$3');
           if (Number(value) > Number(99)) {
             message.error(`Slippage Tolerance should be between 0.1% - 99%`);
             props.onChange && props.onChange('');

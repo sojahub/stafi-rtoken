@@ -3,7 +3,7 @@ import React from 'react';
 
 export default function DexTokenItem(props) {
   return (
-    <div style={{ maxWidth: '290px', marginBottom: '22px', position: 'relative' }}>
+    <div style={{ maxWidth: '280px', marginBottom: '22px', position: 'relative' }}>
       <div
         style={{
           height: '70px',

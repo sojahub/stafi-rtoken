@@ -29,6 +29,7 @@ export default function Index(props: Props) {
           value = value.replace(/\.{2,}/g, '.');
           value = value.replace('.', '$#$').replace(/\./g, '').replace('$#$', '.');
           value = value.replace(/^(\-)*(\d+)\.(\d\d\d\d\d\d).*$/, '$1$2.$3');
+          value = value.replace(/^0+(?!\.|$)/, '');
           if (Number(value) > Number(props.maxInput)) {
             message.error('The amount of input exceeds your transferrable balance');
             props.onChange && props.onChange('');
