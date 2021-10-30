@@ -706,26 +706,7 @@ export default function RDEXHome() {
                   <HContainer mb='8px'>
                     <HContainer alignItems='flex-start'>
                       <Text size='10px' color='#a5a5a5' mr='2px' sameLineHeight>
-                        Liquidity Rate :
-                      </Text>
-                      <Tooltip
-                        overlayClassName='doubt_overlay'
-                        placement='topLeft'
-                        overlayInnerStyle={{ color: '#A4A4A4' }}
-                        title={'Liquidity Rate is used to cover the risk and potential loss of holding rTokens.'}>
-                        <img src={doubt} />
-                      </Tooltip>
-                    </HContainer>
-
-                    <Text size='10px' color='white' sameLineHeight>
-                      {numberUtil.percentageAmountToHuman(currentLiquidityRate)}
-                    </Text>
-                  </HContainer>
-
-                  <HContainer>
-                    <HContainer alignItems='flex-start'>
-                      <Text size='10px' color='#a5a5a5' mr='2px' sameLineHeight>
-                        Fee :
+                        Fee
                       </Text>
 
                       <Tooltip
@@ -735,10 +716,38 @@ export default function RDEXHome() {
                         title={'Fee charged by the rDEX, it will be distributed to the Treasury.'}>
                         <img src={doubt} />
                       </Tooltip>
+
+                      <Text size='10px' color='#a5a5a5' ml='2px' sameLineHeight>
+                        :
+                      </Text>
                     </HContainer>
 
                     <Text size='10px' color='white' sameLineHeight>
                       {currentSwapFee} FIS
+                    </Text>
+                  </HContainer>
+
+                  <HContainer>
+                    <HContainer alignItems='flex-start'>
+                      <Text size='10px' color='#a5a5a5' mr='2px' sameLineHeight>
+                        Liquidity Rate
+                      </Text>
+                      
+                      <Tooltip
+                        overlayClassName='doubt_overlay'
+                        placement='topLeft'
+                        overlayInnerStyle={{ color: '#A4A4A4' }}
+                        title={'Liquidity Rate is used to cover the risk and potential loss of holding rTokens.'}>
+                        <img src={doubt} />
+                      </Tooltip>
+
+                      <Text size='10px' color='#a5a5a5' ml='2px' sameLineHeight>
+                        :
+                      </Text>
+                    </HContainer>
+
+                    <Text size='10px' color='white' sameLineHeight>
+                      {numberUtil.percentageAmountToHuman(currentLiquidityRate)}
                     </Text>
                   </HContainer>
                 </InnerContainer>
