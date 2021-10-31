@@ -59,17 +59,17 @@ export default function LiquidityStaker(props: LiquidityStakerProps) {
   }, [lpData]);
 
   const lpBalance = useMemo(() => {
-    if (!lpData || lpData.lpBalance === '--') {
+    if (!lpData || isNaN(Number(lpData.lpBalance))) {
       return '--';
     }
-    return numberUtil.handleAmountRound(lpData.lpBalance, 2);
+    return Math.floor(lpData.lpBalance * 100) / 100;
   }, [lpData && lpData.lpBalance]);
 
   const unstakableAmount = useMemo(() => {
-    if (!lpData || lpData.userStakedAmount === '--') {
+    if (!lpData || isNaN(Number(lpData.userStakedAmount))) {
       return '--';
     }
-    return numberUtil.handleAmountRound(lpData.userStakedAmount, 2);
+    return Math.floor(lpData.userStakedAmount * 100) / 100;
   }, [lpData && lpData.userStakedAmount]);
 
   const maxInput = useMemo(() => {
