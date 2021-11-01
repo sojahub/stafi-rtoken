@@ -5,7 +5,7 @@ const paths = require('./paths');
 
 const config = {
   devServer: {
-    contentBase: path.join(__dirname, './build'),
+    static: path.join(__dirname, './build'),
     historyApiFallback: true,
     host: '127.0.0.1',
     port: 3111,
