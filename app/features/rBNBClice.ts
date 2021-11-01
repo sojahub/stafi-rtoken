@@ -26,7 +26,7 @@ import {
   setStakeSwapLoadingStatus
 } from './globalClice';
 import { add_Notice, findUuid, noticeStatus, noticesubType, noticeType } from './noticeClice';
-import { connectMetamask, get_eth_getBalance } from './rETHClice';
+import { checkEthAddress, connectMetamask, get_eth_getBalance } from './rETHClice';
 
 const commonClice = new CommonClice();
 
@@ -850,8 +850,7 @@ const handleStakerApr =
   };
 
 export const checkAddress = (address: string) => {
-  const keyringInstance = keyring.init(Symbol.Bnb);
-  return keyringInstance.checkAddress(address);
+  return checkEthAddress(address);
 };
 
 export const accountUnbonds = (): AppThunk => async (dispatch, getState) => {
