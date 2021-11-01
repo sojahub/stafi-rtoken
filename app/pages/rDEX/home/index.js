@@ -215,7 +215,7 @@ export default function RDEXHome() {
   useEffect(() => {
     if (!isNaN(receiveTokenAmount) && !isNaN(currentNativeTokenReserves)) {
       if (Number(receiveTokenAmount) > Number(currentNativeTokenReserves)) {
-        message.error(`Max native amount is ${currentNativeTokenReserves}`);
+        message.error(`Max native amount is ${Math.floor(currentNativeTokenReserves * 100) / 100}`);
       }
     }
   }, [receiveTokenAmount, currentNativeTokenReserves]);
@@ -727,12 +727,12 @@ export default function RDEXHome() {
                     </Text>
                   </HContainer>
 
-                  <HContainer>
+                  <HContainer mb='8px'>
                     <HContainer alignItems='flex-start'>
                       <Text size='10px' color='#a5a5a5' mr='2px' sameLineHeight>
                         Liquidity Rate
                       </Text>
-                      
+
                       <Tooltip
                         overlayClassName='doubt_overlay'
                         placement='topLeft'
@@ -748,6 +748,32 @@ export default function RDEXHome() {
 
                     <Text size='10px' color='white' sameLineHeight>
                       {numberUtil.percentageAmountToHuman(currentLiquidityRate)}
+                    </Text>
+                  </HContainer>
+
+                  <HContainer style={{ visibility: !selectedToken || !selectedToken.title ? 'hidden' : '' }}>
+                    <HContainer alignItems='flex-start'>
+                      <Text size='10px' color='#a5a5a5' mr='2px' sameLineHeight>
+                        Pooled {selectedToken && selectedToken.title.slice(1)}
+                      </Text>
+
+                      <Tooltip
+                        overlayClassName='doubt_overlay'
+                        placement='topLeft'
+                        overlayInnerStyle={{ color: '#A4A4A4' }}
+                        title={`Available ${selectedToken && selectedToken.title.slice(1)} amount in the pool`}>
+                        <img src={doubt} />
+                      </Tooltip>
+
+                      <Text size='10px' color='#a5a5a5' ml='2px' sameLineHeight>
+                        :
+                      </Text>
+                    </HContainer>
+
+                    <Text size='10px' color='white' sameLineHeight>
+                      {!isNaN(Number(currentNativeTokenReserves))
+                        ? Math.floor(currentNativeTokenReserves * 100) / 100
+                        : '--'}
                     </Text>
                   </HContainer>
                 </InnerContainer>
