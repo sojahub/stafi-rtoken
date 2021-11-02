@@ -574,6 +574,9 @@ export default {
     return `https://polkadot.subscan.io/account/${address}?tab=transfer`;
   },
   bnbScanAddressUrl: (address: any) => {
+    if (!isdev()) {
+      return `https://bscscan.com/address/${address}#internaltx`;
+    }
     return `https://testnet.bscscan.com/address/${address}#internaltx`;
   },
   stafiScanUrl: (address: any) => {
