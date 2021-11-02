@@ -6,8 +6,8 @@ import { Redirect } from 'react-router-dom';
 
 const HomeTemplate = React.lazy(() => import('./pages/template/homeTemplate'));
 
-const FeeStationTemplate = React.lazy(() => import('@servers/feeStation/template'));
-const FeeStation = React.lazy(() => import('./pages/feeStation/FeeStation'));
+// const FeeStationTemplate = React.lazy(() => import('@servers/feeStation/template'));
+// const FeeStation = React.lazy(() => import('./pages/feeStation/FeeStation'));
 
 const RAssetHome = React.lazy(() => import('./pages/rAsset/home/index'));
 const RAssetBep = React.lazy(() => import('./pages/rAsset/home/bep'));
@@ -16,16 +16,16 @@ const RAssetNative = React.lazy(() => import('./pages/rAsset/home/native'));
 const RAssetSwap = React.lazy(() => import('./pages/rAsset/swap'));
 const RAssetTemplate = React.lazy(() => import('./pages/rAsset/template'));
 
-const RPoolHome = React.lazy(() => import('./pages/rPool/home'));
-const RPoolStaker = React.lazy(() => import('./pages/rPool/staker'));
-const RPoolStakerInsurance = React.lazy(() => import('./pages/rPool/staker/insurance'));
-const RPoolStakerReward = React.lazy(() => import('./pages/rPool/staker/reward'));
-const RPoolStakerStatus = React.lazy(() => import('./pages/rPool/staker/status'));
-const RPoolStakerStatusNativeErc20 = React.lazy(() => import('./pages/rPool/staker/status/erc20'));
-const RPoolStakerStatusNative = React.lazy(() => import('./pages/rPool/staker/status/native'));
-const RPoolHomeTemplate = React.lazy(() => import('./pages/rPool/template'));
-const LiquidityOverview = React.lazy(() => import('./pages/rPool/LiquidityOverview'));
-const MintOverview = React.lazy(() => import('./pages/rPool/mint'));
+// const RPoolHome = React.lazy(() => import('./pages/rPool/home'));
+// const RPoolStaker = React.lazy(() => import('./pages/rPool/staker'));
+// const RPoolStakerInsurance = React.lazy(() => import('./pages/rPool/staker/insurance'));
+// const RPoolStakerReward = React.lazy(() => import('./pages/rPool/staker/reward'));
+// const RPoolStakerStatus = React.lazy(() => import('./pages/rPool/staker/status'));
+// const RPoolStakerStatusNativeErc20 = React.lazy(() => import('./pages/rPool/staker/status/erc20'));
+// const RPoolStakerStatusNative = React.lazy(() => import('./pages/rPool/staker/status/native'));
+// const RPoolHomeTemplate = React.lazy(() => import('./pages/rPool/template'));
+// const LiquidityOverview = React.lazy(() => import('./pages/rPool/LiquidityOverview'));
+// const MintOverview = React.lazy(() => import('./pages/rPool/mint'));
 
 const RETHHome = React.lazy(() => import('./pages/rETH/home'));
 const RETHLiquefy = React.lazy(() => import('./pages/rETH/liquefy'));
@@ -577,23 +577,23 @@ const routesFactory = (role?: any) => {
         //     },
         //   ],
         // },
-        {
-          id: 'fee_station',
-          path: '/feeStation',
-          type: 'feeStation',
-          component: FeeStationTemplate,
-          routes: [
-            {
-              id: 'fee_station',
-              path: '/feeStation/:tokenType',
-              component: FeeStation,
-            },
-            {
-              path: '*',
-              component: () => <Redirect to='/feeStation/default' />,
-            },
-          ],
-        },
+        // {
+        //   id: 'fee_station',
+        //   path: '/feeStation',
+        //   type: 'feeStation',
+        //   component: FeeStationTemplate,
+        //   routes: [
+        //     {
+        //       id: 'fee_station',
+        //       path: '/feeStation/:tokenType',
+        //       component: FeeStation,
+        //     },
+        //     {
+        //       path: '*',
+        //       component: () => <Redirect to='/feeStation/default' />,
+        //     },
+        //   ],
+        // },
         {
           id: 'RSOL_home',
           path: '/rSOL',
@@ -686,84 +686,84 @@ const routesFactory = (role?: any) => {
             },
           ],
         },
-        {
-          id: 'RPool_index',
-          path: '/rPool',
-          type: 'rPool',
-          // rSymbol:rSymbol.Atom,
-          component: RPoolHomeTemplate,
-          routes: [
-            {
-              id: 'RPool_home',
-              path: '/rPool/home',
-              // width:993,
-              className: 'stafi_content_full',
-              // rSymbol:rSymbol.Atom,
-              component: RPoolHome,
-            },
-            {
-              id: 'RPool_staker',
-              type: 'Staker',
-              path: '/rPool/staker',
-              rSymbol: rSymbol.Dot,
-              component: RPoolStaker,
-              routes: [
-                {
-                  id: 'RPool_reward_index',
-                  path: '/rPool/staker/reward',
-                  type: 'Staker',
-                  component: RPoolStakerReward,
-                },
-                {
-                  id: 'RPool_insurance_index',
-                  path: '/rPool/staker/insurance',
-                  type: 'Staker',
-                  component: RPoolStakerInsurance,
-                },
-                {
-                  id: 'RPool_status_index',
-                  path: '/rPool/staker/status',
-                  type: 'Staker',
-                  component: RPoolStakerStatus,
-                  routes: [
-                    {
-                      id: 'RPool_status_native_index',
-                      path: '/rPool/staker/status/native',
-                      type: 'Staker',
-                      component: RPoolStakerStatusNative,
-                    },
-                    {
-                      id: 'RPool_status_erc20_index',
-                      path: '/rPool/staker/status/erc20',
-                      type: 'Staker',
-                      component: RPoolStakerStatusNativeErc20,
-                    },
-                    {
-                      path: '*',
-                      component: () => <Redirect to='/rPool/staker/status/native' />,
-                    },
-                  ],
-                },
-              ],
-            },
-            {
-              id: 'RPool_Mint_Overview',
-              path: '/rPool/mint/:tokenSymbol/:cycle',
-              className: 'stafi_content_large',
-              component: MintOverview,
-            },
-            {
-              id: 'RPool_Liquidity_Overview',
-              path: '/rPool/lp/:lpPlatform/:poolIndex/:lpContract',
-              className: 'stafi_content_large',
-              component: LiquidityOverview,
-            },
-            {
-              path: '*',
-              component: () => <Redirect to='/rPool/home?tab=mp' />,
-            },
-          ],
-        },
+        // {
+        //   id: 'RPool_index',
+        //   path: '/rPool',
+        //   type: 'rPool',
+        //   // rSymbol:rSymbol.Atom,
+        //   component: RPoolHomeTemplate,
+        //   routes: [
+        //     {
+        //       id: 'RPool_home',
+        //       path: '/rPool/home',
+        //       // width:993,
+        //       className: 'stafi_content_full',
+        //       // rSymbol:rSymbol.Atom,
+        //       component: RPoolHome,
+        //     },
+        //     {
+        //       id: 'RPool_staker',
+        //       type: 'Staker',
+        //       path: '/rPool/staker',
+        //       rSymbol: rSymbol.Dot,
+        //       component: RPoolStaker,
+        //       routes: [
+        //         {
+        //           id: 'RPool_reward_index',
+        //           path: '/rPool/staker/reward',
+        //           type: 'Staker',
+        //           component: RPoolStakerReward,
+        //         },
+        //         {
+        //           id: 'RPool_insurance_index',
+        //           path: '/rPool/staker/insurance',
+        //           type: 'Staker',
+        //           component: RPoolStakerInsurance,
+        //         },
+        //         {
+        //           id: 'RPool_status_index',
+        //           path: '/rPool/staker/status',
+        //           type: 'Staker',
+        //           component: RPoolStakerStatus,
+        //           routes: [
+        //             {
+        //               id: 'RPool_status_native_index',
+        //               path: '/rPool/staker/status/native',
+        //               type: 'Staker',
+        //               component: RPoolStakerStatusNative,
+        //             },
+        //             {
+        //               id: 'RPool_status_erc20_index',
+        //               path: '/rPool/staker/status/erc20',
+        //               type: 'Staker',
+        //               component: RPoolStakerStatusNativeErc20,
+        //             },
+        //             {
+        //               path: '*',
+        //               component: () => <Redirect to='/rPool/staker/status/native' />,
+        //             },
+        //           ],
+        //         },
+        //       ],
+        //     },
+            // {
+            //   id: 'RPool_Mint_Overview',
+            //   path: '/rPool/mint/:tokenSymbol/:cycle',
+            //   className: 'stafi_content_large',
+            //   component: MintOverview,
+            // },
+            // {
+            //   id: 'RPool_Liquidity_Overview',
+            //   path: '/rPool/lp/:lpPlatform/:poolIndex/:lpContract',
+            //   className: 'stafi_content_large',
+            //   component: LiquidityOverview,
+            // },
+            // {
+            //   path: '*',
+            //   component: () => <Redirect to='/rPool/home?tab=mp' />,
+            // },
+          // ],
+        // },
         {
           id: 'RMATIC_index',
           path: '/rMATIC',
