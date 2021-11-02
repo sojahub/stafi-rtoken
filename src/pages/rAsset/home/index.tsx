@@ -1,6 +1,6 @@
-import Content from '@shared/components/content';
 import React from 'react';
 import { Redirect, useParams } from 'react-router';
+import Content from 'src/shared/components/content';
 import BepPage from './bep';
 import Tag from './components/carTag/index';
 import ErcPage from './erc';

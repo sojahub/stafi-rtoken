@@ -1,12 +1,12 @@
-import { getRsymbolByTokenTitle } from '@config/index';
-import stafiIcon from '@images/stafi_green.svg';
-import { rSymbol } from '@keyring/defaults';
-import GhostButton from '@shared/components/button/ghostButton';
-import { formatDuration } from '@util/dateUtil';
-import numberUtil from '@util/numberUtil';
 import { message } from 'antd';
 import React from 'react';
 import { useHistory } from 'react-router-dom';
+import stafiIcon from 'src/assets/images/stafi_green.svg';
+import { getRsymbolByTokenTitle } from 'src/config/index';
+import { rSymbol } from 'src/keyring/defaults';
+import GhostButton from 'src/shared/components/button/ghostButton';
+import { formatDuration } from 'src/util/dateUtil';
+import numberUtil from 'src/util/numberUtil';
 
 type Props = {
   actData: any;

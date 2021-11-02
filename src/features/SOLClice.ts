@@ -1,9 +1,9 @@
 // @ts-nocheck
 
-import config from '@config/index';
 import { createSlice } from '@reduxjs/toolkit';
-import SolServer from '@servers/sol';
 import { Connection } from '@solana/web3.js';
+import config from 'src/config/index';
+import SolServer from 'src/servers/sol';
 import { AppThunk } from '../store';
 
 const splToken = require('@solana/spl-token');

@@ -1,8 +1,8 @@
-// import rpc from '@util/rpc';
-import config from '@config/index';
-import { rSymbol } from '@keyring/defaults';
-import { api } from '@util/http';
+// import rpc from 'src/util/rpc';
 import moment from 'moment';
+import config from 'src/config/index';
+import { rSymbol } from 'src/keyring/defaults';
+import { api } from 'src/util/http';
 
 export const pageCount = 20;
 

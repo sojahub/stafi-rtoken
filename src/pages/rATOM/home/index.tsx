@@ -1,12 +1,12 @@
-import HomeCard from '@components/card/homeCard';
-import { connectAtomjs, connectPolkadot_fis } from '@features/globalClice';
-import keplr from '@images/keplr.png';
-import rDOT_svg from '@images/rDOT.svg';
-import Button from '@shared/components/button/connect_button';
-import Modal from '@shared/components/modal/connectModal';
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Redirect } from 'react-router';
+import keplr from 'src/assets/images/keplr.png';
+import rDOT_svg from 'src/assets/images/rDOT.svg';
+import HomeCard from 'src/components/card/homeCard';
+import { connectAtomjs, connectPolkadot_fis } from 'src/features/globalClice';
+import Button from 'src/shared/components/button/connect_button';
+import Modal from 'src/shared/components/modal/connectModal';
 import Page_FIS from '../../rATOM/selectWallet_rFIS/index';
 import './index.scss';
 

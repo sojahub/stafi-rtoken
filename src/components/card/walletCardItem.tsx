@@ -1,6 +1,6 @@
 import React from 'react';
-import selected_svg from '@images/selected.svg';
-import unSelected_svg from '@images/unSelected.svg';
+import selected_svg from 'src/assets/images/selected.svg';
+import unSelected_svg from 'src/assets/images/unSelected.svg';
 
 type Props={
   data:any,

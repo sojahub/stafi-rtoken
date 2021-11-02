@@ -1,15 +1,15 @@
 // @ts-nocheck
 
-import { rSymbol } from '@keyring/defaults';
 import { web3Enable, web3FromSource } from '@polkadot/extension-dapp';
 import { stringToHex, u8aToHex } from '@polkadot/util';
 import { createSlice } from '@reduxjs/toolkit';
-import keyring from '@servers/index';
-import RPoolServer from '@servers/rpool';
-import StafiServer from '@servers/stafi';
-import { stafi_uuid } from '@util/common';
 import { message } from 'antd';
 import { delay } from 'lodash';
+import { rSymbol } from 'src/keyring/defaults';
+import keyring from 'src/servers/index';
+import RPoolServer from 'src/servers/rpool';
+import StafiServer from 'src/servers/stafi';
+import { stafi_uuid } from 'src/util/common';
 import { AppThunk } from '../store';
 import { setLoading } from './globalClice';
 import { add_Notice, noticeStatus, noticesubType, noticeType } from './noticeClice';

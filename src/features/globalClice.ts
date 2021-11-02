@@ -1,13 +1,13 @@
 // @ts-nocheck
 
-import { Symbol } from '@keyring/defaults';
 import { u8aToHex } from '@polkadot/util';
 import { createSlice } from '@reduxjs/toolkit';
-import AtomServer from '@servers/atom/index';
-import keyring from '@servers/index';
-import PolkadotServer from '@servers/polkadot/index';
-import SolServer from '@servers/sol/index';
 import mixpanel from 'mixpanel-browser';
+import { Symbol } from 'src/keyring/defaults';
+import AtomServer from 'src/servers/atom/index';
+import keyring from 'src/servers/index';
+import PolkadotServer from 'src/servers/polkadot/index';
+import SolServer from 'src/servers/sol/index';
 import { AppThunk } from '../store';
 import { createSubstrate as fisCreateSubstrate, reloadData as fisReloadData } from './FISClice';
 import { createSubstrate as atomCreateSubstrate, reloadData as atomReloadData } from './rATOMClice';

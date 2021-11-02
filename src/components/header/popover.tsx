@@ -1,7 +1,7 @@
-import { checkAll_minting, check_swap_status, readNotice, setProcess } from '@features/noticeClice';
 import { Popover } from 'antd';
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { checkAll_minting, check_swap_status, readNotice, setProcess } from 'src/features/noticeClice';
 import './popover.scss';
 import Item from './popoverItem';
 

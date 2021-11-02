@@ -1,7 +1,7 @@
 import React from 'react';
-import Button from '@shared/components/button/button';
-import LeftContent from '@components/content/leftContent';
-import './index.scss'; 
+import LeftContent from 'src/components/content/leftContent';
+import Button from 'src/shared/components/button/button';
+import './index.scss';
  
 export default function Index(props:any){
     return <LeftContent className="stafi_validator_context stafi_reth_validator_context">

@@ -1,14 +1,14 @@
 import { SyncOutlined } from '@ant-design/icons';
-import config from '@config/index';
-import { processStatus } from '@features/globalClice';
-import doubt from '@images/doubt.svg';
-import failure from '@images/failure.svg';
-import success from '@images/success.png';
-import { rSymbol } from '@keyring/defaults';
-import Button from '@shared/components/button/button';
-import StringUtil from '@util/stringUtil';
 import { Tooltip } from 'antd';
 import React from 'react';
+import doubt from 'src/assets/images/doubt.svg';
+import failure from 'src/assets/images/failure.svg';
+import success from 'src/assets/images/success.png';
+import config from 'src/config/index';
+import { processStatus } from 'src/features/globalClice';
+import { rSymbol } from 'src/keyring/defaults';
+import Button from 'src/shared/components/button/button';
+import StringUtil from 'src/util/stringUtil';
 import './liquidingProcessSliderItem.scss';
 
 type Props = {

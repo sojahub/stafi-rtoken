@@ -1,8 +1,8 @@
-import config from '@config/index';
-import { SubstrateKeyring } from '@keyring/SubstrateKeyring';
 import { ApiPromise, WsProvider } from '@polkadot/api';
 import { KeypairType } from '@polkadot/util-crypto/types';
-import { api } from '@util/http';
+import config from 'src/config/index';
+import { SubstrateKeyring } from 'src/keyring/SubstrateKeyring';
+import { api } from 'src/util/http';
 
 let stafiApi: any = null;
 export default class Index extends SubstrateKeyring {

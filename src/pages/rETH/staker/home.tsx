@@ -1,10 +1,10 @@
-import Content from '@components/content/stakeContent_ETH';
-import { reloadData, send } from '@features/rETHClice';
-import { ratioToAmount } from '@util/common';
-import numberUtil from '@util/numberUtil';
 import { message } from 'antd';
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import Content from 'src/components/content/stakeContent_ETH';
+import { reloadData, send } from 'src/features/rETHClice';
+import { ratioToAmount } from 'src/util/common';
+import numberUtil from 'src/util/numberUtil';
 
 export default function Index(props: any) {
   const [ethNoteModalVisible, setEthNoteModalVisible] = useState(false);

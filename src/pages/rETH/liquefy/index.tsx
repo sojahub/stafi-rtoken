@@ -1,10 +1,10 @@
+import { Form } from 'antd';
 import React from 'react';
-import {Form, message} from 'antd';
-import {useDispatch} from 'react-redux';
-import Input from '@shared/components/input/index';
-import Button from '@shared/components/button/button';
-import Select,{Option} from '@shared/components/select';
-import leftArrowSvg from '@images/left_arrow.svg'; 
+import { useDispatch } from 'react-redux';
+import leftArrowSvg from 'src/assets/images/left_arrow.svg';
+import Button from 'src/shared/components/button/button';
+import Input from 'src/shared/components/input/index';
+import Select, { Option } from 'src/shared/components/select';
 import './index.scss';
 export default function Index(props:any){
   const [form] = Form.useForm();

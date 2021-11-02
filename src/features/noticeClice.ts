@@ -1,10 +1,10 @@
-import config from '@config/index';
-import { rSymbol } from '@keyring/defaults';
 import { createSlice } from '@reduxjs/toolkit';
-import FeeStationServer from '@servers/feeStation';
-import { getLocalStorageItem, Keys, setLocalStorageItem } from '@util/common';
 import { cloneDeep } from 'lodash';
 import moment from 'moment';
+import config from 'src/config/index';
+import { rSymbol } from 'src/keyring/defaults';
+import FeeStationServer from 'src/servers/feeStation';
+import { getLocalStorageItem, Keys, setLocalStorageItem } from 'src/util/common';
 import { AppThunk } from '../store';
 import { BSC_CHAIN_ID, ETH_CHAIN_ID, SOL_CHAIN_ID, STAFI_CHAIN_ID } from './bridgeClice';
 import { bondStates, getMinting } from './FISClice';

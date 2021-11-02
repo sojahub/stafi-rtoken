@@ -1,11 +1,11 @@
 // @ts-nocheck
 
-import no_data_png from '@images/nodata.png';
-import Doubt from '@shared/components/doubt';
 import React, { useEffect, useState } from 'react';
 import { Scrollbars } from 'react-custom-scrollbars';
 import InfiniteScroll from 'react-infinite-scroller';
 import { useDispatch, useSelector } from 'react-redux';
+import no_data_png from 'src/assets/images/nodata.png';
+import Doubt from 'src/shared/components/doubt';
 import { RootState } from 'src/store';
 import LeftContent from '../content/leftContent';
 import './index.scss';

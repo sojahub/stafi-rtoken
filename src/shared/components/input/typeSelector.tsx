@@ -1,8 +1,8 @@
-import black_close from '@images/black_close.svg';
-import downArrowSvg from '@images/ic_arrow_down.svg';
-import icNone from '@images/ic_none.svg';
 import { Popover } from 'antd';
 import React, { useState } from 'react';
+import black_close from 'src/assets/images/black_close.svg';
+import downArrowSvg from 'src/assets/images/ic_arrow_down.svg';
+import icNone from 'src/assets/images/ic_none.svg';
 import './index.scss';
 
 type Props = {

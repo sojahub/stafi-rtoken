@@ -1,10 +1,8 @@
-import React, { useEffect, useState } from 'react'; 
-import {useSelector,useDispatch} from 'react-redux'; 
-import { rTokenRate } from '@features/rDOTClice';
-import {query_rBalances_account,accountUnbonds,setRatioShow} from '@features/rDOTClice'
-import {rSymbol} from '@keyring/defaults'
-import Content from '@components/content/stakeInfoContent'; 
-import NumberUtil from '@util/numberUtil';
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import Content from 'src/components/content/stakeInfoContent';
+import { accountUnbonds, query_rBalances_account, rTokenRate, setRatioShow } from 'src/features/rDOTClice';
+import NumberUtil from 'src/util/numberUtil';
 
 
 export default function Index(props:any){ 

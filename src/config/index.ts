@@ -1,5 +1,5 @@
-import { rSymbol, Symbol } from '@keyring/defaults';
 import { clusterApiUrl } from '@solana/web3.js';
+import { rSymbol, Symbol } from 'src/keyring/defaults';
 
 export const isdev = () => {
   let host = window.location.host;

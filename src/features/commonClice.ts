@@ -1,12 +1,12 @@
 // @ts-nocheck
 
-import { rSymbol, Symbol } from '@keyring/defaults';
 import { hexToU8a } from '@polkadot/util';
-import keyring from '@servers/index';
-import RpcServer from '@servers/rpc';
-import StafiServer from '@servers/stafi';
-import NumberUtil from '@util/numberUtil';
 import { message } from 'antd';
+import { rSymbol, Symbol } from 'src/keyring/defaults';
+import keyring from 'src/servers/index';
+import RpcServer from 'src/servers/rpc';
+import StafiServer from 'src/servers/stafi';
+import NumberUtil from 'src/util/numberUtil';
 
 const stafiServer = new StafiServer();
 const rpcServer = new RpcServer();

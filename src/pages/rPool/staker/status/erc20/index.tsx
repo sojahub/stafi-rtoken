@@ -1,8 +1,8 @@
 import React from 'react';
-import Popover from '@components/tradePopover/index';
-import dow_svg from '@images/dow_black.svg'; 
-import Button from '@shared/components/button/connect_button'
-import metamask from '@images/metamask.png'
+import dow_svg from 'src/assets/images/dow_black.svg';
+import metamask from 'src/assets/images/metamask.png';
+import Popover from 'src/components/tradePopover/index';
+import Button from 'src/shared/components/button/connect_button';
 export default function Index(){
     return <>
         <div className="type_panel">

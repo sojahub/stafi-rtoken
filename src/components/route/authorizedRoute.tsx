@@ -1,9 +1,9 @@
-import { Symbol } from '@keyring/defaults';
-import { getLocalStorageItem, Keys } from '@util/common';
 import { includes } from 'lodash';
 import React from 'react';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router-dom';
+import { Symbol } from 'src/keyring/defaults';
+import { getLocalStorageItem, Keys } from 'src/util/common';
 export const authorized = (allowed: any[], currentRole: any) => includes(allowed, currentRole);
 
 const account = (type: string) => {

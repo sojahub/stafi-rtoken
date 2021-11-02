@@ -1,6 +1,6 @@
-import LeftContent from '@components/content/leftContent';
 import React from 'react';
-import {renderRoutes}  from 'react-router-config';
+import { renderRoutes } from 'react-router-config';
+import LeftContent from 'src/components/content/leftContent';
 import './index.scss';
  
 

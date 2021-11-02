@@ -1,5 +1,5 @@
-import config from '@config/index';
-import { api } from '@util/http';
+import config from 'src/config/index';
+import { api } from 'src/util/http';
 import Web3 from 'web3';
 
 declare const window: any;

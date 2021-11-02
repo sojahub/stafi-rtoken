@@ -1,17 +1,17 @@
-import apr_svg from '@images/apr.svg';
-import rate_eleted_svg from '@images/rate_eleted.svg';
-import rDOT_svg from '@images/rDOT_black2.svg';
-import reth_staker from '@images/reth_staker.svg';
-import reth_validator from '@images/reth_validator.svg';
-import rFIS_svg from '@images/rFIS_black.svg';
-import rKSM_svg from '@images/rKSM_black2.svg';
-import rSOL_svg from '@images/rSOL_stafi.svg';
-import rBnb_svg from '@images/selected_bnb.svg';
-import rATOM_svg from '@images/selected_rATOM.svg';
-import rMatic_svg from '@images/selected_rMatic.svg';
-import validator_svg from '@images/validator_2.svg';
 import React from 'react';
 import { useSelector } from 'react-redux';
+import apr_svg from 'src/assets/images/apr.svg';
+import rate_eleted_svg from 'src/assets/images/rate_eleted.svg';
+import rDOT_svg from 'src/assets/images/rDOT_black2.svg';
+import reth_staker from 'src/assets/images/reth_staker.svg';
+import reth_validator from 'src/assets/images/reth_validator.svg';
+import rFIS_svg from 'src/assets/images/rFIS_black.svg';
+import rKSM_svg from 'src/assets/images/rKSM_black2.svg';
+import rSOL_svg from 'src/assets/images/rSOL_stafi.svg';
+import rBnb_svg from 'src/assets/images/selected_bnb.svg';
+import rATOM_svg from 'src/assets/images/selected_rATOM.svg';
+import rMatic_svg from 'src/assets/images/selected_rMatic.svg';
+import validator_svg from 'src/assets/images/validator_2.svg';
 import './index.scss';
 
 type Props = {

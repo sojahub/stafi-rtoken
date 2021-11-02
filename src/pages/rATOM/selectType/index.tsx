@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react';
-import {Redirect} from 'react-router'
-import {useDispatch, useSelector} from 'react-redux';
-import TypeCard from '@components/card/typeCard';
-import {getTotalIssuance,rTokenLedger} from '@features/rATOMClice'
+import { useDispatch, useSelector } from 'react-redux';
+import { Redirect } from 'react-router';
+import TypeCard from 'src/components/card/typeCard';
+import { getTotalIssuance, rTokenLedger } from 'src/features/rATOMClice';
 
 export default function Index(props:any){
 

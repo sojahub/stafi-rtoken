@@ -1,8 +1,8 @@
-import { HContainer } from '@components/commonComponents';
-import downArrowSvg from '@images/ic_arrow_down.svg';
-import left_arrow from '@images/left_arrow.svg';
-import AmountInputEmbedNew from '@shared/components/input/amountInputEmbedNew';
 import React, { useState } from 'react';
+import downArrowSvg from 'src/assets/images/ic_arrow_down.svg';
+import left_arrow from 'src/assets/images/left_arrow.svg';
+import { HContainer } from 'src/components/commonComponents';
+import AmountInputEmbedNew from 'src/shared/components/input/amountInputEmbedNew';
 import './index.scss';
 
 type Props = {

@@ -1,12 +1,12 @@
-import { approveLpAllowance, claimLpReward, stakeLp, unstakeLp } from '@features/rPoolClice';
-import RPoolServer from '@servers/rpool';
-import AmountInputEmbedNew from '@shared/components/input/amountInputEmbedNew';
-import { liquidityPlatformMatchMetaMask } from '@util/metaMaskUtil';
-import numberUtil from '@util/numberUtil';
 import { message } from 'antd';
 import React, { useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
+import { approveLpAllowance, claimLpReward, stakeLp, unstakeLp } from 'src/features/rPoolClice';
+import RPoolServer from 'src/servers/rpool';
+import AmountInputEmbedNew from 'src/shared/components/input/amountInputEmbedNew';
+import { liquidityPlatformMatchMetaMask } from 'src/util/metaMaskUtil';
+import numberUtil from 'src/util/numberUtil';
 import './LiquidityStaker.scss';
 
 const rPoolServer = new RPoolServer();

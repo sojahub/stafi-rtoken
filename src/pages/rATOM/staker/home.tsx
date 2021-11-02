@@ -1,15 +1,15 @@
-import Content from '@components/content/stakeContent_DOT';
-import { STAFI_CHAIN_ID } from '@features/bridgeClice';
-import { setProcessSlider } from '@features/globalClice';
-import { rTokenLedger, rTokenRate, transfer } from '@features/rATOMClice';
-import atom_stake_tips from '@images/atom_stake_tips.png';
-import Button from '@shared/components/button/button';
-import { getSessionStorageItem, ratioToAmount, setSessionStorageItem } from '@util/common';
-import NumberUtil from '@util/numberUtil';
 import { message, Modal } from 'antd';
 import PubSub from 'pubsub-js';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import atom_stake_tips from 'src/assets/images/atom_stake_tips.png';
+import Content from 'src/components/content/stakeContent_DOT';
+import { STAFI_CHAIN_ID } from 'src/features/bridgeClice';
+import { setProcessSlider } from 'src/features/globalClice';
+import { rTokenLedger, rTokenRate, transfer } from 'src/features/rATOMClice';
+import Button from 'src/shared/components/button/button';
+import { getSessionStorageItem, ratioToAmount, setSessionStorageItem } from 'src/util/common';
+import NumberUtil from 'src/util/numberUtil';
 import './index.scss';
 export default function Index(props: any) {
   const dispatch = useDispatch();

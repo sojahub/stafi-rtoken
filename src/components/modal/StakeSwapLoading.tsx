@@ -1,26 +1,26 @@
 import { LoadingOutlined } from '@ant-design/icons';
-import { getRsymbolByTokenType, getSymbolRTitle } from '@config/index';
-import { BSC_CHAIN_ID, ETH_CHAIN_ID, SOL_CHAIN_ID } from '@features/bridgeClice';
-import {
-  getAssetBalance as getBscAssetBalance,
-  getAssetBalanceAll as getBep20AssetBalanceAll
-} from '@features/BSCClice';
-import {
-  getAssetBalance as getEthAssetBalance,
-  getAssetBalanceAll as getErc20AssetBalanceAll
-} from '@features/ETHClice';
-import { processStatus, setProcessSwapping, setStakeSwapLoadingStatus } from '@features/globalClice';
-import { noticeStatus, update_NoticeProcessSwppingStatus, update_NoticeStatus } from '@features/noticeClice';
-import { getAssetBalance as getSlpAssetBalance, getSlp20AssetBalanceAll } from '@features/SOLClice';
-import close_bold_svg from '@images/close_bold.svg';
-import complete_svg from '@images/complete.svg';
-import { requestAddTokenToMetaMask } from '@util/metaMaskUtil';
-import numberUtil from '@util/numberUtil';
-import { useInterval } from '@util/utils';
 import { message, Modal, Progress, Spin } from 'antd';
 import { cloneDeep } from 'lodash';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import close_bold_svg from 'src/assets/images/close_bold.svg';
+import complete_svg from 'src/assets/images/complete.svg';
+import { getRsymbolByTokenType, getSymbolRTitle } from 'src/config/index';
+import { BSC_CHAIN_ID, ETH_CHAIN_ID, SOL_CHAIN_ID } from 'src/features/bridgeClice';
+import {
+    getAssetBalance as getBscAssetBalance,
+    getAssetBalanceAll as getBep20AssetBalanceAll
+} from 'src/features/BSCClice';
+import {
+    getAssetBalance as getEthAssetBalance,
+    getAssetBalanceAll as getErc20AssetBalanceAll
+} from 'src/features/ETHClice';
+import { processStatus, setProcessSwapping, setStakeSwapLoadingStatus } from 'src/features/globalClice';
+import { noticeStatus, update_NoticeProcessSwppingStatus, update_NoticeStatus } from 'src/features/noticeClice';
+import { getAssetBalance as getSlpAssetBalance, getSlp20AssetBalanceAll } from 'src/features/SOLClice';
+import { requestAddTokenToMetaMask } from 'src/util/metaMaskUtil';
+import numberUtil from 'src/util/numberUtil';
+import { useInterval } from 'src/util/utils';
 import './SwapLoading.scss';
 
 const antIcon = <LoadingOutlined style={{ fontSize: '60px', color: '#fff' }} spin />;

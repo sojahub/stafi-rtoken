@@ -1,8 +1,8 @@
-import LeftContent from '@components/content/leftContent';
-import tidal from '@images/tidal.png';
-import Button from '@shared/components/button/button';
-import selected_rFIS_svg from '@images/selected_r_fis.svg';
 import React from 'react';
+import selected_rFIS_svg from 'src/assets/images/selected_r_fis.svg';
+import tidal from 'src/assets/images/tidal.png';
+import LeftContent from 'src/components/content/leftContent';
+import Button from 'src/shared/components/button/button';
 import './index.scss';
 
 export default function Index(){

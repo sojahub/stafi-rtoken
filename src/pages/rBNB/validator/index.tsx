@@ -1,6 +1,6 @@
-import Card from '@components/card/stakeCard';
-import Slider from '@components/slider/stakeSlider';
 import React from 'react';
+import Card from 'src/components/card/stakeCard';
+import Slider from 'src/components/slider/stakeSlider';
 import { rBNB_data } from '../systemData';
 import Content from './validatorContent';
 

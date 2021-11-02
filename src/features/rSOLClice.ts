@@ -1,42 +1,42 @@
 // @ts-nocheck
 
-import config from '@config/index';
-import { rSymbol, Symbol } from '@keyring/defaults';
 import { web3Enable } from '@polkadot/extension-dapp';
 import { u8aToHex } from '@polkadot/util';
 import { createSlice } from '@reduxjs/toolkit';
-import keyring from '@servers/index';
-import RpcServer, { pageCount } from '@servers/rpc/index';
-import { default as SolServer } from '@servers/sol/index';
-import Stafi from '@servers/stafi/index';
 import * as solanaWeb3 from '@solana/web3.js';
-import { getLocalStorageItem, Keys, removeLocalStorageItem, setLocalStorageItem, stafi_uuid, timeout } from '@util/common';
-import NumberUtil from '@util/numberUtil';
 import { message } from 'antd';
 import base58 from 'bs58';
 import PubSub from 'pubsub-js';
+import config from 'src/config/index';
+import { rSymbol, Symbol } from 'src/keyring/defaults';
+import keyring from 'src/servers/index';
+import RpcServer, { pageCount } from 'src/servers/rpc/index';
+import { default as SolServer } from 'src/servers/sol/index';
+import Stafi from 'src/servers/stafi/index';
+import { getLocalStorageItem, Keys, removeLocalStorageItem, setLocalStorageItem, stafi_uuid, timeout } from 'src/util/common';
+import NumberUtil from 'src/util/numberUtil';
 import { AppThunk } from '../store';
 import {
-  BSC_CHAIN_ID,
-  ETH_CHAIN_ID,
-  SOL_CHAIN_ID,
-  STAFI_CHAIN_ID,
-  updateSwapParamsOfBep,
-  updateSwapParamsOfErc,
-  updateSwapParamsOfSlp
+    BSC_CHAIN_ID,
+    ETH_CHAIN_ID,
+    SOL_CHAIN_ID,
+    STAFI_CHAIN_ID,
+    updateSwapParamsOfBep,
+    updateSwapParamsOfErc,
+    updateSwapParamsOfSlp
 } from './bridgeClice';
 import CommonClice from './commonClice';
 import { bondStates, bound, fisUnbond, rTokenSeries_bondStates } from './FISClice';
 import {
-  connectSoljs,
-  initProcess,
-  processStatus,
-  setLoading,
-  setProcessDestChainId,
-  setProcessSending,
-  setProcessSlider,
-  setProcessType,
-  setStakeSwapLoadingStatus
+    connectSoljs,
+    initProcess,
+    processStatus,
+    setLoading,
+    setProcessDestChainId,
+    setProcessSending,
+    setProcessSlider,
+    setProcessType,
+    setStakeSwapLoadingStatus
 } from './globalClice';
 import { add_Notice, findUuidWithoutBlockhash, noticeStatus, noticesubType, noticeType } from './noticeClice';
 

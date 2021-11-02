@@ -1,13 +1,13 @@
-import HomeCard from '@components/card/homeCard';
-import { connectPolkadot_sol, connectSoljs } from '@features/globalClice';
-import phantom from '@images/phantom.png';
-import rFIS_svg from '@images/rFIS.svg';
-import SolServer from '@servers/sol/index';
-import Button from '@shared/components/button/connect_button';
-import Modal from '@shared/components/modal/connectModal';
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Redirect } from 'react-router';
+import phantom from 'src/assets/images/phantom.png';
+import rFIS_svg from 'src/assets/images/rFIS.svg';
+import HomeCard from 'src/components/card/homeCard';
+import { connectPolkadot_sol, connectSoljs } from 'src/features/globalClice';
+import SolServer from 'src/servers/sol/index';
+import Button from 'src/shared/components/button/connect_button';
+import Modal from 'src/shared/components/modal/connectModal';
 import Page_FIS from '../../rATOM/selectWallet_rFIS/index';
 import './index.scss';
 

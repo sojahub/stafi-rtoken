@@ -1,11 +1,11 @@
+import { Form, message } from 'antd';
 import React from 'react';
-import {Form,message} from 'antd';
-import {useDispatch} from 'react-redux';
-import Input from '@shared/components/input/index';
-import Button from '@shared/components/button/button'; 
-import leftArrowSvg from '@images/left_arrow.svg';
-import {getBlock,onProceed} from '@features/rKSMClice';
-import config from '@config/index'
+import { useDispatch } from 'react-redux';
+import leftArrowSvg from 'src/assets/images/left_arrow.svg';
+import config from 'src/config/index';
+import { onProceed } from 'src/features/rKSMClice';
+import Button from 'src/shared/components/button/button';
+import Input from 'src/shared/components/input/index';
 import './index.scss';
 export default function Index(props:any){
   const [form] = Form.useForm();

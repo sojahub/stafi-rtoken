@@ -1,10 +1,9 @@
+import { Input, message, Popover } from 'antd';
 import React, { useState } from 'react';
-import {Input,Popover,message} from 'antd';  
-import black_close from '@images/black_close.svg';
-import leftArrowSvg from '@images/left_arrow.svg';
-
-import rETH_svg from '@images/rETH.svg';
+import black_close from 'src/assets/images/black_close.svg';
+import leftArrowSvg from 'src/assets/images/left_arrow.svg';
 import './index.scss';
+
 
 type Props={
     placeholder?:string, 

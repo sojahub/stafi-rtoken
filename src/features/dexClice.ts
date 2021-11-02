@@ -1,15 +1,15 @@
 // @ts-nocheck
 
-import { getSymbolByRSymbol, getSymbolRTitle, getSymbolTitle } from '@config/index';
-import { rSymbol } from '@keyring/defaults';
 import { web3Enable, web3FromSource } from '@polkadot/extension-dapp';
 import { u8aToHex } from '@polkadot/util';
 import { createSlice } from '@reduxjs/toolkit';
-import keyring from '@servers/index';
-import StafiServer from '@servers/stafi';
-import { stafi_uuid } from '@util/common';
-import numberUtil from '@util/numberUtil';
 import { message } from 'antd';
+import { getSymbolByRSymbol, getSymbolRTitle, getSymbolTitle } from 'src/config/index';
+import { rSymbol } from 'src/keyring/defaults';
+import keyring from 'src/servers/index';
+import StafiServer from 'src/servers/stafi';
+import { stafi_uuid } from 'src/util/common';
+import numberUtil from 'src/util/numberUtil';
 import { AppThunk } from '../store';
 import { add_Notice, noticeStatus, noticesubType, noticeType } from './noticeClice';
 

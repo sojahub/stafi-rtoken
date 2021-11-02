@@ -1,5 +1,5 @@
-import leftArrowSvg from "@images/left_arrow.svg";
 import React from "react";
+import leftArrowSvg from "src/assets/images/left_arrow.svg";
 import "./index.scss";
 
 type Props = {

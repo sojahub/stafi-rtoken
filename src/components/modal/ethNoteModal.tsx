@@ -1,8 +1,8 @@
+import { Modal, Radio } from 'antd';
 import React, { useEffect, useState } from 'react';
-import {Modal,Radio} from 'antd'
-import A from '@shared/components/button/a';
-import config from '@config/index'
-import './ethNoteModal.scss'
+import config from 'src/config/index';
+import A from 'src/shared/components/button/a';
+import './ethNoteModal.scss';
 
 type Props={
     onCancel:Function,

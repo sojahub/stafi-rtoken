@@ -1,5 +1,5 @@
-import { isdev } from '@config/index';
 import mixpanel from 'mixpanel-browser';
+import { isdev } from 'src/config/index';
 
 /**
  * Initialize mixpanel SDK

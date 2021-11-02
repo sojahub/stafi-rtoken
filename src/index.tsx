@@ -1,6 +1,6 @@
-import { initAnalytics } from '@util/analyticsUtil';
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { initAnalytics } from 'src/util/analyticsUtil';
 import App from './app';
 
 initAnalytics();

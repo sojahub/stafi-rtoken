@@ -1,11 +1,11 @@
-import Header from '@components/header';
-import StakeSwapLoading from '@components/modal/StakeSwapLoading';
-import Sider from '@components/slider';
-import LiquidingProcesSlider from '@components/slider/liquidingProcessSlider';
-import { checkMetaMaskNetworkId, initMetaMaskAccount, monitorMetaMaskChainChange } from '@features/globalClice';
 import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { renderRoutes } from 'react-router-config';
+import Header from 'src/components/header';
+import StakeSwapLoading from 'src/components/modal/StakeSwapLoading';
+import Sider from 'src/components/slider';
+import LiquidingProcesSlider from 'src/components/slider/liquidingProcessSlider';
+import { checkMetaMaskNetworkId, initMetaMaskAccount, monitorMetaMaskChainChange } from 'src/features/globalClice';
 
 export default function index(props: any) {
   const dispatch = useDispatch();

@@ -1,6 +1,6 @@
-import config from '@config/index';
-import NumberUtil from '@util/numberUtil';
 import React from 'react';
+import config from 'src/config/index';
+import NumberUtil from 'src/util/numberUtil';
 
 type Props={
     era:Number,

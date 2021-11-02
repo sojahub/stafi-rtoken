@@ -1,5 +1,5 @@
-import { Symbol } from '@keyring/defaults';
-import { KeyringStruct } from '@keyring/types';
+import { Symbol } from 'src/keyring/defaults';
+import { KeyringStruct } from 'src/keyring/types';
 // import { PolkadotKeyring } from './PolkadotKeyring';
 import CosmosKeyring from './atom/index';
 import KusamaKeyring from './ksm/index';

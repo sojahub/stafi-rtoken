@@ -1,14 +1,14 @@
-import config from '@config/index';
-import { bondSwitch } from '@features/FISClice';
-import { reloadData } from '@features/globalClice';
-import { bondFees, continueProcess, getPools } from '@features/rBNBClice';
-import { get_eth_getBalance } from '@features/rETHClice';
-import { Symbol } from '@keyring/defaults';
-import Content from '@shared/components/content';
 import { Spin } from 'antd';
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { renderRoutes } from 'react-router-config';
+import config from 'src/config/index';
+import { bondSwitch } from 'src/features/FISClice';
+import { reloadData } from 'src/features/globalClice';
+import { bondFees, continueProcess, getPools } from 'src/features/rBNBClice';
+import { get_eth_getBalance } from 'src/features/rETHClice';
+import { Symbol } from 'src/keyring/defaults';
+import Content from 'src/shared/components/content';
 import '../template/index.scss';
 
 export default function Index(props: any) {

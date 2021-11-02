@@ -1,5 +1,5 @@
 import React from 'react';
-import zs_svg from '@images/zs.svg'
+import zs_svg from 'src/assets/images/zs.svg';
 import './index.scss';
 type Props={
     status:Number,

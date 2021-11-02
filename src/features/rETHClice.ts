@@ -1,26 +1,26 @@
 // @ts-nocheck
 
-import config, { isdev } from '@config/index';
-import { rSymbol, Symbol } from '@keyring/defaults';
 import { stringToHex, u8aToHex } from '@polkadot/util';
 import { keccakAsHex } from '@polkadot/util-crypto';
 import { createSlice } from '@reduxjs/toolkit';
-import EthServer from '@servers/eth/index';
-import FeeStationServer from '@servers/feeStation';
-import keyring from '@servers/index';
-import RpcServer, { pageCount } from '@servers/rpc/index';
-import {
-  getLocalStorageItem,
-  Keys,
-  localStorage_currentEthPool,
-  localStorage_poolPubKey,
-  removeLocalStorageItem,
-  setLocalStorageItem,
-  stafi_uuid
-} from '@util/common';
-import NumberUtil from '@util/numberUtil';
-import StringUtil from '@util/stringUtil';
 import { message } from 'antd';
+import config, { isdev } from 'src/config/index';
+import { rSymbol, Symbol } from 'src/keyring/defaults';
+import EthServer from 'src/servers/eth/index';
+import FeeStationServer from 'src/servers/feeStation';
+import keyring from 'src/servers/index';
+import RpcServer, { pageCount } from 'src/servers/rpc/index';
+import {
+    getLocalStorageItem,
+    Keys,
+    localStorage_currentEthPool,
+    localStorage_poolPubKey,
+    removeLocalStorageItem,
+    setLocalStorageItem,
+    stafi_uuid
+} from 'src/util/common';
+import NumberUtil from 'src/util/numberUtil';
+import StringUtil from 'src/util/stringUtil';
 import Web3Utils from 'web3-utils';
 import { AppThunk } from '../store';
 import { getAssetBalance } from './ETHClice';

@@ -1,10 +1,10 @@
-import black_close from '@images/black_close.svg';
-import bsc_white from '@images/bsc_white.svg';
-import eth_white from '@images/eth_white.svg';
-import solana_white from '@images/solana_white.svg';
 import { Popover } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { useHistory, useParams } from 'react-router';
+import black_close from 'src/assets/images/black_close.svg';
+import bsc_white from 'src/assets/images/bsc_white.svg';
+import eth_white from 'src/assets/images/eth_white.svg';
+import solana_white from 'src/assets/images/solana_white.svg';
 import './index.scss';
 
 const rTokenPlatforms = [

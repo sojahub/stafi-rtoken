@@ -1,6 +1,6 @@
-import Uniswap_svg from '@images/uniswap.png';
 import { message, Modal } from 'antd';
 import React from 'react';
+import Uniswap_svg from 'src/assets/images/uniswap.png';
 import './swap.scss';
 
 type Props = {

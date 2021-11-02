@@ -1,13 +1,13 @@
-import Content from '@components/content/redeemContent';
-import UnbondModal from '@components/modal/unbondModal';
-import CommonClice from '@features/commonClice';
-import { setLoading } from '@features/globalClice';
-import { getUnbondCommission, query_rBalances_account, rTokenRate, unbond, unbondFees } from '@features/rBNBClice';
-import { checkEthAddress } from '@features/rETHClice';
-import NumberUtil from '@util/numberUtil';
 import { message } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import Content from 'src/components/content/redeemContent';
+import UnbondModal from 'src/components/modal/unbondModal';
+import CommonClice from 'src/features/commonClice';
+import { setLoading } from 'src/features/globalClice';
+import { getUnbondCommission, query_rBalances_account, rTokenRate, unbond, unbondFees } from 'src/features/rBNBClice';
+import { checkEthAddress } from 'src/features/rETHClice';
+import NumberUtil from 'src/util/numberUtil';
 
 const commonClice = new CommonClice();
 export default function Index(props: any) {

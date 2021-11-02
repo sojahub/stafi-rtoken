@@ -1,9 +1,9 @@
-import Content from '@components/content/stakeInfoContent';
-import { getRethAmount, setRatioShow } from '@features/rETHClice';
-import NumberUtil from '@util/numberUtil';
 import { message } from 'antd';
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import Content from 'src/components/content/stakeInfoContent';
+import { getRethAmount, setRatioShow } from 'src/features/rETHClice';
+import NumberUtil from 'src/util/numberUtil';
 
 
 export default function Index(props:any){ 

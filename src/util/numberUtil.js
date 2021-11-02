@@ -1,13 +1,13 @@
-import { rSymbol } from '@keyring/defaults';
 import {
-  create,
-  divideDependencies,
-  floorDependencies,
-  maxDependencies,
-  minDependencies,
-  multiplyDependencies,
-  subtractDependencies
+    create,
+    divideDependencies,
+    floorDependencies,
+    maxDependencies,
+    minDependencies,
+    multiplyDependencies,
+    subtractDependencies
 } from 'mathjs';
+import { rSymbol } from 'src/keyring/defaults';
 import Web3Utils from 'web3-utils';
 
 // mathjs optimization

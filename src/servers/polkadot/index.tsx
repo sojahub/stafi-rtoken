@@ -1,13 +1,13 @@
-import {
-  web3Accounts,
-  web3Enable
-} from '@polkadot/extension-dapp';
 import { ApiPromise, WsProvider } from '@polkadot/api';
-import config from '@config/index';
-import Stafi from '../stafi'
-
+import {
+    web3Accounts,
+    web3Enable
+} from '@polkadot/extension-dapp';
 import { KeypairType } from '@polkadot/util-crypto/types';
-import { SubstrateKeyring } from '@keyring/SubstrateKeyring';
+import config from 'src/config/index';
+import { SubstrateKeyring } from 'src/keyring/SubstrateKeyring';
+import Stafi from '../stafi';
+
 
 let polkadotApi:any = null
 export default class ExtensionDapp extends SubstrateKeyring{

@@ -1,10 +1,10 @@
-import config from '@config/index';
-import { handleEthAccount, monitoring_Method, reloadData } from '@features/rETHClice';
-import Content from '@shared/components/content';
 import { Spin } from 'antd';
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { renderRoutes } from 'react-router-config';
+import config from 'src/config/index';
+import { handleEthAccount, monitoring_Method, reloadData } from 'src/features/rETHClice';
+import Content from 'src/shared/components/content';
 import '../template/index.scss';
 import './index.scss';
 export default function Index(props: any) {

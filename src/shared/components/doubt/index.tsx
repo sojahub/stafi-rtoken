@@ -1,6 +1,6 @@
-import React from 'react'
-import {Tooltip} from 'antd'
-import doubt from "@images/doubt.svg";
+import { Tooltip } from 'antd';
+import React from 'react';
+import doubt from "src/assets/images/doubt.svg";
 import './index.scss';
 type Props={
     tip:string

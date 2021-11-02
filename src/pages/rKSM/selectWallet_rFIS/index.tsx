@@ -1,9 +1,9 @@
-import React,{useState,useEffect,useMemo} from 'react';
-import {useSelector,useDispatch} from 'react-redux'
-import WalletCard from '@components/card/walletCard'
-import Item from '@components/card/walletCardItem';
-import {setFisAccount} from '@features/FISClice';  
-import {message,Modal} from 'antd';
+import { message } from 'antd';
+import React, { useEffect, useMemo, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import WalletCard from 'src/components/card/walletCard';
+import Item from 'src/components/card/walletCardItem';
+import { setFisAccount } from 'src/features/FISClice';
 import './index.scss';
 
 export default function Index(props:any){ 

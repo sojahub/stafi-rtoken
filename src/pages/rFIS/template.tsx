@@ -1,13 +1,13 @@
-import React, { useEffect } from 'react'; 
-import {Spin} from 'antd';
-import {useDispatch,useSelector} from 'react-redux'; 
-import Content from '@shared/components/content';
-import {renderRoutes}  from 'react-router-config';
-import {getLocalStorageItem,Keys} from '@util/common';
-import {fis_bondSwitch,getPools} from '@features/FISClice'
-import {Symbol} from '@keyring/defaults'
-import {reloadData} from '@features/globalClice'; 
-import '../template/index.scss'
+import { Spin } from 'antd';
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { renderRoutes } from 'react-router-config';
+import { fis_bondSwitch, getPools } from 'src/features/FISClice';
+import { reloadData } from 'src/features/globalClice';
+import { Symbol } from 'src/keyring/defaults';
+import Content from 'src/shared/components/content';
+import { getLocalStorageItem, Keys } from 'src/util/common';
+import '../template/index.scss';
 export default function Index(props:any){
   const dispatch = useDispatch();
 

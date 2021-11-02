@@ -1,11 +1,11 @@
-import Content from '@components/content/redeemContent';
-import UnbondModal from '@components/modal/unbondModal';
-import { setLoading } from '@features/globalClice';
-import { checkAddress, getUnbondCommission, query_rBalances_account, rTokenRate, unbond, unbondFees } from '@features/rDOTClice';
-import NumberUtil from '@util/numberUtil';
 import { message } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import Content from 'src/components/content/redeemContent';
+import UnbondModal from 'src/components/modal/unbondModal';
+import { setLoading } from 'src/features/globalClice';
+import { checkAddress, getUnbondCommission, query_rBalances_account, rTokenRate, unbond, unbondFees } from 'src/features/rDOTClice';
+import NumberUtil from 'src/util/numberUtil';
 
 export default function Index(props:any){ 
   const dispatch=useDispatch();

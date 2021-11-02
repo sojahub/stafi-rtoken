@@ -1,6 +1,6 @@
-import A from "@shared/components/button/a";
 import { Input, message } from "antd";
 import React, { useState } from "react";
+import A from "src/shared/components/button/a";
 
 type Props = {
   value: string | undefined;

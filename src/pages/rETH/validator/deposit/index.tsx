@@ -1,11 +1,11 @@
-import LeftContent from '@components/content/leftContent';
-import { getDepositAmount, getDepositBalance, handleDeposit } from '@features/rETHClice';
-import rETH from '@images/selected_rETH.svg';
-import A from '@shared/components/button/a';
-import Button from '@shared/components/button/button';
-import Input from '@shared/components/input/amountInput';
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import rETH from 'src/assets/images/selected_rETH.svg';
+import LeftContent from 'src/components/content/leftContent';
+import { getDepositAmount, getDepositBalance, handleDeposit } from 'src/features/rETHClice';
+import A from 'src/shared/components/button/a';
+import Button from 'src/shared/components/button/button';
+import Input from 'src/shared/components/input/amountInput';
 import { RootState } from 'src/store';
 import './index.scss';
 export default function Index(props:any){

@@ -1,8 +1,8 @@
 import React from 'react';
-import GhostButton from '@shared/components/button/ghostButton';
-import dow_svg from '@images/dow_green.svg'
-import Popover from './index'
-import './buttonPopover.scss'
+import dow_svg from 'src/assets/images/dow_green.svg';
+import GhostButton from 'src/shared/components/button/ghostButton';
+import './buttonPopover.scss';
+import Popover from './index';
 type Props={
     data:any[],
     children:any, 

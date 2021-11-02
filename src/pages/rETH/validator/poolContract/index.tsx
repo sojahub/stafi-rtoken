@@ -1,14 +1,14 @@
 import React, { useEffect } from 'react';
-import LeftContent from '@components/content/leftContent';
-import selected_rETH from '@images/selected_rETH.svg';
-import BackIcon from '@shared/components/backIcon/index';
-import PoolItem from './components/poolItem';
-import A from '@shared/components/button/a'
-import Status from './components/status'
-import Process from './components/process'
-import './index.scss';
 import { useDispatch, useSelector } from 'react-redux';
-import {getPoolInfo,rewardDetails} from "@features/rETHClice" 
+import selected_rETH from 'src/assets/images/selected_rETH.svg';
+import LeftContent from 'src/components/content/leftContent';
+import { getPoolInfo, rewardDetails } from "src/features/rETHClice";
+import BackIcon from 'src/shared/components/backIcon/index';
+import A from 'src/shared/components/button/a';
+import PoolItem from './components/poolItem';
+import Process from './components/process';
+import Status from './components/status';
+import './index.scss';
 export default function Index(props:any){
   const dispatch=useDispatch();
   useEffect(()=>{  

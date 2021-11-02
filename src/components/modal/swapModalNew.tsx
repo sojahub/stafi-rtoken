@@ -1,6 +1,6 @@
-import trade_svg from '@images/trade.png';
 import { Modal } from 'antd';
 import React from 'react';
+import trade_svg from 'src/assets/images/trade.png';
 import './swap.scss';
 
 type Props = {

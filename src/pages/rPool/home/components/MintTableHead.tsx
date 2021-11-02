@@ -1,5 +1,5 @@
-// import sort_arrow from '@images/sort_arrow.svg';
-// import sort_arrow_white from '@images/sort_arrow_white.svg';
+// import sort_arrow from 'src/assets/images/sort_arrow.svg';
+// import sort_arrow_white from 'src/assets/images/sort_arrow_white.svg';
 import React from 'react';
 
 type Props = {

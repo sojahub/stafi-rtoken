@@ -1,31 +1,31 @@
 // @ts-nocheck
 
-import config from '@config/index';
-import { rSymbol, Symbol } from '@keyring/defaults';
 import { u8aToHex } from '@polkadot/util';
 import { createSlice } from '@reduxjs/toolkit';
-import EthServer from '@servers/eth/index';
-import keyring from '@servers/index';
-import RpcServer, { pageCount } from '@servers/rpc/index';
-import Stafi from '@servers/stafi/index';
-import { getLocalStorageItem, Keys, removeLocalStorageItem, setLocalStorageItem, stafi_uuid } from '@util/common';
-import { default as numberUtil, default as NumberUtil } from '@util/numberUtil';
 import { message } from 'antd';
 import _m0 from 'protobufjs/minimal';
 import PubSub from 'pubsub-js';
+import config from 'src/config/index';
+import { rSymbol, Symbol } from 'src/keyring/defaults';
+import EthServer from 'src/servers/eth/index';
+import keyring from 'src/servers/index';
+import RpcServer, { pageCount } from 'src/servers/rpc/index';
+import Stafi from 'src/servers/stafi/index';
+import { getLocalStorageItem, Keys, removeLocalStorageItem, setLocalStorageItem, stafi_uuid } from 'src/util/common';
+import { default as numberUtil, default as NumberUtil } from 'src/util/numberUtil';
 import { AppThunk } from '../store';
 import { ETH_CHAIN_ID, STAFI_CHAIN_ID, updateSwapParamsOfBep, updateSwapParamsOfErc } from './bridgeClice';
 import CommonClice from './commonClice';
 import { bondStates, bound, fisUnbond, rTokenSeries_bondStates } from './FISClice';
 import {
-  initProcess,
-  processStatus,
-  setLoading,
-  setProcessDestChainId,
-  setProcessSending,
-  setProcessSlider,
-  setProcessType,
-  setStakeSwapLoadingStatus
+    initProcess,
+    processStatus,
+    setLoading,
+    setProcessDestChainId,
+    setProcessSending,
+    setProcessSlider,
+    setProcessType,
+    setStakeSwapLoadingStatus
 } from './globalClice';
 import { add_Notice, findUuid, noticeStatus, noticesubType, noticeType } from './noticeClice';
 import { checkEthAddress, connectMetamask, get_eth_getBalance } from './rETHClice';

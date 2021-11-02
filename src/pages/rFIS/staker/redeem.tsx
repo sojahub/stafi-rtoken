@@ -1,10 +1,9 @@
-import React, { useEffect, useState } from 'react'; 
-import {useSelector} from 'react-redux';
-import Content from '@components/content/redeemContent_FIS';   
-import {rTokenRate,unbond,getUnbondCommission,query_rBalances_account,checkAddress,unbondFees,RefreshUnbonding,withdraw} from '@features/FISClice';
-import {setLoading} from '@features/globalClice'
-import {useDispatch} from 'react-redux'; 
-import NumberUtil from '@util/numberUtil' 
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import Content from 'src/components/content/redeemContent_FIS';
+import { getUnbondCommission, query_rBalances_account, RefreshUnbonding, rTokenRate, unbond, unbondFees, withdraw } from 'src/features/FISClice';
+import { setLoading } from 'src/features/globalClice';
+import NumberUtil from 'src/util/numberUtil';
 
 export default function Index(props:any){ 
   const dispatch=useDispatch();

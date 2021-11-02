@@ -1,14 +1,14 @@
-import HomeCard from '@components/card/homeCard';
-import config from '@config/index';
-import { connectPolkadot_fis } from '@features/globalClice';
-import { connectMetamask } from '@features/rETHClice';
-import metamask from '@images/metamask.png';
-import rFIS_svg from '@images/rFIS.svg';
-import Button from '@shared/components/button/connect_button';
-import Modal from '@shared/components/modal/connectModal';
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Redirect } from 'react-router';
+import metamask from 'src/assets/images/metamask.png';
+import rFIS_svg from 'src/assets/images/rFIS.svg';
+import HomeCard from 'src/components/card/homeCard';
+import config from "src/config/index";
+import { connectPolkadot_fis } from 'src/features/globalClice';
+import { connectMetamask } from 'src/features/rETHClice';
+import Button from 'src/shared/components/button/connect_button';
+import Modal from 'src/shared/components/modal/connectModal';
 import Page_FIS from '../../rATOM/selectWallet_rFIS/index';
 import './index.scss';
 

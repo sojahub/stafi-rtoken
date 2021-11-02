@@ -1,10 +1,10 @@
-import config from '@config/index';
-import { SolKeyring } from '@keyring/SolKeyring';
 import { ApiPromise, WsProvider } from '@polkadot/api';
 import { web3Accounts, web3Enable } from '@polkadot/extension-dapp';
 import { Connection, PublicKey, SystemProgram, Transaction } from '@solana/web3.js';
-import { timeout } from '@util/common';
 import { message } from 'antd';
+import config from 'src/config/index';
+import { SolKeyring } from 'src/keyring/SolKeyring';
+import { timeout } from 'src/util/common';
 import Stafi from '../stafi';
 declare const window: any;
 

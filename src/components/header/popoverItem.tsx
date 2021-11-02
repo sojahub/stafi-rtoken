@@ -1,10 +1,10 @@
 // @ts-nocheck
 
-import config from '@config/index';
-import { noticesubType, noticeType, notice_text } from '@features/noticeClice';
-import { rSymbol, Symbol } from '@keyring/defaults';
 import { Empty } from 'antd';
 import React from 'react';
+import config from 'src/config/index';
+import { noticesubType, noticeType, notice_text } from 'src/features/noticeClice';
+import { rSymbol, Symbol } from 'src/keyring/defaults';
 
 type Props = {
   data?: any;

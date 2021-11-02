@@ -1,10 +1,10 @@
-import poolPancakeIcon from '@images/pancake.svg';
-import poolUniswapIcon from '@images/poolUniswapIcon.png';
-import poolQuickSwapIcon from '@images/quick_swap.png';
-import GhostButton from '@shared/components/button/ghostButton';
-import numberUtil from '@util/numberUtil';
 import React from 'react';
 import { useHistory } from 'react-router-dom';
+import poolPancakeIcon from 'src/assets/images/pancake.svg';
+import poolUniswapIcon from 'src/assets/images/poolUniswapIcon.png';
+import poolQuickSwapIcon from 'src/assets/images/quick_swap.png';
+import GhostButton from 'src/shared/components/button/ghostButton';
+import numberUtil from 'src/util/numberUtil';
 
 type Props = {
   pairIcon: any;

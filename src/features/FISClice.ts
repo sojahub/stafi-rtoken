@@ -1,58 +1,58 @@
 // @ts-nocheck
 
-import config, { getSymbolRTitle } from "@config/index";
-import { query_rBalances_account as fis_query_rBalances_account } from "@features/FISClice";
-import { query_rBalances_account as atom_query_rBalances_account } from "@features/rATOMClice";
-import { query_rBalances_account as bnb_query_rBalances_account } from "@features/rBNBClice";
-import { query_rBalances_account as dot_query_rBalances_account } from "@features/rDOTClice";
-import { query_rBalances_account as ksm_query_rBalances_account } from "@features/rKSMClice";
-import { query_rBalances_account as matic_query_rBalances_account } from "@features/rMATICClice";
-import { query_rBalances_account as sol_query_rBalances_account } from "@features/rSOLClice";
-import { rSymbol, Symbol } from "@keyring/defaults";
 import { web3Enable, web3FromSource } from "@polkadot/extension-dapp";
 import { stringToHex, u8aToHex } from "@polkadot/util";
 import { createSlice } from "@reduxjs/toolkit";
-import { default as keyring, default as keyringInstance } from "@servers/index";
-import RpcServer, { pageCount } from "@servers/rpc/index";
-import SolServer from "@servers/sol/index";
-import Stafi from "@servers/stafi/index";
 import { PublicKey } from "@solana/web3.js";
-import {
-  getLocalStorageItem,
-  Keys,
-  removeLocalStorageItem,
-  setLocalStorageItem,
-  stafi_uuid,
-  timeout
-} from "@util/common";
-import NumberUtil from "@util/numberUtil";
-import StringUtil from "@util/stringUtil";
 import { message } from "antd";
+import config, { getSymbolRTitle } from "src/config/index";
+import { query_rBalances_account as fis_query_rBalances_account } from "src/features/FISClice";
+import { query_rBalances_account as atom_query_rBalances_account } from "src/features/rATOMClice";
+import { query_rBalances_account as bnb_query_rBalances_account } from "src/features/rBNBClice";
+import { query_rBalances_account as dot_query_rBalances_account } from "src/features/rDOTClice";
+import { query_rBalances_account as ksm_query_rBalances_account } from "src/features/rKSMClice";
+import { query_rBalances_account as matic_query_rBalances_account } from "src/features/rMATICClice";
+import { query_rBalances_account as sol_query_rBalances_account } from "src/features/rSOLClice";
+import { rSymbol, Symbol } from "src/keyring/defaults";
+import { default as keyring, default as keyringInstance } from "src/servers/index";
+import RpcServer, { pageCount } from "src/servers/rpc/index";
+import SolServer from "src/servers/sol/index";
+import Stafi from "src/servers/stafi/index";
+import {
+    getLocalStorageItem,
+    Keys,
+    removeLocalStorageItem,
+    setLocalStorageItem,
+    stafi_uuid,
+    timeout
+} from "src/util/common";
+import NumberUtil from "src/util/numberUtil";
+import StringUtil from "src/util/stringUtil";
 import { AppThunk } from "../store";
 import {
-  ETH_CHAIN_ID,
-  SOL_CHAIN_ID,
-  STAFI_CHAIN_ID,
-  updateSwapParamsOfBep,
-  updateSwapParamsOfErc
+    ETH_CHAIN_ID,
+    SOL_CHAIN_ID,
+    STAFI_CHAIN_ID,
+    updateSwapParamsOfBep,
+    updateSwapParamsOfErc
 } from "./bridgeClice";
 import CommonClice from "./commonClice";
 import {
-  initProcess,
-  processStatus,
-  setLoading,
-  setProcessMinting,
-  setProcessSlider,
-  setProcessStaking,
-  setProcessSwapping,
-  setProcessType,
-  setStakeSwapLoadingStatus
+    initProcess,
+    processStatus,
+    setLoading,
+    setProcessMinting,
+    setProcessSlider,
+    setProcessStaking,
+    setProcessSwapping,
+    setProcessType,
+    setStakeSwapLoadingStatus
 } from "./globalClice";
 import {
-  add_Notice,
-  noticeStatus,
-  noticesubType,
-  noticeType
+    add_Notice,
+    noticeStatus,
+    noticesubType,
+    noticeType
 } from "./noticeClice";
 
 declare const ethereum: any;

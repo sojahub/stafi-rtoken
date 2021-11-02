@@ -1,13 +1,13 @@
 // @ts-nocheck
 
-import config, { getRsymbolByTokenTitle } from '@config/index';
-import { rSymbol } from '@keyring/defaults';
-import EthServer from '@servers/eth';
-import StafiServer from '@servers/stafi';
-import { formatDuration } from '@util/dateUtil';
-import numberUtil from '@util/numberUtil';
-import rpc from '@util/rpc';
 import { cloneDeep } from 'lodash';
+import config, { getRsymbolByTokenTitle } from 'src/config/index';
+import { rSymbol } from 'src/keyring/defaults';
+import EthServer from 'src/servers/eth';
+import StafiServer from 'src/servers/stafi';
+import { formatDuration } from 'src/util/dateUtil';
+import numberUtil from 'src/util/numberUtil';
+import rpc from 'src/util/rpc';
 
 const stafiServer = new StafiServer();
 const ethServer = new EthServer();

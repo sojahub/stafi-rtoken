@@ -1,10 +1,10 @@
 import React, { useEffect } from 'react';
-import Card from '@components/card/stakeCard';
-import Slider from '@components/slider/stakeSlider'; 
-import {renderRoutes}  from 'react-router-config';
-import {rFIS_data} from '../systemData';
-import {onboardValidators} from '@features/FISClice'
 import { useDispatch } from 'react-redux';
+import { renderRoutes } from 'react-router-config';
+import Card from 'src/components/card/stakeCard';
+import Slider from 'src/components/slider/stakeSlider';
+import { onboardValidators } from 'src/features/FISClice';
+import { rFIS_data } from '../systemData';
 export default function Index(props:any){ 
   const dispatch=useDispatch();
   useEffect(()=>{

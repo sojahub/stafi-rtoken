@@ -1,12 +1,12 @@
-import { HContainer, Text } from '@components/commonComponents';
-import closeIcon from '@images/ic_close_black.svg';
-import stakeOverviewIcon from '@images/stake_overview.png';
-import sendingIcon from '@images/stake_overview_send.svg';
-import signatureIcon from '@images/stake_overview_signature.svg';
-import stakeIcon from '@images/stake_overview_stake.png';
-import stakeSwapIcon from '@images/stake_overview_stake_swap.png';
 import { Modal } from 'antd';
 import React from 'react';
+import closeIcon from 'src/assets/images/ic_close_black.svg';
+import stakeOverviewIcon from 'src/assets/images/stake_overview.png';
+import sendingIcon from 'src/assets/images/stake_overview_send.svg';
+import signatureIcon from 'src/assets/images/stake_overview_signature.svg';
+import stakeIcon from 'src/assets/images/stake_overview_stake.png';
+import stakeSwapIcon from 'src/assets/images/stake_overview_stake_swap.png';
+import { HContainer, Text } from 'src/components/commonComponents';
 import styled, { CSSProperties } from 'styled-components';
 import './index.scss';
 

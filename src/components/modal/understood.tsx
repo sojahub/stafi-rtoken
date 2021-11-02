@@ -1,6 +1,6 @@
-import understood_png from '@images/understood.png';
 import { Modal } from 'antd';
 import React from 'react';
+import understood_png from 'src/assets/images/understood.png';
 import './swap.scss';
 
 type Props = {

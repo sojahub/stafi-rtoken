@@ -1,9 +1,9 @@
-import Modal from '@components/modal/boardModal';
-import { getCurrentLedgerData, handleOnboard } from '@features/FISClice';
 import { message } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Redirect } from 'react-router';
+import Modal from 'src/components/modal/boardModal';
+import { getCurrentLedgerData, handleOnboard } from 'src/features/FISClice';
 import { RootState } from 'src/store';
 import Content from '../components/validatorContent';
 

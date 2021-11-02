@@ -1,7 +1,7 @@
 import React from 'react';
-import NumberUtil from '@util/numberUtil'
-
+import NumberUtil from 'src/util/numberUtil';
 import './index.scss';
+
 type Props={
   totalValue:any
 }

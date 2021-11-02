@@ -1,8 +1,8 @@
-import Content from '@components/content/stakeInfoContent';
-import { accountUnbonds, query_rBalances_account, rTokenRate, setRatioShow } from '@features/rMATICClice';
-import NumberUtil from '@util/numberUtil';
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import Content from 'src/components/content/stakeInfoContent';
+import { accountUnbonds, query_rBalances_account, rTokenRate, setRatioShow } from 'src/features/rMATICClice';
+import NumberUtil from 'src/util/numberUtil';
 
 export default function Index(props: any) {
   const dispatch = useDispatch();

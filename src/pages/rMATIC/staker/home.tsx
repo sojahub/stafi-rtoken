@@ -1,14 +1,14 @@
-import Content from '@components/content/stakeContent_DOT';
-import { STAFI_CHAIN_ID } from '@features/bridgeClice';
-import { getGasPrice } from '@features/ETHClice';
-import { setProcessSlider } from '@features/globalClice';
-import { rTokenLedger, rTokenRate, transfer } from '@features/rMATICClice';
-import { ratioToAmount } from '@util/common';
-import { default as NumberUtil } from '@util/numberUtil';
 import { message } from 'antd';
 import PubSub from 'pubsub-js';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import Content from 'src/components/content/stakeContent_DOT';
+import { STAFI_CHAIN_ID } from 'src/features/bridgeClice';
+import { getGasPrice } from 'src/features/ETHClice';
+import { setProcessSlider } from 'src/features/globalClice';
+import { rTokenLedger, rTokenRate, transfer } from 'src/features/rMATICClice';
+import { ratioToAmount } from 'src/util/common';
+import { default as NumberUtil } from 'src/util/numberUtil';
 import './index.scss';
 
 export default function Index(props: any) {

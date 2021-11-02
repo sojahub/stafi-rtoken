@@ -1,15 +1,28 @@
-import CommonButton from '@components/CommonButton';
-import { CardContainer, HContainer, Text } from '@components/commonComponents';
-import DexSwapLoading from '@components/modal/DexSwapLoading';
-import TokenSelector from '@components/selector/TokenSelector';
-import config from '@config/index';
-import { swap } from '@features/dexClice';
+import { message, Tooltip } from 'antd';
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+// import { query_rBalances_account, rTokenRate as ksm_rTokenRate } from 'src/features/rKSMClice';
+import arrowDownIcon from 'src/assets/images/arrow_down.svg';
+import doubt from 'src/assets/images/doubt.svg';
+import left_arrow from 'src/assets/images/left_arrow.svg';
+import rasset_ratom_svg from 'src/assets/images/r_atom.svg';
+// import rasset_rfis_svg from 'src/assets/images/r_fis.svg';
+// import rasset_rksm_svg from 'src/assets/images/r_ksm.svg';
+import rasset_rbnb_svg from 'src/assets/images/r_bnb.svg';
+import rasset_rdot_svg from 'src/assets/images/r_dot.svg';
+import settingIcon from 'src/assets/images/setting.svg';
+import CommonButton from 'src/components/CommonButton';
+import { CardContainer, HContainer, Text } from 'src/components/commonComponents';
+import DexSwapLoading from 'src/components/modal/DexSwapLoading';
+import TokenSelector from 'src/components/selector/TokenSelector';
+import config from 'src/config/index';
+import { swap } from 'src/features/dexClice';
 import {
   fetchRTokenStatDetail as fis_fetchRTokenStatDetail,
   reloadData as fis_reloadData,
   rTokenRate as fis_rTokenRate
-} from '@features/FISClice';
-import { connectPolkadot_fis } from '@features/globalClice';
+} from 'src/features/FISClice';
+import { connectPolkadot_fis } from 'src/features/globalClice';
 import {
   checkAddress as atom_checkAddress,
   fetchRTokenStatDetail as atomFetchRTokenStatDetail,
@@ -17,41 +30,28 @@ import {
   rLiquidityRate as atom_rLiquidityRate,
   rSwapFee as atom_rSwapFee,
   rTokenRate as atom_rTokenRate
-} from '@features/rATOMClice';
+} from 'src/features/rATOMClice';
 import {
   checkAddress as bnb_checkAddress,
   query_rBalances_account as bnb_query_rBalances_account,
   rLiquidityRate as bnb_rLiquidityRate,
   rSwapFee as bnb_rSwapFee,
   rTokenRate as bnb_rTokenRate
-} from '@features/rBNBClice';
+} from 'src/features/rBNBClice';
 import {
   checkAddress as dot_checkAddress,
   query_rBalances_account as dot_query_rBalances_account,
   rLiquidityRate as dot_rLiquidityRate,
   rSwapFee as dot_rSwapFee,
   rTokenRate as dot_rTokenRate
-} from '@features/rDOTClice';
-// import { query_rBalances_account, rTokenRate as ksm_rTokenRate } from '@features/rKSMClice';
-import arrowDownIcon from '@images/arrow_down.svg';
-import doubt from '@images/doubt.svg';
-import left_arrow from '@images/left_arrow.svg';
-import rasset_ratom_svg from '@images/r_atom.svg';
-// import rasset_rfis_svg from '@images/r_fis.svg';
-// import rasset_rksm_svg from '@images/r_ksm.svg';
-import rasset_rbnb_svg from '@images/r_bnb.svg';
-import rasset_rdot_svg from '@images/r_dot.svg';
-import settingIcon from '@images/setting.svg';
-import { rSymbol } from '@keyring/defaults';
-import Stafi from '@servers/stafi';
-import AddressInputEmbedNew from '@shared/components/input/addressInputEmbedNew';
-import SlippageToleranceInputEmbed from '@shared/components/input/slippageToleranceInputEmbed';
-import TypeSelectorInput from '@shared/components/input/TypeSelectorInput';
-import Modal from '@shared/components/modal/connectModal';
-import numberUtil from '@util/numberUtil';
-import { message, Tooltip } from 'antd';
-import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+} from 'src/features/rDOTClice';
+import { rSymbol } from 'src/keyring/defaults';
+import Stafi from 'src/servers/stafi';
+import AddressInputEmbedNew from 'src/shared/components/input/addressInputEmbedNew';
+import SlippageToleranceInputEmbed from 'src/shared/components/input/slippageToleranceInputEmbed';
+import TypeSelectorInput from 'src/shared/components/input/TypeSelectorInput';
+import Modal from 'src/shared/components/modal/connectModal';
+import numberUtil from 'src/util/numberUtil';
 import styled from 'styled-components';
 import Page_FIS from '../../rATOM/selectWallet_rFIS/index';
 import DexTokenItem from './DexTokenItem';

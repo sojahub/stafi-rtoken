@@ -1,8 +1,8 @@
-import TypeCard from '@components/card/typeCard';
-import { getTotalIssuance, rTokenLedger } from '@features/rSOLClice';
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Redirect } from 'react-router';
+import TypeCard from 'src/components/card/typeCard';
+import { getTotalIssuance, rTokenLedger } from 'src/features/rSOLClice';
 
 export default function Index(props: any) {
   const dispatch = useDispatch();

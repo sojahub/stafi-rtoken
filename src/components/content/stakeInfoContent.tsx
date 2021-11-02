@@ -1,20 +1,20 @@
 // @ts-nocheck
 
-import config from '@config/index';
-import dow_svg from '@images/left_arrow_black.svg';
-import rDOT_DOT_svg from '@images/rDOT_DOT.svg';
-import rATOM_stafi_svg from '@images/selected_r_atom.svg';
-import rBnb_stafi_svg from '@images/selected_r_bnb.svg';
-import rDOT_stafi_svg from '@images/selected_r_dot.svg';
-import rETH_stafi_svg from '@images/selected_r_eth.svg';
-import rFIS_stafi_svg from '@images/selected_r_fis.svg';
-import rKSM_stafi_svg from '@images/selected_r_ksm.svg';
-import rMatic_stafi_svg from '@images/selected_r_matic.svg';
-import rSOL_stafi_svg from '@images/selected_r_sol.svg';
-import Button from '@shared/components/button/button';
-import NumberUtil from '@util/numberUtil';
 import React, { useMemo, useState } from 'react';
 import { useHistory } from 'react-router';
+import dow_svg from 'src/assets/images/left_arrow_black.svg';
+import rDOT_DOT_svg from 'src/assets/images/rDOT_DOT.svg';
+import rATOM_stafi_svg from 'src/assets/images/selected_r_atom.svg';
+import rBnb_stafi_svg from 'src/assets/images/selected_r_bnb.svg';
+import rDOT_stafi_svg from 'src/assets/images/selected_r_dot.svg';
+import rETH_stafi_svg from 'src/assets/images/selected_r_eth.svg';
+import rFIS_stafi_svg from 'src/assets/images/selected_r_fis.svg';
+import rKSM_stafi_svg from 'src/assets/images/selected_r_ksm.svg';
+import rMatic_stafi_svg from 'src/assets/images/selected_r_matic.svg';
+import rSOL_stafi_svg from 'src/assets/images/selected_r_sol.svg';
+import config from 'src/config/index';
+import Button from 'src/shared/components/button/button';
+import NumberUtil from 'src/util/numberUtil';
 import SwapModalNew from '../modal/swapModalNew';
 import TradePopover from '../tradePopover';
 import LeftContent from './leftContent';

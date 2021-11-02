@@ -1,8 +1,8 @@
-import React from 'react'; 
-import Card from '@components/card/stakeCard';
-import Slider from '@components/slider/stakeSlider'; 
-import {renderRoutes}  from 'react-router-config';
-import {rFIS_data} from '../systemData';
+import React from 'react';
+import { renderRoutes } from 'react-router-config';
+import Card from 'src/components/card/stakeCard';
+import Slider from 'src/components/slider/stakeSlider';
+import { rFIS_data } from '../systemData';
 
 export default function Index(props:any){ 
   return <Card>

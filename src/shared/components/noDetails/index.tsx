@@ -1,7 +1,7 @@
 import React from 'react';
-import no_details from '@images/noDetail.png'
-
+import no_details from 'src/assets/images/noDetail.png';
 import './index.scss';
+
 
 type Props={
     type:"max" |"small"

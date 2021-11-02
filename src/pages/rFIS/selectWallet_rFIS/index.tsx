@@ -1,11 +1,11 @@
-import React,{useState,useEffect,useMemo} from 'react';
-import {useSelector,useDispatch} from 'react-redux'
-import WalletCard from '@components/card/walletCard'
-import Item from '@components/card/walletCardItem';
-import {setFisAccount,reloadData} from '@features/FISClice'; 
-import {connectPolkadotjs} from '@features/globalClice';
-import {Symbol} from '@keyring/defaults' 
-import {message,Modal} from 'antd';
+import { message } from 'antd';
+import React, { useEffect, useMemo, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import WalletCard from 'src/components/card/walletCard';
+import Item from 'src/components/card/walletCardItem';
+import { reloadData, setFisAccount } from 'src/features/FISClice';
+import { connectPolkadotjs } from 'src/features/globalClice';
+import { Symbol } from 'src/keyring/defaults';
 import './index.scss';
 
 export default function Index(props:any){ 

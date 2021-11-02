@@ -1,7 +1,7 @@
-import TradePopover from '@components/tradePopover';
-import dow_svg from '@images/dow_green.svg';
-import GhostButton from '@shared/components/button/ghostButton';
 import React, { useState } from 'react';
+import dow_svg from 'src/assets/images/dow_green.svg';
+import TradePopover from 'src/components/tradePopover';
+import GhostButton from 'src/shared/components/button/ghostButton';
 import SwapModalNew from '../../../../../components/modal/swapModalNew';
 
 type Props = {

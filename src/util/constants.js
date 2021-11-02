@@ -1,4 +1,4 @@
-import config from '@config/index';
+import config from 'src/config/index';
 
 export const metaMaskChainParameters = {
   ethMainnet: {

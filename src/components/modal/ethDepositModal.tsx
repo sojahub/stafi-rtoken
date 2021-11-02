@@ -1,6 +1,6 @@
-import React from 'react'
-import { Modal,Spin } from 'antd';
-import Spin_Icon from '@shared/components/spin'
+import { Modal, Spin } from 'antd';
+import React from 'react';
+import Spin_Icon from 'src/shared/components/spin';
 import './ethDepositModal.scss';
 
 type Props={

@@ -1,7 +1,7 @@
 import React from 'react';
-import Popover from '@components/tradePopover/index';
-import dow_svg from '@images/dow_black.svg'; 
-import Content from '../components/content'
+import dow_svg from 'src/assets/images/dow_black.svg';
+import Popover from 'src/components/tradePopover/index';
+import Content from '../components/content';
 
 export default function Index(){
     return <>

@@ -1,7 +1,7 @@
-import LeftContent from '@components/content/leftContent';
-import Button from '@shared/components/button/button';
 import { message } from 'antd';
 import React from 'react';
+import LeftContent from 'src/components/content/leftContent';
+import Button from 'src/shared/components/button/button';
 import './index.scss';
 
 type Props = {

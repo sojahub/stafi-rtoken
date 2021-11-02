@@ -1,10 +1,10 @@
-import { getPoolCount, getStakingPoolStatus, getTotalRETH, getUnmatchedETH, getUnmatchedValidators } from '@features/rETHClice';
-import leftArrowSvg from '@images/left_arrow.svg';
-import A from '@shared/components/button/a';
-import StringUtil from '@util/stringUtil';
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import leftArrowSvg from 'src/assets/images/left_arrow.svg';
+import { getPoolCount, getStakingPoolStatus, getTotalRETH, getUnmatchedETH, getUnmatchedValidators } from 'src/features/rETHClice';
+import A from 'src/shared/components/button/a';
 import { RootState } from 'src/store';
+import StringUtil from 'src/util/stringUtil';
 import DataItem from './components/dataItem';
 import './index.scss';
 export default function Index(props:any){

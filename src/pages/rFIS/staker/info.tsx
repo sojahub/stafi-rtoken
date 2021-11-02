@@ -1,8 +1,8 @@
-import Content from '@components/content/stakeInfoContent';
-import { query_rBalances_account, RefreshUnbonding, rTokenRate, setRatioShow } from '@features/FISClice';
-import NumberUtil from '@util/numberUtil';
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import Content from 'src/components/content/stakeInfoContent';
+import { query_rBalances_account, RefreshUnbonding, rTokenRate, setRatioShow } from 'src/features/FISClice';
+import NumberUtil from 'src/util/numberUtil';
 
 
 export default function Index(props:any){ 

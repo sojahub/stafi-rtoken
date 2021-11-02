@@ -1,22 +1,22 @@
-import config from '@config/index';
-import {
-  bridgeCommon_ChainFees,
-  BSC_CHAIN_ID,
-  ETH_CHAIN_ID,
-  SOL_CHAIN_ID,
-  STAFI_CHAIN_ID
-} from '@features/bridgeClice';
-import { connectSoljs, setLoading } from '@features/globalClice';
-import { checkEthAddress } from '@features/rETHClice';
-import { checkAddress as checkSOLAddress } from '@features/rSOLClice';
-import leftArrowSvg from '@images/left_arrow.svg';
-import SolServer from '@servers/sol';
-import Button from '@shared/components/button/button';
-import AddressInputEmbed from '@shared/components/input/addressInputEmbed';
 import { message } from 'antd';
 import { isEmpty } from 'lodash';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import leftArrowSvg from 'src/assets/images/left_arrow.svg';
+import config from 'src/config/index';
+import {
+    bridgeCommon_ChainFees,
+    BSC_CHAIN_ID,
+    ETH_CHAIN_ID,
+    SOL_CHAIN_ID,
+    STAFI_CHAIN_ID
+} from 'src/features/bridgeClice';
+import { connectSoljs, setLoading } from 'src/features/globalClice';
+import { checkEthAddress } from 'src/features/rETHClice';
+import { checkAddress as checkSOLAddress } from 'src/features/rSOLClice';
+import SolServer from 'src/servers/sol';
+import Button from 'src/shared/components/button/button';
+import AddressInputEmbed from 'src/shared/components/input/addressInputEmbed';
 import web3Utils from 'web3-utils';
 import StakeOverviewModal from '../../modal/StakeOverviewModal';
 import './index.scss';

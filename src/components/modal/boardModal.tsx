@@ -1,6 +1,6 @@
-import React from 'react'
 import { Modal } from 'antd';
-import payment from '@images/payment.png'
+import React from 'react';
+import payment from 'src/assets/images/payment.png';
 import './boardModal.scss';
 
 type Props = {

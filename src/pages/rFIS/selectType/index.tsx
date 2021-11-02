@@ -1,8 +1,8 @@
-import TypeCard from '@components/card/typeCard';
-import { getTotalIssuance, rTokenLedger } from '@features/FISClice';
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Redirect } from 'react-router';
+import TypeCard from 'src/components/card/typeCard';
+import { getTotalIssuance, rTokenLedger } from 'src/features/FISClice';
 import { RootState } from 'src/store';
 
 export default function Index(props: any) {

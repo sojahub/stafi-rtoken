@@ -1,7 +1,10 @@
-import Content from '@components/content/redeemContent';
-import UnbondModal from '@components/modal/unbondModal';
-import CommonClice from '@features/commonClice';
-import { setLoading } from '@features/globalClice';
+import { message } from 'antd';
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import Content from 'src/components/content/redeemContent';
+import UnbondModal from 'src/components/modal/unbondModal';
+import CommonClice from 'src/features/commonClice';
+import { setLoading } from 'src/features/globalClice';
 import {
   checkAddress,
   getUnbondCommission,
@@ -9,11 +12,8 @@ import {
   rTokenRate,
   unbond,
   unbondFees
-} from '@features/rSOLClice';
-import NumberUtil from '@util/numberUtil';
-import { message } from 'antd';
-import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+} from 'src/features/rSOLClice';
+import NumberUtil from 'src/util/numberUtil';
 
 const commonClice = new CommonClice();
 

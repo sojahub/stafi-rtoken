@@ -1,54 +1,54 @@
-import config from '@config/index';
-import { getRtokenPriceList } from '@features/bridgeClice';
-import CommonClice from '@features/commonClice';
-import {
-  getUnbondCommission as fis_getUnbondCommission,
-  query_rBalances_account as fis_query_rBalances_account,
-  rTokenRate as fis_rTokenRate
-} from '@features/FISClice';
-import { connectPolkadotjs, reloadData } from '@features/globalClice';
-import {
-  getUnbondCommission as atom_getUnbondCommission,
-  query_rBalances_account as atom_query_rBalances_account,
-  rTokenRate as atom_rTokenRate
-} from '@features/rATOMClice';
-import {
-  getUnbondCommission as bnb_getUnbondCommission,
-  query_rBalances_account as bnb_query_rBalances_account,
-  rTokenRate as bnb_rTokenRate
-} from '@features/rBNBClice';
-import {
-  getUnbondCommission as dot_getUnbondCommission,
-  query_rBalances_account as dot_query_rBalances_account,
-  rTokenRate as dot_rTokenRate
-} from '@features/rDOTClice';
-import { getUnbondCommission, query_rBalances_account, rTokenRate as ksm_rTokenRate } from '@features/rKSMClice';
-import {
-  getUnbondCommission as matic_getUnbondCommission,
-  query_rBalances_account as matic_query_rBalances_account,
-  rTokenRate as matic_rTokenRate
-} from '@features/rMATICClice';
-import {
-  getUnbondCommission as sol_getUnbondCommission,
-  query_rBalances_account as sol_query_rBalances_account,
-  rTokenRate as sol_rTokenRate
-} from '@features/rSOLClice';
-import rDOT_svg from '@images/rDOT.svg';
-import rasset_fis_svg from '@images/rFIS.svg';
-import rasset_rsol_svg from '@images/rSOL.svg';
-import rasset_ratom_svg from '@images/r_atom.svg';
-import rasset_rbnb_svg from '@images/r_bnb.svg';
-import rasset_rdot_svg from '@images/r_dot.svg';
-import rasset_rfis_svg from '@images/r_fis.svg';
-import rasset_rksm_svg from '@images/r_ksm.svg';
-import rasset_rmatic_svg from '@images/r_matic.svg';
-import { Symbol } from '@keyring/defaults';
-import Button from '@shared/components/button/connect_button';
-import Modal from '@shared/components/modal/connectModal';
-import NumberUtil from '@util/numberUtil';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useParams } from 'react-router';
+import rDOT_svg from 'src/assets/images/rDOT.svg';
+import rasset_fis_svg from 'src/assets/images/rFIS.svg';
+import rasset_rsol_svg from 'src/assets/images/rSOL.svg';
+import rasset_ratom_svg from 'src/assets/images/r_atom.svg';
+import rasset_rbnb_svg from 'src/assets/images/r_bnb.svg';
+import rasset_rdot_svg from 'src/assets/images/r_dot.svg';
+import rasset_rfis_svg from 'src/assets/images/r_fis.svg';
+import rasset_rksm_svg from 'src/assets/images/r_ksm.svg';
+import rasset_rmatic_svg from 'src/assets/images/r_matic.svg';
+import config from 'src/config/index';
+import { getRtokenPriceList } from 'src/features/bridgeClice';
+import CommonClice from 'src/features/commonClice';
+import {
+    getUnbondCommission as fis_getUnbondCommission,
+    query_rBalances_account as fis_query_rBalances_account,
+    rTokenRate as fis_rTokenRate
+} from 'src/features/FISClice';
+import { connectPolkadotjs, reloadData } from 'src/features/globalClice';
+import {
+    getUnbondCommission as atom_getUnbondCommission,
+    query_rBalances_account as atom_query_rBalances_account,
+    rTokenRate as atom_rTokenRate
+} from 'src/features/rATOMClice';
+import {
+    getUnbondCommission as bnb_getUnbondCommission,
+    query_rBalances_account as bnb_query_rBalances_account,
+    rTokenRate as bnb_rTokenRate
+} from 'src/features/rBNBClice';
+import {
+    getUnbondCommission as dot_getUnbondCommission,
+    query_rBalances_account as dot_query_rBalances_account,
+    rTokenRate as dot_rTokenRate
+} from 'src/features/rDOTClice';
+import { getUnbondCommission, query_rBalances_account, rTokenRate as ksm_rTokenRate } from 'src/features/rKSMClice';
+import {
+    getUnbondCommission as matic_getUnbondCommission,
+    query_rBalances_account as matic_query_rBalances_account,
+    rTokenRate as matic_rTokenRate
+} from 'src/features/rMATICClice';
+import {
+    getUnbondCommission as sol_getUnbondCommission,
+    query_rBalances_account as sol_query_rBalances_account,
+    rTokenRate as sol_rTokenRate
+} from 'src/features/rSOLClice';
+import { Symbol } from 'src/keyring/defaults';
+import Button from 'src/shared/components/button/connect_button';
+import Modal from 'src/shared/components/modal/connectModal';
+import NumberUtil from 'src/util/numberUtil';
 import Page_FIS from '../../rDOT/selectWallet_rFIS/index';
 import CountAmount from './components/countAmount';
 import DataList from './components/list';

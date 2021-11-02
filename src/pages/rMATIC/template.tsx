@@ -1,22 +1,22 @@
-import config from '@config/index';
-import { bondSwitch } from '@features/FISClice';
-import { reloadData } from '@features/globalClice';
-import {
-  bondFees,
-  connectMetamask,
-  continueProcess,
-  getPools,
-  getTotalIssuance,
-  monitoring_Method,
-  query_rBalances_account
-} from '@features/rMATICClice';
-import { Symbol } from '@keyring/defaults';
-import Content from '@shared/components/content';
-import { getLocalStorageItem, Keys } from '@util/common';
 import { Spin } from 'antd';
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { renderRoutes } from 'react-router-config';
+import config from 'src/config/index';
+import { bondSwitch } from 'src/features/FISClice';
+import { reloadData } from 'src/features/globalClice';
+import {
+    bondFees,
+    connectMetamask,
+    continueProcess,
+    getPools,
+    getTotalIssuance,
+    monitoring_Method,
+    query_rBalances_account
+} from 'src/features/rMATICClice';
+import { Symbol } from 'src/keyring/defaults';
+import Content from 'src/shared/components/content';
+import { getLocalStorageItem, Keys } from 'src/util/common';
 import '../template/index.scss';
 
 export default function Index(props: any) {

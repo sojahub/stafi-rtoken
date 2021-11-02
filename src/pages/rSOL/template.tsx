@@ -1,14 +1,14 @@
-import { bondSwitch } from '@features/FISClice';
-import { reloadData } from '@features/globalClice';
-import { bondFees, continueProcess, getPools, getTotalIssuance, setSolAccount } from '@features/rSOLClice';
-import { Symbol } from '@keyring/defaults';
-import SolServer from '@servers/sol/index';
-import Content from '@shared/components/content';
-import { getLocalStorageItem, Keys, removeLocalStorageItem, timeout } from '@util/common';
 import { Spin } from 'antd';
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { renderRoutes } from 'react-router-config';
+import { bondSwitch } from 'src/features/FISClice';
+import { reloadData } from 'src/features/globalClice';
+import { bondFees, continueProcess, getPools, getTotalIssuance, setSolAccount } from 'src/features/rSOLClice';
+import { Symbol } from 'src/keyring/defaults';
+import SolServer from 'src/servers/sol/index';
+import Content from 'src/shared/components/content';
+import { getLocalStorageItem, Keys, removeLocalStorageItem, timeout } from 'src/util/common';
 import '../template/index.scss';
 
 const solServer = new SolServer();

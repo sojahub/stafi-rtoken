@@ -1,9 +1,9 @@
 import React from 'react';
-import Input from '@shared/components/input/amountInput';
-import LeftContent from './leftContent'
-import Button from '@shared/components/button/button'
-import A from '@shared/components/button/a'
-import rDOT from '@images/selected_rDOT.svg';
+import rDOT from 'src/assets/images/selected_rDOT.svg';
+import A from 'src/shared/components/button/a';
+import Button from 'src/shared/components/button/button';
+import Input from 'src/shared/components/input/amountInput';
+import LeftContent from './leftContent';
 
 type Props={
     onRecovery:Function

@@ -1,16 +1,16 @@
-import LeftContent from '@components/content/leftContent';
-import Modal from '@components/modal/boardModal';
-import { handleOffboard, initValidatorStatus } from '@features/FISClice';
-import no_details from '@images/noDetail.png';
-import rFIS_detail_svg from '@images/rfis_detail.svg';
-import rFIS_stafi_svg from '@images/selected_r_fis.svg';
-import A from '@shared/components/button/a';
-import Button from '@shared/components/button/button';
-import NumberUtil from '@util/numberUtil';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Redirect } from 'react-router';
+import no_details from 'src/assets/images/noDetail.png';
+import rFIS_detail_svg from 'src/assets/images/rfis_detail.svg';
+import rFIS_stafi_svg from 'src/assets/images/selected_r_fis.svg';
+import LeftContent from 'src/components/content/leftContent';
+import Modal from 'src/components/modal/boardModal';
+import { handleOffboard, initValidatorStatus } from 'src/features/FISClice';
+import A from 'src/shared/components/button/a';
+import Button from 'src/shared/components/button/button';
 import { RootState } from 'src/store';
+import NumberUtil from 'src/util/numberUtil';
 import './index.scss';
 
 export default function Index(props:any){

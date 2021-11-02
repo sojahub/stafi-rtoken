@@ -1,20 +1,20 @@
 // @ts-nocheck
 
-import config, { isdev } from '@config/index';
-import { rSymbol, Symbol } from '@keyring/defaults';
 import { u8aToHex } from '@polkadot/util';
 import { createSlice } from '@reduxjs/toolkit';
-import EthServer from '@servers/eth/index';
-import keyring from '@servers/index';
-import MaticServer from '@servers/matic/index';
-import RpcServer, { pageCount } from '@servers/rpc/index';
-import Stafi from '@servers/stafi/index';
-import { getLocalStorageItem, Keys, removeLocalStorageItem, setLocalStorageItem, stafi_uuid } from '@util/common';
-import NumberUtil from '@util/numberUtil';
 import { message } from 'antd';
 import InputDataDecoder from 'ethereum-input-data-decoder';
 import _m0 from 'protobufjs/minimal';
 import PubSub from 'pubsub-js';
+import config, { isdev } from 'src/config/index';
+import { rSymbol, Symbol } from 'src/keyring/defaults';
+import EthServer from 'src/servers/eth/index';
+import keyring from 'src/servers/index';
+import MaticServer from 'src/servers/matic/index';
+import RpcServer, { pageCount } from 'src/servers/rpc/index';
+import Stafi from 'src/servers/stafi/index';
+import { getLocalStorageItem, Keys, removeLocalStorageItem, setLocalStorageItem, stafi_uuid } from 'src/util/common';
+import NumberUtil from 'src/util/numberUtil';
 import { AppThunk } from '../store';
 import { ETH_CHAIN_ID, STAFI_CHAIN_ID, updateSwapParamsOfBep, updateSwapParamsOfErc } from './bridgeClice';
 import CommonClice from './commonClice';

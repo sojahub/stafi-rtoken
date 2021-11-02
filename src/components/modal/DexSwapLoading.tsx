@@ -1,16 +1,16 @@
 // @ts-nocheck
 
 import { LoadingOutlined } from '@ant-design/icons';
-import { setSwapLoadingStatus } from '@features/dexClice';
-import { noticeStatus, update_NoticeStatus } from '@features/noticeClice';
-import close_bold_svg from '@images/close_bold.svg';
-import complete_svg from '@images/complete.svg';
-import Stafi from '@servers/stafi';
-import numberUtil from '@util/numberUtil';
-import { useInterval } from '@util/utils';
 import { message, Modal, Progress, Spin } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import close_bold_svg from 'src/assets/images/close_bold.svg';
+import complete_svg from 'src/assets/images/complete.svg';
+import { setSwapLoadingStatus } from 'src/features/dexClice';
+import { noticeStatus, update_NoticeStatus } from 'src/features/noticeClice';
+import Stafi from 'src/servers/stafi';
+import numberUtil from 'src/util/numberUtil';
+import { useInterval } from 'src/util/utils';
 import './DexSwapLoading.scss';
 
 const stafiServer = new Stafi();

@@ -1,16 +1,16 @@
-import Content from '@components/content/stakeContent_DOT';
-import { STAFI_CHAIN_ID } from '@features/bridgeClice';
-import { clice, setProcessSlider } from '@features/globalClice';
-import { balancesAll, rTokenLedger, rTokenRate, transfer } from '@features/rSOLClice';
-import { Symbol } from '@keyring/defaults';
-import SolServer from '@servers/sol/index';
 import { PublicKey } from '@solana/web3.js';
-import { ratioToAmount } from '@util/common';
-import NumberUtil from '@util/numberUtil';
 import PubSub from 'pubsub-js';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Redirect } from 'react-router-dom';
+import Content from 'src/components/content/stakeContent_DOT';
+import { STAFI_CHAIN_ID } from 'src/features/bridgeClice';
+import { clice, setProcessSlider } from 'src/features/globalClice';
+import { balancesAll, rTokenLedger, rTokenRate, transfer } from 'src/features/rSOLClice';
+import { Symbol } from 'src/keyring/defaults';
+import SolServer from 'src/servers/sol/index';
+import { ratioToAmount } from 'src/util/common';
+import NumberUtil from 'src/util/numberUtil';
 
 const solServer = new SolServer();
 

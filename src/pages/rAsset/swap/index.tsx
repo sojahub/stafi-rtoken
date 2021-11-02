@@ -1,5 +1,23 @@
-import SwapLoading from '@components/modal/SwapLoading';
-import config from '@config/index';
+import { message } from 'antd';
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { Redirect, useHistory, useLocation, useParams } from 'react-router-dom';
+import bsc_white from 'src/assets/images/bsc_white.svg';
+import eth_white from 'src/assets/images/eth_white.svg';
+import exchange_svg from 'src/assets/images/exchange.svg';
+import rasset_fis_svg from 'src/assets/images/rFIS.svg';
+import rasset_rsol_svg from 'src/assets/images/rSOL.svg';
+import rasset_ratom_svg from 'src/assets/images/r_atom.svg';
+import rasset_rbnb_svg from 'src/assets/images/r_bnb.svg';
+import rasset_rdot_svg from 'src/assets/images/r_dot.svg';
+import rasset_reth_svg from 'src/assets/images/r_eth.svg';
+import rasset_rfis_svg from 'src/assets/images/r_fis.svg';
+import rasset_rksm_svg from 'src/assets/images/r_ksm.svg';
+import rasset_rmatic_svg from 'src/assets/images/r_matic.svg';
+import solana_white from 'src/assets/images/solana_white.svg';
+import stafi_white from 'src/assets/images/stafi_white.svg';
+import SwapLoading from 'src/components/modal/SwapLoading';
+import config from 'src/config/index';
 import {
   bep20ToOtherSwap,
   bridgeCommon_ChainFees,
@@ -11,80 +29,62 @@ import {
   slp20ToOtherSwap,
   SOL_CHAIN_ID,
   STAFI_CHAIN_ID
-} from '@features/bridgeClice';
+} from 'src/features/bridgeClice';
 import {
   getAssetBalanceAll as getBep20AssetBalanceAll,
   getBep20Allowances,
   handleBscAccount,
   monitoring_Method as bsc_Monitoring_Method
-} from '@features/BSCClice';
-import { getAssetBalanceAll, getErc20Allowances } from '@features/ETHClice';
+} from 'src/features/BSCClice';
+import { getAssetBalanceAll, getErc20Allowances } from 'src/features/ETHClice';
 import {
   checkAddress as fis_checkAddress,
   getUnbondCommission as fis_getUnbondCommission,
   query_rBalances_account as fis_query_rBalances_account,
   reloadData,
   rTokenRate as fis_rTokenRate
-} from '@features/FISClice';
-import { setLoading } from '@features/globalClice';
+} from 'src/features/FISClice';
+import { setLoading } from 'src/features/globalClice';
 import {
   getUnbondCommission as atom_getUnbondCommission,
   query_rBalances_account as atom_query_rBalances_account,
   rTokenRate as atom_rTokenRate
-} from '@features/rATOMClice';
+} from 'src/features/rATOMClice';
 import {
   getUnbondCommission as bnb_getUnbondCommission,
   query_rBalances_account as bnb_query_rBalances_account,
   rTokenRate as bnb_rTokenRate
-} from '@features/rBNBClice';
+} from 'src/features/rBNBClice';
 import {
   getUnbondCommission as dot_getUnbondCommission,
   query_rBalances_account as dot_query_rBalances_account,
   rTokenRate as dot_rTokenRate
-} from '@features/rDOTClice';
-import { checkEthAddress, get_eth_getBalance, monitoring_Method as eth_Monitoring_Method } from '@features/rETHClice';
-import { getUnbondCommission, query_rBalances_account, rTokenRate as ksm_rTokenRate } from '@features/rKSMClice';
+} from 'src/features/rDOTClice';
+import { checkEthAddress, get_eth_getBalance, monitoring_Method as eth_Monitoring_Method } from 'src/features/rETHClice';
+import { getUnbondCommission, query_rBalances_account, rTokenRate as ksm_rTokenRate } from 'src/features/rKSMClice';
 import {
   getUnbondCommission as matic_getUnbondCommission,
   query_rBalances_account as matic_query_rBalances_account,
   rTokenRate as matic_rTokenRate
-} from '@features/rMATICClice';
+} from 'src/features/rMATICClice';
 import {
   checkAddress as checkSOLAddress,
   createSubstrate as solCreateSubstrate,
   getUnbondCommission as sol_getUnbondCommission,
   query_rBalances_account as sol_query_rBalances_account,
   rTokenRate as sol_rTokenRate
-} from '@features/rSOLClice';
-import { getSlp20Allowances, getSlp20AssetBalanceAll } from '@features/SOLClice';
-import bsc_white from '@images/bsc_white.svg';
-import eth_white from '@images/eth_white.svg';
-import exchange_svg from '@images/exchange.svg';
-import rasset_fis_svg from '@images/rFIS.svg';
-import rasset_rsol_svg from '@images/rSOL.svg';
-import rasset_ratom_svg from '@images/r_atom.svg';
-import rasset_rbnb_svg from '@images/r_bnb.svg';
-import rasset_rdot_svg from '@images/r_dot.svg';
-import rasset_reth_svg from '@images/r_eth.svg';
-import rasset_rfis_svg from '@images/r_fis.svg';
-import rasset_rksm_svg from '@images/r_ksm.svg';
-import rasset_rmatic_svg from '@images/r_matic.svg';
-import solana_white from '@images/solana_white.svg';
-import stafi_white from '@images/stafi_white.svg';
-import SolServer from '@servers/sol';
-import Back from '@shared/components/backIcon';
-import Button from '@shared/components/button/button';
-import Title from '@shared/components/cardTitle';
-import Content from '@shared/components/content';
-import AddressInputEmbed from '@shared/components/input/addressInputEmbed';
-import AmountInputEmbed from '@shared/components/input/amountInputEmbed';
-import TypeSelector from '@shared/components/input/typeSelector';
-import NumberUtil from '@util/numberUtil';
-import { useInterval } from '@util/utils';
-import { message } from 'antd';
-import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { Redirect, useHistory, useLocation, useParams } from 'react-router-dom';
+} from 'src/features/rSOLClice';
+import { getSlp20Allowances, getSlp20AssetBalanceAll } from 'src/features/SOLClice';
+import SolServer from 'src/servers/sol';
+import Back from 'src/shared/components/backIcon';
+import Button from 'src/shared/components/button/button';
+import Title from 'src/shared/components/cardTitle';
+import Content from 'src/shared/components/content';
+import AddressInputEmbed from 'src/shared/components/input/addressInputEmbed';
+import AmountInputEmbed from 'src/shared/components/input/amountInputEmbed';
+import TypeSelector from 'src/shared/components/input/typeSelector';
+import NumberUtil from 'src/util/numberUtil';
+import { useInterval } from 'src/util/utils';
 import './index.scss';
 
 const solServer = new SolServer();

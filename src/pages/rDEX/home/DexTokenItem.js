@@ -1,5 +1,5 @@
-import { Text } from '@components/commonComponents';
 import React from 'react';
+import { Text } from 'src/components/commonComponents';
 
 export default function DexTokenItem(props) {
   return (

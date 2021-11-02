@@ -1,11 +1,11 @@
-import config from '@config/index';
-import doubt from '@images/doubt.svg';
-import { Symbol } from '@keyring/defaults';
-import A from '@shared/components/button/a';
-import Button from '@shared/components/button/button';
-import NumberUtil from '@util/numberUtil';
 import { Modal, Tooltip } from 'antd';
 import React from 'react';
+import doubt from 'src/assets/images/doubt.svg';
+import config from 'src/config/index';
+import { Symbol } from 'src/keyring/defaults';
+import A from 'src/shared/components/button/a';
+import Button from 'src/shared/components/button/button';
+import NumberUtil from 'src/util/numberUtil';
 import './unbondModal.scss';
 
 type Props = {

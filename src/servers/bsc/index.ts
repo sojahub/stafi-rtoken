@@ -1,4 +1,4 @@
-import config from '@config/index';
+import config from 'src/config/index';
 import Web3 from 'web3';
 
 declare const window: any;

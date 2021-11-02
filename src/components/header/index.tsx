@@ -1,37 +1,37 @@
-import config from "@config/index";
-import { balancesAll } from "@features/FISClice";
-import {
-  connectAtomjs,
-  connectPolkadot,
-  connectPolkadotjs,
-  connectPolkadot_ksm,
-  connectSoljs
-} from "@features/globalClice";
-import { noticeStatus } from "@features/noticeClice";
-import {
-  query_rBalances_account as dotquery_rBalances_account,
-  reloadData as dotReloadData
-} from "@features/rDOTClice";
-import { monitoring_Method as eth_monitoring_method } from "@features/rETHClice";
-import {
-  query_rBalances_account as ksmquery_rBalances_account,
-  reloadData as ksmReloadData
-} from "@features/rKSMClice";
-import notice from "@images/notice.svg";
-import report_icon from "@images/report_icon.svg";
-import wrong_network from "@images/wrong_network.svg";
-import { rSymbol, Symbol } from "@keyring/defaults";
-import Modal from "@shared/components/modal/connectModal";
-import {
-  getLpPlatformFromUrl,
-  getMetaMaskTokenSymbol,
-  liquidityPlatformMatchMetaMask
-} from "@util/metaMaskUtil";
-import NumberUtil from "@util/numberUtil";
-import StringUtil from "@util/stringUtil";
-import Tool from "@util/toolUtil";
 import React, { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import notice from "src/assets/images/notice.svg";
+import report_icon from "src/assets/images/report_icon.svg";
+import wrong_network from "src/assets/images/wrong_network.svg";
+import config from "src/config/index";
+import { balancesAll } from "src/features/FISClice";
+import {
+    connectAtomjs,
+    connectPolkadot,
+    connectPolkadotjs,
+    connectPolkadot_ksm,
+    connectSoljs
+} from "src/features/globalClice";
+import { noticeStatus } from "src/features/noticeClice";
+import {
+    query_rBalances_account as dotquery_rBalances_account,
+    reloadData as dotReloadData
+} from "src/features/rDOTClice";
+import { monitoring_Method as eth_monitoring_method } from "src/features/rETHClice";
+import {
+    query_rBalances_account as ksmquery_rBalances_account,
+    reloadData as ksmReloadData
+} from "src/features/rKSMClice";
+import { rSymbol, Symbol } from "src/keyring/defaults";
+import Modal from "src/shared/components/modal/connectModal";
+import {
+    getLpPlatformFromUrl,
+    getMetaMaskTokenSymbol,
+    liquidityPlatformMatchMetaMask
+} from "src/util/metaMaskUtil";
+import NumberUtil from "src/util/numberUtil";
+import StringUtil from "src/util/stringUtil";
+import Tool from "src/util/toolUtil";
 import Page from "../../pages/rDOT/selectWallet/index";
 import Page_FIS from "../../pages/rDOT/selectWallet_rFIS/index";
 import Page_rFIS from "../../pages/rFIS/selectWallet_rFIS/index";

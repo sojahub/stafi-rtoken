@@ -1,12 +1,12 @@
-import WalletCard from '@components/card/walletCard';
-import Item from '@components/card/walletCardItem';
-import { connectPolkadotjs } from '@features/globalClice';
-import { setKsmAccount } from '@features/rKSMClice';
-import { Symbol } from '@keyring/defaults';
-import { getLocalStorageItem, Keys } from '@util/common';
 import { message } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import WalletCard from 'src/components/card/walletCard';
+import Item from 'src/components/card/walletCardItem';
+import { connectPolkadotjs } from 'src/features/globalClice';
+import { setKsmAccount } from 'src/features/rKSMClice';
+import { Symbol } from 'src/keyring/defaults';
+import { getLocalStorageItem, Keys } from 'src/util/common';
 import './index.scss';
 
 export default function Index(props: any) {

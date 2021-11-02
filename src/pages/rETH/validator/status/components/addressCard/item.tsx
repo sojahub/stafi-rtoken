@@ -1,6 +1,6 @@
 import React from 'react';
-import A from '@shared/components/button/a'
-import './index.scss'
+import A from 'src/shared/components/button/a';
+import './index.scss';
 
 type Props={
     status:string,

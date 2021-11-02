@@ -1,34 +1,34 @@
 // @ts-nocheck
 
-import config from '@config/index';
-import { rSymbol, Symbol } from '@keyring/defaults';
 import { web3Enable, web3FromSource } from '@polkadot/extension-dapp';
 import { u8aToHex } from '@polkadot/util';
 import { createSlice } from '@reduxjs/toolkit';
-import FeeStationServer from '@servers/feeStation';
-import keyring from '@servers/index';
-import PolkadotServer from '@servers/polkadot/index';
-import RpcServer, { pageCount } from '@servers/rpc/index';
-import Stafi from '@servers/stafi/index';
-import { getLocalStorageItem, Keys, removeLocalStorageItem, setLocalStorageItem, stafi_uuid } from '@util/common';
-import NumberUtil from '@util/numberUtil';
 import { message as M, message } from 'antd';
 import PubSub from 'pubsub-js';
+import config from 'src/config/index';
+import { rSymbol, Symbol } from 'src/keyring/defaults';
+import FeeStationServer from 'src/servers/feeStation';
+import keyring from 'src/servers/index';
+import PolkadotServer from 'src/servers/polkadot/index';
+import RpcServer, { pageCount } from 'src/servers/rpc/index';
+import Stafi from 'src/servers/stafi/index';
+import { getLocalStorageItem, Keys, removeLocalStorageItem, setLocalStorageItem, stafi_uuid } from 'src/util/common';
+import NumberUtil from 'src/util/numberUtil';
 import { AppThunk } from '../store';
 import { ETH_CHAIN_ID, STAFI_CHAIN_ID, updateSwapParamsOfBep, updateSwapParamsOfErc } from './bridgeClice';
 import CommonClice from './commonClice';
 import { setSwapLoadingStatus, uploadSwapInfo } from './feeStationClice';
 import { bondStates, bound, feeStationSignature, fisUnbond, rTokenSeries_bondStates } from './FISClice';
 import {
-  initProcess,
-  processStatus,
-  setLoading,
-  setProcessDestChainId,
-  setProcessSending,
-  setProcessSlider,
-  setProcessType,
-  setStakeSwapLoadingStatus,
-  trackEvent
+    initProcess,
+    processStatus,
+    setLoading,
+    setProcessDestChainId,
+    setProcessSending,
+    setProcessSlider,
+    setProcessType,
+    setStakeSwapLoadingStatus,
+    trackEvent
 } from './globalClice';
 import { add_Notice, findUuid, noticeStatus, noticesubType, noticeType } from './noticeClice';
 

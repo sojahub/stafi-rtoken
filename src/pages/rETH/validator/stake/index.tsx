@@ -1,18 +1,18 @@
-import LeftContent from '@components/content/leftContent';
-import OffboardModal from '@components/modal/boardModal';
-import { getNodeStakingPoolCount, handleCurrentPool, handleOffboard, handleStake } from '@features/rETHClice';
-import drop_down_arrow from '@images/drop_down_arrow.svg';
-import eth_svg from '@images/eth.svg';
-import A from '@shared/components/button/a';
-import Button from '@shared/components/button/button';
-import Popover from '@shared/components/popover/addressSelect';
-import ProgressBar from '@shared/components/progressBar';
-import Upload from '@shared/components/upload';
-import StringUtil from '@util/stringUtil';
 import { message } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import drop_down_arrow from 'src/assets/images/drop_down_arrow.svg';
+import eth_svg from 'src/assets/images/eth.svg';
+import LeftContent from 'src/components/content/leftContent';
+import OffboardModal from 'src/components/modal/boardModal';
+import { getNodeStakingPoolCount, handleCurrentPool, handleOffboard, handleStake } from 'src/features/rETHClice';
+import A from 'src/shared/components/button/a';
+import Button from 'src/shared/components/button/button';
+import Popover from 'src/shared/components/popover/addressSelect';
+import ProgressBar from 'src/shared/components/progressBar';
+import Upload from 'src/shared/components/upload';
 import { RootState } from 'src/store';
+import StringUtil from 'src/util/stringUtil';
 import './index.scss';
 
 export default function Index(props:any){

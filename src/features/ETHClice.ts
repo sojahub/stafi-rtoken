@@ -1,13 +1,13 @@
-import config from '@config/index';
 import { createSlice } from '@reduxjs/toolkit';
-import AtomServer from '@servers/atom';
-import BridgeServer from '@servers/bridge';
-import EthServer from '@servers/eth/index';
-import KsmServer from '@servers/ksm';
-import MaticServer from '@servers/matic';
-import DotServer from '@servers/polkadot';
-import SolServer from '@servers/sol';
-import FisServer from '@servers/stafi';
+import config from 'src/config/index';
+import AtomServer from 'src/servers/atom';
+import BridgeServer from 'src/servers/bridge';
+import EthServer from 'src/servers/eth/index';
+import KsmServer from 'src/servers/ksm';
+import MaticServer from 'src/servers/matic';
+import DotServer from 'src/servers/polkadot';
+import SolServer from 'src/servers/sol';
+import FisServer from 'src/servers/stafi';
 import { AppThunk } from '../store';
 
 declare const ethereum: any;

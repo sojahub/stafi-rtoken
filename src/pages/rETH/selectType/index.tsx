@@ -1,7 +1,7 @@
-import React, { useEffect } from 'react';
-import {Redirect} from 'react-router'
-import {useDispatch, useSelector} from 'react-redux';
-import TypeCard from '@components/card/typeCard'; 
+import React from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { Redirect } from 'react-router';
+import TypeCard from 'src/components/card/typeCard';
 
 export default function Index(props:any){
 

@@ -1,9 +1,9 @@
 import { createSlice } from '@reduxjs/toolkit';
-import FeeStationServer from '@servers/feeStation';
-import PolkadotServer from '@servers/polkadot/index';
-import StafiServer from '@servers/stafi';
-import numberUtil from '@util/numberUtil';
 import { message } from 'antd';
+import FeeStationServer from 'src/servers/feeStation';
+import PolkadotServer from 'src/servers/polkadot/index';
+import StafiServer from 'src/servers/stafi';
+import numberUtil from 'src/util/numberUtil';
 import { AppThunk } from '../store';
 import { trackEvent } from './globalClice';
 import { add_Notice, noticesubType, noticeType } from './noticeClice';

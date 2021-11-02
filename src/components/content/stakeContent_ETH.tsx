@@ -1,14 +1,14 @@
 // @ts-nocheck
 
-import { getRsymbolByTokenTitle } from '@config/index';
-import rETH from '@images/selected_rETH.svg';
-import RPoolServer from '@servers/rpool';
-import A from '@shared/components/button/a';
-import Button from '@shared/components/button/button';
-import Input from '@shared/components/input/amountInput';
-import numberUtil from '@util/numberUtil';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
+import rETH from 'src/assets/images/selected_rETH.svg';
+import { getRsymbolByTokenTitle } from 'src/config/index';
+import RPoolServer from 'src/servers/rpool';
+import A from 'src/shared/components/button/a';
+import Button from 'src/shared/components/button/button';
+import Input from 'src/shared/components/input/amountInput';
+import numberUtil from 'src/util/numberUtil';
 import './index.scss';
 import LeftContent from './leftContent';
 

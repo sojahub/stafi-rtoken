@@ -1,27 +1,27 @@
-import config from '@config/index';
-import { getRtokenPriceList } from '@features/bridgeClice';
-import { monitoring_Method } from '@features/BSCClice';
-import CommonClice from '@features/commonClice';
-import { getUnbondCommission as fis_getUnbondCommission, rTokenRate as fis_rTokenRate } from '@features/FISClice';
-import { connectSoljs } from '@features/globalClice';
-import {
-  createSubstrate,
-  getUnbondCommission as sol_getUnbondCommission,
-  rTokenRate as sol_rTokenRate
-} from '@features/rSOLClice';
-import { getSlp20AssetBalanceAll } from '@features/SOLClice';
-// import {
-//   getUnbondCommission as matic_getUnbondCommission,
-//   rTokenRate as matic_rTokenRate
-// } from '@features/rMATICClice';
-import phantom from '@images/phantom.png';
-import rasset_fis_svg from '@images/rFIS.svg';
-import rasset_rsol_svg from '@images/rSOL.svg';
-import Button from '@shared/components/button/connect_button';
-import NumberUtil from '@util/numberUtil';
 import React, { useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router';
+// import {
+//   getUnbondCommission as matic_getUnbondCommission,
+//   rTokenRate as matic_rTokenRate
+// } from 'src/features/rMATICClice';
+import phantom from 'src/assets/images/phantom.png';
+import rasset_fis_svg from 'src/assets/images/rFIS.svg';
+import rasset_rsol_svg from 'src/assets/images/rSOL.svg';
+import config from 'src/config/index';
+import { getRtokenPriceList } from 'src/features/bridgeClice';
+import { monitoring_Method } from 'src/features/BSCClice';
+import CommonClice from 'src/features/commonClice';
+import { getUnbondCommission as fis_getUnbondCommission, rTokenRate as fis_rTokenRate } from 'src/features/FISClice';
+import { connectSoljs } from 'src/features/globalClice';
+import {
+    createSubstrate,
+    getUnbondCommission as sol_getUnbondCommission,
+    rTokenRate as sol_rTokenRate
+} from 'src/features/rSOLClice';
+import { getSlp20AssetBalanceAll } from 'src/features/SOLClice';
+import Button from 'src/shared/components/button/connect_button';
+import NumberUtil from 'src/util/numberUtil';
 import CountAmount from './components/countAmount';
 import DataList from './components/list';
 import DataItem from './components/list/item';

@@ -1,11 +1,11 @@
-import HomeCard from '@components/card/homeCard';
-import config from '@config/index';
-import { connectMetamask, handleEthAccount, monitoring_Method } from '@features/rETHClice';
-import metamask_png from '@images/metamask.png';
-import Button from '@shared/components/button/connect_button';
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Redirect } from 'react-router';
+import metamask_png from 'src/assets/images/metamask.png';
+import HomeCard from 'src/components/card/homeCard';
+import config from 'src/config/index';
+import { connectMetamask, handleEthAccount, monitoring_Method } from 'src/features/rETHClice';
+import Button from 'src/shared/components/button/connect_button';
 import './index.scss';
 
 export default function Inde(props: any) {

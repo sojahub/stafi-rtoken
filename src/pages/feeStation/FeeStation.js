@@ -1,15 +1,26 @@
-import CommonButton from '@components/CommonButton';
-import { CardContainer, HContainer, Text } from '@components/commonComponents';
-import FeeStationSwapLoading from '@components/modal/FeeStationSwapLoading';
-import TokenSelector from '@components/selector/TokenSelector';
-import config from '@config/index';
+import { message, Spin } from 'antd';
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { useHistory, useParams } from 'react-router-dom';
+import arrowDownIcon from 'src/assets/images/arrow_down.svg';
+import left_arrow from 'src/assets/images/left_arrow.svg';
+import atomIcon from 'src/assets/images/rATOM.svg';
+import dotIcon from 'src/assets/images/rDOT.svg';
+import ethIcon from 'src/assets/images/rETH.svg';
+import ksmIcon from 'src/assets/images/rKSM.svg';
+import settingIcon from 'src/assets/images/setting.svg';
+import CommonButton from 'src/components/CommonButton';
+import { CardContainer, HContainer, Text } from 'src/components/commonComponents';
+import FeeStationSwapLoading from 'src/components/modal/FeeStationSwapLoading';
+import TokenSelector from 'src/components/selector/TokenSelector';
+import config from 'src/config/index';
 import {
   reloadData as feeStation_reloadData,
   setPoolInfoList,
   setSwapMaxLimit,
   setSwapMinLimit
-} from '@features/feeStationClice';
-import { queryBalance as fis_queryBalance } from '@features/FISClice';
+} from 'src/features/feeStationClice';
+import { queryBalance as fis_queryBalance } from 'src/features/FISClice';
 import {
   connectAtomjs,
   connectPolkadot,
@@ -18,30 +29,19 @@ import {
   reloadData,
   setLoading,
   trackEvent
-} from '@features/globalClice';
-import { swapAtomForFis } from '@features/rATOMClice';
-import { getPools as dot_getPools, swapDotForFis } from '@features/rDOTClice';
-import { connectMetamask, get_eth_getBalance, monitoring_Method, swapEthForFis } from '@features/rETHClice';
-import { swapKsmForFis } from '@features/rKSMClice';
-import arrowDownIcon from '@images/arrow_down.svg';
-import left_arrow from '@images/left_arrow.svg';
-import atomIcon from '@images/rATOM.svg';
-import dotIcon from '@images/rDOT.svg';
-import ethIcon from '@images/rETH.svg';
-import ksmIcon from '@images/rKSM.svg';
-import settingIcon from '@images/setting.svg';
-import { Symbol } from '@keyring/defaults';
-import FeeStationServer from '@servers/feeStation';
-import SlippageToleranceInputEmbed from '@shared/components/input/slippageToleranceInputEmbed';
-import TypeSelectorInput from '@shared/components/input/TypeSelectorInput';
-import Modal from '@shared/components/modal/connectModal';
-import { getLocalStorageItem, Keys } from '@util/common';
-import numberUtil from '@util/numberUtil';
-import { useInterval } from '@util/utils';
-import { message, Spin } from 'antd';
-import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { useHistory, useParams } from 'react-router-dom';
+} from 'src/features/globalClice';
+import { swapAtomForFis } from 'src/features/rATOMClice';
+import { getPools as dot_getPools, swapDotForFis } from 'src/features/rDOTClice';
+import { connectMetamask, get_eth_getBalance, monitoring_Method, swapEthForFis } from 'src/features/rETHClice';
+import { swapKsmForFis } from 'src/features/rKSMClice';
+import { Symbol } from 'src/keyring/defaults';
+import FeeStationServer from 'src/servers/feeStation';
+import SlippageToleranceInputEmbed from 'src/shared/components/input/slippageToleranceInputEmbed';
+import TypeSelectorInput from 'src/shared/components/input/TypeSelectorInput';
+import Modal from 'src/shared/components/modal/connectModal';
+import { getLocalStorageItem, Keys } from 'src/util/common';
+import numberUtil from 'src/util/numberUtil';
+import { useInterval } from 'src/util/utils';
 import styled from 'styled-components';
 import Page_FIS from '../rATOM/selectWallet_rFIS/index';
 import Page_DOT from '../rDOT/selectWallet/index.tsx';

@@ -1,18 +1,18 @@
-import { HContainer, Text } from '@components/commonComponents';
-import { BSC_CHAIN_ID, ETH_CHAIN_ID, SOL_CHAIN_ID, STAFI_CHAIN_ID } from '@features/bridgeClice';
-import doubt from '@images/doubt.svg';
-import bep20Icon from '@images/mint_type_bep20.svg';
-import bep20SelectedIcon from '@images/mint_type_bep20_selected.svg';
-import erc20Icon from '@images/mint_type_erc20.svg';
-import erc20SelectedIcon from '@images/mint_type_erc20_selected.svg';
-import nativeIcon from '@images/mint_type_native.svg';
-import nativeSelectedIcon from '@images/mint_type_native_selected.svg';
-import splIcon from '@images/mint_type_spl.svg';
-import splSelectedIcon from '@images/mint_type_spl_selected.svg';
-import numberUtil from '@util/numberUtil';
 import { Tooltip } from 'antd';
 import React from 'react';
 import { useSelector } from 'react-redux';
+import doubt from 'src/assets/images/doubt.svg';
+import bep20Icon from 'src/assets/images/mint_type_bep20.svg';
+import bep20SelectedIcon from 'src/assets/images/mint_type_bep20_selected.svg';
+import erc20Icon from 'src/assets/images/mint_type_erc20.svg';
+import erc20SelectedIcon from 'src/assets/images/mint_type_erc20_selected.svg';
+import nativeIcon from 'src/assets/images/mint_type_native.svg';
+import nativeSelectedIcon from 'src/assets/images/mint_type_native_selected.svg';
+import splIcon from 'src/assets/images/mint_type_spl.svg';
+import splSelectedIcon from 'src/assets/images/mint_type_spl_selected.svg';
+import { HContainer, Text } from 'src/components/commonComponents';
+import { BSC_CHAIN_ID, ETH_CHAIN_ID, SOL_CHAIN_ID, STAFI_CHAIN_ID } from 'src/features/bridgeClice';
+import numberUtil from 'src/util/numberUtil';
 import styled from 'styled-components';
 
 interface MintTypeCardProps {

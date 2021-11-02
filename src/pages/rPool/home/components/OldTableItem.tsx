@@ -1,7 +1,7 @@
-import poolCurveIcon from '@images/poolCurveIcon.svg';
-import GhostButton from '@shared/components/button/ghostButton';
-import numberUtil from '@util/numberUtil';
 import React from 'react';
+import poolCurveIcon from 'src/assets/images/poolCurveIcon.svg';
+import GhostButton from 'src/shared/components/button/ghostButton';
+import numberUtil from 'src/util/numberUtil';
 
 type Props = {
   pairIcon: any;

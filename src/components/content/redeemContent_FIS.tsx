@@ -1,14 +1,12 @@
-import React, { useState } from 'react'; 
-import {message} from 'antd'
-import LeftContent from './leftContent'  
-import Input from '@shared/components/input/amountInput'; 
-import rFIS from '@images/selected_rFIS.svg';
-import leftArrowSvg from '@images/left_arrow.svg'
-import NumberUtil from '@util/numberUtil'
-import Button from '@shared/components/button/button';
-import numberUtil from '@util/numberUtil';
-import config from '@config/index';
-import {Symbol} from '@keyring/defaults'
+import React from 'react';
+import leftArrowSvg from 'src/assets/images/left_arrow.svg';
+import rFIS from 'src/assets/images/selected_rFIS.svg';
+import config from 'src/config/index';
+import { Symbol } from 'src/keyring/defaults';
+import Button from 'src/shared/components/button/button';
+import Input from 'src/shared/components/input/amountInput';
+import { default as NumberUtil, default as numberUtil } from 'src/util/numberUtil';
+import LeftContent from './leftContent';
 
 type Props={
      onRdeemClick?:Function,

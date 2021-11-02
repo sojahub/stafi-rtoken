@@ -1,8 +1,8 @@
+import { Select } from 'antd';
 import React from 'react';
-import {Select} from 'antd'
-
-import selectedIcon from '@images/selectedIcon.svg'
+import selectedIcon from 'src/assets/images/selectedIcon.svg';
 import './index.scss';
+
 
 
 export default function Index(props:any){

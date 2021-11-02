@@ -1,6 +1,6 @@
-import config, { isdev } from '@config/index';
-import { BSC_CHAIN_ID, ETH_CHAIN_ID } from '@features/bridgeClice';
 import { message } from 'antd';
+import config, { isdev } from 'src/config/index';
+import { BSC_CHAIN_ID, ETH_CHAIN_ID } from 'src/features/bridgeClice';
 import { metaMaskBEP20TokenParameters, metaMaskChainParameters, metaMaskERC20TokenParameters } from './constants';
 
 declare const ethereum: any;

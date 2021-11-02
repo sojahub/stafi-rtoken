@@ -1,10 +1,10 @@
-import HomeCard from '@components/card/homeCard';
-import { connectPolkadot_fis } from '@features/globalClice';
-import rFIS_svg from '@images/rFIS.svg';
-import Button from '@shared/components/button/connect_button';
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Redirect } from 'react-router';
+import rFIS_svg from 'src/assets/images/rFIS.svg';
+import HomeCard from 'src/components/card/homeCard';
+import { connectPolkadot_fis } from 'src/features/globalClice';
+import Button from 'src/shared/components/button/connect_button';
 import './index.scss';
 
 export default function Inde(props: any) {

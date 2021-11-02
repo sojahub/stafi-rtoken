@@ -1,11 +1,11 @@
-import config, { isdev } from '@config/index';
 import { createSlice } from '@reduxjs/toolkit';
-import BridgeServer from '@servers/bridge';
-import BscServer from '@servers/bsc/index';
-import EthServer from '@servers/eth/index';
-import { getLocalStorageItem, Keys, removeLocalStorageItem, setLocalStorageItem } from '@util/common';
-import numberUtil from '@util/numberUtil';
 import { message } from 'antd';
+import config, { isdev } from 'src/config/index';
+import BridgeServer from 'src/servers/bridge';
+import BscServer from 'src/servers/bsc/index';
+import EthServer from 'src/servers/eth/index';
+import { getLocalStorageItem, Keys, removeLocalStorageItem, setLocalStorageItem } from 'src/util/common';
+import numberUtil from 'src/util/numberUtil';
 import Web3Utils from 'web3-utils';
 import { AppThunk } from '../store';
 

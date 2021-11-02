@@ -1,15 +1,15 @@
 import { LoadingOutlined } from '@ant-design/icons';
-import { setSwapLoadingStatus } from '@features/feeStationClice';
-import { trackEvent } from '@features/globalClice';
-import { noticeStatus, update_NoticeStatus } from '@features/noticeClice';
-import close_bold_svg from '@images/close_bold.svg';
-import complete_svg from '@images/complete.svg';
-import FeeStationServer from '@servers/feeStation';
-import numberUtil from '@util/numberUtil';
-import { useInterval } from '@util/utils';
 import { message, Modal, Progress, Spin } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import close_bold_svg from 'src/assets/images/close_bold.svg';
+import complete_svg from 'src/assets/images/complete.svg';
+import { setSwapLoadingStatus } from 'src/features/feeStationClice';
+import { trackEvent } from 'src/features/globalClice';
+import { noticeStatus, update_NoticeStatus } from 'src/features/noticeClice';
+import FeeStationServer from 'src/servers/feeStation';
+import numberUtil from 'src/util/numberUtil';
+import { useInterval } from 'src/util/utils';
 import './SwapLoading.scss';
 
 const antIcon = <LoadingOutlined style={{ fontSize: '60px', color: '#fff' }} spin />;

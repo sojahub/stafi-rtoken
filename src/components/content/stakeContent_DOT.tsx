@@ -1,24 +1,24 @@
 // @ts-nocheck
 
-import config, { getRsymbolByTokenTitle } from '@config/index';
-import { BSC_CHAIN_ID, ETH_CHAIN_ID, SOL_CHAIN_ID } from '@features/bridgeClice';
-import { setStakeSwapLoadingParams } from '@features/globalClice';
-import rBNB from '@images/selected_bnb.svg';
-import rATOM from '@images/selected_rATOM.svg';
-import rDOT from '@images/selected_rDOT.svg';
-import rFIS from '@images/selected_rFIS.svg';
-import rKSM from '@images/selected_rKSM.svg';
-import rMATIC from '@images/selected_rMatic.svg';
-import rSOL from '@images/solana.svg';
-import RPoolServer from '@servers/rpool';
-import Button from '@shared/components/button/button';
-import Input from '@shared/components/input/amountInput';
-import numberUtil from '@util/numberUtil';
 import { message } from 'antd';
 import PubSub from 'pubsub-js';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router';
+import rBNB from 'src/assets/images/selected_bnb.svg';
+import rATOM from 'src/assets/images/selected_rATOM.svg';
+import rDOT from 'src/assets/images/selected_rDOT.svg';
+import rFIS from 'src/assets/images/selected_rFIS.svg';
+import rKSM from 'src/assets/images/selected_rKSM.svg';
+import rMATIC from 'src/assets/images/selected_rMatic.svg';
+import rSOL from 'src/assets/images/solana.svg';
+import config, { getRsymbolByTokenTitle } from 'src/config/index';
+import { BSC_CHAIN_ID, ETH_CHAIN_ID, SOL_CHAIN_ID } from 'src/features/bridgeClice';
+import { setStakeSwapLoadingParams } from 'src/features/globalClice';
+import RPoolServer from 'src/servers/rpool';
+import Button from 'src/shared/components/button/button';
+import Input from 'src/shared/components/input/amountInput';
+import numberUtil from 'src/util/numberUtil';
 import ChooseMintType from './ChooseMintType';
 import './index.scss';
 import LeftContent from './leftContent';

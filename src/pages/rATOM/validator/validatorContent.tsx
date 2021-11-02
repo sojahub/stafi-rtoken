@@ -1,8 +1,8 @@
-import React from 'react';
-import Button from '@shared/components/button/button';
-import LeftContent from '@components/content/leftContent';
-import './index.scss'; 
 import { message } from 'antd';
+import React from 'react';
+import LeftContent from 'src/components/content/leftContent';
+import Button from 'src/shared/components/button/button';
+import './index.scss';
 
 type Props={
     onRecovery:Function,

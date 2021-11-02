@@ -1,5 +1,5 @@
-import config, { isdev } from '@config/index';
-import { rSymbol } from '@keyring/defaults';
+import config, { isdev } from 'src/config/index';
+import { rSymbol } from 'src/keyring/defaults';
 
 export default class Index {
   getBridgeErc20HandlerAddress() {

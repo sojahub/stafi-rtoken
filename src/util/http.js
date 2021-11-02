@@ -1,8 +1,8 @@
- import webConfig from '@config/index';
-import { message } from 'antd';
+ import { message } from 'antd';
 import axios from 'axios';
 import { createBrowserHistory, createHashHistory } from 'history';
 import { includes } from 'lodash';
+import webConfig from 'src/config/index';
 let loadingTimer = null;
 const clearLoading = () => {
   clearTimeout(loadingTimer);

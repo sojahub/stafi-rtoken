@@ -1,12 +1,12 @@
 // @ts-nocheck
 
-import config from '@config/index';
-import { Symbol } from '@keyring/defaults';
 import { createSlice } from '@reduxjs/toolkit';
-import EthServer from '@servers/eth';
-import RPoolServer from '@servers/rpool';
-import { stafi_uuid } from '@util/common';
 import { message } from 'antd';
+import config from 'src/config/index';
+import { Symbol } from 'src/keyring/defaults';
+import EthServer from 'src/servers/eth';
+import RPoolServer from 'src/servers/rpool';
+import { stafi_uuid } from 'src/util/common';
 import { AppThunk } from '../store';
 import { setLoading } from './globalClice';
 import { add_Notice, noticeStatus, noticesubType, noticeType } from './noticeClice';

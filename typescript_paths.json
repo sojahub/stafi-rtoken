@@ -1,16 +1,5 @@
 {
   "compilerOptions": {
-    "paths": {
-      "@components/*": ["src/components/*"],
-      "@images/*": ["src/assets/images/*"],
-      "@features/*": ["src/features/*"],
-      "@servers/*": ["src/servers/*"],
-      "@util/*": ["src/util/*"],
-      "@keyring/*": ["src/keyring/*"],
-      "@config/*": ["src/config/*"],
-      "@shared/*": ["src/shared/*"],
-      "@hooks/*": ["src/hooks/*"]
-    }
   },
   "linterOptions": {
     "exclude": ["src/**"]

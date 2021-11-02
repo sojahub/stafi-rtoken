@@ -1,7 +1,7 @@
-import close_bold_svg from '@images/close_bold.svg';
 import { Modal, Spin } from 'antd';
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import close_bold_svg from 'src/assets/images/close_bold.svg';
 import './ClaimModal.scss';
 
 type Props = {

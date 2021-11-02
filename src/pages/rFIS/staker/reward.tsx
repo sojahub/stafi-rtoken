@@ -1,11 +1,11 @@
-import DataItem from '@components/reward/dataItem';
-import RewardContent from '@components/reward/index';
-import CommonClice from '@features/commonClice';
-import { getReward, getUnbondCommission } from '@features/FISClice';
-import NumberUtil from '@util/numberUtil';
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import DataItem from 'src/components/reward/dataItem';
+import RewardContent from 'src/components/reward/index';
+import CommonClice from 'src/features/commonClice';
+import { getReward, getUnbondCommission } from 'src/features/FISClice';
 import { RootState } from 'src/store';
+import NumberUtil from 'src/util/numberUtil';
 
 const commonClice=new CommonClice()
 export default function Index(){

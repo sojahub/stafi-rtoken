@@ -1,13 +1,13 @@
-import { bondSwitch } from '@features/FISClice';
-import { reloadData } from '@features/globalClice';
-import { bondFees, continueProcess, getPools, getTotalIssuance } from '@features/rKSMClice';
-import { Symbol } from '@keyring/defaults';
-import Content from '@shared/components/content';
-import { getLocalStorageItem, Keys } from '@util/common';
 import { Spin } from 'antd';
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { renderRoutes } from 'react-router-config';
+import { bondSwitch } from 'src/features/FISClice';
+import { reloadData } from 'src/features/globalClice';
+import { bondFees, continueProcess, getPools, getTotalIssuance } from 'src/features/rKSMClice';
+import { Symbol } from 'src/keyring/defaults';
+import Content from 'src/shared/components/content';
+import { getLocalStorageItem, Keys } from 'src/util/common';
 import '../template/index.scss';
 export default function Index(props:any){
   const dispatch = useDispatch();

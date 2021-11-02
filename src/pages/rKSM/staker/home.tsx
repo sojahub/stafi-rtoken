@@ -1,13 +1,13 @@
-import Content from '@components/content/stakeContent_DOT';
-import { STAFI_CHAIN_ID } from '@features/bridgeClice';
-import { setProcessSlider } from '@features/globalClice';
-import { balancesAll, rTokenLedger, rTokenRate, transfer } from '@features/rKSMClice';
-import { ratioToAmount } from '@util/common';
-import NumberUtil from '@util/numberUtil';
 import { message } from 'antd';
 import PubSub from 'pubsub-js';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import Content from 'src/components/content/stakeContent_DOT';
+import { STAFI_CHAIN_ID } from 'src/features/bridgeClice';
+import { setProcessSlider } from 'src/features/globalClice';
+import { balancesAll, rTokenLedger, rTokenRate, transfer } from 'src/features/rKSMClice';
+import { ratioToAmount } from 'src/util/common';
+import NumberUtil from 'src/util/numberUtil';
 
 export default function Index(props: any) {
   const dispatch = useDispatch();

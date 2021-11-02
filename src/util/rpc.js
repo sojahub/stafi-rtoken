@@ -1,6 +1,6 @@
-import config from '@config/index';
 import { message } from 'antd';
 import axios from 'axios';
+import config from 'src/config/index';
  
 const toastTimeout = 500;
 

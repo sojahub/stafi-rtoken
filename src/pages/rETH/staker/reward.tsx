@@ -1,10 +1,10 @@
-import DataItem from '@components/reward/dataItem';
-import RewardContent from '@components/reward/index';
-import { getReward } from '@features/rETHClice';
-import NumberUtil from '@util/numberUtil';
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import DataItem from 'src/components/reward/dataItem';
+import RewardContent from 'src/components/reward/index';
+import { getReward } from 'src/features/rETHClice';
 import { RootState } from 'src/store';
+import NumberUtil from 'src/util/numberUtil';
  
 export default function Index(){
     const dispatch=useDispatch();

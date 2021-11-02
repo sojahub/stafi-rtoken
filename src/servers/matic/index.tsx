@@ -1,7 +1,7 @@
-import config, { isdev } from '@config/index';
 import { SigningStargateClient } from '@cosmjs/stargate';
-import { CosmosKeyring } from '@keyring/CosmosKeyring';
 import { message } from 'antd';
+import config, { isdev } from 'src/config/index';
+import { CosmosKeyring } from 'src/keyring/CosmosKeyring';
 declare const window: any;
 let cosmosApi:any = null; 
 

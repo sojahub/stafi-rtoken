@@ -1,9 +1,9 @@
 import React from 'react';
-import Popover from '@components/tradePopover/index';
-import dow_svg from '@images/dow_black.svg';
-import Button from '@shared/components/button/button';
-import selected_rETH_svg from '@images/selected_r_eth.svg';
-import rDOT_DOT_svg from '@images/rDOT_DOT.svg'
+import dow_svg from 'src/assets/images/dow_black.svg';
+import rDOT_DOT_svg from 'src/assets/images/rDOT_DOT.svg';
+import selected_rETH_svg from 'src/assets/images/selected_r_eth.svg';
+import Popover from 'src/components/tradePopover/index';
+import Button from 'src/shared/components/button/button';
 
 export default function Index(){
     return <>
