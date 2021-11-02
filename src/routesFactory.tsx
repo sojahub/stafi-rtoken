@@ -3,8 +3,9 @@ import { renderRoutes } from 'react-router-config';
 import { Redirect } from 'react-router-dom';
 import authorizedRoute from 'src/components/route/authorizedRoute';
 import { rSymbol, Symbol } from 'src/keyring/defaults';
+import HomeTemplate from './pages/template/homeTemplate';
 
-const HomeTemplate = React.lazy(() => import('./pages/template/homeTemplate'));
+// const HomeTemplate = React.lazy(() => import('./pages/template/homeTemplate'));
 
 const FeeStationTemplate = React.lazy(() => import('src/servers/feeStation/template'));
 const FeeStation = React.lazy(() => import('./pages/feeStation/FeeStation'));

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { Suspense, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { renderRoutes } from 'react-router-config';
 import Header from 'src/components/header';
@@ -7,9 +7,9 @@ import Sider from 'src/components/slider';
 import LiquidingProcesSlider from 'src/components/slider/liquidingProcessSlider';
 import { checkMetaMaskNetworkId, initMetaMaskAccount, monitorMetaMaskChainChange } from 'src/features/globalClice';
 
-export default function index(props: any) {
+export default function Index(props: any) {
   const dispatch = useDispatch();
-  
+
   useEffect(() => {
     dispatch(initMetaMaskAccount());
     dispatch(checkMetaMaskNetworkId());
@@ -24,7 +24,7 @@ export default function index(props: any) {
 
       <div className={'stafi_layout_content'}>
         <Header route={props.route} history={props.history} />
-        {renderRoutes(props.route.routes)}
+        <Suspense fallback={<div></div>}>{renderRoutes(props.route.routes)}</Suspense>
       </div>
 
       <StakeSwapLoading />

@@ -1,4 +1,4 @@
-import React, { Fragment, Suspense } from 'react';
+import React, { Fragment } from 'react';
 import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
 import './css/antd.scss';
@@ -15,7 +15,7 @@ export default function Index() {
       <Provider store={store}>
         <Fragment>
           <BrowserRouter>
-            <Suspense fallback={<div></div>}>{routesFactory()}</Suspense>
+            {routesFactory()}
           </BrowserRouter>
         </Fragment>
       </Provider>
