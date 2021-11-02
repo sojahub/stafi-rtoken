@@ -395,7 +395,7 @@ export default function RDEXHome() {
         return;
       }
       symbol = rSymbol.Bnb;
-      setViewTxUrl(config.atomScanAddressUrl(address));
+      setViewTxUrl(config.bnbScanAddressUrl(address));
     }
 
     dispatch(

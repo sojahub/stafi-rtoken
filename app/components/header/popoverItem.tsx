@@ -76,6 +76,8 @@ export default function Index(props: Props) {
                 viewTxUrl = config.atomScanAddressUrl(address);
               } else if (tokenSymbol === rSymbol.Dot) {
                 viewTxUrl = config.dotScanAddressUrl(address);
+              } else if (tokenSymbol === rSymbol.Bnb) {
+                viewTxUrl = config.bnbScanAddressUrl(address);
               }
               viewTxUrl && window.open(viewTxUrl);
               props.hideNoticePopover && props.hideNoticePopover();
