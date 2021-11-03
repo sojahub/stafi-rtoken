@@ -212,14 +212,6 @@ export default function RDEXHome() {
     updateTokenReserves();
   }, [selectedToken]);
 
-  useEffect(() => {
-    if (!isNaN(receiveTokenAmount) && !isNaN(currentNativeTokenReserves)) {
-      if (Number(receiveTokenAmount) > Number(currentNativeTokenReserves)) {
-        message.error(`Max native amount is ${Math.floor(currentNativeTokenReserves * 100) / 100}`);
-      }
-    }
-  }, [receiveTokenAmount, currentNativeTokenReserves]);
-
   const updateTokenReserves = async () => {
     if (!selectedToken) {
       return;
@@ -366,6 +358,7 @@ export default function RDEXHome() {
     if (!selectedToken) {
       return;
     }
+
     let leastFee = Number(currentSwapFee) + 0.003;
     let leastFeeStr = parseInt(leastFee * 1000) / 1000;
     if (Number(transferrableAmount) < Number(leastFeeStr)) {
@@ -441,6 +434,7 @@ export default function RDEXHome() {
               )}
               {scene === 1 && (
                 <img
+                  alt='back'
                   src={left_arrow}
                   style={{ cursor: 'pointer', width: '12px', height: '12px' }}
                   onClick={() => {
@@ -452,6 +446,7 @@ export default function RDEXHome() {
               {scene === 2 && (
                 <HContainer>
                   <img
+                    alt='back'
                     src={left_arrow}
                     style={{ cursor: 'pointer', width: '12px', height: '12px' }}
                     onClick={() => {
@@ -467,6 +462,7 @@ export default function RDEXHome() {
               {scene === 3 && (
                 <HContainer>
                   <img
+                    alt='back'
                     src={left_arrow}
                     style={{ cursor: 'pointer', width: '12px', height: '12px' }}
                     onClick={() => {
@@ -653,14 +649,17 @@ export default function RDEXHome() {
                     disabled={
                       fisAccount &&
                       fisAccount.address &&
-                      (!selectedToken ||
-                        Number(rTokenAmount) <= Number(0) ||
-                        isNaN(currentNativeTokenReserves) ||
-                        (!isNaN(receiveTokenAmount) && Number(receiveTokenAmount) > Number(currentNativeTokenReserves)))
+                      (!selectedToken || Number(rTokenAmount) <= Number(0) || isNaN(currentNativeTokenReserves))
                     }
                     mt='25px'
                     onClick={() => {
                       if (fisAccount && fisAccount.address) {
+                        if (!isNaN(receiveTokenAmount) && !isNaN(currentNativeTokenReserves)) {
+                          if (Number(receiveTokenAmount) > Number(currentNativeTokenReserves)) {
+                            message.error(`No enough ${selectedToken.title.slice(1)} to be swapped in the pool`);
+                            return;
+                          }
+                        }
                         setScene(1);
                       } else {
                         dispatch(
@@ -673,9 +672,7 @@ export default function RDEXHome() {
                   />
                 )}
 
-                {scene === 1 && (
-                  <CommonButton text={'Swap'} onClick={() => {}} disabled={!address} mt='25px' onClick={startSwap} />
-                )}
+                {scene === 1 && <CommonButton text={'Swap'} disabled={!address} mt='25px' onClick={startSwap} />}
               </InnerContainer>
 
               <div style={{ visibility: scene === 2 ? 'hidden' : 'visible' }}>

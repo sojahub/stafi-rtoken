@@ -4,14 +4,14 @@ import { web3Enable, web3FromSource } from '@polkadot/extension-dapp';
 import { u8aToHex } from '@polkadot/util';
 import { createSlice } from '@reduxjs/toolkit';
 import { message } from 'antd';
-import { getSymbolByRSymbol, getSymbolRTitle, getSymbolTitle } from 'src/config/index';
+import { getSymbolByRSymbol } from 'src/config/index';
 import { rSymbol } from 'src/keyring/defaults';
 import keyring from 'src/servers/index';
 import StafiServer from 'src/servers/stafi';
 import { stafi_uuid } from 'src/util/common';
 import numberUtil from 'src/util/numberUtil';
 import { AppThunk } from '../store';
-import { add_Notice, noticeStatus, noticesubType, noticeType } from './noticeClice';
+import { add_Notice, noticesubType, noticeType } from './noticeClice';
 
 const stafiServer = new StafiServer();
 
@@ -83,26 +83,23 @@ export const swap =
                   if (dispatchError.isModule) {
                     try {
                       const mod = dispatchError.asModule;
-                      const error = data.registry.findMetaError(
-                        new Uint8Array([mod.index.toNumber(), mod.error.toNumber()]),
-                      );
                       let message_str = 'Something is wrong, please make sure you have enough FIS balance';
-                      // if (tokenType == 'rfis') {
-                      //   message_str = 'Something is wrong, please make sure you have enough FIS and rFIS balance';
-                      // } else if (tokenType == 'rdot') {
-                      //   message_str = 'Something is wrong, please make sure you have enough FIS and rDOT balance';
-                      // } else if (tokenType == 'rksm') {
-                      //   message_str = 'Something is wrong, please make sure you have enough FIS and rKSM balance';
-                      // } else if (tokenType == 'ratom') {
-                      //   message_str = 'Something is wrong, please make sure you have enough FIS and rATOM balance';
-                      // } else if (tokenType == 'rsol') {
-                      //   message_str = 'Something is wrong, please make sure you have enough FIS and rSOL balance';
-                      // } else if (tokenType == 'rmatic') {
-                      //   message_str = 'Something is wrong, please make sure you have enough FIS and rMATIC balance';
-                      // }
-                      if (error.name == 'ServicePaused') {
-                        message_str = 'Service is paused, please try again later!';
+                      try {
+                        const error = data.registry.findMetaError(
+                          new Uint8Array([mod.index.toNumber(), mod.error.toNumber()]),
+                        );
+
+                        if (error && error.name === 'ServicePaused') {
+                          message_str = 'Service is paused, please try again later!';
+                        }
+                      } catch (err: any) {
+                        if (mod.index.toNumber() === 45 && mod.error.toNumber() === 11) {
+                          message_str = 'The price is fluctuating, please refresh the page and try again';
+                        } else {
+                          throw err;
+                        }
                       }
+
                       dispatch(setSwapLoadingStatus(0));
                       message.error(message_str);
                     } catch (error) {
