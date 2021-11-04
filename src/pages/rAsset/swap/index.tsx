@@ -28,13 +28,13 @@ import {
   nativeToOtherSwap,
   slp20ToOtherSwap,
   SOL_CHAIN_ID,
-  STAFI_CHAIN_ID
+  STAFI_CHAIN_ID,
 } from 'src/features/bridgeClice';
 import {
   getAssetBalanceAll as getBep20AssetBalanceAll,
   getBep20Allowances,
   handleBscAccount,
-  monitoring_Method as bsc_Monitoring_Method
+  monitoring_Method as bsc_Monitoring_Method,
 } from 'src/features/BSCClice';
 import { getAssetBalanceAll, getErc20Allowances } from 'src/features/ETHClice';
 import {
@@ -42,37 +42,41 @@ import {
   getUnbondCommission as fis_getUnbondCommission,
   query_rBalances_account as fis_query_rBalances_account,
   reloadData,
-  rTokenRate as fis_rTokenRate
+  rTokenRate as fis_rTokenRate,
 } from 'src/features/FISClice';
 import { setLoading } from 'src/features/globalClice';
 import {
   getUnbondCommission as atom_getUnbondCommission,
   query_rBalances_account as atom_query_rBalances_account,
-  rTokenRate as atom_rTokenRate
+  rTokenRate as atom_rTokenRate,
 } from 'src/features/rATOMClice';
 import {
   getUnbondCommission as bnb_getUnbondCommission,
   query_rBalances_account as bnb_query_rBalances_account,
-  rTokenRate as bnb_rTokenRate
+  rTokenRate as bnb_rTokenRate,
 } from 'src/features/rBNBClice';
 import {
   getUnbondCommission as dot_getUnbondCommission,
   query_rBalances_account as dot_query_rBalances_account,
-  rTokenRate as dot_rTokenRate
+  rTokenRate as dot_rTokenRate,
 } from 'src/features/rDOTClice';
-import { checkEthAddress, get_eth_getBalance, monitoring_Method as eth_Monitoring_Method } from 'src/features/rETHClice';
+import {
+  checkEthAddress,
+  get_eth_getBalance,
+  monitoring_Method as eth_Monitoring_Method,
+} from 'src/features/rETHClice';
 import { getUnbondCommission, query_rBalances_account, rTokenRate as ksm_rTokenRate } from 'src/features/rKSMClice';
 import {
   getUnbondCommission as matic_getUnbondCommission,
   query_rBalances_account as matic_query_rBalances_account,
-  rTokenRate as matic_rTokenRate
+  rTokenRate as matic_rTokenRate,
 } from 'src/features/rMATICClice';
 import {
   checkAddress as checkSOLAddress,
   createSubstrate as solCreateSubstrate,
   getUnbondCommission as sol_getUnbondCommission,
   query_rBalances_account as sol_query_rBalances_account,
-  rTokenRate as sol_rTokenRate
+  rTokenRate as sol_rTokenRate,
 } from 'src/features/rSOLClice';
 import { getSlp20Allowances, getSlp20AssetBalanceAll } from 'src/features/SOLClice';
 import SolServer from 'src/servers/sol';
@@ -679,6 +683,7 @@ export default function Index(props: any) {
 
             <AmountInputEmbed
               maxInput={tokenType && tokenType.content !== '--' ? tokenType.content : 0}
+              showMax={tokenType && !isNaN(Number(tokenType.content))}
               placeholder='0.0'
               value={fromAoumt}
               onChange={(value: any) => {

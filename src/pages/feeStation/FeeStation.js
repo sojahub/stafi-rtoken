@@ -18,7 +18,7 @@ import {
   reloadData as feeStation_reloadData,
   setPoolInfoList,
   setSwapMaxLimit,
-  setSwapMinLimit
+  setSwapMinLimit,
 } from 'src/features/feeStationClice';
 import { queryBalance as fis_queryBalance } from 'src/features/FISClice';
 import {
@@ -28,7 +28,7 @@ import {
   connectPolkadot_ksm,
   reloadData,
   setLoading,
-  trackEvent
+  trackEvent,
 } from 'src/features/globalClice';
 import { swapAtomForFis } from 'src/features/rATOMClice';
 import { getPools as dot_getPools, swapDotForFis } from 'src/features/rDOTClice';
@@ -302,10 +302,6 @@ export default function FeeStation() {
       const tokenAmount = numberUtil.divide(numberUtil.mul(receiveFisAmount, 1000000), currentPoolInfo.swapRate);
       if (!selectedToken || selectedToken.balance === '--' || tokenAmount > selectedToken.balance) {
         setTokenAmount('');
-        setTokenAmount('');
-        if (selectedToken && selectedToken.balance !== '--') {
-          message.error('The amount of input exceeds your transferrable balance');
-        }
         return;
       }
 
@@ -334,6 +330,23 @@ export default function FeeStation() {
     slippageTolerance,
     customSlippageTolerance,
   ]);
+
+  const selectedTokenBalanceValid = selectedToken && selectedToken.balance !== '--';
+
+  useEffect(() => {
+    if (!inputFromReceive) {
+      return;
+    }
+    if (!isNaN(receiveFisAmount)) {
+      const tokenAmount = numberUtil.divide(numberUtil.mul(receiveFisAmount, 1000000), currentPoolInfo.swapRate);
+      if (selectedTokenBalanceValid && tokenAmount > selectedToken.balance) {
+        setTokenAmount('');
+        if (selectedToken && selectedToken.balance !== '--') {
+          message.error('The amount of input exceeds your transferrable balance');
+        }
+      }
+    }
+  }, [inputFromReceive, receiveFisAmount, selectedTokenBalanceValid]);
 
   useEffect(() => {
     if (receiveFisAmount && !isNaN(receiveFisAmount) && !isNaN(swapMinLimit) && !isNaN(swapMaxLimit)) {
