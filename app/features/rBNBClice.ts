@@ -830,7 +830,7 @@ export const rTokenLedger = (): AppThunk => async (dispatch, getState) => {
 const handleStakerApr =
   (currentRate?: any, lastRate?: any): AppThunk =>
   async (dispatch, getState) => {
-    dispatch(setStakerApr('13.7%'));
+    dispatch(setStakerApr('20.6%'));
     // if (currentRate && lastRate) {
     //   const apr = NumberUtil.handleEthRoundToFixed(((currentRate - lastRate) / 1000000000000 / 7) * 365.25 * 100) + '%';
     //   dispatch(setStakerApr(apr));
