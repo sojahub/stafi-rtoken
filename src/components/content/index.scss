@@ -147,7 +147,6 @@
   .item {
     flex: 1;
     .title {
-      padding-top: 15px;
       font-size: 30px;
       img {
         margin: 0px 10px;
@@ -155,12 +154,14 @@
     }
     .content {
       display: flex;
-      justify-content: space-between;
-      margin-top: 20px;
+      margin-right: 20px;
+      margin-top: 60px;
+      margin-bottom: 30px;
+      justify-content: flex-end;
       font-size: 30px;
       color: #00f3ab;
       font-weight: bold;
-      padding-left: 65px;
+
       .btns {
         display: flex;
         align-items: center;

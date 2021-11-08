@@ -11,13 +11,13 @@ import FeeStationServer from 'src/servers/feeStation';
 import keyring from 'src/servers/index';
 import RpcServer, { pageCount } from 'src/servers/rpc/index';
 import {
-    getLocalStorageItem,
-    Keys,
-    localStorage_currentEthPool,
-    localStorage_poolPubKey,
-    removeLocalStorageItem,
-    setLocalStorageItem,
-    stafi_uuid
+  getLocalStorageItem,
+  Keys,
+  localStorage_currentEthPool,
+  localStorage_poolPubKey,
+  removeLocalStorageItem,
+  setLocalStorageItem,
+  stafi_uuid,
 } from 'src/util/common';
 import NumberUtil from 'src/util/numberUtil';
 import StringUtil from 'src/util/stringUtil';
@@ -70,6 +70,7 @@ const rETHClice = createSlice({
     ethAmount: 4,
     rewardList: [],
     rewardList_lastdata: null,
+    lastEraRate: '--',
   },
   reducers: {
     setEthAccount(state, { payload }) {
@@ -185,6 +186,9 @@ const rETHClice = createSlice({
     setRewardList_lastdata(state, { payload }) {
       state.rewardList_lastdata = payload;
     },
+    setLastEraRate(state, { payload }) {
+      state.lastEraRate = payload;
+    },
   },
 });
 
@@ -223,6 +227,7 @@ export const {
   setEthAmount,
   setRewardList,
   setRewardList_lastdata,
+  setLastEraRate,
 } = rETHClice.actions;
 
 declare const window: any;
@@ -594,8 +599,7 @@ export const swapEthForFis =
         if (res.status === '80000' && res.data) {
           bundleAddressId = res.data.bundleAddressId;
         }
-      } catch (err: any) {
-      }
+      } catch (err: any) {}
 
       if (!bundleAddressId) {
         dispatch(setLoading(false));
@@ -1337,6 +1341,9 @@ export const getReward =
       dispatch(setLoading(false));
     }
   };
+
+export const getLastEraRate = (): AppThunk => async (dispatch, getState) => {};
+
 //validator-Deposit
 
 const add_ETH_Staker_stake_Notice =

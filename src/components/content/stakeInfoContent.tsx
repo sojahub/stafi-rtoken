@@ -15,9 +15,13 @@ import rSOL_stafi_svg from 'src/assets/images/selected_r_sol.svg';
 import config from 'src/config/index';
 import Button from 'src/shared/components/button/button';
 import NumberUtil from 'src/util/numberUtil';
+import styled from 'styled-components';
+import { HContainer, Text } from '../commonComponents';
 import SwapModalNew from '../modal/swapModalNew';
 import TradePopover from '../tradePopover';
 import LeftContent from './leftContent';
+import { SelectPlatformPopover } from './SelectPlatformPopover';
+import { UnbondRecord } from './UnbondRecord';
 
 type Props = {
   onRdeemClick?: Function;
@@ -30,11 +34,15 @@ type Props = {
   onSwapClick?: Function;
   onUniswapClick?: Function;
   hours?: number;
+  lastEraRate?: any;
+  platform?: string;
+  redeemableTokenAmount?: any;
 };
 
 export default function Index(props: Props) {
   const history = useHistory();
 
+  const [showUnbondRecord, setShowUnbondRecord] = useState(false);
   const [visibleModal, setVisibleModal] = useState(false);
   const [tradeLabel, setTradeLabel] = useState('Uniswap');
   const [selectedExchange, setSelectedExchange] = useState('');
@@ -65,23 +73,120 @@ export default function Index(props: Props) {
     }
   }, [props.type, selectedExchange]);
 
+  const showNative = props.type !== 'rETH';
+  const showErc20 =
+    props.type === 'rETH' ||
+    props.type === 'rFIS' ||
+    props.type === 'rKSM' ||
+    props.type === 'rDOT' ||
+    props.type === 'rATOM' ||
+    props.type === 'rMATIC';
+  const showBep20 =
+    props.type === 'rFIS' ||
+    props.type === 'rKSM' ||
+    props.type === 'rDOT' ||
+    props.type === 'rATOM' ||
+    props.type === 'rMATIC' ||
+    props.type === 'rBNB';
+  const showSpl = props.type === 'rSOL';
+
+  const platformArr = [];
+  if (showNative) {
+    platformArr.push('Native');
+  }
+  if (showErc20) {
+    platformArr.push('ERC20');
+  }
+  if (showBep20) {
+    platformArr.push('BEP20');
+  }
+  if (showSpl) {
+    platformArr.push('SPL');
+  }
+
+  if (showUnbondRecord) {
+    return (
+      <LeftContent className='stafi_stake_info_context' padding='36px 10px'>
+        <UnbondRecord onClickBack={() => setShowUnbondRecord(false)} />
+      </LeftContent>
+    );
+  }
+
   return (
     <LeftContent className='stafi_stake_info_context'>
       <div className='item'>
-        <div className='title'>
-          {props.type == 'rDOT' && <img src={rDOT_stafi_svg} style={{ width: '40px' }} />}
-          {props.type == 'rKSM' && <img src={rKSM_stafi_svg} style={{ width: '40px' }} />}
-          {props.type == 'rATOM' && <img src={rATOM_stafi_svg} style={{ width: '40px' }} />}
-          {props.type == 'rETH' && <img src={rETH_stafi_svg} style={{ width: '40px' }} />}
-          {props.type == 'rFIS' && <img src={rFIS_stafi_svg} style={{ width: '40px' }} />}
-          {props.type == 'rSOL' && <img src={rSOL_stafi_svg} style={{ width: '40px' }} />}
-          {props.type == 'rMATIC' && <img src={rMatic_stafi_svg} style={{ width: '40px' }} />}
-          {props.type == 'rBNB' && <img src={rBnb_stafi_svg} style={{ width: '40px' }} />}
-          {props.type}
-        </div>
+        <SelectPlatformPopover
+          currentPlatform={props.platform}
+          platforms={platformArr}
+          onClick={(platform: string) => {
+            history.push(history.location.pathname + `?platform=${platform}`);
+          }}
+        />
+
+        <TitleContainer>
+          <div className='title'>
+            {props.type === 'rDOT' && <img src={rDOT_stafi_svg} style={{ width: '40px' }} alt='icon' />}
+            {props.type === 'rKSM' && <img src={rKSM_stafi_svg} style={{ width: '40px' }} alt='icon' />}
+            {props.type === 'rATOM' && <img src={rATOM_stafi_svg} style={{ width: '40px' }} alt='icon' />}
+            {props.type === 'rETH' && <img src={rETH_stafi_svg} style={{ width: '40px' }} alt='icon' />}
+            {props.type === 'rFIS' && <img src={rFIS_stafi_svg} style={{ width: '40px' }} alt='icon' />}
+            {props.type === 'rSOL' && <img src={rSOL_stafi_svg} style={{ width: '40px' }} alt='icon' />}
+            {props.type === 'rMATIC' && <img src={rMatic_stafi_svg} style={{ width: '40px' }} alt='icon' />}
+            {props.type === 'rBNB' && <img src={rBnb_stafi_svg} style={{ width: '40px' }} alt='icon' />}
+            {props.type}
+          </div>
+
+          <TokenAmountContainer>
+            <Text size='30px' bold sameLineHeight color='#00F3AB'>
+              {props.tokenAmount === '--' ? '--' : NumberUtil.handleFisAmountToFixed(props.tokenAmount)}
+            </Text>
+
+            <Text size='12px' sameLineHeight color='#c4c4c4' mt='10px'>
+              Redeemable {props.type.slice(1)}: {props.redeemableTokenAmount}
+            </Text>
+          </TokenAmountContainer>
+        </TitleContainer>
+
+        <InfoContainer>
+          <InfoItem>
+            <Text size='12px' scale={0.67} bold transformOrigin='center top' color='#C4C4C4'>
+              Staked {props.type.slice(1)}
+            </Text>
+
+            <Text size='16px' bold color='#ffffff' mt='8px'>
+              {props.tokenAmount !== '--' && props.ratio !== '--'
+                ? NumberUtil.handleAmountFloorToFixed(props.tokenAmount * props.ratio, 2)
+                : '--'}{' '}
+              {props.type.slice(1)}
+            </Text>
+          </InfoItem>
+
+          <InfoDivider />
+
+          <InfoItem style={{ cursor: 'pointer' }} onClick={() => setShowUnbondRecord(true)}>
+            <Text size='12px' scale={0.67} bold transformOrigin='center top' color='#C4C4C4' clickable>
+              Unbonding {props.type.slice(1)} &gt;
+            </Text>
+
+            <Text size='16px' bold color='#ffffff' mt='8px' clickable>
+              {NumberUtil.handleAmountFloorToFixed(props.totalUnbonding, 2)} {props.type.slice(1)}
+            </Text>
+          </InfoItem>
+
+          <InfoDivider />
+
+          <InfoItem>
+            <Text size='12px' scale={0.67} bold transformOrigin='center top' color='#C4C4C4'>
+              Reward of last era &gt;
+            </Text>
+
+            <Text size='16px' bold color='#ffffff' mt='8px'>
+              {NumberUtil.handleAmountFloorToFixed(props.lastEraRate * props.tokenAmount, 2)} {props.type.slice(1)}
+            </Text>
+          </InfoItem>
+        </InfoContainer>
 
         <div className='content'>
-          <div>{props.tokenAmount == '--' ? '--' : NumberUtil.handleFisAmountToFixed(props.tokenAmount)}</div>
           <div className='btns'>
             <Button
               size='small'
@@ -92,7 +197,7 @@ export default function Index(props: Props) {
               Redeem
             </Button>
 
-            {props.type == 'rETH' && (
+            {props.type === 'rETH' && (
               <TradePopover
                 data={[
                   { label: 'Curve', url: config.curve.rethURL },
@@ -105,7 +210,7 @@ export default function Index(props: Props) {
                 }}>
                 {' '}
                 <Button size='small' btnType='ellipse'>
-                  Trade <img className='dow_svg' src={dow_svg} />{' '}
+                  Trade <img className='dow_svg' src={dow_svg} alt='down arrow' />{' '}
                 </Button>{' '}
               </TradePopover>
             )}
@@ -131,102 +236,37 @@ export default function Index(props: Props) {
                 }}>
                 <Button size='small' btnType='ellipse' disabled={!tradeUrl}>
                   Trade
-                  <img className='dow_svg' src={dow_svg} />
+                  <img className='dow_svg' src={dow_svg} alt='down arrow' />
                 </Button>
               </TradePopover>
             )}
           </div>
         </div>
-        <div className='describe'>
-          {props.type == 'rDOT' &&
-            ` Your current staked DOT  is ${
-              props.tokenAmount != '--' && props.ratio != '--'
-                ? NumberUtil.handleFisRoundToFixed(props.tokenAmount * props.ratio)
-                : '--'
-            }`}
-          {props.type == 'rFIS' &&
-            ` Your current staked FIS  is ${
-              props.tokenAmount != '--' && props.ratio != '--'
-                ? NumberUtil.handleFisRoundToFixed(props.tokenAmount * props.ratio)
-                : '--'
-            }`}
-          {props.type == 'rKSM' &&
-            `Your current staked KSM  is ${
-              props.tokenAmount != '--' && props.ratio != '--'
-                ? NumberUtil.handleFisRoundToFixed(props.tokenAmount * props.ratio)
-                : '--'
-            }`}
-          {props.type == 'rATOM' &&
-            `Your current staked ATOM  is ${
-              props.tokenAmount != '--' && props.ratio != '--'
-                ? NumberUtil.handleAtomRoundToFixed(props.tokenAmount * props.ratio)
-                : '--'
-            }`}
-          {props.type == 'rETH' &&
-            `Your current staked ETH  is ${
-              props.tokenAmount != '--' && props.ratio != '--'
-                ? NumberUtil.handleAtomRoundToFixed(props.tokenAmount * props.ratio)
-                : '--'
-            }`}
-          {props.type == 'rMATIC' &&
-            `Your current staked MATIC  is ${
-              props.tokenAmount != '--' && props.ratio != '--'
-                ? NumberUtil.handleAtomRoundToFixed(props.tokenAmount * props.ratio)
-                : '--'
-            }`}
-          {props.type == 'rBNB' &&
-            `Your current staked BNB  is ${
-              props.tokenAmount != '--' && props.ratio != '--'
-                ? NumberUtil.handleAtomRoundToFixed(props.tokenAmount * props.ratio)
-                : '--'
-            }`}
-          {props.type == 'rSOL' &&
-            `Your current staked SOL  is ${
-              props.tokenAmount != '--' && props.ratio != '--'
-                ? NumberUtil.handleAtomRoundToFixed(props.tokenAmount * props.ratio)
-                : '--'
-            }`}
-
-          {props.type == 'rDOT' && props.totalUnbonding > 0 && `. Unbonding DOT is ${props.totalUnbonding}`}
-          {props.type == 'rFIS' && props.totalUnbonding > 0 && `. Unbonding FIS is ${props.totalUnbonding}`}
-          {props.type == 'rKSM' && props.totalUnbonding > 0 && `. Unbonding KSM is ${props.totalUnbonding}`}
-          {props.type == 'rATOM' && props.totalUnbonding > 0 && `. Unbonding ATOM is ${props.totalUnbonding}`}
-          {props.type == 'rSOL' && props.totalUnbonding > 0 && `. Unbonding SOL is ${props.totalUnbonding}`}
-          {props.type == 'rMATIC' && props.totalUnbonding > 0 && `. Unbonding MATIC is ${props.totalUnbonding}`}
-          {props.type == 'rBNB' && props.totalUnbonding > 0 && `. Unbonding BNB is ${props.totalUnbonding}`}
-        </div>
       </div>
 
-      <div className='item'>
-        <div className='title'>
-          <img src={rDOT_DOT_svg} />
-          {props.type == 'rDOT' && `rDOT / DOT`}
-          {props.type == 'rFIS' && `rFIS / FIS`}
-          {props.type == 'rKSM' && `rKSM / KSM`}
-          {props.type == 'rATOM' && `rATOM / ATOM`}
-          {props.type == 'rETH' && `rETH / ETH`}
-          {props.type == 'rSOL' && `rSOL / SOL`}
-          {props.type == 'rMATIC' && `rMATIC / MATIC`}
-          {props.type == 'rBNB' && `rBNB / BNB`}
-        </div>
+      <TitleContainer style={{ marginTop: '40px' }}>
+        <HContainer>
+          <img src={rDOT_DOT_svg} alt='icon' width='36px' height='36px' />
+          <Text size='30px' bold color='white' ml='10px'>
+            {props.type === 'rDOT' && `rDOT / DOT`}
+            {props.type === 'rFIS' && `rFIS / FIS`}
+            {props.type === 'rKSM' && `rKSM / KSM`}
+            {props.type === 'rATOM' && `rATOM / ATOM`}
+            {props.type === 'rETH' && `rETH / ETH`}
+            {props.type === 'rSOL' && `rSOL / SOL`}
+            {props.type === 'rMATIC' && `rMATIC / MATIC`}
+            {props.type === 'rBNB' && `rBNB / BNB`}
+          </Text>
+        </HContainer>
 
-        <div className='content'>
-          <div>{props.ratioShow}</div>
+        <Text size='30px' bold color='#00F3AB'>
+          {props.ratioShow}
+        </Text>
+      </TitleContainer>
 
-          <div className='btns'>
-            <Button
-              onClick={() => {
-                props.onStakeClick && props.onStakeClick();
-              }}
-              size='small'
-              btnType='ellipse'>
-              Stake
-            </Button>
-          </div>
-        </div>
-
-        <div className='describe'>Updated every {props.hours} hours</div>
-      </div>
+      <Text size='12px' color='#c4c4c4' mt='44px' ml='10px' mb='10px'>
+        Updated every {props.hours} hours
+      </Text>
 
       <SwapModalNew
         type={props.type}
@@ -251,3 +291,38 @@ export default function Index(props: Props) {
     </LeftContent>
   );
 }
+
+const TitleContainer = styled.div`
+  margin-left: 10px;
+  margin-right: 20px;
+  margin-top: 20px;
+  display: flex;
+  justify-content: space-between;
+`;
+
+const TokenAmountContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+`;
+
+const InfoContainer = styled.div`
+  margin: 50px 20px 0;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+`;
+
+const InfoDivider = styled.div`
+  width: 1px;
+  height: 38px;
+  background-color: #444545;
+`;
+
+const InfoItem = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 45px;
+  flex: 1;
+`;

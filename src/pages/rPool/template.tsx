@@ -1,18 +1,20 @@
 import React, { useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useLocation } from 'react-router';
 import { renderRoutes } from 'react-router-config';
 import Content from 'src/shared/components/content';
 import {
-    getLpMetaMaskNetworkName,
-    getLpPlatformFromUrl,
-    getLpPrefix,
-    liquidityPlatformMatchMetaMask,
-    requestSwitchMetaMaskNetwork
+  getLpMetaMaskNetworkName,
+  getLpPlatformFromUrl,
+  getLpPrefix,
+  liquidityPlatformMatchMetaMask,
+  requestSwitchMetaMaskNetwork,
 } from 'src/util/metaMaskUtil';
 import '../template/index.scss';
 
 export default function Index(props: any) {
   const dispatch = useDispatch();
+  const location = useLocation();
 
   const { loading, metaMaskNetworkId } = useSelector((state: any) => {
     return {

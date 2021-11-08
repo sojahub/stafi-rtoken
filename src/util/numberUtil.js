@@ -1,11 +1,11 @@
 import {
-    create,
-    divideDependencies,
-    floorDependencies,
-    maxDependencies,
-    minDependencies,
-    multiplyDependencies,
-    subtractDependencies
+  create,
+  divideDependencies,
+  floorDependencies,
+  maxDependencies,
+  minDependencies,
+  multiplyDependencies,
+  subtractDependencies,
 } from 'mathjs';
 import { rSymbol } from 'src/keyring/defaults';
 import Web3Utils from 'web3-utils';
@@ -173,6 +173,14 @@ export default {
     }
     const factor = Math.pow(10, powNumber);
     return (Math.round(amount * factor) / factor).toFixed(powNumber);
+  },
+
+  handleAmountFloorToFixed(amount, powNumber) {
+    if (amount === '--' || isNaN(Number(amount))) {
+      return '--';
+    }
+    const factor = Math.pow(10, powNumber || 2);
+    return (Math.floor(Number(amount) * factor) / factor).toFixed(powNumber || 2);
   },
 
   // Returns a string containing 6 decimal places, including 0

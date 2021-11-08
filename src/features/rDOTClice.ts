@@ -13,26 +13,30 @@ import PolkadotServer from 'src/servers/polkadot/index';
 import RpcServer, { pageCount } from 'src/servers/rpc/index';
 import Stafi from 'src/servers/stafi/index';
 import { getLocalStorageItem, Keys, removeLocalStorageItem, setLocalStorageItem, stafi_uuid } from 'src/util/common';
-import NumberUtil from 'src/util/numberUtil';
+import { default as numberUtil, default as NumberUtil } from 'src/util/numberUtil';
 import { AppThunk } from '../store';
 import { ETH_CHAIN_ID, STAFI_CHAIN_ID, updateSwapParamsOfBep, updateSwapParamsOfErc } from './bridgeClice';
 import CommonClice from './commonClice';
 import { setSwapLoadingStatus, uploadSwapInfo } from './feeStationClice';
 import { bondStates, bound, feeStationSignature, fisUnbond, rTokenSeries_bondStates } from './FISClice';
 import {
-    initProcess,
-    processStatus,
-    setLoading,
-    setProcessDestChainId,
-    setProcessSending,
-    setProcessSlider,
-    setProcessType,
-    setStakeSwapLoadingStatus,
-    trackEvent
+  initProcess,
+  processStatus,
+  setLoading,
+  setProcessDestChainId,
+  setProcessSending,
+  setProcessSlider,
+  setProcessType,
+  setStakeSwapLoadingStatus,
+  trackEvent,
 } from './globalClice';
 import { add_Notice, findUuid, noticeStatus, noticesubType, noticeType } from './noticeClice';
 
 const feeStationServer = new FeeStationServer();
+const polkadotServer = new PolkadotServer();
+const commonClice = new CommonClice();
+const stafiServer = new Stafi();
+const rpcServer = new RpcServer();
 
 const rDOTClice = createSlice({
   name: 'rDOTModule',
@@ -60,6 +64,7 @@ const rDOTClice = createSlice({
     rewardList_lastdata: null,
     liquidityRate: '--',
     swapFee: '--',
+    lastEraRate: '--',
   },
   reducers: {
     setDotAccounts(state, { payload }) {
@@ -107,8 +112,7 @@ const rDOTClice = createSlice({
         removeLocalStorageItem(Keys.DotStakeHash);
         state.stakeHash = payload;
       } else {
-        setLocalStorageItem(Keys.DotStakeHash, payload)
-        (state.stakeHash = payload);
+        setLocalStorageItem(Keys.DotStakeHash, payload)((state.stakeHash = payload));
       }
     },
     setValidPools(state, { payload }) {
@@ -152,12 +156,12 @@ const rDOTClice = createSlice({
     setSwapFee(state, { payload }) {
       state.swapFee = payload;
     },
+    setLastEraRate(state, { payload }) {
+      state.lastEraRate = payload;
+    },
   },
 });
-const polkadotServer = new PolkadotServer();
-const commonClice = new CommonClice();
-const stafiServer = new Stafi();
-const rpcServer = new RpcServer();
+
 export const {
   setDotAccounts,
   setDotAccount,
@@ -179,6 +183,7 @@ export const {
   setRewardList_lastdata,
   setLiquidityRate,
   setSwapFee,
+  setLastEraRate,
 } = rDOTClice.actions;
 
 export const reloadData = (): AppThunk => async (dispatch, getState) => {
@@ -1047,6 +1052,27 @@ export const rTokenLedger = (): AppThunk => async (dispatch, getState) => {
     dispatch(handleStakerApr());
   }
 };
+
+export const getLastEraRate = (): AppThunk => async (dispatch, getState) => {
+  try {
+    const stafiApi = await stafiServer.createStafiApi();
+    const eraResult = await stafiApi.query.rTokenLedger.chainEras(rSymbol.Dot);
+    let currentEra = eraResult.toJSON();
+    if (currentEra) {
+      let rateResult = await stafiApi.query.rTokenRate.eraRate(rSymbol.Dot, currentEra - 1);
+      const currentRate = rateResult.toJSON();
+      const rateResult2 = await stafiApi.query.rTokenRate.eraRate(rSymbol.Dot, currentEra - 2);
+      let lastRate = rateResult2.toJSON();
+      console.log('getLastEraRate', lastRate, currentRate);
+      if (Number(currentRate) <= Number(lastRate)) {
+        dispatch(setLastEraRate(0));
+      } else {
+        dispatch(setLastEraRate(numberUtil.rTokenRateToHuman(Number(currentRate) - Number(lastRate))));
+      }
+    }
+  } catch (err: any) {}
+};
+
 const handleStakerApr =
   (currentRate?: any, lastRate?: any): AppThunk =>
   async (dispatch, getState) => {

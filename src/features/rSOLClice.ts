@@ -13,30 +13,37 @@ import keyring from 'src/servers/index';
 import RpcServer, { pageCount } from 'src/servers/rpc/index';
 import { default as SolServer } from 'src/servers/sol/index';
 import Stafi from 'src/servers/stafi/index';
-import { getLocalStorageItem, Keys, removeLocalStorageItem, setLocalStorageItem, stafi_uuid, timeout } from 'src/util/common';
+import {
+  getLocalStorageItem,
+  Keys,
+  removeLocalStorageItem,
+  setLocalStorageItem,
+  stafi_uuid,
+  timeout,
+} from 'src/util/common';
 import NumberUtil from 'src/util/numberUtil';
 import { AppThunk } from '../store';
 import {
-    BSC_CHAIN_ID,
-    ETH_CHAIN_ID,
-    SOL_CHAIN_ID,
-    STAFI_CHAIN_ID,
-    updateSwapParamsOfBep,
-    updateSwapParamsOfErc,
-    updateSwapParamsOfSlp
+  BSC_CHAIN_ID,
+  ETH_CHAIN_ID,
+  SOL_CHAIN_ID,
+  STAFI_CHAIN_ID,
+  updateSwapParamsOfBep,
+  updateSwapParamsOfErc,
+  updateSwapParamsOfSlp,
 } from './bridgeClice';
 import CommonClice from './commonClice';
 import { bondStates, bound, fisUnbond, rTokenSeries_bondStates } from './FISClice';
 import {
-    connectSoljs,
-    initProcess,
-    processStatus,
-    setLoading,
-    setProcessDestChainId,
-    setProcessSending,
-    setProcessSlider,
-    setProcessType,
-    setStakeSwapLoadingStatus
+  connectSoljs,
+  initProcess,
+  processStatus,
+  setLoading,
+  setProcessDestChainId,
+  setProcessSending,
+  setProcessSlider,
+  setProcessType,
+  setStakeSwapLoadingStatus,
 } from './globalClice';
 import { add_Notice, findUuidWithoutBlockhash, noticeStatus, noticesubType, noticeType } from './noticeClice';
 
@@ -71,6 +78,7 @@ const rSOLClice = createSlice({
     totalUnbonding: null,
     rewardList: [],
     rewardList_lastdata: null,
+    lastEraRate: '--',
   },
   reducers: {
     setSolAccounts(state, { payload }) {
@@ -118,8 +126,7 @@ const rSOLClice = createSlice({
         removeLocalStorageItem(Keys.SolStakeHash);
         state.stakeHash = payload;
       } else {
-        setLocalStorageItem(Keys.SolStakeHash, payload)
-         (state.stakeHash = payload);
+        setLocalStorageItem(Keys.SolStakeHash, payload)((state.stakeHash = payload));
       }
     },
     setValidPools(state, { payload }) {
@@ -157,6 +164,9 @@ const rSOLClice = createSlice({
     setRewardList_lastdata(state, { payload }) {
       state.rewardList_lastdata = payload;
     },
+    setLastEraRate(state, { payload }) {
+      state.lastEraRate = payload;
+    },
   },
 });
 
@@ -179,6 +189,7 @@ export const {
   setRatioShow,
   setRewardList,
   setRewardList_lastdata,
+  setLastEraRate,
 } = rSOLClice.actions;
 
 export const reloadData = (): AppThunk => async (dispatch, getState) => {
@@ -844,6 +855,27 @@ export const rTokenLedger = (): AppThunk => async (dispatch, getState) => {
     dispatch(handleStakerApr());
   }
 };
+
+export const getLastEraRate = (): AppThunk => async (dispatch, getState) => {
+  try {
+    const stafiApi = await stafiServer.createStafiApi();
+    const eraResult = await stafiApi.query.rTokenLedger.chainEras(rSymbol.Sol);
+    let currentEra = eraResult.toJSON();
+    if (currentEra) {
+      let rateResult = await stafiApi.query.rTokenRate.eraRate(rSymbol.Sol, currentEra - 1);
+      const currentRate = rateResult.toJSON();
+      const rateResult2 = await stafiApi.query.rTokenRate.eraRate(rSymbol.Sol, currentEra - 2);
+      let lastRate = rateResult2.toJSON();
+      console.log('rSOL getLastEraRate', lastRate, currentRate);
+      if (Number(currentRate) <= Number(lastRate)) {
+        dispatch(setLastEraRate(0));
+      } else {
+        dispatch(setLastEraRate(NumberUtil.rTokenRateToHuman(Number(currentRate) - Number(lastRate))));
+      }
+    }
+  } catch (err: any) {}
+};
+
 const handleStakerApr =
   (currentRate?: any, lastRate?: any): AppThunk =>
   async (dispatch, getState) => {

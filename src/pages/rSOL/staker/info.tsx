@@ -1,25 +1,65 @@
+import qs from 'querystring';
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useHistory } from 'react-router';
 import Content from 'src/components/content/stakeInfoContent';
-import { accountUnbonds, query_rBalances_account, rTokenRate, setRatioShow } from 'src/features/rSOLClice';
+import CommonClice from 'src/features/commonClice';
+import {
+  accountUnbonds,
+  getLastEraRate,
+  getUnbondCommission,
+  query_rBalances_account,
+  rTokenRate,
+  setRatioShow,
+} from 'src/features/rSOLClice';
+import { getRSOLAssetBalance } from 'src/features/SOLClice';
 import NumberUtil from 'src/util/numberUtil';
+
+const commonClice = new CommonClice();
 
 export default function Index(props: any) {
   const dispatch = useDispatch();
+  const history = useHistory();
+
+  let platform = 'Native';
+  if (history.location.search) {
+    platform = qs.parse(history.location.search.slice(1)).platform as string;
+  }
+
   useEffect(() => {
     dispatch(query_rBalances_account());
     dispatch(rTokenRate());
     dispatch(accountUnbonds());
+    dispatch(getLastEraRate());
+    dispatch(getUnbondCommission());
   }, []);
 
-  const { ratio, tokenAmount, ratioShow, totalUnbonding } = useSelector((state: any) => {
-    return {
-      ratio: state.rSOLModule.ratio,
-      tokenAmount: state.rSOLModule.tokenAmount,
-      ratioShow: state.rSOLModule.ratioShow,
-      totalUnbonding: state.rSOLModule.totalUnbonding,
-    };
-  });
+  useEffect(() => {
+    if (platform === 'Native') {
+      dispatch(query_rBalances_account());
+    } else if (platform === 'SPL') {
+      dispatch(getRSOLAssetBalance());
+    }
+  }, [platform]);
+
+  const { ratio, tokenAmount, ratioShow, totalUnbonding, lastEraRate, redeemableTokenAmount } = useSelector(
+    (state: any) => {
+      const tokenAmount =
+        platform === 'Native' ? state.rSOLModule.tokenAmount : platform === 'SPL' ? state.SOLModule.rSOLBalance : '--';
+      return {
+        ratio: state.rSOLModule.ratio,
+        tokenAmount,
+        ratioShow: state.rSOLModule.ratioShow,
+        totalUnbonding: state.rSOLModule.totalUnbonding,
+        lastEraRate: state.rSOLModule.lastEraRate,
+        redeemableTokenAmount: commonClice.getWillAmount(
+          state.rSOLModule.ratio,
+          state.rSOLModule.unbondCommission,
+          tokenAmount,
+        ),
+      };
+    },
+  );
 
   useEffect(() => {
     let count = 0;
@@ -38,6 +78,7 @@ export default function Index(props: any) {
       }, 100);
     }
   }, [ratio]);
+
   return (
     <Content
       ratio={ratio}
@@ -45,11 +86,14 @@ export default function Index(props: any) {
       ratioShow={ratioShow}
       tokenAmount={tokenAmount}
       totalUnbonding={totalUnbonding}
+      lastEraRate={lastEraRate}
+      platform={platform}
+      redeemableTokenAmount={redeemableTokenAmount}
       onStakeClick={() => {
         props.history.push('/rSOL/staker/index');
       }}
       onRdeemClick={() => {
-        props.history.push('/rSOL/staker/redeem');
+        props.history.push(`/rSOL/staker/redeem`);
       }}
       onUniswapClick={() => {
         window.open('');
