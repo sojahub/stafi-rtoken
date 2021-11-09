@@ -4,6 +4,7 @@ import { web3Enable, web3FromSource } from '@polkadot/extension-dapp';
 import { u8aToHex } from '@polkadot/util';
 import { createSlice } from '@reduxjs/toolkit';
 import { message as M, message } from 'antd';
+import moment from 'moment';
 import PubSub from 'pubsub-js';
 import config from 'src/config/index';
 import { rSymbol, Symbol } from 'src/keyring/defaults';
@@ -13,6 +14,8 @@ import PolkadotServer from 'src/servers/ksm/index';
 import RpcServer, { pageCount } from 'src/servers/rpc/index';
 import Stafi from 'src/servers/stafi/index';
 import { getLocalStorageItem, Keys, removeLocalStorageItem, setLocalStorageItem, stafi_uuid } from 'src/util/common';
+import localStorageUtil from 'src/util/localStorage';
+import numberUtil from 'src/util/numberUtil';
 import NumberUtil from 'src/util/numberUtil';
 import { AppThunk } from '../store';
 import { ETH_CHAIN_ID, STAFI_CHAIN_ID, updateSwapParamsOfBep, updateSwapParamsOfErc } from './bridgeClice';
@@ -20,20 +23,23 @@ import CommonClice from './commonClice';
 import { setSwapLoadingStatus, uploadSwapInfo } from './feeStationClice';
 import { bondStates, bound, feeStationSignature, fisUnbond, rTokenSeries_bondStates } from './FISClice';
 import {
-    initProcess,
-    processStatus,
-    setLoading,
-    setProcessDestChainId,
-    setProcessSending,
-    setProcessSlider,
-    setProcessType,
-    setStakeSwapLoadingStatus,
-    trackEvent
+  initProcess,
+  processStatus,
+  setLoading,
+  setProcessDestChainId,
+  setProcessSending,
+  setProcessSlider,
+  setProcessType,
+  setStakeSwapLoadingStatus,
+  trackEvent,
 } from './globalClice';
 import { add_Notice, findUuid, noticeStatus, noticesubType, noticeType } from './noticeClice';
 
 const commonClice = new CommonClice();
 const feeStationServer = new FeeStationServer();
+const polkadotServer = new PolkadotServer();
+const stafiServer = new Stafi();
+const rpcServer = new RpcServer();
 
 const rKSMClice = createSlice({
   name: 'rKSMModule',
@@ -60,6 +66,7 @@ const rKSMClice = createSlice({
     totalUnbonding: null,
     rewardList: [],
     rewardList_lastdata: null,
+    lastEraRate: '--',
   },
   reducers: {
     setKsmAccounts(state, { payload }) {
@@ -107,8 +114,7 @@ const rKSMClice = createSlice({
         removeLocalStorageItem(Keys.KsmStakeHash);
         state.stakeHash = payload;
       } else {
-        setLocalStorageItem(Keys.KsmStakeHash, payload)
-         (state.stakeHash = payload);
+        setLocalStorageItem(Keys.KsmStakeHash, payload)((state.stakeHash = payload));
       }
     },
     setValidPools(state, { payload }) {
@@ -146,11 +152,12 @@ const rKSMClice = createSlice({
     setRewardList_lastdata(state, { payload }) {
       state.rewardList_lastdata = payload;
     },
+    setLastEraRate(state, { payload }) {
+      state.lastEraRate = payload;
+    },
   },
 });
-const polkadotServer = new PolkadotServer();
-const stafiServer = new Stafi();
-const rpcServer = new RpcServer();
+
 export const {
   setKsmAccounts,
   setKsmAccount,
@@ -170,6 +177,7 @@ export const {
   setRatioShow,
   setRewardList,
   setRewardList_lastdata,
+  setLastEraRate,
 } = rKSMClice.actions;
 
 export const reloadData = (): AppThunk => async (dispatch, getState) => {
@@ -741,12 +749,18 @@ export const unbond =
           'Unbond succeeded, unbonding period is around ' + config.unboundAroundDays(Symbol.Ksm) + ' days',
           (r?: string, txHash?: string) => {
             dispatch(reloadData());
-
-            if (r == 'Success') {
-              dispatch(add_KSM_unbond_Notice(stafi_uuid(), willAmount, noticeStatus.Confirmed, { txHash }));
+            const uuid = stafi_uuid();
+            if (r === 'Success') {
+              dispatch(add_KSM_unbond_Notice(uuid, willAmount, noticeStatus.Confirmed, { txHash }));
+              localStorageUtil.addRTokenUnbondRecords('rKSM', stafiServer, {
+                id: uuid,
+                estimateSuccessTime: moment().add(config.unboundAroundDays(Symbol.Ksm), 'day').valueOf(),
+                amount,
+                recipient,
+              });
             }
-            if (r == 'Failed') {
-              dispatch(add_KSM_unbond_Notice(stafi_uuid(), willAmount, noticeStatus.Error));
+            if (r === 'Failed') {
+              dispatch(add_KSM_unbond_Notice(uuid, willAmount, noticeStatus.Error));
             }
             cb && cb();
           },
@@ -1023,6 +1037,27 @@ export const rTokenLedger = (): AppThunk => async (dispatch, getState) => {
     dispatch(handleStakerApr());
   }
 };
+
+export const getLastEraRate = (): AppThunk => async (dispatch, getState) => {
+  try {
+    const stafiApi = await stafiServer.createStafiApi();
+    const eraResult = await stafiApi.query.rTokenLedger.chainEras(rSymbol.Ksm);
+    let currentEra = eraResult.toJSON();
+    if (currentEra) {
+      let rateResult = await stafiApi.query.rTokenRate.eraRate(rSymbol.Ksm, currentEra - 1);
+      const currentRate = rateResult.toJSON();
+      const rateResult2 = await stafiApi.query.rTokenRate.eraRate(rSymbol.Ksm, currentEra - 2);
+      let lastRate = rateResult2.toJSON();
+      console.log('rKSM getLastEraRate', lastRate, currentRate);
+      if (Number(currentRate) <= Number(lastRate)) {
+        dispatch(setLastEraRate(0));
+      } else {
+        dispatch(setLastEraRate(numberUtil.rTokenRateToHuman(Number(currentRate) - Number(lastRate))));
+      }
+    }
+  } catch (err: any) {}
+};
+
 const handleStakerApr =
   (currentRate?: any, lastRate?: any): AppThunk =>
   async (dispatch, getState) => {

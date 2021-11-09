@@ -4,6 +4,7 @@ import { HContainer, Text } from '../commonComponents';
 import localStorageUtil from 'src/util/localStorage';
 import styled from 'styled-components';
 import successIcon from 'src/assets/images/unbond_record_success.png';
+import pendingIcon from 'src/assets/images/unbond_record_pending.png';
 import moment from 'moment';
 
 type Props = {
@@ -16,7 +17,7 @@ export const UnbondRecord = (props: Props) => {
 
   useEffect(() => {
     setUnbondRecords(localStorageUtil.getRTokenUnbondRecords(props.type));
-  }, []);
+  }, [props.type]);
 
   return (
     <div style={{ flex: 1 }}>
@@ -64,10 +65,15 @@ export const UnbondRecord = (props: Props) => {
       )}
 
       {unbondRecords.map((itemObj: any) => (
-        <ItemContainer>
+        <ItemContainer key={itemObj.id}>
           <HContainer ml='20px' mr='10px' justifyContent='flex-start'>
             <div style={{ width: '20px' }}>
-              <img src={successIcon} alt='success' width='12px' height='12px' />
+              <img
+                src={Number(itemObj.estimateSuccessTime) <= moment().valueOf() ? successIcon : pendingIcon}
+                alt='success'
+                width='12px'
+                height='12px'
+              />
             </div>
 
             <div style={{ width: '80px', marginLeft: '10px' }}>

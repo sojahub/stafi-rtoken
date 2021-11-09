@@ -6,6 +6,7 @@ import { createSlice } from '@reduxjs/toolkit';
 import * as solanaWeb3 from '@solana/web3.js';
 import { message } from 'antd';
 import base58 from 'bs58';
+import moment from 'moment';
 import PubSub from 'pubsub-js';
 import config from 'src/config/index';
 import { rSymbol, Symbol } from 'src/keyring/defaults';
@@ -21,6 +22,7 @@ import {
   stafi_uuid,
   timeout,
 } from 'src/util/common';
+import localStorageUtil from 'src/util/localStorage';
 import NumberUtil from 'src/util/numberUtil';
 import { AppThunk } from '../store';
 import {
@@ -525,12 +527,18 @@ export const unbond =
           'Unbond succeeded, unbonding period is around ' + config.unboundAroundDays(Symbol.Sol) + ' days',
           (r?: string, txHash?: string) => {
             dispatch(reloadData());
-
-            if (r == 'Success') {
-              dispatch(add_SOL_unbond_Notice(stafi_uuid(), willAmount, noticeStatus.Confirmed, { txHash }));
+            const uuid = stafi_uuid();
+            if (r === 'Success') {
+              dispatch(add_SOL_unbond_Notice(uuid, willAmount, noticeStatus.Confirmed, { txHash }));
+              localStorageUtil.addRTokenUnbondRecords('rSOL', stafiServer, {
+                id: uuid,
+                estimateSuccessTime: moment().add(config.unboundAroundDays(Symbol.Sol), 'day').valueOf(),
+                amount,
+                recipient,
+              });
             }
-            if (r == 'Failed') {
-              dispatch(add_SOL_unbond_Notice(stafi_uuid(), willAmount, noticeStatus.Error));
+            if (r === 'Failed') {
+              dispatch(add_SOL_unbond_Notice(uuid, willAmount, noticeStatus.Error));
             }
             cb && cb();
           },

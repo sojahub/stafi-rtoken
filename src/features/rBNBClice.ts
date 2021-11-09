@@ -3,6 +3,7 @@
 import { u8aToHex } from '@polkadot/util';
 import { createSlice } from '@reduxjs/toolkit';
 import { message } from 'antd';
+import moment from 'moment';
 import _m0 from 'protobufjs/minimal';
 import PubSub from 'pubsub-js';
 import config from 'src/config/index';
@@ -12,20 +13,21 @@ import keyring from 'src/servers/index';
 import RpcServer, { pageCount } from 'src/servers/rpc/index';
 import Stafi from 'src/servers/stafi/index';
 import { getLocalStorageItem, Keys, removeLocalStorageItem, setLocalStorageItem, stafi_uuid } from 'src/util/common';
+import localStorageUtil from 'src/util/localStorage';
 import { default as numberUtil, default as NumberUtil } from 'src/util/numberUtil';
 import { AppThunk } from '../store';
 import { ETH_CHAIN_ID, STAFI_CHAIN_ID, updateSwapParamsOfBep, updateSwapParamsOfErc } from './bridgeClice';
 import CommonClice from './commonClice';
 import { bondStates, bound, fisUnbond, rTokenSeries_bondStates } from './FISClice';
 import {
-    initProcess,
-    processStatus,
-    setLoading,
-    setProcessDestChainId,
-    setProcessSending,
-    setProcessSlider,
-    setProcessType,
-    setStakeSwapLoadingStatus
+  initProcess,
+  processStatus,
+  setLoading,
+  setProcessDestChainId,
+  setProcessSending,
+  setProcessSlider,
+  setProcessType,
+  setStakeSwapLoadingStatus,
 } from './globalClice';
 import { add_Notice, findUuid, noticeStatus, noticesubType, noticeType } from './noticeClice';
 import { checkEthAddress, connectMetamask, get_eth_getBalance } from './rETHClice';
@@ -55,6 +57,7 @@ const rBNBClice = createSlice({
     totalUnbonding: null,
     rewardList: [],
     rewardList_lastdata: null,
+    lastEraRate: '--',
   },
   reducers: {
     setTransferrableAmountShow(state, { payload }) {
@@ -88,8 +91,7 @@ const rBNBClice = createSlice({
         removeLocalStorageItem(Keys.MaticStakeHash);
         state.stakeHash = payload;
       } else {
-        setLocalStorageItem(Keys.MaticStakeHash, payload)
-         (state.stakeHash = payload);
+        setLocalStorageItem(Keys.MaticStakeHash, payload)((state.stakeHash = payload));
       }
     },
     setValidPools(state, { payload }) {
@@ -127,6 +129,9 @@ const rBNBClice = createSlice({
     setRewardList_lastdata(state, { payload }) {
       state.rewardList_lastdata = payload;
     },
+    setLastEraRate(state, { payload }) {
+      state.lastEraRate = payload;
+    },
   },
 });
 
@@ -153,6 +158,7 @@ export const {
   setRatioShow,
   setRewardList,
   setRewardList_lastdata,
+  setLastEraRate,
 } = rBNBClice.actions;
 
 export const reloadData = (): AppThunk => async (dispatch, getState) => {
@@ -497,11 +503,18 @@ export const unbond =
           'Unbond succeeded, unbonding period is around ' + config.unboundAroundDays(Symbol.Bnb) + ' days',
           (r?: string, txHash?: string) => {
             dispatch(reloadData());
-            if (r == 'Success') {
-              dispatch(add_Matic_unbond_Notice(stafi_uuid(), willAmount, noticeStatus.Confirmed, { txHash: txHash }));
+            const uuid = stafi_uuid();
+            if (r === 'Success') {
+              dispatch(add_Matic_unbond_Notice(uuid, willAmount, noticeStatus.Confirmed, { txHash: txHash }));
+              localStorageUtil.addRTokenUnbondRecords('rBNB', stafiServer, {
+                id: uuid,
+                estimateSuccessTime: moment().add(config.unboundAroundDays(Symbol.Bnb), 'day').valueOf(),
+                amount,
+                recipient,
+              });
             }
-            if (r == 'Failed') {
-              dispatch(add_Matic_unbond_Notice(stafi_uuid(), willAmount, noticeStatus.Error));
+            if (r === 'Failed') {
+              dispatch(add_Matic_unbond_Notice(uuid, willAmount, noticeStatus.Error));
             }
             cb && cb();
           },
@@ -840,6 +853,27 @@ export const rTokenLedger = (): AppThunk => async (dispatch, getState) => {
     dispatch(handleStakerApr());
   }
 };
+
+export const getLastEraRate = (): AppThunk => async (dispatch, getState) => {
+  try {
+    const stafiApi = await stafiServer.createStafiApi();
+    const eraResult = await stafiApi.query.rTokenLedger.chainEras(rSymbol.Bnb);
+    let currentEra = eraResult.toJSON();
+    if (currentEra) {
+      let rateResult = await stafiApi.query.rTokenRate.eraRate(rSymbol.Bnb, currentEra - 1);
+      const currentRate = rateResult.toJSON();
+      const rateResult2 = await stafiApi.query.rTokenRate.eraRate(rSymbol.Bnb, currentEra - 2);
+      let lastRate = rateResult2.toJSON();
+      console.log('rBNB getLastEraRate', lastRate, currentRate);
+      if (Number(currentRate) <= Number(lastRate)) {
+        dispatch(setLastEraRate(0));
+      } else {
+        dispatch(setLastEraRate(numberUtil.rTokenRateToHuman(Number(currentRate) - Number(lastRate))));
+      }
+    }
+  } catch (err: any) {}
+};
+
 const handleStakerApr =
   (currentRate?: any, lastRate?: any): AppThunk =>
   async (dispatch, getState) => {

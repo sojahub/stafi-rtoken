@@ -1,4 +1,5 @@
 import { cloneDeep } from 'lodash';
+import { getRsymbolByTokenTitle } from 'src/config';
 import { noticeStatus } from 'src/features/noticeClice';
 import { getLocalStorageItem, Keys, setLocalStorageItem } from './common';
 
@@ -62,7 +63,7 @@ const localStorageUtil = {
     return [];
   },
 
-  addRTokenUnbondRecords: async function (type, itemObj) {
+  addRTokenUnbondRecords: async function (type, stafiServer, itemObj) {
     const unbondRecords = getLocalStorageItem(Keys.UnbondRecordsKey);
     let arr;
     if (unbondRecords && unbondRecords[type]) {
@@ -70,7 +71,14 @@ const localStorageUtil = {
     } else {
       arr = [];
     }
-    const newLength = arr.unshift(itemObj);
+
+    const stafiApi = await stafiServer.createStafiApi();
+    const eraResult = await stafiApi.query.rTokenLedger.chainEras(getRsymbolByTokenTitle(type));
+    const bondingDurationResult = await stafiApi.query.rTokenLedger.chainBondingDuration(getRsymbolByTokenTitle(type));
+    let currentEra = eraResult.toJSON();
+    let unlockEra = currentEra + bondingDurationResult.toJSON();
+
+    const newLength = arr.unshift({ ...itemObj, currentEra, unlockEra });
     if (newLength > 10) {
       arr.pop();
     }

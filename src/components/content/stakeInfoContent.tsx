@@ -1,6 +1,7 @@
 // @ts-nocheck
 
 import React, { useMemo, useState } from 'react';
+import { useSelector } from 'react-redux';
 import { useHistory } from 'react-router';
 import dow_svg from 'src/assets/images/left_arrow_black.svg';
 import rDOT_DOT_svg from 'src/assets/images/rDOT_DOT.svg';
@@ -14,6 +15,8 @@ import rMatic_stafi_svg from 'src/assets/images/selected_r_matic.svg';
 import rSOL_stafi_svg from 'src/assets/images/selected_r_sol.svg';
 import config from 'src/config/index';
 import Button from 'src/shared/components/button/button';
+import { configuredStore } from 'src/store';
+import { requestSwitchMetaMaskNetwork } from 'src/util/metaMaskUtil';
 import NumberUtil from 'src/util/numberUtil';
 import styled from 'styled-components';
 import { HContainer, Text } from '../commonComponents';
@@ -120,6 +123,11 @@ export default function Index(props: Props) {
           platforms={platformArr}
           onClick={(platform: string) => {
             history.push(history.location.pathname + `?platform=${platform}`);
+            if (platform === 'ERC20') {
+              requestSwitchMetaMaskNetwork('Ethereum');
+            } else if (platform === 'BEP20') {
+              requestSwitchMetaMaskNetwork('BSC');
+            }
           }}
         />
 
@@ -138,7 +146,7 @@ export default function Index(props: Props) {
 
           <TokenAmountContainer>
             <Text size='30px' bold sameLineHeight color='#00F3AB'>
-              {props.tokenAmount === '--' ? '--' : NumberUtil.handleFisAmountToFixed(props.tokenAmount)}
+              {isNaN(Number(props.tokenAmount)) ? '--' : NumberUtil.handleFisAmountToFixed(props.tokenAmount)}
             </Text>
 
             <Text size='12px' sameLineHeight color='#c4c4c4' mt='10px'>
@@ -181,7 +189,7 @@ export default function Index(props: Props) {
             </Text>
 
             <Text size='16px' bold color='#ffffff' mt='8px' clickable>
-              {NumberUtil.handleAmountFloorToFixed(props.lastEraRate * props.tokenAmount, 2)} {props.type.slice(1)}
+              {NumberUtil.handleAmountFloorToFixed(props.lastEraRate * props.tokenAmount, 6)} {props.type.slice(1)}
             </Text>
           </InfoItem>
         </InfoContainer>
