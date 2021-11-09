@@ -4,6 +4,7 @@ import { web3Enable, web3FromSource } from '@polkadot/extension-dapp';
 import { u8aToHex } from '@polkadot/util';
 import { createSlice } from '@reduxjs/toolkit';
 import { message as M, message } from 'antd';
+import moment from 'moment';
 import PubSub from 'pubsub-js';
 import config from 'src/config/index';
 import { rSymbol, Symbol } from 'src/keyring/defaults';
@@ -13,6 +14,7 @@ import PolkadotServer from 'src/servers/polkadot/index';
 import RpcServer, { pageCount } from 'src/servers/rpc/index';
 import Stafi from 'src/servers/stafi/index';
 import { getLocalStorageItem, Keys, removeLocalStorageItem, setLocalStorageItem, stafi_uuid } from 'src/util/common';
+import localStorageUtil from 'src/util/localStorage';
 import { default as numberUtil, default as NumberUtil } from 'src/util/numberUtil';
 import { AppThunk } from '../store';
 import { ETH_CHAIN_ID, STAFI_CHAIN_ID, updateSwapParamsOfBep, updateSwapParamsOfErc } from './bridgeClice';
@@ -760,12 +762,18 @@ export const unbond =
           'Unbond succeeded, unbonding period is around ' + config.unboundAroundDays(Symbol.Dot) + ' days',
           (r?: string, txHash?: string) => {
             dispatch(reloadData());
-
-            if (r == 'Success') {
-              dispatch(add_DOT_unbond_Notice(stafi_uuid(), willAmount, noticeStatus.Confirmed, { txHash }));
+            const uuid = stafi_uuid();
+            if (r === 'Success') {
+              dispatch(add_DOT_unbond_Notice(uuid, willAmount, noticeStatus.Confirmed, { txHash }));
+              localStorageUtil.addRTokenUnbondRecords('rDOT', {
+                id: uuid,
+                estimateSuccessTime: moment().add(config.unboundAroundDays(Symbol.Dot), 'day').valueOf(),
+                amount,
+                recipient,
+              });
             }
-            if (r == 'Failed') {
-              dispatch(add_DOT_unbond_Notice(stafi_uuid(), willAmount, noticeStatus.Error));
+            if (r === 'Failed') {
+              dispatch(add_DOT_unbond_Notice(uuid, willAmount, noticeStatus.Error));
             }
             cb && cb();
           },
@@ -1063,7 +1071,7 @@ export const getLastEraRate = (): AppThunk => async (dispatch, getState) => {
       const currentRate = rateResult.toJSON();
       const rateResult2 = await stafiApi.query.rTokenRate.eraRate(rSymbol.Dot, currentEra - 2);
       let lastRate = rateResult2.toJSON();
-      console.log('getLastEraRate', lastRate, currentRate);
+      console.log('rDOT getLastEraRate', lastRate, currentRate);
       if (Number(currentRate) <= Number(lastRate)) {
         dispatch(setLastEraRate(0));
       } else {

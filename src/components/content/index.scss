@@ -147,9 +147,11 @@
   .item {
     flex: 1;
     .title {
+      margin-left: 10px;
       font-size: 30px;
+
       img {
-        margin: 0px 10px;
+        margin-right: 10px;
       }
     }
     .content {

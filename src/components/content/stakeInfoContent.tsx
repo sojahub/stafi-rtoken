@@ -107,7 +107,7 @@ export default function Index(props: Props) {
   if (showUnbondRecord) {
     return (
       <LeftContent className='stafi_stake_info_context' padding='36px 10px'>
-        <UnbondRecord onClickBack={() => setShowUnbondRecord(false)} />
+        <UnbondRecord onClickBack={() => setShowUnbondRecord(false)} type={props.type} />
       </LeftContent>
     );
   }
@@ -125,14 +125,14 @@ export default function Index(props: Props) {
 
         <TitleContainer>
           <div className='title'>
-            {props.type === 'rDOT' && <img src={rDOT_stafi_svg} style={{ width: '40px' }} alt='icon' />}
-            {props.type === 'rKSM' && <img src={rKSM_stafi_svg} style={{ width: '40px' }} alt='icon' />}
-            {props.type === 'rATOM' && <img src={rATOM_stafi_svg} style={{ width: '40px' }} alt='icon' />}
-            {props.type === 'rETH' && <img src={rETH_stafi_svg} style={{ width: '40px' }} alt='icon' />}
-            {props.type === 'rFIS' && <img src={rFIS_stafi_svg} style={{ width: '40px' }} alt='icon' />}
-            {props.type === 'rSOL' && <img src={rSOL_stafi_svg} style={{ width: '40px' }} alt='icon' />}
-            {props.type === 'rMATIC' && <img src={rMatic_stafi_svg} style={{ width: '40px' }} alt='icon' />}
-            {props.type === 'rBNB' && <img src={rBnb_stafi_svg} style={{ width: '40px' }} alt='icon' />}
+            {props.type === 'rDOT' && <img src={rDOT_stafi_svg} style={{ width: '36px' }} alt='icon' />}
+            {props.type === 'rKSM' && <img src={rKSM_stafi_svg} style={{ width: '36px' }} alt='icon' />}
+            {props.type === 'rATOM' && <img src={rATOM_stafi_svg} style={{ width: '36px' }} alt='icon' />}
+            {props.type === 'rETH' && <img src={rETH_stafi_svg} style={{ width: '36px' }} alt='icon' />}
+            {props.type === 'rFIS' && <img src={rFIS_stafi_svg} style={{ width: '36px' }} alt='icon' />}
+            {props.type === 'rSOL' && <img src={rSOL_stafi_svg} style={{ width: '36px' }} alt='icon' />}
+            {props.type === 'rMATIC' && <img src={rMatic_stafi_svg} style={{ width: '36px' }} alt='icon' />}
+            {props.type === 'rBNB' && <img src={rBnb_stafi_svg} style={{ width: '36px' }} alt='icon' />}
             {props.type}
           </div>
 
@@ -175,12 +175,12 @@ export default function Index(props: Props) {
 
           <InfoDivider />
 
-          <InfoItem>
-            <Text size='12px' scale={0.67} bold transformOrigin='center top' color='#C4C4C4'>
+          <InfoItem style={{ cursor: 'pointer' }} onClick={() => history.push(`/${props.type}/staker/reward`)}>
+            <Text size='12px' scale={0.67} bold transformOrigin='center top' color='#C4C4C4' clickable>
               Reward of last era &gt;
             </Text>
 
-            <Text size='16px' bold color='#ffffff' mt='8px'>
+            <Text size='16px' bold color='#ffffff' mt='8px' clickable>
               {NumberUtil.handleAmountFloorToFixed(props.lastEraRate * props.tokenAmount, 2)} {props.type.slice(1)}
             </Text>
           </InfoItem>
@@ -244,7 +244,7 @@ export default function Index(props: Props) {
         </div>
       </div>
 
-      <TitleContainer style={{ marginTop: '40px' }}>
+      <TitleContainer style={{ marginTop: '40px', marginLeft: '20px' }}>
         <HContainer>
           <img src={rDOT_DOT_svg} alt='icon' width='36px' height='36px' />
           <Text size='30px' bold color='white' ml='10px'>
@@ -264,7 +264,7 @@ export default function Index(props: Props) {
         </Text>
       </TitleContainer>
 
-      <Text size='12px' color='#c4c4c4' mt='44px' ml='10px' mb='10px'>
+      <Text size='12px' color='#c4c4c4' mt='44px' ml='20px' mb='10px'>
         Updated every {props.hours} hours
       </Text>
 
