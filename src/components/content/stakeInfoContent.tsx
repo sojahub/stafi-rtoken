@@ -111,7 +111,7 @@ export default function Index(props: Props) {
 
   if (showUnbondRecord) {
     return (
-      <LeftContent className='stafi_stake_info_context' padding='36px 10px'>
+      <LeftContent className='stafi_stake_info_context' padding='36px 10px 0'>
         <UnbondRecord onClickBack={() => setShowUnbondRecord(false)} type={props.type} />
       </LeftContent>
     );

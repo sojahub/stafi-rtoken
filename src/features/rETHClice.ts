@@ -329,23 +329,16 @@ export const monitoring_Method = (): AppThunk => (dispatch, getState) => {
       }
     });
 
-    ethereum.on('chainChanged', (chainId: any) => {
-      if (isdev()) {
-        if (ethereum.chainId != '0x3' && location.pathname.includes('/rAsset/erc')) {
-          // message.warning('Please connect to Ropsten Test Network!');
-          dispatch(setEthAccount(null));
-        }
-        if (ethereum.chainId != '0x5' && location.pathname.includes('/rETH')) {
-          // message.warning('Please connect to Goerli Test Network!');
-          dispatch(setEthAccount(null));
-        }
-      }
-      // else if (ethereum.chainId != '0x1') {
-      //   // message.warning('Please connect to Ethereum Main Network!');
-
-      //   dispatch(setEthAccount(null));
-      // }
-    });
+    // ethereum.on('chainChanged', (chainId: any) => {
+    //   if (isdev()) {
+    //     if (ethereum.chainId != '0x3' && location.pathname.includes('/rAsset/erc')) {
+    //       dispatch(setEthAccount(null));
+    //     }
+    //     if (ethereum.chainId != '0x5' && location.pathname.includes('/rETH')) {
+    //       dispatch(setEthAccount(null));
+    //     }
+    //   }
+    // });
   }
 };
 
