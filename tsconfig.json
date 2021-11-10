@@ -1,35 +1,37 @@
 {
+  "extends": "./typescript_paths.json",
   "compilerOptions": {
-      "outDir": "./build/",
-      "sourceMap": false,
-      "noImplicitAny": false,
-      "module": "commonjs",
-      "target": "es5",
-      "jsx": "react",
-      "allowJs": true,
-      // "baseUrl": ".",
-      "esModuleInterop": true,
-      "moduleResolution": "node",
-      "baseUrl": "./",
-      "paths": { 
-        "@components/*": ["app/components/*"], // 要使用别名下的模块的，配置这个。 
-        "@images/*": ["app/assets/images/*"], // 要使用别名下的模块的，配置这个。 
-        "@features/*": ["app/features/*"],
-        "@servers/*": ["app/servers/*"],
-        "@util/*": ["app/util/*"],
-        "@keyring/*": ["app/keyring/*"],
-        "@config/*": ["app/config/*"],
-        "@shared/*": ["app/shared/*"],
-        "@hooks/*": ["app/hooks/*"],
-      },
-      "allowSyntheticDefaultImports": true,
+    "outDir": "./build/",
+    "sourceMap": false,
+    "noImplicitAny": false,
+    "module": "esnext",
+    "target": "es5",
+    "jsx": "react-jsx",
+    "allowJs": true,
+    "esModuleInterop": true,
+    "moduleResolution": "node",
+    "baseUrl": ".",
+    "allowSyntheticDefaultImports": true,
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
+    "skipLibCheck": true,
+    "strict": false,
+    "forceConsistentCasingInFileNames": true,
+    "noFallthroughCasesInSwitch": true,
+    "resolveJsonModule": true,
+    "noEmit": true,
+    "noEmitOnError": true,
+    "isolatedModules": true
   },
   "include": [
-      "./app/**/*",
-      "./typings/images.d.ts"
+    "./src/**/*",
+    "./typings/images.d.ts"
   ],
   "exclude": [
     "build",
     "node_modules"
-  ], 
+  ]
 }

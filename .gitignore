@@ -13,3 +13,5 @@ yarn.lock
 # misc
 .DS_Store
 npm-debug.log*
+
+build.zip
