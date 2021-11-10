@@ -45,13 +45,13 @@ export const UnbondRecord = (props: Props) => {
           <div style={{ width: '20px' }}></div>
 
           <div style={{ width: '80px', marginLeft: '10px' }}>
-            <Text size='12px' color='#7C7C7C' style={{ width: '80px' }}>
+            <Text size='12px' color='#7C7C7C' style={{ width: '95px' }}>
               Amount
             </Text>
           </div>
 
           <div style={{ width: '100px' }}>
-            <Text size='12px' color='#7C7C7C' style={{ width: '90px' }}>
+            <Text size='12px' color='#7C7C7C' ml='15px'>
               Period
             </Text>
           </div>
@@ -76,13 +76,13 @@ export const UnbondRecord = (props: Props) => {
               />
             </div>
 
-            <div style={{ width: '80px', marginLeft: '10px' }}>
+            <div style={{ width: '95px', marginLeft: '10px' }}>
               <Text size='16px' color='white'>
                 {itemObj.amount}
               </Text>
             </div>
 
-            <div style={{ width: '100px' }}>
+            <div style={{ width: '85px' }}>
               <Text size='12px' color='#C8C8C8' scale={0.83} transformOrigin='center left'>
                 ≈ {Math.ceil(Math.max(0, Number(itemObj.estimateSuccessTime) - moment().valueOf()) / 86400000)} days
               </Text>

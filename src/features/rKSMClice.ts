@@ -755,7 +755,7 @@ export const unbond =
               localStorageUtil.addRTokenUnbondRecords('rKSM', stafiServer, {
                 id: uuid,
                 estimateSuccessTime: moment().add(config.unboundAroundDays(Symbol.Ksm), 'day').valueOf(),
-                amount,
+                amount: willAmount,
                 recipient,
               });
             }

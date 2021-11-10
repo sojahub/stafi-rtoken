@@ -509,7 +509,7 @@ export const unbond =
               localStorageUtil.addRTokenUnbondRecords('rBNB', stafiServer, {
                 id: uuid,
                 estimateSuccessTime: moment().add(config.unboundAroundDays(Symbol.Bnb), 'day').valueOf(),
-                amount,
+                amount: willAmount,
                 recipient,
               });
             }
