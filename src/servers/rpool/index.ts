@@ -41,8 +41,7 @@ export default class Index {
     return rpc.post(url, { contract: JSON.stringify(contractList) });
   }
 
-  async fillLpData(sourceActs: Array<any>, ethAddress: any) {
-    const lpActs = cloneDeep(sourceActs);
+  async fillLpData(oldAct: any, ethAddress: any) {
     let rPoolList = [];
     const rPoolListRes = await this.getRPoolList();
     if (rPoolListRes.status === '80000' && rPoolListRes.data) {
@@ -51,7 +50,7 @@ export default class Index {
 
     let fisPrice = '';
     const tokenPriceListRes = await rpc.fetchRtokenPriceList();
-    if (tokenPriceListRes && tokenPriceListRes.status == '80000') {
+    if (tokenPriceListRes && tokenPriceListRes.status === '80000') {
       const fisObj = tokenPriceListRes.data?.find((item: any) => {
         return item.symbol === 'FIS';
       });
@@ -61,80 +60,78 @@ export default class Index {
     }
 
     try {
-      for (let item of lpActs) {
-        for (let poolItem of item.children) {
-          const web3 = ethServer.getWeb3FromPlatform(poolItem.platform);
-          if (!web3) {
+      for (let poolItem of oldAct.children) {
+        const web3 = ethServer.getWeb3FromPlatform(poolItem.platform);
+        if (!web3) {
+          continue;
+        }
+        let contractAddress = config.lockContractAddress(poolItem.platform);
+        if (!contractAddress) {
+          continue;
+        }
+
+        try {
+          // console.log('address:', contractAddress);
+          let lockContract = new web3.eth.Contract(this.getStakingLockDropAbi(poolItem.platform), contractAddress, {
+            from: ethAddress,
+          });
+
+          const poolLength = await lockContract.methods.poolLength().call();
+          // console.log('poolLength: ', poolLength);
+          // console.log('poolIndex: ', poolItem.poolIndex);
+          const poolInfo = await lockContract.methods.poolInfo(poolItem.poolIndex).call();
+          // console.log('poolInfo: ', poolInfo);
+          poolItem.stakeTokenAddress = poolInfo.stakeToken;
+
+          let totalReward = web3.utils.fromWei(poolInfo.totalReward, 'ether');
+          poolItem.totalReward = totalReward.toString().replace(/(\d)(?=(?:\d{3})+$)/g, '$1,');
+          poolItem.totalRewardValue = totalReward;
+
+          let rewardPerBlock = web3.utils.fromWei(poolInfo.rewardPerBlock, 'ether');
+          poolItem.rewardPerBlockValue = rewardPerBlock;
+
+          poolItem.startBlock = poolInfo.startBlock;
+
+          if (!poolItem.stakeTokenAddress) {
             continue;
           }
-          let contractAddress = config.lockContractAddress(poolItem.platform);
-          if (!contractAddress) {
-            continue;
-          }
+          let tokenContract = new web3.eth.Contract(this.getStakeTokenAbi(), poolItem.stakeTokenAddress, {
+            from: ethAddress,
+          });
 
-          try {
-            // console.log('address:', contractAddress);
-            let lockContract = new web3.eth.Contract(this.getStakingLockDropAbi(poolItem.platform), contractAddress, {
-              from: ethAddress,
+          const poolStakeTokenSupply = await tokenContract.methods.balanceOf(contractAddress).call();
+          let stakeTokenSupply = web3.utils.fromWei(poolStakeTokenSupply, 'ether');
+          poolItem.stakeTokenSupply = stakeTokenSupply;
+
+          if (poolItem.lpContract) {
+            const lpPool = rPoolList.find((item: any) => {
+              return item.contract === poolItem.lpContract;
             });
-
-            const poolLength = await lockContract.methods.poolLength().call();
-            // console.log('poolLength: ', poolLength);
-            // console.log('poolIndex: ', poolItem.poolIndex);
-            const poolInfo = await lockContract.methods.poolInfo(poolItem.poolIndex).call();
-            // console.log('poolInfo: ', poolInfo);
-            poolItem.stakeTokenAddress = poolInfo.stakeToken;
-
-            let totalReward = web3.utils.fromWei(poolInfo.totalReward, 'ether');
-            poolItem.totalReward = totalReward.toString().replace(/(\d)(?=(?:\d{3})+$)/g, '$1,');
-            poolItem.totalRewardValue = totalReward;
-
-            let rewardPerBlock = web3.utils.fromWei(poolInfo.rewardPerBlock, 'ether');
-            poolItem.rewardPerBlockValue = rewardPerBlock;
-
-            poolItem.startBlock = poolInfo.startBlock;
-
-            if (!poolItem.stakeTokenAddress) {
-              continue;
-            }
-            let tokenContract = new web3.eth.Contract(this.getStakeTokenAbi(), poolItem.stakeTokenAddress, {
-              from: ethAddress,
-            });
-
-            const poolStakeTokenSupply = await tokenContract.methods.balanceOf(contractAddress).call();
-            let stakeTokenSupply = web3.utils.fromWei(poolStakeTokenSupply, 'ether');
-            poolItem.stakeTokenSupply = stakeTokenSupply;
-
-            if (poolItem.lpContract) {
-              const lpPool = rPoolList.find((item: any) => {
-                return item.contract === poolItem.lpContract;
-              });
-              if (lpPool) {
-                poolItem.liquidity = lpPool.liquidity;
-                poolItem.slippage = lpPool.slippage;
-                poolItem.lpPrice = lpPool.lpPrice;
-              } else {
-                poolItem.lpPrice = 1;
-              }
+            if (lpPool) {
+              poolItem.liquidity = lpPool.liquidity;
+              poolItem.slippage = lpPool.slippage;
+              poolItem.lpPrice = lpPool.lpPrice;
             } else {
               poolItem.lpPrice = 1;
             }
-            poolItem.apr = await this.getLpApr(
-              poolItem.platform,
-              ethAddress,
-              poolItem.stakeTokenAddress,
-              poolItem.rewardPerBlockValue,
-              poolItem.lpPrice,
-              Number(fisPrice),
-            );
-          } catch (err) {
-            console.error('get LPList error:', err.message);
-            throw new Error('fillLpData Error');
+          } else {
+            poolItem.lpPrice = 1;
           }
+          poolItem.apr = await this.getLpApr(
+            poolItem.platform,
+            ethAddress,
+            poolItem.stakeTokenAddress,
+            poolItem.rewardPerBlockValue,
+            poolItem.lpPrice,
+            Number(fisPrice),
+          );
+        } catch (err) {
+          console.error('get LPList error:', err.message);
+          throw new Error('fillLpData Error');
         }
       }
 
-      return lpActs;
+      return oldAct;
     } catch (err) {
       console.error('get LPList error2:', err.message);
     }

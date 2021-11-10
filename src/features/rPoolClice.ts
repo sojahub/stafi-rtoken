@@ -2,6 +2,7 @@
 
 import { createSlice } from '@reduxjs/toolkit';
 import { message } from 'antd';
+import { cloneDeep } from 'lodash';
 import config from 'src/config/index';
 import { Symbol } from 'src/keyring/defaults';
 import EthServer from 'src/servers/eth';
@@ -295,10 +296,14 @@ export const getLPList =
       // if (showLoading) {
       //   dispatch(setLoadingLpList(true));
       // }
-      const newList = await rPoolServer.fillLpData(lpActs, '');
-      if (newList) {
-        dispatch(setLpList(newList));
+      const lpList = cloneDeep(getState().rPoolModule.lpList);
+
+      for (let index = 0; index < lpList.length; index++) {
+        const newObj = await rPoolServer.fillLpData(lpList[index], '');
+        lpList.splice(index, 1, newObj);
+        dispatch(setLpList(cloneDeep(lpList)));
       }
+      lpList.forEach((item: any, index: number) => {});
     } finally {
       dispatch(setLoadingLpList(false));
     }
