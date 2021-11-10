@@ -41,47 +41,28 @@ export default class Index {
     return rpc.post(url, { contract: JSON.stringify(contractList) });
   }
 
-  async fillLpData(oldAct: any, ethAddress: any) {
-    let rPoolList = [];
-    const rPoolListRes = await this.getRPoolList();
-    if (rPoolListRes.status === '80000' && rPoolListRes.data) {
-      rPoolList = rPoolListRes.data.list;
-    }
-
-    let fisPrice = '';
-    const tokenPriceListRes = await rpc.fetchRtokenPriceList();
-    if (tokenPriceListRes && tokenPriceListRes.status === '80000') {
-      const fisObj = tokenPriceListRes.data?.find((item: any) => {
-        return item.symbol === 'FIS';
-      });
-      if (fisObj) {
-        fisPrice = fisObj.price;
-      }
-    }
-
+  async fillLpData(oldAct: any, rPoolList: any[], fisPrice: any, ethAddress?: any) {
     try {
       for (let poolItem of oldAct.children) {
         const web3 = ethServer.getWeb3FromPlatform(poolItem.platform);
         if (!web3) {
           continue;
         }
+
         let contractAddress = config.lockContractAddress(poolItem.platform);
         if (!contractAddress) {
           continue;
         }
 
         try {
-          // console.log('address:', contractAddress);
           let lockContract = new web3.eth.Contract(this.getStakingLockDropAbi(poolItem.platform), contractAddress, {
             from: ethAddress,
           });
-
-          const poolLength = await lockContract.methods.poolLength().call();
-          // console.log('poolLength: ', poolLength);
-          // console.log('poolIndex: ', poolItem.poolIndex);
           const poolInfo = await lockContract.methods.poolInfo(poolItem.poolIndex).call();
-          // console.log('poolInfo: ', poolInfo);
           poolItem.stakeTokenAddress = poolInfo.stakeToken;
+          if (!poolItem.stakeTokenAddress) {
+            continue;
+          }
 
           let totalReward = web3.utils.fromWei(poolInfo.totalReward, 'ether');
           poolItem.totalReward = totalReward.toString().replace(/(\d)(?=(?:\d{3})+$)/g, '$1,');
@@ -92,9 +73,6 @@ export default class Index {
 
           poolItem.startBlock = poolInfo.startBlock;
 
-          if (!poolItem.stakeTokenAddress) {
-            continue;
-          }
           let tokenContract = new web3.eth.Contract(this.getStakeTokenAbi(), poolItem.stakeTokenAddress, {
             from: ethAddress,
           });
@@ -131,7 +109,7 @@ export default class Index {
         }
       }
 
-      return oldAct;
+      return cloneDeep(oldAct);
     } catch (err) {
       console.error('get LPList error2:', err.message);
     }

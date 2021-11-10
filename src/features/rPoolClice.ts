@@ -7,6 +7,7 @@ import config from 'src/config/index';
 import { Symbol } from 'src/keyring/defaults';
 import EthServer from 'src/servers/eth';
 import RPoolServer from 'src/servers/rpool';
+import rpc from 'src/util/rpc';
 import { stafi_uuid } from 'src/util/common';
 import { AppThunk } from '../store';
 import { setLoading } from './globalClice';
@@ -293,17 +294,40 @@ export const getLPList =
   (showLoading: boolean): AppThunk =>
   async (dispatch, getState) => {
     try {
-      // if (showLoading) {
-      //   dispatch(setLoadingLpList(true));
-      // }
-      const lpList = cloneDeep(getState().rPoolModule.lpList);
+      const [rPoolListRes, tokenPriceListRes] = await Promise.all([
+        rPoolServer.getRPoolList(),
+        rpc.fetchRtokenPriceList(),
+      ]);
 
-      for (let index = 0; index < lpList.length; index++) {
-        const newObj = await rPoolServer.fillLpData(lpList[index], '');
-        lpList.splice(index, 1, newObj);
-        dispatch(setLpList(cloneDeep(lpList)));
+      let rPoolList = [];
+      if (rPoolListRes.status === '80000' && rPoolListRes.data) {
+        rPoolList = rPoolListRes.data.list;
       }
-      lpList.forEach((item: any, index: number) => {});
+
+      let fisPrice = '';
+      if (tokenPriceListRes && tokenPriceListRes.status === '80000') {
+        const fisObj = tokenPriceListRes.data?.find((item: any) => {
+          return item.symbol === 'FIS';
+        });
+        if (fisObj) {
+          fisPrice = fisObj.price;
+        }
+      }
+
+      const lpList = cloneDeep(getState().rPoolModule.lpList);
+      const promiseList = [];
+      for (let index = 0; index < lpList.length; index++) {
+        promiseList.push(rPoolServer.fillLpData(lpList[index], rPoolList, fisPrice));
+      }
+
+      const resultList = await Promise.all(promiseList);
+      lpList.forEach((item: any) => {
+        const newItem = resultList.find((data: any) => {
+          return data.name === item.name;
+        });
+        item.children = newItem?.children;
+      });
+      dispatch(setLpList(cloneDeep(lpList)));
     } finally {
       dispatch(setLoadingLpList(false));
     }
