@@ -70,7 +70,7 @@ export default function Index(props: any) {
           <Content>{renderRoutes(props.route.routes)}</Content>
         </Spin>
 
-        {location.pathname.includes('/staker/info') && showSwitchMetamaskButton && (
+        {/* {location.pathname.includes('/staker/info') && showSwitchMetamaskButton && (
           <div className='switch_network_container'>
             <div className='switch_network_prefix'></div>
 
@@ -83,7 +83,7 @@ export default function Index(props: any) {
               {isdev() ? 'Testnet' : 'Mainnet'}
             </div>
           </div>
-        )}
+        )} */}
       </div>
     </div>
   );

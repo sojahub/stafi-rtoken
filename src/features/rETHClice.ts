@@ -1342,7 +1342,22 @@ export const getReward =
     }
   };
 
-export const getLastEraRate = (): AppThunk => async (dispatch, getState) => {};
+export const getLastEraRate = (): AppThunk => async (dispatch, getState) => {
+  const res = await ethServer.getEthRate();
+  if (res.status === '80000' && res.data?.list) {
+    res.data.list.sort((a: any, b: any) => {
+      return a.date * 1 - b.date * 1;
+    });
+    const lastRate = res.data.list[0].rate;
+    const currentRate = res.data.list[1].rate;
+    console.log('rETH getLastEraRate', lastRate, currentRate);
+    if (Number(currentRate) <= Number(lastRate)) {
+      dispatch(setLastEraRate(0));
+    } else {
+      dispatch(setLastEraRate(Number(currentRate) - Number(lastRate)));
+    }
+  }
+};
 
 //validator-Deposit
 

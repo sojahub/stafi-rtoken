@@ -75,6 +75,7 @@ export default class Index {
   getRETHTokenAddress() {
     return config.rETHTokenAddress();
   }
+
   getRETHGoerliTokenAddress() {
     return config.rETHTokenAddress();
   }
@@ -160,6 +161,11 @@ export default class Index {
   getPoolInfo(poolAddress: string, pubkey: string) {
     const url = 'v1/webapi/reth/poolinfo';
     return api.post(url, { contract: poolAddress, pubkey: pubkey });
+  }
+
+  getEthRate() {
+    const url = config.api() + '/stafi/v1/webapi/rtoken/getrethlist';
+    return api.post(url);
   }
 }
 

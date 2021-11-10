@@ -6,7 +6,7 @@ import { useHistory } from 'react-router';
 import Content from 'src/components/content/stakeInfoContent';
 import { getRETHAssetBalance as getBEP20RETHAssetBalance } from 'src/features/BSCClice';
 import { getETHAssetBalance as getRETHErc20Allowance } from 'src/features/ETHClice';
-import { getLastEraRate, setRatioShow } from 'src/features/rETHClice';
+import { getLastEraRate, rTokenRate, setRatioShow } from 'src/features/rETHClice';
 import NumberUtil from 'src/util/numberUtil';
 
 export default function Index(props: any) {
@@ -18,20 +18,9 @@ export default function Index(props: any) {
     platform = qs.parse(history.location.search.slice(1)).platform as string;
   }
 
-  useEffect(() => {
-    dispatch(getLastEraRate());
-  }, []);
-
-  useEffect(() => {
-    if (platform === 'ERC20') {
-      dispatch(getRETHErc20Allowance());
-    } else if (platform === 'BEP20') {
-      dispatch(getBEP20RETHAssetBalance());
-    }
-  }, [platform]);
-
-  const { ratio, tokenAmount, ratioShow, totalUnbonding, lastEraRate } = useSelector((state: any) => {
+  const { ratio, tokenAmount, ratioShow, lastEraRate, metaMaskNetworkId } = useSelector((state: any) => {
     return {
+      metaMaskNetworkId: state.globalModule.metaMaskNetworkId,
       ratio: state.rETHModule.ratio,
       ratioShow: state.rETHModule.ratioShow,
       tokenAmount:
@@ -42,10 +31,26 @@ export default function Index(props: any) {
           : platform === 'BEP20'
           ? state.BSCModule.bepRETHBalance
           : '--',
-      totalUnbonding: state.rDOTModule.totalUnbonding,
       lastEraRate: state.rETHModule.lastEraRate,
     };
   });
+
+  useEffect(() => {
+    dispatch(rTokenRate());
+    dispatch(getLastEraRate());
+  }, []);
+
+  useEffect(() => {
+    if (platform === 'ERC20') {
+      setTimeout(() => {
+        dispatch(getRETHErc20Allowance());
+      }, 500);
+    } else if (platform === 'BEP20') {
+      setTimeout(() => {
+        dispatch(getBEP20RETHAssetBalance());
+      }, 500);
+    }
+  }, [platform, metaMaskNetworkId]);
 
   useEffect(() => {
     let count = 0;
@@ -71,9 +76,10 @@ export default function Index(props: any) {
       ratio={NumberUtil.handleEthAmountRateToFixed(ratio)}
       ratioShow={ratioShow}
       tokenAmount={tokenAmount}
-      totalUnbonding={totalUnbonding}
+      totalUnbonding={0}
       lastEraRate={lastEraRate}
       platform={platform}
+      redeemableTokenAmount={'0'}
       onStakeClick={() => {
         props.history.push('/rETH/staker/index');
       }}

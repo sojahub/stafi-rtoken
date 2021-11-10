@@ -1,5 +1,6 @@
 // @ts-nocheck
 
+import { message } from 'antd';
 import React, { useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useHistory } from 'react-router';
@@ -85,6 +86,7 @@ export default function Index(props: Props) {
     props.type === 'rATOM' ||
     props.type === 'rMATIC';
   const showBep20 =
+    props.type === 'rETH' ||
     props.type === 'rFIS' ||
     props.type === 'rKSM' ||
     props.type === 'rDOT' ||
@@ -171,7 +173,15 @@ export default function Index(props: Props) {
 
           <InfoDivider />
 
-          <InfoItem style={{ cursor: 'pointer' }} onClick={() => setShowUnbondRecord(true)}>
+          <InfoItem
+            style={{ cursor: 'pointer' }}
+            onClick={() => {
+              if (props.type === 'rETH') {
+                message.info('Redeem Function will be supported once ETH2.0 Phase 1.5 is released');
+                return;
+              }
+              setShowUnbondRecord(true);
+            }}>
             <Text size='12px' scale={0.67} bold transformOrigin='center top' color='#C4C4C4' clickable>
               Unbonding {props.type.slice(1)} &gt;
             </Text>

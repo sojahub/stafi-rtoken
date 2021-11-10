@@ -32,7 +32,7 @@ export default function Index(props: any) {
   }, [ethAccount && ethAccount.address, metaMaskNetworkId]);
 
   useEffect(() => {
-    dispatch(monitoring_Method());
+    // dispatch(monitoring_Method());
   }, []);
 
   const { loading } = useSelector((state: any) => {

@@ -260,7 +260,7 @@ export default function Index(props: Props) {
 
   useEffect(() => {
     if (account && account.ethAccount) {
-      dispatch(eth_monitoring_method());
+      // dispatch(eth_monitoring_method());
     }
   }, [account]);
 
