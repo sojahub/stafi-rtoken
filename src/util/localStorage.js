@@ -1,4 +1,5 @@
 import { cloneDeep } from 'lodash';
+import moment from 'moment';
 import { getRsymbolByTokenTitle } from 'src/config';
 import { noticeStatus } from 'src/features/noticeClice';
 import { getLocalStorageItem, Keys, setLocalStorageItem } from './common';
@@ -58,6 +59,9 @@ const localStorageUtil = {
   getRTokenUnbondRecords: function (type) {
     const unbondRecords = getLocalStorageItem(Keys.UnbondRecordsKey);
     if (unbondRecords && unbondRecords[type]) {
+      unbondRecords[type].forEach((item) => {
+        item.remainingDays = Math.ceil(Math.max(0, Number(item.estimateSuccessTime) - moment().valueOf()) / 86400000);
+      });
       return unbondRecords[type];
     }
     return [];

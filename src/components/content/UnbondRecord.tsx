@@ -1,15 +1,15 @@
 import leftArrowSvg from 'src/assets/images/left_arrow.svg';
 import { useEffect, useState } from 'react';
 import { HContainer, Text } from '../commonComponents';
-import localStorageUtil from 'src/util/localStorage';
 import styled from 'styled-components';
 import no_data_png from 'src/assets/images/nodata.png';
 import successIcon from 'src/assets/images/unbond_record_success.png';
 import pendingIcon from 'src/assets/images/unbond_record_pending.png';
-import moment from 'moment';
 import CommonClice from 'src/features/commonClice';
-import { useSelector } from 'react-redux';
+import { setLoading as setGlobalLoading } from 'src/features/globalClice';
+import { useDispatch, useSelector } from 'react-redux';
 import { getRsymbolByTokenTitle } from 'src/config';
+import localStorageUtil from 'src/util/localStorage';
 
 const commonClice = new CommonClice();
 
@@ -19,6 +19,7 @@ type Props = {
 };
 
 export const UnbondRecord = (props: Props) => {
+  const dispatch = useDispatch();
   const [loading, setLoading] = useState(true);
   const [unbondRecords, setUnbondRecords] = useState([]);
 
@@ -29,12 +30,18 @@ export const UnbondRecord = (props: Props) => {
   });
 
   useEffect(() => {
-    // setUnbondRecords(localStorageUtil.getRTokenUnbondRecords(props.type));
-    commonClice.getUnbondRecords(fisAddress, getRsymbolByTokenTitle(props.type)).then((items) => {
+    if (props.type === 'rFIS') {
+      setUnbondRecords(localStorageUtil.getRTokenUnbondRecords('rFIS'));
       setLoading(false);
-      setUnbondRecords(items);
-    });
-  }, [props.type, fisAddress]);
+    } else {
+      dispatch(setGlobalLoading(true));
+      commonClice.getUnbondRecords(fisAddress, getRsymbolByTokenTitle(props.type)).then((items) => {
+        dispatch(setGlobalLoading(false));
+        setLoading(false);
+        setUnbondRecords(items);
+      });
+    }
+  }, [props.type, fisAddress, dispatch]);
 
   return (
     <div style={{ flex: 1, position: 'relative' }}>
@@ -118,7 +125,7 @@ export const UnbondRecord = (props: Props) => {
                   scale={0.83}
                   transformOrigin='center left'
                   style={{ position: 'absolute', left: 0, top: 0 }}>
-                  {itemObj.receiver}
+                  {itemObj.receiver || itemObj.recipient}
                 </Text>
               </div>
             </HContainer>

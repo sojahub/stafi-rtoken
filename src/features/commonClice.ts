@@ -1,5 +1,6 @@
 // @ts-nocheck
 
+import { encodeAddress } from '@polkadot/keyring';
 import { hexToU8a } from '@polkadot/util';
 import { message } from 'antd';
 import { rSymbol, Symbol } from 'src/keyring/defaults';
@@ -200,6 +201,7 @@ export default class CommonClice {
       cb && cb(0);
     }
   }
+
   async getUnbondRecords(fisAddress: string, symbol: any, cb?: Function) {
     const stafiApi = await stafiServer.createStafiApi();
     const eraResult = await stafiApi.query.rTokenLedger.chainEras(symbol);
@@ -208,11 +210,13 @@ export default class CommonClice {
     if (currentEra) {
       const result = await stafiApi.query.rTokenSeries.accountUnbonds(fisAddress, symbol);
       let accountUnbonds = result.toJSON();
+      console.log('adfsdf', accountUnbonds);
+
       if (accountUnbonds && accountUnbonds.length > 0) {
         accountUnbonds.sort((a: any, b: any) => {
           return b.unlock_era * 1 - a.unlock_era * 1;
         });
-        const keyringInstance = keyring.init(symbol);
+        const keyringInstance = keyring.initByRSymbol(symbol);
         accountUnbonds.forEach((element: any) => {
           if (symbol === rSymbol.Ksm) {
             element.remainingDays = Math.ceil(Math.max(0, element.unlock_era * 1 - currentEra * 1) / 4);
@@ -220,8 +224,13 @@ export default class CommonClice {
             element.remainingDays = Math.max(0, element.unlock_era * 1 - currentEra * 1);
           }
           element.amount = numberUtil.handleAmountRoundToFixed(numberUtil.tokenAmountToHuman(element.value, symbol), 6);
-          const receiver = keyringInstance.encodeAddress(element.recipient);
-          element.receiver = receiver;
+          if (symbol === rSymbol.Matic || symbol === rSymbol.Bnb) {
+            element.receiver = element.recipient;
+          } else if (symbol === rSymbol.Sol) {
+            element.receiver = keyringInstance.encodeAddress(element.recipient);
+          } else {
+            element.receiver = keyringInstance.encodeAddress(hexToU8a(element.recipient));
+          }
         });
         if (accountUnbonds.length > 10) {
           return accountUnbonds.slice(0, 10);
@@ -234,6 +243,7 @@ export default class CommonClice {
       return [];
     }
   }
+
   async getUnbondCommission() {
     const stafiApi = await stafiServer.createStafiApi();
     const result = await stafiApi.query.rTokenSeries.unbondCommission();

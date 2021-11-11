@@ -752,7 +752,6 @@ export const unbond =
         return;
       }
       const keyringInstance = keyring.init(Symbol.Dot);
-
       dispatch(
         fisUnbond(
           amount,

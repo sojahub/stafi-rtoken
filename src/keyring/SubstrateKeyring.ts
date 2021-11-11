@@ -1,8 +1,12 @@
 import { hexToU8a, u8aToHex } from '@polkadot/util';
 import {
-  checkAddress, decodeAddress, encodeAddress, mnemonicToMiniSecret,
-  mnemonicValidate, naclKeypairFromSeed as naclFromSeed,
-  schnorrkelKeypairFromSeed as schnorrkelFromSeed
+  checkAddress,
+  decodeAddress,
+  encodeAddress,
+  mnemonicToMiniSecret,
+  mnemonicValidate,
+  naclKeypairFromSeed as naclFromSeed,
+  schnorrkelKeypairFromSeed as schnorrkelFromSeed,
 } from '@polkadot/util-crypto';
 import { KeypairType } from '@polkadot/util-crypto/types';
 import Base from './Base';
@@ -69,6 +73,7 @@ export class SubstrateKeyring extends Base implements KeyringStruct {
   }
 
   public encodeAddress(publicKey: string | Uint8Array): string {
+    console.log('sdfsdf', this._ss58_format);
     return encodeAddress(publicKey, this._ss58_format);
   }
 

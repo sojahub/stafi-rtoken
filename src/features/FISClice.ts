@@ -799,8 +799,8 @@ export const rTokenLedger = (): AppThunk => async (dispatch, getState) => {
 export const getLastEraRate = (): AppThunk => async (dispatch, getState) => {
   try {
     const stafiApi = await stafiServer.createStafiApi();
-    const eraResult = await stafiApi.query.rTokenLedger.chainEras(rSymbol.Fis);
-    let currentEra = eraResult.toJSON();
+    const eraResult = await stafiApi.query.staking.activeEra();
+    let currentEra = eraResult.toJSON().index;
     if (currentEra) {
       let rateResult = await stafiApi.query.rTokenRate.eraRate(rSymbol.Fis, currentEra - 1);
       const currentRate = rateResult.toJSON();
