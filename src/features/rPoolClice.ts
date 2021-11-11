@@ -11,7 +11,6 @@ import rpc from 'src/util/rpc';
 import { stafi_uuid } from 'src/util/common';
 import { AppThunk } from '../store';
 import { setLoading } from './globalClice';
-import rpc from 'src/util/rpc';
 import { add_Notice, noticeStatus, noticesubType, noticeType } from './noticeClice';
 
 const lpActs: Array<any> = [
