@@ -544,23 +544,23 @@ const routesFactory = (role?: any) => {
             },
           ],
         },
-        // {
-        //   id: 'rDEX_home',
-        //   path: '/rDEX',
-        //   type: 'rDEX',
-        //   component: RDEXHome,
-        //   routes: [
-        //     {
-        //       id: 'rDEX_home',
-        //       path: '/rDEX/home',
-        //       component: RDEXHome,
-        //     },
-        //     {
-        //       path: '*',
-        //       component: () => <Redirect to='/rDEX/home' />,
-        //     },
-        //   ],
-        // },
+        {
+          id: 'rDEX_home',
+          path: '/rDEX',
+          type: 'rDEX',
+          component: RDEXHome,
+          routes: [
+            {
+              id: 'rDEX_home',
+              path: '/rDEX/home',
+              component: RDEXHome,
+            },
+            {
+              path: '*',
+              component: () => <Redirect to='/rDEX/home' />,
+            },
+          ],
+        },
         {
           id: 'fee_station',
           path: '/feeStation',
