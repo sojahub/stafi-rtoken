@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useLocation } from 'react-router';
 import { renderRoutes } from 'react-router-config';
 import config from 'src/config/index';
+import { getETHAssetBalance } from 'src/features/ETHClice';
 import { handleEthAccount, monitoring_Method, reloadData } from 'src/features/rETHClice';
 import Content from 'src/shared/components/content';
 import '../template/index.scss';
@@ -29,7 +30,8 @@ export default function Index(props: any) {
   useEffect(() => {
     ethAccount && ethAccount.address && dispatch(handleEthAccount(ethAccount.address, config.goerliChainId()));
     ethAccount && ethAccount.address && dispatch(reloadData());
-  }, [ethAccount && ethAccount.address, metaMaskNetworkId]);
+    dispatch(getETHAssetBalance());
+  }, [ethAccount && ethAccount.address, metaMaskNetworkId, dispatch]);
 
   useEffect(() => {
     // dispatch(monitoring_Method());

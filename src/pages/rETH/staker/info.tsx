@@ -49,7 +49,7 @@ export default function Index(props: any) {
         dispatch(getBEP20RETHAssetBalance());
       }, 500);
     }
-  }, [platform, metaMaskNetworkId, ethAddress]);
+  }, [platform, metaMaskNetworkId, ethAddress, dispatch]);
 
   useEffect(() => {
     let count = 0;

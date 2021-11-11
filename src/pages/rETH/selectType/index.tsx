@@ -9,7 +9,7 @@ export default function Index(props: any) {
     return {
       totalStakedAmount: state.rETHModule.totalStakedAmount,
       stakerApr: state.rETHModule.stakerApr,
-      tokenAmount: state.rETHModule.balance,
+      tokenAmount: state.ETHModule.ercETHBalance,
       poolCount: state.rETHModule.poolCount,
     };
   });
