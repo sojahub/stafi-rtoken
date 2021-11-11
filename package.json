@@ -127,7 +127,8 @@
     "start": "craco start",
     "build": "craco build",
     "test": "craco test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "madge": "madge  --image ./madge-graph.svg --extensions js,jsx,ts,tsx --circular ."
   },
   "eslintConfig": {
     "extends": [

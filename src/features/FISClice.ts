@@ -2,6 +2,7 @@
 
 import { web3Enable, web3FromSource } from '@polkadot/extension-dapp';
 import { stringToHex, u8aToHex } from '@polkadot/util';
+import { SubmittableResult } from '@polkadot/api';
 import { createSlice } from '@reduxjs/toolkit';
 import { PublicKey } from '@solana/web3.js';
 import { message } from 'antd';
@@ -1027,18 +1028,15 @@ export const unbond =
       );
 
       api
-        .signAndSend(address, { signer: injector.signer }, (result: any) => {
+        .signAndSend(address, { signer: injector.signer }, (result: SubmittableResult) => {
           if (result.status.isInBlock) {
             dispatch(setLoading(false));
             const uuid = stafi_uuid();
             result.events
-              .filter((data: any) => {
-                let section = data.event.section;
+              .filter(({ event: { section } }) => {
                 return section === 'system';
               })
-              .forEach((item: any) => {
-                let data = item.event.data;
-                let method = item.event.method;
+              .forEach(({ event: { data, section, method } }) => {
                 if (method === 'ExtrinsicFailed') {
                   const [dispatchError] = data;
                   if (dispatchError.isModule) {
@@ -1049,9 +1047,9 @@ export const unbond =
                       );
 
                       let messageStr = 'Something is wrong, please try again later';
-                      if (error.name == 'LiquidityUnbondZero') {
+                      if (error.name === 'LiquidityUnbondZero') {
                         messageStr = 'The input amount should be larger than 0';
-                      } else if (error.name == 'InsufficientBalance') {
+                      } else if (error.name === 'InsufficientBalance') {
                         messageStr = 'Insufficient balance';
                       }
                       message.error(messageStr);
