@@ -77,10 +77,21 @@ const localStorageUtil = {
     }
 
     const stafiApi = await stafiServer.createStafiApi();
-    const eraResult = await stafiApi.query.rTokenLedger.chainEras(getRsymbolByTokenTitle(type));
-    const bondingDurationResult = await stafiApi.query.rTokenLedger.chainBondingDuration(getRsymbolByTokenTitle(type));
-    let currentEra = eraResult.toJSON();
-    let unlockEra = currentEra + bondingDurationResult.toJSON();
+
+    let currentEra = 0;
+    let unlockEra = 0;
+    if (type === 'rFIS') {
+      const eraResult = await stafiApi.query.staking.activeEra();
+      currentEra = eraResult.toJSON().index;
+      unlockEra = currentEra + 56;
+    } else {
+      const eraResult = await stafiApi.query.rTokenLedger.chainEras(getRsymbolByTokenTitle(type));
+      currentEra = eraResult.toJSON();
+      const bondingDurationResult = await stafiApi.query.rTokenLedger.chainBondingDuration(
+        getRsymbolByTokenTitle(type),
+      );
+      unlockEra = currentEra + bondingDurationResult.toJSON();
+    }
 
     const newLength = arr.unshift({ ...itemObj, currentEra, unlockEra });
     if (newLength > 10) {
