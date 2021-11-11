@@ -26,14 +26,6 @@ export default function Index(props: any) {
     platform = qs.parse(history.location.search.slice(1)).platform as string;
   }
 
-  useEffect(() => {
-    dispatch(query_rBalances_account());
-    dispatch(rTokenRate());
-    dispatch(accountUnbonds());
-    dispatch(getUnbondCommission());
-    dispatch(getLastEraRate());
-  }, []);
-
   const { ratio, tokenAmount, ratioShow, totalUnbonding, metaMaskNetworkId, lastEraRate, redeemableTokenAmount } =
     useSelector((state: any) => {
       const tokenAmount =
@@ -57,13 +49,26 @@ export default function Index(props: any) {
       };
     });
 
+  const { fisAddress } = useSelector((state: any) => {
+    return {
+      fisAddress: state.FISModule.fisAccount && state.FISModule.fisAccount.address,
+    };
+  });
+
+  useEffect(() => {
+    dispatch(rTokenRate());
+    dispatch(accountUnbonds());
+    dispatch(getUnbondCommission());
+    dispatch(getLastEraRate());
+  }, [fisAddress, dispatch]);
+
   useEffect(() => {
     if (platform === 'Native') {
       dispatch(query_rBalances_account());
     } else if (platform === 'BEP20') {
       dispatch(getRBNBAssetBalance());
     }
-  }, [platform, metaMaskNetworkId]);
+  }, [platform, metaMaskNetworkId, fisAddress, dispatch]);
 
   useEffect(() => {
     let count = 0;

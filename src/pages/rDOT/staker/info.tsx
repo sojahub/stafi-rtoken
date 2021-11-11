@@ -52,12 +52,18 @@ export default function Index(props: any) {
       };
     });
 
+  const { fisAddress } = useSelector((state: any) => {
+    return {
+      fisAddress: state.FISModule.fisAccount && state.FISModule.fisAccount.address,
+    };
+  });
+
   useEffect(() => {
     dispatch(rTokenRate());
     dispatch(accountUnbonds());
     dispatch(getLastEraRate());
     dispatch(getUnbondCommission());
-  }, []);
+  }, [fisAddress, dispatch]);
 
   useEffect(() => {
     if (platform === 'Native') {
@@ -67,7 +73,7 @@ export default function Index(props: any) {
     } else if (platform === 'BEP20') {
       dispatch(getBEP20RDOTAssetBalance());
     }
-  }, [platform, metaMaskNetworkId]);
+  }, [platform, metaMaskNetworkId, fisAddress, dispatch]);
 
   useEffect(() => {
     let count = 0;

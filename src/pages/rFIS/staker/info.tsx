@@ -15,6 +15,7 @@ import NumberUtil from 'src/util/numberUtil';
 import qs from 'querystring';
 import { getFISAssetBalance as getBEP20FISAssetBalance } from 'src/features/BSCClice';
 import { getFISAssetBalance as getERC20FISAssetBalance } from 'src/features/ETHClice';
+import { difference } from 'lodash';
 
 const commonClice = new CommonClice();
 
@@ -57,12 +58,18 @@ export default function Index(props: any) {
     };
   });
 
+  const { fisAddress } = useSelector((state: any) => {
+    return {
+      fisAddress: state.FISModule.fisAccount && state.FISModule.fisAccount.address,
+    };
+  });
+
   useEffect(() => {
     dispatch(RefreshUnbonding());
     dispatch(rTokenRate());
     dispatch(getLastEraRate());
     dispatch(getUnbondCommission());
-  }, []);
+  }, [fisAddress, dispatch]);
 
   useEffect(() => {
     if (platform === 'Native') {
@@ -72,7 +79,7 @@ export default function Index(props: any) {
     } else if (platform === 'BEP20') {
       dispatch(getBEP20FISAssetBalance());
     }
-  }, [platform, metaMaskNetworkId]);
+  }, [platform, metaMaskNetworkId, fisAddress, dispatch]);
 
   useEffect(() => {
     let count = 0;

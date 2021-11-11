@@ -26,22 +26,6 @@ export default function Index(props: any) {
     platform = qs.parse(history.location.search.slice(1)).platform as string;
   }
 
-  useEffect(() => {
-    dispatch(query_rBalances_account());
-    dispatch(rTokenRate());
-    dispatch(accountUnbonds());
-    dispatch(getLastEraRate());
-    dispatch(getUnbondCommission());
-  }, []);
-
-  useEffect(() => {
-    if (platform === 'Native') {
-      dispatch(query_rBalances_account());
-    } else if (platform === 'SPL') {
-      dispatch(getRSOLAssetBalance());
-    }
-  }, [platform]);
-
   const { ratio, tokenAmount, ratioShow, totalUnbonding, lastEraRate, redeemableTokenAmount } = useSelector(
     (state: any) => {
       const tokenAmount =
@@ -60,6 +44,27 @@ export default function Index(props: any) {
       };
     },
   );
+
+  const { fisAddress } = useSelector((state: any) => {
+    return {
+      fisAddress: state.FISModule.fisAccount && state.FISModule.fisAccount.address,
+    };
+  });
+
+  useEffect(() => {
+    dispatch(rTokenRate());
+    dispatch(accountUnbonds());
+    dispatch(getLastEraRate());
+    dispatch(getUnbondCommission());
+  }, [fisAddress, dispatch]);
+
+  useEffect(() => {
+    if (platform === 'Native') {
+      dispatch(query_rBalances_account());
+    } else if (platform === 'SPL') {
+      dispatch(getRSOLAssetBalance());
+    }
+  }, [platform, fisAddress, dispatch]);
 
   useEffect(() => {
     let count = 0;
