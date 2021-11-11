@@ -26,11 +26,12 @@ export default function LiquidityPrograms(props: any) {
 
   useEffect(() => {
     dispatch(getRPoolList());
-    dispatch(getLPList(true));
-  }, []);
+  }, [dispatch]);
 
   useInterval(() => {
-    dispatch(getLPList(false));
+    if (rPoolList && rPoolList.length > 0) {
+      dispatch(getLPList(rPoolList));
+    }
   }, 60000);
 
   const [sortField, setSortField] = useState('liquidity');
@@ -43,6 +44,12 @@ export default function LiquidityPrograms(props: any) {
       loadingLpList: state.rPoolModule.loadingLpList,
     };
   });
+
+  useEffect(() => {
+    if (rPoolList && rPoolList.length > 0) {
+      dispatch(getLPList(rPoolList));
+    }
+  }, [rPoolList, dispatch]);
 
   const { ethCurveData, atomSifData } = useMemo(() => {
     const ethCurveData = rPoolList.find((item) => {

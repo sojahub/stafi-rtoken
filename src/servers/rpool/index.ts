@@ -41,7 +41,37 @@ export default class Index {
     return rpc.post(url, { contract: JSON.stringify(contractList) });
   }
 
-  async fillLpData(oldAct: any, rPoolList: any[], fisPrice: any, ethAddress?: any) {
+  fillLpApiData(oldAct: any, rPoolList: any[]) {
+    try {
+      for (let poolItem of oldAct.children) {
+        try {
+          if (poolItem.lpContract) {
+            const lpPool = rPoolList.find((item: any) => {
+              return item.contract === poolItem.lpContract;
+            });
+            if (lpPool) {
+              poolItem.liquidity = lpPool.liquidity;
+              poolItem.slippage = lpPool.slippage;
+              poolItem.lpPrice = lpPool.lpPrice;
+            } else {
+              poolItem.lpPrice = 1;
+            }
+          } else {
+            poolItem.lpPrice = 1;
+          }
+        } catch (err) {
+          console.error('fillLpApiData error:', err.message);
+          throw new Error('fillLpApiData Error');
+        }
+      }
+
+      return cloneDeep(oldAct);
+    } catch (err) {
+      console.error('fillLpApiData error2:', err.message);
+    }
+  }
+
+  async fillLpData(oldAct: any, fisPrice: any, ethAddress?: any) {
     try {
       for (let poolItem of oldAct.children) {
         const web3 = ethServer.getWeb3FromPlatform(poolItem.platform);
@@ -81,20 +111,6 @@ export default class Index {
           let stakeTokenSupply = web3.utils.fromWei(poolStakeTokenSupply, 'ether');
           poolItem.stakeTokenSupply = stakeTokenSupply;
 
-          if (poolItem.lpContract) {
-            const lpPool = rPoolList.find((item: any) => {
-              return item.contract === poolItem.lpContract;
-            });
-            if (lpPool) {
-              poolItem.liquidity = lpPool.liquidity;
-              poolItem.slippage = lpPool.slippage;
-              poolItem.lpPrice = lpPool.lpPrice;
-            } else {
-              poolItem.lpPrice = 1;
-            }
-          } else {
-            poolItem.lpPrice = 1;
-          }
           poolItem.apr = await this.getLpApr(
             poolItem.platform,
             ethAddress,

@@ -120,7 +120,6 @@ import RSOLHomeTemplate from './pages/rSOL/template';
 import RSOLValidator from './pages/rSOL/validator';
 import HomeTemplate from './pages/template/homeTemplate';
 
-
 const routesFactory = (role?: any) => {
   const routes = [
     {
@@ -545,23 +544,23 @@ const routesFactory = (role?: any) => {
             },
           ],
         },
-        {
-          id: 'rDEX_home',
-          path: '/rDEX',
-          type: 'rDEX',
-          component: RDEXHome,
-          routes: [
-            {
-              id: 'rDEX_home',
-              path: '/rDEX/home',
-              component: RDEXHome,
-            },
-            {
-              path: '*',
-              component: () => <Redirect to='/rDEX/home' />,
-            },
-          ],
-        },
+        // {
+        //   id: 'rDEX_home',
+        //   path: '/rDEX',
+        //   type: 'rDEX',
+        //   component: RDEXHome,
+        //   routes: [
+        //     {
+        //       id: 'rDEX_home',
+        //       path: '/rDEX/home',
+        //       component: RDEXHome,
+        //     },
+        //     {
+        //       path: '*',
+        //       component: () => <Redirect to='/rDEX/home' />,
+        //     },
+        //   ],
+        // },
         {
           id: 'fee_station',
           path: '/feeStation',

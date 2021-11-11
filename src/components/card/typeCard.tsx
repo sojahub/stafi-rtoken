@@ -45,7 +45,7 @@ export default function Index(props: Props) {
         <div className='sub_title'>
           {props.type == 'rDOT' && 'Delegate your DOT, get rDOT'}
           {props.type == 'rKSM' && 'Delegate your KSM, get rKSM'}
-          {props.type == 'rATOM' && 'Delegate your MATIC, get rMATIC'}
+          {props.type == 'rATOM' && 'Delegate your ATOM, get rATOM'}
           {props.type == 'rETH' && 'Delegate your ETH'}
           {props.type == 'rFIS' && 'Delegate your FIS, get rFIS'}
           {props.type == 'rSOL' && 'Delegate your SOL, get rSOL'}
