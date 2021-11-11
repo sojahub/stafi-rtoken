@@ -41,7 +41,7 @@ export default class Index {
     return rpc.post(url, { contract: JSON.stringify(contractList) });
   }
 
-  fillLpApiData(oldAct: any, rPoolList: any[], fisPrice: any) {
+  fillLpApiData(oldAct: any, rPoolList: any[]) {
     try {
       for (let poolItem of oldAct.children) {
         try {

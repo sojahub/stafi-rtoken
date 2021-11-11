@@ -291,19 +291,18 @@ export const getRPoolList = (): AppThunk => async (dispatch, getState) => {
 };
 
 export const getLPList =
-  (showLoading: boolean): AppThunk =>
+  (rPoolList: any[]): AppThunk =>
   async (dispatch, getState) => {
     try {
-      const [rPoolListRes, tokenPriceListRes] = await Promise.all([
-        rPoolServer.getRPoolList(),
-        rpc.fetchRtokenPriceList(),
-      ]);
+      let lpList = cloneDeep(getState().rPoolModule.lpList);
 
-      let rPoolList = [];
-      if (rPoolListRes.status === '80000' && rPoolListRes.data) {
-        rPoolList = rPoolListRes.data.list;
-      }
+      lpList.forEach((item: any) => {
+        const newItem = rPoolServer.fillLpApiData(item, rPoolList);
+        item.children = newItem?.children;
+      });
+      dispatch(setLpList(cloneDeep(lpList)));
 
+      const [tokenPriceListRes] = await Promise.all([rpc.fetchRtokenPriceList()]);
       let fisPrice = '';
       if (tokenPriceListRes && tokenPriceListRes.status === '80000') {
         const fisObj = tokenPriceListRes.data?.find((item: any) => {
@@ -313,15 +312,6 @@ export const getLPList =
           fisPrice = fisObj.price;
         }
       }
-
-      let lpList = cloneDeep(getState().rPoolModule.lpList);
-
-      lpList.forEach((item: any) => {
-        const newItem = rPoolServer.fillLpApiData(item, rPoolList, fisPrice);
-        item.children = newItem?.children;
-      });
-      dispatch(setLpList(cloneDeep(lpList)));
-
       const promiseList = [];
       for (let index = 0; index < lpList.length; index++) {
         promiseList.push(rPoolServer.fillLpData(lpList[index], fisPrice));
