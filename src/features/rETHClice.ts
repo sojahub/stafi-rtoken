@@ -311,17 +311,16 @@ export const monitoring_Method = (): AppThunk => (dispatch, getState) => {
   if (isload_monitoring) {
     return;
   }
-  if (typeof window.ethereum !== 'undefined' && ethereum.isMetaMask) {
+  if (typeof window.ethereum !== 'undefined' && window.ethereum.isMetaMask) {
     dispatch(setIsloadMonitoring(true));
-    ethereum.autoRefreshOnNetworkChange = false;
-    ethereum.on('accountsChanged', (accounts: any) => {
+    window.ethereum.autoRefreshOnNetworkChange = false;
+    window.ethereum.on('accountsChanged', (accounts: any) => {
       if (accounts.length > 0) {
         dispatch(handleEthAccount(accounts[0]));
 
         setTimeout(() => {
           // dispatch(getAssetBalanceAll());
           dispatch(reloadData());
-          window.location.reload();
         }, 200);
       } else {
         // MetaMask is locked or the user has not connected any accounts

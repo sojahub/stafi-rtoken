@@ -7,6 +7,11 @@ import no_data_png from 'src/assets/images/nodata.png';
 import successIcon from 'src/assets/images/unbond_record_success.png';
 import pendingIcon from 'src/assets/images/unbond_record_pending.png';
 import moment from 'moment';
+import CommonClice from 'src/features/commonClice';
+import { useSelector } from 'react-redux';
+import { getRsymbolByTokenTitle } from 'src/config';
+
+const commonClice = new CommonClice();
 
 type Props = {
   type: 'rDOT' | 'rETH' | 'rFIS' | 'rKSM' | 'rATOM' | 'rSOL' | 'rMATIC' | 'rBNB';
@@ -14,11 +19,22 @@ type Props = {
 };
 
 export const UnbondRecord = (props: Props) => {
+  const [loading, setLoading] = useState(true);
   const [unbondRecords, setUnbondRecords] = useState([]);
 
+  const { fisAddress } = useSelector((state: any) => {
+    return {
+      fisAddress: state.FISModule.fisAccount && state.FISModule.fisAccount.address,
+    };
+  });
+
   useEffect(() => {
-    setUnbondRecords(localStorageUtil.getRTokenUnbondRecords(props.type));
-  }, [props.type]);
+    // setUnbondRecords(localStorageUtil.getRTokenUnbondRecords(props.type));
+    commonClice.getUnbondRecords(fisAddress, getRsymbolByTokenTitle(props.type)).then((items) => {
+      setLoading(false);
+      setUnbondRecords(items);
+    });
+  }, [props.type, fisAddress]);
 
   return (
     <div style={{ flex: 1, position: 'relative' }}>
@@ -41,7 +57,7 @@ export const UnbondRecord = (props: Props) => {
         </Text>
       </HContainer>
 
-      {unbondRecords.length === 0 && (
+      {unbondRecords.length === 0 && !loading && (
         <NoDataContainer>
           <NoDataImage src={no_data_png} />
         </NoDataContainer>
@@ -71,12 +87,12 @@ export const UnbondRecord = (props: Props) => {
         </HContainer>
       )}
       <ContentContainer>
-        {unbondRecords.map((itemObj: any) => (
-          <ItemContainer key={itemObj.id}>
+        {unbondRecords.map((itemObj: any, index: number) => (
+          <ItemContainer key={index}>
             <HContainer ml='20px' mr='10px' justifyContent='flex-start'>
               <div style={{ width: '20px' }}>
                 <img
-                  src={Number(itemObj.estimateSuccessTime) <= moment().valueOf() ? successIcon : pendingIcon}
+                  src={itemObj.remainingDays * 1 <= 0 ? successIcon : pendingIcon}
                   alt='success'
                   width='12px'
                   height='12px'
@@ -91,7 +107,7 @@ export const UnbondRecord = (props: Props) => {
 
               <div style={{ width: '85px' }}>
                 <Text size='12px' color='#C8C8C8' scale={0.83} transformOrigin='center left'>
-                  ≈ {Math.ceil(Math.max(0, Number(itemObj.estimateSuccessTime) - moment().valueOf()) / 86400000)} days
+                  ≈ {itemObj.remainingDays} days
                 </Text>
               </div>
 
@@ -102,7 +118,7 @@ export const UnbondRecord = (props: Props) => {
                   scale={0.83}
                   transformOrigin='center left'
                   style={{ position: 'absolute', left: 0, top: 0 }}>
-                  {itemObj.recipient}
+                  {itemObj.receiver}
                 </Text>
               </div>
             </HContainer>

@@ -18,15 +18,14 @@ export default function Index(props: any) {
     platform = qs.parse(history.location.search.slice(1)).platform as string;
   }
 
-  const { ratio, tokenAmount, ratioShow, lastEraRate, metaMaskNetworkId } = useSelector((state: any) => {
+  const { ratio, tokenAmount, ratioShow, lastEraRate, metaMaskNetworkId, ethAddress } = useSelector((state: any) => {
     return {
       metaMaskNetworkId: state.globalModule.metaMaskNetworkId,
+      ethAddress: state.rETHModule.ethAccount && state.rETHModule.ethAccount.address,
       ratio: state.rETHModule.ratio,
       ratioShow: state.rETHModule.ratioShow,
       tokenAmount:
-        platform === 'Native'
-          ? state.rETHModule.rethAmount
-          : platform === 'ERC20'
+        platform === 'ERC20'
           ? state.ETHModule.ercETHBalance
           : platform === 'BEP20'
           ? state.BSCModule.bepRETHBalance
@@ -50,7 +49,7 @@ export default function Index(props: any) {
         dispatch(getBEP20RETHAssetBalance());
       }, 500);
     }
-  }, [platform, metaMaskNetworkId]);
+  }, [platform, metaMaskNetworkId, ethAddress]);
 
   useEffect(() => {
     let count = 0;

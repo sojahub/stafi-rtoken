@@ -3,9 +3,10 @@
 import { hexToU8a } from '@polkadot/util';
 import { message } from 'antd';
 import { rSymbol, Symbol } from 'src/keyring/defaults';
-import keyring from 'src/servers/index';
+import keyring, { Keyring } from 'src/servers/index';
 import RpcServer from 'src/servers/rpc';
 import StafiServer from 'src/servers/stafi';
+import numberUtil from 'src/util/numberUtil';
 import NumberUtil from 'src/util/numberUtil';
 
 const stafiServer = new StafiServer();
@@ -197,6 +198,40 @@ export default class CommonClice {
       }
     } else {
       cb && cb(0);
+    }
+  }
+  async getUnbondRecords(fisAddress: string, symbol: any, cb?: Function) {
+    const stafiApi = await stafiServer.createStafiApi();
+    const eraResult = await stafiApi.query.rTokenLedger.chainEras(symbol);
+    let currentEra = eraResult.toJSON();
+    console.log('currentEra', currentEra);
+    if (currentEra) {
+      const result = await stafiApi.query.rTokenSeries.accountUnbonds(fisAddress, symbol);
+      let accountUnbonds = result.toJSON();
+      if (accountUnbonds && accountUnbonds.length > 0) {
+        accountUnbonds.sort((a: any, b: any) => {
+          return b.unlock_era * 1 - a.unlock_era * 1;
+        });
+        const keyringInstance = keyring.init(symbol);
+        accountUnbonds.forEach((element: any) => {
+          if (symbol === rSymbol.Ksm) {
+            element.remainingDays = Math.ceil(Math.max(0, element.unlock_era * 1 - currentEra * 1) / 4);
+          } else {
+            element.remainingDays = Math.max(0, element.unlock_era * 1 - currentEra * 1);
+          }
+          element.amount = numberUtil.handleAmountRoundToFixed(numberUtil.tokenAmountToHuman(element.value, symbol), 6);
+          const receiver = keyringInstance.encodeAddress(element.recipient);
+          element.receiver = receiver;
+        });
+        if (accountUnbonds.length > 10) {
+          return accountUnbonds.slice(0, 10);
+        }
+        return accountUnbonds;
+      } else {
+        return [];
+      }
+    } else {
+      return [];
     }
   }
   async getUnbondCommission() {

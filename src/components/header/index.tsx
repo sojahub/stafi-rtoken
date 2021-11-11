@@ -259,9 +259,7 @@ export default function Index(props: Props) {
   }, [noticeData]);
 
   useEffect(() => {
-    if (account && account.ethAccount) {
-      dispatch(monitoring_Method());
-    }
+    dispatch(monitoring_Method());
   }, [account]);
 
   if (location.pathname.includes('/rPool/home')) {

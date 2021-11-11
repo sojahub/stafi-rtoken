@@ -173,7 +173,7 @@ export default function MintOverview() {
     tokenSymbol.toString() !== rSymbol.Atom.toString() &&
     tokenSymbol.toString() !== rSymbol.Fis.toString() &&
     tokenSymbol.toString() !== rSymbol.Bnb.toString() &&
-    tokenSymbol.toString() !== rSymbol.Sol.toString() 
+    tokenSymbol.toString() !== rSymbol.Sol.toString()
   ) {
     history.replace('/rPool/home?tab=mp');
   }
@@ -299,7 +299,6 @@ export default function MintOverview() {
             width={'400px'}
             onClick={() => {
               dispatch(connectMetamask(config.ethChainId()));
-              dispatch(monitoring_Method());
             }}>
             Connect to MetaMask
           </Button>
