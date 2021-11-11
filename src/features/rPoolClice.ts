@@ -2,6 +2,7 @@
 
 import { createSlice } from '@reduxjs/toolkit';
 import { message } from 'antd';
+import { cloneDeep } from 'lodash';
 import config from 'src/config/index';
 import { Symbol } from 'src/keyring/defaults';
 import EthServer from 'src/servers/eth';
@@ -9,6 +10,7 @@ import RPoolServer from 'src/servers/rpool';
 import { stafi_uuid } from 'src/util/common';
 import { AppThunk } from '../store';
 import { setLoading } from './globalClice';
+import rpc from 'src/util/rpc';
 import { add_Notice, noticeStatus, noticesubType, noticeType } from './noticeClice';
 
 const lpActs: Array<any> = [
@@ -261,7 +263,7 @@ export const { setRPoolList, setLpList, setLoadingLpList, setTotalLiquidity, set
 
 export const getRPoolList = (): AppThunk => async (dispatch, getState) => {
   const result = await rPoolServer.getRPoolList();
-  if (result.status == '80000') {
+  if (result.status === '80000') {
     const list = result.data.list;
     let totalLiquidity = 0;
     let apyCount = 0;
@@ -292,13 +294,47 @@ export const getLPList =
   (showLoading: boolean): AppThunk =>
   async (dispatch, getState) => {
     try {
-      // if (showLoading) {
-      //   dispatch(setLoadingLpList(true));
-      // }
-      const newList = await rPoolServer.fillLpData(lpActs, '');
-      if (newList) {
-        dispatch(setLpList(newList));
+      const [rPoolListRes, tokenPriceListRes] = await Promise.all([
+        rPoolServer.getRPoolList(),
+        rpc.fetchRtokenPriceList(),
+      ]);
+
+      let rPoolList = [];
+      if (rPoolListRes.status === '80000' && rPoolListRes.data) {
+        rPoolList = rPoolListRes.data.list;
       }
+
+      let fisPrice = '';
+      if (tokenPriceListRes && tokenPriceListRes.status === '80000') {
+        const fisObj = tokenPriceListRes.data?.find((item: any) => {
+          return item.symbol === 'FIS';
+        });
+        if (fisObj) {
+          fisPrice = fisObj.price;
+        }
+      }
+
+      let lpList = cloneDeep(getState().rPoolModule.lpList);
+
+      lpList.forEach((item: any) => {
+        const newItem = rPoolServer.fillLpApiData(item, rPoolList, fisPrice);
+        item.children = newItem?.children;
+      });
+      dispatch(setLpList(cloneDeep(lpList)));
+
+      const promiseList = [];
+      for (let index = 0; index < lpList.length; index++) {
+        promiseList.push(rPoolServer.fillLpData(lpList[index], fisPrice));
+      }
+
+      const resultList = await Promise.all(promiseList);
+      lpList.forEach((item: any) => {
+        const newItem = resultList.find((data: any) => {
+          return data.name === item.name;
+        });
+        item.children = newItem?.children;
+      });
+      dispatch(setLpList(cloneDeep(lpList)));
     } finally {
       dispatch(setLoadingLpList(false));
     }
