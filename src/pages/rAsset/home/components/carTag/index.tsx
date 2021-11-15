@@ -33,7 +33,7 @@ type Props = {
   onClick?: Function;
 };
 
-export default function index(props: Props) {
+export default function Index(props: Props) {
   const { selectedPlatform, rTokenPlatform } = useParams<any>();
   const history = useHistory();
 
@@ -99,11 +99,7 @@ export default function index(props: Props) {
                 onSelectChange={(v: any) => {
                   setSelectedRTokenData(v);
                   setShowSelect(false);
-                  if (selectedPlatform !== 'native') {
-                    history.push(`/rAsset/home/${v.type}`);
-                  } else {
-                    history.push(`/rAsset/home/native/${v.type}`);
-                  }
+                  history.push(`/rAsset/home/${v.type}`);
                 }}
               />
             }>

@@ -3,6 +3,7 @@
 import { encodeAddress } from '@polkadot/keyring';
 import { hexToU8a } from '@polkadot/util';
 import { message } from 'antd';
+import config, { getSymbolTitle } from 'src/config';
 import { rSymbol, Symbol } from 'src/keyring/defaults';
 import keyring, { Keyring } from 'src/servers/index';
 import RpcServer from 'src/servers/rpc';
@@ -206,11 +207,9 @@ export default class CommonClice {
     const stafiApi = await stafiServer.createStafiApi();
     const eraResult = await stafiApi.query.rTokenLedger.chainEras(symbol);
     let currentEra = eraResult.toJSON();
-    console.log('currentEra', currentEra);
     if (currentEra) {
       const result = await stafiApi.query.rTokenSeries.accountUnbonds(fisAddress, symbol);
       let accountUnbonds = result.toJSON();
-      console.log('adfsdf', accountUnbonds);
 
       if (accountUnbonds && accountUnbonds.length > 0) {
         accountUnbonds.sort((a: any, b: any) => {
@@ -219,10 +218,13 @@ export default class CommonClice {
         const keyringInstance = keyring.initByRSymbol(symbol);
         accountUnbonds.forEach((element: any) => {
           if (symbol === rSymbol.Ksm) {
-            element.remainingDays = Math.ceil(Math.max(0, element.unlock_era * 1 - currentEra * 1) / 4);
-          } else {
+            element.remainingDays = Math.ceil(Math.max(0, element.unlock_era * 1 + 1 - currentEra * 1) / 4);
+          } else if (symbol === rSymbol.Bnb) {
             element.remainingDays = Math.max(0, element.unlock_era * 1 - currentEra * 1);
+          } else {
+            element.remainingDays = Math.max(0, element.unlock_era * 1 + 1 - currentEra * 1);
           }
+          element.periodInDays = config.unboundAroundDays(getSymbolTitle(symbol).toLowerCase());
           element.amount = numberUtil.handleAmountRoundToFixed(numberUtil.tokenAmountToHuman(element.value, symbol), 6);
           if (symbol === rSymbol.Matic || symbol === rSymbol.Bnb) {
             element.receiver = element.recipient;

@@ -142,6 +142,12 @@ export default function Index(props: Props) {
     }
     if (location.pathname.includes('/rETH')) {
       if (state.rETHModule.ethAccount) {
+        if (location.pathname.includes('/rETH/staker/info')) {
+          return {
+            ethAccount: state.rETHModule.ethAccount,
+            type: 'rETH/status',
+          };
+        }
         return {
           ethAccount: state.rETHModule.ethAccount,
         };
@@ -446,6 +452,7 @@ export default function Index(props: Props) {
                     <img src={wrong_network} className={'wrong_network'} />
                   )}
                 {account.type !== 'rPool/lp' &&
+                  account.type !== 'rETH/status' &&
                   metaMaskNetworkId &&
                   !config.metaMaskNetworkIsGoerliEth(metaMaskNetworkId) && (
                     <img src={wrong_network} className={'wrong_network'} />

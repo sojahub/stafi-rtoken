@@ -27,7 +27,7 @@ const { divide, floor, max, min, multiply, subtract } = create(
   config,
 );
 
-export default {
+const numberUtil = {
   // Add floating point numbers
   floatAdd: function (arg1, arg2) {
     var r1, r2, m;
@@ -142,7 +142,7 @@ export default {
 
   // The return string contains 6 decimal places, including 0
   handleFisAmountToFixed(amount) {
-    if (amount == '--') {
+    if (amount === '--') {
       return '--';
     }
     return (floor(amount * 1000000) / 1000000).toFixed(6) || '--';
@@ -393,3 +393,5 @@ export default {
     return subtract(x, y);
   },
 };
+
+export default numberUtil;

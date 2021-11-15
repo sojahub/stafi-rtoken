@@ -72,14 +72,18 @@ export default function Index(props: Props) {
         {
           <TradePopover
             data={tradeUrlsData}
-            onClick={(item: any) => {
-              setTradeLabel(item.label);
-              setTradeUrl(item.url);
-              setTradeModalVisible(true);
-            }}>
+            onClick={
+              props.rSymbol === 'rETH' && props.operationType === 'erc20'
+                ? null
+                : (item: any) => {
+                    setTradeLabel(item.label);
+                    setTradeUrl(item.url);
+                    setTradeModalVisible(true);
+                  }
+            }>
             <GhostButton disabled={!props.tradeList || props.tradeList.length === 0}>
               Trade
-              {<img className='dow_svg' src={dow_svg} />}
+              {<img className='dow_svg' src={dow_svg} alt='down' />}
             </GhostButton>
           </TradePopover>
         }

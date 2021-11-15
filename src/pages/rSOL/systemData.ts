@@ -12,6 +12,10 @@ export const rSOL_data = [
         url: '/rSOL/staker/reward',
       },
       {
+        text: '-Unbond',
+        url: '/rSOL/staker/unbondRecords',
+      },
+      {
         text: '-Recovery',
         url: '/rSOL/search',
       },

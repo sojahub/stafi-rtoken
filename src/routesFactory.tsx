@@ -18,6 +18,7 @@ import RATOMStakerIndex from './pages/rATOM/staker/home';
 import RATOMStakerInfo from './pages/rATOM/staker/info';
 import RATOMStakerRedeem from './pages/rATOM/staker/redeem';
 import RATOMStakerReward from './pages/rATOM/staker/reward';
+import RATOMStakerUnbondRecords from './pages/rATOM/staker/unbondRecords';
 import RATOMHomeTemplate from './pages/rATOM/template';
 import RATOMValidator from './pages/rATOM/validator';
 import RBnbHome from './pages/rBNB/home';
@@ -30,6 +31,7 @@ import RBnbStakerIndex from './pages/rBNB/staker/home';
 import RBnbStakerInfo from './pages/rBNB/staker/info';
 import RBnbStakerRedeem from './pages/rBNB/staker/redeem';
 import RBnbStakerReward from './pages/rBNB/staker/reward';
+import RBnbStakerUnbondRecords from './pages/rBNB/staker/unbondRecords';
 import RBnbHomeTemplate from './pages/rBNB/template';
 import RBnbValidator from './pages/rBNB/validator';
 import RDEXHome from './pages/rDEX/home';
@@ -43,6 +45,7 @@ import RDOTStakerIndex from './pages/rDOT/staker/home';
 import RDOTStakerInfo from './pages/rDOT/staker/info';
 import RDOTStakerRedeem from './pages/rDOT/staker/redeem';
 import RDOTStakerReward from './pages/rDOT/staker/reward';
+import RDOTStakerUnbondRewards from './pages/rDOT/staker/unbondRecords';
 import DOTHomeTemplate from './pages/rDOT/template';
 import RDOTValidator from './pages/rDOT/validator';
 import RETHHome from './pages/rETH/home';
@@ -68,6 +71,7 @@ import RFISStakerIndex from './pages/rFIS/staker/home';
 import RFISStakerInfo from './pages/rFIS/staker/info';
 import RFISStakerRedeem from './pages/rFIS/staker/redeem';
 import RFISStakerReward from './pages/rFIS/staker/reward';
+import RFISStakerUnbondRecords from './pages/rFIS/staker/unbondRecords';
 import RFISHomeTemplate from './pages/rFIS/template';
 import RFISValidator from './pages/rFIS/validator';
 import RFISValidatorOffboard from './pages/rFIS/validator/offboard';
@@ -82,6 +86,7 @@ import RKSMStakerIndex from './pages/rKSM/staker/home';
 import RKSMStakerInfo from './pages/rKSM/staker/info';
 import RKSMStakerRedeem from './pages/rKSM/staker/redeem';
 import RKSMStakerReward from './pages/rKSM/staker/reward';
+import RKSMStakerUnbondRecords from './pages/rKSM/staker/unbondRecords';
 import RKSMHomeTemplate from './pages/rKSM/template';
 import RKSMValidator from './pages/rKSM/validator';
 import RMaticHome from './pages/rMATIC/home';
@@ -94,6 +99,7 @@ import RMaticStakerIndex from './pages/rMATIC/staker/home';
 import RMaticStakerInfo from './pages/rMATIC/staker/info';
 import RMaticStakerRedeem from './pages/rMATIC/staker/redeem';
 import RMaticStakerReward from './pages/rMATIC/staker/reward';
+import RMaticStakerUnbondRecords from './pages/rMATIC/staker/unbondRecords';
 import RMaticHomeTemplate from './pages/rMATIC/template';
 import RMaticValidator from './pages/rMATIC/validator';
 import RPoolHome from './pages/rPool/home';
@@ -116,6 +122,7 @@ import RSOLStakerIndex from './pages/rSOL/staker/home';
 import RSOLStakerInfo from './pages/rSOL/staker/info';
 import RSOLStakerRedeem from './pages/rSOL/staker/redeem';
 import RSOLStakerReward from './pages/rSOL/staker/reward';
+import RSOLStakerUnbondRecords from './pages/rSOL/staker/unbondRecords';
 import RSOLHomeTemplate from './pages/rSOL/template';
 import RSOLValidator from './pages/rSOL/validator';
 import HomeTemplate from './pages/template/homeTemplate';
@@ -182,6 +189,13 @@ const routesFactory = (role?: any) => {
                   type: 'Staker',
                   rSymbol: rSymbol.Dot,
                   component: RDOTStakerReward,
+                },
+                {
+                  id: 'RDOT_reward_unbond',
+                  path: '/rDOT/staker/unbondRecords',
+                  type: 'Staker',
+                  rSymbol: rSymbol.Dot,
+                  component: RDOTStakerUnbondRewards,
                 },
                 {
                   id: 'RDOT_staker_index_redeem',
@@ -394,6 +408,13 @@ const routesFactory = (role?: any) => {
                   component: RKSMStakerReward,
                 },
                 {
+                  id: 'RKSM_reward_unbond',
+                  path: '/rKSM/staker/unbondRecords',
+                  type: 'Staker',
+                  rSymbol: rSymbol.Ksm,
+                  component: RKSMStakerUnbondRecords,
+                },
+                {
                   id: 'RKSM_staker_index_redeem',
                   path: '/rKSM/staker/redeem',
                   type: 'Staker',
@@ -483,6 +504,13 @@ const routesFactory = (role?: any) => {
                   type: 'Staker',
                   rSymbol: rSymbol.Atom,
                   component: RATOMStakerReward,
+                },
+                {
+                  id: 'RATOM_reward_unbond',
+                  path: '/rATOM/staker/unbondRecords',
+                  type: 'Staker',
+                  rSymbol: rSymbol.Atom,
+                  component: RATOMStakerUnbondRecords,
                 },
                 {
                   id: 'RATOM_staker_index_redeem',
@@ -637,6 +665,13 @@ const routesFactory = (role?: any) => {
                   type: 'Staker',
                   rSymbol: rSymbol.Sol,
                   component: RSOLStakerReward,
+                },
+                {
+                  id: 'RSOL_reward_unbond',
+                  path: '/rSOL/staker/unbondRecords',
+                  type: 'Staker',
+                  rSymbol: rSymbol.Sol,
+                  component: RSOLStakerUnbondRecords,
                 },
                 {
                   path: '*',
@@ -801,6 +836,13 @@ const routesFactory = (role?: any) => {
                   component: RMaticStakerReward,
                 },
                 {
+                  id: 'RMATIC_reward_unbond',
+                  path: '/rMATIC/staker/unbondRecords',
+                  type: 'Staker',
+                  rSymbol: rSymbol.Matic,
+                  component: RMaticStakerUnbondRecords,
+                },
+                {
                   id: 'RMATIC_staker_index_redeem',
                   path: '/rMATIC/staker/redeem',
                   type: 'Staker',
@@ -890,6 +932,13 @@ const routesFactory = (role?: any) => {
                   type: 'Staker',
                   rSymbol: rSymbol.Bnb,
                   component: RBnbStakerReward,
+                },
+                {
+                  id: 'RBNB_reward_unbond',
+                  path: '/rBNB/staker/unbondRecords',
+                  type: 'Staker',
+                  rSymbol: rSymbol.Bnb,
+                  component: RBnbStakerUnbondRecords,
                 },
                 {
                   id: 'RBNB_staker_index_redeem',
@@ -988,6 +1037,13 @@ const routesFactory = (role?: any) => {
                   type: 'Staker',
                   rSymbol: rSymbol.Fis,
                   component: RFISStakerReward,
+                },
+                {
+                  id: 'RFIS_staker_index_redeem',
+                  path: '/rFIS/staker/unbondRecords',
+                  type: 'Staker',
+                  rSymbol: rSymbol.Fis,
+                  component: RFISStakerUnbondRecords,
                 },
                 {
                   path: '*',

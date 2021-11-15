@@ -1,21 +1,22 @@
-import leftArrowSvg from 'src/assets/images/left_arrow.svg';
 import { useEffect, useState } from 'react';
-import { HContainer, Text } from '../commonComponents';
-import styled from 'styled-components';
+import { useDispatch, useSelector } from 'react-redux';
+import leftArrowSvg from 'src/assets/images/left_arrow.svg';
 import no_data_png from 'src/assets/images/nodata.png';
-import successIcon from 'src/assets/images/unbond_record_success.png';
 import pendingIcon from 'src/assets/images/unbond_record_pending.png';
+import successIcon from 'src/assets/images/unbond_record_success.png';
+import { getRsymbolByTokenTitle } from 'src/config';
 import CommonClice from 'src/features/commonClice';
 import { setLoading as setGlobalLoading } from 'src/features/globalClice';
-import { useDispatch, useSelector } from 'react-redux';
-import { getRsymbolByTokenTitle } from 'src/config';
 import localStorageUtil from 'src/util/localStorage';
+import numberUtil from 'src/util/numberUtil';
+import styled from 'styled-components';
+import { HContainer, Text } from '../commonComponents';
+import LeftContent from './leftContent';
 
 const commonClice = new CommonClice();
 
 type Props = {
   type: 'rDOT' | 'rETH' | 'rFIS' | 'rKSM' | 'rATOM' | 'rSOL' | 'rMATIC' | 'rBNB';
-  onClickBack: Function;
 };
 
 export const UnbondRecord = (props: Props) => {
@@ -44,99 +45,98 @@ export const UnbondRecord = (props: Props) => {
   }, [props.type, fisAddress, dispatch]);
 
   return (
-    <div style={{ flex: 1, position: 'relative' }}>
-      <HContainer justifyContent='flex-start'>
-        <img
-          onClick={() => {
-            props.onClickBack();
-          }}
-          src={leftArrowSvg}
-          alt='back'
-          style={{
-            cursor: 'pointer',
-            width: '13px',
-            height: '24px',
-          }}
-        />
-
-        <Text size='30px' bold color='white' ml='20px'>
-          Unbonded Records
-        </Text>
-      </HContainer>
-
-      {unbondRecords.length === 0 && !loading && (
-        <NoDataContainer>
-          <NoDataImage src={no_data_png} />
-        </NoDataContainer>
-      )}
-
-      {unbondRecords.length > 0 && (
-        <HContainer ml='20px' mr='10px' mt='35px' mb='9px' style={{ width: '530px' }}>
-          <div style={{ width: '20px' }}></div>
-
-          <div style={{ width: '80px', marginLeft: '10px' }}>
-            <Text size='12px' color='#7C7C7C' style={{ width: '95px' }}>
-              Amount
-            </Text>
-          </div>
-
-          <div style={{ width: '100px' }}>
-            <Text size='12px' color='#7C7C7C' ml='15px'>
-              Period
-            </Text>
-          </div>
-
-          <div style={{ flex: 1 }}>
-            <Text size='12px' color='#7C7C7C' style={{ flex: 1 }}>
-              Unbond to
-            </Text>
-          </div>
+    <LeftContent className='stafi_stake_info_context' padding='36px 10px 0'>
+      <div style={{ flex: 1, position: 'relative' }}>
+        <HContainer justifyContent='flex-start'>
+          <Text size='30px' bold color='white' ml='20px'>
+            Unbonded Records
+          </Text>
         </HContainer>
-      )}
-      <ContentContainer>
-        {unbondRecords.map((itemObj: any, index: number) => (
-          <ItemContainer key={index}>
-            <HContainer ml='20px' mr='10px' justifyContent='flex-start'>
-              <div style={{ width: '20px' }}>
-                <img
-                  src={itemObj.remainingDays * 1 <= 0 ? successIcon : pendingIcon}
-                  alt='success'
-                  width='12px'
-                  height='12px'
-                />
-              </div>
 
-              <div style={{ width: '95px', marginLeft: '10px' }}>
-                <Text size='16px' color='white'>
-                  {itemObj.amount}
-                </Text>
-              </div>
+        {unbondRecords.length === 0 && !loading && (
+          <NoDataContainer>
+            <NoDataImage src={no_data_png} />
+          </NoDataContainer>
+        )}
 
-              <div style={{ width: '85px' }}>
-                <Text size='12px' color='#C8C8C8' scale={0.83} transformOrigin='center left'>
-                  ≈ {itemObj.remainingDays} days
-                </Text>
-              </div>
+        {unbondRecords.length > 0 && (
+          <HContainer ml='20px' mr='10px' mt='30px' mb='9px' style={{ width: '530px' }}>
+            <div style={{ width: '20px' }}></div>
 
-              <div style={{ position: 'relative', marginBottom: '15px' }}>
-                <Text
-                  size='12px'
-                  color='#C8C8C8'
-                  scale={0.83}
-                  transformOrigin='center left'
-                  style={{ position: 'absolute', left: 0, top: 0 }}>
-                  {itemObj.receiver || itemObj.recipient}
-                </Text>
-              </div>
-            </HContainer>
+            <div style={{ width: '90px', marginLeft: '10px' }}>
+              <Text size='14px' color='#7C7C7C' style={{ width: '95px' }}>
+                Amount
+              </Text>
+            </div>
 
-            <ItemDivider />
-          </ItemContainer>
-        ))}
-      </ContentContainer>
+            <div style={{ width: '100px' }}>
+              <Text size='14px' color='#7C7C7C' ml='15px'>
+                Period
+              </Text>
+            </div>
 
-      <MaxCountText>This form only shows the recent 10 records</MaxCountText>
-    </div>
+            <div style={{ flex: 1 }}>
+              <Text size='14px' color='#7C7C7C' style={{ flex: 1 }}>
+                Received Address
+              </Text>
+            </div>
+          </HContainer>
+        )}
+        <ContentContainer>
+          {unbondRecords.map((itemObj: any, index: number) => (
+            <ItemContainer key={index}>
+              <HContainer ml='20px' mr='10px' justifyContent='flex-start'>
+                <div style={{ width: '20px' }}>
+                  <img
+                    src={itemObj.remainingDays * 1 <= 0 ? successIcon : pendingIcon}
+                    alt='success'
+                    width='12px'
+                    height='12px'
+                  />
+                </div>
+
+                <div style={{ width: '105px', marginLeft: '10px' }}>
+                  <Text size='16px' color='white'>
+                    {itemObj.amount !== '--'
+                      ? Number(itemObj.amount) > 0 && Number(itemObj.amount) < 0.0001
+                        ? '<0.0001'
+                        : numberUtil.handleAmountFloorToFixed(itemObj.amount, 3)
+                      : '--'}
+                  </Text>
+                </div>
+
+                <div style={{ width: '85px' }}>
+                  <Text size='12px' color='#C8C8C8' scale={0.83} transformOrigin='center left' sameLineHeight>
+                    ≈ {itemObj.periodInDays} days
+                  </Text>
+                  {Number(itemObj.remainingDays) > 0 && (
+                    <Text size='12px' color='#C8C8C8' scale={0.83} transformOrigin='center left' sameLineHeight>
+                      {Number(itemObj.remainingDays) === 1 ? '<1' : itemObj.remainingDays}d left
+                    </Text>
+                  )}
+                </div>
+
+                <div style={{ position: 'relative', marginBottom: '15px' }}>
+                  <Text
+                    size='12px'
+                    color='#C8C8C8'
+                    scale={0.83}
+                    transformOrigin='center left'
+                    bold
+                    style={{ position: 'absolute', left: 0, top: 0 }}>
+                    {itemObj.receiver || itemObj.recipient}
+                  </Text>
+                </div>
+              </HContainer>
+
+              <ItemDivider />
+            </ItemContainer>
+          ))}
+        </ContentContainer>
+
+        <MaxCountText>Only the last 10 records are displayed</MaxCountText>
+      </div>
+    </LeftContent>
   );
 };
 
@@ -178,7 +178,7 @@ const NoDataImage = styled.img`
 const MaxCountText = styled.div`
   position: absolute;
   bottom: 14px;
-  right: 5px;
+  left: 5px;
   font-size: 12px;
   color: #c4c4c4;
 `;

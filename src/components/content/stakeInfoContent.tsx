@@ -2,9 +2,9 @@
 
 import { message } from 'antd';
 import React, { useMemo, useState } from 'react';
-import { useSelector } from 'react-redux';
 import { useHistory } from 'react-router';
 import dow_svg from 'src/assets/images/left_arrow_black.svg';
+import arrowIcon from 'src/assets/images/staker_info_content_arrow.svg';
 import rDOT_DOT_svg from 'src/assets/images/rDOT_DOT.svg';
 import rATOM_stafi_svg from 'src/assets/images/selected_r_atom.svg';
 import rBnb_stafi_svg from 'src/assets/images/selected_r_bnb.svg';
@@ -16,7 +16,6 @@ import rMatic_stafi_svg from 'src/assets/images/selected_r_matic.svg';
 import rSOL_stafi_svg from 'src/assets/images/selected_r_sol.svg';
 import config from 'src/config/index';
 import Button from 'src/shared/components/button/button';
-import { configuredStore } from 'src/store';
 import { requestSwitchMetaMaskNetwork } from 'src/util/metaMaskUtil';
 import NumberUtil from 'src/util/numberUtil';
 import styled from 'styled-components';
@@ -25,7 +24,6 @@ import SwapModalNew from '../modal/swapModalNew';
 import TradePopover from '../tradePopover';
 import LeftContent from './leftContent';
 import { SelectPlatformPopover } from './SelectPlatformPopover';
-import { UnbondRecord } from './UnbondRecord';
 
 type Props = {
   onRdeemClick?: Function;
@@ -46,7 +44,6 @@ type Props = {
 export default function Index(props: Props) {
   const history = useHistory();
 
-  const [showUnbondRecord, setShowUnbondRecord] = useState(false);
   const [visibleModal, setVisibleModal] = useState(false);
   const [tradeLabel, setTradeLabel] = useState('Uniswap');
   const [selectedExchange, setSelectedExchange] = useState('');
@@ -109,14 +106,6 @@ export default function Index(props: Props) {
     platformArr.push('SPL');
   }
 
-  if (showUnbondRecord) {
-    return (
-      <LeftContent className='stafi_stake_info_context' padding='36px 10px 0'>
-        <UnbondRecord onClickBack={() => setShowUnbondRecord(false)} type={props.type} />
-      </LeftContent>
-    );
-  }
-
   return (
     <LeftContent className='stafi_stake_info_context'>
       <div className='item'>
@@ -159,13 +148,15 @@ export default function Index(props: Props) {
 
         <InfoContainer>
           <InfoItem>
-            <Text size='12px' scale={0.67} bold transformOrigin='center top' color='#C4C4C4'>
+            <Text size='12px' scale={0.83} bold transformOrigin='center top' color='#C4C4C4'>
               Staked {props.type.slice(1)}
             </Text>
 
             <Text size='16px' bold color='#ffffff' mt='8px'>
               {props.tokenAmount !== '--' && props.ratio !== '--'
-                ? NumberUtil.handleAmountFloorToFixed(props.tokenAmount * props.ratio, 2)
+                ? Number(props.tokenAmount * props.ratio) > 0 && Number(props.tokenAmount * props.ratio) < 0.0001
+                  ? '<0.0001'
+                  : NumberUtil.handleAmountFloorToFixed(props.tokenAmount * props.ratio, 3)
                 : '--'}{' '}
               {props.type.slice(1)}
             </Text>
@@ -177,29 +168,48 @@ export default function Index(props: Props) {
             style={{ cursor: 'pointer' }}
             onClick={() => {
               if (props.type === 'rETH') {
-                message.info('Redeem Function will be supported once ETH2.0 Phase 1.5 is released');
+                message.info('Redemption will be supported once ETH2.0 Phase 1.5 is released');
                 return;
               }
-              setShowUnbondRecord(true);
+              history.push(`/${props.type}/staker/unbondRecords`);
             }}>
-            <Text size='12px' scale={0.67} bold transformOrigin='center top' color='#C4C4C4' clickable>
-              Unbonding {props.type.slice(1)} &gt;
-            </Text>
+            <HContainer>
+              <Text size='12px' scale={0.83} bold transformOrigin='center top' color='#C4C4C4' clickable>
+                Unbonding {props.type.slice(1)}
+              </Text>
+
+              <img src={arrowIcon} width='3px' height='5.1px' alt='arrow' />
+            </HContainer>
 
             <Text size='16px' bold color='#ffffff' mt='8px' clickable>
-              {NumberUtil.handleAmountFloorToFixed(props.totalUnbonding, 2)} {props.type.slice(1)}
+              {props.totalUnbonding !== '--'
+                ? Number(props.totalUnbonding) > 0 && Number(props.totalUnbonding) < 0.0001
+                  ? '<0.0001'
+                  : NumberUtil.handleAmountFloorToFixed(props.totalUnbonding, 3)
+                : '--'}{' '}
+              {props.type.slice(1)}
             </Text>
           </InfoItem>
 
           <InfoDivider />
 
           <InfoItem style={{ cursor: 'pointer' }} onClick={() => history.push(`/${props.type}/staker/reward`)}>
-            <Text size='12px' scale={0.67} bold transformOrigin='center top' color='#C4C4C4' clickable>
-              Reward of last era &gt;
-            </Text>
+            <HContainer>
+              <Text size='12px' scale={0.83} bold transformOrigin='center top' color='#C4C4C4' clickable>
+                Reward of last era
+              </Text>
+
+              <img src={arrowIcon} width='3px' height='5.1px' alt='arrow' />
+            </HContainer>
 
             <Text size='16px' bold color='#ffffff' mt='8px' clickable>
-              {NumberUtil.handleAmountFloorToFixed(props.lastEraRate * props.tokenAmount, 6)} {props.type.slice(1)}
+              {props.lastEraRate !== '--' && props.tokenAmount !== '--'
+                ? Number(props.lastEraRate * props.tokenAmount) > 0 &&
+                  Number(props.lastEraRate * props.tokenAmount) < 0.000001
+                  ? '<0.000001'
+                  : NumberUtil.handleAmountFloorToFixed(props.lastEraRate * props.tokenAmount, 6)
+                : '--'}{' '}
+              {props.type.slice(1)}
             </Text>
           </InfoItem>
         </InfoContainer>
@@ -208,6 +218,7 @@ export default function Index(props: Props) {
           <div className='btns'>
             <Button
               size='small'
+              disabled={props.platform !== 'Native'}
               btnType='ellipse'
               onClick={() => {
                 props.onRdeemClick && props.onRdeemClick();
@@ -220,14 +231,9 @@ export default function Index(props: Props) {
                 data={[
                   { label: 'Curve', url: config.curve.rethURL },
                   { label: 'Uniswap', url: config.uniswap.rethURL },
-                ]}
-                onClick={(item: any) => {
-                  setSelectedExchange(item.label);
-                  setVisibleModal(true);
-                  setTradeLabel(item.label);
-                }}>
+                ]}>
                 {' '}
-                <Button size='small' btnType='ellipse'>
+                <Button size='small' btnType='ellipse' disabled={props.platform !== 'ERC20'}>
                   Trade <img className='dow_svg' src={dow_svg} alt='down arrow' />{' '}
                 </Button>{' '}
               </TradePopover>

@@ -165,13 +165,14 @@ export const add_Notice =
     );
   };
 
-export const update_Notice =
+const update_Notice =
   (
     uuid: string,
     rSymbol: string,
     type: string,
     subType: string,
     amount: string,
+    dateTime: string,
     status: string,
     subData?: any,
   ): AppThunk =>
@@ -185,7 +186,7 @@ export const update_Notice =
           subType: subType,
           // content:content,
           amount: amount,
-          dateTime: moment().format(formatStr),
+          dateTime: dateTime,
           status: status,
           rSymbol: rSymbol,
           subData: subData,
@@ -447,7 +448,7 @@ export const checkAll_minting =
           }
           dispatch(
             bondStates(staking.type, txHash, blockHash, (e: string) => {
-              if (e == 'successful') {
+              if (e === 'successful') {
                 process.sending = {
                   ...process.sending,
                   ...{
@@ -500,6 +501,7 @@ export const checkAll_minting =
                       item.type,
                       item.subType,
                       item.amount,
+                      item.dateTime,
                       noticeStatus.Swapping,
                       {
                         process: process,
@@ -515,6 +517,7 @@ export const checkAll_minting =
                       item.type,
                       item.subType,
                       item.amount,
+                      item.dateTime,
                       noticeStatus.Confirmed,
                       {
                         process: process,
@@ -550,10 +553,19 @@ export const checkAll_minting =
                   };
                 }
                 dispatch(
-                  update_Notice(item.uuid, item.rSymbol, item.type, item.subType, item.amount, noticeStatus.Error, {
-                    process: process,
-                    processParameter: item.subData.processParameter,
-                  }),
+                  update_Notice(
+                    item.uuid,
+                    item.rSymbol,
+                    item.type,
+                    item.subType,
+                    item.amount,
+                    item.dateTime,
+                    noticeStatus.Error,
+                    {
+                      process: process,
+                      processParameter: item.subData.processParameter,
+                    },
+                  ),
                 );
               } else if (e == 'pending') {
                 process.sending = {
@@ -580,10 +592,19 @@ export const checkAll_minting =
                   },
                 };
                 dispatch(
-                  update_Notice(item.uuid, item.rSymbol, item.type, item.subType, item.amount, noticeStatus.Pending, {
-                    process: process,
-                    processParameter: item.subData.processParameter,
-                  }),
+                  update_Notice(
+                    item.uuid,
+                    item.rSymbol,
+                    item.type,
+                    item.subType,
+                    item.amount,
+                    item.dateTime,
+                    noticeStatus.Pending,
+                    {
+                      process: process,
+                      processParameter: item.subData.processParameter,
+                    },
+                  ),
                 );
               } else {
                 if (item.status == noticeStatus.Pending) {
@@ -612,10 +633,19 @@ export const checkAll_minting =
                   };
                 }
                 dispatch(
-                  update_Notice(item.uuid, item.rSymbol, item.type, item.subType, item.amount, noticeStatus.Error, {
-                    process: process,
-                    processParameter: item.subData.processParameter,
-                  }),
+                  update_Notice(
+                    item.uuid,
+                    item.rSymbol,
+                    item.type,
+                    item.subType,
+                    item.amount,
+                    item.dateTime,
+                    noticeStatus.Error,
+                    {
+                      process: process,
+                      processParameter: item.subData.processParameter,
+                    },
+                  ),
                 );
               }
             }),
@@ -725,7 +755,6 @@ export const check_swap_status = (): AppThunk => async (dispatch, getState) => {
         );
       }
     }
-
   });
 };
 

@@ -12,6 +12,10 @@ export const rBNB_data = [
         url: '/rBNB/staker/reward',
       },
       {
+        text: '-Unbond',
+        url: '/rBNB/staker/unbondRecords',
+      },
+      {
         text: '-Recovery',
         url: '/rBNB/search',
       },

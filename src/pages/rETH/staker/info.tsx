@@ -83,7 +83,7 @@ export default function Index(props: any) {
         props.history.push('/rETH/staker/index');
       }}
       onRdeemClick={() => {
-        message.info('Redeem Function will be supported once ETH2.0 Phase 1.5 is released');
+        message.info('Redemption will be supported once ETH2.0 Phase 1.5 is released');
       }}
       onUniswapClick={() => {
         //
