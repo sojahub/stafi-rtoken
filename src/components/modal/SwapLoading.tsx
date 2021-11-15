@@ -5,15 +5,21 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import close_bold_svg from 'src/assets/images/close_bold.svg';
 import complete_svg from 'src/assets/images/complete.svg';
-import { BSC_CHAIN_ID, ETH_CHAIN_ID, setSwapLoadingStatus, SOL_CHAIN_ID, STAFI_CHAIN_ID } from 'src/features/bridgeClice';
 import {
-    getAssetBalance as getBscAssetBalance,
-    getAssetBalanceAll as getBep20AssetBalanceAll
+  BSC_CHAIN_ID,
+  ETH_CHAIN_ID,
+  setSwapLoadingStatus,
+  SOL_CHAIN_ID,
+  STAFI_CHAIN_ID,
+} from 'src/features/bridgeClice';
+import {
+  getAssetBalance as getBscAssetBalance,
+  getAssetBalanceAll as getBep20AssetBalanceAll,
 } from 'src/features/BSCClice';
 import CommonClice from 'src/features/commonClice';
 import {
-    getAssetBalance as getEthAssetBalance,
-    getAssetBalanceAll as getErc20AssetBalanceAll
+  getAssetBalance as getEthAssetBalance,
+  getAssetBalanceAll as getErc20AssetBalanceAll,
 } from 'src/features/ETHClice';
 import { queryTokenBalances } from 'src/features/FISClice';
 import { noticeStatus, update_NoticeStatus } from 'src/features/noticeClice';
@@ -200,7 +206,7 @@ export default function SwapLoading(props: Props) {
       let data;
       if (swapLoadingParams.tokenType === 'fis') {
         const api = await stafiServer.createStafiApi();
-        const result = await api.query.system.account(swapLoadingParams.address);
+        const result = (await api.query.system.account(swapLoadingParams.address)) as any;
         if (result) {
           data = result.data;
         }

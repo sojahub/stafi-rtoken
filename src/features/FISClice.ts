@@ -2,7 +2,7 @@
 
 import { web3Enable, web3FromSource } from '@polkadot/extension-dapp';
 import { stringToHex, u8aToHex } from '@polkadot/util';
-import { SubmittableResult } from '@polkadot/api';
+import { ApiPromise, SubmittableResult } from '@polkadot/api';
 import { createSlice } from '@reduxjs/toolkit';
 import { PublicKey } from '@solana/web3.js';
 import { message } from 'antd';

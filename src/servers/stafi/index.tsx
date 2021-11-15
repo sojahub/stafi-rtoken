@@ -19,11 +19,11 @@ export default class Index extends SubstrateKeyring {
     return 'polkadot-js';
   }
 
-  createStafiApi() {
+  createStafiApi(): ApiPromise {
     if (stafiApi) {
       return stafiApi;
     }
-    
+
     const types = {
       Address: 'IndicesLookupSource',
       LookupSource: 'IndicesLookupSource',
