@@ -285,24 +285,24 @@ export default function RDEXHome() {
     allTokenDatas.forEach((item) => {
       if (item.type === 'rdot') {
         item.content = rDOTTokenAmount;
-        item.ratio = isNaN(Number(rDOTRatio)) ? '--' : numberUtil.handleAmountRoundToFixed(rDOTRatio, 2);
+        item.ratio = isNaN(Number(rDOTRatio)) ? '--' : numberUtil.handleAmountRoundToFixed(rDOTRatio, 3);
         item.totalRate = isNaN(Number(rDOTRatio * rDOTLiquidityRate))
           ? '--'
-          : numberUtil.handleAmountRoundToFixed(rDOTRatio * rDOTLiquidityRate, 2);
+          : numberUtil.handleAmountRoundToFixed(rDOTRatio * rDOTLiquidityRate, 3);
       }
       if (item.type === 'ratom') {
         item.content = rATOMTokenAmount;
-        item.ratio = isNaN(Number(rATOMRatio)) ? '--' : numberUtil.handleAmountRoundToFixed(rATOMRatio, 2);
+        item.ratio = isNaN(Number(rATOMRatio)) ? '--' : numberUtil.handleAmountRoundToFixed(rATOMRatio, 3);
         item.totalRate = isNaN(Number(rATOMRatio * rATOMLiquidityRate))
           ? '--'
-          : numberUtil.handleAmountRoundToFixed(rATOMRatio * rATOMLiquidityRate, 2);
+          : numberUtil.handleAmountRoundToFixed(rATOMRatio * rATOMLiquidityRate, 3);
       }
       if (item.type === 'rbnb') {
         item.content = rBNBTokenAmount;
-        item.ratio = isNaN(Number(rBNBRatio)) ? '--' : numberUtil.handleAmountRoundToFixed(rBNBRatio, 2);
+        item.ratio = isNaN(Number(rBNBRatio)) ? '--' : numberUtil.handleAmountRoundToFixed(rBNBRatio, 3);
         item.totalRate = isNaN(Number(rBNBRatio * rBNBLiquidityRate))
           ? '--'
-          : numberUtil.handleAmountRoundToFixed(rBNBRatio * rBNBLiquidityRate, 2);
+          : numberUtil.handleAmountRoundToFixed(rBNBRatio * rBNBLiquidityRate, 3);
       }
     });
     setTokenTypes([...allTokenDatas]);
