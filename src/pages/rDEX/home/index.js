@@ -416,7 +416,7 @@ export default function RDEXHome() {
     <HContainer alignItems='flex-start'>
       <Container>
         <Text size={'30px'} sameLineHeight bold>
-          rSWAP
+          rSwap
         </Text>
 
         <Text size={'14px'} color={'#a5a5a5'} sameLineHeight mt={'5px'}>
@@ -714,7 +714,7 @@ export default function RDEXHome() {
                         overlayClassName='doubt_overlay'
                         placement='topLeft'
                         overlayInnerStyle={{ color: '#A4A4A4' }}
-                        title={'Fee charged by the rSWAP, it will be distributed to the Treasury.'}>
+                        title={'Fee charged by the rSwap, it will be distributed to the Treasury.'}>
                         <img src={doubt} />
                       </Tooltip>
 

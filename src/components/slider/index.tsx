@@ -40,9 +40,9 @@ const siderData = [
   {
     icon: rDEX_svg,
     selectedIcon: selected_rDEX_svg,
-    text: 'rSWAP',
-    urlKeywords: '/rSWAP',
-    url: '/rSWAP/home',
+    text: 'rSwap',
+    urlKeywords: '/rSwap',
+    url: '/rSwap/home',
   },
   {
     icon: rPool_svg,

@@ -546,18 +546,18 @@ const routesFactory = (role?: any) => {
         },
         {
           id: 'rSWAP_home',
-          path: '/rSWAP',
+          path: '/rSwap',
           type: 'rSWAP',
           component: RSWAPHome,
           routes: [
             {
               id: 'rSWAP_home',
-              path: '/rSWAP/home',
+              path: '/rSwap/home',
               component: RSWAPHome,
             },
             {
               path: '*',
-              component: () => <Redirect to='/rSWAP/home' />,
+              component: () => <Redirect to='/rSwap/home' />,
             },
           ],
         },
