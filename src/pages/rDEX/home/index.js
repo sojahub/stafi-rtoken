@@ -423,7 +423,7 @@ export default function RDEXHome() {
           Protocol Liquidity for rTokens. Read{' '}
           <span
             style={{ color: '#00F3AB', cursor: 'pointer', textDecoration: 'underline' }}
-            onClick={() => window.open('https://docs.stafi.io/rtoken-app/exchange-rate-discounting-solution')}>
+            onClick={() => window.open('https://docs.stafi.io/rtoken-app/rswap-v1-erd-solution')}>
             Mechanism
           </span>
         </Text>
