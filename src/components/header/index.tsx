@@ -1,5 +1,7 @@
+import qs from 'querystring';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useHistory } from 'react-router';
 import notice from 'src/assets/images/notice.svg';
 import report_icon from 'src/assets/images/report_icon.svg';
 import wrong_network from 'src/assets/images/wrong_network.svg';
@@ -17,7 +19,7 @@ import {
   query_rBalances_account as dotquery_rBalances_account,
   reloadData as dotReloadData,
 } from 'src/features/rDOTClice';
-import { monitoring_Method as eth_monitoring_method, monitoring_Method } from 'src/features/rETHClice';
+import { get_eth_getBalance, monitoring_Method } from 'src/features/rETHClice';
 import {
   query_rBalances_account as ksmquery_rBalances_account,
   reloadData as ksmReloadData,
@@ -44,6 +46,7 @@ type Props = {
 
 export default function Index(props: Props) {
   const dispatch = useDispatch();
+  const history = useHistory();
 
   const [visible, setVisible] = useState(false);
   const [modalType, setModalType] = useState<any>();
@@ -52,6 +55,22 @@ export default function Index(props: Props) {
   const account = useSelector((state: any) => {
     if (location.pathname.includes('/rDOT')) {
       if (state.rDOTModule.dotAccount && state.FISModule.fisAccount) {
+        if (location.pathname.includes('/rDOT/staker/info')) {
+          let platform = 'Native';
+          if (history.location.search) {
+            platform = qs.parse(history.location.search.slice(1)).platform as string;
+          }
+          const temp =
+            platform === 'Native'
+              ? { dotAccount: state.rDOTModule.dotAccount }
+              : { ethAccount: state.rETHModule.ethAccount };
+          return {
+            ...temp,
+            fisAccount: state.FISModule.fisAccount,
+            noticeData: state.noticeModule.noticeData,
+            type: 'rDOT/status',
+          };
+        }
         return {
           dotAccount: state.rDOTModule.dotAccount,
           fisAccount: state.FISModule.fisAccount,
@@ -61,6 +80,22 @@ export default function Index(props: Props) {
     }
     if (location.pathname.includes('/rKSM')) {
       if (state.rKSMModule.ksmAccount && state.FISModule.fisAccount) {
+        if (location.pathname.includes('/rKSM/staker/info')) {
+          let platform = 'Native';
+          if (history.location.search) {
+            platform = qs.parse(history.location.search.slice(1)).platform as string;
+          }
+          const temp =
+            platform === 'Native'
+              ? { ksmAccount: state.rKSMModule.ksmAccount }
+              : { ethAccount: state.rETHModule.ethAccount };
+          return {
+            ...temp,
+            fisAccount: state.FISModule.fisAccount,
+            noticeData: state.noticeModule.noticeData,
+            type: 'rKSM/status',
+          };
+        }
         return {
           ksmAccount: state.rKSMModule.ksmAccount,
           fisAccount: state.FISModule.fisAccount,
@@ -70,6 +105,22 @@ export default function Index(props: Props) {
     }
     if (location.pathname.includes('/rATOM')) {
       if (state.rATOMModule.atomAccount || state.FISModule.fisAccount) {
+        if (location.pathname.includes('/rATOM/staker/info')) {
+          let platform = 'Native';
+          if (history.location.search) {
+            platform = qs.parse(history.location.search.slice(1)).platform as string;
+          }
+          const temp =
+            platform === 'Native'
+              ? { atomAccount: state.rATOMModule.atomAccount }
+              : { ethAccount: state.rETHModule.ethAccount };
+          return {
+            ...temp,
+            fisAccount: state.FISModule.fisAccount,
+            noticeData: state.noticeModule.noticeData,
+            type: 'rATOM/status',
+          };
+        }
         return {
           atomAccount: state.rATOMModule.atomAccount,
           fisAccount: state.FISModule.fisAccount,
@@ -165,6 +216,23 @@ export default function Index(props: Props) {
     }
     if (location.pathname.includes('/rMATIC')) {
       if (state.rMATICModule.maticAccount || state.FISModule.fisAccount) {
+        if (location.pathname.includes('/rMATIC/staker/info')) {
+          let platform = 'Native';
+          if (history.location.search) {
+            platform = qs.parse(history.location.search.slice(1)).platform as string;
+          }
+          const temp =
+            platform === 'Native'
+              ? { maticAccount: state.rMATICModule.maticAccount }
+              : { ethAccount: state.rETHModule.ethAccount };
+          return {
+            ...temp,
+            fisAccount: state.FISModule.fisAccount,
+            noticeData: state.noticeModule.noticeData,
+            type: 'rMATIC/status',
+          };
+        }
+
         return {
           maticAccount: state.rMATICModule.maticAccount,
           fisAccount: state.FISModule.fisAccount,
@@ -175,16 +243,31 @@ export default function Index(props: Props) {
     }
     if (location.pathname.includes('/rBNB')) {
       if (state.rETHModule.ethAccount || state.FISModule.fisAccount) {
+        const type = location.pathname.includes('/rBNB/staker/info') ? 'rBNB/status' : 'rBNB';
         return {
           ethAccount: state.rETHModule.ethAccount,
           fisAccount: state.FISModule.fisAccount,
           noticeData: state.noticeModule.noticeData,
-          type: 'rBNB',
+          type: type,
         };
       }
     }
     if (location.pathname.includes('/rFIS')) {
       if (state.FISModule.fisAccount) {
+        if (location.pathname.includes('/rFIS/staker/info')) {
+          let platform = 'Native';
+          if (history.location.search) {
+            platform = qs.parse(history.location.search.slice(1)).platform as string;
+          }
+          const temp = platform === 'Native' ? {} : { ethAccount: state.rETHModule.ethAccount };
+          return {
+            ...temp,
+            fisAccount: state.FISModule.fisAccount,
+            noticeData: state.noticeModule.noticeData,
+            type: 'rFIS/status',
+          };
+        }
+
         return {
           fisAccount: state.FISModule.fisAccount,
           noticeData: state.noticeModule.noticeData,
@@ -249,6 +332,7 @@ export default function Index(props: Props) {
       metaMaskNetworkId: state.globalModule.metaMaskNetworkId,
     };
   });
+
   const { noticeData } = useSelector((state: any) => {
     return {
       noticeData: state.noticeModule.noticeData,
@@ -266,7 +350,11 @@ export default function Index(props: Props) {
 
   useEffect(() => {
     dispatch(monitoring_Method());
-  }, [account]);
+  }, [account, dispatch]);
+
+  useEffect(() => {
+    dispatch(get_eth_getBalance());
+  }, [metaMaskNetworkId, dispatch]);
 
   if (location.pathname.includes('/rPool/home')) {
     return <></>;
@@ -394,7 +482,7 @@ export default function Index(props: Props) {
               </div>
             )}
 
-            {account.type == 'rATOM' &&
+            {account.type === 'rATOM' &&
               (account.atomAccount ? (
                 <div className='header_tool account'>
                   <div>{account.atomAccount.balance} ATOM</div>
@@ -409,6 +497,13 @@ export default function Index(props: Props) {
                   connect to Kepir
                 </div>
               ))}
+
+            {account.type === 'rATOM/status' && account.atomAccount && (
+              <div className='header_tool account'>
+                <div>{account.atomAccount.balance} ATOM</div>
+                <div>{StringUtil.replacePkh(account.atomAccount.address, 6, 38)}</div>
+              </div>
+            )}
 
             {account.type == 'feeStation' &&
               (account.atomAccount ? (
@@ -453,6 +548,13 @@ export default function Index(props: Props) {
                   )}
                 {account.type !== 'rPool/lp' &&
                   account.type !== 'rETH/status' &&
+                  account.type !== 'rATOM/status' &&
+                  account.type !== 'rDOT/status' &&
+                  account.type !== 'rFIS/status' &&
+                  account.type !== 'rBNB/status' &&
+                  account.type !== 'rSOL/status' &&
+                  account.type !== 'rMATIC/status' &&
+                  account.type !== 'rKSM/status' &&
                   metaMaskNetworkId &&
                   !config.metaMaskNetworkIsGoerliEth(metaMaskNetworkId) && (
                     <img src={wrong_network} className={'wrong_network'} />

@@ -1,15 +1,13 @@
 // @ts-nocheck
 
-import { encodeAddress } from '@polkadot/keyring';
 import { hexToU8a } from '@polkadot/util';
 import { message } from 'antd';
 import config, { getSymbolTitle } from 'src/config';
 import { rSymbol, Symbol } from 'src/keyring/defaults';
-import keyring, { Keyring } from 'src/servers/index';
+import keyring from 'src/servers/index';
 import RpcServer from 'src/servers/rpc';
 import StafiServer from 'src/servers/stafi';
-import numberUtil from 'src/util/numberUtil';
-import NumberUtil from 'src/util/numberUtil';
+import { default as numberUtil, default as NumberUtil } from 'src/util/numberUtil';
 
 const stafiServer = new StafiServer();
 const rpcServer = new RpcServer();

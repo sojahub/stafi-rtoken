@@ -40,7 +40,7 @@ export default function Index(props: any) {
       platform === 'Native'
         ? state.rMATICModule.tokenAmount
         : platform === 'ERC20'
-        ? state.ETHModule.ercRMATICBalance
+        ? state.ETHModule.ercRMaticBalance
         : platform === 'BEP20'
         ? state.BSCModule.bepRMATICBalance
         : '--';

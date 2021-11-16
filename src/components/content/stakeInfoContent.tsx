@@ -1,7 +1,7 @@
 // @ts-nocheck
 
 import { message } from 'antd';
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import { useHistory } from 'react-router';
 import dow_svg from 'src/assets/images/left_arrow_black.svg';
 import arrowIcon from 'src/assets/images/staker_info_content_arrow.svg';
@@ -24,6 +24,8 @@ import SwapModalNew from '../modal/swapModalNew';
 import TradePopover from '../tradePopover';
 import LeftContent from './leftContent';
 import { SelectPlatformPopover } from './SelectPlatformPopover';
+import { get_eth_getBalance } from 'src/features/rETHClice';
+import { useDispatch, useSelector } from 'react-redux';
 
 type Props = {
   onRdeemClick?: Function;
@@ -43,10 +45,17 @@ type Props = {
 
 export default function Index(props: Props) {
   const history = useHistory();
+  const dispatch = useDispatch();
 
   const [visibleModal, setVisibleModal] = useState(false);
   const [tradeLabel, setTradeLabel] = useState('Uniswap');
   const [selectedExchange, setSelectedExchange] = useState('');
+
+  const { metaMaskNetworkId } = useSelector((state: any) => {
+    return {
+      metaMaskNetworkId: state.globalModule.metaMaskNetworkId,
+    };
+  });
 
   const tradeUrl = useMemo(() => {
     if (props.type === 'rDOT') {
@@ -73,6 +82,14 @@ export default function Index(props: Props) {
       }
     }
   }, [props.type, selectedExchange]);
+
+  useEffect(() => {
+    if (props.platform === 'ERC20') {
+      requestSwitchMetaMaskNetwork('Ethereum');
+    } else if (props.platform === 'BEP20') {
+      requestSwitchMetaMaskNetwork('BSC');
+    }
+  }, [props.platform]);
 
   const showNative = props.type !== 'rETH';
   const showErc20 =
@@ -114,11 +131,6 @@ export default function Index(props: Props) {
           platforms={platformArr}
           onClick={(platform: string) => {
             history.push(history.location.pathname + `?platform=${platform}`);
-            if (platform === 'ERC20') {
-              requestSwitchMetaMaskNetwork('Ethereum');
-            } else if (platform === 'BEP20') {
-              requestSwitchMetaMaskNetwork('BSC');
-            }
           }}
         />
 
@@ -141,7 +153,8 @@ export default function Index(props: Props) {
             </Text>
 
             <Text size='12px' sameLineHeight color='#c4c4c4' mt='10px'>
-              Redeemable {props.type.slice(1)}: {props.redeemableTokenAmount}
+              Redeemable {props.type.slice(1)}:{' '}
+              {isNaN(props.redeemableTokenAmount) ? '--' : props.redeemableTokenAmount}
             </Text>
           </TokenAmountContainer>
         </TitleContainer>
@@ -218,7 +231,7 @@ export default function Index(props: Props) {
           <div className='btns'>
             <Button
               size='small'
-              disabled={props.platform !== 'Native'}
+              disabled={props.platform !== 'Native' && props.type !== 'rETH'}
               btnType='ellipse'
               onClick={() => {
                 props.onRdeemClick && props.onRdeemClick();
