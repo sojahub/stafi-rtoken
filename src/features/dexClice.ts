@@ -4,14 +4,14 @@ import { web3Enable, web3FromSource } from '@polkadot/extension-dapp';
 import { u8aToHex } from '@polkadot/util';
 import { createSlice } from '@reduxjs/toolkit';
 import { message } from 'antd';
-import { getSymbolByRSymbol } from 'src/config/index';
+import { getSymbolByRSymbol, getSymbolRTitle, getSymbolTitle } from 'src/config/index';
 import { rSymbol } from 'src/keyring/defaults';
 import keyring from 'src/servers/index';
 import StafiServer from 'src/servers/stafi';
 import { stafi_uuid } from 'src/util/common';
 import numberUtil from 'src/util/numberUtil';
 import { AppThunk } from '../store';
-import { add_Notice, noticesubType, noticeType } from './noticeClice';
+import { add_Notice, noticeStatus, noticesubType, noticeType } from './noticeClice';
 
 const stafiServer = new StafiServer();
 

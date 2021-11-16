@@ -8,8 +8,8 @@ import left_arrow from 'src/assets/images/left_arrow.svg';
 import rasset_ratom_svg from 'src/assets/images/r_atom.svg';
 // import rasset_rfis_svg from 'src/assets/images/r_fis.svg';
 // import rasset_rksm_svg from 'src/assets/images/r_ksm.svg';
-import rasset_rbnb_svg from 'src/assets/images/r_bnb.svg';
-import rasset_rdot_svg from 'src/assets/images/r_dot.svg';
+// import rasset_rbnb_svg from 'src/assets/images/r_bnb.svg';
+// import rasset_rdot_svg from 'src/assets/images/r_dot.svg';
 import settingIcon from 'src/assets/images/setting.svg';
 import CommonButton from 'src/components/CommonButton';
 import { CardContainer, HContainer, Text } from 'src/components/commonComponents';
@@ -20,7 +20,7 @@ import { swap } from 'src/features/dexClice';
 import {
   fetchRTokenStatDetail as fis_fetchRTokenStatDetail,
   reloadData as fis_reloadData,
-  rTokenRate as fis_rTokenRate
+  rTokenRate as fis_rTokenRate,
 } from 'src/features/FISClice';
 import { connectPolkadot_fis } from 'src/features/globalClice';
 import {
@@ -29,21 +29,21 @@ import {
   query_rBalances_account as atom_query_rBalances_account,
   rLiquidityRate as atom_rLiquidityRate,
   rSwapFee as atom_rSwapFee,
-  rTokenRate as atom_rTokenRate
+  rTokenRate as atom_rTokenRate,
 } from 'src/features/rATOMClice';
 import {
   checkAddress as bnb_checkAddress,
   query_rBalances_account as bnb_query_rBalances_account,
   rLiquidityRate as bnb_rLiquidityRate,
   rSwapFee as bnb_rSwapFee,
-  rTokenRate as bnb_rTokenRate
+  rTokenRate as bnb_rTokenRate,
 } from 'src/features/rBNBClice';
 import {
   checkAddress as dot_checkAddress,
   query_rBalances_account as dot_query_rBalances_account,
   rLiquidityRate as dot_rLiquidityRate,
   rSwapFee as dot_rSwapFee,
-  rTokenRate as dot_rTokenRate
+  rTokenRate as dot_rTokenRate,
 } from 'src/features/rDOTClice';
 import { rSymbol } from 'src/keyring/defaults';
 import Stafi from 'src/servers/stafi';
@@ -73,22 +73,22 @@ const allTokenDatas = [
     ratio: '--',
     totalRate: '--',
   },
-  {
-    icon: rasset_rbnb_svg,
-    title: 'rBNB',
-    type: 'rbnb',
-    content: '--',
-    ratio: '--',
-    totalRate: '--',
-  },
-  {
-    icon: rasset_rdot_svg,
-    title: 'rDOT',
-    type: 'rdot',
-    content: '--',
-    ratio: '--',
-    totalRate: '--',
-  },
+  // {
+  //   icon: rasset_rbnb_svg,
+  //   title: 'rBNB',
+  //   type: 'rbnb',
+  //   content: '--',
+  //   ratio: '--',
+  //   totalRate: '--',
+  // },
+  // {
+  //   icon: rasset_rdot_svg,
+  //   title: 'rDOT',
+  //   type: 'rdot',
+  //   content: '--',
+  //   ratio: '--',
+  //   totalRate: '--',
+  // },
   // {
   //   icon: rasset_rsol_svg,
   //   title: 'rSOL',
@@ -416,12 +416,16 @@ export default function RDEXHome() {
     <HContainer alignItems='flex-start'>
       <Container>
         <Text size={'30px'} sameLineHeight bold>
-          rDEX
+          rSWAP
         </Text>
 
         <Text size={'14px'} color={'#a5a5a5'} sameLineHeight mt={'5px'}>
           Protocol Liquidity for rTokens. Read{' '}
-          <span style={{ color: '#00F3AB', cursor: 'pointer', textDecoration: 'underline' }}>Mechanism</span>
+          <span
+            style={{ color: '#00F3AB', cursor: 'pointer', textDecoration: 'underline' }}
+            onClick={() => window.open('https://docs.stafi.io/rtoken-app/exchange-rate-discounting-solution')}>
+            Mechanism
+          </span>
         </Text>
 
         <CardContainer width={'342px'} mt={'50px'} pt={'17px'} pb={'8px'} style={{ minHeight: '468px' }}>
@@ -710,7 +714,7 @@ export default function RDEXHome() {
                         overlayClassName='doubt_overlay'
                         placement='topLeft'
                         overlayInnerStyle={{ color: '#A4A4A4' }}
-                        title={'Fee charged by the rDEX, it will be distributed to the Treasury.'}>
+                        title={'Fee charged by the rSWAP, it will be distributed to the Treasury.'}>
                         <img src={doubt} />
                       </Tooltip>
 

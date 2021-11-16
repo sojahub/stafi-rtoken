@@ -32,7 +32,7 @@ import RBnbStakerRedeem from './pages/rBNB/staker/redeem';
 import RBnbStakerReward from './pages/rBNB/staker/reward';
 import RBnbHomeTemplate from './pages/rBNB/template';
 import RBnbValidator from './pages/rBNB/validator';
-import RDEXHome from './pages/rDEX/home';
+import RSWAPHome from './pages/rDEX/home';
 import RDOTHome from './pages/rDOT/home';
 import RDOTSeach from './pages/rDOT/search';
 import RDOTType from './pages/rDOT/selectType';
@@ -544,23 +544,23 @@ const routesFactory = (role?: any) => {
             },
           ],
         },
-        // {
-        //   id: 'rDEX_home',
-        //   path: '/rDEX',
-        //   type: 'rDEX',
-        //   component: RDEXHome,
-        //   routes: [
-        //     {
-        //       id: 'rDEX_home',
-        //       path: '/rDEX/home',
-        //       component: RDEXHome,
-        //     },
-        //     {
-        //       path: '*',
-        //       component: () => <Redirect to='/rDEX/home' />,
-        //     },
-        //   ],
-        // },
+        {
+          id: 'rSWAP_home',
+          path: '/rSWAP',
+          type: 'rSWAP',
+          component: RSWAPHome,
+          routes: [
+            {
+              id: 'rSWAP_home',
+              path: '/rSWAP/home',
+              component: RSWAPHome,
+            },
+            {
+              path: '*',
+              component: () => <Redirect to='/rSWAP/home' />,
+            },
+          ],
+        },
         {
           id: 'fee_station',
           path: '/feeStation',
