@@ -807,14 +807,12 @@ export const getLastEraRate = (): AppThunk => async (dispatch, getState) => {
       const currentRate = rateResult.toJSON();
       const rateResult2 = await stafiApi.query.rTokenRate.eraRate(rSymbol.Fis, currentEra - 2);
       let lastRate = rateResult2.toJSON();
-      console.log('rFIS getLastEraRate', lastRate, currentRate);
       if (Number(currentRate) <= Number(lastRate)) {
         dispatch(setLastEraRate(0));
       } else {
         dispatch(setLastEraRate(numberUtil.rTokenRateToHuman(Number(currentRate) - Number(lastRate))));
       }
     } else {
-      console.log('rFIS getLastEraRate currentEra:', currentEra);
     }
   } catch (err: any) {
     console.log('err', err);

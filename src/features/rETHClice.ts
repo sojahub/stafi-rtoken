@@ -1342,7 +1342,6 @@ export const getLastEraRate = (): AppThunk => async (dispatch, getState) => {
     });
     const lastRate = res.data.list[0].rate;
     const currentRate = res.data.list[1].rate;
-    console.log('rETH getLastEraRate', lastRate, currentRate);
     if (Number(currentRate) <= Number(lastRate)) {
       dispatch(setLastEraRate(0));
     } else {

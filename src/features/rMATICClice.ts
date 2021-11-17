@@ -280,15 +280,15 @@ export const monitoring_Method = (): AppThunk => (dispatch, getState) => {
 
     ethereum.on('chainChanged', (chainId: any) => {
       if (isdev()) {
-        if (ethereum.chainId != '0x3' && location.pathname.includes('/rAsset/erc')) {
+        if (ethereum.chainId !== '0x3' && window.location.pathname.includes('/rAsset/erc')) {
           // message.warning('Please connect to Ropsten Test Network!');
           dispatch(setMaticAccount(null));
         }
-        if (ethereum.chainId != '0x5' && location.pathname.includes('/rETH')) {
+        if (ethereum.chainId !== '0x5' && window.location.pathname.includes('/rETH')) {
           // message.warning('Please connect to Goerli Test Network!');
           dispatch(setMaticAccount(null));
         }
-      } else if (ethereum.chainId != '0x1') {
+      } else if (ethereum.chainId !== '0x1') {
         // message.warning('Please connect to Ethereum Main Network!');
 
         dispatch(setMaticAccount(null));
@@ -1016,7 +1016,6 @@ export const getLastEraRate = (): AppThunk => async (dispatch, getState) => {
       const currentRate = rateResult.toJSON();
       const rateResult2 = await stafiApi.query.rTokenRate.eraRate(rSymbol.Matic, currentEra - 2);
       let lastRate = rateResult2.toJSON();
-      console.log('rMATIC getLastEraRate', lastRate, currentRate);
       if (Number(currentRate) <= Number(lastRate)) {
         dispatch(setLastEraRate(0));
       } else {

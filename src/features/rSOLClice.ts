@@ -874,7 +874,6 @@ export const getLastEraRate = (): AppThunk => async (dispatch, getState) => {
       const currentRate = rateResult.toJSON();
       const rateResult2 = await stafiApi.query.rTokenRate.eraRate(rSymbol.Sol, currentEra - 2);
       let lastRate = rateResult2.toJSON();
-      console.log('rSOL getLastEraRate', lastRate, currentRate);
       if (Number(currentRate) <= Number(lastRate)) {
         dispatch(setLastEraRate(0));
       } else {

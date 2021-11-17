@@ -122,7 +122,7 @@ export default function Index(props: Props) {
   return (
     <div className='stafi_left_master_sider'>
       <div className='logo_panel'>
-        <img className='header_logo' src={logo} />
+        <img className='header_logo' src={logo} alt='logo' />
       </div>
 
       <div className='network'>{isdev() ? 'Testnet' : 'Mainnet'}</div>

@@ -1,6 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useHistory } from 'react-router';
 import notice from 'src/assets/images/notice.svg';
 import report_icon from 'src/assets/images/report_icon.svg';
 import wrong_network from 'src/assets/images/wrong_network.svg';
@@ -30,9 +29,9 @@ import NumberUtil from 'src/util/numberUtil';
 import StringUtil from 'src/util/stringUtil';
 import Tool from 'src/util/toolUtil';
 import Page from '../../pages/rDOT/selectWallet/index';
-import Page_FIS from '../../pages/rDOT/selectWallet_rFIS/index';
-import Page_rFIS from '../../pages/rFIS/selectWallet_rFIS/index';
-import Page_Ksm from '../../pages/rKSM/selectWallet/index';
+import PageFis from '../../pages/rDOT/selectWallet_rFIS/index';
+import PageRFis from '../../pages/rFIS/selectWallet_rFIS/index';
+import PageKsm from '../../pages/rKSM/selectWallet/index';
 import './index.scss';
 import Popover from './popover';
 
@@ -45,7 +44,6 @@ type Props = {
 
 export default function Index(props: Props) {
   const dispatch = useDispatch();
-  const history = useHistory();
 
   const [visible, setVisible] = useState(false);
   const [modalType, setModalType] = useState<any>();
@@ -333,7 +331,7 @@ export default function Index(props: Props) {
   return (
     <div className='stafi_header'>
       <Modal visible={visible}>
-        {modalType == 'dot' && (
+        {modalType === 'dot' && (
           <Page
             location={{}}
             type='header'
@@ -344,8 +342,8 @@ export default function Index(props: Props) {
           />
         )}
 
-        {modalType == 'fis' && !location.pathname.includes('/rFIS') && (
-          <Page_FIS
+        {modalType === 'fis' && !location.pathname.includes('/rFIS') && (
+          <PageFis
             location={{}}
             type='header'
             onClose={() => {
@@ -356,8 +354,8 @@ export default function Index(props: Props) {
             }}
           />
         )}
-        {modalType == 'fis' && location.pathname.includes('/rFIS') && (
-          <Page_rFIS
+        {modalType === 'fis' && location.pathname.includes('/rFIS') && (
+          <PageRFis
             location={{}}
             type='header'
             onClose={() => {
@@ -365,8 +363,8 @@ export default function Index(props: Props) {
             }}
           />
         )}
-        {modalType == 'ksm' && (
-          <Page_Ksm
+        {modalType === 'ksm' && (
+          <PageKsm
             location={{}}
             type='header'
             onClose={() => {
@@ -380,18 +378,18 @@ export default function Index(props: Props) {
       <div></div>
 
       <div className='info_span'>
-        {account == null && (Tool.pageType() == rSymbol.Ksm || Tool.pageType() == rSymbol.Dot) && (
+        {account == null && (Tool.pageType() === rSymbol.Ksm || Tool.pageType() === rSymbol.Dot) && (
           <div
             className='header_tool'
             onClick={() => {
-              if (Tool.pageType() == rSymbol.Dot) {
+              if (Tool.pageType() === rSymbol.Dot) {
                 dispatch(
                   connectPolkadot(() => {
                     props.history.push('/rDOT/wallet');
                   }),
                 );
               }
-              if (Tool.pageType() == rSymbol.Ksm) {
+              if (Tool.pageType() === rSymbol.Ksm) {
                 dispatch(
                   connectPolkadot_ksm(() => {
                     props.history.push('/rKSM/wallet');
@@ -408,7 +406,7 @@ export default function Index(props: Props) {
             <Popover history={props.history} visible={noticePopoverVisible} onVisibleChange={setNoticePopoverVisible}>
               <div className={`notice_container ${pendingCount > 0 && 'pending'}`}>
                 <div className={`header_tool notice ${noticeData && noticeData.showNew && 'new'}`}>
-                  <img src={notice} className='notice_icon' />
+                  <img src={notice} className='notice_icon' alt='notice' />
                 </div>
 
                 {pendingCount > 0 && <div className='notice_pending_text'>{pendingCount} Pending</div>}
@@ -475,7 +473,7 @@ export default function Index(props: Props) {
               </div>
             )}
 
-            {account.type == 'feeStation' &&
+            {account.type === 'feeStation' &&
               (account.atomAccount ? (
                 <div className='header_tool account'>
                   <div>{account.atomAccount.balance} ATOM</div>
@@ -483,7 +481,7 @@ export default function Index(props: Props) {
                 </div>
               ) : null)}
 
-            {(account.type == 'rSOL' || account.type == 'rAsset') &&
+            {(account.type === 'rSOL' || account.type === 'rAsset') &&
               (account.solAccount ? (
                 <div
                   className='header_tool account'
@@ -514,12 +512,12 @@ export default function Index(props: Props) {
                 {account.type === 'rPool/lp' &&
                   metaMaskNetworkId &&
                   !liquidityPlatformMatchMetaMask(metaMaskNetworkId, getLpPlatformFromUrl(location.pathname)) && (
-                    <img src={wrong_network} className={'wrong_network'} />
+                    <img src={wrong_network} className={'wrong_network'} alt='wrong network' />
                   )}
                 {account.type !== 'rPool/lp' &&
                   metaMaskNetworkId &&
                   !config.metaMaskNetworkIsGoerliEth(metaMaskNetworkId) && (
-                    <img src={wrong_network} className={'wrong_network'} />
+                    <img src={wrong_network} className={'wrong_network'} alt='wrong network' />
                   )}
               </div>
             )}
@@ -533,7 +531,7 @@ export default function Index(props: Props) {
                   <div>{StringUtil.replacePkh(account.ethAccount.address, 4, 38)}</div>
                 </div>
                 {metaMaskNetworkId && !config.metaMaskNetworkIsBsc(metaMaskNetworkId) && (
-                  <img src={wrong_network} className={'wrong_network'} />
+                  <img src={wrong_network} className={'wrong_network'} alt='wrong network' />
                 )}
               </div>
             )}
@@ -545,7 +543,7 @@ export default function Index(props: Props) {
                   <div>{StringUtil.replacePkh(account.bscAccount.address, 4, 38)}</div>
                 </div>
                 {metaMaskNetworkId && !config.metaMaskNetworkIsBsc(metaMaskNetworkId) && (
-                  <img src={wrong_network} className={'wrong_network'} />
+                  <img src={wrong_network} className={'wrong_network'} alt='wrong network' />
                 )}
               </div>
             )}
@@ -557,7 +555,7 @@ export default function Index(props: Props) {
                   <div>{StringUtil.replacePkh(account.maticAccount.address, 4, 38)}</div>
                 </div>
                 {metaMaskNetworkId && !config.metaMaskNetworkIsGoerliEth(metaMaskNetworkId) && (
-                  <img src={wrong_network} className={'wrong_network'} />
+                  <img src={wrong_network} className={'wrong_network'} alt='wrong network' />
                 )}
               </div>
             )}
@@ -565,7 +563,7 @@ export default function Index(props: Props) {
         )}
         <div className='report_icon'>
           <a target='_blank' href='https://info.stafi.io/' rel='noreferrer'>
-            <img src={report_icon} />
+            <img src={report_icon} alt='report' />
           </a>
         </div>
       </div>
