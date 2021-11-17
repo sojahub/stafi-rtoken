@@ -8,6 +8,7 @@ import MaticServer from 'src/servers/matic';
 import DotServer from 'src/servers/polkadot';
 import SolServer from 'src/servers/sol';
 import FisServer from 'src/servers/stafi';
+import { requestMetamaskAccount } from 'src/util/metaMaskUtil';
 import { AppThunk } from '../store';
 
 declare const ethereum: any;
@@ -156,6 +157,12 @@ export const getETHAssetBalance = (): AppThunk => (dispatch, getState) => {
     getAssetBalance(address, ethServer.getRETHTokenAbi(), ethServer.getRETHTokenAddress(), (v: any) => {
       dispatch(setErcETHBalance(v));
     });
+  } else {
+    requestMetamaskAccount((address: string) => {
+      getAssetBalance(address, ethServer.getRETHTokenAbi(), ethServer.getRETHTokenAddress(), (v: any) => {
+        dispatch(setErcETHBalance(v));
+      });
+    });
   }
 };
 
@@ -165,6 +172,12 @@ export const getFISAssetBalance = (): AppThunk => (dispatch, getState) => {
     getAssetBalance(address, fisServer.getFISTokenAbi(), fisServer.getFISTokenAddress(), (v: any) => {
       dispatch(setErcFISBalance(v));
     });
+  } else {
+    requestMetamaskAccount((address: string) => {
+      getAssetBalance(address, fisServer.getFISTokenAbi(), fisServer.getFISTokenAddress(), (v: any) => {
+        dispatch(setErcFISBalance(v));
+      });
+    });
   }
 };
 export const getRFISAssetBalance = (): AppThunk => (dispatch, getState) => {
@@ -172,6 +185,12 @@ export const getRFISAssetBalance = (): AppThunk => (dispatch, getState) => {
     const address = getState().rETHModule.ethAccount.address;
     getAssetBalance(address, fisServer.getRFISTokenAbi(), fisServer.getRFISTokenAddress(), (v: any) => {
       dispatch(setErcRFISBalance(v));
+    });
+  } else {
+    requestMetamaskAccount((address: string) => {
+      getAssetBalance(address, fisServer.getRFISTokenAbi(), fisServer.getRFISTokenAddress(), (v: any) => {
+        dispatch(setErcRFISBalance(v));
+      });
     });
   }
 };
@@ -181,6 +200,12 @@ export const getRKSMAssetBalance = (): AppThunk => (dispatch, getState) => {
     getAssetBalance(address, ksmServer.getRKSMTokenAbi(), ksmServer.getRKSMTokenAddress(), (v: any) => {
       dispatch(setErcRKSMBalance(v));
     });
+  } else {
+    requestMetamaskAccount((address: string) => {
+      getAssetBalance(address, ksmServer.getRKSMTokenAbi(), ksmServer.getRKSMTokenAddress(), (v: any) => {
+        dispatch(setErcRKSMBalance(v));
+      });
+    });
   }
 };
 export const getRDOTAssetBalance = (): AppThunk => (dispatch, getState) => {
@@ -188,6 +213,12 @@ export const getRDOTAssetBalance = (): AppThunk => (dispatch, getState) => {
     const address = getState().rETHModule.ethAccount.address;
     getAssetBalance(address, dotServer.getRDOTTokenAbi(), dotServer.getRDOTTokenAddress(), (v: any) => {
       dispatch(setErcRDOTBalance(v));
+    });
+  } else {
+    requestMetamaskAccount((address: string) => {
+      getAssetBalance(address, dotServer.getRDOTTokenAbi(), dotServer.getRDOTTokenAddress(), (v: any) => {
+        dispatch(setErcRDOTBalance(v));
+      });
     });
   }
 };
@@ -198,6 +229,12 @@ export const getRATOMAssetBalance = (): AppThunk => (dispatch, getState) => {
     getAssetBalance(address, atomServer.getTokenAbi(), atomServer.getRATOMTokenAddress(), (v: any) => {
       dispatch(setErcRATOMBalance(v));
     });
+  } else {
+    requestMetamaskAccount((address: string) => {
+      getAssetBalance(address, atomServer.getTokenAbi(), atomServer.getRATOMTokenAddress(), (v: any) => {
+        dispatch(setErcRATOMBalance(v));
+      });
+    });
   }
 };
 export const getRSOLAssetBalance = (): AppThunk => (dispatch, getState) => {
@@ -205,6 +242,12 @@ export const getRSOLAssetBalance = (): AppThunk => (dispatch, getState) => {
     const address = getState().rETHModule.ethAccount.address;
     getAssetBalance(address, solServer.getTokenAbi(), solServer.getRSOLTokenAddress(), (v: any) => {
       dispatch(setErcRSOLBalance(v));
+    });
+  } else {
+    requestMetamaskAccount((address: string) => {
+      getAssetBalance(address, solServer.getTokenAbi(), solServer.getRSOLTokenAddress(), (v: any) => {
+        dispatch(setErcRSOLBalance(v));
+      });
     });
   }
 };
@@ -214,6 +257,12 @@ export const getRMaticAssetBalance = (): AppThunk => (dispatch, getState) => {
     const address = getState().rETHModule.ethAccount && getState().rETHModule.ethAccount.address;
     getAssetBalance(address, maticServer.getTokenAbi(), maticServer.getTokenAddress(), (v: any) => {
       dispatch(setErcRMaticBalance(v));
+    });
+  } else {
+    requestMetamaskAccount((address: string) => {
+      getAssetBalance(address, maticServer.getTokenAbi(), maticServer.getTokenAddress(), (v: any) => {
+        dispatch(setErcRMaticBalance(v));
+      });
     });
   }
 };

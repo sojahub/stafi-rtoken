@@ -165,7 +165,7 @@ export const requestAddTokenToMetaMask = async (tokenType: string, destChainId: 
       parameters = metaMaskBEP20TokenParameters.rMATIC;
     } else if (tokenType === 'ratom') {
       parameters = metaMaskBEP20TokenParameters.rATOM;
-    }else if (tokenType === 'rbnb') {
+    } else if (tokenType === 'rbnb') {
       parameters = metaMaskBEP20TokenParameters.rBNB;
     }
   }
@@ -212,6 +212,21 @@ export const requestAddTokenToMetaMask = async (tokenType: string, destChainId: 
       });
     } catch (error: any) {
       console.log(error);
+    }
+  }
+};
+
+export const requestMetamaskAccount = (cb: Function) => {
+  if (typeof ethereum !== 'undefined' && ethereum.isMetaMask) {
+    try {
+      ethereum
+        .request({ method: 'eth_requestAccounts' })
+        .then((accounts: any) => {
+          cb(accounts[0]);
+        })
+        .catch((error: any) => {});
+    } catch (err: any) {
+      console.error('requestMetamaskAccount error:', err.message);
     }
   }
 };

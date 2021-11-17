@@ -1,4 +1,3 @@
-import qs from 'querystring';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router';
@@ -179,6 +178,13 @@ export default function Index(props: Props) {
     }
     if (location.pathname.includes('/rSOL')) {
       if (state.rSOLModule.solAccount && state.FISModule.fisAccount) {
+        if (location.pathname.includes('rSOL/staker/info')) {
+          return {
+            fisAccount: state.FISModule.fisAccount,
+            noticeData: state.noticeModule.noticeData,
+            type: 'rSOL/status',
+          };
+        }
         return {
           solAccount: state.rSOLModule.solAccount,
           fisAccount: state.FISModule.fisAccount,
@@ -207,11 +213,18 @@ export default function Index(props: Props) {
     }
     if (location.pathname.includes('/rBNB')) {
       if (state.rETHModule.ethAccount || state.FISModule.fisAccount) {
-        const type = location.pathname.includes('/rBNB/staker/info') ? 'rBNB/status' : 'rBNB';
+        if (location.pathname.includes('rBNB/staker/info')) {
+          return {
+            fisAccount: state.FISModule.fisAccount,
+            noticeData: state.noticeModule.noticeData,
+            type: 'rBNB/status',
+          };
+        }
         return {
+          ethAccount: state.rETHModule.ethAccount,
           fisAccount: state.FISModule.fisAccount,
           noticeData: state.noticeModule.noticeData,
-          type: type,
+          type: 'rBNB',
         };
       }
     }

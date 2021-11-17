@@ -5,6 +5,7 @@ import BridgeServer from 'src/servers/bridge';
 import BscServer from 'src/servers/bsc/index';
 import EthServer from 'src/servers/eth/index';
 import { getLocalStorageItem, Keys, removeLocalStorageItem, setLocalStorageItem } from 'src/util/common';
+import { requestMetamaskAccount } from 'src/util/metaMaskUtil';
 import numberUtil from 'src/util/numberUtil';
 import Web3Utils from 'web3-utils';
 import { AppThunk } from '../store';
@@ -142,6 +143,7 @@ export const {
 
 declare const window: any;
 declare const ethereum: any;
+declare const location: any;
 
 export const connectMetamask =
   (chainId: string, isAutoConnect?: boolean): AppThunk =>
@@ -277,6 +279,12 @@ export const getFISAssetBalance = (): AppThunk => (dispatch, getState) => {
     getAssetBalance(address, bscServer.getFISTokenAbi(), bscServer.getFISTokenAddress(), (v: any) => {
       dispatch(setBepFISBalance(v));
     });
+  } else {
+    requestMetamaskAccount((address: string) => {
+      getAssetBalance(address, bscServer.getRFISTokenAbi(), bscServer.getRFISTokenAddress(), (v: any) => {
+        dispatch(setBepRFISBalance(v));
+      });
+    });
   }
 };
 export const getRFISAssetBalance = (): AppThunk => (dispatch, getState) => {
@@ -284,6 +292,12 @@ export const getRFISAssetBalance = (): AppThunk => (dispatch, getState) => {
     const address = getState().BSCModule.bscAccount.address;
     getAssetBalance(address, bscServer.getRFISTokenAbi(), bscServer.getRFISTokenAddress(), (v: any) => {
       dispatch(setBepRFISBalance(v));
+    });
+  } else {
+    requestMetamaskAccount((address: string) => {
+      getAssetBalance(address, bscServer.getRFISTokenAbi(), bscServer.getRFISTokenAddress(), (v: any) => {
+        dispatch(setBepRFISBalance(v));
+      });
     });
   }
 };
@@ -293,6 +307,12 @@ export const getRKSMAssetBalance = (): AppThunk => (dispatch, getState) => {
     getAssetBalance(address, bscServer.getRKSMTokenAbi(), bscServer.getRKSMTokenAddress(), (v: any) => {
       dispatch(setBepRKSMBalance(v));
     });
+  } else {
+    requestMetamaskAccount((address: string) => {
+      getAssetBalance(address, bscServer.getRKSMTokenAbi(), bscServer.getRKSMTokenAddress(), (v: any) => {
+        dispatch(setBepRKSMBalance(v));
+      });
+    });
   }
 };
 export const getRDOTAssetBalance = (): AppThunk => (dispatch, getState) => {
@@ -300,6 +320,12 @@ export const getRDOTAssetBalance = (): AppThunk => (dispatch, getState) => {
     const address = getState().BSCModule.bscAccount.address;
     getAssetBalance(address, bscServer.getRDOTTokenAbi(), bscServer.getRDOTTokenAddress(), (v: any) => {
       dispatch(setBepRDOTBalance(v));
+    });
+  } else {
+    requestMetamaskAccount((address: string) => {
+      getAssetBalance(address, bscServer.getRDOTTokenAbi(), bscServer.getRDOTTokenAddress(), (v: any) => {
+        dispatch(setBepRDOTBalance(v));
+      });
     });
   }
 };
@@ -310,6 +336,12 @@ export const getRATOMAssetBalance = (): AppThunk => (dispatch, getState) => {
     getAssetBalance(address, bscServer.getRATOMTokenAbi(), bscServer.getRATOMTokenAddress(), (v: any) => {
       dispatch(setBepRATOMBalance(v));
     });
+  } else {
+    requestMetamaskAccount((address: string) => {
+      getAssetBalance(address, bscServer.getRATOMTokenAbi(), bscServer.getRATOMTokenAddress(), (v: any) => {
+        dispatch(setBepRATOMBalance(v));
+      });
+    });
   }
 };
 
@@ -318,6 +350,12 @@ export const getRSOLAssetBalance = (): AppThunk => (dispatch, getState) => {
     const address = getState().BSCModule.bscAccount.address;
     getAssetBalance(address, bscServer.getRSOLTokenAbi(), bscServer.getRSOLTokenAddress(), (v: any) => {
       dispatch(setBepRSOLBalance(v));
+    });
+  } else {
+    requestMetamaskAccount((address: string) => {
+      getAssetBalance(address, bscServer.getRSOLTokenAbi(), bscServer.getRSOLTokenAddress(), (v: any) => {
+        dispatch(setBepRSOLBalance(v));
+      });
     });
   }
 };
@@ -328,6 +366,12 @@ export const getRMATICAssetBalance = (): AppThunk => (dispatch, getState) => {
     getAssetBalance(address, bscServer.getRMATICTokenAbi(), bscServer.getRMATICTokenAddress(), (v: any) => {
       dispatch(setBepRMATICBalance(v));
     });
+  } else {
+    requestMetamaskAccount((address: string) => {
+      getAssetBalance(address, bscServer.getRMATICTokenAbi(), bscServer.getRMATICTokenAddress(), (v: any) => {
+        dispatch(setBepRMATICBalance(v));
+      });
+    });
   }
 };
 
@@ -337,6 +381,12 @@ export const getRETHAssetBalance = (): AppThunk => (dispatch, getState) => {
     getAssetBalance(address, bscServer.getRETHTokenAbi(), bscServer.getRETHTokenAddress(), (v: any) => {
       dispatch(setBepRETHBalance(v));
     });
+  } else {
+    requestMetamaskAccount((address: string) => {
+      getAssetBalance(address, bscServer.getRETHTokenAbi(), bscServer.getRETHTokenAddress(), (v: any) => {
+        dispatch(setBepRETHBalance(v));
+      });
+    });
   }
 };
 
@@ -345,6 +395,12 @@ export const getRBNBAssetBalance = (): AppThunk => (dispatch, getState) => {
     const address = getState().BSCModule.bscAccount.address;
     getAssetBalance(address, bscServer.getRTokenAbi(), bscServer.getRBNBTokenAddress(), (v: any) => {
       dispatch(setBepRBNBBalance(v));
+    });
+  } else {
+    requestMetamaskAccount((address: string) => {
+      getAssetBalance(address, bscServer.getRTokenAbi(), bscServer.getRBNBTokenAddress(), (v: any) => {
+        dispatch(setBepRBNBBalance(v));
+      });
     });
   }
 };
