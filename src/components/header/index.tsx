@@ -56,16 +56,7 @@ export default function Index(props: Props) {
     if (location.pathname.includes('/rDOT')) {
       if (state.rDOTModule.dotAccount && state.FISModule.fisAccount) {
         if (location.pathname.includes('/rDOT/staker/info')) {
-          let platform = 'Native';
-          if (history.location.search) {
-            platform = qs.parse(history.location.search.slice(1)).platform as string;
-          }
-          const temp =
-            platform === 'Native'
-              ? { dotAccount: state.rDOTModule.dotAccount }
-              : { ethAccount: state.rETHModule.ethAccount };
           return {
-            ...temp,
             fisAccount: state.FISModule.fisAccount,
             noticeData: state.noticeModule.noticeData,
             type: 'rDOT/status',
@@ -81,16 +72,7 @@ export default function Index(props: Props) {
     if (location.pathname.includes('/rKSM')) {
       if (state.rKSMModule.ksmAccount && state.FISModule.fisAccount) {
         if (location.pathname.includes('/rKSM/staker/info')) {
-          let platform = 'Native';
-          if (history.location.search) {
-            platform = qs.parse(history.location.search.slice(1)).platform as string;
-          }
-          const temp =
-            platform === 'Native'
-              ? { ksmAccount: state.rKSMModule.ksmAccount }
-              : { ethAccount: state.rETHModule.ethAccount };
           return {
-            ...temp,
             fisAccount: state.FISModule.fisAccount,
             noticeData: state.noticeModule.noticeData,
             type: 'rKSM/status',
@@ -106,16 +88,7 @@ export default function Index(props: Props) {
     if (location.pathname.includes('/rATOM')) {
       if (state.rATOMModule.atomAccount || state.FISModule.fisAccount) {
         if (location.pathname.includes('/rATOM/staker/info')) {
-          let platform = 'Native';
-          if (history.location.search) {
-            platform = qs.parse(history.location.search.slice(1)).platform as string;
-          }
-          const temp =
-            platform === 'Native'
-              ? { atomAccount: state.rATOMModule.atomAccount }
-              : { ethAccount: state.rETHModule.ethAccount };
           return {
-            ...temp,
             fisAccount: state.FISModule.fisAccount,
             noticeData: state.noticeModule.noticeData,
             type: 'rATOM/status',
@@ -195,7 +168,7 @@ export default function Index(props: Props) {
       if (state.rETHModule.ethAccount) {
         if (location.pathname.includes('/rETH/staker/info')) {
           return {
-            ethAccount: state.rETHModule.ethAccount,
+            fisAccount: state.FISModule.fisAccount,
             type: 'rETH/status',
           };
         }
@@ -217,16 +190,7 @@ export default function Index(props: Props) {
     if (location.pathname.includes('/rMATIC')) {
       if (state.rMATICModule.maticAccount || state.FISModule.fisAccount) {
         if (location.pathname.includes('/rMATIC/staker/info')) {
-          let platform = 'Native';
-          if (history.location.search) {
-            platform = qs.parse(history.location.search.slice(1)).platform as string;
-          }
-          const temp =
-            platform === 'Native'
-              ? { maticAccount: state.rMATICModule.maticAccount }
-              : { ethAccount: state.rETHModule.ethAccount };
           return {
-            ...temp,
             fisAccount: state.FISModule.fisAccount,
             noticeData: state.noticeModule.noticeData,
             type: 'rMATIC/status',
@@ -245,7 +209,6 @@ export default function Index(props: Props) {
       if (state.rETHModule.ethAccount || state.FISModule.fisAccount) {
         const type = location.pathname.includes('/rBNB/staker/info') ? 'rBNB/status' : 'rBNB';
         return {
-          ethAccount: state.rETHModule.ethAccount,
           fisAccount: state.FISModule.fisAccount,
           noticeData: state.noticeModule.noticeData,
           type: type,
@@ -255,13 +218,7 @@ export default function Index(props: Props) {
     if (location.pathname.includes('/rFIS')) {
       if (state.FISModule.fisAccount) {
         if (location.pathname.includes('/rFIS/staker/info')) {
-          let platform = 'Native';
-          if (history.location.search) {
-            platform = qs.parse(history.location.search.slice(1)).platform as string;
-          }
-          const temp = platform === 'Native' ? {} : { ethAccount: state.rETHModule.ethAccount };
           return {
-            ...temp,
             fisAccount: state.FISModule.fisAccount,
             noticeData: state.noticeModule.noticeData,
             type: 'rFIS/status',
