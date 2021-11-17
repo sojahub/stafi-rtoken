@@ -40,9 +40,9 @@ const siderData = [
   {
     icon: rDEX_svg,
     selectedIcon: selected_rDEX_svg,
-    text: 'rDEX',
-    urlKeywords: '/rDEX',
-    url: '/rDEX/home',
+    text: 'rSwap',
+    urlKeywords: '/rSwap',
+    url: '/rSwap/home',
   },
   {
     icon: rPool_svg,
@@ -136,7 +136,7 @@ export default function Index(props: Props) {
               selectedIcon={item.selectedIcon}
               text={item.text}
               url={item.url}
-              selected={location.pathname.includes(item.urlKeywords)}
+              selected={history.location.pathname.includes(item.urlKeywords)}
               onClick={() => {
                 dispatch(
                   trackEvent('clik_nav_link', {

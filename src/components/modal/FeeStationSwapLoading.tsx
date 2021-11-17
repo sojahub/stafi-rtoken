@@ -100,7 +100,7 @@ export default function FeeStationSwapLoading(props: Props) {
           stage2StartProgress + ((STAGE2_PERIOD - stage2TimeLeft) * (100 - stage2StartProgress) * 8) / STAGE2_PERIOD,
         );
         if (stage2TimeLeft === 0) {
-          message.info('We are tranferring tokens to the received address, please check your wallet later.');
+          message.info('We are transferring tokens to the received address, please check your wallet later.');
           dispatch(setSwapLoadingStatus(0));
         }
       } else {
@@ -199,7 +199,7 @@ export default function FeeStationSwapLoading(props: Props) {
             <div className='title'>Swapping</div>
 
             <div className='context' style={{ marginTop: props.showSignatureHint ? '23px' : '29px' }}>
-              We are tranferring tokens to the received address
+              We are transferring tokens to the received address
             </div>
             {props.showSignatureHint && (
               <div className='context' style={{ marginTop: '4px' }}>

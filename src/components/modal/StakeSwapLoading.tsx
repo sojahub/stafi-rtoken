@@ -8,12 +8,12 @@ import complete_svg from 'src/assets/images/complete.svg';
 import { getRsymbolByTokenType, getSymbolRTitle } from 'src/config/index';
 import { BSC_CHAIN_ID, ETH_CHAIN_ID, SOL_CHAIN_ID } from 'src/features/bridgeClice';
 import {
-    getAssetBalance as getBscAssetBalance,
-    getAssetBalanceAll as getBep20AssetBalanceAll
+  getAssetBalance as getBscAssetBalance,
+  getAssetBalanceAll as getBep20AssetBalanceAll,
 } from 'src/features/BSCClice';
 import {
-    getAssetBalance as getEthAssetBalance,
-    getAssetBalanceAll as getErc20AssetBalanceAll
+  getAssetBalance as getEthAssetBalance,
+  getAssetBalanceAll as getErc20AssetBalanceAll,
 } from 'src/features/ETHClice';
 import { processStatus, setProcessSwapping, setStakeSwapLoadingStatus } from 'src/features/globalClice';
 import { noticeStatus, update_NoticeProcessSwppingStatus, update_NoticeStatus } from 'src/features/noticeClice';
@@ -107,7 +107,7 @@ export default function StakeSwapLoading(props: Props) {
           stage2StartProgress + ((STAGE2_PERIOD - stage2TimeLeft) * (100 - stage2StartProgress) * 15) / STAGE2_PERIOD,
         );
         if (stage2TimeLeft === 0) {
-          message.info('We are tranferring tokens to the received address, please check your wallet later.');
+          message.info('We are transferring tokens to the received address, please check your wallet later.');
           dispatch(setStakeSwapLoadingStatus(0));
         }
       } else {

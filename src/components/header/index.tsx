@@ -245,11 +245,11 @@ export default function Index(props: Props) {
         };
       }
     }
-    if (location.pathname.includes('/rDEX')) {
+    if (location.pathname.includes('/rSWAP')) {
       if (state.FISModule.fisAccount) {
         return {
           fisAccount: state.FISModule.fisAccount,
-          type: 'rDEX',
+          type: 'rSWAP',
         };
       }
     }
@@ -517,14 +517,6 @@ export default function Index(props: Props) {
                     <img src={wrong_network} className={'wrong_network'} />
                   )}
                 {account.type !== 'rPool/lp' &&
-                  account.type !== 'rETH/status' &&
-                  account.type !== 'rATOM/status' &&
-                  account.type !== 'rDOT/status' &&
-                  account.type !== 'rFIS/status' &&
-                  account.type !== 'rBNB/status' &&
-                  account.type !== 'rSOL/status' &&
-                  account.type !== 'rMATIC/status' &&
-                  account.type !== 'rKSM/status' &&
                   metaMaskNetworkId &&
                   !config.metaMaskNetworkIsGoerliEth(metaMaskNetworkId) && (
                     <img src={wrong_network} className={'wrong_network'} />

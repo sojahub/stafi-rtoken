@@ -120,7 +120,7 @@ export default function SwapLoading(props: Props) {
           stage2StartProgress + ((STAGE2_PERIOD - stage2TimeLeft) * (100 - stage2StartProgress) * 15) / STAGE2_PERIOD,
         );
         if (stage2TimeLeft === 0) {
-          message.info('We are tranferring tokens to the received address, please check your wallet later.');
+          message.info('We are transferring tokens to the received address, please check your wallet later.');
           dispatch(setSwapLoadingStatus(0));
         }
       } else {

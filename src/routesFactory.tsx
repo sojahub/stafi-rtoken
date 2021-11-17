@@ -34,7 +34,7 @@ import RBnbStakerReward from './pages/rBNB/staker/reward';
 import RBnbStakerUnbondRecords from './pages/rBNB/staker/unbondRecords';
 import RBnbHomeTemplate from './pages/rBNB/template';
 import RBnbValidator from './pages/rBNB/validator';
-import RDEXHome from './pages/rDEX/home';
+import RSWAPHome from './pages/rDEX/home';
 import RDOTHome from './pages/rDOT/home';
 import RDOTSeach from './pages/rDOT/search';
 import RDOTType from './pages/rDOT/selectType';
@@ -573,19 +573,19 @@ const routesFactory = (role?: any) => {
           ],
         },
         {
-          id: 'rDEX_home',
-          path: '/rDEX',
-          type: 'rDEX',
-          component: RDEXHome,
+          id: 'rSWAP_home',
+          path: '/rSwap',
+          type: 'rSWAP',
+          component: RSWAPHome,
           routes: [
             {
-              id: 'rDEX_home',
-              path: '/rDEX/home',
-              component: RDEXHome,
+              id: 'rSWAP_home',
+              path: '/rSwap/home',
+              component: RSWAPHome,
             },
             {
               path: '*',
-              component: () => <Redirect to='/rDEX/home' />,
+              component: () => <Redirect to='/rSwap/home' />,
             },
           ],
         },
