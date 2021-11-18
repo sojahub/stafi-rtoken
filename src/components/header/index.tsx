@@ -176,7 +176,6 @@ export default function Index(props: Props) {
       if (state.rETHModule.ethAccount) {
         if (location.pathname.includes('/rETH/staker/info')) {
           return {
-            fisAccount: state.FISModule.fisAccount,
             ethAccount: state.rETHModule.ethAccount,
             type: 'staker/status',
           };

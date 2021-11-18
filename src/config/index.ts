@@ -211,14 +211,6 @@ const config = {
       return '0x0ed54e1b7b3be1c02d91b4fa8bf5655f3fbe08b4';
     }
   },
-  rETHTokenAddress2: () => {
-    if (!isdev()) {
-      return '0x9559aaa82d9649c7a7b220e7c461d2e74c9a3593';
-    } else {
-      // Rospten
-      return '0x3bced7ac14364e754edca244844f826de1703c12';
-    }
-  },
   stafiUserDepositAddress: () => {
     if (!isdev()) {
       return '0x430cf6dd3e289adae63b50ff661d6bba2dbb3f28';

@@ -14,6 +14,7 @@ export default function Index(props: Props) {
   if (props.reward === '--') {
     return null;
   }
+
   return (
     <div className='row body'>
       <div className='col col1'>{props.era}</div>
@@ -21,10 +22,11 @@ export default function Index(props: Props) {
       <div className='col col3'>{props.ratio}</div>
       <div className='col col4'>{props.redeemableToken}</div>
       <div className='col col5'>
-        {props.reward !== '--' && props.reward > 0 && props.reward < config.minReward && `<${config.minReward}`}
-        {props.reward !== '--' && props.reward >= config.minReward && `+${NumberUtil.fixedAmountLength(props.reward)}`}
-        {props.reward === '--' && props.reward}
-        {isEmpty(props.reward) && 'Fetching'}
+        {!isNaN(Number(props.reward)) && props.reward > 0 && props.reward < config.minReward && `<${config.minReward}`}
+        {!isNaN(Number(props.reward)) &&
+          props.reward >= config.minReward &&
+          `+${NumberUtil.fixedAmountLength(props.reward)}`}
+        {(isNaN(Number(props.reward)) || isEmpty(props.reward && props.reward.toString())) && 'Fetching'}
       </div>
     </div>
   );

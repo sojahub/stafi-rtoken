@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router';
 import Content from 'src/components/content/stakeInfoContent';
 import { getRETHAssetBalance as getBEP20RETHAssetBalance } from 'src/features/BSCClice';
-import { getETHAssetBalance, getETHAssetBalance as getRETHErc20Allowance } from 'src/features/ETHClice';
+import { getETHAssetBalance } from 'src/features/ETHClice';
 import { getLastEraRate, rTokenRate, setRatioShow } from 'src/features/rETHClice';
 import NumberUtil from 'src/util/numberUtil';
 

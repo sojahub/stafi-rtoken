@@ -1,8 +1,8 @@
 // @ts-nocheck
 
 import { message } from 'antd';
-import React, { useEffect, useMemo, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import qs from 'querystring';
+import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router';
 import dow_svg from 'src/assets/images/left_arrow_black.svg';
 import rDOT_DOT_svg from 'src/assets/images/rDOT_DOT.svg';
@@ -15,7 +15,6 @@ import rKSM_stafi_svg from 'src/assets/images/selected_r_ksm.svg';
 import rMatic_stafi_svg from 'src/assets/images/selected_r_matic.svg';
 import rSOL_stafi_svg from 'src/assets/images/selected_r_sol.svg';
 import arrowIcon from 'src/assets/images/staker_info_content_arrow.svg';
-import config from 'src/config/index';
 import { useTradeList } from 'src/hooks/useTradeList';
 import Button from 'src/shared/components/button/button';
 import { requestSwitchMetaMaskNetwork } from 'src/util/metaMaskUtil';
@@ -46,7 +45,6 @@ type Props = {
 
 export default function Index(props: Props) {
   const history = useHistory();
-  const dispatch = useDispatch();
 
   const [visibleModal, setVisibleModal] = useState(false);
   const [redeemSwapModalVisible, setRedeemSwapModalVisible] = useState(false);
@@ -61,6 +59,17 @@ export default function Index(props: Props) {
       requestSwitchMetaMaskNetwork('BSC');
     }
   }, [props.platform]);
+
+  useEffect(() => {
+    if (
+      !history.location.search ||
+      history.location.search.length < 1 ||
+      !qs.parse(history.location.search.slice(1)).platform
+    ) {
+      const defaultPlatform = props.type === 'rETH' ? 'ERC20' : 'Native';
+      history.push(`${history.location.pathname}?platform=${defaultPlatform}`);
+    }
+  }, [history, props.type]);
 
   const showNative = props.type !== 'rETH';
   const showErc20 =

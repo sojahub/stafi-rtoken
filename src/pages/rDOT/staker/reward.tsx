@@ -7,36 +7,44 @@ import { getReward, getUnbondCommission } from 'src/features/rDOTClice';
 import { RootState } from 'src/store';
 import NumberUtil from 'src/util/numberUtil';
 
-const commonClice=new CommonClice()
-export default function Index(){
-    const dispatch=useDispatch();
-    useEffect(()=>{ 
-        dispatch(getUnbondCommission());
-    },[])
-    const {rewardList,unbondCommission,rewardList_lastdata,address}=useSelector((state:RootState)=>{
-        return {
-            rewardList:state.rDOTModule.rewardList,
-            unbondCommission:state.rDOTModule.unbondCommission,
-            rewardList_lastdata:state.rDOTModule.rewardList_lastdata,
-            address:state.rDOTModule.dotAccount?state.rDOTModule.dotAccount.address:''
+const commonClice = new CommonClice();
+export default function Index() {
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(getUnbondCommission());
+  }, []);
+  const { rewardList, unbondCommission, rewardList_lastdata, address } = useSelector((state: RootState) => {
+    return {
+      rewardList: state.rDOTModule.rewardList,
+      unbondCommission: state.rDOTModule.unbondCommission,
+      rewardList_lastdata: state.rDOTModule.rewardList_lastdata,
+      address: state.rDOTModule.dotAccount ? state.rDOTModule.dotAccount.address : '',
+    };
+  });
+  return (
+    <RewardContent address={address} hours={24} rewardList={rewardList} getReward={getReward} type='DOT'>
+      {rewardList.map((item, index) => {
+        let reward: any = '--';
+
+        if (index < rewardList.length - 1) {
+          reward = (item.rate - rewardList[index + 1].rate) * rewardList[index + 1].rbalance;
+        } else if (rewardList_lastdata) {
+          reward = (item.rate - rewardList_lastdata.rate) * rewardList_lastdata.rbalance;
         }
-    }) 
-    return <RewardContent address={address} hours={24} rewardList={rewardList} getReward={getReward} type="DOT">
-        {
-            rewardList.map((item,index)=>{
-                let reward:any='--';
-            
-                if(index<(rewardList.length-1)){
-                    reward=(item.rate-rewardList[index+1].rate)*rewardList[index+1].rbalance; 
-                }else if(rewardList_lastdata){
-                    reward=(item.rate-rewardList_lastdata.rate)*rewardList_lastdata.rbalance;  
-                }
-                
-                return <DataItem era={item.era} tokenAmount={NumberUtil.handleFisAmountToFixed(item.rbalance)} ratio={NumberUtil.handleFisAmountRateToFixed(item.rate)} redeemableToken={commonClice.getWillAmount(item.rate,unbondCommission,item.rbalance)} reward={reward} />
-            })
-        }
-         
-         {/* <DataItem era={2} tokenAmount={2.234323} ratio={32.321232} redeemableToken={2.342345} reward={23.432345} />
+
+        return (
+          <DataItem
+            key={item.era}
+            era={item.era}
+            tokenAmount={NumberUtil.handleFisAmountToFixed(item.rbalance)}
+            ratio={NumberUtil.handleFisAmountRateToFixed(item.rate)}
+            redeemableToken={commonClice.getWillAmount(item.rate, unbondCommission, item.rbalance)}
+            reward={reward}
+          />
+        );
+      })}
+
+      {/* <DataItem era={2} tokenAmount={2.234323} ratio={32.321232} redeemableToken={2.342345} reward={23.432345} />
          <DataItem era={2} tokenAmount={2.234323} ratio={32.321232} redeemableToken={2.342345} reward={23.432345} />
          <DataItem era={4} tokenAmount={2.234323} ratio={32.321232} redeemableToken={2.342345} reward={23.432345} />
          <DataItem era={1} tokenAmount={2.234323} ratio={32.321232} redeemableToken={2.342345} reward={23.432345} />
@@ -52,4 +60,5 @@ export default function Index(){
          <DataItem era={2} tokenAmount={2.234323} ratio={32.321232} redeemableToken={2.342345} reward={23.432345} />
          <DataItem era={4} tokenAmount={2.234323} ratio={32.321232} redeemableToken={2.342345} reward={23.432345} /> */}
     </RewardContent>
+  );
 }

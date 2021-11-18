@@ -34,6 +34,7 @@ export default function Index() {
 
         return (
           <DataItem
+            key={item.era}
             era={item.era}
             tokenAmount={NumberUtil.handleFisAmountToFixed(item.rbalance)}
             ratio={NumberUtil.handleFisAmountRateToFixed(item.rate)}
