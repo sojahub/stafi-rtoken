@@ -320,7 +320,7 @@ export const getLPList =
       const resultList = await Promise.all(promiseList);
       lpList.forEach((item: any) => {
         const newItem = resultList.find((data: any) => {
-          return data.name === item.name;
+          return data && item && data.name === item.name;
         });
         item.children = newItem?.children;
       });

@@ -114,7 +114,8 @@ const rDOTClice = createSlice({
         removeLocalStorageItem(Keys.DotStakeHash);
         state.stakeHash = payload;
       } else {
-        setLocalStorageItem(Keys.DotStakeHash, payload)((state.stakeHash = payload));
+        setLocalStorageItem(Keys.DotStakeHash, payload);
+        state.stakeHash = payload;
       }
     },
     setValidPools(state, { payload }) {
@@ -291,7 +292,6 @@ export const transfer =
             }),
           );
         }
-
         if (result.status.isInBlock) {
           dispatch(
             setProcessSending({
@@ -430,14 +430,16 @@ export const transfer =
             }),
           );
         } else if (result.isError) {
-          M.error(result.toHuman());
+          message.error(result.toHuman());
         }
       } catch (e) {
-        M.error(e.message);
+        console.log('sdfsdfsfsdf11');
+
+        message.error(e.message);
       }
     }).catch((e: any) => {
       dispatch(setLoading(false));
-      if (e == 'Error: Cancelled') {
+      if (e === 'Error: Cancelled') {
         message.error('Cancelled');
       } else {
         console.error(e);

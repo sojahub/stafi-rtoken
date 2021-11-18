@@ -114,7 +114,8 @@ const rKSMClice = createSlice({
         removeLocalStorageItem(Keys.KsmStakeHash);
         state.stakeHash = payload;
       } else {
-        setLocalStorageItem(Keys.KsmStakeHash, payload)((state.stakeHash = payload));
+        setLocalStorageItem(Keys.KsmStakeHash, payload);
+        state.stakeHash = payload;
       }
     },
     setValidPools(state, { payload }) {

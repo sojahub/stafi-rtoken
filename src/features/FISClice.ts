@@ -1,8 +1,8 @@
 // @ts-nocheck
 
+import { SubmittableResult } from '@polkadot/api';
 import { web3Enable, web3FromSource } from '@polkadot/extension-dapp';
 import { stringToHex, u8aToHex } from '@polkadot/util';
-import { ApiPromise, SubmittableResult } from '@polkadot/api';
 import { createSlice } from '@reduxjs/toolkit';
 import { PublicKey } from '@solana/web3.js';
 import { message } from 'antd';
@@ -29,8 +29,7 @@ import {
   timeout,
 } from 'src/util/common';
 import localStorageUtil from 'src/util/localStorage';
-import numberUtil from 'src/util/numberUtil';
-import NumberUtil from 'src/util/numberUtil';
+import { default as numberUtil, default as NumberUtil } from 'src/util/numberUtil';
 import StringUtil from 'src/util/stringUtil';
 import { AppThunk } from '../store';
 import {
@@ -152,7 +151,8 @@ const FISClice = createSlice({
         state.stakeHash = payload;
       } else {
         let param = { ...state.processParameter, ...payload };
-        setLocalStorageItem(Keys.FisStakeHash, param)((state.stakeHash = payload));
+        setLocalStorageItem(Keys.FisStakeHash, param);
+        state.stakeHash = payload;
       }
     },
     setProcessParameter(state, { payload }) {
@@ -1070,7 +1070,9 @@ export const unbond =
                     amount: willAmount,
                     recipient: address,
                   });
-                  cb && cb();
+                  setTimeout(() => {
+                    cb && cb();
+                  }, 500);
                 }
               });
           } else if (result.isError) {

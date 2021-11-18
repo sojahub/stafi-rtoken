@@ -128,7 +128,8 @@ const rSOLClice = createSlice({
         removeLocalStorageItem(Keys.SolStakeHash);
         state.stakeHash = payload;
       } else {
-        setLocalStorageItem(Keys.SolStakeHash, payload)((state.stakeHash = payload));
+        setLocalStorageItem(Keys.SolStakeHash, payload);
+        state.stakeHash = payload;
       }
     },
     setValidPools(state, { payload }) {

@@ -117,7 +117,8 @@ const rMATICClice = createSlice({
         removeLocalStorageItem(Keys.MaticStakeHash);
         state.stakeHash = payload;
       } else {
-        setLocalStorageItem(Keys.MaticStakeHash, payload)((state.stakeHash = payload));
+        setLocalStorageItem(Keys.MaticStakeHash, payload);
+        state.stakeHash = payload;
       }
     },
     setValidPools(state, { payload }) {
