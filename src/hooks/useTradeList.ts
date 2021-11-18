@@ -15,7 +15,10 @@ export function useTradeList(
   useEffect(() => {
     if (tokenType === 'rDOT') {
       if (platform === 'native') {
-        setTradeList([{ label: 'Uniswap', url: config.uniswap.rdotURL }]);
+        setTradeList([
+          { label: 'Uniswap', url: config.uniswap.rdotURL },
+          { label: 'Pancake', url: config.pancake.rdotURL },
+        ]);
       } else if (platform === 'erc20') {
         setTradeList([{ label: 'Uniswap', url: config.uniswap.rdotURL }]);
       } else if (platform === 'bep20') {
@@ -76,7 +79,7 @@ export function useTradeList(
       }
     } else if (tokenType === 'rBNB') {
       if (platform === 'native') {
-        setTradeList([]);
+        setTradeList([{ label: 'Pancake', url: config.pancake.rbnbURL }]);
       } else if (platform === 'bep20') {
         setTradeList([{ label: 'Pancake', url: config.pancake.rbnbURL }]);
       } else {

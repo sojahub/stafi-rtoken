@@ -54,7 +54,9 @@ export default function Index(props: Props) {
         <div
           className='context'
           style={{ color: 'rgba(34,36,31,0.8)', lineHeight: '18px', marginTop: '10px', marginBottom: '18px' }}>
-          Swap Native {props.type} to ERC20 {props.type} before trading on {props.label}
+          Swap Native {props.type} to{' '}
+          {props.label === 'Uniswap' || props.label === 'Curve' || props.label === 'Quickswap' ? 'ERC20' : 'BEP20'}{' '}
+          {props.type} before trading on {props.label}
         </div>
       </div>
     </Modal>

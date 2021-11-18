@@ -51,40 +51,8 @@ export default function Index(props: Props) {
   const [visibleModal, setVisibleModal] = useState(false);
   const [redeemSwapModalVisible, setRedeemSwapModalVisible] = useState(false);
   const [tradeLabel, setTradeLabel] = useState('Uniswap');
-  const [selectedExchange, setSelectedExchange] = useState('');
+  const [selectedTradeUrl, setSelectedTradeUrl] = useState();
   const tradeList = useTradeList(props.platform?.toLowerCase(), props.type);
-
-  const { metaMaskNetworkId } = useSelector((state: any) => {
-    return {
-      metaMaskNetworkId: state.globalModule.metaMaskNetworkId,
-    };
-  });
-
-  const tradeUrl = useMemo(() => {
-    if (props.type === 'rDOT') {
-      return config.uniswap.rdotURL;
-    }
-    if (props.type === 'rFIS') {
-      return config.uniswap.rfisURL;
-    }
-    if (props.type === 'rKSM') {
-      return config.uniswap.rksmURL;
-    }
-    if (props.type === 'rATOM') {
-      return config.uniswap.ratomURL;
-    }
-    if (props.type === 'rMATIC') {
-      return config.quickswap.rmaticURL;
-    }
-    if (props.type === 'rETH') {
-      if (selectedExchange === 'Uniswap') {
-        return config.uniswap.rethURL;
-      }
-      if (selectedExchange === 'Curve') {
-        return config.curve.rethURL;
-      }
-    }
-  }, [props.type, selectedExchange]);
 
   useEffect(() => {
     if (props.platform === 'ERC20') {
@@ -241,7 +209,8 @@ export default function Index(props: Props) {
                 } else {
                   setRedeemSwapModalVisible(true);
                 }
-              }}>
+              }}
+              btnStyle={{ marginRight: '10px' }}>
               Redeem
             </Button>
 
@@ -251,12 +220,16 @@ export default function Index(props: Props) {
                 props.platform === 'ERC20' || props.platform === 'BEP20'
                   ? null
                   : (item: any) => {
-                      setSelectedExchange(item.label);
                       setVisibleModal(true);
                       setTradeLabel(item.label);
+                      setSelectedTradeUrl(item.url);
                     }
               }>
-              <Button size='small' btnType='ellipse' disabled={!tradeList || tradeList.length === 0}>
+              <Button
+                size='small'
+                btnType='ellipse'
+                disabled={!tradeList || tradeList.length === 0}
+                btnStyle={{ marginLeft: '0px' }}>
                 Trade <img className='dow_svg' src={dow_svg} alt='down arrow' />{' '}
               </Button>{' '}
             </TradePopover>
@@ -289,10 +262,10 @@ export default function Index(props: Props) {
       </Text>
 
       <SwapModalNew
-        type={props.type}
         visible={visibleModal}
+        type={props.type}
         label={tradeLabel}
-        tradeUrl={tradeUrl}
+        tradeUrl={selectedTradeUrl}
         onCancel={() => {
           setVisibleModal(false);
         }}

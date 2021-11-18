@@ -14,36 +14,36 @@ import config from 'src/config/index';
 import { getRtokenPriceList } from 'src/features/bridgeClice';
 import CommonClice from 'src/features/commonClice';
 import {
-    getUnbondCommission as fis_getUnbondCommission,
-    query_rBalances_account as fis_query_rBalances_account,
-    rTokenRate as fis_rTokenRate
+  getUnbondCommission as fis_getUnbondCommission,
+  query_rBalances_account as fis_query_rBalances_account,
+  rTokenRate as fis_rTokenRate,
 } from 'src/features/FISClice';
 import { connectPolkadotjs, reloadData } from 'src/features/globalClice';
 import {
-    getUnbondCommission as atom_getUnbondCommission,
-    query_rBalances_account as atom_query_rBalances_account,
-    rTokenRate as atom_rTokenRate
+  getUnbondCommission as atom_getUnbondCommission,
+  query_rBalances_account as atom_query_rBalances_account,
+  rTokenRate as atom_rTokenRate,
 } from 'src/features/rATOMClice';
 import {
-    getUnbondCommission as bnb_getUnbondCommission,
-    query_rBalances_account as bnb_query_rBalances_account,
-    rTokenRate as bnb_rTokenRate
+  getUnbondCommission as bnb_getUnbondCommission,
+  query_rBalances_account as bnb_query_rBalances_account,
+  rTokenRate as bnb_rTokenRate,
 } from 'src/features/rBNBClice';
 import {
-    getUnbondCommission as dot_getUnbondCommission,
-    query_rBalances_account as dot_query_rBalances_account,
-    rTokenRate as dot_rTokenRate
+  getUnbondCommission as dot_getUnbondCommission,
+  query_rBalances_account as dot_query_rBalances_account,
+  rTokenRate as dot_rTokenRate,
 } from 'src/features/rDOTClice';
 import { getUnbondCommission, query_rBalances_account, rTokenRate as ksm_rTokenRate } from 'src/features/rKSMClice';
 import {
-    getUnbondCommission as matic_getUnbondCommission,
-    query_rBalances_account as matic_query_rBalances_account,
-    rTokenRate as matic_rTokenRate
+  getUnbondCommission as matic_getUnbondCommission,
+  query_rBalances_account as matic_query_rBalances_account,
+  rTokenRate as matic_rTokenRate,
 } from 'src/features/rMATICClice';
 import {
-    getUnbondCommission as sol_getUnbondCommission,
-    query_rBalances_account as sol_query_rBalances_account,
-    rTokenRate as sol_rTokenRate
+  getUnbondCommission as sol_getUnbondCommission,
+  query_rBalances_account as sol_query_rBalances_account,
+  rTokenRate as sol_rTokenRate,
 } from 'src/features/rSOLClice';
 import { Symbol } from 'src/keyring/defaults';
 import Button from 'src/shared/components/button/connect_button';
@@ -248,7 +248,10 @@ export default function Index(props: any) {
               willGetBalance={dotWillAmount}
               unit='DOT'
               operationType='native'
-              tradeList={[{ label: 'Uniswap', url: config.uniswap.rdotURL }]}
+              tradeList={[
+                { label: 'Uniswap', url: config.uniswap.rdotURL },
+                { label: 'Pancake', url: config.pancake.rdotURL },
+              ]}
               onSwapClick={() => {
                 history.push(`/rAsset/swap/native/default`, {
                   rSymbol: 'rDOT',
@@ -302,7 +305,7 @@ export default function Index(props: any) {
                 });
               }}
             />
-            
+
             <DataItem
               rSymbol='rMATIC'
               icon={rasset_rmatic_svg}
@@ -327,6 +330,7 @@ export default function Index(props: any) {
               willGetBalance={bnbWillAmount}
               unit='BNB'
               operationType='native'
+              tradeList={[{ label: 'Pancake', url: config.pancake.rbnbURL }]}
               onSwapClick={() => {
                 history.push('/rAsset/swap/native/default', {
                   rSymbol: 'rBNB',
