@@ -196,11 +196,10 @@ export default function Index(props: Props) {
             </HContainer>
 
             <Text size='16px' bold color='#ffffff' mt='8px' clickable>
-              {props.lastEraRate !== '--' && props.tokenAmount !== '--'
-                ? Number(props.lastEraRate * props.tokenAmount) > 0 &&
-                  Number(props.lastEraRate * props.tokenAmount) < 0.000001
+              {props.lastEraRate !== '--'
+                ? Number(props.lastEraRate) > 0 && Number(props.lastEraRate) < 0.000001
                   ? '<0.000001'
-                  : NumberUtil.handleAmountFloorToFixed(props.lastEraRate * props.tokenAmount, 6)
+                  : NumberUtil.handleAmountFloorToFixed(props.lastEraRate, 6)
                 : '--'}{' '}
               {props.type.slice(1)}
             </Text>

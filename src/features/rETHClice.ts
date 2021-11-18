@@ -1292,12 +1292,12 @@ export const getReward =
     const ethAccount = getState().rETHModule.ethAccount;
     dispatch(setLoading(true));
     try {
-      if (pageIndex == 0) {
+      if (pageIndex === 0) {
         dispatch(setRewardList([]));
         dispatch(setRewardList_lastdata(null));
       }
       const result = await rpcServer.getReward('', ethAccount.address, -1, pageIndex);
-      if (result.status == 80000) {
+      if (result.status === 80000) {
         const rewardList = getState().rETHModule.rewardList;
         if (result.data.rewardList.length > 0) {
           const list = result.data.rewardList.map((item: any) => {
@@ -1335,18 +1335,27 @@ export const getReward =
   };
 
 export const getLastEraRate = (): AppThunk => async (dispatch, getState) => {
-  const res = await ethServer.getEthRate();
-  if (res.status === '80000' && res.data?.list) {
-    res.data.list.sort((a: any, b: any) => {
-      return a.date * 1 - b.date * 1;
-    });
-    const lastRate = res.data.list[0].rate;
-    const currentRate = res.data.list[1].rate;
-    if (Number(currentRate) <= Number(lastRate)) {
-      dispatch(setLastEraRate(0));
+  const ethAddress = getState().rETHModule.ethAccount && getState().rETHModule.ethAccount.address;
+  const result = await rpcServer.getReward('', ethAddress, -1, 0);
+  if (result.status === 80000) {
+    if (result.data.rewardList.length > 1) {
+      const list = result.data.rewardList.map((item: any) => {
+        const rate = NumberUtil.tokenAmountToHuman(item.rate, rSymbol.Eth);
+        const rbalance = NumberUtil.tokenAmountToHuman(item.rbalance, rSymbol.Eth);
+        return {
+          ...item,
+          rbalance: rbalance,
+          rate: rate,
+        };
+      });
+      dispatch(setLastEraRate((list[0].rate - list[1].rate) * list[1].rbalance));
     } else {
-      dispatch(setLastEraRate(Number(currentRate) - Number(lastRate)));
+      dispatch(setLastEraRate(0));
     }
+  } else if (result.status === 301) {
+    dispatch(setLastEraRate(0));
+  } else {
+    dispatch(setLastEraRate('--'));
   }
 };
 

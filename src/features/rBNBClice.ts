@@ -857,19 +857,30 @@ export const rTokenLedger = (): AppThunk => async (dispatch, getState) => {
 
 export const getLastEraRate = (): AppThunk => async (dispatch, getState) => {
   try {
-    const stafiApi = await stafiServer.createStafiApi();
-    const eraResult = await stafiApi.query.rTokenLedger.chainEras(rSymbol.Bnb);
-    let currentEra = eraResult.toJSON();
-    if (currentEra) {
-      let rateResult = await stafiApi.query.rTokenRate.eraRate(rSymbol.Bnb, currentEra - 1);
-      const currentRate = rateResult.toJSON();
-      const rateResult2 = await stafiApi.query.rTokenRate.eraRate(rSymbol.Bnb, currentEra - 2);
-      let lastRate = rateResult2.toJSON();
-      if (Number(currentRate) <= Number(lastRate)) {
-        dispatch(setLastEraRate(0));
+    const fisSource = getState().FISModule.fisAccount && getState().FISModule.fisAccount.address;
+    const ethAddress = getState().rETHModule.ethAccount && getState().rETHModule.ethAccount.address;
+    const solAddress = getState().rSOLModule.solAccount && getState().rSOLModule.solAccount.address;
+    const bscAddress = getState().BSCModule.bscAccount && getState().BSCModule.bscAccount.address;
+    const result = await rpcServer.getReward(fisSource, ethAddress, rSymbol.Bnb, 0, bscAddress, solAddress);
+    if (result.status === 80000) {
+      if (result.data.rewardList.length > 1) {
+        const list = result.data.rewardList.map((item: any) => {
+          const rate = NumberUtil.rTokenRateToHuman(item.rate);
+          const rbalance = NumberUtil.tokenAmountToHuman(item.rbalance, rSymbol.Bnb);
+          return {
+            ...item,
+            rbalance: rbalance,
+            rate: rate,
+          };
+        });
+        dispatch(setLastEraRate((list[0].rate - list[1].rate) * list[1].rbalance));
       } else {
-        dispatch(setLastEraRate(numberUtil.rTokenRateToHuman(Number(currentRate) - Number(lastRate))));
+        dispatch(setLastEraRate(0));
       }
+    } else if (result.status === 301) {
+      dispatch(setLastEraRate(0));
+    } else {
+      dispatch(setLastEraRate('--'));
     }
   } catch (err: any) {}
 };
@@ -914,7 +925,7 @@ const add_Matic_stake_Notice =
 export const getReward =
   (pageIndex: Number, cb: Function): AppThunk =>
   async (dispatch, getState) => {
-    const fisSource = getState().FISModule.fisAccount.address;
+    const fisSource = getState().FISModule.fisAccount && getState().FISModule.fisAccount.address;
     const ethAccount = getState().rETHModule.ethAccount;
     const bscAccount = getState().BSCModule.bscAccount;
     const solAccount = getState().rSOLModule.solAccount;
@@ -933,7 +944,7 @@ export const getReward =
         bscAccount && bscAccount.address,
         solAccount && solAccount.address,
       );
-      if (result.status == 80000) {
+      if (result.status === 80000) {
         const rewardList = getState().rBNBModule.rewardList;
         if (result.data.rewardList.length > 0) {
           const list = result.data.rewardList.map((item: any) => {

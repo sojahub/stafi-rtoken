@@ -14,7 +14,7 @@ export default function Index(props: any) {
     dispatch(initMetaMaskAccount());
     dispatch(checkMetaMaskNetworkId());
     dispatch(monitorMetaMaskChainChange());
-  }, []);
+  }, [dispatch]);
 
   return (
     <div className='stafi_layout' style={{ height: '100%' }}>
