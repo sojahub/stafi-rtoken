@@ -52,9 +52,10 @@ export default function Index(props: any) {
       };
     });
 
-  const { fisAddress } = useSelector((state: any) => {
+  const { fisAddress, ethAddress } = useSelector((state: any) => {
     return {
       fisAddress: state.FISModule.fisAccount && state.FISModule.fisAccount.address,
+      ethAddress: state.rETHModule.ethAccount && state.rETHModule.ethAccount.address,
     };
   });
 
@@ -73,7 +74,7 @@ export default function Index(props: any) {
     } else if (platform === 'BEP20') {
       dispatch(getBEP20RDOTAssetBalance());
     }
-  }, [platform, metaMaskNetworkId, fisAddress, dispatch]);
+  }, [dispatch, platform, metaMaskNetworkId, fisAddress, ethAddress]);
 
   useEffect(() => {
     let count = 0;

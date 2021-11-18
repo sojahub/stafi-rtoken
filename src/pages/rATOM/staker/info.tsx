@@ -64,6 +64,13 @@ export default function Index(props: any) {
     dispatch(getLastEraRate());
   }, []);
 
+  const { fisAddress, ethAddress } = useSelector((state: any) => {
+    return {
+      fisAddress: state.FISModule.fisAccount && state.FISModule.fisAccount.address,
+      ethAddress: state.rETHModule.ethAccount && state.rETHModule.ethAccount.address,
+    };
+  });
+
   useEffect(() => {
     if (platform === 'Native') {
       dispatch(query_rBalances_account());
@@ -72,7 +79,7 @@ export default function Index(props: any) {
     } else if (platform === 'BEP20') {
       dispatch(getBEP20RATOMAssetBalance());
     }
-  }, [platform, metaMaskNetworkId]);
+  }, [dispatch, platform, metaMaskNetworkId, fisAddress, ethAddress]);
 
   useEffect(() => {
     let count = 0;

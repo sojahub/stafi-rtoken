@@ -1,5 +1,7 @@
+import qs from 'querystring';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useHistory } from 'react-router';
 import notice from 'src/assets/images/notice.svg';
 import report_icon from 'src/assets/images/report_icon.svg';
 import wrong_network from 'src/assets/images/wrong_network.svg';
@@ -17,7 +19,7 @@ import {
   query_rBalances_account as dotquery_rBalances_account,
   reloadData as dotReloadData,
 } from 'src/features/rDOTClice';
-import { get_eth_getBalance, monitoring_Method } from 'src/features/rETHClice';
+import { connectMetamask, get_eth_getBalance, monitoring_Method } from 'src/features/rETHClice';
 import {
   query_rBalances_account as ksmquery_rBalances_account,
   reloadData as ksmReloadData,
@@ -44,6 +46,12 @@ type Props = {
 
 export default function Index(props: Props) {
   const dispatch = useDispatch();
+  const history = useHistory();
+
+  let platform = 'Native';
+  if (history.location.search) {
+    platform = qs.parse(history.location.search.slice(1)).platform as string;
+  }
 
   const [visible, setVisible] = useState(false);
   const [modalType, setModalType] = useState<any>();
@@ -54,9 +62,10 @@ export default function Index(props: Props) {
       if (state.rDOTModule.dotAccount && state.FISModule.fisAccount) {
         if (location.pathname.includes('/rDOT/staker/info')) {
           return {
+            ethAccount: state.rETHModule.ethAccount,
             fisAccount: state.FISModule.fisAccount,
             noticeData: state.noticeModule.noticeData,
-            type: 'rDOT/status',
+            type: 'staker/status',
           };
         }
         return {
@@ -70,9 +79,10 @@ export default function Index(props: Props) {
       if (state.rKSMModule.ksmAccount && state.FISModule.fisAccount) {
         if (location.pathname.includes('/rKSM/staker/info')) {
           return {
+            ethAccount: state.rETHModule.ethAccount,
             fisAccount: state.FISModule.fisAccount,
             noticeData: state.noticeModule.noticeData,
-            type: 'rKSM/status',
+            type: 'staker/status',
           };
         }
         return {
@@ -86,9 +96,10 @@ export default function Index(props: Props) {
       if (state.rATOMModule.atomAccount || state.FISModule.fisAccount) {
         if (location.pathname.includes('/rATOM/staker/info')) {
           return {
+            ethAccount: state.rETHModule.ethAccount,
             fisAccount: state.FISModule.fisAccount,
             noticeData: state.noticeModule.noticeData,
-            type: 'rATOM/status',
+            type: 'staker/status',
           };
         }
         return {
@@ -166,7 +177,8 @@ export default function Index(props: Props) {
         if (location.pathname.includes('/rETH/staker/info')) {
           return {
             fisAccount: state.FISModule.fisAccount,
-            type: 'rETH/status',
+            ethAccount: state.rETHModule.ethAccount,
+            type: 'staker/status',
           };
         }
         return {
@@ -174,13 +186,15 @@ export default function Index(props: Props) {
         };
       }
     }
+
     if (location.pathname.includes('/rSOL')) {
       if (state.rSOLModule.solAccount && state.FISModule.fisAccount) {
         if (location.pathname.includes('rSOL/staker/info')) {
           return {
             fisAccount: state.FISModule.fisAccount,
+            solAccount: state.rSOLModule.solAccount,
             noticeData: state.noticeModule.noticeData,
-            type: 'rSOL/status',
+            type: 'staker/status',
           };
         }
         return {
@@ -196,8 +210,9 @@ export default function Index(props: Props) {
         if (location.pathname.includes('/rMATIC/staker/info')) {
           return {
             fisAccount: state.FISModule.fisAccount,
+            ethAccount: state.rETHModule.ethAccount,
             noticeData: state.noticeModule.noticeData,
-            type: 'rMATIC/status',
+            type: 'staker/status',
           };
         }
 
@@ -214,8 +229,9 @@ export default function Index(props: Props) {
         if (location.pathname.includes('rBNB/staker/info')) {
           return {
             fisAccount: state.FISModule.fisAccount,
+            ethAccount: state.rETHModule.ethAccount,
             noticeData: state.noticeModule.noticeData,
-            type: 'rBNB/status',
+            type: 'staker/status',
           };
         }
         return {
@@ -231,8 +247,9 @@ export default function Index(props: Props) {
         if (location.pathname.includes('/rFIS/staker/info')) {
           return {
             fisAccount: state.FISModule.fisAccount,
+            ethAccount: state.rETHModule.ethAccount,
             noticeData: state.noticeModule.noticeData,
-            type: 'rFIS/status',
+            type: 'staker/status',
           };
         }
 
@@ -425,6 +442,7 @@ export default function Index(props: Props) {
                 <div>{StringUtil.replacePkh(account.fisAccount.address, 6, 44)}</div>
               </div>
             )}
+
             {account.dotAccount && (
               <div
                 onClick={() => {
@@ -437,6 +455,7 @@ export default function Index(props: Props) {
                 <div>{StringUtil.replacePkh(account.dotAccount.address, 6, 44)}</div>
               </div>
             )}
+
             {account.ksmAccount && (
               <div
                 onClick={() => {
@@ -501,7 +520,7 @@ export default function Index(props: Props) {
                 </div>
               ))}
 
-            {account.type !== 'rBNB' && account.ethAccount && (
+            {account.type !== 'rBNB' && account.type !== 'staker/status' && account.ethAccount && (
               <div style={{ display: 'flex', flexDirection: 'column' }}>
                 <div className='header_tool account'>
                   <div>
@@ -555,6 +574,64 @@ export default function Index(props: Props) {
                   <div>{StringUtil.replacePkh(account.maticAccount.address, 4, 38)}</div>
                 </div>
                 {metaMaskNetworkId && !config.metaMaskNetworkIsGoerliEth(metaMaskNetworkId) && (
+                  <img src={wrong_network} className={'wrong_network'} alt='wrong network' />
+                )}
+              </div>
+            )}
+
+            {account.type === 'staker/status' && (platform === 'ERC20' || platform === 'BEP20' || platform === 'SPL') && (
+              <div style={{ display: 'flex', flexDirection: 'column' }}>
+                {platform === 'ERC20' || platform === 'BEP20' ? (
+                  account.ethAccount ? (
+                    <div className='header_tool account'>
+                      {platform === 'BEP20' && (
+                        <div>
+                          {(config.metaMaskNetworkIsBsc(metaMaskNetworkId) && account.ethAccount.balance) || '--'} BNB
+                        </div>
+                      )}
+                      {platform === 'ERC20' && (
+                        <div>
+                          {(config.metaMaskNetworkIsGoerliEth(metaMaskNetworkId) && account.ethAccount.balance) || '--'}{' '}
+                          ETH
+                        </div>
+                      )}
+                      <div>{StringUtil.replacePkh(account.ethAccount.address, 4, 38)}</div>
+                    </div>
+                  ) : (
+                    <div
+                      onClick={() => {
+                        dispatch(connectMetamask(platform === 'ERC20' ? config.ethChainId() : config.bscChainId()));
+                      }}
+                      className='header_tool account'>
+                      connect to MetaMask
+                    </div>
+                  )
+                ) : null}
+
+                {platform === 'SPL' &&
+                  (account.solAccount ? (
+                    <div
+                      className='header_tool account'
+                      onClick={() => {
+                        dispatch(connectSoljs());
+                      }}>
+                      <div>{account.solAccount.balance} SOL</div>
+                      <div>{StringUtil.replacePkh(account.solAccount.address, 6, 38)}</div>
+                    </div>
+                  ) : (
+                    <div
+                      onClick={() => {
+                        dispatch(connectSoljs());
+                      }}
+                      className='header_tool account'>
+                      connect to Phantom
+                    </div>
+                  ))}
+
+                {platform === 'BEP20' && metaMaskNetworkId && !config.metaMaskNetworkIsBsc(metaMaskNetworkId) && (
+                  <img src={wrong_network} className={'wrong_network'} alt='wrong network' />
+                )}
+                {platform === 'ERC20' && metaMaskNetworkId && !config.metaMaskNetworkIsGoerliEth(metaMaskNetworkId) && (
                   <img src={wrong_network} className={'wrong_network'} alt='wrong network' />
                 )}
               </div>

@@ -1,10 +1,10 @@
 // @ts-nocheck
 
 import { message } from 'antd';
-import React, { useMemo, useState, useEffect } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router';
 import dow_svg from 'src/assets/images/left_arrow_black.svg';
-import arrowIcon from 'src/assets/images/staker_info_content_arrow.svg';
 import rDOT_DOT_svg from 'src/assets/images/rDOT_DOT.svg';
 import rATOM_stafi_svg from 'src/assets/images/selected_r_atom.svg';
 import rBnb_stafi_svg from 'src/assets/images/selected_r_bnb.svg';
@@ -14,18 +14,18 @@ import rFIS_stafi_svg from 'src/assets/images/selected_r_fis.svg';
 import rKSM_stafi_svg from 'src/assets/images/selected_r_ksm.svg';
 import rMatic_stafi_svg from 'src/assets/images/selected_r_matic.svg';
 import rSOL_stafi_svg from 'src/assets/images/selected_r_sol.svg';
+import arrowIcon from 'src/assets/images/staker_info_content_arrow.svg';
 import config from 'src/config/index';
 import Button from 'src/shared/components/button/button';
 import { requestSwitchMetaMaskNetwork } from 'src/util/metaMaskUtil';
 import NumberUtil from 'src/util/numberUtil';
 import styled from 'styled-components';
 import { HContainer, Text } from '../commonComponents';
+import RedeemSwapModal from '../modal/RedeemSwapModal';
 import SwapModalNew from '../modal/swapModalNew';
 import TradePopover from '../tradePopover';
 import LeftContent from './leftContent';
 import { SelectPlatformPopover } from './SelectPlatformPopover';
-import { get_eth_getBalance } from 'src/features/rETHClice';
-import { useDispatch, useSelector } from 'react-redux';
 
 type Props = {
   onRdeemClick?: Function;
@@ -48,6 +48,7 @@ export default function Index(props: Props) {
   const dispatch = useDispatch();
 
   const [visibleModal, setVisibleModal] = useState(false);
+  const [redeemSwapModalVisible, setRedeemSwapModalVisible] = useState(false);
   const [tradeLabel, setTradeLabel] = useState('Uniswap');
   const [selectedExchange, setSelectedExchange] = useState('');
 
@@ -231,10 +232,13 @@ export default function Index(props: Props) {
           <div className='btns'>
             <Button
               size='small'
-              disabled={props.platform !== 'Native' && props.type !== 'rETH'}
               btnType='ellipse'
               onClick={() => {
-                props.onRdeemClick && props.onRdeemClick();
+                if (props.platform === 'Native' || (props.platform === 'ERC20' && props.type === 'rETH')) {
+                  props.onRdeemClick && props.onRdeemClick();
+                } else {
+                  setRedeemSwapModalVisible(true);
+                }
               }}>
               Redeem
             </Button>
@@ -323,6 +327,15 @@ export default function Index(props: Props) {
               rSymbol: props.type,
             });
           }
+        }}
+      />
+
+      <RedeemSwapModal
+        type={props.type}
+        platform={props.platform}
+        visible={redeemSwapModalVisible}
+        onCancel={() => {
+          setRedeemSwapModalVisible(false);
         }}
       />
     </LeftContent>

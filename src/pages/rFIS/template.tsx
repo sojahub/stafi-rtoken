@@ -8,36 +8,36 @@ import { Symbol } from 'src/keyring/defaults';
 import Content from 'src/shared/components/content';
 import { getLocalStorageItem, Keys } from 'src/util/common';
 import '../template/index.scss';
-export default function Index(props:any){
+export default function Index(props: any) {
   const dispatch = useDispatch();
 
-  const {fisAccount}=useSelector((state:any)=>{
+  const { fisAccount } = useSelector((state: any) => {
     return {
-      fisAccount:state.FISModule.fisAccount
-    }
-  })
-   
-  useEffect(()=>{ 
+      fisAccount: state.FISModule.fisAccount,
+    };
+  });
+
+  useEffect(() => {
     dispatch(fis_bondSwitch());
     dispatch(getPools());
-    if(getLocalStorageItem(Keys.FisAccountKey)){
-      dispatch(reloadData(Symbol.Fis)); 
+    if (getLocalStorageItem(Keys.FisAccountKey)) {
+      dispatch(reloadData(Symbol.Fis));
     }
-  },[]) 
+  }, []);
 
-  const {loading} =useSelector((state:any)=>{
+  const { loading } = useSelector((state: any) => {
     return {
-      loading:state.globalModule.loading
-    }
-  })
- 
-  return <div className="stafi_layout"> 
-      <div className="stafi_container">
-        <Spin spinning={loading} size="large" tip="loading">
-          <Content>
-            {renderRoutes(props.route.routes)}
-          </Content> 
+      loading: state.globalModule.loading,
+    };
+  });
+
+  return (
+    <div className='stafi_layout'>
+      <div className='stafi_container'>
+        <Spin spinning={loading} size='large' tip='loading'>
+          <Content>{renderRoutes(props.route.routes)}</Content>
         </Spin>
-      </div> 
-  </div>
+      </div>
+    </div>
+  );
 }

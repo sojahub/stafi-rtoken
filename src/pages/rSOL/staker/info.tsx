@@ -45,9 +45,10 @@ export default function Index(props: any) {
     },
   );
 
-  const { fisAddress } = useSelector((state: any) => {
+  const { fisAddress, solAddress } = useSelector((state: any) => {
     return {
       fisAddress: state.FISModule.fisAccount && state.FISModule.fisAccount.address,
+      solAddress: state.SOLModule.solAccount && state.SOLModule.solAccount.address,
     };
   });
 
@@ -64,7 +65,7 @@ export default function Index(props: any) {
     } else if (platform === 'SPL') {
       dispatch(getRSOLAssetBalance());
     }
-  }, [platform, fisAddress, dispatch]);
+  }, [platform, fisAddress, solAddress, dispatch]);
 
   useEffect(() => {
     let count = 0;

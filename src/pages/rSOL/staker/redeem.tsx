@@ -1,6 +1,7 @@
 import { message } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useHistory } from 'react-router';
 import Content from 'src/components/content/redeemContent';
 import UnbondModal from 'src/components/modal/unbondModal';
 import CommonClice from 'src/features/commonClice';
@@ -11,7 +12,7 @@ import {
   query_rBalances_account,
   rTokenRate,
   unbond,
-  unbondFees
+  unbondFees,
 } from 'src/features/rSOLClice';
 import NumberUtil from 'src/util/numberUtil';
 
@@ -19,6 +20,7 @@ const commonClice = new CommonClice();
 
 export default function Index(props: any) {
   const dispatch = useDispatch();
+  const history = useHistory();
   const [recipient, setRecipient] = useState<string>();
   const [amount, setAmount] = useState<any>();
   const [visible, setVisible] = useState(false);
@@ -74,6 +76,7 @@ export default function Index(props: any) {
     dispatch(
       unbond(amount, recipient, willAmount, () => {
         dispatch(setLoading(false));
+        history.push('/rSOL/staker/unbondRecords');
       }),
     );
   };
