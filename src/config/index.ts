@@ -123,7 +123,7 @@ export const getSymbolTitle = (symbol: rSymbol) => {
   }
 };
 
-export default {
+const config = {
   polkadotChain: () => {
     if (!isdev()) {
       return 'wss://rpc.polkadot.io';
@@ -518,6 +518,12 @@ export default {
     rsolURL:
       'https://app.uniswap.org/#/swap?inputCurrency=ETH&outputCurrency=0x08841b9cbA30e80A0E51df13b174F362F90E3dF1',
   },
+  pancake: {
+    rbnbURL:
+      'https://pancakeswap.finance/swap?inputCurrency=0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c&outputCurrency=0xf027e525d491ef6ffcc478555fbb3cfabb3406a6',
+    rdotURL:
+      'https://pancakeswap.finance/swap?inputCurrency=0x1dab2a526c8ac1ddea86838a7b968626988d33de&outputCurrency=0x7083609fce4d1d8dc0c979aab8c869ea2c873402',
+  },
   quickswap: {
     rmaticURL:
       'https://quickswap.exchange/#/swap?inputCurrency=0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270&outputCurrency=0x9f28e2455f9ffcfac9ebd6084853417362bc5dbb',
@@ -774,3 +780,5 @@ export default {
     }
   },
 };
+
+export default config;

@@ -14,13 +14,16 @@ import { getRtokenPriceList } from 'src/features/bridgeClice';
 import { connectMetamask, getAssetBalanceAll, handleBscAccount, monitoring_Method } from 'src/features/BSCClice';
 import CommonClice from 'src/features/commonClice';
 import { getUnbondCommission as fis_getUnbondCommission, rTokenRate as fis_rTokenRate } from 'src/features/FISClice';
-import { getUnbondCommission as atom_getUnbondCommission, rTokenRate as atom_rTokenRate } from 'src/features/rATOMClice';
+import {
+  getUnbondCommission as atom_getUnbondCommission,
+  rTokenRate as atom_rTokenRate,
+} from 'src/features/rATOMClice';
 import { getUnbondCommission as bnb_getUnbondCommission, rTokenRate as bnb_rTokenRate } from 'src/features/rBNBClice';
 import { getUnbondCommission as dot_getUnbondCommission, rTokenRate as dot_rTokenRate } from 'src/features/rDOTClice';
 import { getUnbondCommission as ksm_getUnbondCommission, rTokenRate as ksm_rTokenRate } from 'src/features/rKSMClice';
 import {
-    getUnbondCommission as matic_getUnbondCommission,
-    rTokenRate as matic_rTokenRate
+  getUnbondCommission as matic_getUnbondCommission,
+  rTokenRate as matic_rTokenRate,
 } from 'src/features/rMATICClice';
 import { getUnbondCommission as sol_getUnbondCommission } from 'src/features/rSOLClice';
 import Button from 'src/shared/components/button/connect_button';
@@ -250,6 +253,7 @@ export default function Index(props: any) {
               willGetBalance={dotWillAmount}
               unit='DOT'
               operationType='bep20'
+              tradeList={[{ label: 'Pancake', url: config.pancake.rdotURL }]}
               onSwapClick={() => toSwap('rDOT')}
             />
 
@@ -297,6 +301,7 @@ export default function Index(props: any) {
               willGetBalance={bnbWillAmount}
               unit='BNB'
               operationType='bep20'
+              tradeList={[{ label: 'Pancake', url: config.pancake.rbnbURL }]}
               onSwapClick={() => toSwap('rBNB')}
             />
           </DataList>{' '}

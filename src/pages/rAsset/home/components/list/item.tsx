@@ -42,38 +42,11 @@ export default function Index(props: Props) {
       </div>
 
       <div className='col_btns'>
-        {/* {props.operationType == 'erc20' && props.rSymbol != 'rETH' && (
-          <GhostButton
-            disabled={props.disabled}
-            onClick={() => {
-              if (props.trade) {
-                window.open(props.trade);
-              } else {
-                message.info('Pool is not open yet.');
-              }
-            }}>
-            Trade
-          </GhostButton>
-        )}
-
-        {props.operationType == 'erc20' && props.rSymbol == 'rETH' && (
-          <TradePopover
-            data={[
-              { label: 'Curve', url: config.curve.rethURL },
-              { label: 'Uniswap', url: props.trade },
-            ]}>
-            <GhostButton disabled={props.disabled}>
-              Trade
-              {!props.disabled && <img className='dow_svg' src={dow_svg} />}
-            </GhostButton>
-          </TradePopover>
-        )} */}
-
         {
           <TradePopover
             data={tradeUrlsData}
             onClick={
-              props.rSymbol === 'rETH' && props.operationType === 'erc20'
+              props.operationType === 'erc20' || props.operationType === 'bep20'
                 ? null
                 : (item: any) => {
                     setTradeLabel(item.label);

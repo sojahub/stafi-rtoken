@@ -85,8 +85,8 @@ export default function LiquidityPrograms(props: any) {
       slippageSum += Number(atomSifData.slippage);
       liquiditySum += Number(atomSifData.liquidity);
     }
-    lpList.forEach((data: any) => {
-      data.children.forEach((item: any) => {
+    lpList?.forEach((data: any) => {
+      data.children?.forEach((item: any) => {
         if (!isNaN(Number(item.apr))) {
           count++;
           apySum += Number(item.apr);

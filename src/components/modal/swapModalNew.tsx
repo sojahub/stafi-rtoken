@@ -18,6 +18,10 @@ export default function Index(props: Props) {
       visible={props.visible}
       className='stafi_swap_modal'
       closable={false}
+      style={{
+        left: '88px',
+        top: '180px',
+      }}
       footer={
         <div>
           <a

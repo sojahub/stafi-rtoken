@@ -16,6 +16,7 @@ import rMatic_stafi_svg from 'src/assets/images/selected_r_matic.svg';
 import rSOL_stafi_svg from 'src/assets/images/selected_r_sol.svg';
 import arrowIcon from 'src/assets/images/staker_info_content_arrow.svg';
 import config from 'src/config/index';
+import { useTradeList } from 'src/hooks/useTradeList';
 import Button from 'src/shared/components/button/button';
 import { requestSwitchMetaMaskNetwork } from 'src/util/metaMaskUtil';
 import NumberUtil from 'src/util/numberUtil';
@@ -51,6 +52,7 @@ export default function Index(props: Props) {
   const [redeemSwapModalVisible, setRedeemSwapModalVisible] = useState(false);
   const [tradeLabel, setTradeLabel] = useState('Uniswap');
   const [selectedExchange, setSelectedExchange] = useState('');
+  const tradeList = useTradeList(props.platform?.toLowerCase(), props.type);
 
   const { metaMaskNetworkId } = useSelector((state: any) => {
     return {
@@ -243,44 +245,21 @@ export default function Index(props: Props) {
               Redeem
             </Button>
 
-            {props.type === 'rETH' && (
-              <TradePopover
-                data={[
-                  { label: 'Curve', url: config.curve.rethURL },
-                  { label: 'Uniswap', url: config.uniswap.rethURL },
-                ]}>
-                {' '}
-                <Button size='small' btnType='ellipse' disabled={props.platform !== 'ERC20'}>
-                  Trade <img className='dow_svg' src={dow_svg} alt='down arrow' />{' '}
-                </Button>{' '}
-              </TradePopover>
-            )}
-
-            {/* {props.type === 'rBNB' && (
-              <Button
-                onClick={() => {
-                  message.info('DEX Pool for rBNB will be open soon.');
-                }}
-                size='small'
-                btnType='ellipse'>
-                Trade
-              </Button>
-            )} */}
-
-            {props.type !== 'rETH' && (
-              <TradePopover
-                data={[{ label: props.type !== 'rMATIC' ? 'Uniswap' : 'Quickswap', url: tradeUrl }]}
-                onClick={(item: any) => {
-                  setSelectedExchange(item.label);
-                  setVisibleModal(true);
-                  setTradeLabel(item.label);
-                }}>
-                <Button size='small' btnType='ellipse' disabled={!tradeUrl}>
-                  Trade
-                  <img className='dow_svg' src={dow_svg} alt='down arrow' />
-                </Button>
-              </TradePopover>
-            )}
+            <TradePopover
+              data={tradeList}
+              onClick={
+                props.platform === 'ERC20' || props.platform === 'BEP20'
+                  ? null
+                  : (item: any) => {
+                      setSelectedExchange(item.label);
+                      setVisibleModal(true);
+                      setTradeLabel(item.label);
+                    }
+              }>
+              <Button size='small' btnType='ellipse' disabled={!tradeList || tradeList.length === 0}>
+                Trade <img className='dow_svg' src={dow_svg} alt='down arrow' />{' '}
+              </Button>{' '}
+            </TradePopover>
           </div>
         </div>
       </div>
