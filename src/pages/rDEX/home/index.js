@@ -9,7 +9,7 @@ import rasset_ratom_svg from 'src/assets/images/r_atom.svg';
 // import rasset_rfis_svg from 'src/assets/images/r_fis.svg';
 // import rasset_rksm_svg from 'src/assets/images/r_ksm.svg';
 // import rasset_rbnb_svg from 'src/assets/images/r_bnb.svg';
-// import rasset_rdot_svg from 'src/assets/images/r_dot.svg';
+import rasset_rdot_svg from 'src/assets/images/r_dot.svg';
 import settingIcon from 'src/assets/images/setting.svg';
 import CommonButton from 'src/components/CommonButton';
 import { CardContainer, HContainer, Text } from 'src/components/commonComponents';
@@ -81,14 +81,14 @@ const allTokenDatas = [
   //   ratio: '--',
   //   totalRate: '--',
   // },
-  // {
-  //   icon: rasset_rdot_svg,
-  //   title: 'rDOT',
-  //   type: 'rdot',
-  //   content: '--',
-  //   ratio: '--',
-  //   totalRate: '--',
-  // },
+  {
+    icon: rasset_rdot_svg,
+    title: 'rDOT',
+    type: 'rdot',
+    content: '--',
+    ratio: '--',
+    totalRate: '--',
+  },
   // {
   //   icon: rasset_rsol_svg,
   //   title: 'rSOL',
