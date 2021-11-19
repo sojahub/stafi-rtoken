@@ -259,11 +259,11 @@ export default function Index(props: Props) {
         };
       }
     }
-    if (location.pathname.includes('/rSWAP')) {
+    if (location.pathname.includes('/rSwap')) {
       if (state.FISModule.fisAccount) {
         return {
           fisAccount: state.FISModule.fisAccount,
-          type: 'rSWAP',
+          type: 'rSwap',
         };
       }
     }
