@@ -56,6 +56,7 @@ import RETHStaker from './pages/rETH/staker';
 import RETHStakerIndex from './pages/rETH/staker/home';
 import RETHStakerInfo from './pages/rETH/staker/info';
 import RETHStakerReward from './pages/rETH/staker/reward';
+import RETHStakerInsurance from './pages/rETH/staker/insurance';
 import ETHHomeTemplate from './pages/rETH/template';
 import RETHValidator from './pages/rETH/validator';
 import RETHValidatorDeposit from './pages/rETH/validator/deposit';
@@ -268,6 +269,13 @@ const routesFactory = (role?: any) => {
                   type: 'Staker',
                   rSymbol: rSymbol.Eth,
                   component: RETHStakerReward,
+                },
+                {
+                  id: 'RETH_reward_insurance',
+                  path: '/rETH/staker/insurance',
+                  type: 'Staker',
+                  rSymbol: rSymbol.Eth,
+                  component: RETHStakerInsurance,
                 },
                 {
                   id: 'RETH_staker_index_info',
