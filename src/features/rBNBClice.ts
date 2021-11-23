@@ -847,7 +847,7 @@ export const rTokenLedger = (): AppThunk => async (dispatch, getState) => {
   if (currentEra) {
     let rateResult = await stafiApi.query.rTokenRate.eraRate(rSymbol.Bnb, currentEra - 1);
     const currentRate = rateResult.toJSON();
-    const rateResult2 = await stafiApi.query.rTokenRate.eraRate(rSymbol.Bnb, currentEra - 8);
+    const rateResult2 = await stafiApi.query.rTokenRate.eraRate(rSymbol.Bnb, currentEra - 2);
     let lastRate = rateResult2.toJSON();
     dispatch(handleStakerApr(currentRate, lastRate));
   } else {
@@ -888,8 +888,8 @@ export const getLastEraRate = (): AppThunk => async (dispatch, getState) => {
 const handleStakerApr =
   (currentRate?: any, lastRate?: any): AppThunk =>
   async (dispatch, getState) => {
-    if (currentRate && lastRate) {
-      const apr = NumberUtil.handleEthRoundToFixed(((currentRate - lastRate) / 1000000000000 / 7) * 365.25 * 100) + '%';
+    if (currentRate && lastRate && currentRate > lastRate) {
+      const apr = NumberUtil.handleEthRoundToFixed(((currentRate - lastRate) / 1000000000000) * 365.25 * 100) + '%';
       dispatch(setStakerApr(apr));
     } else {
       dispatch(setStakerApr('9.7%'));
