@@ -898,13 +898,12 @@ export const getLastEraRate = (): AppThunk => async (dispatch, getState) => {
 const handleStakerApr =
   (currentRate?: any, lastRate?: any): AppThunk =>
   async (dispatch, getState) => {
-    dispatch(setStakerApr('7.2%'));
-    //  if (currentRate && lastRate) {
-    //     const apr = NumberUtil.handleEthRoundToFixed((currentRate - lastRate)/lastRate * 4 * 365.25 * 100) + '%';
-    //     dispatch(setStakerApr(apr));
-    //   } else {
-    //     dispatch(setStakerApr('7.2%'));
-    //   }
+    if (currentRate && lastRate && currentRate > lastRate) {
+      const apr = NumberUtil.handleEthRoundToFixed(((currentRate - lastRate) / 1000000000000) / 2.54 * 365.25 * 100) + '%';
+      dispatch(setStakerApr(apr));
+    } else {
+      dispatch(setStakerApr('7.2%'));
+    }
   };
 export const checkAddress = (address: string) => {
   const keyringInstance = keyring.init(Symbol.Sol);
