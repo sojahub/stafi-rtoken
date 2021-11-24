@@ -573,7 +573,7 @@ const config = {
   },
   bnbScanAddressUrl: (address: any) => {
     if (!isdev()) {
-      return `https://bscscan.com/address/${address}#internaltx`;
+      return ` https://explorer.bitquery.io/bsc/address/${address}/inflow`;
     }
     return `https://testnet.bscscan.com/address/${address}#internaltx`;
   },
