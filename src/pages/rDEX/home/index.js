@@ -8,7 +8,7 @@ import left_arrow from 'src/assets/images/left_arrow.svg';
 import rasset_ratom_svg from 'src/assets/images/r_atom.svg';
 // import rasset_rfis_svg from 'src/assets/images/r_fis.svg';
 // import rasset_rksm_svg from 'src/assets/images/r_ksm.svg';
-// import rasset_rbnb_svg from 'src/assets/images/r_bnb.svg';
+import rasset_rbnb_svg from 'src/assets/images/r_bnb.svg';
 import rasset_rdot_svg from 'src/assets/images/r_dot.svg';
 import settingIcon from 'src/assets/images/setting.svg';
 import CommonButton from 'src/components/CommonButton';
@@ -73,14 +73,14 @@ const allTokenDatas = [
     ratio: '--',
     totalRate: '--',
   },
-  // {
-  //   icon: rasset_rbnb_svg,
-  //   title: 'rBNB',
-  //   type: 'rbnb',
-  //   content: '--',
-  //   ratio: '--',
-  //   totalRate: '--',
-  // },
+  {
+    icon: rasset_rbnb_svg,
+    title: 'rBNB',
+    type: 'rbnb',
+    content: '--',
+    ratio: '--',
+    totalRate: '--',
+  },
   {
     icon: rasset_rdot_svg,
     title: 'rDOT',
