@@ -1,0 +1,81 @@
+.stafi_reward_card{
+    .title{
+        font-size: 30px;
+        font-weight: bold;
+        margin-left:25px;
+        position: relative;
+        width:fit-content;
+        img{
+            position: absolute;
+            top:6px;
+            right: -8px;
+        }
+    }
+    .tbody,.list-scrollbars{ 
+        height: 336px;
+        margin-bottom: 10px;
+        // overflow: auto;
+    }
+    .data_table{
+        .ant-empty-description{
+            color:#ffffff;
+        }
+        .no_data{
+            width:100%;
+            text-align: center;
+
+            img{
+                margin-top:116px;
+                width:146px;
+                height:95px;
+            }
+        }
+        .row{
+            padding:0px 10px 0px 25px;
+            height:37px;
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid #3B3B3B;
+            >div:last-child{
+                flex:1; 
+            }
+            .col{
+                position: relative;
+                .stafi_doubt_icon{
+                    position: absolute;
+                    top:0px;
+                }
+            }
+            .col.col1{
+                width:53px
+            }
+            .col.col2{
+                width:100px
+            }
+            .col.col3{
+                width:100px
+            }
+            .col.col4{
+                width:143px
+            }
+            >div{
+                font-size: 14px;
+                font-weight: bold; 
+            } 
+        }
+        .row.body{
+            .col.col5{
+                color:#00F3AB;
+            }
+            
+        }
+        .row.heard{
+            >div{ 
+                color:#7C7C7C;
+            }
+        }
+        .tfoot{
+            margin-top: 20px;
+        }
+    }
+}
