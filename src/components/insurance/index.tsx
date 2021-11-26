@@ -28,20 +28,19 @@ export default function Index(props: Props) {
           </Text>
         </HContainer>
 
-        <Text size='16px' color='#c4c4c4' lineHeight='20px' mt='20px'>
-          StaFi is collaborate with Tidal.finance to provide an insurance to cover the POTENTIAL LOSS of your staking
-          derivative
+        <Text size='16px' color='#c4c4c4' lineHeight='20px' mt='20px' mr='20px'>
+          StaFi is collaborate with Tidal.finance to provide an insurance to cover the POTENTIAL LOSS of your rETH.
         </Text>
 
-        <Text size='16px' color='#c4c4c4' lineHeight='20px' mt='20px'>
+        <Text size='16px' color='#c4c4c4' lineHeight='20px' mt='20px' mr='20px'>
           Such as the designated smart contract was used in an unintended way, or The designated smart contract suffered
           hacks or exploitation of the protocol code for any bug that was not publicly disclosed before the coverage
           period began, etc.
         </Text>
 
-        <Text size='16px' color='#c4c4c4' lineHeight='20px' mt='20px'>
-          You can to the Tidal Finance to check the details, and here is an{' '}
-          <a href='javascript;' style={{ color: '#00F3AB' }}>
+        <Text size='16px' color='#c4c4c4' lineHeight='20px' mt='20px' mr='20px'>
+          You can go to Tidal Finance to check the details, and here is a{' '}
+          <a href='javascript;' style={{ color: '#00F3AB', textDecoration: 'underline' }}>
             guide
           </a>{' '}
           on how to buy cover on Tidal.
