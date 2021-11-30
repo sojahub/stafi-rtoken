@@ -509,6 +509,7 @@ export const unbond =
               dispatch(add_Matic_unbond_Notice(uuid, willAmount, noticeStatus.Confirmed, { txHash: txHash }));
               localStorageUtil.addRTokenUnbondRecords('rBNB', stafiServer, {
                 id: uuid,
+                txHash,
                 estimateSuccessTime: moment().add(config.unboundAroundDays(Symbol.Bnb), 'day').valueOf(),
                 amount: willAmount,
                 recipient,

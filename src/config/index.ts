@@ -73,7 +73,7 @@ export const getSymbolByRSymbol = (symbol: rSymbol) => {
     case rSymbol.Bnb:
       return Symbol.Bnb;
     default:
-      return 'rFIS';
+      return Symbol.Fis;
   }
 };
 

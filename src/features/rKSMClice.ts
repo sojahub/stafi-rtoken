@@ -755,6 +755,7 @@ export const unbond =
               dispatch(add_KSM_unbond_Notice(uuid, willAmount, noticeStatus.Confirmed, { txHash }));
               localStorageUtil.addRTokenUnbondRecords('rKSM', stafiServer, {
                 id: uuid,
+                txHash,
                 estimateSuccessTime: moment().add(config.unboundAroundDays(Symbol.Ksm), 'day').valueOf(),
                 amount: willAmount,
                 recipient,

@@ -648,10 +648,12 @@ export const unbond =
           (r?: string, txHash?: string) => {
             dispatch(reloadData());
             const uuid = stafi_uuid();
+            console.log('unbond callback', r);
             if (r === 'Success') {
               dispatch(add_ATOM_unbond_Notice(uuid, willAmount, noticeStatus.Confirmed, { txHash }));
               localStorageUtil.addRTokenUnbondRecords('rATOM', stafiServer, {
                 id: uuid,
+                txHash,
                 estimateSuccessTime: moment().add(config.unboundAroundDays(Symbol.Atom), 'day').valueOf(),
                 amount: willAmount,
                 recipient,

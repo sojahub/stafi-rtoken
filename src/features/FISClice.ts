@@ -1076,6 +1076,7 @@ export const unbond =
                   dispatch(add_FIS_unbond_Notice(uuid, willAmount, noticeStatus.Confirmed));
                   localStorageUtil.addRTokenUnbondRecords('rFIS', stafiServer, {
                     id: uuid,
+                    txHash: api.hash.toHex(),
                     estimateSuccessTime: moment().add(config.unboundAroundDays(Symbol.Fis), 'day').valueOf(),
                     amount: willAmount,
                     recipient: address,
@@ -1127,7 +1128,7 @@ export const fisUnbond =
             if (result.status.isInBlock) {
               result.events
                 .filter((e: any) => {
-                  return e.event.section == 'system';
+                  return e.event.section === 'system';
                 })
                 .forEach((data: any) => {
                   if (data.event.method === 'ExtrinsicSuccess') {

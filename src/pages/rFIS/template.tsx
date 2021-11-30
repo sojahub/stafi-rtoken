@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { renderRoutes } from 'react-router-config';
 import { fis_bondSwitch, getPools, rTokenRate } from 'src/features/FISClice';
 import { reloadData } from 'src/features/globalClice';
+import { useStafiAccount } from 'src/hooks/useStafiAccount';
 import { Symbol } from 'src/keyring/defaults';
 import Content from 'src/shared/components/content';
 import { getLocalStorageItem, Keys } from 'src/util/common';
@@ -11,11 +12,7 @@ import '../template/index.scss';
 export default function Index(props: any) {
   const dispatch = useDispatch();
 
-  const { fisAccount } = useSelector((state: any) => {
-    return {
-      fisAccount: state.FISModule.fisAccount,
-    };
-  });
+  const { stafiAddress } = useStafiAccount();
 
   useEffect(() => {
     dispatch(fis_bondSwitch());
@@ -24,7 +21,7 @@ export default function Index(props: any) {
       dispatch(reloadData(Symbol.Fis));
     }
     dispatch(rTokenRate());
-  }, [fisAccount]);
+  }, [stafiAddress, dispatch]);
 
   const { loading } = useSelector((state: any) => {
     return {

@@ -168,7 +168,7 @@ const numberUtil = {
   },
 
   handleAmountRoundToFixed(amount, powNumber) {
-    if (amount == '--' || isNaN(amount)) {
+    if (amount === '--' || isNaN(amount)) {
       return '--';
     }
     const factor = Math.pow(10, powNumber);
@@ -181,6 +181,14 @@ const numberUtil = {
     }
     const factor = Math.pow(10, powNumber || 2);
     return (Math.floor(Number(amount) * factor) / factor).toFixed(powNumber || 2);
+  },
+
+  handleAmountCeilToFixed(amount, powNumber) {
+    if (amount === '--' || isNaN(Number(amount))) {
+      return '--';
+    }
+    const factor = Math.pow(10, powNumber);
+    return (Math.ceil(Number(amount) * factor) / factor).toFixed(powNumber);
   },
 
   // Returns a string containing 6 decimal places, including 0

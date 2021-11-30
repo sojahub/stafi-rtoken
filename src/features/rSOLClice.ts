@@ -533,6 +533,7 @@ export const unbond =
               dispatch(add_SOL_unbond_Notice(uuid, willAmount, noticeStatus.Confirmed, { txHash }));
               localStorageUtil.addRTokenUnbondRecords('rSOL', stafiServer, {
                 id: uuid,
+                txHash,
                 estimateSuccessTime: moment().add(config.unboundAroundDays(Symbol.Sol), 'day').valueOf(),
                 amount: willAmount,
                 recipient,
@@ -899,7 +900,8 @@ const handleStakerApr =
   (currentRate?: any, lastRate?: any): AppThunk =>
   async (dispatch, getState) => {
     if (currentRate && lastRate && currentRate > lastRate) {
-      const apr = NumberUtil.handleEthRoundToFixed(((currentRate - lastRate) / 1000000000000) / 2.54 * 365.25 * 100) + '%';
+      const apr =
+        NumberUtil.handleEthRoundToFixed(((currentRate - lastRate) / 1000000000000 / 2.54) * 365.25 * 100) + '%';
       dispatch(setStakerApr(apr));
     } else {
       dispatch(setStakerApr('7.2%'));

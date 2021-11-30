@@ -68,7 +68,7 @@ const localStorageUtil = {
     return [];
   },
 
-  addRTokenUnbondRecords: async function (type, stafiServer, itemObj) {
+  addRTokenUnbondRecords: function (type, stafiServer, itemObj) {
     const unbondRecords = getLocalStorageItem(Keys.UnbondRecordsKey);
     let arr;
     if (unbondRecords && unbondRecords[type]) {
@@ -77,24 +77,7 @@ const localStorageUtil = {
       arr = [];
     }
 
-    const stafiApi = await stafiServer.createStafiApi();
-
-    let currentEra = 0;
-    let unlockEra = 0;
-    if (type === 'rFIS') {
-      const eraResult = await stafiApi.query.staking.activeEra();
-      currentEra = eraResult.toJSON().index;
-      unlockEra = currentEra + 56;
-    } else {
-      const eraResult = await stafiApi.query.rTokenLedger.chainEras(getRsymbolByTokenTitle(type));
-      currentEra = eraResult.toJSON();
-      const bondingDurationResult = await stafiApi.query.rTokenLedger.chainBondingDuration(
-        getRsymbolByTokenTitle(type),
-      );
-      unlockEra = currentEra + bondingDurationResult.toJSON();
-    }
-
-    const newLength = arr.unshift({ ...itemObj, currentEra, unlockEra });
+    const newLength = arr.unshift({ ...itemObj, timestamp: moment().valueOf() });
     if (newLength > 10) {
       arr.pop();
     }

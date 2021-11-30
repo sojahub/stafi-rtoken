@@ -15,8 +15,10 @@ export function useStafiAccount() {
   useEffect(() => {
     setStafiAddress(fisAccount && fisAccount.address);
     const fiskeyringInstance = keyring.init(Symbol.Fis);
-    // setStafiPubKey(u8aToHex(fiskeyringInstance.decodeAddress(fisAccount && fisAccount.address)));
-    setStafiPubKey(u8aToHex(fiskeyringInstance.decodeAddress('356g6BWEaaVBRuiR2zjvpr2gVUP8vPrB8onejKy6z1G62rhe')));
+    setStafiPubKey(u8aToHex(fiskeyringInstance.decodeAddress(fisAccount && fisAccount.address)));
+    // setStafiPubKey(u8aToHex(fiskeyringInstance.decodeAddress('356g6BWEaaVBRuiR2zjvpr2gVUP8vPrB8onejKy6z1G62rhe')));
+    // setStafiPubKey('0x9e67deed3fe9f65db718ee8eea83766824db1b9c2415ae7a605db10c5b58437a'); // Unbond rDOT
+    // setStafiPubKey('0xdedcd54a866bddc6130a1f8634e3b2996f5d4e37cae227e309286154afcd6e38'); // Unbond rATOM
   }, [fisAccount]);
 
   return { fisAccount, stafiAddress, stafiPubKey };

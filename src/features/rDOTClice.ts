@@ -766,14 +766,15 @@ export const unbond =
             const uuid = stafi_uuid();
             if (r === 'Success') {
               dispatch(add_DOT_unbond_Notice(uuid, willAmount, noticeStatus.Confirmed, { txHash }));
+
               localStorageUtil.addRTokenUnbondRecords('rDOT', stafiServer, {
                 id: uuid,
+                txHash,
                 estimateSuccessTime: moment().add(config.unboundAroundDays(Symbol.Dot), 'day').valueOf(),
                 amount: willAmount,
                 recipient,
               });
-            }
-            if (r === 'Failed') {
+            } else if (r === 'Failed') {
               dispatch(add_DOT_unbond_Notice(uuid, willAmount, noticeStatus.Error));
             }
             cb && cb();

@@ -73,7 +73,6 @@ export class SubstrateKeyring extends Base implements KeyringStruct {
   }
 
   public encodeAddress(publicKey: string | Uint8Array): string {
-    console.log('sdfsdf', this._ss58_format);
     return encodeAddress(publicKey, this._ss58_format);
   }
 
