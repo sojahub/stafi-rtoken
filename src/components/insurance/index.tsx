@@ -29,7 +29,7 @@ export default function Index(props: Props) {
         </HContainer>
 
         <Text size='16px' color='#c4c4c4' lineHeight='20px' mt='20px' mr='20px'>
-          StaFi is collaborate with Tidal.finance to provide an insurance to cover the POTENTIAL LOSS of your rETH.
+          StaFi collaborates with Tidal.finance to provide an insurance to cover the POTENTIAL LOSS of your rETH.
         </Text>
 
         <Text size='16px' color='#c4c4c4' lineHeight='20px' mt='20px' mr='20px'>
@@ -40,14 +40,23 @@ export default function Index(props: Props) {
 
         <Text size='16px' color='#c4c4c4' lineHeight='20px' mt='20px' mr='20px'>
           You can go to Tidal Finance to check the details, and here is a{' '}
-          <a href='javascript;' style={{ color: '#00F3AB', textDecoration: 'underline' }}>
+          <a
+            href='https://docs.tidal.finance/how-to-use-1/buy-cover'
+            target='_blank'
+            style={{ color: '#00F3AB', textDecoration: 'underline' }}
+            rel='noreferrer'>
             guide
           </a>{' '}
           on how to buy cover on Tidal.
         </Text>
 
         <HContainer justifyContent='flex-end' mt='42px'>
-          <Button size='small' btnType='ellipse' onClick={() => {}}>
+          <Button
+            size='small'
+            btnType='ellipse'
+            onClick={() => {
+              window.open('https://stafi.tidal.finance/');
+            }}>
             Buy Cover
           </Button>
         </HContainer>

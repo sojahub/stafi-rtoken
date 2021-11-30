@@ -141,7 +141,7 @@ export default class Index {
   ) {
     let flag = true;
     if (flag) {
-      return 0.0;
+      return 0;
     }
     let apr = '--';
 
