@@ -29,7 +29,7 @@ export default function Index(props: Props) {
         </HContainer>
 
         <Text size='16px' color='#c4c4c4' lineHeight='20px' mt='20px' mr='20px'>
-          StaFi is collaborate with Tidal.finance to provide an insurance to cover the POTENTIAL LOSS of your rETH.
+          StaFi collaborates with Tidal.finance to provide an insurance to cover the POTENTIAL LOSS of your rETH.
         </Text>
 
         <Text size='16px' color='#c4c4c4' lineHeight='20px' mt='20px' mr='20px'>
