@@ -164,56 +164,58 @@ export default function LiquidityPrograms(props: any) {
               platform='Cosmos'
             /> */}
 
-            {lpList.map((data: any, i: number) => {
-              return (
-                <div key={`${data.name}${i}`} className='rtoken_type'>
-                  {data.children.map((item: any, index: number) => {
-                    let type = '';
-                    let icon = null;
-                    if (data.extraName === 'rETH') {
-                      type = 'rETH/ETH';
-                      icon = rpool_reth_Icon;
-                    } else if (data.extraName === 'rFIS') {
-                      type = 'rFIS/FIS';
-                      icon = rpool_rfis_Icon;
-                    } else if (data.extraName === 'rDOT') {
-                      type = 'rDOT/DOT';
-                      icon = rpool_rdot_Icon;
-                    } else if (data.extraName === 'rKSM') {
-                      type = 'rKSM/KSM';
-                      icon = rpool_rksm_Icon;
-                    } else if (data.extraName === 'rATOM') {
-                      type = 'rATOM/ATOM';
-                      icon = rpool_ratom_Icon;
-                    } else if (data.extraName === 'rMATIC') {
-                      type = 'rMATIC/MATIC';
-                      icon = rpool_rmatic_Icon;
-                    } else if (data.extraName === 'rBNB') {
-                      type = 'rBNB/BNB';
-                      icon = rpool_rbnb_Icon;
-                    }
-                    if (type === '') {
-                      return <div key={`${data.name}${item.platform}${index}`}></div>;
-                    }
-                    return (
-                      <TableItem
-                        key={`${data.name}${item.platform}${index}`}
-                        history={props.history}
-                        pairIcon={index == 0 ? icon : null}
-                        pairValue={index == 0 ? type : null}
-                        apr={item.apr}
-                        liquidity={item.liquidity}
-                        slippage={item.slippage}
-                        poolOn={1}
-                        platform={item.platform}
-                        poolIndex={item.poolIndex}
-                        lpContract={item.lpContract}
-                      />
-                    );
-                  })}
-                </div>
-              );
-            })}
+            {lpList &&
+              lpList.map((data: any, i: number) => {
+                return (
+                  <div key={`${data.name}${i}`} className='rtoken_type'>
+                    {data.children &&
+                      data.children.map((item: any, index: number) => {
+                        let type = '';
+                        let icon = null;
+                        if (data.extraName === 'rETH') {
+                          type = 'rETH/ETH';
+                          icon = rpool_reth_Icon;
+                        } else if (data.extraName === 'rFIS') {
+                          type = 'rFIS/FIS';
+                          icon = rpool_rfis_Icon;
+                        } else if (data.extraName === 'rDOT') {
+                          type = 'rDOT/DOT';
+                          icon = rpool_rdot_Icon;
+                        } else if (data.extraName === 'rKSM') {
+                          type = 'rKSM/KSM';
+                          icon = rpool_rksm_Icon;
+                        } else if (data.extraName === 'rATOM') {
+                          type = 'rATOM/ATOM';
+                          icon = rpool_ratom_Icon;
+                        } else if (data.extraName === 'rMATIC') {
+                          type = 'rMATIC/MATIC';
+                          icon = rpool_rmatic_Icon;
+                        } else if (data.extraName === 'rBNB') {
+                          type = 'rBNB/BNB';
+                          icon = rpool_rbnb_Icon;
+                        }
+                        if (type === '') {
+                          return <div key={`${data.name}${item.platform}${index}`}></div>;
+                        }
+                        return (
+                          <TableItem
+                            key={`${data.name}${item.platform}${index}`}
+                            history={props.history}
+                            pairIcon={index == 0 ? icon : null}
+                            pairValue={index == 0 ? type : null}
+                            apr={item.apr}
+                            liquidity={item.liquidity}
+                            slippage={item.slippage}
+                            poolOn={1}
+                            platform={item.platform}
+                            poolIndex={item.poolIndex}
+                            lpContract={item.lpContract}
+                          />
+                        );
+                      })}
+                  </div>
+                );
+              })}
           </div>
         </Spin>
       </div>
