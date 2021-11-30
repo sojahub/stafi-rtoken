@@ -15,6 +15,7 @@ import rKSM_stafi_svg from 'src/assets/images/selected_r_ksm.svg';
 import rMatic_stafi_svg from 'src/assets/images/selected_r_matic.svg';
 import rSOL_stafi_svg from 'src/assets/images/selected_r_sol.svg';
 import arrowIcon from 'src/assets/images/staker_info_content_arrow.svg';
+import { useLastEraReward } from 'src/hooks/useEraReward';
 import { useTradeList } from 'src/hooks/useTradeList';
 import Button from 'src/shared/components/button/button';
 import { requestSwitchMetaMaskNetwork } from 'src/util/metaMaskUtil';
@@ -38,7 +39,6 @@ type Props = {
   onSwapClick?: Function;
   onUniswapClick?: Function;
   hours?: number;
-  lastEraRate?: any;
   platform?: string;
   redeemableTokenAmount?: any;
 };
@@ -51,6 +51,7 @@ export default function Index(props: Props) {
   const [tradeLabel, setTradeLabel] = useState('Uniswap');
   const [selectedTradeUrl, setSelectedTradeUrl] = useState();
   const tradeList = useTradeList(props.platform?.toLowerCase(), props.type);
+  const { lastEraReward } = useLastEraReward(props.platform, props.type);
 
   useEffect(() => {
     if (props.platform === 'ERC20') {
@@ -166,10 +167,10 @@ export default function Index(props: Props) {
             </HContainer>
 
             <Text size='16px' bold color='#ffffff' mt='8px' clickable>
-              {props.lastEraRate !== '--'
-                ? Number(props.lastEraRate) > 0 && Number(props.lastEraRate) < 0.000001
+              {lastEraReward !== '--'
+                ? Number(lastEraReward) > 0 && Number(lastEraReward) < 0.000001
                   ? '<0.000001'
-                  : NumberUtil.handleAmountFloorToFixed(props.lastEraRate, 6)
+                  : NumberUtil.handleAmountFloorToFixed(lastEraReward, 6)
                 : '--'}{' '}
               {props.type.slice(1)}
             </Text>

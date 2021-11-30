@@ -1,4 +1,5 @@
 import { UserDeleteOutlined } from '@ant-design/icons';
+import { isEmpty } from 'lodash';
 import { useCallback, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import config, { getRsymbolByTokenTitle } from 'src/config';
@@ -7,6 +8,7 @@ import { setLoading } from 'src/features/globalClice';
 import { rSymbol } from 'src/keyring/defaults';
 import { api } from 'src/util/http';
 import numberUtil from 'src/util/numberUtil';
+import rpc from 'src/util/rpc';
 import { useMetaMaskAccount } from './useMetaMaskAccount';
 import { useSolAccount } from './useSolAccount';
 import { useStafiAccount } from './useStafiAccount';
@@ -95,13 +97,23 @@ export function useEraReward(
           if (platform === 'ERC20' || platform === 'BEP20') {
             newStakeValue = numberUtil.tokenAmountToHuman(element.stakeValue, rSymbol.Eth).toFixed(6);
             newRTokenBalance = numberUtil.tokenAmountToHuman(element.rTokenBalance, rSymbol.Eth).toFixed(6);
-            newReward = numberUtil.tokenAmountToHuman(element.reward, rSymbol.Eth).toFixed(6);
+            if (!isEmpty(element.reward)) {
+              newReward = numberUtil.handleAmountFloorToFixed(
+                numberUtil.tokenAmountToHuman(element.reward, rSymbol.Eth),
+                6,
+              );
+            }
           } else if (platform === 'Native') {
             newStakeValue = numberUtil.tokenAmountToHuman(element.stakeValue, getRsymbolByTokenTitle(type)).toFixed(6);
             newRTokenBalance = numberUtil
               .tokenAmountToHuman(element.rTokenBalance, getRsymbolByTokenTitle(type))
               .toFixed(6);
-            newReward = numberUtil.tokenAmountToHuman(element.reward, getRsymbolByTokenTitle(type)).toFixed(6);
+            if (!isEmpty(element.reward)) {
+              newReward = numberUtil.handleAmountFloorToFixed(
+                numberUtil.tokenAmountToHuman(element.reward, getRsymbolByTokenTitle(type)),
+                6,
+              );
+            }
           }
 
           return {
@@ -163,4 +175,77 @@ export function useEraReward(
   };
 
   return { lastEraReward, chartData, loadMore, rewardList, hasMore };
+}
+
+export function useLastEraReward(
+  platform: string,
+  type: 'rDOT' | 'rETH' | 'rFIS' | 'rKSM' | 'rATOM' | 'rSOL' | 'rMATIC' | 'rBNB',
+) {
+  const [lastEraReward, setLastEraReward] = useState('--');
+  const [chainType, setChainType] = useState(STAFI_CHAIN_ID);
+  const [userAddress, setUserAddress] = useState<string>();
+  const { metaMaskAddress } = useMetaMaskAccount();
+  const { stafiPubKey } = useStafiAccount();
+  const { solAddress } = useSolAccount();
+
+  const fetchData = async () => {
+    if (!userAddress || chainType === -1) {
+      return;
+    }
+
+    try {
+      const url = `${config.api2()}/stafi/webapi/rtoken/lastEraReward`;
+      const res = await api.post(url, {
+        userAddress,
+        chainType,
+        rTokenType: type === 'rETH' ? -1 : getRsymbolByTokenTitle(type),
+      });
+
+      if (res.status === '80000' && res.data) {
+        if (platform === 'ERC20' || platform === 'BEP20') {
+          setLastEraReward(
+            numberUtil.handleAmountFloorToFixed(numberUtil.tokenAmountToHuman(res.data.lastEraReward, rSymbol.Eth), 6),
+          );
+        } else if (platform === 'Native') {
+          setLastEraReward(
+            numberUtil.handleAmountFloorToFixed(
+              numberUtil.tokenAmountToHuman(res.data.lastEraReward, getRsymbolByTokenTitle(type)),
+              6,
+            ),
+          );
+        }
+      }
+    } finally {
+    }
+  };
+
+  useEffect(() => {
+    if (platform === 'Native') {
+      setUserAddress(stafiPubKey);
+    } else if (platform === 'SPL') {
+      setUserAddress(solAddress);
+    } else {
+      setUserAddress(metaMaskAddress);
+    }
+  }, [platform, stafiPubKey, metaMaskAddress, solAddress]);
+
+  useEffect(() => {
+    setChainType(
+      platform === 'Native'
+        ? STAFI_CHAIN_ID
+        : platform === 'ERC20'
+        ? ETH_CHAIN_ID
+        : platform === 'BEP20'
+        ? BSC_CHAIN_ID
+        : platform === 'SPL'
+        ? SOL_CHAIN_ID
+        : -1,
+    );
+  }, [platform, type, userAddress]);
+
+  useEffect(() => {
+    fetchData();
+  }, [userAddress, chainType]);
+
+  return { lastEraReward };
 }

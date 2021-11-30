@@ -19,5 +19,5 @@ export function useStafiAccount() {
     setStafiPubKey(u8aToHex(fiskeyringInstance.decodeAddress('356g6BWEaaVBRuiR2zjvpr2gVUP8vPrB8onejKy6z1G62rhe')));
   }, [fisAccount]);
 
-  return { stafiAddress, stafiPubKey };
+  return { fisAccount, stafiAddress, stafiPubKey };
 }

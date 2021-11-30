@@ -35,7 +35,7 @@ export default function Index(props: any) {
     };
   });
 
-  const { tokenAmount, lastEraRate, redeemableTokenAmount, metaMaskNetworkId } = useSelector((state: any) => {
+  const { tokenAmount, redeemableTokenAmount, metaMaskNetworkId } = useSelector((state: any) => {
     const tokenAmount =
       platform === 'Native'
         ? state.rKSMModule.tokenAmount
@@ -48,7 +48,6 @@ export default function Index(props: any) {
     return {
       metaMaskNetworkId: state.globalModule.metaMaskNetworkId,
       tokenAmount,
-      lastEraRate: state.rKSMModule.lastEraRate,
       redeemableTokenAmount: commonClice.getWillAmount(
         state.rKSMModule.ratio,
         state.rKSMModule.unbondCommission,
@@ -105,7 +104,6 @@ export default function Index(props: any) {
       ratioShow={ratioShow}
       tokenAmount={tokenAmount}
       totalUnbonding={totalUnbonding}
-      lastEraRate={lastEraRate}
       platform={platform}
       redeemableTokenAmount={redeemableTokenAmount}
       onStakeClick={() => {

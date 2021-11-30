@@ -26,24 +26,21 @@ export default function Index(props: any) {
     platform = qs.parse(history.location.search.slice(1)).platform as string;
   }
 
-  const { ratio, tokenAmount, ratioShow, totalUnbonding, lastEraRate, redeemableTokenAmount } = useSelector(
-    (state: any) => {
-      const tokenAmount =
-        platform === 'Native' ? state.rSOLModule.tokenAmount : platform === 'SPL' ? state.SOLModule.rSOLBalance : '--';
-      return {
-        ratio: state.rSOLModule.ratio,
+  const { ratio, tokenAmount, ratioShow, totalUnbonding, redeemableTokenAmount } = useSelector((state: any) => {
+    const tokenAmount =
+      platform === 'Native' ? state.rSOLModule.tokenAmount : platform === 'SPL' ? state.SOLModule.rSOLBalance : '--';
+    return {
+      ratio: state.rSOLModule.ratio,
+      tokenAmount,
+      ratioShow: state.rSOLModule.ratioShow,
+      totalUnbonding: state.rSOLModule.totalUnbonding,
+      redeemableTokenAmount: commonClice.getWillAmount(
+        state.rSOLModule.ratio,
+        state.rSOLModule.unbondCommission,
         tokenAmount,
-        ratioShow: state.rSOLModule.ratioShow,
-        totalUnbonding: state.rSOLModule.totalUnbonding,
-        lastEraRate: state.rSOLModule.lastEraRate,
-        redeemableTokenAmount: commonClice.getWillAmount(
-          state.rSOLModule.ratio,
-          state.rSOLModule.unbondCommission,
-          tokenAmount,
-        ),
-      };
-    },
-  );
+      ),
+    };
+  });
 
   const { fisAddress, solAddress } = useSelector((state: any) => {
     return {
@@ -92,7 +89,6 @@ export default function Index(props: any) {
       ratioShow={ratioShow}
       tokenAmount={tokenAmount}
       totalUnbonding={totalUnbonding}
-      lastEraRate={lastEraRate}
       platform={platform}
       redeemableTokenAmount={redeemableTokenAmount}
       onStakeClick={() => {

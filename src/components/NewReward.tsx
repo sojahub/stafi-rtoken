@@ -10,6 +10,9 @@ import { SelectPlatformPopover } from './content/SelectPlatformPopover';
 import EraRewardChart from './EraRewardChart';
 import no_data_png from 'src/assets/images/nodata.png';
 import { useStakedValue } from 'src/hooks/useStakedValue';
+import config from 'src/config';
+import { isEmpty } from 'lodash';
+import numberUtil from 'src/util/numberUtil';
 
 interface NewRewardProps {
   type: 'rDOT' | 'rETH' | 'rFIS' | 'rKSM' | 'rATOM' | 'rSOL' | 'rMATIC' | 'rBNB';
@@ -55,7 +58,12 @@ export const NewReward = (props: NewRewardProps) => {
         <HContainer justifyContent='flex-end' mt='8px'>
           <HContainer>
             <Text size='14px' color='#00F3AB'>
-              + {lastEraReward} {props.type.slice(1)}
+              {lastEraReward !== '--'
+                ? Number(lastEraReward) > 0 && Number(lastEraReward) < 0.000001
+                  ? '<0.000001'
+                  : `+${numberUtil.handleAmountFloorToFixed(lastEraReward, 6)}`
+                : '--'}{' '}
+              {props.type.slice(1)}
             </Text>
 
             <Text size='14px' ml='2px'>
@@ -148,7 +156,14 @@ export const NewReward = (props: NewRewardProps) => {
 
                 <Box width='80px'>
                   <Text size='14px' color='#00F3AB' bold>
-                    + {item.reward}
+                    {!isNaN(Number(item.reward)) &&
+                      Number(item.reward) > 0 &&
+                      Number(item.reward) < config.minReward &&
+                      `<${config.minReward}`}
+                    {!isNaN(Number(item.reward)) &&
+                      Number(item.reward) >= config.minReward &&
+                      `+${numberUtil.fixedAmountLength(item.reward)}`}
+                    {(isNaN(Number(item.reward)) || isEmpty(item.reward)) && 'Fetching'}
                   </Text>
                 </Box>
               </HContainer>

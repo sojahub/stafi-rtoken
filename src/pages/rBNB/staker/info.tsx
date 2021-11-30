@@ -26,8 +26,8 @@ export default function Index(props: any) {
     platform = qs.parse(history.location.search.slice(1)).platform as string;
   }
 
-  const { ratio, tokenAmount, ratioShow, totalUnbonding, metaMaskNetworkId, lastEraRate, redeemableTokenAmount } =
-    useSelector((state: any) => {
+  const { ratio, tokenAmount, ratioShow, totalUnbonding, metaMaskNetworkId, redeemableTokenAmount } = useSelector(
+    (state: any) => {
       const tokenAmount =
         platform === 'Native'
           ? state.rBNBModule.tokenAmount
@@ -39,7 +39,6 @@ export default function Index(props: any) {
         tokenAmount,
         ratioShow: state.rBNBModule.ratioShow,
         totalUnbonding: state.rBNBModule.totalUnbonding,
-        lastEraRate: state.rBNBModule.lastEraRate,
         redeemableTokenAmount: commonClice.getWillAmount(
           state.rBNBModule.ratio,
           state.rBNBModule.unbondCommission,
@@ -47,7 +46,8 @@ export default function Index(props: any) {
         ),
         metaMaskNetworkId: state.globalModule.metaMaskNetworkId,
       };
-    });
+    },
+  );
 
   const { fisAddress, ethAddress } = useSelector((state: any) => {
     return {
@@ -95,7 +95,6 @@ export default function Index(props: any) {
       ratioShow={ratioShow}
       tokenAmount={tokenAmount}
       totalUnbonding={totalUnbonding}
-      lastEraRate={lastEraRate}
       platform={platform}
       redeemableTokenAmount={redeemableTokenAmount}
       onStakeClick={() => {

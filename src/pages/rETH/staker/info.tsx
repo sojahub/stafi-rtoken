@@ -18,7 +18,7 @@ export default function Index(props: any) {
     platform = qs.parse(history.location.search.slice(1)).platform as string;
   }
 
-  const { ratio, tokenAmount, ratioShow, lastEraRate, metaMaskNetworkId, ethAddress } = useSelector((state: any) => {
+  const { ratio, tokenAmount, ratioShow, metaMaskNetworkId, ethAddress } = useSelector((state: any) => {
     return {
       metaMaskNetworkId: state.globalModule.metaMaskNetworkId,
       ethAddress: state.rETHModule.ethAccount && state.rETHModule.ethAccount.address,
@@ -30,7 +30,6 @@ export default function Index(props: any) {
           : platform === 'BEP20'
           ? state.BSCModule.bepRETHBalance
           : '--',
-      lastEraRate: state.rETHModule.lastEraRate,
     };
   });
 
@@ -76,7 +75,6 @@ export default function Index(props: any) {
       ratioShow={ratioShow}
       tokenAmount={tokenAmount}
       totalUnbonding={0}
-      lastEraRate={lastEraRate}
       platform={platform}
       redeemableTokenAmount={'0'}
       onStakeClick={() => {
