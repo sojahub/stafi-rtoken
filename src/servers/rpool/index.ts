@@ -139,6 +139,10 @@ export default class Index {
     stakeTokenPrice: any,
     fisPrice: number,
   ) {
+    let flag = true;
+    if (flag) {
+      return 0.0;
+    }
     let apr = '--';
 
     if (isNaN(fisPrice)) {
