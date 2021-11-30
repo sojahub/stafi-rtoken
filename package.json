@@ -123,7 +123,7 @@
     "decimal.js": "10.3.0"
   },
   "scripts": {
-    "start": "craco start",
+    "start": "PORT=3111 craco start",
     "build": "craco build",
     "test": "craco test",
     "eject": "react-scripts eject",

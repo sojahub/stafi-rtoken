@@ -55,7 +55,7 @@ export const NewReward = (props: NewRewardProps) => {
         <HContainer justifyContent='flex-end' mt='8px'>
           <HContainer>
             <Text size='14px' color='#00F3AB'>
-              + {lastEraReward} ETH
+              + {lastEraReward} {props.type.slice(1)}
             </Text>
 
             <Text size='14px' ml='2px'>

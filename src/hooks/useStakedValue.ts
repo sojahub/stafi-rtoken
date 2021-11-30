@@ -8,7 +8,6 @@ export function useStakedValue(type: 'rDOT' | 'rETH' | 'rFIS' | 'rKSM' | 'rATOM'
   const [stakedValue, setStakedValue] = useState('--');
 
   const rTokenAmount = useSelector((state: any) => {
-    console.log('sdfsdf', state.rBNBModule.totalIssuance, state.rBNBModule.ratio);
     if (type === 'rETH') {
       return state.rETHModule.totalStakedAmount;
     } else if (type === 'rBNB') {
