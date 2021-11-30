@@ -62,10 +62,12 @@ interface HContainerProps {
   mb?: any;
   ml?: any;
   mr?: any;
+  height?: any;
 }
 
 export const HContainer = styled.div<HContainerProps>`
   cursor: ${(props) => (props.clickable ? 'pointer' : '')};
+  height: ${(props) => props.height};
   display: flex;
   flex-direction: row;
   justify-content: ${(props) => props.justifyContent || 'space-between'};

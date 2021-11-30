@@ -6,7 +6,7 @@ import atom_stake_tips from 'src/assets/images/atom_stake_tips.png';
 import Content from 'src/components/content/stakeContent_DOT';
 import { STAFI_CHAIN_ID } from 'src/features/bridgeClice';
 import { setProcessSlider } from 'src/features/globalClice';
-import { rTokenLedger, rTokenRate, transfer } from 'src/features/rATOMClice';
+import { rTokenLedger, transfer } from 'src/features/rATOMClice';
 import Button from 'src/shared/components/button/button';
 import { getSessionStorageItem, ratioToAmount, setSessionStorageItem } from 'src/util/common';
 import NumberUtil from 'src/util/numberUtil';
@@ -20,7 +20,6 @@ export default function Index(props: any) {
   const [savedTargetAddress, setSavedTargetAddress] = useState('');
 
   useEffect(() => {
-    dispatch(rTokenRate());
     dispatch(rTokenLedger());
   }, []);
 

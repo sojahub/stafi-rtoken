@@ -5,7 +5,7 @@ import { renderRoutes } from 'react-router-config';
 import config from 'src/config/index';
 import { bondSwitch } from 'src/features/FISClice';
 import { reloadData } from 'src/features/globalClice';
-import { bondFees, continueProcess, getPools } from 'src/features/rBNBClice';
+import { bondFees, continueProcess, getPools, rTokenRate } from 'src/features/rBNBClice';
 import { get_eth_getBalance } from 'src/features/rETHClice';
 import { Symbol } from 'src/keyring/defaults';
 import Content from 'src/shared/components/content';
@@ -21,7 +21,8 @@ export default function Index(props: any) {
   });
 
   useEffect(() => {
-    fisAccount && fisAccount.address && dispatch(reloadData(Symbol.Fis));
+    fisAccount && fisAccount.address && dispatch(reloadData(Symbol.Bnb));
+    dispatch(rTokenRate());
   }, [fisAccount && fisAccount.address]);
 
   useEffect(() => {

@@ -1,5 +1,6 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { NewReward } from 'src/components/NewReward';
 import DataItem from 'src/components/reward/dataItem';
 import RewardContent from 'src/components/reward/index';
 import { getReward } from 'src/features/rETHClice';
@@ -16,6 +17,9 @@ export default function Index() {
       address: state.rETHModule.ethAccount ? state.rETHModule.ethAccount.address : '',
     };
   });
+
+  return <NewReward type='rETH' hours={8} />;
+
   return (
     <RewardContent address={address} hours={8} rewardList={rewardList} getReward={getReward} type='ETH'>
       {rewardList.map((item, index) => {

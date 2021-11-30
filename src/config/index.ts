@@ -199,7 +199,7 @@ const config = {
     if (!isdev()) {
       return 'https://rtoken-api2.stafi.io';
     } else {
-      return 'https://rtoken-api2.stafi.io';
+      return 'https://test-rtoken-api2.stafi.io';
     }
   },
   stafiApi: 'https://drop.stafi.io',

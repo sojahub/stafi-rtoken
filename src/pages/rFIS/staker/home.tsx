@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Content from 'src/components/content/stakeContent_DOT';
 import { STAFI_CHAIN_ID } from 'src/features/bridgeClice';
-import { balancesAll, rTokenLedger, rTokenRate, transfer } from 'src/features/FISClice';
+import { balancesAll, rTokenLedger, transfer } from 'src/features/FISClice';
 import { RootState } from 'src/store';
 import { ratioToAmount } from 'src/util/common';
 import { default as NumberUtil } from 'src/util/numberUtil';
@@ -15,7 +15,6 @@ export default function Index(props: any) {
   const [amount, setAmount] = useState<any>();
   useEffect(() => {
     dispatch(balancesAll());
-    dispatch(rTokenRate());
     dispatch(rTokenLedger());
   }, []);
 

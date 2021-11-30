@@ -71,48 +71,18 @@ export default function Index(props: Props) {
     }
   }, [history, props.type]);
 
-  const showNative = props.type !== 'rETH';
-  const showErc20 =
-    props.type === 'rETH' ||
-    props.type === 'rFIS' ||
-    props.type === 'rKSM' ||
-    props.type === 'rDOT' ||
-    props.type === 'rATOM' ||
-    props.type === 'rMATIC';
-  const showBep20 =
-    props.type === 'rETH' ||
-    props.type === 'rFIS' ||
-    props.type === 'rKSM' ||
-    props.type === 'rDOT' ||
-    props.type === 'rATOM' ||
-    props.type === 'rMATIC' ||
-    props.type === 'rBNB';
-  const showSpl = props.type === 'rSOL';
-
-  const platformArr = [];
-  if (showNative) {
-    platformArr.push('Native');
-  }
-  if (showErc20) {
-    platformArr.push('ERC20');
-  }
-  if (showBep20) {
-    platformArr.push('BEP20');
-  }
-  if (showSpl) {
-    platformArr.push('SPL');
-  }
-
   return (
     <LeftContent className='stafi_stake_info_context'>
       <div className='item'>
-        <SelectPlatformPopover
-          currentPlatform={props.platform}
-          platforms={platformArr}
-          onClick={(platform: string) => {
-            history.push(history.location.pathname + `?platform=${platform}`);
-          }}
-        />
+        <div style={{ marginLeft: '20px', marginTop: '20px' }}>
+          <SelectPlatformPopover
+            type={props.type}
+            currentPlatform={props.platform}
+            onClick={(platform: string) => {
+              history.push(history.location.pathname + `?platform=${platform}`);
+            }}
+          />
+        </div>
 
         <TitleContainer>
           <div className='title'>

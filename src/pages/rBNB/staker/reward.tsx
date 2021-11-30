@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { NewReward } from 'src/components/NewReward';
 import DataItem from 'src/components/reward/dataItem';
 import RewardContent from 'src/components/reward/index';
 import CommonClice from 'src/features/commonClice';
@@ -23,6 +24,8 @@ export default function Index() {
       address: state.rETHModule.ethAccount && state.rETHModule.ethAccount.address,
     };
   });
+
+  return <NewReward type='rBNB' hours={24} />;
 
   return (
     <RewardContent address={address} hours={24} rewardList={rewardList} getReward={getReward} type='BNB'>

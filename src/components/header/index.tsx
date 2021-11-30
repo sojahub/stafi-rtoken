@@ -68,6 +68,14 @@ export default function Index(props: Props) {
             type: 'staker/status',
           };
         }
+        if (location.pathname.includes('/rDOT/staker/reward')) {
+          return {
+            ethAccount: state.rETHModule.ethAccount,
+            fisAccount: state.FISModule.fisAccount,
+            noticeData: state.noticeModule.noticeData,
+            type: 'staker/reward',
+          };
+        }
         return {
           dotAccount: state.rDOTModule.dotAccount,
           fisAccount: state.FISModule.fisAccount,
@@ -85,6 +93,14 @@ export default function Index(props: Props) {
             type: 'staker/status',
           };
         }
+        if (location.pathname.includes('/rKSM/staker/reward')) {
+          return {
+            ethAccount: state.rETHModule.ethAccount,
+            fisAccount: state.FISModule.fisAccount,
+            noticeData: state.noticeModule.noticeData,
+            type: 'staker/reward',
+          };
+        }
         return {
           ksmAccount: state.rKSMModule.ksmAccount,
           fisAccount: state.FISModule.fisAccount,
@@ -100,6 +116,14 @@ export default function Index(props: Props) {
             fisAccount: state.FISModule.fisAccount,
             noticeData: state.noticeModule.noticeData,
             type: 'staker/status',
+          };
+        }
+        if (location.pathname.includes('/rATOM/staker/reward')) {
+          return {
+            ethAccount: state.rETHModule.ethAccount,
+            fisAccount: state.FISModule.fisAccount,
+            noticeData: state.noticeModule.noticeData,
+            type: 'staker/reward',
           };
         }
         return {
@@ -180,6 +204,12 @@ export default function Index(props: Props) {
             type: 'staker/status',
           };
         }
+        if (location.pathname.includes('/rETH/staker/reward')) {
+          return {
+            ethAccount: state.rETHModule.ethAccount,
+            type: 'staker/reward',
+          };
+        }
         return {
           ethAccount: state.rETHModule.ethAccount,
         };
@@ -194,6 +224,14 @@ export default function Index(props: Props) {
             solAccount: state.rSOLModule.solAccount,
             noticeData: state.noticeModule.noticeData,
             type: 'staker/status',
+          };
+        }
+        if (location.pathname.includes('rSOL/staker/reward')) {
+          return {
+            fisAccount: state.FISModule.fisAccount,
+            solAccount: state.rSOLModule.solAccount,
+            noticeData: state.noticeModule.noticeData,
+            type: 'staker/reward',
           };
         }
         return {
@@ -214,7 +252,14 @@ export default function Index(props: Props) {
             type: 'staker/status',
           };
         }
-
+        if (location.pathname.includes('/rMATIC/staker/reward')) {
+          return {
+            fisAccount: state.FISModule.fisAccount,
+            ethAccount: state.rETHModule.ethAccount,
+            noticeData: state.noticeModule.noticeData,
+            type: 'staker/reward',
+          };
+        }
         return {
           maticAccount: state.rMATICModule.maticAccount,
           fisAccount: state.FISModule.fisAccount,
@@ -231,6 +276,14 @@ export default function Index(props: Props) {
             ethAccount: state.rETHModule.ethAccount,
             noticeData: state.noticeModule.noticeData,
             type: 'staker/status',
+          };
+        }
+        if (location.pathname.includes('rBNB/staker/reward')) {
+          return {
+            fisAccount: state.FISModule.fisAccount,
+            ethAccount: state.rETHModule.ethAccount,
+            noticeData: state.noticeModule.noticeData,
+            type: 'staker/reward',
           };
         }
         return {
@@ -251,7 +304,14 @@ export default function Index(props: Props) {
             type: 'staker/status',
           };
         }
-
+        if (location.pathname.includes('/rFIS/staker/reward')) {
+          return {
+            fisAccount: state.FISModule.fisAccount,
+            ethAccount: state.rETHModule.ethAccount,
+            noticeData: state.noticeModule.noticeData,
+            type: 'staker/reward',
+          };
+        }
         return {
           fisAccount: state.FISModule.fisAccount,
           noticeData: state.noticeModule.noticeData,
@@ -519,26 +579,29 @@ export default function Index(props: Props) {
                 </div>
               ))}
 
-            {account.type !== 'rBNB' && account.type !== 'staker/status' && account.ethAccount && (
-              <div style={{ display: 'flex', flexDirection: 'column' }}>
-                <div className='header_tool account'>
-                  <div>
-                    {account.ethAccount.balance || '--'} {getMetaMaskTokenSymbol(metaMaskNetworkId)}
+            {account.type !== 'rBNB' &&
+              account.type !== 'staker/status' &&
+              account.type !== 'staker/reward' &&
+              account.ethAccount && (
+                <div style={{ display: 'flex', flexDirection: 'column' }}>
+                  <div className='header_tool account'>
+                    <div>
+                      {account.ethAccount.balance || '--'} {getMetaMaskTokenSymbol(metaMaskNetworkId)}
+                    </div>
+                    <div>{StringUtil.replacePkh(account.ethAccount.address, 4, 38)}</div>
                   </div>
-                  <div>{StringUtil.replacePkh(account.ethAccount.address, 4, 38)}</div>
+                  {account.type === 'rPool/lp' &&
+                    metaMaskNetworkId &&
+                    !liquidityPlatformMatchMetaMask(metaMaskNetworkId, getLpPlatformFromUrl(location.pathname)) && (
+                      <img src={wrong_network} className={'wrong_network'} alt='wrong network' />
+                    )}
+                  {account.type !== 'rPool/lp' &&
+                    metaMaskNetworkId &&
+                    !config.metaMaskNetworkIsGoerliEth(metaMaskNetworkId) && (
+                      <img src={wrong_network} className={'wrong_network'} alt='wrong network' />
+                    )}
                 </div>
-                {account.type === 'rPool/lp' &&
-                  metaMaskNetworkId &&
-                  !liquidityPlatformMatchMetaMask(metaMaskNetworkId, getLpPlatformFromUrl(location.pathname)) && (
-                    <img src={wrong_network} className={'wrong_network'} alt='wrong network' />
-                  )}
-                {account.type !== 'rPool/lp' &&
-                  metaMaskNetworkId &&
-                  !config.metaMaskNetworkIsGoerliEth(metaMaskNetworkId) && (
-                    <img src={wrong_network} className={'wrong_network'} alt='wrong network' />
-                  )}
-              </div>
-            )}
+              )}
 
             {account.type === 'rBNB' && account.ethAccount && (
               <div style={{ display: 'flex', flexDirection: 'column' }}>
@@ -578,63 +641,67 @@ export default function Index(props: Props) {
               </div>
             )}
 
-            {account.type === 'staker/status' && (platform === 'ERC20' || platform === 'BEP20' || platform === 'SPL') && (
-              <div style={{ display: 'flex', flexDirection: 'column' }}>
-                {platform === 'ERC20' || platform === 'BEP20' ? (
-                  account.ethAccount ? (
-                    <div className='header_tool account'>
-                      {platform === 'BEP20' && (
-                        <div>
-                          {(config.metaMaskNetworkIsBsc(metaMaskNetworkId) && account.ethAccount.balance) || '--'} BNB
-                        </div>
-                      )}
-                      {platform === 'ERC20' && (
-                        <div>
-                          {(config.metaMaskNetworkIsGoerliEth(metaMaskNetworkId) && account.ethAccount.balance) || '--'}{' '}
-                          ETH
-                        </div>
-                      )}
-                      <div>{StringUtil.replacePkh(account.ethAccount.address, 4, 38)}</div>
-                    </div>
-                  ) : (
-                    <div
-                      onClick={() => {
-                        dispatch(connectMetamask(platform === 'ERC20' ? config.ethChainId() : config.bscChainId()));
-                      }}
-                      className='header_tool account'>
-                      connect to MetaMask
-                    </div>
-                  )
-                ) : null}
+            {(account.type === 'staker/status' || account.type === 'staker/reward') &&
+              (platform === 'ERC20' || platform === 'BEP20' || platform === 'SPL') && (
+                <div style={{ display: 'flex', flexDirection: 'column' }}>
+                  {platform === 'ERC20' || platform === 'BEP20' ? (
+                    account.ethAccount ? (
+                      <div className='header_tool account'>
+                        {platform === 'BEP20' && (
+                          <div>
+                            {(config.metaMaskNetworkIsBsc(metaMaskNetworkId) && account.ethAccount.balance) || '--'} BNB
+                          </div>
+                        )}
+                        {platform === 'ERC20' && (
+                          <div>
+                            {(config.metaMaskNetworkIsGoerliEth(metaMaskNetworkId) && account.ethAccount.balance) ||
+                              '--'}{' '}
+                            ETH
+                          </div>
+                        )}
+                        <div>{StringUtil.replacePkh(account.ethAccount.address, 4, 38)}</div>
+                      </div>
+                    ) : (
+                      <div
+                        onClick={() => {
+                          dispatch(connectMetamask(platform === 'ERC20' ? config.ethChainId() : config.bscChainId()));
+                        }}
+                        className='header_tool account'>
+                        connect to MetaMask
+                      </div>
+                    )
+                  ) : null}
 
-                {platform === 'SPL' &&
-                  (account.solAccount ? (
-                    <div
-                      className='header_tool account'
-                      onClick={() => {
-                        dispatch(connectSoljs());
-                      }}>
-                      <div>{account.solAccount.balance} SOL</div>
-                      <div>{StringUtil.replacePkh(account.solAccount.address, 6, 38)}</div>
-                    </div>
-                  ) : (
-                    <div
-                      onClick={() => {
-                        dispatch(connectSoljs());
-                      }}
-                      className='header_tool account'>
-                      connect to Phantom
-                    </div>
-                  ))}
+                  {platform === 'SPL' &&
+                    (account.solAccount ? (
+                      <div
+                        className='header_tool account'
+                        onClick={() => {
+                          dispatch(connectSoljs());
+                        }}>
+                        <div>{account.solAccount.balance} SOL</div>
+                        <div>{StringUtil.replacePkh(account.solAccount.address, 6, 38)}</div>
+                      </div>
+                    ) : (
+                      <div
+                        onClick={() => {
+                          dispatch(connectSoljs());
+                        }}
+                        className='header_tool account'>
+                        connect to Phantom
+                      </div>
+                    ))}
 
-                {platform === 'BEP20' && metaMaskNetworkId && !config.metaMaskNetworkIsBsc(metaMaskNetworkId) && (
-                  <img src={wrong_network} className={'wrong_network'} alt='wrong network' />
-                )}
-                {platform === 'ERC20' && metaMaskNetworkId && !config.metaMaskNetworkIsGoerliEth(metaMaskNetworkId) && (
-                  <img src={wrong_network} className={'wrong_network'} alt='wrong network' />
-                )}
-              </div>
-            )}
+                  {platform === 'BEP20' && metaMaskNetworkId && !config.metaMaskNetworkIsBsc(metaMaskNetworkId) && (
+                    <img src={wrong_network} className={'wrong_network'} alt='wrong network' />
+                  )}
+                  {platform === 'ERC20' &&
+                    metaMaskNetworkId &&
+                    !config.metaMaskNetworkIsGoerliEth(metaMaskNetworkId) && (
+                      <img src={wrong_network} className={'wrong_network'} alt='wrong network' />
+                    )}
+                </div>
+              )}
           </div>
         )}
         <div className='report_icon'>

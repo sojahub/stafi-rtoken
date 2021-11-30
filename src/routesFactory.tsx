@@ -268,6 +268,7 @@ const routesFactory = (role?: any) => {
                   path: '/rETH/staker/reward',
                   type: 'Staker',
                   rSymbol: rSymbol.Eth,
+                  className: 'stafi_content_high',
                   component: RETHStakerReward,
                 },
                 {

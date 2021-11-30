@@ -6,13 +6,14 @@ import config from 'src/config/index';
 import { bondSwitch } from 'src/features/FISClice';
 import { reloadData } from 'src/features/globalClice';
 import {
-    bondFees,
-    connectMetamask,
-    continueProcess,
-    getPools,
-    getTotalIssuance,
-    monitoring_Method,
-    query_rBalances_account
+  bondFees,
+  connectMetamask,
+  continueProcess,
+  getPools,
+  getTotalIssuance,
+  monitoring_Method,
+  query_rBalances_account,
+  rTokenRate,
 } from 'src/features/rMATICClice';
 import { Symbol } from 'src/keyring/defaults';
 import Content from 'src/shared/components/content';
@@ -31,6 +32,7 @@ export default function Index(props: any) {
 
   useEffect(() => {
     dispatch(getTotalIssuance());
+    dispatch(rTokenRate());
     dispatch(query_rBalances_account());
   }, [fisAccount]);
 

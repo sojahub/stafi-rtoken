@@ -2,7 +2,7 @@ import { Spin } from 'antd';
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { renderRoutes } from 'react-router-config';
-import { fis_bondSwitch, getPools } from 'src/features/FISClice';
+import { fis_bondSwitch, getPools, rTokenRate } from 'src/features/FISClice';
 import { reloadData } from 'src/features/globalClice';
 import { Symbol } from 'src/keyring/defaults';
 import Content from 'src/shared/components/content';
@@ -23,7 +23,8 @@ export default function Index(props: any) {
     if (getLocalStorageItem(Keys.FisAccountKey)) {
       dispatch(reloadData(Symbol.Fis));
     }
-  }, []);
+    dispatch(rTokenRate());
+  }, [fisAccount]);
 
   const { loading } = useSelector((state: any) => {
     return {

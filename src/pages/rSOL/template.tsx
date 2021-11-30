@@ -4,7 +4,14 @@ import { useDispatch, useSelector } from 'react-redux';
 import { renderRoutes } from 'react-router-config';
 import { bondSwitch } from 'src/features/FISClice';
 import { reloadData } from 'src/features/globalClice';
-import { bondFees, continueProcess, getPools, getTotalIssuance, setSolAccount } from 'src/features/rSOLClice';
+import {
+  bondFees,
+  continueProcess,
+  getPools,
+  getTotalIssuance,
+  rTokenRate,
+  setSolAccount,
+} from 'src/features/rSOLClice';
 import { Symbol } from 'src/keyring/defaults';
 import SolServer from 'src/servers/sol/index';
 import Content from 'src/shared/components/content';
@@ -38,6 +45,7 @@ export default function Index(props: any) {
 
   useEffect(() => {
     dispatch(getTotalIssuance());
+    dispatch(rTokenRate());
   }, [fisAccount, solAccount]);
 
   useEffect(() => {

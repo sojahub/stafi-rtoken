@@ -7,7 +7,7 @@ import { renderRoutes } from 'react-router-config';
 import config, { isdev } from 'src/config';
 import { bondSwitch } from 'src/features/FISClice';
 import { reloadData } from 'src/features/globalClice';
-import { bondFees, continueProcess, getPools, getTotalIssuance } from 'src/features/rDOTClice';
+import { bondFees, continueProcess, getPools, getTotalIssuance, rTokenRate } from 'src/features/rDOTClice';
 import { Symbol } from 'src/keyring/defaults';
 import Content from 'src/shared/components/content';
 import { getLocalStorageItem, Keys } from 'src/util/common';
@@ -32,6 +32,7 @@ export default function Index(props: any) {
 
   useEffect(() => {
     dispatch(getTotalIssuance());
+    dispatch(rTokenRate());
   }, [fisAccount, dotAccount]);
 
   useEffect(() => {

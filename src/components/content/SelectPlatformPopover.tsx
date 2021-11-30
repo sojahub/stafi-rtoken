@@ -1,19 +1,19 @@
 import { Popover } from 'antd';
 import { useState } from 'react';
-import { useHistory } from 'react-router';
 import arrow_down_black from 'src/assets/images/arrow_down_black.svg';
+import { usePlatform } from 'src/hooks/usePlatform';
 import styled from 'styled-components';
 import { Text } from '../commonComponents';
 
 type Props = {
+  type: 'rDOT' | 'rETH' | 'rFIS' | 'rKSM' | 'rATOM' | 'rSOL' | 'rMATIC' | 'rBNB';
   currentPlatform: string;
-  platforms: Array<string>;
   onClick: Function;
 };
 
 export const SelectPlatformPopover = (props: Props) => {
   const [visible, setVisible] = useState(false);
-  const history = useHistory();
+  const { platformArr } = usePlatform(props.type);
 
   return (
     <div>
@@ -25,8 +25,8 @@ export const SelectPlatformPopover = (props: Props) => {
         trigger='click'
         content={
           <div>
-            {props.platforms &&
-              props.platforms.map((item, index) => {
+            {platformArr &&
+              platformArr.map((item, index) => {
                 return (
                   <div
                     key={index + ''}
@@ -61,8 +61,6 @@ export const SelectPlatformPopover = (props: Props) => {
 };
 
 const PlatformCard = styled.div`
-  margin-top: 20px;
-  margin-left: 20px;
   display: flex;
   flex-direction: row;
   align-items: center;

@@ -6,7 +6,7 @@ import Content from 'src/components/content/stakeContent_DOT';
 import { STAFI_CHAIN_ID } from 'src/features/bridgeClice';
 import { getGasPrice } from 'src/features/ETHClice';
 import { setProcessSlider } from 'src/features/globalClice';
-import { rTokenLedger, rTokenRate, transfer } from 'src/features/rMATICClice';
+import { rTokenLedger, transfer } from 'src/features/rMATICClice';
 import { ratioToAmount } from 'src/util/common';
 import { default as NumberUtil } from 'src/util/numberUtil';
 import './index.scss';
@@ -16,8 +16,8 @@ export default function Index(props: any) {
 
   const [amount, setAmount] = useState<any>();
   const [visible, setVisible] = useState(false);
+
   useEffect(() => {
-    dispatch(rTokenRate());
     dispatch(rTokenLedger());
     dispatch(getGasPrice());
   }, []);

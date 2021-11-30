@@ -15,7 +15,6 @@ export default function Index(props: any) {
   const [amount, setAmount] = useState<any>();
   useEffect(() => {
     dispatch(balancesAll());
-    dispatch(rTokenRate());
     dispatch(rTokenLedger());
   }, []);
 

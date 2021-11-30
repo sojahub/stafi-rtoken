@@ -23,13 +23,8 @@ export default function Index(props: any) {
     };
   });
 
-  if (!solAccount) {
-    return <Redirect to={'/rSOL/home'} />;
-  }
-
   useEffect(() => {
     dispatch(balancesAll());
-    dispatch(rTokenRate());
     dispatch(rTokenLedger());
   }, []);
 
@@ -38,7 +33,7 @@ export default function Index(props: any) {
     if (solServer.getProvider() && solServer.getProvider().isConnected) {
       publicKey = solServer.getProvider().publicKey;
     }
-    if (publicKey && publicKey.toString() !== solAccount.address) {
+    if (publicKey && publicKey.toString() !== (solAccount && solAccount.address)) {
       // message.warn('Sollet address switched', 5);
       setAmount('');
       const account = {
@@ -67,6 +62,10 @@ export default function Index(props: any) {
       };
     },
   );
+
+  if (!solAccount) {
+    return <Redirect to={'/rSOL/home'} />;
+  }
 
   const getPublicKey = (result: any) => {
     return new PublicKey(result._bn);
