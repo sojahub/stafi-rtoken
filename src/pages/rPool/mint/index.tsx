@@ -293,15 +293,17 @@ export default function MintOverview() {
 
           <div style={{ height: '30px' }}></div>
 
-          <Button
-            disabled={ethAccount && ethAccount.address}
-            icon={metamask}
-            width={'400px'}
-            onClick={() => {
-              dispatch(connectMetamask(config.ethChainId()));
-            }}>
-            Connect to MetaMask
-          </Button>
+          {Number(tokenSymbol) === rSymbol.Eth && (
+            <Button
+              disabled={ethAccount && ethAccount.address}
+              icon={metamask}
+              width={'400px'}
+              onClick={() => {
+                dispatch(connectMetamask(config.ethChainId()));
+              }}>
+              Connect to MetaMask
+            </Button>
+          )}
         </div>
       )}
 

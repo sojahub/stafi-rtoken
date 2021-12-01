@@ -120,14 +120,14 @@ export default class Index {
             Number(fisPrice),
           );
         } catch (err) {
-          console.error('get LPList error:', err.message);
+          // console.error('get LPList error:', err.message);
           throw new Error('fillLpData Error');
         }
       }
 
       return cloneDeep(oldAct);
     } catch (err) {
-      console.error('get LPList error2:', err.message);
+      // console.error('get LPList error2:', err.message);
     }
   }
 

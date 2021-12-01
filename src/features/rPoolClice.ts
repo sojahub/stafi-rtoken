@@ -322,7 +322,9 @@ export const getLPList =
         const newItem = resultList.find((data: any) => {
           return data && item && data.name === item.name;
         });
-        item.children = newItem?.children;
+        if (newItem && newItem.children) {
+          item.children = newItem.children;
+        }
       });
       dispatch(setLpList(cloneDeep(lpList)));
     } finally {
