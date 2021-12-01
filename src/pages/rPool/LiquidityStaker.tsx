@@ -1,5 +1,5 @@
 import { message } from 'antd';
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import { approveLpAllowance, claimLpReward, stakeLp, unstakeLp } from 'src/features/rPoolClice';
@@ -9,6 +9,7 @@ import { liquidityPlatformMatchMetaMask } from 'src/util/metaMaskUtil';
 import numberUtil from 'src/util/numberUtil';
 import './LiquidityStaker.scss';
 
+declare const window: any;
 const rPoolServer = new RPoolServer();
 
 type LiquidityStakerProps = {
@@ -24,6 +25,7 @@ export default function LiquidityStaker(props: LiquidityStakerProps) {
 
   const [index, setIndex] = useState(0);
   const [amount, setAmount] = useState<any>();
+  const [isEnd, setIsEnd] = useState(false);
 
   const { lpData, initData, lpNameWithPrefix } = props;
 
@@ -35,6 +37,20 @@ export default function LiquidityStaker(props: LiquidityStakerProps) {
       unitPriceList: state.bridgeModule.priceList,
     };
   });
+
+  useEffect(() => {
+    if (window.ethereum && typeof window.ethereum !== 'undefined' && window.ethereum.isMetaMask) {
+      window.ethereum
+        .request({ method: 'eth_getBlockByNumber', params: ['latest', true] })
+        .then((result: any) => {
+          const currentBlock = Number(result.number);
+          if (lpData && !isNaN(Number(lpData.endBlock)) && currentBlock > Number(lpData.endBlock)) {
+            setIsEnd(true);
+          }
+        })
+        .catch((error: any) => {});
+    }
+  }, [lpData]);
 
   const metaMaskNetworkMatched = useMemo(() => {
     return liquidityPlatformMatchMetaMask(metaMaskNetworkId, lpPlatform);
@@ -109,6 +125,10 @@ export default function LiquidityStaker(props: LiquidityStakerProps) {
       message.error('waiting for data');
       return;
     }
+    if (isEnd) {
+      message.info('The yield farming of this pool has ended');
+      return;
+    }
     dispatch(
       approveLpAllowance(ethAccount.address, lpData.stakeTokenAddress, lpPlatform, (success: boolean) => {
         if (success) {
@@ -128,6 +148,10 @@ export default function LiquidityStaker(props: LiquidityStakerProps) {
     }
     if (!ethAccount || !ethAccount.address) {
       message.error('eth address empty');
+      return;
+    }
+    if (isEnd) {
+      message.info('The yield farming of this pool has ended');
       return;
     }
     dispatch(

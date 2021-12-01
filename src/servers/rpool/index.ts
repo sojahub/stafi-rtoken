@@ -546,6 +546,7 @@ export default class Index {
       lpAllowance: '--',
       userStakedAmount: '--',
       vesting: '--',
+      endBlock: '--',
     };
     try {
       // const web3 = ethServer.getWeb3FromPlatform(platform);
@@ -566,6 +567,8 @@ export default class Index {
       if (!poolInfo) {
         return;
       }
+
+      response.endBlock = poolInfo.totalReward / poolInfol.rewardPerBlock + poolInfo.startBlock * 1;
 
       const stakeTokenAddress = poolInfo.stakeToken;
       if (!stakeTokenAddress) {
