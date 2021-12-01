@@ -8,6 +8,8 @@ import AtomServer from 'src/servers/atom/index';
 import keyring from 'src/servers/index';
 import PolkadotServer from 'src/servers/polkadot/index';
 import SolServer from 'src/servers/sol/index';
+import numberUtil from 'src/util/numberUtil';
+import Web3Utils from 'web3-utils';
 import { AppThunk } from '../store';
 import { createSubstrate as fisCreateSubstrate, reloadData as fisReloadData } from './FISClice';
 import { createSubstrate as atomCreateSubstrate, reloadData as atomReloadData } from './rATOMClice';
@@ -67,7 +69,8 @@ const globalClice = createSlice({
 
     loading: false,
     metaMaskNetworkId: null,
-    metaMaskAccount: null,
+    metaMaskAddress: null,
+    metaMaskBalance: null,
     isload_monitoring: false,
 
     // 0-invisible, 1-start transferring, 2-start minting
@@ -130,8 +133,11 @@ const globalClice = createSlice({
     setMetaMaskNetworkId(state, { payload }) {
       state.metaMaskNetworkId = payload;
     },
-    setMetaMaskAccount(state, { payload }) {
-      state.metaMaskAccount = payload;
+    setMetaMaskAddress(state, { payload }) {
+      state.metaMaskAddress = payload;
+    },
+    setMetaMaskBalance(state, { payload }) {
+      state.metaMaskBalance = payload;
     },
     setIsloadMonitoring(state, { payload }) {
       state.isload_monitoring = payload;
@@ -158,7 +164,8 @@ export const {
   setTimeOutFunc,
   initProcess,
   setMetaMaskNetworkId,
-  setMetaMaskAccount,
+  setMetaMaskAddress,
+  setMetaMaskBalance,
   setLoading,
   setIsloadMonitoring,
   setStakeSwapLoadingStatus,
@@ -212,6 +219,7 @@ export const monitorMetaMaskChainChange = (): AppThunk => (dispatch, getState) =
 
     ethereum.on('chainChanged', (chainId: any) => {
       dispatch(setMetaMaskNetworkId(chainId));
+      dispatch(requestMetaMaskBalance(getState().globalModule.metaMaskAddress));
     });
   }
 };
@@ -222,18 +230,40 @@ export const initMetaMaskAccount = (): AppThunk => (dispatch, getState) => {
       .request({ method: 'eth_requestAccounts' })
       .then((accounts: any) => {
         if (accounts && accounts.length > 0) {
-          dispatch(setMetaMaskAccount(accounts[0]));
+          dispatch(setMetaMaskAddress(accounts[0]));
+          dispatch(requestMetaMaskBalance(accounts[0]));
         }
       })
       .catch((error: any) => {});
 
     window.ethereum.on('accountsChanged', (accounts: any) => {
       if (accounts.length > 0) {
-        dispatch(setMetaMaskAccount(accounts[0]));
+        dispatch(setMetaMaskAddress(accounts[0]));
+        dispatch(requestMetaMaskBalance(accounts[0]));
       }
     });
   }
 };
+
+const requestMetaMaskBalance =
+  (address: string): AppThunk =>
+  (dispatch, getState) => {
+    if (!address) {
+      return;
+    }
+    if (window.ethereum && typeof window.ethereum !== 'undefined' && window.ethereum.isMetaMask) {
+      window.ethereum
+        .request({ method: 'eth_getBalance', params: [address, 'latest'] })
+        .then((result: any) => {
+          const balance = numberUtil.handleEthAmountToFixed(Web3Utils.fromWei(result, 'ether'));
+          dispatch(setMetaMaskBalance(balance));
+        })
+        .catch((error: any) => {
+          console.log('sdfsdf', error);
+          dispatch(setMetaMaskBalance('--'));
+        });
+    }
+  };
 
 export const keplr_keystorechange =
   (cb?: Function): AppThunk =>

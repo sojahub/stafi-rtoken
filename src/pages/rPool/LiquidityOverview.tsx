@@ -18,7 +18,9 @@ import rpool_rksm_Icon from 'src/assets/images/rpool_rksm_ksm.svg';
 import rpool_rmatic_Icon from 'src/assets/images/rpool_rmatic_matic.svg';
 import config from 'src/config/index';
 import { getRtokenPriceList } from 'src/features/bridgeClice';
+import { initMetaMaskAccount } from 'src/features/globalClice';
 import { connectMetamask, get_eth_getBalance, monitoring_Method } from 'src/features/rETHClice';
+import { useMetaMaskAccount } from 'src/hooks/useMetaMaskAccount';
 import RPoolServer from 'src/servers/rpool';
 import Button from 'src/shared/components/button/connect_button';
 import Modal from 'src/shared/components/modal/connectModal';
@@ -62,6 +64,7 @@ export default function LiquidityOverview() {
   const [vesting, setVesting] = useState('--');
   const [claimModalVisible, setClaimModalVisible] = useState(false);
   const [fisAccountModalVisible, setFisAccountModalVisible] = useState(false);
+  const { metaMaskAddress } = useMetaMaskAccount();
 
   const { loading } = useSelector((state: any) => {
     return {
@@ -69,10 +72,9 @@ export default function LiquidityOverview() {
     };
   });
 
-  const { fisAccount, ethAccount, unitPriceList, metaMaskNetworkId } = useSelector((state: any) => {
+  const { fisAccount, unitPriceList, metaMaskNetworkId } = useSelector((state: any) => {
     return {
       fisAccount: state.FISModule.fisAccount,
-      ethAccount: state.rETHModule.ethAccount,
       unitPriceList: state.bridgeModule.priceList,
       metaMaskNetworkId: state.globalModule.metaMaskNetworkId,
     };
@@ -86,14 +88,14 @@ export default function LiquidityOverview() {
   }, []);
 
   useEffect(() => {
-    if (ethAccount && ethAccount.address) {
+    if (metaMaskAddress) {
       dispatch(getRtokenPriceList());
     }
-  }, [ethAccount && ethAccount.address]);
+  }, [metaMaskAddress, dispatch]);
 
   useEffect(() => {
     initData();
-  }, [ethAccount && ethAccount.address, unitPriceList, metaMaskNetworkId]);
+  }, [metaMaskAddress, unitPriceList, metaMaskNetworkId]);
 
   useInterval(() => {
     initData();
@@ -116,8 +118,8 @@ export default function LiquidityOverview() {
   }, [lpName, lpPlatform]);
 
   const showContent = useMemo(() => {
-    return ethAccount && ethAccount.address;
-  }, [ethAccount && ethAccount.address]);
+    return metaMaskAddress;
+  }, [metaMaskAddress]);
 
   const mintedValue = useMemo(() => {
     let res: any = '--';
@@ -134,10 +136,10 @@ export default function LiquidityOverview() {
       return numberUtil.amount_format(overviewData.totalMintedValue);
     }
     return res;
-  }, [unitPriceList, rTokenName, overviewData]);
+  }, [overviewData]);
 
   const initData = async () => {
-    if (ethAccount && ethAccount.address) {
+    if (metaMaskAddress) {
       dispatch(get_eth_getBalance());
     }
     let unitPrice = unitPriceList?.find((item: any) => {
@@ -148,9 +150,9 @@ export default function LiquidityOverview() {
     });
     if (lpPlatform && poolIndex) {
       let response;
-      if (ethAccount && ethAccount.address) {
+      if (metaMaskAddress) {
         response = await rPoolServer.getLiquidityOverview(
-          ethAccount.address,
+          metaMaskAddress,
           lpPlatform,
           poolIndex,
           lpContract,
@@ -221,6 +223,7 @@ export default function LiquidityOverview() {
                 });
               }
             }}
+            alt='back'
           />
 
           <div className='title' style={{ fontSize: showStaker ? '20px' : '30px', height: '48px', lineHeight: '48px' }}>
@@ -230,13 +233,13 @@ export default function LiquidityOverview() {
 
         {showContent && !showStaker && (
           <div className='content_container'>
-            {rTokenName === 'rDOT' && <img src={rpool_rdot_Icon} className='token_icon' />}
-            {rTokenName === 'rMATIC' && <img src={rpool_rmatic_Icon} className='token_icon' />}
-            {rTokenName === 'rATOM' && <img src={rpool_ratom_Icon} className='token_icon' />}
-            {rTokenName === 'rFIS' && <img src={rpool_rfis_Icon} className='token_icon' />}
-            {rTokenName === 'rKSM' && <img src={rpool_rksm_Icon} className='token_icon' />}
-            {rTokenName === 'rETH' && <img src={rpool_reth_Icon} className='token_icon' />}
-            {rTokenName === 'rBNB' && <img src={rpool_rbnb_Icon} className='token_icon' />}
+            {rTokenName === 'rDOT' && <img src={rpool_rdot_Icon} className='token_icon' alt='token icon' />}
+            {rTokenName === 'rMATIC' && <img src={rpool_rmatic_Icon} className='token_icon' alt='token icon' />}
+            {rTokenName === 'rATOM' && <img src={rpool_ratom_Icon} className='token_icon' alt='token icon' />}
+            {rTokenName === 'rFIS' && <img src={rpool_rfis_Icon} className='token_icon' alt='token icon' />}
+            {rTokenName === 'rKSM' && <img src={rpool_rksm_Icon} className='token_icon' alt='token icon' />}
+            {rTokenName === 'rETH' && <img src={rpool_reth_Icon} className='token_icon' alt='token icon' />}
+            {rTokenName === 'rBNB' && <img src={rpool_rbnb_Icon} className='token_icon' alt='token icon' />}
 
             <div className='right_content'>
               <div className='title'>{lpNameWithPrefix}</div>
@@ -249,7 +252,7 @@ export default function LiquidityOverview() {
               <div className='divider' />
 
               <div className='content_row'>
-                <img src={mintRewardTokenIcon} className='icon' />
+                <img src={mintRewardTokenIcon} className='icon' alt='token icon' />
 
                 <div className='label'>Reward Token</div>
 
@@ -258,7 +261,7 @@ export default function LiquidityOverview() {
               </div>
 
               <div className='content_row'>
-                <img src={mintValueIcon} className='icon' />
+                <img src={mintValueIcon} className='icon' alt='mint value' />
 
                 <div className='label'>Staked Value</div>
 
@@ -266,7 +269,7 @@ export default function LiquidityOverview() {
               </div>
 
               <div className='content_row'>
-                <img src={mintMyMintIcon} className='icon' />
+                <img src={mintMyMintIcon} className='icon' alt='my mint' />
 
                 <div className='label'>My Share</div>
 
@@ -278,7 +281,7 @@ export default function LiquidityOverview() {
               </div>
 
               <div className='content_row'>
-                <img src={mintMyRewardIcon} className='icon_small' />
+                <img src={mintMyRewardIcon} className='icon_small' alt='my reward' />
 
                 <div className='label'>My Reward</div>
 
@@ -288,7 +291,7 @@ export default function LiquidityOverview() {
               </div>
 
               <div className='content_row'>
-                <img src={mintVestingIcon} className='icon_small' />
+                <img src={mintVestingIcon} className='icon_small' alt='mint vesting' />
 
                 <div className='label'>Vesting</div>
 
@@ -357,22 +360,23 @@ export default function LiquidityOverview() {
         {!showContent && (
           <div style={{ marginTop: '150px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
             <Button
-              disabled={ethAccount && ethAccount.address}
+              disabled={metaMaskAddress}
               icon={metamask}
               width={'400px'}
               onClick={() => {
-                dispatch(
-                  connectMetamask(
-                    lpPlatform === 'Ethereum'
-                      ? config.metaMaskEthNetworkId()
-                      : lpPlatform === 'BSC'
-                      ? config.metaMaskBscNetworkId()
-                      : lpPlatform === 'Polygon'
-                      ? config.metaMaskPolygonNetworkId()
-                      : '',
-                  ),
-                );
-                dispatch(monitoring_Method());
+                // dispatch(
+                //   connectMetamask(
+                //     lpPlatform === 'Ethereum'
+                //       ? config.metaMaskEthNetworkId()
+                //       : lpPlatform === 'BSC'
+                //       ? config.metaMaskBscNetworkId()
+                //       : lpPlatform === 'Polygon'
+                //       ? config.metaMaskPolygonNetworkId()
+                //       : '',
+                //   ),
+                // );
+                // dispatch(monitoring_Method());
+                dispatch(initMetaMaskAccount());
               }}>
               Connect to MetaMask
             </Button>

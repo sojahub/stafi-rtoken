@@ -399,13 +399,17 @@ function sleep(ms: any) {
 }
 
 export const query_rBalances_account = (): AppThunk => async (dispatch, getState) => {
-  commonClice.query_rBalances_account(getState().FISModule.fisAccount, rSymbol.Bnb, (data: any) => {
-    if (data == null) {
-      dispatch(setTokenAmount(NumberUtil.handleFisAmountToFixed(0)));
-    } else {
-      dispatch(setTokenAmount(NumberUtil.tokenAmountToHuman(data.free, rSymbol.Bnb)));
-    }
-  });
+  commonClice.query_rBalances_account(
+    getState().FISModule.fisAccount && getState().FISModule.fisAccount,
+    rSymbol.Bnb,
+    (data: any) => {
+      if (data == null) {
+        dispatch(setTokenAmount(NumberUtil.handleFisAmountToFixed(0)));
+      } else {
+        dispatch(setTokenAmount(NumberUtil.tokenAmountToHuman(data.free, rSymbol.Bnb)));
+      }
+    },
+  );
 };
 
 export const reSending =
@@ -905,7 +909,7 @@ export const accountUnbonds = (): AppThunk => async (dispatch, getState) => {
   // dispatch(getTotalUnbonding(rSymbol.Matic,(total:any)=>{
   //   dispatch(setTotalUnbonding(total));
   // }))
-  let fisAddress = getState().FISModule.fisAccount.address;
+  let fisAddress = getState().FISModule.fisAccount && getState().FISModule.fisAccount.address;
   commonClice.getTotalUnbonding(fisAddress, rSymbol.Bnb, (total: any) => {
     dispatch(setTotalUnbonding(total));
   });
