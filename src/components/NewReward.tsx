@@ -13,6 +13,8 @@ import { useStakedValue } from 'src/hooks/useStakedValue';
 import config from 'src/config';
 import { isEmpty } from 'lodash';
 import numberUtil from 'src/util/numberUtil';
+import { useEffect } from 'react';
+import { requestSwitchMetaMaskNetwork } from 'src/util/metaMaskUtil';
 
 interface NewRewardProps {
   type: 'rDOT' | 'rETH' | 'rFIS' | 'rKSM' | 'rATOM' | 'rSOL' | 'rMATIC' | 'rBNB';
@@ -23,7 +25,15 @@ export const NewReward = (props: NewRewardProps) => {
   const history = useHistory();
   const { platform } = usePlatform(props.type);
   const { lastEraReward, chartData, loadMore, hasMore, rewardList } = useEraReward(platform, props.type);
-  const { stakedValue } = useStakedValue(props.type);
+  const { stakedValue } = useStakedValue(platform, props.type);
+
+  useEffect(() => {
+    if (platform === 'ERC20') {
+      requestSwitchMetaMaskNetwork('Ethereum');
+    } else if (platform === 'BEP20') {
+      requestSwitchMetaMaskNetwork('BSC');
+    }
+  }, [platform]);
 
   return (
     <LeftContent className='stafi_reward_card' padding='30px 22px 0 42px'>

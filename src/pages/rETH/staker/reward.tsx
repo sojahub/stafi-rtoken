@@ -1,47 +1,27 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { NewReward } from 'src/components/NewReward';
-import DataItem from 'src/components/reward/dataItem';
-import RewardContent from 'src/components/reward/index';
-import { getReward } from 'src/features/rETHClice';
-import { RootState } from 'src/store';
-import NumberUtil from 'src/util/numberUtil';
+import { usePlatform } from 'src/hooks/usePlatform';
+import { getRETHAssetBalance as getBEP20RETHAssetBalance } from 'src/features/BSCClice';
+import { getETHAssetBalance } from 'src/features/ETHClice';
+import { useMetaMaskAccount } from 'src/hooks/useMetaMaskAccount';
 
 export default function Index() {
   const dispatch = useDispatch();
+  const { platform } = usePlatform('rETH');
+  const { metaMaskNetworkId, metaMaskAddress } = useMetaMaskAccount();
 
-  const { rewardList, rewardList_lastdata, address } = useSelector((state: RootState) => {
-    return {
-      rewardList: state.rETHModule.rewardList,
-      rewardList_lastdata: state.rETHModule.rewardList_lastdata,
-      address: state.rETHModule.ethAccount ? state.rETHModule.ethAccount.address : '',
-    };
-  });
+  useEffect(() => {
+    if (platform === 'ERC20') {
+      setTimeout(() => {
+        dispatch(getETHAssetBalance());
+      }, 500);
+    } else if (platform === 'BEP20') {
+      setTimeout(() => {
+        dispatch(getBEP20RETHAssetBalance());
+      }, 500);
+    }
+  }, [platform, metaMaskNetworkId, metaMaskAddress, dispatch]);
 
   return <NewReward type='rETH' hours={8} />;
-
-  return (
-    <RewardContent address={address} hours={8} rewardList={rewardList} getReward={getReward} type='ETH'>
-      {rewardList.map((item, index) => {
-        let reward: any = '--';
-
-        if (index < rewardList.length - 1) {
-          reward = (item.rate - rewardList[index + 1].rate) * rewardList[index + 1].rbalance;
-        } else if (rewardList_lastdata) {
-          reward = (item.rate - rewardList_lastdata.rate) * rewardList_lastdata.rbalance;
-        }
-
-        return (
-          <DataItem
-            key={item.era}
-            era={item.era}
-            tokenAmount={NumberUtil.handleFisAmountToFixed(item.rbalance)}
-            ratio={NumberUtil.handleFisAmountRateToFixed(item.rate)}
-            redeemableToken={'0.000000'}
-            reward={reward}
-          />
-        );
-      })}
-    </RewardContent>
-  );
 }

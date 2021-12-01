@@ -6,7 +6,7 @@ import { useHistory } from 'react-router';
 import Content from 'src/components/content/stakeInfoContent';
 import { getRETHAssetBalance as getBEP20RETHAssetBalance } from 'src/features/BSCClice';
 import { getETHAssetBalance } from 'src/features/ETHClice';
-import { getLastEraRate, rTokenRate, setRatioShow } from 'src/features/rETHClice';
+import { getLastEraRate, setRatioShow } from 'src/features/rETHClice';
 import NumberUtil from 'src/util/numberUtil';
 
 export default function Index(props: any) {
@@ -34,7 +34,6 @@ export default function Index(props: any) {
   });
 
   useEffect(() => {
-    dispatch(rTokenRate());
     dispatch(getLastEraRate());
   }, []);
 

@@ -50,14 +50,6 @@ export function usePlatform(type: 'rDOT' | 'rETH' | 'rFIS' | 'rKSM' | 'rATOM' | 
   }, [history, history.location.search, type]);
 
   useEffect(() => {
-    if (platform === 'ERC20') {
-      requestSwitchMetaMaskNetwork('Ethereum');
-    } else if (platform === 'BEP20') {
-      requestSwitchMetaMaskNetwork('BSC');
-    }
-  }, [platform]);
-
-  useEffect(() => {
     if (platformArr.indexOf(platform) < 0) {
       history.push(`${history.location.pathname}?platform=${type === 'rETH' ? 'ERC20' : 'Native'}`);
     }

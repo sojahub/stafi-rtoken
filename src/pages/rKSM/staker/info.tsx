@@ -1,20 +1,19 @@
+import qs from 'querystring';
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router';
 import Content from 'src/components/content/stakeInfoContent';
+import { getRKSMAssetBalance as getBEP20RKSMAssetBalance } from 'src/features/BSCClice';
+import CommonClice from 'src/features/commonClice';
+import { getRKSMAssetBalance as getERC20RKSMAssetBalance } from 'src/features/ETHClice';
 import {
   accountUnbonds,
   getLastEraRate,
   getUnbondCommission,
   query_rBalances_account,
-  rTokenRate,
   setRatioShow,
 } from 'src/features/rKSMClice';
 import NumberUtil from 'src/util/numberUtil';
-import qs from 'querystring';
-import CommonClice from 'src/features/commonClice';
-import { getRKSMAssetBalance as getBEP20RKSMAssetBalance } from 'src/features/BSCClice';
-import { getRKSMAssetBalance as getERC20RKSMAssetBalance } from 'src/features/ETHClice';
 
 const commonClice = new CommonClice();
 
@@ -64,7 +63,6 @@ export default function Index(props: any) {
   });
 
   useEffect(() => {
-    dispatch(rTokenRate());
     dispatch(accountUnbonds());
     dispatch(getUnbondCommission());
     dispatch(getLastEraRate());

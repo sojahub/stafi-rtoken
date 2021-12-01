@@ -1,21 +1,19 @@
+import qs from 'querystring';
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router';
 import Content from 'src/components/content/stakeInfoContent';
+import { getRFISAssetBalance as getBEP20RFISAssetBalance } from 'src/features/BSCClice';
+import CommonClice from 'src/features/commonClice';
+import { getRFISAssetBalance as getERC20RFISAssetBalance } from 'src/features/ETHClice';
 import {
   getLastEraRate,
   getUnbondCommission,
   query_rBalances_account,
   RefreshUnbonding,
-  rTokenRate,
   setRatioShow,
 } from 'src/features/FISClice';
-import CommonClice from 'src/features/commonClice';
 import NumberUtil from 'src/util/numberUtil';
-import qs from 'querystring';
-import { getFISAssetBalance as getBEP20FISAssetBalance } from 'src/features/BSCClice';
-import { getFISAssetBalance as getERC20FISAssetBalance } from 'src/features/ETHClice';
-import { difference } from 'lodash';
 
 const commonClice = new CommonClice();
 
@@ -41,9 +39,9 @@ export default function Index(props: any) {
       platform === 'Native'
         ? state.FISModule.tokenAmount
         : platform === 'ERC20'
-        ? state.ETHModule.ercFISBalance
+        ? state.ETHModule.ercRFISBalance
         : platform === 'BEP20'
-        ? state.BSCModule.bepFISBalance
+        ? state.BSCModule.bepRFISBalance
         : '--';
 
     return {
@@ -66,7 +64,6 @@ export default function Index(props: any) {
 
   useEffect(() => {
     dispatch(RefreshUnbonding());
-    dispatch(rTokenRate());
     dispatch(getLastEraRate());
     dispatch(getUnbondCommission());
   }, [fisAddress, dispatch]);
@@ -75,9 +72,9 @@ export default function Index(props: any) {
     if (platform === 'Native') {
       dispatch(query_rBalances_account());
     } else if (platform === 'ERC20') {
-      dispatch(getERC20FISAssetBalance());
+      dispatch(getERC20RFISAssetBalance());
     } else if (platform === 'BEP20') {
-      dispatch(getBEP20FISAssetBalance());
+      dispatch(getBEP20RFISAssetBalance());
     }
   }, [platform, metaMaskNetworkId, fisAddress, ethAddress, dispatch]);
 

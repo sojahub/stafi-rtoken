@@ -34,15 +34,6 @@ export default function Index(props: any) {
     checkSolanaWallet();
   }, []);
 
-  const checkSolanaWallet = async () => {
-    await timeout(500);
-    const solana = solServer.getProvider();
-    if (!solana) {
-      dispatch(setSolAccount(null));
-      removeLocalStorageItem(Keys.SolAccountKey);
-    }
-  };
-
   useEffect(() => {
     dispatch(getTotalIssuance());
     dispatch(rTokenRate());
@@ -66,6 +57,16 @@ export default function Index(props: any) {
       loading: state.globalModule.loading,
     };
   });
+
+  const checkSolanaWallet = async () => {
+    await timeout(500);
+    const solana = solServer.getProvider();
+    if (!solana) {
+      dispatch(setSolAccount(null));
+      removeLocalStorageItem(Keys.SolAccountKey);
+    }
+  };
+
   return (
     <div className='stafi_layout'>
       {/* <LiquidingProcesSlider route={props.route}  history={props.history}/> */}

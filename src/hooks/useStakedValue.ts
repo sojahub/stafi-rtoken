@@ -3,28 +3,75 @@ import { useSelector } from 'react-redux';
 import numberUtil from 'src/util/numberUtil';
 import rpc from 'src/util/rpc';
 
-export function useStakedValue(type: 'rDOT' | 'rETH' | 'rFIS' | 'rKSM' | 'rATOM' | 'rSOL' | 'rMATIC' | 'rBNB') {
+export function useStakedValue(
+  platform: string,
+  type: 'rDOT' | 'rETH' | 'rFIS' | 'rKSM' | 'rATOM' | 'rSOL' | 'rMATIC' | 'rBNB',
+) {
   const [tokenPrice, setTokenPrice] = useState('--');
   const [stakedValue, setStakedValue] = useState('--');
 
   const rTokenAmount = useSelector((state: any) => {
     if (type === 'rETH') {
-      return state.rETHModule.totalStakedAmount;
+      if (platform === 'ERC20') {
+        return state.ETHModule.ercETHBalance;
+      } else if (platform === 'BEP20') {
+        return state.BSCModule.bepRETHBalance;
+      }
     } else if (type === 'rBNB') {
-      return numberUtil.handleFisAmountToFixed(state.rBNBModule.totalIssuance * state.rBNBModule.ratio);
+      if (platform === 'Native') {
+        return state.rBNBModule.tokenAmount;
+      } else if (platform === 'BEP20') {
+        return state.BSCModule.bepRBNBBalance;
+      }
     } else if (type === 'rFIS') {
-      return numberUtil.handleFisAmountToFixed(state.FISModule.totalIssuance * state.FISModule.ratio);
+      if (platform === 'Native') {
+        return state.FISModule.tokenAmount * state.FISModule.ratio;
+      } else if (platform === 'ERC20') {
+        return state.ETHModule.ercRFISBalance * state.FISModule.ratio;
+      } else if (platform === 'BEP20') {
+        return state.BSCModule.bepRFISBalance * state.FISModule.ratio;
+      }
     } else if (type === 'rDOT') {
-      return numberUtil.handleFisAmountToFixed(state.rDOTModule.totalIssuance * state.rDOTModule.ratio);
+      if (platform === 'Native') {
+        return state.rDOTModule.tokenAmount * state.rDOTModule.ratio;
+      } else if (platform === 'ERC20') {
+        return state.ETHModule.ercRDOTBalance * state.rDOTModule.ratio;
+      } else if (platform === 'BEP20') {
+        return state.BSCModule.bepRDOTBalance * state.rDOTModule.ratio;
+      }
     } else if (type === 'rKSM') {
-      return numberUtil.handleFisAmountToFixed(state.rKSMModule.totalIssuance * state.rKSMModule.ratio);
+      if (platform === 'Native') {
+        return state.rKSMModule.tokenAmount * state.rKSMModule.ratio;
+      } else if (platform === 'ERC20') {
+        return state.ETHModule.ercRKSMBalance * state.rKSMModule.ratio;
+      } else if (platform === 'BEP20') {
+        return state.BSCModule.bepRKSMBalance * state.rKSMModule.ratio;
+      }
     } else if (type === 'rATOM') {
-      return numberUtil.handleFisAmountToFixed(state.rATOMModule.totalIssuance * state.rATOMModule.ratio);
+      if (platform === 'Native') {
+        return state.rATOMModule.tokenAmount * state.rATOMModule.ratio;
+      } else if (platform === 'ERC20') {
+        return state.ETHModule.ercRATOMBalance * state.rATOMModule.ratio;
+      } else if (platform === 'BEP20') {
+        return state.BSCModule.bepRATOMBalance * state.rATOMModule.ratio;
+      }
     } else if (type === 'rSOL') {
-      return numberUtil.handleFisAmountToFixed(state.rSOLModule.totalIssuance * state.rSOLModule.ratio);
+      if (platform === 'Native') {
+        return state.rSOLModule.tokenAmount * state.rSOLModule.ratio;
+      } else if (platform === 'SPL') {
+        return state.SOLModule.rSOLBalance * state.rSOLModule.ratio;
+      }
     } else if (type === 'rMATIC') {
-      return numberUtil.handleFisAmountToFixed(state.rMATICModule.totalIssuance * state.rMATICModule.ratio);
+      if (platform === 'Native') {
+        return state.rMATICModule.tokenAmount * state.rATOMModule.ratio;
+      } else if (platform === 'ERC20') {
+        return state.ETHModule.ercRMaticBalance * state.rATOMModule.ratio;
+      } else if (platform === 'BEP20') {
+        return state.BSCModule.bepRMATICBalance * state.rATOMModule.ratio;
+      }
     }
+
+    return '--';
   });
 
   useEffect(() => {
@@ -43,7 +90,9 @@ export function useStakedValue(type: 'rDOT' | 'rETH' | 'rFIS' | 'rKSM' | 'rATOM'
       setStakedValue('--');
       return;
     }
-    setStakedValue(numberUtil.amount_format(Number(rTokenAmount) * Number(tokenPrice), 2));
+    setStakedValue(
+      numberUtil.amount_format(numberUtil.handleFisAmountToFixed(Number(rTokenAmount) * Number(tokenPrice)), 2),
+    );
   }, [tokenPrice, rTokenAmount]);
 
   return { stakedValue };

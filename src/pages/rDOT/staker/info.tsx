@@ -11,7 +11,6 @@ import {
   getLastEraRate,
   getUnbondCommission,
   query_rBalances_account,
-  rTokenRate,
   setRatioShow,
 } from 'src/features/rDOTClice';
 import NumberUtil from 'src/util/numberUtil';
@@ -60,7 +59,6 @@ export default function Index(props: any) {
   });
 
   useEffect(() => {
-    dispatch(rTokenRate());
     dispatch(accountUnbonds());
     dispatch(getLastEraRate());
     dispatch(getUnbondCommission());

@@ -6,7 +6,7 @@ import { useLocation } from 'react-router';
 import { renderRoutes } from 'react-router-config';
 import config from 'src/config/index';
 import { getETHAssetBalance } from 'src/features/ETHClice';
-import { handleEthAccount, monitoring_Method, reloadData } from 'src/features/rETHClice';
+import { handleEthAccount, reloadData, rTokenRate } from 'src/features/rETHClice';
 import Content from 'src/shared/components/content';
 import '../template/index.scss';
 import './index.scss';
@@ -35,6 +35,7 @@ export default function Index(props: any) {
 
   useEffect(() => {
     // dispatch(monitoring_Method());
+    dispatch(rTokenRate());
   }, []);
 
   const { loading } = useSelector((state: any) => {

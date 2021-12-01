@@ -61,8 +61,8 @@ export function useUnbondList(type: 'rDOT' | 'rETH' | 'rFIS' | 'rKSM' | 'rATOM' 
       if (res.status === '80000' && res.data) {
         const formatUnbondList = res.data.unbondList.map((element: UnbondModel) => {
           const formatTokenAmount = numberUtil.tokenAmountToHuman(element.tokenAmount, getRsymbolByTokenTitle(type));
-          const lockTotalTimeInDays = numberUtil.handleAmountCeilToFixed(element.lockTotalTime / (60 * 60 * 24), 0);
-          const lockLeftTimeInDays = numberUtil.handleAmountCeilToFixed(element.lockLeftTime / (60 * 60 * 24), 0);
+          const lockTotalTimeInDays = numberUtil.handleAmountFloorToFixed(element.lockTotalTime / (60 * 60 * 24), 0);
+          const lockLeftTimeInDays = numberUtil.handleAmountFloorToFixed(element.lockLeftTime / (60 * 60 * 24), 0);
 
           let formatReceiveAddress = '';
           if (type === 'rMATIC' || type === 'rBNB') {
