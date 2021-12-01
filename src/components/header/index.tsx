@@ -13,6 +13,7 @@ import {
   connectPolkadotjs,
   connectPolkadot_ksm,
   connectSoljs,
+  initMetaMaskAccount,
 } from 'src/features/globalClice';
 import { noticeStatus } from 'src/features/noticeClice';
 import {
@@ -24,6 +25,7 @@ import {
   query_rBalances_account as ksmquery_rBalances_account,
   reloadData as ksmReloadData,
 } from 'src/features/rKSMClice';
+import { useMetaMaskAccount } from 'src/hooks/useMetaMaskAccount';
 import { rSymbol, Symbol } from 'src/keyring/defaults';
 import Modal from 'src/shared/components/modal/connectModal';
 import { getLpPlatformFromUrl, getMetaMaskTokenSymbol, liquidityPlatformMatchMetaMask } from 'src/util/metaMaskUtil';
@@ -47,6 +49,7 @@ type Props = {
 export default function Index(props: Props) {
   const dispatch = useDispatch();
   const history = useHistory();
+  const { metaMaskAddress, metaMaskBalance, metaMaskNetworkId } = useMetaMaskAccount();
 
   let platform = 'Native';
   if (history.location.search) {
@@ -303,18 +306,13 @@ export default function Index(props: Props) {
     }
     if (location.pathname.includes('/rPool/lp')) {
       const returnValue: any = { type: 'rPool/lp' };
-      if (state.rETHModule.ethAccount) {
-        returnValue.ethAccount = state.rETHModule.ethAccount;
-      }
+      returnValue.metaMaskAccount = {
+        address: metaMaskAddress,
+        balance: metaMaskBalance,
+      };
       return returnValue;
     }
     return null;
-  });
-
-  const { metaMaskNetworkId } = useSelector((state: any) => {
-    return {
-      metaMaskNetworkId: state.globalModule.metaMaskNetworkId,
-    };
   });
 
   const { noticeData } = useSelector((state: any) => {
@@ -538,6 +536,35 @@ export default function Index(props: Props) {
                     <img src={wrong_network} className={'wrong_network'} alt='wrong network' />
                   )}
               </div>
+            )}
+
+            {account.type === 'rPool/lp' && account.metaMaskAccount && (
+              <>
+                {account.metaMaskAccount.address ? (
+                  <div style={{ display: 'flex', flexDirection: 'column' }}>
+                    <div className='header_tool account'>
+                      <div>
+                        {account.metaMaskAccount.balance || '--'} {getMetaMaskTokenSymbol(metaMaskNetworkId)}
+                      </div>
+
+                      <div>{StringUtil.replacePkh(account.metaMaskAccount.address, 4, 38)}</div>
+                    </div>
+
+                    {metaMaskNetworkId &&
+                      !liquidityPlatformMatchMetaMask(metaMaskNetworkId, getLpPlatformFromUrl(location.pathname)) && (
+                        <img src={wrong_network} className={'wrong_network'} alt='wrong network' />
+                      )}
+                  </div>
+                ) : (
+                  <div
+                    onClick={() => {
+                      dispatch(initMetaMaskAccount());
+                    }}
+                    className='header_tool account'>
+                    connect to MetaMask
+                  </div>
+                )}
+              </>
             )}
 
             {account.type === 'rBNB' && account.ethAccount && (

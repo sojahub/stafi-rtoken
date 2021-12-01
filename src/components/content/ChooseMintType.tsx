@@ -5,11 +5,11 @@ import { useDispatch, useSelector } from 'react-redux';
 import leftArrowSvg from 'src/assets/images/left_arrow.svg';
 import config from 'src/config/index';
 import {
-    bridgeCommon_ChainFees,
-    BSC_CHAIN_ID,
-    ETH_CHAIN_ID,
-    SOL_CHAIN_ID,
-    STAFI_CHAIN_ID
+  bridgeCommon_ChainFees,
+  BSC_CHAIN_ID,
+  ETH_CHAIN_ID,
+  SOL_CHAIN_ID,
+  STAFI_CHAIN_ID,
 } from 'src/features/bridgeClice';
 import { connectSoljs, setLoading } from 'src/features/globalClice';
 import { checkEthAddress } from 'src/features/rETHClice';
@@ -54,9 +54,9 @@ export default function ChooseMintType(props: ChooseMintTypeProps) {
     },
   );
 
-  const { metaMaskNetworkId, metaMaskAccount, solAddress } = useSelector((state: any) => {
+  const { metaMaskNetworkId, metaMaskAddress, solAddress } = useSelector((state: any) => {
     return {
-      metaMaskAccount: state.globalModule.metaMaskAccount,
+      metaMaskAddress: state.globalModule.metaMaskAddress,
       metaMaskNetworkId: state.globalModule.metaMaskNetworkId,
       solAddress: state.rSOLModule.solAccount && state.rSOLModule.solAccount.address,
     };
@@ -222,7 +222,7 @@ export default function ChooseMintType(props: ChooseMintTypeProps) {
         };
       }
     }
-    return {}
+    return {};
   }, [props.type, selectedChainId, erc20SwapFee, bep20SwapFee, slp20SwapFee]);
 
   const showNative = true;
@@ -360,18 +360,18 @@ export default function ChooseMintType(props: ChooseMintTypeProps) {
                   !!targetAddress ||
                   selectedChainId === STAFI_CHAIN_ID ||
                   (selectedChainId === ETH_CHAIN_ID &&
-                    (!metaMaskAccount || !config.metaMaskNetworkIsGoerliEth(metaMaskNetworkId))) ||
+                    (!metaMaskAddress || !config.metaMaskNetworkIsGoerliEth(metaMaskNetworkId))) ||
                   (selectedChainId === BSC_CHAIN_ID &&
-                    (!metaMaskAccount || !config.metaMaskNetworkIsBsc(metaMaskNetworkId))) ||
+                    (!metaMaskAddress || !config.metaMaskNetworkIsBsc(metaMaskNetworkId))) ||
                   (selectedChainId === SOL_CHAIN_ID && !solAddress)
                     ? 'none'
                     : 'flex',
               }}
               onClick={() => {
                 if (selectedChainId === ETH_CHAIN_ID) {
-                  setTargetAddress(metaMaskAccount);
+                  setTargetAddress(metaMaskAddress);
                 } else if (selectedChainId === BSC_CHAIN_ID) {
-                  setTargetAddress(metaMaskAccount);
+                  setTargetAddress(metaMaskAddress);
                 } else if (selectedChainId === SOL_CHAIN_ID) {
                   fillSolAddress();
                 }
