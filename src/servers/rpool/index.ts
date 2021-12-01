@@ -568,7 +568,7 @@ export default class Index {
         return;
       }
 
-      response.endBlock = poolInfo.totalReward / poolInfol.rewardPerBlock + poolInfo.startBlock * 1;
+      response.endBlock = poolInfo.totalReward / poolInfo.rewardPerBlock + poolInfo.startBlock * 1;
 
       const stakeTokenAddress = poolInfo.stakeToken;
       if (!stakeTokenAddress) {
