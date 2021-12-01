@@ -120,14 +120,14 @@ export default class Index {
             Number(fisPrice),
           );
         } catch (err) {
-          console.error('get LPList error:', err.message);
+          // console.error('get LPList error:', err.message);
           throw new Error('fillLpData Error');
         }
       }
 
       return cloneDeep(oldAct);
     } catch (err) {
-      console.error('get LPList error2:', err.message);
+      // console.error('get LPList error2:', err.message);
     }
   }
 
@@ -546,6 +546,7 @@ export default class Index {
       lpAllowance: '--',
       userStakedAmount: '--',
       vesting: '--',
+      endBlock: '--',
     };
     try {
       // const web3 = ethServer.getWeb3FromPlatform(platform);
@@ -566,6 +567,8 @@ export default class Index {
       if (!poolInfo) {
         return;
       }
+
+      response.endBlock = poolInfo.totalReward / poolInfo.rewardPerBlock + poolInfo.startBlock * 1;
 
       const stakeTokenAddress = poolInfo.stakeToken;
       if (!stakeTokenAddress) {
