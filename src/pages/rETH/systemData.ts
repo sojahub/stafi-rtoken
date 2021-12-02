@@ -11,10 +11,10 @@ export const rDOT_data = [
         text: '-Reward',
         url: '/rETH/staker/reward',
       },
-      {
-        text: '-Insurance',
-        url: '/rETH/staker/insurance',
-      },
+      // {
+      //   text: '-Insurance',
+      //   url: '/rETH/staker/insurance',
+      // },
     ],
   },
   {
