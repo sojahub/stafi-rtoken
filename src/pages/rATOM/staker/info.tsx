@@ -15,12 +15,14 @@ import { useHistory } from 'react-router';
 import CommonClice from 'src/features/commonClice';
 import { getRATOMAssetBalance as getBEP20RATOMAssetBalance } from 'src/features/BSCClice';
 import { getRATOMAssetBalance as getERC20RATOMAssetBalance } from 'src/features/ETHClice';
+import { useMetaMaskAccount } from 'src/hooks/useMetaMaskAccount';
 
 const commonClice = new CommonClice();
 
 export default function Index(props: any) {
   const dispatch = useDispatch();
   const history = useHistory();
+  const { metaMaskAddress, metaMaskNetworkId } = useMetaMaskAccount();
 
   let platform = 'Native';
   if (history.location.search) {
@@ -35,7 +37,7 @@ export default function Index(props: any) {
     };
   });
 
-  const { tokenAmount, lastEraRate, redeemableTokenAmount, metaMaskNetworkId } = useSelector((state: any) => {
+  const { tokenAmount, lastEraRate, redeemableTokenAmount } = useSelector((state: any) => {
     const tokenAmount =
       platform === 'Native'
         ? state.rATOMModule.tokenAmount
@@ -46,7 +48,6 @@ export default function Index(props: any) {
         : '--';
 
     return {
-      metaMaskNetworkId: state.globalModule.metaMaskNetworkId,
       tokenAmount,
       lastEraRate: state.rATOMModule.lastEraRate,
       redeemableTokenAmount: commonClice.getWillAmount(
@@ -64,10 +65,9 @@ export default function Index(props: any) {
     dispatch(getLastEraRate());
   }, []);
 
-  const { fisAddress, ethAddress } = useSelector((state: any) => {
+  const { fisAddress } = useSelector((state: any) => {
     return {
       fisAddress: state.FISModule.fisAccount && state.FISModule.fisAccount.address,
-      ethAddress: state.rETHModule.ethAccount && state.rETHModule.ethAccount.address,
     };
   });
 
@@ -79,7 +79,7 @@ export default function Index(props: any) {
     } else if (platform === 'BEP20') {
       dispatch(getBEP20RATOMAssetBalance());
     }
-  }, [dispatch, platform, metaMaskNetworkId, fisAddress, ethAddress]);
+  }, [dispatch, platform, metaMaskNetworkId, fisAddress, metaMaskAddress]);
 
   useEffect(() => {
     let count = 0;

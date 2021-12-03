@@ -18,7 +18,7 @@ export default function Index() {
       rewardList: state.rSOLModule.rewardList,
       unbondCommission: state.rSOLModule.unbondCommission,
       rewardList_lastdata: state.rSOLModule.rewardList_lastdata,
-      address: state.rSOLModule.solAccount ? state.rSOLModule.solAccount.address : '',
+      address: state.rSOLModule.solAddress,
     };
   });
   return (

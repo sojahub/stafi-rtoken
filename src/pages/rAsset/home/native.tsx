@@ -65,6 +65,7 @@ export default function Index(props: any) {
 
   const {
     fisAccount,
+    fisAddress,
     tokenAmount,
     ksmWillAmount,
     fis_tokenAmount,
@@ -85,6 +86,7 @@ export default function Index(props: any) {
     return {
       unitPriceList: state.bridgeModule.priceList,
       fisAccount: state.FISModule.fisAccount,
+      fisAddress: state.FISModule.fisAccount && state.FISModule.fisAccount.address,
       tokenAmount: state.rKSMModule.tokenAmount,
       ksmWillAmount: commonClice.getWillAmount(
         state.rKSMModule.ratio,
@@ -168,11 +170,11 @@ export default function Index(props: any) {
   ]);
 
   useEffect(() => {
-    if (fisAccount) {
+    if (fisAddress) {
       dispatch(getRtokenPriceList());
       dispatch(reloadData(Symbol.Fis));
     }
-  }, []);
+  }, [dispatch, fisAddress]);
 
   useEffect(() => {
     if (fisAccount) {

@@ -14,6 +14,7 @@ import {
   rTokenRate,
   setRatioShow,
 } from 'src/features/rDOTClice';
+import { useMetaMaskAccount } from 'src/hooks/useMetaMaskAccount';
 import NumberUtil from 'src/util/numberUtil';
 
 const commonClice = new CommonClice();
@@ -21,14 +22,15 @@ const commonClice = new CommonClice();
 export default function Index(props: any) {
   const dispatch = useDispatch();
   const history = useHistory();
+  const { metaMaskAddress, metaMaskNetworkId } = useMetaMaskAccount();
 
   let platform = 'Native';
   if (history.location.search) {
     platform = qs.parse(history.location.search.slice(1)).platform as string;
   }
 
-  const { metaMaskNetworkId, ratio, tokenAmount, ratioShow, totalUnbonding, lastEraRate, redeemableTokenAmount } =
-    useSelector((state: any) => {
+  const { ratio, tokenAmount, ratioShow, totalUnbonding, lastEraRate, redeemableTokenAmount } = useSelector(
+    (state: any) => {
       const tokenAmount =
         platform === 'Native'
           ? state.rDOTModule.tokenAmount
@@ -38,7 +40,6 @@ export default function Index(props: any) {
           ? state.BSCModule.bepRDOTBalance
           : '--';
       return {
-        metaMaskNetworkId: state.globalModule.metaMaskNetworkId,
         ratio: state.rDOTModule.ratio,
         tokenAmount,
         ratioShow: state.rDOTModule.ratioShow,
@@ -50,12 +51,12 @@ export default function Index(props: any) {
           tokenAmount,
         ),
       };
-    });
+    },
+  );
 
-  const { fisAddress, ethAddress } = useSelector((state: any) => {
+  const { fisAddress } = useSelector((state: any) => {
     return {
       fisAddress: state.FISModule.fisAccount && state.FISModule.fisAccount.address,
-      ethAddress: state.rETHModule.ethAccount && state.rETHModule.ethAccount.address,
     };
   });
 
@@ -74,7 +75,7 @@ export default function Index(props: any) {
     } else if (platform === 'BEP20') {
       dispatch(getBEP20RDOTAssetBalance());
     }
-  }, [dispatch, platform, metaMaskNetworkId, fisAddress, ethAddress]);
+  }, [dispatch, platform, metaMaskNetworkId, fisAddress, metaMaskAddress]);
 
   useEffect(() => {
     let count = 0;
@@ -82,18 +83,18 @@ export default function Index(props: any) {
     let ratioAmount = 0;
     let piece = ratio / totalCount;
 
-    if (ratio != '--') {
+    if (ratio !== '--') {
       let interval = setInterval(() => {
         count++;
         ratioAmount += piece;
-        if (count == totalCount) {
+        if (count === totalCount) {
           ratioAmount = ratio;
           window.clearInterval(interval);
         }
         dispatch(setRatioShow(NumberUtil.handleFisAmountRateToFixed(ratioAmount)));
       }, 100);
     }
-  }, [ratio]);
+  }, [dispatch, ratio]);
 
   return (
     <Content

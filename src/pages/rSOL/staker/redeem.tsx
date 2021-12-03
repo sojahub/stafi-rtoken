@@ -48,7 +48,7 @@ export default function Index(props: any) {
       tokenAmount: tokenAmount,
       unbondCommission: unbondCommission,
       fisFee: state.rSOLModule.unbondCommission,
-      address: state.rSOLModule.solAccount.address,
+      address: state.rSOLModule.solAddress,
       unBondFees: state.rSOLModule.unBondFees,
       willAmount: commonClice.getWillAmount(ratio, state.rSOLModule.unbondCommission, amount),
       estimateUnBondTxFees: state.FISModule.estimateUnBondTxFees,

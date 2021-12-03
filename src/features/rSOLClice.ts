@@ -49,6 +49,8 @@ import {
 } from './globalClice';
 import { add_Notice, findUuidWithoutBlockhash, noticeStatus, noticesubType, noticeType } from './noticeClice';
 
+declare const window: any;
+
 const commonClice = new CommonClice();
 const stafiServer = new Stafi();
 const solServer = new SolServer();
@@ -57,14 +59,10 @@ const rpcServer = new RpcServer();
 const rSOLClice = createSlice({
   name: 'rSOLModule',
   initialState: {
-    solAccounts: [],
-    solAccount: getLocalStorageItem(Keys.SolAccountKey) && {
-      ...getLocalStorageItem(Keys.SolAccountKey),
-      balance: '--',
-    },
+    solAddress: null,
+    transferrableAmountShow: '--',
     validPools: [],
     poolLimit: 0,
-    transferrableAmountShow: '--',
     ratio: '--',
     ratioShow: '--',
     tokenAmount: '--',
@@ -83,23 +81,8 @@ const rSOLClice = createSlice({
     lastEraRate: '--',
   },
   reducers: {
-    setSolAccounts(state, { payload }) {
-      const accounts = state.solAccounts;
-      const account = accounts.find((item: any) => {
-        return item.address == payload.address;
-      });
-      if (account) {
-        account.balance = payload.balance;
-        account.name = payload.name;
-      } else {
-        state.solAccounts.push(payload);
-      }
-    },
-    setSolAccount(state, { payload }) {
-      if (payload) {
-        setLocalStorageItem(Keys.SolAccountKey, { address: payload.address });
-      }
-      state.solAccount = payload;
+    setSolAddress(state, { payload }) {
+      state.solAddress = payload;
     },
     setTransferrableAmountShow(state, { payload }) {
       state.transferrableAmountShow = payload;
@@ -174,8 +157,7 @@ const rSOLClice = createSlice({
 });
 
 export const {
-  setSolAccounts,
-  setSolAccount,
+  setSolAddress,
   setTransferrableAmountShow,
   setRatio,
   setTokenAmount,
@@ -195,37 +177,39 @@ export const {
   setLastEraRate,
 } = rSOLClice.actions;
 
-export const reloadData = (): AppThunk => async (dispatch, getState) => {
-  const account = getState().rSOLModule.solAccount;
-  if (account) {
-    dispatch(createSubstrate(account));
+export const earglyConnectPhantom = (): AppThunk => async (dispatch, getState) => {
+  if (window.solana && window.solana.isPhantom) {
+    window.solana
+      .connect({ onlyIfTrusted: true })
+      .then(({ publicKey }) => {
+        dispatch(setSolAddress(publicKey.toString()));
+      })
+      .catch(() => {});
   }
-  dispatch(balancesAll());
+};
+
+export const reloadData = (): AppThunk => async (dispatch, getState) => {
+  dispatch(queryBalance());
   dispatch(query_rBalances_account());
   dispatch(getTotalIssuance());
   dispatch(getPools());
 };
-export const createSubstrate =
-  (account: any): AppThunk =>
-  async (dispatch, getState) => {
-    queryBalance(account, dispatch, getState);
-  };
 
-const queryBalance = async (account: any, dispatch: any, getState: any) => {
-  dispatch(setSolAccounts(account));
-  let account2: any = { ...account };
+export const queryBalance = (): AppThunk => async (dispatch, getState) => {
+  const solAddress = getState().rSOLModule.solAddress;
+  if (!solAddress) {
+    return;
+  }
 
   const connection = new solanaWeb3.Connection(config.solRpcApi(), {
     wsEndpoint: config.solRpcWs(),
     commitment: 'singleGossip',
   });
-  const balance = await connection.getBalance(new solanaWeb3.PublicKey(account2.address));
-  let solBalance = NumberUtil.tokenAmountToHuman(balance, rSymbol.Sol);
-  account2.balance = solBalance ? NumberUtil.handleEthAmountRound(solBalance) : 0;
 
-  dispatch(setTransferrableAmountShow(account2.balance));
-  dispatch(setSolAccount(account2));
-  dispatch(setSolAccounts(account2));
+  const balance = await connection.getBalance(new solanaWeb3.PublicKey(solAddress));
+  let solBalance = NumberUtil.tokenAmountToHuman(balance, rSymbol.Sol);
+
+  dispatch(setTransferrableAmountShow(solBalance ? NumberUtil.handleEthAmountRound(solBalance) : 0));
 };
 
 export const transfer =
@@ -247,9 +231,9 @@ export const transfer =
       }
     }
 
-    const localSolAddress = getState().rSOLModule.solAccount && getState().rSOLModule.solAccount.address;
+    const localSolAddress = getState().rSOLModule.solAddress;
     const solAddress = solana.publicKey.toString();
-    console.log('solana account:', solana.publicKey.toString());
+    // console.log('solana account:', solana.publicKey.toString());
     if (localSolAddress !== solAddress) {
       dispatch(connectSoljs());
     }
@@ -408,17 +392,6 @@ export const transfer =
     }
   };
 
-export const balancesAll = (): AppThunk => async (dispatch, getState) => {
-  // const api = await polkadotServer.createPolkadotApi();
-  // const address = getState().rSOLModule.solAccount.address;
-  // const result = await api.derive.balances.all(address);
-  // if (result) {
-  //   const transferrableAmount = NumberUtil.fisAmountToHuman(result.availableBalance);
-  //   const transferrableAmountShow = NumberUtil.handleFisAmountToFixed(transferrableAmount);
-  //   dispatch(setTransferrableAmountShow(transferrableAmountShow));
-  // }
-};
-
 export const query_rBalances_account = (): AppThunk => async (dispatch, getState) => {
   commonClice.query_rBalances_account(getState().FISModule.fisAccount, rSymbol.Sol, (data: any) => {
     if (data == null) {
@@ -574,7 +547,7 @@ export const onProceed =
 
     let blockhash: any;
     try {
-      const result = await solServer.getTransactionDetail(getstate().rSOLModule.solAccount.address, txHash);
+      const result = await solServer.getTransactionDetail(getstate().rSOLModule.solAddress, txHash);
       if (result) {
         blockhash = result.blockhash;
       }
@@ -656,14 +629,14 @@ export const getBlock =
   (txHash: string, uuid?: string, cb?: Function): AppThunk =>
   async (dispatch, getState) => {
     try {
-      const address = getState().rSOLModule.solAccount.address;
+      const address = getState().rSOLModule.solAddress;
       const validPools = getState().rSOLModule.validPools;
       const processParameter = getState().rSOLModule.processParameter;
       const { destChainId, targetAddress } = processParameter;
 
       const solServer = new SolServer();
       const { amount, poolAddress, blockhash } = await solServer.getTransactionDetail(
-        getState().rSOLModule.solAccount.address,
+        getState().rSOLModule.solAddress,
         txHash,
       );
 
@@ -777,23 +750,16 @@ export const getReward =
   (pageIndex: Number, cb: Function): AppThunk =>
   async (dispatch, getState) => {
     const fisSource = getState().FISModule.fisAccount.address;
-    const ethAccount = getState().rETHModule.ethAccount;
-    const bscAccount = getState().BSCModule.bscAccount;
-    const solAccount = getState().rSOLModule.solAccount;
+    const ethAddress = getState().globalModule.metaMaskAddress;
+    const bscAddress = getState().globalModule.metaMaskAddress;
+    const solAddress = getState().rSOLModule.solAddress;
     dispatch(setLoading(true));
     try {
       if (pageIndex == 0) {
         dispatch(setRewardList([]));
         dispatch(setRewardList_lastdata(null));
       }
-      const result = await rpcServer.getReward(
-        fisSource,
-        ethAccount ? ethAccount.address : '',
-        rSymbol.Sol,
-        pageIndex,
-        bscAccount && bscAccount.address,
-        solAccount && solAccount.address,
-      );
+      const result = await rpcServer.getReward(fisSource, ethAddress, rSymbol.Sol, pageIndex, bscAddress, solAddress);
       if (result.status == 80000) {
         const rewardList = getState().rSOLModule.rewardList;
         if (result.data.rewardList.length > 0) {
@@ -868,9 +834,9 @@ export const rTokenLedger = (): AppThunk => async (dispatch, getState) => {
 export const getLastEraRate = (): AppThunk => async (dispatch, getState) => {
   try {
     const fisSource = getState().FISModule.fisAccount && getState().FISModule.fisAccount.address;
-    const ethAddress = getState().rETHModule.ethAccount && getState().rETHModule.ethAccount.address;
-    const solAddress = getState().rSOLModule.solAccount && getState().rSOLModule.solAccount.address;
-    const bscAddress = getState().BSCModule.bscAccount && getState().BSCModule.bscAccount.address;
+    const ethAddress = getState().globalModule.metaMaskAddress;
+    const solAddress = getState().rSOLModule.solAddress;
+    const bscAddress = getState().globalModule.metaMaskAddress;
     const result = await rpcServer.getReward(fisSource, ethAddress, rSymbol.Sol, 0, bscAddress, solAddress);
     if (result.status === 80000) {
       if (result.data.rewardList.length > 1) {
@@ -899,7 +865,8 @@ const handleStakerApr =
   (currentRate?: any, lastRate?: any): AppThunk =>
   async (dispatch, getState) => {
     if (currentRate && lastRate && currentRate > lastRate) {
-      const apr = NumberUtil.handleEthRoundToFixed(((currentRate - lastRate) / 1000000000000) / 2.54 * 365.25 * 100) + '%';
+      const apr =
+        NumberUtil.handleEthRoundToFixed(((currentRate - lastRate) / 1000000000000 / 2.54) * 365.25 * 100) + '%';
       dispatch(setStakerApr(apr));
     } else {
       dispatch(setStakerApr('7.2%'));

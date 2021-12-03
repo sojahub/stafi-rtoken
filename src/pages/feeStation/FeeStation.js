@@ -26,14 +26,16 @@ import {
   connectPolkadot,
   connectPolkadot_fis,
   connectPolkadot_ksm,
+  initMetaMaskAccount,
   reloadData,
   setLoading,
   trackEvent,
 } from 'src/features/globalClice';
 import { swapAtomForFis } from 'src/features/rATOMClice';
 import { getPools as dot_getPools, swapDotForFis } from 'src/features/rDOTClice';
-import { connectMetamask, get_eth_getBalance, monitoring_Method, swapEthForFis } from 'src/features/rETHClice';
+import { swapEthForFis } from 'src/features/rETHClice';
 import { swapKsmForFis } from 'src/features/rKSMClice';
+import { useMetaMaskAccount } from 'src/hooks/useMetaMaskAccount';
 import { Symbol } from 'src/keyring/defaults';
 import FeeStationServer from 'src/servers/feeStation';
 import SlippageToleranceInputEmbed from 'src/shared/components/input/slippageToleranceInputEmbed';
@@ -84,7 +86,6 @@ export default function FeeStation() {
   const dispatch = useDispatch();
   const history = useHistory();
   let urlTokenType = useParams().tokenType;
-
   // 0-main, 2-setting, 3-select token
   const [scene, setScene] = useState(0);
   const [tokenTypes, setTokenTypes] = useState(allTokenDatas);
@@ -107,31 +108,21 @@ export default function FeeStation() {
   const [transferDetail, setTransferDetail] = useState('');
   const [swapInfoParams, setSwapInfoParams] = useState();
 
-  const {
-    loading,
-    fisAccount,
-    dotAccount,
-    ksmAccount,
-    atomAccount,
-    ethAccount,
-    metaMaskNetworkId,
-    poolInfoList,
-    swapMinLimit,
-    swapMaxLimit,
-  } = useSelector((state) => {
-    return {
-      loading: state.globalModule.loading,
-      fisAccount: state.FISModule.fisAccount,
-      dotAccount: state.rDOTModule.dotAccount,
-      ksmAccount: state.rKSMModule.ksmAccount,
-      atomAccount: state.rATOMModule.atomAccount,
-      ethAccount: state.rETHModule.ethAccount,
-      metaMaskNetworkId: state.globalModule.metaMaskNetworkId,
-      poolInfoList: state.feeStationModule.poolInfoList,
-      swapMinLimit: state.feeStationModule.swapMinLimit,
-      swapMaxLimit: state.feeStationModule.swapMaxLimit,
-    };
-  });
+  const { metaMaskAddress, metaMaskBalance, metaMaskNetworkId } = useMetaMaskAccount();
+
+  const { loading, fisAccount, dotAccount, ksmAccount, atomAccount, poolInfoList, swapMinLimit, swapMaxLimit } =
+    useSelector((state) => {
+      return {
+        loading: state.globalModule.loading,
+        fisAccount: state.FISModule.fisAccount,
+        dotAccount: state.rDOTModule.dotAccount,
+        ksmAccount: state.rKSMModule.ksmAccount,
+        atomAccount: state.rATOMModule.atomAccount,
+        poolInfoList: state.feeStationModule.poolInfoList,
+        swapMinLimit: state.feeStationModule.swapMinLimit,
+        swapMaxLimit: state.feeStationModule.swapMaxLimit,
+      };
+    });
 
   useInterval(() => {
     if (fisAccount) {
@@ -190,13 +181,6 @@ export default function FeeStation() {
   }, [selectedToken && selectedToken.type, atomAccount && atomAccount.address]);
 
   useEffect(() => {
-    if (selectedToken && selectedToken.type === 'eth' && ethAccount && ethAccount.address) {
-      dispatch(get_eth_getBalance());
-      dispatch(monitoring_Method());
-    }
-  }, [selectedToken && selectedToken.type, ethAccount && ethAccount.address, metaMaskNetworkId]);
-
-  useEffect(() => {
     tokenTypes.forEach((item) => {
       if (item.type === Symbol.Dot && dotAccount) {
         item.balance = dotAccount.balance;
@@ -207,8 +191,12 @@ export default function FeeStation() {
       if (item.type === Symbol.Atom && atomAccount) {
         item.balance = atomAccount.balance;
       }
-      if (item.type === Symbol.Eth && ethAccount) {
-        item.balance = ethAccount.balance;
+      if (item.type === Symbol.Eth) {
+        if (config.metaMaskNetworkIsGoerliEth(metaMaskNetworkId)) {
+          item.balance = metaMaskBalance;
+        } else {
+          item.balance = '--';
+        }
       }
     });
 
@@ -236,7 +224,7 @@ export default function FeeStation() {
           clearConnectWallet();
         }
       } else if (selectedToken && selectedToken.type === Symbol.Eth) {
-        if (!ethAccount || !ethAccount.address) {
+        if (!metaMaskAddress) {
           setConnectWallet('ETH');
         } else {
           clearConnectWallet();
@@ -246,7 +234,17 @@ export default function FeeStation() {
         setNeedConnectWalletName(null);
       }
     }
-  }, [scene, selectedToken, fisAccount, dotAccount, ksmAccount, atomAccount, ethAccount]);
+  }, [
+    scene,
+    selectedToken,
+    fisAccount,
+    dotAccount,
+    ksmAccount,
+    atomAccount,
+    metaMaskAddress,
+    metaMaskBalance,
+    metaMaskNetworkId,
+  ]);
 
   useEffect(() => {
     let poolInfo = null;
@@ -403,7 +401,7 @@ export default function FeeStation() {
       dispatch(connectAtomjs(() => {}));
     }
     if (needConnectWalletName === 'ETH') {
-      dispatch(connectMetamask(config.ethChainId(), false));
+      dispatch(initMetaMaskAccount());
     }
   };
 
@@ -472,6 +470,10 @@ export default function FeeStation() {
       return false;
     }
     if (!selectedToken) {
+      return false;
+    }
+    if (isNaN(Number(selectedToken.balance)) || Number(selectedToken.balance) < Number(tokenAmount)) {
+      message.error('The amount of input exceeds your transferrable balance');
       return false;
     }
     if (selectedToken && selectedToken.type === Symbol.Dot) {

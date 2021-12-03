@@ -5,8 +5,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Redirect } from 'react-router-dom';
 import Content from 'src/components/content/stakeContent_DOT';
 import { STAFI_CHAIN_ID } from 'src/features/bridgeClice';
-import { clice, setProcessSlider } from 'src/features/globalClice';
-import { balancesAll, rTokenLedger, rTokenRate, transfer } from 'src/features/rSOLClice';
+import { clice, connectSoljs, setProcessSlider } from 'src/features/globalClice';
+import { queryBalance, rTokenLedger, rTokenRate, transfer } from 'src/features/rSOLClice';
 import { Symbol } from 'src/keyring/defaults';
 import SolServer from 'src/servers/sol/index';
 import { ratioToAmount } from 'src/util/common';
@@ -17,39 +17,30 @@ const solServer = new SolServer();
 export default function Index(props: any) {
   const dispatch = useDispatch();
   const [amount, setAmount] = useState<any>();
-  const { solAccount } = useSelector((state: any) => {
+
+  const { solAddress } = useSelector((state: any) => {
     return {
-      solAccount: state.rSOLModule.solAccount,
+      solAddress: state.rSOLModule.solAddress,
     };
   });
 
-  if (!solAccount) {
-    return <Redirect to={'/rSOL/home'} />;
-  }
-
   useEffect(() => {
-    dispatch(balancesAll());
     dispatch(rTokenRate());
     dispatch(rTokenLedger());
-  }, []);
+    dispatch(queryBalance());
+  }, [dispatch, solAddress]);
 
-  useEffect(() => {
-    let publicKey: any;
-    if (solServer.getProvider() && solServer.getProvider().isConnected) {
-      publicKey = solServer.getProvider().publicKey;
-    }
-    if (publicKey && publicKey.toString() !== solAccount.address) {
-      // message.warn('Sollet address switched', 5);
-      setAmount('');
-      const account = {
-        name: '',
-        pubkey: publicKey.toString(),
-        address: publicKey.toString(),
-        balance: '--',
-      };
-      dispatch(clice(Symbol.Sol).createSubstrate(account));
-    }
-  }, []);
+  // useEffect(() => {
+  //   let publicKey: any;
+  //   if (solServer.getProvider() && solServer.getProvider().isConnected) {
+  //     publicKey = solServer.getProvider().publicKey;
+  //   }
+  //   if (publicKey && publicKey.toString() !== solAddress) {
+  //     // message.warn('Sollet address switched', 5);
+  //     setAmount('');
+  //     dispatch(connectSoljs());
+  //   }
+  // }, [dispatch]);
 
   const { transferrableAmount, ratio, stafiStakerApr, fisCompare, validPools, totalIssuance, bondFees } = useSelector(
     (state: any) => {
@@ -68,10 +59,6 @@ export default function Index(props: any) {
     },
   );
 
-  const getPublicKey = (result: any) => {
-    return new PublicKey(result._bn);
-  };
-
   const clickStake = (chainId: number, targetAddress: string) => {
     if (amount) {
       dispatch(
@@ -86,6 +73,10 @@ export default function Index(props: any) {
       );
     }
   };
+
+  if (!solAddress) {
+    return <Redirect to={'/rSOL/home'} />;
+  }
 
   return (
     <Content

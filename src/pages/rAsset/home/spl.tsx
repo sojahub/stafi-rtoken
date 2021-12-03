@@ -10,14 +10,14 @@ import rasset_fis_svg from 'src/assets/images/rFIS.svg';
 import rasset_rsol_svg from 'src/assets/images/rSOL.svg';
 import config from 'src/config/index';
 import { getRtokenPriceList } from 'src/features/bridgeClice';
-import { monitoring_Method } from 'src/features/BSCClice';
 import CommonClice from 'src/features/commonClice';
 import { getUnbondCommission as fis_getUnbondCommission, rTokenRate as fis_rTokenRate } from 'src/features/FISClice';
 import { connectSoljs } from 'src/features/globalClice';
 import {
-    createSubstrate,
-    getUnbondCommission as sol_getUnbondCommission,
-    rTokenRate as sol_rTokenRate
+  earglyConnectPhantom,
+  getUnbondCommission as sol_getUnbondCommission,
+  reloadData,
+  rTokenRate as sol_rTokenRate,
 } from 'src/features/rSOLClice';
 import { getSlp20AssetBalanceAll } from 'src/features/SOLClice';
 import Button from 'src/shared/components/button/connect_button';
@@ -28,14 +28,15 @@ import DataItem from './components/list/item';
 import './page.scss';
 
 const commonClice = new CommonClice();
+
 export default function Index(props: any) {
   const dispatch = useDispatch();
   const history = useHistory();
 
-  const { solAccount, fis_slpBalance, rsol_slpBalance, fisWillAmount, solWillAmount, unitPriceList } = useSelector(
+  const { solAddress, fis_slpBalance, rsol_slpBalance, fisWillAmount, solWillAmount, unitPriceList } = useSelector(
     (state: any) => {
       return {
-        solAccount: state.rSOLModule.solAccount,
+        solAddress: state.rSOLModule.solAddress,
         unitPriceList: state.bridgeModule.priceList,
         fis_slpBalance: state.SOLModule.fisBalance,
         rsol_slpBalance: state.SOLModule.rSOLBalance,
@@ -68,6 +69,10 @@ export default function Index(props: any) {
     return count;
   }, [unitPriceList, fis_slpBalance, rsol_slpBalance]);
 
+  useEffect(() => {
+    dispatch(earglyConnectPhantom());
+  }, [dispatch]);
+
   let time: any;
   useEffect(() => {
     updateData();
@@ -80,16 +85,15 @@ export default function Index(props: any) {
         clearInterval(time);
       }
     };
-  }, [solAccount && solAccount.address]);
+  }, [solAddress]);
 
   useEffect(() => {
     dispatch(getRtokenPriceList());
-    dispatch(monitoring_Method());
   }, []);
 
   const updateData = () => {
-    if (solAccount && solAccount.address) {
-      dispatch(createSubstrate(solAccount));
+    if (solAddress) {
+      dispatch(reloadData());
       dispatch(getRtokenPriceList());
       dispatch(getSlp20AssetBalanceAll());
       dispatch(fis_rTokenRate());
@@ -107,7 +111,7 @@ export default function Index(props: any) {
 
   return (
     <div>
-      {solAccount && solAccount.address ? (
+      {solAddress ? (
         <>
           <DataList>
             <DataItem

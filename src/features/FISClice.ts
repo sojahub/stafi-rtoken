@@ -523,16 +523,16 @@ export const bound =
       const stafiApi = await stafiServer.createStafiApi();
       let pubkey = '';
       let poolPubkey = pooladdress;
-      if (type == rSymbol.Atom) {
+      if (type === rSymbol.Atom) {
         signature = config.rAtomAignature;
         pubkey = getState().rATOMModule.atomAccount.pubkey;
         txhash = '0x' + txhash;
         blockhash = '0x' + blockhash;
 
         message.info('Sending succeeded, proceeding staking');
-      } else if (type == rSymbol.Matic) {
+      } else if (type === rSymbol.Matic) {
         await timeout(3000);
-        const ethAddress = getState().rMATICModule.maticAccount.address;
+        const ethAddress = getState().globalModule.metaMaskAddress;
         const fisPubkey = u8aToHex(keyringInstance.decodeAddress(fisAddress), -1, false);
         const msg = stringToHex(fisPubkey);
         pubkey = address;
@@ -553,7 +553,7 @@ export const bound =
         message.info('Signature succeeded, proceeding staking');
       } else if (type === rSymbol.Bnb) {
         await timeout(3000);
-        const ethAddress = getState().rETHModule.ethAccount.address;
+        const ethAddress = getState().globalModule.metaMaskAddress;
         const fisPubkey = u8aToHex(keyringInstance.decodeAddress(fisAddress), -1, false);
         const msg = stringToHex(fisPubkey);
         pubkey = address;
@@ -575,7 +575,7 @@ export const bound =
       } else if (type == rSymbol.Sol) {
         try {
           signature = await solSignature(address, fisAddress);
-          pubkey = u8aToHex(new PublicKey(getState().rSOLModule.solAccount.address).toBytes());
+          pubkey = u8aToHex(new PublicKey(getState().rSOLModule.solAddress).toBytes());
           message.info('Signature succeeded, proceeding staking');
         } catch (err) {
           dispatch(
@@ -800,9 +800,9 @@ export const rTokenLedger = (): AppThunk => async (dispatch, getState) => {
 export const getLastEraRate = (): AppThunk => async (dispatch, getState) => {
   try {
     const fisSource = getState().FISModule.fisAccount && getState().FISModule.fisAccount.address;
-    const ethAddress = getState().rETHModule.ethAccount && getState().rETHModule.ethAccount.address;
-    const solAddress = getState().rSOLModule.solAccount && getState().rSOLModule.solAccount.address;
-    const bscAddress = getState().BSCModule.bscAccount && getState().BSCModule.bscAccount.address;
+    const ethAddress = getState().globalModule.metaMaskAddress;
+    const solAddress = getState().rSOLModule.solAddress;
+    const bscAddress = getState().globalModule.metaMaskAddress;
     const result = await rpcServer.getReward(fisSource, ethAddress, rSymbol.Fis, 0, bscAddress, solAddress);
     if (result.status === 80000) {
       if (result.data.rewardList.length > 1) {
@@ -1685,14 +1685,15 @@ export const getReward =
   (pageIndex: Number, cb: Function): AppThunk =>
   async (dispatch, getState) => {
     const stafiSource = getState().FISModule.fisAccount && getState().FISModule.fisAccount.address;
-    const ethSource = getState().rETHModule.ethAccount;
+    const ethSource = getState().globalModule.metaMaskAddress;
     dispatch(setLoading(true));
+
     try {
       if (pageIndex == 0) {
         dispatch(setRewardList([]));
         dispatch(setRewardList_lastdata(null));
       }
-      const result = await rpcServer.getReward(stafiSource, ethSource ? ethSource.address : '', rSymbol.Fis, pageIndex);
+      const result = await rpcServer.getReward(stafiSource, ethSource, rSymbol.Fis, pageIndex);
       if (result.status == 80000) {
         const rewardList = getState().FISModule.rewardList;
         if (result.data.rewardList.length > 0) {

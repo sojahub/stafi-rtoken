@@ -1,7 +1,11 @@
+import qs from 'querystring';
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router';
 import Content from 'src/components/content/stakeInfoContent';
+import { getRFISAssetBalance as getBEP20RFISAssetBalance } from 'src/features/BSCClice';
+import CommonClice from 'src/features/commonClice';
+import { getRFISAssetBalance as getERC20RFISAssetBalance } from 'src/features/ETHClice';
 import {
   getLastEraRate,
   getUnbondCommission,
@@ -10,18 +14,15 @@ import {
   rTokenRate,
   setRatioShow,
 } from 'src/features/FISClice';
-import CommonClice from 'src/features/commonClice';
+import { useMetaMaskAccount } from 'src/hooks/useMetaMaskAccount';
 import NumberUtil from 'src/util/numberUtil';
-import qs from 'querystring';
-import { getFISAssetBalance as getBEP20FISAssetBalance } from 'src/features/BSCClice';
-import { getFISAssetBalance as getERC20FISAssetBalance } from 'src/features/ETHClice';
-import { difference } from 'lodash';
 
 const commonClice = new CommonClice();
 
 export default function Index(props: any) {
   const dispatch = useDispatch();
   const history = useHistory();
+  const { metaMaskAddress, metaMaskNetworkId } = useMetaMaskAccount();
 
   let platform = 'Native';
   if (history.location.search) {
@@ -36,18 +37,17 @@ export default function Index(props: any) {
     };
   });
 
-  const { tokenAmount, lastEraRate, redeemableTokenAmount, metaMaskNetworkId } = useSelector((state: any) => {
+  const { tokenAmount, lastEraRate, redeemableTokenAmount } = useSelector((state: any) => {
     const tokenAmount =
       platform === 'Native'
         ? state.FISModule.tokenAmount
         : platform === 'ERC20'
-        ? state.ETHModule.ercFISBalance
+        ? state.ETHModule.ercRFISBalance
         : platform === 'BEP20'
-        ? state.BSCModule.bepFISBalance
+        ? state.BSCModule.bepRFISBalance
         : '--';
 
     return {
-      metaMaskNetworkId: state.globalModule.metaMaskNetworkId,
       tokenAmount,
       lastEraRate: state.FISModule.lastEraRate,
       redeemableTokenAmount: commonClice.getWillAmount(
@@ -58,10 +58,9 @@ export default function Index(props: any) {
     };
   });
 
-  const { fisAddress, ethAddress } = useSelector((state: any) => {
+  const { fisAddress } = useSelector((state: any) => {
     return {
       fisAddress: state.FISModule.fisAccount && state.FISModule.fisAccount.address,
-      ethAddress: state.rETHModule.ethAccount && state.rETHModule.ethAccount.address,
     };
   });
 
@@ -76,11 +75,11 @@ export default function Index(props: any) {
     if (platform === 'Native') {
       dispatch(query_rBalances_account());
     } else if (platform === 'ERC20') {
-      dispatch(getERC20FISAssetBalance());
+      dispatch(getERC20RFISAssetBalance());
     } else if (platform === 'BEP20') {
-      dispatch(getBEP20FISAssetBalance());
+      dispatch(getBEP20RFISAssetBalance());
     }
-  }, [platform, metaMaskNetworkId, fisAddress, ethAddress, dispatch]);
+  }, [platform, metaMaskNetworkId, fisAddress, metaMaskAddress, dispatch]);
 
   useEffect(() => {
     let count = 0;

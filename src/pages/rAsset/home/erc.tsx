@@ -14,15 +14,19 @@ import { getRtokenPriceList } from 'src/features/bridgeClice';
 import CommonClice from 'src/features/commonClice';
 import { getAssetBalanceAll } from 'src/features/ETHClice';
 import { getUnbondCommission as fis_getUnbondCommission, rTokenRate as fis_rTokenRate } from 'src/features/FISClice';
-import { getUnbondCommission as atom_getUnbondCommission, rTokenRate as atom_rTokenRate } from 'src/features/rATOMClice';
+import { initMetaMaskAccount } from 'src/features/globalClice';
+import {
+  getUnbondCommission as atom_getUnbondCommission,
+  rTokenRate as atom_rTokenRate,
+} from 'src/features/rATOMClice';
 import { getUnbondCommission as dot_getUnbondCommission, rTokenRate as dot_rTokenRate } from 'src/features/rDOTClice';
-import { connectMetamask, handleEthAccount, monitoring_Method } from 'src/features/rETHClice';
 import { getUnbondCommission as ksm_getUnbondCommission, rTokenRate as ksm_rTokenRate } from 'src/features/rKSMClice';
 import {
-    getUnbondCommission as matic_getUnbondCommission,
-    rTokenRate as matic_rTokenRate
+  getUnbondCommission as matic_getUnbondCommission,
+  rTokenRate as matic_rTokenRate,
 } from 'src/features/rMATICClice';
 import { getUnbondCommission as sol_getUnbondCommission, rTokenRate as sol_rTokenRate } from 'src/features/rSOLClice';
+import { useMetaMaskAccount } from 'src/hooks/useMetaMaskAccount';
 import Button from 'src/shared/components/button/connect_button';
 import { requestSwitchMetaMaskNetwork } from 'src/util/metaMaskUtil';
 import NumberUtil from 'src/util/numberUtil';
@@ -35,9 +39,9 @@ const commonClice = new CommonClice();
 export default function Index(props: any) {
   const dispatch = useDispatch();
   const history = useHistory();
+  const { metaMaskAddress, metaMaskNetworkId } = useMetaMaskAccount();
 
   const {
-    ethAccount,
     ksm_ercBalance,
     fis_ercBalance,
     eth_ercBalance,
@@ -54,7 +58,6 @@ export default function Index(props: any) {
   } = useSelector((state: any) => {
     return {
       unitPriceList: state.bridgeModule.priceList,
-      ethAccount: state.rETHModule.ethAccount,
       ksm_ercBalance: state.ETHModule.ercRKSMBalance,
       fis_ercBalance: state.ETHModule.ercFISBalance,
       rfis_ercBalance: state.ETHModule.ercRFISBalance,
@@ -87,11 +90,6 @@ export default function Index(props: any) {
         state.rMATICModule.unbondCommission,
         state.ETHModule.ercRMaticBalance,
       ),
-    };
-  });
-  const { metaMaskNetworkId } = useSelector((state: any) => {
-    return {
-      metaMaskNetworkId: state.globalModule.metaMaskNetworkId,
     };
   });
 
@@ -132,12 +130,7 @@ export default function Index(props: any) {
         clearInterval(time);
       }
     };
-  }, [metaMaskNetworkId, ethAccount && ethAccount.address]);
-
-  useEffect(() => {
-    dispatch(getRtokenPriceList());
-    dispatch(monitoring_Method());
-  }, []);
+  }, [metaMaskNetworkId, metaMaskAddress]);
 
   useEffect(() => {
     if (metaMaskNetworkId !== config.ethChainId()) {
@@ -146,9 +139,7 @@ export default function Index(props: any) {
   }, [metaMaskNetworkId]);
 
   const updateData = () => {
-    if (ethAccount && ethAccount.address) {
-      dispatch(handleEthAccount(ethAccount.address, config.goerliChainId()));
-
+    if (metaMaskAddress) {
       dispatch(getAssetBalanceAll());
 
       dispatch(ksm_rTokenRate());
@@ -163,15 +154,12 @@ export default function Index(props: any) {
       dispatch(atom_getUnbondCommission());
       dispatch(sol_getUnbondCommission());
       dispatch(matic_getUnbondCommission());
-    } else {
-      dispatch(connectMetamask(config.ethChainId(), true));
     }
   };
 
   useEffect(() => {
     dispatch(getRtokenPriceList());
-    dispatch(monitoring_Method());
-  }, []);
+  }, [dispatch]);
 
   const toSwap = (tokenSymbol: string) => {
     history.push('/rAsset/swap/erc20/default', {
@@ -187,7 +175,7 @@ export default function Index(props: any) {
 
   return (
     <div>
-      {ethAccount && ethAccount.address ? (
+      {metaMaskAddress ? (
         <>
           <DataList>
             <DataItem
@@ -291,8 +279,7 @@ export default function Index(props: any) {
           <Button
             icon={metamask}
             onClick={() => {
-              dispatch(connectMetamask(config.ethChainId()));
-              dispatch(monitoring_Method());
+              dispatch(initMetaMaskAccount());
             }}>
             Connect to Metamask
           </Button>

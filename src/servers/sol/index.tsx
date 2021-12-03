@@ -31,13 +31,13 @@ export default class ExtensionDapp extends SolKeyring {
     const solana = this.getProvider();
     if (solana) {
       window.solana.on('connect', () => {
-        const account = {
-          name: '',
-          pubkey: solana.publicKey.toString(),
-          address: solana.publicKey.toString(),
-          balance: '--',
-        };
-        cb && cb(account);
+        // const account = {
+        //   name: '',
+        //   pubkey: solana.publicKey.toString(),
+        //   address: solana.publicKey.toString(),
+        //   balance: '--',
+        // };
+        cb && cb(solana.publicKey.toString());
       });
 
       await solana.connect();

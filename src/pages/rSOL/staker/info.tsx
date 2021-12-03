@@ -48,7 +48,7 @@ export default function Index(props: any) {
   const { fisAddress, solAddress } = useSelector((state: any) => {
     return {
       fisAddress: state.FISModule.fisAccount && state.FISModule.fisAccount.address,
-      solAddress: state.SOLModule.solAccount && state.SOLModule.solAccount.address,
+      solAddress: state.SOLModule.solAddress,
     };
   });
 
@@ -57,7 +57,7 @@ export default function Index(props: any) {
     dispatch(accountUnbonds());
     dispatch(getLastEraRate());
     dispatch(getUnbondCommission());
-  }, [fisAddress, dispatch]);
+  }, [fisAddress, solAddress, dispatch]);
 
   useEffect(() => {
     if (platform === 'Native') {

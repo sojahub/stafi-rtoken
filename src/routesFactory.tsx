@@ -116,8 +116,6 @@ import RPoolHomeTemplate from './pages/rPool/template';
 import RSOLHome from './pages/rSOL/home';
 import RSOLSeach from './pages/rSOL/search';
 import RSOLType from './pages/rSOL/selectType';
-import RSOLWallet from './pages/rSOL/selectWallet';
-import RSOLWalletFIS from './pages/rSOL/selectWallet_rFIS';
 import RSOLStaker from './pages/rSOL/staker';
 import RSOLStakerIndex from './pages/rSOL/staker/home';
 import RSOLStakerInfo from './pages/rSOL/staker/info';
@@ -626,18 +624,6 @@ const routesFactory = (role?: any) => {
               path: '/rSOL/home',
               rSymbol: rSymbol.Sol,
               component: RSOLHome,
-            },
-            {
-              id: 'RSOL_wallet',
-              path: '/rSOL/wallet',
-              rSymbol: rSymbol.Sol,
-              component: RSOLWallet,
-            },
-            {
-              id: 'RSOL_wallet',
-              path: '/rSOL/fiswallet',
-              rSymbol: rSymbol.Sol,
-              component: RSOLWalletFIS,
             },
             {
               id: 'RSOL_staker',

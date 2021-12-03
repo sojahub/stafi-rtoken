@@ -3,7 +3,7 @@
 import { u8aToHex } from '@polkadot/util';
 import { createSlice } from '@reduxjs/toolkit';
 import mixpanel from 'mixpanel-browser';
-import { Symbol } from 'src/keyring/defaults';
+import { rSymbol, Symbol } from 'src/keyring/defaults';
 import AtomServer from 'src/servers/atom/index';
 import keyring from 'src/servers/index';
 import PolkadotServer from 'src/servers/polkadot/index';
@@ -17,7 +17,7 @@ import { reloadData as bnbReloadData } from './rBNBClice';
 import { createSubstrate as dotCreateSubstrate, reloadData as dotReloadData } from './rDOTClice';
 import { createSubstrate as ksmCreateSubstrate, reloadData as ksmReloadData } from './rKSMClice';
 import { reloadData as maticReloadData } from './rMATICClice';
-import { createSubstrate as solCreateSubstrate, reloadData as solReloadData, setSolAccount } from './rSOLClice';
+import { reloadData as solReloadData, setSolAddress } from './rSOLClice';
 
 export enum processStatus {
   default = 0,
@@ -245,7 +245,7 @@ export const initMetaMaskAccount = (): AppThunk => (dispatch, getState) => {
   }
 };
 
-const requestMetaMaskBalance =
+export const requestMetaMaskBalance =
   (address: string): AppThunk =>
   (dispatch, getState) => {
     if (!address) {
@@ -291,24 +291,27 @@ export const connectAtomjs =
       // message.error('Please create an account');
     }
   };
+
 export const connectSoljs =
   (cb?: Function): AppThunk =>
   async (dispatch, getState) => {
     try {
-      solServer.connectSolJs((account: any) => {
-        dispatch(setSolAccount(account));
-        dispatch(clice(Symbol.Sol).createSubstrate(account));
+      solServer.connectSolJs((solAddress: string) => {
+        dispatch(setSolAddress(solAddress));
+        dispatch(reloadData(Symbol.Sol));
       });
     } catch (e) {
       // message.error('Please create an account');
     }
   };
+
 export const reloadData =
   (type: Symbol, cb?: Function): AppThunk =>
   async (dispatch, getState) => {
     dispatch(clice(type).reloadData());
     cb && cb();
   };
+
 export const clice = (symbol: string) => {
   switch (symbol) {
     case Symbol.Xtz:
@@ -324,7 +327,6 @@ export const clice = (symbol: string) => {
       };
     case Symbol.Sol:
       return {
-        createSubstrate: solCreateSubstrate,
         reloadData: solReloadData,
       };
     case Symbol.Dot:

@@ -287,45 +287,52 @@ export const erc20ToOtherSwap =
 
     let tokenContract: any = '';
     let allowance: any = 0;
-    const ethAddress = getState().rETHModule.ethAccount.address;
-    if (tokenType == 'fis') {
+
+    const memtaMaskAddress = getState().globalModule.metaMaskAddress;
+    if (!memtaMaskAddress) {
+      dispatch(setLoading(false));
+      dispatch(setSwapLoadingStatus(0));
+      return;
+    }
+
+    if (tokenType === 'fis') {
       tokenContract = new web3.eth.Contract(stafiServer.getFISTokenAbi(), stafiServer.getFISTokenAddress(), {
-        from: ethAddress,
+        from: memtaMaskAddress,
       });
       allowance = getState().ETHModule.FISErc20Allowance;
-    } else if (tokenType == 'rfis') {
+    } else if (tokenType === 'rfis') {
       tokenContract = new web3.eth.Contract(stafiServer.getRFISTokenAbi(), stafiServer.getRFISTokenAddress(), {
-        from: ethAddress,
+        from: memtaMaskAddress,
       });
       allowance = getState().ETHModule.RFISErc20Allowance;
-    } else if (tokenType == 'rksm') {
+    } else if (tokenType === 'rksm') {
       tokenContract = new web3.eth.Contract(ksmServer.getRKSMTokenAbi(), ksmServer.getRKSMTokenAddress(), {
-        from: ethAddress,
+        from: memtaMaskAddress,
       });
       allowance = getState().ETHModule.RKSMErc20Allowance;
-    } else if (tokenType == 'rdot') {
+    } else if (tokenType === 'rdot') {
       tokenContract = new web3.eth.Contract(dotServer.getRDOTTokenAbi(), dotServer.getRDOTTokenAddress(), {
-        from: ethAddress,
+        from: memtaMaskAddress,
       });
       allowance = getState().ETHModule.RDOTErc20Allowance;
-    } else if (tokenType == 'ratom') {
+    } else if (tokenType === 'ratom') {
       tokenContract = new web3.eth.Contract(atomServer.getTokenAbi(), atomServer.getRATOMTokenAddress(), {
-        from: ethAddress,
+        from: memtaMaskAddress,
       });
       allowance = getState().ETHModule.RATOMErc20Allowance;
-    } else if (tokenType == 'rsol') {
+    } else if (tokenType === 'rsol') {
       tokenContract = new web3.eth.Contract(solServer.getTokenAbi(), solServer.getRSOLTokenAddress(), {
-        from: ethAddress,
+        from: memtaMaskAddress,
       });
       allowance = getState().ETHModule.RSOLErc20Allowance;
-    } else if (tokenType == 'rmatic') {
+    } else if (tokenType === 'rmatic') {
       tokenContract = new web3.eth.Contract(maticServer.getTokenAbi(), maticServer.getTokenAddress(), {
-        from: ethAddress,
+        from: memtaMaskAddress,
       });
       allowance = getState().ETHModule.RMaticErc20Allowance;
-    } else if (tokenType == 'reth') {
+    } else if (tokenType === 'reth') {
       tokenContract = new web3.eth.Contract(ethServer.getRETHTokenAbi(), ethServer.getRETHTokenAddress(), {
-        from: ethAddress,
+        from: memtaMaskAddress,
       });
       allowance = getState().ETHModule.RETHErc20Allowance;
     }
@@ -343,7 +350,7 @@ export const erc20ToOtherSwap =
           .send();
         if (approveResult && approveResult.status) {
           let bridgeContract = new web3.eth.Contract(bridgeServer.getBridgeAbi(), bridgeServer.getBridgeAddress(), {
-            from: ethAddress,
+            from: memtaMaskAddress,
           });
           const sendAmount = web3.utils.toWei(getState().bridgeModule.estimateEthFee);
 
@@ -386,7 +393,7 @@ export const erc20ToOtherSwap =
         }
       } else {
         let bridgeContract = new web3.eth.Contract(bridgeServer.getBridgeAbi(), bridgeServer.getBridgeAddress(), {
-          from: ethAddress,
+          from: memtaMaskAddress,
         });
         const sendAmount = web3.utils.toWei(getState().bridgeModule.estimateEthFee);
 
@@ -442,6 +449,12 @@ export const bep20ToOtherSwap =
     cb?: Function,
   ): AppThunk =>
   async (dispatch, getState) => {
+    const bscAddress = getState().globalModule.metaMaskAddress;
+    if (!bscAddress) {
+      message.warn('Please connect MetaMask first');
+      return;
+    }
+
     const notice_uuid = stafi_uuid();
     dispatch(setLoading(true));
     dispatch(setSwapLoadingStatus(1));
@@ -456,48 +469,47 @@ export const bep20ToOtherSwap =
 
     let tokenContract: any = '';
     let allowance: any = 0;
-    const bscAddress = getState().BSCModule.bscAccount.address;
-    if (tokenType == 'fis') {
+    if (tokenType === 'fis') {
       tokenContract = new web3.eth.Contract(bscServer.getFISTokenAbi(), bscServer.getFISTokenAddress(), {
         from: bscAddress,
       });
       allowance = getState().BSCModule.FISBep20Allowance;
-    } else if (tokenType == 'rfis') {
+    } else if (tokenType === 'rfis') {
       tokenContract = new web3.eth.Contract(bscServer.getRFISTokenAbi(), bscServer.getRFISTokenAddress(), {
         from: bscAddress,
       });
       allowance = getState().BSCModule.RFISBep20Allowance;
-    } else if (tokenType == 'rksm') {
+    } else if (tokenType === 'rksm') {
       tokenContract = new web3.eth.Contract(bscServer.getRKSMTokenAbi(), bscServer.getRKSMTokenAddress(), {
         from: bscAddress,
       });
       allowance = getState().BSCModule.RKSMBep20Allowance;
-    } else if (tokenType == 'rdot') {
+    } else if (tokenType === 'rdot') {
       tokenContract = new web3.eth.Contract(bscServer.getRDOTTokenAbi(), bscServer.getRDOTTokenAddress(), {
         from: bscAddress,
       });
       allowance = getState().BSCModule.RDOTBep20Allowance;
-    } else if (tokenType == 'ratom') {
+    } else if (tokenType === 'ratom') {
       tokenContract = new web3.eth.Contract(bscServer.getRATOMTokenAbi(), bscServer.getRATOMTokenAddress(), {
         from: bscAddress,
       });
       allowance = getState().BSCModule.RATOMBep20Allowance;
-    } else if (tokenType == 'rsol') {
+    } else if (tokenType === 'rsol') {
       tokenContract = new web3.eth.Contract(bscServer.getRSOLTokenAbi(), bscServer.getRSOLTokenAddress(), {
         from: bscAddress,
       });
       allowance = getState().BSCModule.RSOLBep20Allowance;
-    } else if (tokenType == 'rmatic') {
+    } else if (tokenType === 'rmatic') {
       tokenContract = new web3.eth.Contract(bscServer.getRMATICTokenAbi(), bscServer.getRMATICTokenAddress(), {
         from: bscAddress,
       });
       allowance = getState().BSCModule.RMATICBep20Allowance;
-    } else if (tokenType == 'reth') {
+    } else if (tokenType === 'reth') {
       tokenContract = new web3.eth.Contract(bscServer.getRETHTokenAbi(), bscServer.getRETHTokenAddress(), {
         from: bscAddress,
       });
       allowance = getState().BSCModule.RETHBep20Allowance;
-    } else if (tokenType == 'rbnb') {
+    } else if (tokenType === 'rbnb') {
       tokenContract = new web3.eth.Contract(bscServer.getRTokenAbi(), bscServer.getRBNBTokenAddress(), {
         from: bscAddress,
       });
@@ -637,7 +649,7 @@ export const slp20ToOtherSwap =
         }
       }
 
-      const localSolAddress = getState().rSOLModule.solAccount && getState().rSOLModule.solAccount.address;
+      const localSolAddress = getState().rSOLModule.solAddress;
       const solAddress = solana.publicKey.toString();
       if (localSolAddress !== solAddress) {
         message.info('Phantom wallet address switched, please try again');

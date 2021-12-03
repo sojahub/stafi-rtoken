@@ -37,8 +37,10 @@ export default function Index(props: any) {
   useEffect(() => {
     dispatch(bondFees());
     dispatch(bondSwitch());
-    if (getLocalStorageItem(Keys.DotAccountKey) && getLocalStorageItem(Keys.FisAccountKey)) {
+    if (getLocalStorageItem(Keys.DotAccountKey)) {
       dispatch(reloadData(Symbol.Dot));
+    }
+    if (getLocalStorageItem(Keys.FisAccountKey)) {
       dispatch(reloadData(Symbol.Fis));
     }
     dispatch(getPools());

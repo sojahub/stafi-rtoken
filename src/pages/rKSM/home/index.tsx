@@ -9,16 +9,19 @@ import './index.scss';
 
 export default function Inde(props: any) {
   const dispatch = useDispatch();
+
   const hasAcount = useSelector((state: any) => {
-    if (state.FISModule.fisAccount) {
+    if (state.FISModule.fisAccount && state.rKSMModule.ksmAccount) {
       return true;
     } else {
       return false;
     }
   });
+
   if (hasAcount) {
     return <Redirect to='/rKSM/type' />;
   }
+
   return (
     <HomeCard
       title={

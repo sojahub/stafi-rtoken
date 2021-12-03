@@ -1,16 +1,15 @@
 import { message } from 'antd';
 import React, { useEffect, useMemo, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import { approveLpAllowance, claimLpReward, stakeLp, unstakeLp } from 'src/features/rPoolClice';
-import RPoolServer from 'src/servers/rpool';
+import { useMetaMaskAccount } from 'src/hooks/useMetaMaskAccount';
 import AmountInputEmbedNew from 'src/shared/components/input/amountInputEmbedNew';
 import { liquidityPlatformMatchMetaMask } from 'src/util/metaMaskUtil';
 import numberUtil from 'src/util/numberUtil';
 import './LiquidityStaker.scss';
 
 declare const window: any;
-const rPoolServer = new RPoolServer();
 
 type LiquidityStakerProps = {
   disabled: boolean;
@@ -27,16 +26,9 @@ export default function LiquidityStaker(props: LiquidityStakerProps) {
   const [amount, setAmount] = useState<any>();
   const [isEnd, setIsEnd] = useState(false);
 
-  const { lpData, initData, lpNameWithPrefix } = props;
+  const { metaMaskAddress, metaMaskNetworkId } = useMetaMaskAccount();
 
-  const { metaMaskNetworkId, fisAccount, ethAccount, unitPriceList } = useSelector((state: any) => {
-    return {
-      metaMaskNetworkId: state.globalModule.metaMaskNetworkId,
-      fisAccount: state.FISModule.fisAccount,
-      ethAccount: state.rETHModule.ethAccount,
-      unitPriceList: state.bridgeModule.priceList,
-    };
-  });
+  const { lpData, initData, lpNameWithPrefix } = props;
 
   useEffect(() => {
     if (window.ethereum && typeof window.ethereum !== 'undefined' && window.ethereum.isMetaMask) {
@@ -117,7 +109,7 @@ export default function LiquidityStaker(props: LiquidityStakerProps) {
     if (!amount || isNaN(amount)) {
       return;
     }
-    if (!ethAccount || !ethAccount.address) {
+    if (!metaMaskAddress) {
       message.error('eth address empty');
       return;
     }
@@ -130,7 +122,7 @@ export default function LiquidityStaker(props: LiquidityStakerProps) {
       return;
     }
     dispatch(
-      approveLpAllowance(ethAccount.address, lpData.stakeTokenAddress, lpPlatform, (success: boolean) => {
+      approveLpAllowance(metaMaskAddress, lpData.stakeTokenAddress, lpPlatform, (success: boolean) => {
         if (success) {
           initData && initData();
           clickStake();
@@ -146,7 +138,7 @@ export default function LiquidityStaker(props: LiquidityStakerProps) {
     if (!amount || isNaN(amount)) {
       return;
     }
-    if (!ethAccount || !ethAccount.address) {
+    if (!metaMaskAddress) {
       message.error('eth address empty');
       return;
     }
@@ -169,7 +161,7 @@ export default function LiquidityStaker(props: LiquidityStakerProps) {
     if (!amount || isNaN(amount)) {
       return;
     }
-    if (!ethAccount || !ethAccount.address) {
+    if (!metaMaskAddress) {
       message.error('eth address empty');
       return;
     }
@@ -188,7 +180,7 @@ export default function LiquidityStaker(props: LiquidityStakerProps) {
     if (!claimableReward || isNaN(Number(claimableReward)) || Number(claimableReward) <= Number(0)) {
       return;
     }
-    if (!ethAccount || !ethAccount.address) {
+    if (!metaMaskAddress) {
       message.error('eth address empty');
       return;
     }

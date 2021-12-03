@@ -1042,9 +1042,9 @@ export const rTokenLedger = (): AppThunk => async (dispatch, getState) => {
 export const getLastEraRate = (): AppThunk => async (dispatch, getState) => {
   try {
     const fisSource = getState().FISModule.fisAccount && getState().FISModule.fisAccount.address;
-    const ethAddress = getState().rETHModule.ethAccount && getState().rETHModule.ethAccount.address;
-    const solAddress = getState().rSOLModule.solAccount && getState().rSOLModule.solAccount.address;
-    const bscAddress = getState().BSCModule.bscAccount && getState().BSCModule.bscAccount.address;
+    const ethAddress = getState().globalModule.metaMaskAddress;
+    const solAddress = getState().rSOLModule.solAddress;
+    const bscAddress = getState().globalModule.metaMaskAddress;
     const result = await rpcServer.getReward(fisSource, ethAddress, rSymbol.Ksm, 0, bscAddress, solAddress);
     if (result.status === 80000) {
       if (result.data.rewardList.length > 1) {
@@ -1088,7 +1088,7 @@ export const accountUnbonds = (): AppThunk => async (dispatch, getState) => {
   //   dispatch(setTotalUnbonding(total));
   // }))
 
-  let fisAddress = getState().FISModule.fisAccount.address;
+  let fisAddress = getState().FISModule.fisAccount && getState().FISModule.fisAccount.address;
   commonClice.getTotalUnbonding(fisAddress, rSymbol.Ksm, (total: any) => {
     dispatch(setTotalUnbonding(total));
   });
@@ -1124,14 +1124,14 @@ export const getReward =
   (pageIndex: Number, cb: Function): AppThunk =>
   async (dispatch, getState) => {
     const fisSource = getState().FISModule.fisAccount.address;
-    const ethAccount = getState().rETHModule.ethAccount;
+    const ethAddress = getState().globalModule.metaMaskAddress;
     dispatch(setLoading(true));
     try {
       if (pageIndex == 0) {
         dispatch(setRewardList([]));
         dispatch(setRewardList_lastdata(null));
       }
-      const result = await rpcServer.getReward(fisSource, ethAccount ? ethAccount.address : '', rSymbol.Ksm, pageIndex);
+      const result = await rpcServer.getReward(fisSource, ethAddress, rSymbol.Ksm, pageIndex);
       if (result.status == 80000) {
         const rewardList = getState().rKSMModule.rewardList;
         if (result.data.rewardList.length > 0) {

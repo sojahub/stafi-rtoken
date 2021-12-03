@@ -58,7 +58,7 @@ export default function ChooseMintType(props: ChooseMintTypeProps) {
     return {
       metaMaskAddress: state.globalModule.metaMaskAddress,
       metaMaskNetworkId: state.globalModule.metaMaskNetworkId,
-      solAddress: state.rSOLModule.solAccount && state.rSOLModule.solAccount.address,
+      solAddress: state.rSOLModule.solAddress,
     };
   });
 

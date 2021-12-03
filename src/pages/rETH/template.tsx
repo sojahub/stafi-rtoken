@@ -6,7 +6,8 @@ import { useLocation } from 'react-router';
 import { renderRoutes } from 'react-router-config';
 import config from 'src/config/index';
 import { getETHAssetBalance } from 'src/features/ETHClice';
-import { handleEthAccount, monitoring_Method, reloadData } from 'src/features/rETHClice';
+import { reloadData } from 'src/features/rETHClice';
+import { useMetaMaskAccount } from 'src/hooks/useMetaMaskAccount';
 import Content from 'src/shared/components/content';
 import '../template/index.scss';
 import './index.scss';
@@ -14,28 +15,17 @@ import './index.scss';
 export default function Index(props: any) {
   const dispatch = useDispatch();
   const location = useLocation();
+  const { metaMaskAddress, metaMaskNetworkId } = useMetaMaskAccount();
 
   let platform = 'ERC20';
   if (location.search) {
     platform = qs.parse(location.search.slice(1)).platform as string;
   }
 
-  const { ethAccount, metaMaskNetworkId } = useSelector((state: any) => {
-    return {
-      ethAccount: state.rETHModule.ethAccount,
-      metaMaskNetworkId: state.globalModule.metaMaskNetworkId,
-    };
-  });
-
   useEffect(() => {
-    ethAccount && ethAccount.address && dispatch(handleEthAccount(ethAccount.address, config.goerliChainId()));
-    ethAccount && ethAccount.address && dispatch(reloadData());
+    metaMaskAddress && dispatch(reloadData());
     dispatch(getETHAssetBalance());
-  }, [ethAccount && ethAccount.address, metaMaskNetworkId, dispatch]);
-
-  useEffect(() => {
-    // dispatch(monitoring_Method());
-  }, []);
+  }, [metaMaskAddress, metaMaskNetworkId, dispatch]);
 
   const { loading } = useSelector((state: any) => {
     return {

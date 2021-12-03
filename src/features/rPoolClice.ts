@@ -361,7 +361,7 @@ export const approveLpAllowance =
 export const stakeLp =
   (amount: any, platform: string, poolIndex: any, lpNameWithPrefix: string, cb?: Function): AppThunk =>
   async (dispatch, getState) => {
-    if (!getState().rETHModule.ethAccount || !getState().rETHModule.ethAccount.address) {
+    if (!getState().globalModule.metaMaskAddress) {
       return;
     }
     dispatch(setLoading(true));
@@ -373,7 +373,7 @@ export const stakeLp =
         rPoolServer.getStakingLockDropAbi(platform),
         config.lockContractAddress(platform),
         {
-          from: getState().rETHModule.ethAccount.address,
+          from: getState().globalModule.metaMaskAddress,
         },
       );
       const result = await lockDropContract.methods.deposit(poolIndex, amountInWei).send();
@@ -399,7 +399,7 @@ export const stakeLp =
 export const unstakeLp =
   (amount: any, platform: string, poolIndex: any, lpNameWithPrefix: string, cb?: Function): AppThunk =>
   async (dispatch, getState) => {
-    if (!getState().rETHModule.ethAccount || !getState().rETHModule.ethAccount.address) {
+    if (!getState().globalModule.metaMaskAddress) {
       return;
     }
     dispatch(setLoading(true));
@@ -411,7 +411,7 @@ export const unstakeLp =
         rPoolServer.getStakingLockDropAbi(platform),
         config.lockContractAddress(platform),
         {
-          from: getState().rETHModule.ethAccount.address,
+          from: getState().globalModule.metaMaskAddress,
         },
       );
       const result = await lockDropContract.methods.withdraw(poolIndex, amountInWei).send();
@@ -444,7 +444,7 @@ export const unstakeLp =
 export const claimLpReward =
   (platform: string, poolIndex: any, lpNameWithPrefix: string, claimableAmount: any, cb?: Function): AppThunk =>
   async (dispatch, getState) => {
-    if (!getState().rETHModule.ethAccount || !getState().rETHModule.ethAccount.address) {
+    if (!getState().globalModule.metaMaskAddress) {
       return;
     }
     dispatch(setLoading(true));
@@ -455,7 +455,7 @@ export const claimLpReward =
         rPoolServer.getStakingLockDropAbi(platform),
         config.lockContractAddress(platform),
         {
-          from: getState().rETHModule.ethAccount.address,
+          from: getState().globalModule.metaMaskAddress,
         },
       );
       const result = await lockDropContract.methods.claimReward(poolIndex).send();

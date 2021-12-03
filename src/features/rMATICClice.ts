@@ -7,7 +7,7 @@ import InputDataDecoder from 'ethereum-input-data-decoder';
 import moment from 'moment';
 import _m0 from 'protobufjs/minimal';
 import PubSub from 'pubsub-js';
-import config, { isdev } from 'src/config/index';
+import config from 'src/config/index';
 import { rSymbol, Symbol } from 'src/keyring/defaults';
 import EthServer from 'src/servers/eth/index';
 import keyring from 'src/servers/index';
@@ -34,7 +34,6 @@ import {
   setStakeSwapLoadingStatus,
 } from './globalClice';
 import { add_Notice, findUuid, noticeStatus, noticesubType, noticeType } from './noticeClice';
-import { setIsloadMonitoring } from './rETHClice';
 
 declare const window: any;
 declare const ethereum: any;
@@ -48,14 +47,9 @@ const ethServer = new EthServer();
 const rMATICClice = createSlice({
   name: 'rMATICModule',
   initialState: {
-    maticAccounts: [],
-    maticAccount: getLocalStorageItem(Keys.MaticAccountKey) && {
-      ...getLocalStorageItem(Keys.MaticAccountKey),
-      balance: '--',
-    },
+    transferrableAmountShow: '--',
     validPools: [],
     poolLimit: 0,
-    transferrableAmountShow: '--',
     ratio: '--',
     ratioShow: '--',
     tokenAmount: '--',
@@ -74,24 +68,6 @@ const rMATICClice = createSlice({
     lastEraRate: '--',
   },
   reducers: {
-    setMaticAccounts(state, { payload }) {
-      const accounts = state.maticAccounts;
-      const account: any = accounts.find((item: any) => {
-        return item.address == payload.address;
-      });
-      if (account) {
-        account.balance = payload.balance;
-        account.name = payload.name;
-      } else {
-        state.maticAccounts.push(payload);
-      }
-    },
-    setMaticAccount(state, { payload }) {
-      if (payload) {
-        setLocalStorageItem(Keys.MaticAccountKey, { address: payload.address, pubkey: payload.pubkey });
-      }
-      state.maticAccount = payload;
-    },
     setTransferrableAmountShow(state, { payload }) {
       state.transferrableAmountShow = payload;
     },
@@ -163,8 +139,6 @@ const rMATICClice = createSlice({
 });
 
 export const {
-  setMaticAccounts,
-  setMaticAccount,
   setTransferrableAmountShow,
   setRatio,
   setTokenAmount,
@@ -185,11 +159,6 @@ export const {
 } = rMATICClice.actions;
 
 export const reloadData = (): AppThunk => async (dispatch, getState) => {
-  //const account = getState().rMATICModule.maticAccount;
-  // if(account){
-  //   dispatch(createSubstrate(account));
-  // }
-
   dispatch(balancesAll());
   dispatch(query_rBalances_account());
   dispatch(getTotalIssuance());
@@ -197,115 +166,15 @@ export const reloadData = (): AppThunk => async (dispatch, getState) => {
   dispatch(getPools());
 };
 
-export const connectMetamask =
-  (chainId: string, isAutoConnect?: boolean): AppThunk =>
-  async (dispatch, getState) => {
-    if (typeof window.ethereum !== 'undefined' && ethereum.isMetaMask) {
-      ethereum.autoRefreshOnNetworkChange = false;
-
-      ethereum.request({ method: 'eth_chainId' }).then((chainId: any) => {
-        if (isdev()) {
-          if (ethereum.chainId != chainId) {
-            if (chainId == '0x3') {
-              if (!isAutoConnect) {
-                message.warning('Please connect to Ropsten Test Network!');
-              }
-            }
-            if (chainId == '0x5') {
-              if (!isAutoConnect) {
-                message.warning('Please connect to Goerli Test Network!');
-              }
-            }
-            return;
-          }
-        } else if (ethereum.chainId != '0x1') {
-          if (!isAutoConnect) {
-            message.warning('Please connect to Ethereum Main Network!');
-          }
-          return;
-        }
-
-        ethereum
-          .request({ method: 'eth_requestAccounts' })
-          .then((accounts: any) => {
-            dispatch(handleMaticAccount(accounts[0]));
-          })
-          .catch((error: any) => {
-            dispatch(setMaticAccount(null));
-            if (error.code === 4001) {
-              message.error('Please connect to MetaMask.');
-            } else {
-              message.error('error.message');
-            }
-          });
-      });
-    } else {
-      message.warning('Please install MetaMask!');
-    }
-  };
-
-export const handleMaticAccount =
-  (address: string): AppThunk =>
-  (dispatch, getState) => {
-    if (!address) {
-      return;
-    }
-    dispatch(setMaticAccount({ address: address, balance: '--' }));
-
-    getAssetBalance(address, maticServer.getTokenAbi(), maticServer.getMaticTokenAddress(), (v: any) => {
-      dispatch(setTransferrableAmountShow(v));
-      dispatch(setMaticAccount({ address: address, balance: v }));
-    });
-  };
-
-export const monitoring_Method = (): AppThunk => (dispatch, getState) => {
-  const isload_monitoring = getState().rETHModule.isload_monitoring;
-
-  if (isload_monitoring) {
-    return;
-  }
-  if (typeof window.ethereum !== 'undefined' && ethereum.isMetaMask) {
-    dispatch(setIsloadMonitoring(true));
-    ethereum.autoRefreshOnNetworkChange = false;
-    ethereum.on('accountsChanged', (accounts: any) => {
-      if (accounts.length > 0) {
-        dispatch(handleMaticAccount(accounts[0]));
-
-        setTimeout(() => {
-          dispatch(reloadData());
-        }, 200);
-      } else {
-        // dispatch(handleMaticAccount(null));
-      }
-    });
-
-    ethereum.on('chainChanged', (chainId: any) => {
-      if (isdev()) {
-        if (ethereum.chainId !== '0x3' && window.location.pathname.includes('/rAsset/erc')) {
-          // message.warning('Please connect to Ropsten Test Network!');
-          dispatch(setMaticAccount(null));
-        }
-        if (ethereum.chainId !== '0x5' && window.location.pathname.includes('/rETH')) {
-          // message.warning('Please connect to Goerli Test Network!');
-          dispatch(setMaticAccount(null));
-        }
-      } else if (ethereum.chainId !== '0x1') {
-        // message.warning('Please connect to Ethereum Main Network!');
-
-        dispatch(setMaticAccount(null));
-      }
-    });
-  }
-};
-
 export const balancesAll = (): AppThunk => (dispatch, getState) => {
-  if (getState().rMATICModule.maticAccount) {
-    const address = getState().rMATICModule.maticAccount.address;
-    getAssetBalance(address, maticServer.getTokenAbi(), maticServer.getMaticTokenAddress(), (v: any) => {
-      dispatch(setTransferrableAmountShow(v));
-      dispatch(setMaticAccount({ address: address, balance: v }));
-    });
-  }
+  getAssetBalance(
+    getState().globalModule.metaMaskAddress,
+    maticServer.getTokenAbi(),
+    maticServer.getMaticTokenAddress(),
+    (v: any) => {
+      dispatch(setTransferrableAmountShow(numberUtil.handleEthAmountToFixed(v)));
+    },
+  );
 };
 
 export const transfer =
@@ -316,7 +185,7 @@ export const transfer =
 
     dispatch(initProcess(null));
 
-    const address = getState().rMATICModule.maticAccount.address;
+    const address = getState().globalModule.metaMaskAddress;
     const validPools = getState().rMATICModule.validPools;
     const poolLimit = getState().rMATICModule.poolLimit;
 
@@ -705,7 +574,7 @@ export const onProceed =
       params: [txHash],
     });
     if (result) {
-      const address = getstate().rMATICModule.maticAccount.address;
+      const address = getstate().globalModule.metaMaskAddress;
       if (address.toLowerCase() != result.from.toLowerCase()) {
         message.error('Please select your Matic account that sent the transaction');
         return;
@@ -770,7 +639,7 @@ export const getBlock =
   (blockHash: string, txHash: string, uuid?: string, cb?: Function): AppThunk =>
   async (dispatch, getState) => {
     try {
-      const address = getState().rMATICModule.maticAccount.address;
+      const address = getState().globalModule.metaMaskAddress;
       const validPools = getState().rMATICModule.validPools;
 
       const processParameter = getState().rMATICModule.processParameter;
@@ -1010,9 +879,9 @@ export const rTokenLedger = (): AppThunk => async (dispatch, getState) => {
 export const getLastEraRate = (): AppThunk => async (dispatch, getState) => {
   try {
     const fisSource = getState().FISModule.fisAccount && getState().FISModule.fisAccount.address;
-    const ethAddress = getState().rETHModule.ethAccount && getState().rETHModule.ethAccount.address;
-    const solAddress = getState().rSOLModule.solAccount && getState().rSOLModule.solAccount.address;
-    const bscAddress = getState().BSCModule.bscAccount && getState().BSCModule.bscAccount.address;
+    const ethAddress = getState().globalModule.metaMaskAddress;
+    const solAddress = getState().rSOLModule.solAddress;
+    const bscAddress = getState().globalModule.metaMaskAddress;
     const result = await rpcServer.getReward(fisSource, ethAddress, rSymbol.Matic, 0, bscAddress, solAddress);
     if (result.status === 80000) {
       if (result.data.rewardList.length > 1) {
@@ -1078,19 +947,14 @@ export const getReward =
   (pageIndex: Number, cb: Function): AppThunk =>
   async (dispatch, getState) => {
     const fisSource = getState().FISModule.fisAccount && getState().FISModule.fisAccount.address;
-    const ethAccount = getState().rETHModule.ethAccount;
+    const ethAddress = getState().globalModule.metaMaskAddress;
     dispatch(setLoading(true));
     try {
       if (pageIndex == 0) {
         dispatch(setRewardList([]));
         dispatch(setRewardList_lastdata(null));
       }
-      const result = await rpcServer.getReward(
-        fisSource,
-        ethAccount ? ethAccount.address : '',
-        rSymbol.Matic,
-        pageIndex,
-      );
+      const result = await rpcServer.getReward(fisSource, ethAddress, rSymbol.Matic, pageIndex);
       if (result.status == 80000) {
         const rewardList = getState().rMATICModule.rewardList;
         if (result.data.rewardList.length > 0) {

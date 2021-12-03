@@ -13,16 +13,15 @@ export default function Index() {
   useEffect(() => {
     dispatch(getUnbondCommission());
   }, []);
-  const { rewardList, unbondCommission, rewardList_lastdata, address } = useSelector((state: RootState) => {
+  const { rewardList, unbondCommission, rewardList_lastdata } = useSelector((state: RootState) => {
     return {
       rewardList: state.rMATICModule.rewardList,
       unbondCommission: state.rMATICModule.unbondCommission,
       rewardList_lastdata: state.rMATICModule.rewardList_lastdata,
-      address: state.rMATICModule.maticAccount ? state.rMATICModule.maticAccount.address : '',
     };
   });
   return (
-    <RewardContent address={address} hours={24} rewardList={rewardList} getReward={getReward} type='MATIC'>
+    <RewardContent hours={24} rewardList={rewardList} getReward={getReward} type='MATIC'>
       {rewardList.map((item, index) => {
         let reward: any = '--';
 

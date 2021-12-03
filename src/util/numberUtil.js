@@ -247,6 +247,9 @@ const numberUtil = {
     return divide(Number(amount), Number(factor));
   },
   tokenAmountToHuman(amount, symbol) {
+    if (isNaN(Number(amount))) {
+      return '--';
+    }
     let factor;
     switch (symbol) {
       case rSymbol.Dot:

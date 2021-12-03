@@ -1,13 +1,8 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { message } from 'antd';
-import config, { isdev } from 'src/config/index';
+import config from 'src/config/index';
 import BridgeServer from 'src/servers/bridge';
 import BscServer from 'src/servers/bsc/index';
 import EthServer from 'src/servers/eth/index';
-import { getLocalStorageItem, Keys, removeLocalStorageItem, setLocalStorageItem } from 'src/util/common';
-import { requestMetamaskAccount } from 'src/util/metaMaskUtil';
-import numberUtil from 'src/util/numberUtil';
-import Web3Utils from 'web3-utils';
 import { AppThunk } from '../store';
 
 const bscServer = new BscServer();
@@ -17,7 +12,6 @@ const bridegServer = new BridgeServer();
 const BSCClice = createSlice({
   name: 'BSCModule',
   initialState: {
-    bscAccount: getLocalStorageItem(Keys.BscAccountKey),
     bscBNBBalance: '--',
     bepFISBalance: '--',
     bepRFISBalance: '--',
@@ -37,23 +31,8 @@ const BSCClice = createSlice({
     RMATICBep20Allowance: '--',
     RETHBep20Allowance: '--',
     RBNBBep20Allowance: '--',
-    isload_monitoring: false,
   },
   reducers: {
-    setBscAccount(state, { payload }) {
-      if (payload == null) {
-        state.bscAccount = payload;
-        removeLocalStorageItem(Keys.BscAccountKey);
-      } else {
-        if (state.bscAccount && state.bscAccount.address == payload.address) {
-          state.bscAccount = { ...state.bscAccount, ...payload };
-          setLocalStorageItem(Keys.BscAccountKey, { address: payload.address });
-        } else {
-          state.bscAccount = payload;
-          setLocalStorageItem(Keys.BscAccountKey, { address: payload.address });
-        }
-      }
-    },
     setBscBNBBalance(state, { payload }) {
       state.bscBNBBalance = payload;
     },
@@ -111,14 +90,10 @@ const BSCClice = createSlice({
     setRBNBBep20Allowance(state, { payload }) {
       state.RBNBBep20Allowance = payload;
     },
-    setIsloadMonitoring(state, { payload }) {
-      state.isload_monitoring = payload;
-    },
   },
 });
 
 export const {
-  setBscAccount,
   setBscBNBBalance,
   setBepFISBalance,
   setBepRFISBalance,
@@ -138,117 +113,7 @@ export const {
   setRMATICBep20Allowance,
   setRETHBep20Allowance,
   setRBNBBep20Allowance,
-  setIsloadMonitoring,
 } = BSCClice.actions;
-
-declare const window: any;
-declare const ethereum: any;
-declare const location: any;
-
-export const connectMetamask =
-  (chainId: string, isAutoConnect?: boolean): AppThunk =>
-  async (dispatch, getState) => {
-    if (typeof window.ethereum !== 'undefined' && ethereum.isMetaMask) {
-      ethereum.autoRefreshOnNetworkChange = false;
-
-      ethereum.request({ method: 'eth_chainId' }).then((chainId: any) => {
-        if (isdev()) {
-          if (ethereum.chainId != '0x61') {
-            if (!isAutoConnect) {
-              message.warning('Please connect to Binance Test Network!');
-            }
-            return;
-          }
-        } else if (ethereum.chainId != '0x38') {
-          if (!isAutoConnect) {
-            message.warning('Please connect to Binance Main Network!');
-          }
-          return;
-        }
-
-        ethereum
-          .request({ method: 'eth_requestAccounts' })
-          .then((accounts: any) => {
-            dispatch(handleBscAccount(accounts[0]));
-          })
-          .catch((error: any) => {
-            dispatch(setBscAccount(null));
-            if (error.code === 4001) {
-              message.error('Please connect to MetaMask.');
-            } else {
-              message.error('error.message');
-            }
-          });
-      });
-    } else {
-      message.warning('Please install MetaMask!');
-    }
-  };
-
-export const monitoring_Method = (): AppThunk => (dispatch, getState) => {
-  const isload_monitoring = getState().BSCModule.isload_monitoring;
-
-  if (isload_monitoring) {
-    return;
-  }
-  if (typeof window.ethereum !== 'undefined' && ethereum.isMetaMask) {
-    dispatch(setIsloadMonitoring(true));
-    ethereum.autoRefreshOnNetworkChange = false;
-
-    ethereum.on('accountsChanged', (accounts: any) => {
-      if (accounts.length > 0) {
-        dispatch(handleBscAccount(accounts[0]));
-
-        setTimeout(() => {
-          dispatch(getAssetBalanceAll());
-          dispatch(getBep20Allowances());
-          // dispatch(reloadData());
-        }, 200);
-      } else {
-        // dispatch(handleBscAccount(null));
-      }
-    });
-
-    ethereum.on('chainChanged', (chainId: any) => {
-      if (isdev()) {
-        if (ethereum.chainId != config.bscChainId() && location.pathname.includes('/rAsset/bep')) {
-          message.warning('Please connect to Binance Smart Chain!');
-          dispatch(setBscAccount(null));
-        }
-        if (
-          ethereum.chainId != config.bscChainId() &&
-          (location.pathname.includes('/swap/bep20') || location.pathname.includes('/swap/native/bep20'))
-        ) {
-          message.warning('Please connect to Binance Smart Chain!');
-          // dispatch(setBscAccount(null));
-        }
-      } else if (ethereum.chainId != config.bscChainId()) {
-        // message.warning("Please connect to Binance Smart Chain!");
-        dispatch(setBscAccount(null));
-      }
-    });
-  }
-};
-
-export const handleBscAccount =
-  (address: string): AppThunk =>
-  (dispatch, getState) => {
-    // dispatch(setBscAccount({ address: address, balance: "--" }));
-    if (!config.metaMaskNetworkIsBsc(getState().globalModule.metaMaskNetworkId)) {
-      dispatch(setBscAccount({ address: address, balance: '--' }));
-      return;
-    }
-    ethereum
-      .request({ method: 'eth_getBalance', params: [address, 'latest'] })
-      .then((result: any) => {
-        const balance = numberUtil.handleEthAmountToFixed(Web3Utils.fromWei(result, 'ether'));
-        dispatch(setBscAccount({ address: address, balance: balance }));
-      })
-      .catch((error: any) => {
-        dispatch(setBscAccount({ address: address, balance: '--' }));
-        message.error(error.message);
-      });
-  };
 
 export const getAssetBalanceAll = (): AppThunk => (dispatch, getState) => {
   // dispatch(getFISAssetBalance());
@@ -274,72 +139,99 @@ export const getBep20Allowances = (): AppThunk => (dispatch, getState) => {
 };
 
 export const getFISAssetBalance = (): AppThunk => (dispatch, getState) => {
-  requestMetamaskAccount((address: string) => {
-    getAssetBalance(address, bscServer.getRFISTokenAbi(), bscServer.getRFISTokenAddress(), (v: any) => {
+  getAssetBalance(
+    getState().globalModule.metaMaskAddress,
+    bscServer.getRFISTokenAbi(),
+    bscServer.getRFISTokenAddress(),
+    (v: any) => {
       dispatch(setBepRFISBalance(v));
-    });
-  });
+    },
+  );
 };
 export const getRFISAssetBalance = (): AppThunk => (dispatch, getState) => {
-  requestMetamaskAccount((address: string) => {
-    getAssetBalance(address, bscServer.getRFISTokenAbi(), bscServer.getRFISTokenAddress(), (v: any) => {
+  getAssetBalance(
+    getState().globalModule.metaMaskAddress,
+    bscServer.getRFISTokenAbi(),
+    bscServer.getRFISTokenAddress(),
+    (v: any) => {
       dispatch(setBepRFISBalance(v));
-    });
-  });
+    },
+  );
 };
 export const getRKSMAssetBalance = (): AppThunk => (dispatch, getState) => {
-  requestMetamaskAccount((address: string) => {
-    getAssetBalance(address, bscServer.getRKSMTokenAbi(), bscServer.getRKSMTokenAddress(), (v: any) => {
+  getAssetBalance(
+    getState().globalModule.metaMaskAddress,
+    bscServer.getRKSMTokenAbi(),
+    bscServer.getRKSMTokenAddress(),
+    (v: any) => {
       dispatch(setBepRKSMBalance(v));
-    });
-  });
+    },
+  );
 };
 export const getRDOTAssetBalance = (): AppThunk => (dispatch, getState) => {
-  requestMetamaskAccount((address: string) => {
-    getAssetBalance(address, bscServer.getRDOTTokenAbi(), bscServer.getRDOTTokenAddress(), (v: any) => {
+  getAssetBalance(
+    getState().globalModule.metaMaskAddress,
+    bscServer.getRDOTTokenAbi(),
+    bscServer.getRDOTTokenAddress(),
+    (v: any) => {
       dispatch(setBepRDOTBalance(v));
-    });
-  });
+    },
+  );
 };
 
 export const getRATOMAssetBalance = (): AppThunk => (dispatch, getState) => {
-  requestMetamaskAccount((address: string) => {
-    getAssetBalance(address, bscServer.getRATOMTokenAbi(), bscServer.getRATOMTokenAddress(), (v: any) => {
+  getAssetBalance(
+    getState().globalModule.metaMaskAddress,
+    bscServer.getRATOMTokenAbi(),
+    bscServer.getRATOMTokenAddress(),
+    (v: any) => {
       dispatch(setBepRATOMBalance(v));
-    });
-  });
+    },
+  );
 };
 
 export const getRSOLAssetBalance = (): AppThunk => (dispatch, getState) => {
-  requestMetamaskAccount((address: string) => {
-    getAssetBalance(address, bscServer.getRSOLTokenAbi(), bscServer.getRSOLTokenAddress(), (v: any) => {
+  getAssetBalance(
+    getState().globalModule.metaMaskAddress,
+    bscServer.getRSOLTokenAbi(),
+    bscServer.getRSOLTokenAddress(),
+    (v: any) => {
       dispatch(setBepRSOLBalance(v));
-    });
-  });
+    },
+  );
 };
 
 export const getRMATICAssetBalance = (): AppThunk => (dispatch, getState) => {
-  requestMetamaskAccount((address: string) => {
-    getAssetBalance(address, bscServer.getRMATICTokenAbi(), bscServer.getRMATICTokenAddress(), (v: any) => {
+  getAssetBalance(
+    getState().globalModule.metaMaskAddress,
+    bscServer.getRMATICTokenAbi(),
+    bscServer.getRMATICTokenAddress(),
+    (v: any) => {
       dispatch(setBepRMATICBalance(v));
-    });
-  });
+    },
+  );
 };
 
 export const getRETHAssetBalance = (): AppThunk => (dispatch, getState) => {
-  requestMetamaskAccount((address: string) => {
-    getAssetBalance(address, bscServer.getRETHTokenAbi(), bscServer.getRETHTokenAddress(), (v: any) => {
+  getAssetBalance(
+    getState().globalModule.metaMaskAddress,
+    bscServer.getRETHTokenAbi(),
+    bscServer.getRETHTokenAddress(),
+    (v: any) => {
       dispatch(setBepRETHBalance(v));
-    });
-  });
+    },
+  );
 };
 
 export const getRBNBAssetBalance = (): AppThunk => (dispatch, getState) => {
-  requestMetamaskAccount((address: string) => {
-    getAssetBalance(address, bscServer.getRTokenAbi(), bscServer.getRBNBTokenAddress(), (v: any) => {
+  getAssetBalance(
+    getState().globalModule.metaMaskAddress,
+    bscServer.getRTokenAbi(),
+    bscServer.getRBNBTokenAddress(),
+    (v: any) => {
       dispatch(setBepRBNBBalance(v));
-    });
-  });
+    },
+  );
 };
 
 export const getAssetBalance = (
@@ -349,6 +241,10 @@ export const getAssetBalance = (
   cb?: Function,
   useCustomProvider?: boolean,
 ) => {
+  if (!ethAddress) {
+    return;
+  }
+
   let web3 = useCustomProvider ? ethServer.getBSCWeb3() : ethServer.getWeb3();
   let contract = new web3.eth.Contract(getTokenAbi, getTokenAddress, {
     from: ethAddress,
@@ -371,83 +267,105 @@ export const getAssetBalance = (
 };
 
 export const getFISBep20Allowance = (): AppThunk => (dispatch, getState) => {
-  if (getState().BSCModule.bscAccount) {
-    const address = getState().BSCModule.bscAccount.address;
-    getBep20Allowance(address, bscServer.getFISTokenAbi(), bscServer.getFISTokenAddress(), (v: any) => {
+  getBep20Allowance(
+    getState().globalModule.metaMaskAddress,
+    bscServer.getFISTokenAbi(),
+    bscServer.getFISTokenAddress(),
+    (v: any) => {
       dispatch(setFISBep20Allowance(v));
-    });
-  }
+    },
+  );
 };
 export const getRFISBep20Allowance = (): AppThunk => (dispatch, getState) => {
-  if (getState().BSCModule.bscAccount) {
-    const address = getState().BSCModule.bscAccount.address;
-    getBep20Allowance(address, bscServer.getRFISTokenAbi(), bscServer.getRFISTokenAddress(), (v: any) => {
+  getBep20Allowance(
+    getState().globalModule.metaMaskAddress,
+    bscServer.getRFISTokenAbi(),
+    bscServer.getRFISTokenAddress(),
+    (v: any) => {
       dispatch(setRFISBep20Allowance(v));
-    });
-  }
+    },
+  );
 };
 
 export const getRKSMBep20Allowance = (): AppThunk => (dispatch, getState) => {
-  if (getState().BSCModule.bscAccount) {
-    const address = getState().BSCModule.bscAccount.address;
-    getBep20Allowance(address, bscServer.getRKSMTokenAbi(), bscServer.getRKSMTokenAddress(), (v: any) => {
+  getBep20Allowance(
+    getState().globalModule.metaMaskAddress,
+    bscServer.getRKSMTokenAbi(),
+    bscServer.getRKSMTokenAddress(),
+    (v: any) => {
       dispatch(setRKSMBep20Allowance(v));
-    });
-  }
+    },
+  );
 };
 export const getRDOTBep20Allowance = (): AppThunk => (dispatch, getState) => {
-  if (getState().BSCModule.bscAccount) {
-    const address = getState().BSCModule.bscAccount.address;
-    getBep20Allowance(address, bscServer.getRDOTTokenAbi(), bscServer.getRDOTTokenAddress(), (v: any) => {
+  getBep20Allowance(
+    getState().globalModule.metaMaskAddress,
+    bscServer.getRDOTTokenAbi(),
+    bscServer.getRDOTTokenAddress(),
+    (v: any) => {
       dispatch(setRDOTBep20Allowance(v));
-    });
-  }
+    },
+  );
 };
 export const getRATOMBep20Allowance = (): AppThunk => (dispatch, getState) => {
-  if (getState().BSCModule.bscAccount) {
-    const address = getState().BSCModule.bscAccount.address;
-    getBep20Allowance(address, bscServer.getRATOMTokenAbi(), bscServer.getRATOMTokenAddress(), (v: any) => {
+  getBep20Allowance(
+    getState().globalModule.metaMaskAddress,
+    bscServer.getRATOMTokenAbi(),
+    bscServer.getRATOMTokenAddress(),
+    (v: any) => {
       dispatch(setRATOMBep20Allowance(v));
-    });
-  }
+    },
+  );
 };
 export const getRSOLBep20Allowance = (): AppThunk => (dispatch, getState) => {
-  if (getState().BSCModule.bscAccount) {
-    const address = getState().BSCModule.bscAccount.address;
-    getBep20Allowance(address, bscServer.getRSOLTokenAbi(), bscServer.getRSOLTokenAddress(), (v: any) => {
+  getBep20Allowance(
+    getState().globalModule.metaMaskAddress,
+    bscServer.getRSOLTokenAbi(),
+    bscServer.getRSOLTokenAddress(),
+    (v: any) => {
       dispatch(setRSOLBep20Allowance(v));
-    });
-  }
+    },
+  );
 };
 
 export const getRMATICBep20Allowance = (): AppThunk => (dispatch, getState) => {
-  if (getState().BSCModule.bscAccount) {
-    const address = getState().BSCModule.bscAccount.address;
-    getBep20Allowance(address, bscServer.getRMATICTokenAbi(), bscServer.getRMATICTokenAddress(), (v: any) => {
+  getBep20Allowance(
+    getState().globalModule.metaMaskAddress,
+    bscServer.getRMATICTokenAbi(),
+    bscServer.getRMATICTokenAddress(),
+    (v: any) => {
       dispatch(setRMATICBep20Allowance(v));
-    });
-  }
+    },
+  );
 };
 
 export const getRETHBep20Allowance = (): AppThunk => (dispatch, getState) => {
-  if (getState().BSCModule.bscAccount) {
-    const address = getState().BSCModule.bscAccount.address;
-    getBep20Allowance(address, bscServer.getRETHTokenAbi(), bscServer.getRETHTokenAddress(), (v: any) => {
+  getBep20Allowance(
+    getState().globalModule.metaMaskAddress,
+    bscServer.getRETHTokenAbi(),
+    bscServer.getRETHTokenAddress(),
+    (v: any) => {
       dispatch(setRETHBep20Allowance(v));
-    });
-  }
+    },
+  );
 };
 
 export const getRBNBBep20Allowance = (): AppThunk => (dispatch, getState) => {
-  if (getState().rETHModule.ethAccount && getState().rETHModule.ethAccount.address) {
-    const address = getState().rETHModule.ethAccount.address;
-    getBep20Allowance(address, bscServer.getRTokenAbi(), bscServer.getRBNBTokenAddress(), (v: any) => {
+  getBep20Allowance(
+    getState().globalModule.metaMaskAddress,
+    bscServer.getRTokenAbi(),
+    bscServer.getRBNBTokenAddress(),
+    (v: any) => {
       dispatch(setRBNBBep20Allowance(v));
-    });
-  }
+    },
+  );
 };
 
 const getBep20Allowance = async (address: string, getTokenAbi: string, getTokenAddress: string, cb?: Function) => {
+  if (!address) {
+    return;
+  }
+
   let web3 = bscServer.getWeb3();
   let contract = new web3.eth.Contract(getTokenAbi, getTokenAddress, {
     from: address,

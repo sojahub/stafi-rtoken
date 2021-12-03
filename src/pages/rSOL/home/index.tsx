@@ -11,23 +11,17 @@ import Modal from 'src/shared/components/modal/connectModal';
 import Page_FIS from '../../rATOM/selectWallet_rFIS/index';
 import './index.scss';
 
-declare const window: any;
-
-const solServer = new SolServer();
-
 export default function Inde(props: any) {
   const [visible, setVisible] = useState(false);
   const dispatch = useDispatch();
-  const { fisAccount, solAccount, fisAccounts, solAccounts } = useSelector((state: any) => {
+  const { fisAccount, solAddress } = useSelector((state: any) => {
     return {
       fisAccount: state.FISModule.fisAccount,
-      fisAccounts: state.FISModule.fisAccounts,
-      solAccount: state.rSOLModule.solAccount,
-      solAccounts: state.rSOLModule.solAccounts,
+      solAddress: state.rSOLModule.solAddress,
     };
   });
 
-  if (fisAccount && solAccount) {
+  if (fisAccount && solAddress) {
     return <Redirect to='/rSOL/type' />;
   }
 
@@ -42,7 +36,7 @@ export default function Inde(props: any) {
       onIntroUrl=''>
       <Button
         width={'370px'}
-        disabled={!!solAccount}
+        disabled={!!solAddress}
         icon={phantom}
         onClick={() => {
           dispatch(connectSoljs());
