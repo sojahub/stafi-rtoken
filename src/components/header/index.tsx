@@ -198,6 +198,7 @@ export default function Index(props: Props) {
       }
       return {
         showMetaMaskAccount: true,
+        wrongNetwork: !config.metaMaskNetworkIsGoerliEth(metaMaskNetworkId),
       };
     }
 
