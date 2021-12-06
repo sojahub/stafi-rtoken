@@ -138,7 +138,7 @@ export const getAssetBalanceAll = (): AppThunk => (dispatch, getState) => {
   dispatch(getRKSMAssetBalance());
   dispatch(getRDOTAssetBalance());
   dispatch(getRATOMAssetBalance());
-  dispatch(getRSOLAssetBalance());
+  // dispatch(getRSOLAssetBalance());
   dispatch(getRMaticAssetBalance());
 };
 export const getErc20Allowances = (): AppThunk => (dispatch, getState) => {
@@ -147,77 +147,62 @@ export const getErc20Allowances = (): AppThunk => (dispatch, getState) => {
   dispatch(getRKSMErc20Allowance());
   dispatch(getRDOTErc20Allowance());
   dispatch(getRATOMErc20Allowance());
-  dispatch(getRSOLErc20Allowance());
+  // dispatch(getRSOLErc20Allowance());
   dispatch(getRMaticErc20Allowance());
   dispatch(getRETHErc20Allowance());
 };
 export const getETHAssetBalance = (): AppThunk => (dispatch, getState) => {
-  if (getState().globalModule.metaMaskAddress) {
-    const address = getState().globalModule.metaMaskAddress;
-    getAssetBalance(address, ethServer.getRETHTokenAbi(), ethServer.getRETHTokenAddress(), (v: any) => {
-      dispatch(setErcETHBalance(v));
-    });
-  }
+  const address = getState().globalModule.metaMaskAddress;
+  getAssetBalance(address, ethServer.getRETHTokenAbi(), ethServer.getRETHTokenAddress(), (v: any) => {
+    dispatch(setErcETHBalance(v));
+  });
 };
 
 export const getFISAssetBalance = (): AppThunk => (dispatch, getState) => {
-  if (getState().globalModule.metaMaskAddress) {
-    const address = getState().globalModule.metaMaskAddress;
-    getAssetBalance(address, fisServer.getFISTokenAbi(), fisServer.getFISTokenAddress(), (v: any) => {
-      dispatch(setErcFISBalance(v));
-    });
-  }
+  const address = getState().globalModule.metaMaskAddress;
+  getAssetBalance(address, fisServer.getFISTokenAbi(), fisServer.getFISTokenAddress(), (v: any) => {
+    dispatch(setErcFISBalance(v));
+  });
 };
 export const getRFISAssetBalance = (): AppThunk => (dispatch, getState) => {
-  if (getState().globalModule.metaMaskAddress) {
-    const address = getState().globalModule.metaMaskAddress;
-    getAssetBalance(address, fisServer.getRFISTokenAbi(), fisServer.getRFISTokenAddress(), (v: any) => {
-      dispatch(setErcRFISBalance(v));
-    });
-  }
+  const address = getState().globalModule.metaMaskAddress;
+  getAssetBalance(address, fisServer.getRFISTokenAbi(), fisServer.getRFISTokenAddress(), (v: any) => {
+    dispatch(setErcRFISBalance(v));
+  });
 };
 export const getRKSMAssetBalance = (): AppThunk => (dispatch, getState) => {
-  if (getState().globalModule.metaMaskAddress) {
-    const address = getState().globalModule.metaMaskAddress;
-    getAssetBalance(address, ksmServer.getRKSMTokenAbi(), ksmServer.getRKSMTokenAddress(), (v: any) => {
-      dispatch(setErcRKSMBalance(v));
-    });
-  }
+  const address = getState().globalModule.metaMaskAddress;
+  getAssetBalance(address, ksmServer.getRKSMTokenAbi(), ksmServer.getRKSMTokenAddress(), (v: any) => {
+    dispatch(setErcRKSMBalance(v));
+  });
 };
 export const getRDOTAssetBalance = (): AppThunk => (dispatch, getState) => {
-  if (getState().globalModule.metaMaskAddress) {
-    const address = getState().globalModule.metaMaskAddress;
-    getAssetBalance(address, dotServer.getRDOTTokenAbi(), dotServer.getRDOTTokenAddress(), (v: any) => {
-      dispatch(setErcRDOTBalance(v));
-    });
-  }
+  const address = getState().globalModule.metaMaskAddress;
+  getAssetBalance(address, dotServer.getRDOTTokenAbi(), dotServer.getRDOTTokenAddress(), (v: any) => {
+    dispatch(setErcRDOTBalance(v));
+  });
 };
 
 export const getRATOMAssetBalance = (): AppThunk => (dispatch, getState) => {
-  if (getState().globalModule.metaMaskAddress) {
-    const address = getState().globalModule.metaMaskAddress;
-    getAssetBalance(address, atomServer.getTokenAbi(), atomServer.getRATOMTokenAddress(), (v: any) => {
-      dispatch(setErcRATOMBalance(v));
-    });
-  }
+  const address = getState().globalModule.metaMaskAddress;
+  getAssetBalance(address, atomServer.getTokenAbi(), atomServer.getRATOMTokenAddress(), (v: any) => {
+    dispatch(setErcRATOMBalance(v));
+  });
 };
 export const getRSOLAssetBalance = (): AppThunk => (dispatch, getState) => {
-  if (getState().globalModule.metaMaskAddress) {
-    const address = getState().globalModule.metaMaskAddress;
-    getAssetBalance(address, solServer.getTokenAbi(), solServer.getRSOLTokenAddress(), (v: any) => {
-      dispatch(setErcRSOLBalance(v));
-    });
-  }
+  const address = getState().globalModule.metaMaskAddress;
+  getAssetBalance(address, solServer.getTokenAbi(), solServer.getRSOLTokenAddress(), (v: any) => {
+    dispatch(setErcRSOLBalance(v));
+  });
 };
 
 export const getRMaticAssetBalance = (): AppThunk => (dispatch, getState) => {
-  if (getState().globalModule.metaMaskAddress) {
-    const address = getState().globalModule.metaMaskAddress;
-    getAssetBalance(address, maticServer.getTokenAbi(), maticServer.getTokenAddress(), (v: any) => {
-      dispatch(setErcRMaticBalance(v));
-    });
-  }
+  const address = getState().globalModule.metaMaskAddress;
+  getAssetBalance(address, maticServer.getTokenAbi(), maticServer.getTokenAddress(), (v: any) => {
+    dispatch(setErcRMaticBalance(v));
+  });
 };
+
 export const getAssetBalance = (
   ethAddress: string,
   getTokenAbi: string,
