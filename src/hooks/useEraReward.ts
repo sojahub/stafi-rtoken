@@ -1,6 +1,5 @@
-import { UserDeleteOutlined } from '@ant-design/icons';
 import { isEmpty } from 'lodash';
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import config, { getRsymbolByTokenTitle } from 'src/config';
 import { BSC_CHAIN_ID, ETH_CHAIN_ID, SOL_CHAIN_ID, STAFI_CHAIN_ID } from 'src/features/bridgeClice';
@@ -8,7 +7,6 @@ import { setLoading } from 'src/features/globalClice';
 import { rSymbol } from 'src/keyring/defaults';
 import { api } from 'src/util/http';
 import numberUtil from 'src/util/numberUtil';
-import rpc from 'src/util/rpc';
 import { useMetaMaskAccount } from './useMetaMaskAccount';
 import { useSolAccount } from './useSolAccount';
 import { useStafiAccount } from './useStafiAccount';
@@ -65,9 +63,12 @@ export function useEraReward(
       if (res.status === '80000' && res.data) {
         const formatYData = res.data.chartYData.map((element: string) => {
           if (platform === 'ERC20' || platform === 'BEP20') {
-            return numberUtil.tokenAmountToHuman(element, rSymbol.Eth).toFixed(6);
+            return numberUtil.handleAmountRoundToFixed(numberUtil.tokenAmountToHuman(element, rSymbol.Eth), 6);
           } else {
-            return numberUtil.tokenAmountToHuman(element, getRsymbolByTokenTitle(type)).toFixed(6);
+            return numberUtil.handleAmountRoundToFixed(
+              numberUtil.tokenAmountToHuman(element, getRsymbolByTokenTitle(type)),
+              6,
+            );
           }
         });
 
@@ -95,8 +96,14 @@ export function useEraReward(
           let newRTokenBalance = '--';
           let newReward = '--';
           if (platform === 'ERC20' || platform === 'BEP20') {
-            newStakeValue = numberUtil.tokenAmountToHuman(element.stakeValue, rSymbol.Eth).toFixed(6);
-            newRTokenBalance = numberUtil.tokenAmountToHuman(element.rTokenBalance, rSymbol.Eth).toFixed(6);
+            newStakeValue = numberUtil.handleAmountRoundToFixed(
+              numberUtil.tokenAmountToHuman(element.stakeValue, rSymbol.Eth),
+              6,
+            );
+            newRTokenBalance = numberUtil.handleAmountRoundToFixed(
+              numberUtil.tokenAmountToHuman(element.rTokenBalance, rSymbol.Eth),
+              6,
+            );
             if (!isEmpty(element.reward)) {
               newReward = numberUtil.handleAmountFloorToFixed(
                 numberUtil.tokenAmountToHuman(element.reward, rSymbol.Eth),
@@ -104,10 +111,14 @@ export function useEraReward(
               );
             }
           } else if (platform === 'Native') {
-            newStakeValue = numberUtil.tokenAmountToHuman(element.stakeValue, getRsymbolByTokenTitle(type)).toFixed(6);
-            newRTokenBalance = numberUtil
-              .tokenAmountToHuman(element.rTokenBalance, getRsymbolByTokenTitle(type))
-              .toFixed(6);
+            newStakeValue = numberUtil.handleAmountRoundToFixed(
+              numberUtil.tokenAmountToHuman(element.stakeValue, getRsymbolByTokenTitle(type)),
+              6,
+            );
+            newRTokenBalance = numberUtil.handleAmountRoundToFixed(
+              numberUtil.tokenAmountToHuman(element.rTokenBalance, getRsymbolByTokenTitle(type)),
+              6,
+            );
             if (!isEmpty(element.reward)) {
               newReward = numberUtil.handleAmountFloorToFixed(
                 numberUtil.tokenAmountToHuman(element.reward, getRsymbolByTokenTitle(type)),
@@ -160,7 +171,7 @@ export function useEraReward(
         : -1,
     );
     dispatch(setLoading(true));
-  }, [platform, type, userAddress]);
+  }, [dispatch, platform, type, userAddress]);
 
   useEffect(() => {
     fetchData();
