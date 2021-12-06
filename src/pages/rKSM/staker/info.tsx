@@ -13,6 +13,7 @@ import {
   query_rBalances_account,
   setRatioShow,
 } from 'src/features/rKSMClice';
+import { useMetaMaskAccount } from 'src/hooks/useMetaMaskAccount';
 import NumberUtil from 'src/util/numberUtil';
 
 const commonClice = new CommonClice();
@@ -20,6 +21,7 @@ const commonClice = new CommonClice();
 export default function Index(props: any) {
   const dispatch = useDispatch();
   const history = useHistory();
+  const { metaMaskAddress, metaMaskNetworkId } = useMetaMaskAccount();
 
   let platform = 'Native';
   if (history.location.search) {
@@ -34,7 +36,7 @@ export default function Index(props: any) {
     };
   });
 
-  const { tokenAmount, redeemableTokenAmount, metaMaskNetworkId } = useSelector((state: any) => {
+  const { tokenAmount, redeemableTokenAmount } = useSelector((state: any) => {
     const tokenAmount =
       platform === 'Native'
         ? state.rKSMModule.tokenAmount
@@ -45,7 +47,6 @@ export default function Index(props: any) {
         : '--';
 
     return {
-      metaMaskNetworkId: state.globalModule.metaMaskNetworkId,
       tokenAmount,
       redeemableTokenAmount: commonClice.getWillAmount(
         state.rKSMModule.ratio,
@@ -55,10 +56,9 @@ export default function Index(props: any) {
     };
   });
 
-  const { fisAddress, ethAddress } = useSelector((state: any) => {
+  const { fisAddress } = useSelector((state: any) => {
     return {
       fisAddress: state.FISModule.fisAccount && state.FISModule.fisAccount.address,
-      ethAddress: state.rETHModule.ethAccount && state.rETHModule.ethAccount.address,
     };
   });
 
@@ -76,25 +76,25 @@ export default function Index(props: any) {
     } else if (platform === 'BEP20') {
       dispatch(getBEP20RKSMAssetBalance());
     }
-  }, [platform, metaMaskNetworkId, fisAddress, ethAddress, dispatch]);
+  }, [platform, metaMaskNetworkId, fisAddress, metaMaskAddress, dispatch]);
 
   useEffect(() => {
     let count = 0;
     let totalCount = 10;
     let ratioAmount = 0;
     let piece = ratio / totalCount;
-    if (ratio != '--') {
+    if (ratio !== '--') {
       let interval = setInterval(() => {
         count++;
         ratioAmount += piece;
-        if (count == totalCount) {
+        if (count === totalCount) {
           ratioAmount = ratio;
           window.clearInterval(interval);
         }
         dispatch(setRatioShow(NumberUtil.handleFisAmountRateToFixed(ratioAmount)));
       }, 100);
     }
-  }, [ratio]);
+  }, [ratio, dispatch]);
 
   return (
     <Content

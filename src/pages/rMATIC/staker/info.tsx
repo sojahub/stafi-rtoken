@@ -14,12 +14,15 @@ import {
   setRatioShow,
 } from 'src/features/rMATICClice';
 import NumberUtil from 'src/util/numberUtil';
+import { useMetaMaskAccount } from 'src/hooks/useMetaMaskAccount';
+import config from 'src/config';
 
 const commonClice = new CommonClice();
 
 export default function Index(props: any) {
   const dispatch = useDispatch();
   const history = useHistory();
+  const { metaMaskAddress, metaMaskNetworkId } = useMetaMaskAccount();
 
   let platform = 'Native';
   if (history.location.search) {
@@ -34,7 +37,7 @@ export default function Index(props: any) {
     };
   });
 
-  const { tokenAmount, redeemableTokenAmount, metaMaskNetworkId } = useSelector((state: any) => {
+  const { tokenAmount, redeemableTokenAmount } = useSelector((state: any) => {
     const tokenAmount =
       platform === 'Native'
         ? state.rMATICModule.tokenAmount
@@ -45,7 +48,6 @@ export default function Index(props: any) {
         : '--';
 
     return {
-      metaMaskNetworkId: state.globalModule.metaMaskNetworkId,
       tokenAmount,
       redeemableTokenAmount: commonClice.getWillAmount(
         state.rMATICModule.ratio,
@@ -55,10 +57,9 @@ export default function Index(props: any) {
     };
   });
 
-  const { fisAddress, ethAddress } = useSelector((state: any) => {
+  const { fisAddress } = useSelector((state: any) => {
     return {
       fisAddress: state.FISModule.fisAccount && state.FISModule.fisAccount.address,
-      ethAddress: state.rETHModule.ethAccount && state.rETHModule.ethAccount.address,
     };
   });
 
@@ -71,12 +72,12 @@ export default function Index(props: any) {
   useEffect(() => {
     if (platform === 'Native') {
       dispatch(query_rBalances_account());
-    } else if (platform === 'ERC20') {
+    } else if (platform === 'ERC20' && config.metaMaskNetworkIsGoerliEth(metaMaskNetworkId)) {
       dispatch(getERC20RMATICAssetBalance());
-    } else if (platform === 'BEP20') {
+    } else if (platform === 'BEP20' && config.metaMaskNetworkIsBsc(metaMaskNetworkId)) {
       dispatch(getBEP20RMATICAssetBalance());
     }
-  }, [platform, metaMaskNetworkId, fisAddress, ethAddress, dispatch]);
+  }, [platform, metaMaskNetworkId, fisAddress, metaMaskAddress, dispatch]);
 
   useEffect(() => {
     let count = 0;
@@ -94,7 +95,8 @@ export default function Index(props: any) {
         dispatch(setRatioShow(NumberUtil.handleFisAmountRateToFixed(ratioAmount)));
       }, 100);
     }
-  }, [ratio]);
+  }, [ratio, dispatch]);
+
   return (
     <Content
       ratio={ratio}

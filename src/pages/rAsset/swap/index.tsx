@@ -30,12 +30,7 @@ import {
   SOL_CHAIN_ID,
   STAFI_CHAIN_ID,
 } from 'src/features/bridgeClice';
-import {
-  getAssetBalanceAll as getBep20AssetBalanceAll,
-  getBep20Allowances,
-  handleBscAccount,
-  monitoring_Method as bsc_Monitoring_Method,
-} from 'src/features/BSCClice';
+import { getAssetBalanceAll as getBep20AssetBalanceAll, getBep20Allowances } from 'src/features/BSCClice';
 import { getAssetBalanceAll, getErc20Allowances } from 'src/features/ETHClice';
 import {
   checkAddress as fis_checkAddress,
@@ -60,11 +55,7 @@ import {
   query_rBalances_account as dot_query_rBalances_account,
   rTokenRate as dot_rTokenRate,
 } from 'src/features/rDOTClice';
-import {
-  checkEthAddress,
-  get_eth_getBalance,
-  monitoring_Method as eth_Monitoring_Method,
-} from 'src/features/rETHClice';
+import { checkEthAddress } from 'src/features/rETHClice';
 import { getUnbondCommission, query_rBalances_account, rTokenRate as ksm_rTokenRate } from 'src/features/rKSMClice';
 import {
   getUnbondCommission as matic_getUnbondCommission,
@@ -73,12 +64,14 @@ import {
 } from 'src/features/rMATICClice';
 import {
   checkAddress as checkSOLAddress,
-  createSubstrate as solCreateSubstrate,
+  queryBalance as solQueryBalance,
   getUnbondCommission as sol_getUnbondCommission,
   query_rBalances_account as sol_query_rBalances_account,
   rTokenRate as sol_rTokenRate,
+  earglyConnectPhantom,
 } from 'src/features/rSOLClice';
 import { getSlp20Allowances, getSlp20AssetBalanceAll } from 'src/features/SOLClice';
+import { useMetaMaskAccount } from 'src/hooks/useMetaMaskAccount';
 import SolServer from 'src/servers/sol';
 import Back from 'src/shared/components/backIcon';
 import Button from 'src/shared/components/button/button';
@@ -205,6 +198,8 @@ export default function Index(props: any) {
 
   const [showAddSplTokenButton, setShowAddSplTokenButton] = useState(false);
 
+  const { metaMaskAddress, metaMaskNetworkId, metaMaskBalance } = useMetaMaskAccount();
+
   const {
     erc20EstimateFee,
     bep20EstimateFee,
@@ -271,20 +266,26 @@ export default function Index(props: any) {
     }
   });
 
-  const { fisAccount, ethAccount, bscAccount, solAccount } = useSelector((state: any) => {
+  const { fisAccount, solAddress, solTransferrableAmount } = useSelector((state: any) => {
     return {
       fisAccount: state.FISModule.fisAccount,
-      ethAccount: state.rETHModule.ethAccount,
-      bscAccount: state.BSCModule.bscAccount,
-      solAccount: state.rSOLModule.solAccount,
+      solAddress: state.rSOLModule.solAddress,
+      solTransferrableAmount: state.rSOLModule.transferrableAmountShow,
     };
   });
 
-  const { metaMaskNetworkId } = useSelector((state: any) => {
-    return {
-      metaMaskNetworkId: state.globalModule.metaMaskNetworkId,
-    };
-  });
+  const updateSplTokenStatus = async () => {
+    if (destType !== 'spl' || !tokenType) {
+      setShowAddSplTokenButton(false);
+      return;
+    }
+    if (!address || !checkSOLAddress(address)) {
+      setShowAddSplTokenButton(false);
+      return;
+    }
+    const splTokenAccountPubkey = await solServer.getTokenAccountPubkey(address, tokenType.type);
+    setShowAddSplTokenButton(!splTokenAccountPubkey);
+  };
 
   useEffect(() => {
     updateSplTokenStatus();
@@ -337,14 +338,7 @@ export default function Index(props: any) {
 
   useEffect(() => {
     update3rdPlatformData();
-  }, [
-    metaMaskNetworkId,
-    fromType,
-    destType,
-    ethAccount && ethAccount.address,
-    bscAccount && bscAccount.address,
-    solAccount && solAccount.address,
-  ]);
+  }, [metaMaskNetworkId, fromType, destType, metaMaskAddress, solAddress]);
 
   useEffect(() => {
     if (location.state) {
@@ -515,24 +509,22 @@ export default function Index(props: any) {
   };
 
   const update3rdPlatformData = () => {
-    if (fromType == 'erc20' && ethAccount && ethAccount.address) {
-      dispatch(get_eth_getBalance());
+    if (fromType === 'erc20' && metaMaskAddress) {
       dispatch(getErc20Allowances());
       dispatch(getAssetBalanceAll());
-      dispatch(eth_Monitoring_Method());
     }
-    if (fromType == 'bep20' && bscAccount && bscAccount.address) {
-      dispatch(handleBscAccount(bscAccount.address));
+    if (fromType === 'bep20' && metaMaskAddress) {
       dispatch(getBep20Allowances());
       dispatch(getBep20AssetBalanceAll());
-      dispatch(bsc_Monitoring_Method());
     }
-    if (fromType == 'spl' && solAccount && solAccount.address) {
-      if (solAccount) {
-        dispatch(solCreateSubstrate(solAccount));
+    if (fromType === 'spl') {
+      if (solAddress) {
+        dispatch(solQueryBalance());
+        dispatch(getSlp20AssetBalanceAll());
+        dispatch(getSlp20Allowances());
+      } else {
+        dispatch(earglyConnectPhantom());
       }
-      dispatch(getSlp20AssetBalanceAll());
-      dispatch(getSlp20Allowances());
     }
   };
 
@@ -548,15 +540,15 @@ export default function Index(props: any) {
     setAddress('');
   };
 
-  if (fromTypeData && fromTypeData.type == 'native' && (!fisAccount || !fisAccount.address)) {
+  if (fromTypeData && fromTypeData.type === 'native' && (!fisAccount || !fisAccount.address)) {
     return <Redirect to='/rAsset/home/native' />;
   }
 
-  if (fromTypeData && fromTypeData.type == 'erc20' && (!ethAccount || !ethAccount.address)) {
-    return <Redirect to='/rAsset/home/eth' />;
+  if (fromTypeData && fromTypeData.type === 'erc20' && !metaMaskAddress) {
+    return <Redirect to='/rAsset/home/erc' />;
   }
 
-  if (fromTypeData && fromTypeData.type == 'bep20' && (!bscAccount || !bscAccount.address)) {
+  if (fromTypeData && fromTypeData.type === 'bep20' && !metaMaskAddress) {
     return <Redirect to='/rAsset/home/bep' />;
   }
 
@@ -596,19 +588,6 @@ export default function Index(props: any) {
     history.replace(`/rAsset/swap/${fromType}/${type.type}`, {
       rSymbol: tokenType && tokenType.title,
     });
-  };
-
-  const updateSplTokenStatus = async () => {
-    if (destType !== 'spl' || !tokenType) {
-      setShowAddSplTokenButton(false);
-      return;
-    }
-    if (!address || !checkSOLAddress(address)) {
-      setShowAddSplTokenButton(false);
-      return;
-    }
-    const splTokenAccountPubkey = await solServer.getTokenAccountPubkey(address, tokenType.type);
-    setShowAddSplTokenButton(!splTokenAccountPubkey);
   };
 
   return (
@@ -785,19 +764,19 @@ export default function Index(props: any) {
                 return;
               }
               if (fromTypeData && fromTypeData.type === 'erc20') {
-                if (!ethAccount || Number(ethAccount.balance) <= Number(estimateEthFee)) {
+                if (isNaN(Number(metaMaskBalance)) || Number(metaMaskBalance) <= Number(estimateEthFee)) {
                   message.error(`No enough ETH to pay for the fee`);
                   return;
                 }
               }
               if (fromTypeData && fromTypeData.type === 'bep20') {
-                if (!bscAccount || Number(bscAccount.balance) <= Number(estimateBscFee)) {
+                if (isNaN(Number(metaMaskBalance)) || Number(metaMaskBalance) <= Number(estimateBscFee)) {
                   message.error(`No enough BNB to pay for the fee`);
                   return;
                 }
               }
               if (fromTypeData && fromTypeData.type === 'spl') {
-                if (!solAccount || Number(solAccount.balance) <= Number(estimateSolFee)) {
+                if (isNaN(Number(solTransferrableAmount)) || Number(solTransferrableAmount) <= Number(estimateSolFee)) {
                   message.error(`No enough SOL to pay for the fee`);
                   return;
                 }

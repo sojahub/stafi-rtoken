@@ -14,12 +14,14 @@ import NumberUtil from 'src/util/numberUtil';
 import qs from 'querystring';
 import CommonClice from 'src/features/commonClice';
 import { getRBNBAssetBalance } from 'src/features/BSCClice';
+import { useMetaMaskAccount } from 'src/hooks/useMetaMaskAccount';
 
 const commonClice = new CommonClice();
 
 export default function Index(props: any) {
   const dispatch = useDispatch();
   const history = useHistory();
+  const { metaMaskAddress } = useMetaMaskAccount();
 
   let platform = 'Native';
   if (history.location.search) {
@@ -49,10 +51,9 @@ export default function Index(props: any) {
     },
   );
 
-  const { fisAddress, ethAddress } = useSelector((state: any) => {
+  const { fisAddress } = useSelector((state: any) => {
     return {
       fisAddress: state.FISModule.fisAccount && state.FISModule.fisAccount.address,
-      ethAddress: state.rETHModule.ethAccount && state.rETHModule.ethAccount.address,
     };
   });
 
@@ -69,7 +70,7 @@ export default function Index(props: any) {
     } else if (platform === 'BEP20') {
       dispatch(getRBNBAssetBalance());
     }
-  }, [platform, metaMaskNetworkId, fisAddress, ethAddress, dispatch]);
+  }, [platform, metaMaskNetworkId, fisAddress, metaMaskAddress, dispatch]);
 
   useEffect(() => {
     let count = 0;

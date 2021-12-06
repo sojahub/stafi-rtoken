@@ -5,20 +5,24 @@ import rDOT_svg from 'src/assets/images/rDOT.svg';
 import HomeCard from 'src/components/card/homeCard';
 import { connectPolkadot } from 'src/features/globalClice';
 import Button from 'src/shared/components/button/connect_button';
+import PubSub from 'pubsub-js';
 import './index.scss';
 
 export default function Inde(props: any) {
   const dispatch = useDispatch();
+
   const hasAcount = useSelector((state: any) => {
-    if (state.FISModule.fisAccount) {
+    if (state.FISModule.fisAccount && state.rDOTModule.dotAccount) {
       return true;
     } else {
       return false;
     }
   });
+
   if (hasAcount) {
     return <Redirect to='/rDOT/type' />;
   }
+
   return (
     <HomeCard
       title={
@@ -38,6 +42,7 @@ export default function Inde(props: any) {
               props.history.push('/rDOT/wallet');
             }),
           );
+          // PubSub.publish('connectDotWallet');
         }}>
         Connect to Polkadotjs extension
       </Button>

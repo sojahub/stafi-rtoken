@@ -11,9 +11,10 @@ import rasset_rksm_svg from 'src/assets/images/r_ksm.svg';
 import rasset_rmatic_svg from 'src/assets/images/r_matic.svg';
 import config from 'src/config/index';
 import { getRtokenPriceList } from 'src/features/bridgeClice';
-import { connectMetamask, getAssetBalanceAll, handleBscAccount, monitoring_Method } from 'src/features/BSCClice';
+import { getAssetBalanceAll } from 'src/features/BSCClice';
 import CommonClice from 'src/features/commonClice';
 import { getUnbondCommission as fis_getUnbondCommission, rTokenRate as fis_rTokenRate } from 'src/features/FISClice';
+import { initMetaMaskAccount } from 'src/features/globalClice';
 import {
   getUnbondCommission as atom_getUnbondCommission,
   rTokenRate as atom_rTokenRate,
@@ -26,6 +27,7 @@ import {
   rTokenRate as matic_rTokenRate,
 } from 'src/features/rMATICClice';
 import { getUnbondCommission as sol_getUnbondCommission } from 'src/features/rSOLClice';
+import { useMetaMaskAccount } from 'src/hooks/useMetaMaskAccount';
 import Button from 'src/shared/components/button/connect_button';
 import { requestSwitchMetaMaskNetwork } from 'src/util/metaMaskUtil';
 import NumberUtil from 'src/util/numberUtil';
@@ -38,9 +40,9 @@ const commonClice = new CommonClice();
 export default function Index(props: any) {
   const dispatch = useDispatch();
   const history = useHistory();
+  const { metaMaskAddress, metaMaskNetworkId } = useMetaMaskAccount();
 
   const {
-    bscAccount,
     ksm_bepBalance,
     fis_bepBalance,
     rfis_bepBalance,
@@ -58,7 +60,6 @@ export default function Index(props: any) {
     unitPriceList,
   } = useSelector((state: any) => {
     return {
-      bscAccount: state.BSCModule.bscAccount,
       unitPriceList: state.bridgeModule.priceList,
       ksm_bepBalance: state.BSCModule.bepRKSMBalance,
       fis_bepBalance: state.BSCModule.bepFISBalance,
@@ -101,31 +102,25 @@ export default function Index(props: any) {
     };
   });
 
-  const { metaMaskNetworkId } = useSelector((state: any) => {
-    return {
-      metaMaskNetworkId: state.globalModule.metaMaskNetworkId,
-    };
-  });
-
   const totalPrice = useMemo(() => {
     let count: any = '--';
     unitPriceList.forEach((item: any) => {
-      if (count == '--') {
+      if (count === '--') {
         count = 0;
       }
-      if (item.symbol == 'rFIS' && rfis_bepBalance && rfis_bepBalance != '--') {
+      if (item.symbol === 'rFIS' && rfis_bepBalance && rfis_bepBalance !== '--') {
         count = count + item.price * rfis_bepBalance;
-      } else if (item.symbol == 'FIS' && fis_bepBalance && fis_bepBalance != '--') {
+      } else if (item.symbol === 'FIS' && fis_bepBalance && fis_bepBalance !== '--') {
         count = count + item.price * fis_bepBalance;
-      } else if (item.symbol == 'rKSM' && ksm_bepBalance && ksm_bepBalance != '--') {
+      } else if (item.symbol === 'rKSM' && ksm_bepBalance && ksm_bepBalance !== '--') {
         count = count + item.price * ksm_bepBalance;
-      } else if (item.symbol == 'rDOT' && dot_bepBalance && dot_bepBalance != '--') {
+      } else if (item.symbol === 'rDOT' && dot_bepBalance && dot_bepBalance !== '--') {
         count = count + item.price * dot_bepBalance;
-      } else if (item.symbol == 'rATOM' && atom_bepBalance && atom_bepBalance != '--') {
+      } else if (item.symbol === 'rATOM' && atom_bepBalance && atom_bepBalance !== '--') {
         count = count + item.price * atom_bepBalance;
-      } else if (item.symbol == 'rETH' && reth_bepBalance && reth_bepBalance != '--') {
+      } else if (item.symbol === 'rETH' && reth_bepBalance && reth_bepBalance !== '--') {
         count = count + item.price * reth_bepBalance;
-      } else if (item.symbol == 'rBNB' && rbnb_bepBalance && rbnb_bepBalance != '--') {
+      } else if (item.symbol === 'rBNB' && rbnb_bepBalance && rbnb_bepBalance !== '--') {
         count = count + item.price * rbnb_bepBalance;
       }
     });
@@ -138,6 +133,7 @@ export default function Index(props: any) {
     dot_bepBalance,
     atom_bepBalance,
     reth_bepBalance,
+    rbnb_bepBalance,
   ]);
 
   let time: any;
@@ -152,11 +148,10 @@ export default function Index(props: any) {
         clearInterval(time);
       }
     };
-  }, [metaMaskNetworkId, bscAccount && bscAccount.address]);
+  }, [metaMaskNetworkId, metaMaskAddress]);
 
   useEffect(() => {
     dispatch(getRtokenPriceList());
-    dispatch(monitoring_Method());
   }, []);
 
   useEffect(() => {
@@ -166,9 +161,7 @@ export default function Index(props: any) {
   }, [metaMaskNetworkId]);
 
   const updateData = () => {
-    if (bscAccount && bscAccount.address) {
-      dispatch(handleBscAccount(bscAccount.address));
-
+    if (metaMaskAddress) {
       dispatch(getAssetBalanceAll());
 
       dispatch(ksm_rTokenRate());
@@ -184,8 +177,6 @@ export default function Index(props: any) {
       dispatch(sol_getUnbondCommission());
       dispatch(matic_getUnbondCommission());
       dispatch(bnb_getUnbondCommission());
-    } else {
-      dispatch(connectMetamask(config.bscChainId(), true));
     }
   };
 
@@ -203,7 +194,7 @@ export default function Index(props: any) {
 
   return (
     <div>
-      {bscAccount && bscAccount.address ? (
+      {metaMaskAddress ? (
         <>
           <DataList>
             {/* <DataItem
@@ -312,8 +303,7 @@ export default function Index(props: any) {
           <Button
             icon={metamask}
             onClick={() => {
-              dispatch(connectMetamask(config.bscChainId()));
-              dispatch(monitoring_Method());
+              dispatch(initMetaMaskAccount());
             }}>
             Connect to Metamask
           </Button>

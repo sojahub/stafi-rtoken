@@ -7,14 +7,13 @@ import { bondSwitch } from 'src/features/FISClice';
 import { reloadData } from 'src/features/globalClice';
 import {
   bondFees,
-  connectMetamask,
+  rTokenRate,
   continueProcess,
   getPools,
   getTotalIssuance,
-  monitoring_Method,
   query_rBalances_account,
-  rTokenRate,
 } from 'src/features/rMATICClice';
+import { useMetaMaskAccount } from 'src/hooks/useMetaMaskAccount';
 import { Symbol } from 'src/keyring/defaults';
 import Content from 'src/shared/components/content';
 import { getLocalStorageItem, Keys } from 'src/util/common';
@@ -22,10 +21,10 @@ import '../template/index.scss';
 
 export default function Index(props: any) {
   const dispatch = useDispatch();
+  const { metaMaskAddress, metaMaskNetworkId } = useMetaMaskAccount();
 
-  const { fisAccount, metaMaskNetworkId } = useSelector((state: any) => {
+  const { fisAccount } = useSelector((state: any) => {
     return {
-      metaMaskNetworkId: state.globalModule.metaMaskNetworkId,
       fisAccount: state.FISModule.fisAccount,
     };
   });
@@ -34,16 +33,11 @@ export default function Index(props: any) {
     dispatch(getTotalIssuance());
     dispatch(rTokenRate());
     dispatch(query_rBalances_account());
-  }, [fisAccount]);
+  }, [dispatch, fisAccount]);
 
   useEffect(() => {
     dispatch(bondFees());
     dispatch(bondSwitch());
-    // if(getLocalStorageItem(Keys.AtomAccountKey)){
-    //   setTimeout(()=>{
-    //     dispatch(connectAtomjs());
-    //   },1000)
-    // }
     if (getLocalStorageItem(Keys.FisAccountKey)) {
       dispatch(reloadData(Symbol.Fis));
     }
@@ -51,31 +45,20 @@ export default function Index(props: any) {
     setTimeout(() => {
       dispatch(continueProcess());
     }, 50);
-    // setTimeout(()=>{
-    //   dispatch(keplr_keystorechange());
-    // },500)
-  }, []);
-
-  const { maticAccount } = useSelector((state: any) => {
-    return {
-      maticAccount: state.rMATICModule.maticAccount,
-    };
-  });
+  }, [dispatch]);
 
   useEffect(() => {
-    maticAccount && maticAccount.address && dispatch(reloadData(Symbol.Matic));
-  }, [maticAccount && maticAccount.address, metaMaskNetworkId]);
-
-  useEffect(() => {
-    dispatch(connectMetamask(config.ethChainId(), true));
-    dispatch(monitoring_Method());
-  }, []);
+    if (metaMaskAddress && config.metaMaskNetworkIsGoerliEth(metaMaskNetworkId)) {
+      dispatch(reloadData(Symbol.Matic));
+    }
+  }, [dispatch, metaMaskAddress, metaMaskNetworkId]);
 
   const { loading } = useSelector((state: any) => {
     return {
       loading: state.globalModule.loading,
     };
   });
+
   return (
     <div className='stafi_layout'>
       {/* <LiquidingProcesSlider route={props.route}  history={props.history}/> */}

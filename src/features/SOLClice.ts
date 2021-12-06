@@ -46,14 +46,14 @@ export const getSlp20Allowances = (): AppThunk => (dispatch, getState) => {
 };
 
 export const getFisAssetBalance = (): AppThunk => (dispatch, getState) => {
-  const address = getState().rSOLModule.solAccount && getState().rSOLModule.solAccount.address;
+  const address = getState().rSOLModule.solAddress;
   getAssetBalance(address, 'fis', (v: any) => {
     dispatch(setFisBalance(v));
   });
 };
 
 export const getRSOLAssetBalance = (): AppThunk => (dispatch, getState) => {
-  const address = getState().rSOLModule.solAccount && getState().rSOLModule.solAccount.address;
+  const address = getState().rSOLModule.solAddress;
   getAssetBalance(address, 'rsol', (v: any) => {
     dispatch(setRSOLBalance(v));
   });
@@ -81,16 +81,14 @@ export const getAssetBalance = async (address: string, tokenType: string, cb?: F
 };
 
 export const getFisAllowance = (): AppThunk => (dispatch, getState) => {
-  if (getState().rETHModule.ethAccount) {
-    const address = getState().rETHModule.ethAccount.address;
-    getTokenAllowance(address);
+  if (getState().globalModule.metaMaskAddress) {
+    getTokenAllowance(getState().globalModule.metaMaskAddress);
   }
 };
 
 export const getRSOLAllowance = (): AppThunk => (dispatch, getState) => {
-  if (getState().rETHModule.ethAccount) {
-    const address = getState().rETHModule.ethAccount.address;
-    getTokenAllowance(address);
+  if (getState().globalModule.metaMaskAddress) {
+    getTokenAllowance(getState().globalModule.metaMaskAddress);
   }
 };
 

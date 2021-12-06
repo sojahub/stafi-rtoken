@@ -15,6 +15,9 @@ const account = (type: string) => {
       if (getLocalStorageItem(Keys.KsmAccountKey) == null && getLocalStorageItem(Keys.FisAccountKey)) {
         return '/rKSM/wallet';
       }
+      if (getLocalStorageItem(Keys.KsmAccountKey) && getLocalStorageItem(Keys.FisAccountKey) == null) {
+        return '/rKSM/fiswallet';
+      }
       return true;
     case Symbol.Atom:
       if (getLocalStorageItem(Keys.AtomAccountKey) == null || getLocalStorageItem(Keys.FisAccountKey) == null) {
@@ -28,27 +31,27 @@ const account = (type: string) => {
       if (getLocalStorageItem(Keys.DotAccountKey) == null && getLocalStorageItem(Keys.FisAccountKey)) {
         return '/rDOT/wallet';
       }
+      if (getLocalStorageItem(Keys.DotAccountKey) && getLocalStorageItem(Keys.FisAccountKey) == null) {
+        return '/rDOT/fiswallet';
+      }
       return true;
     case Symbol.Eth:
-      if (getLocalStorageItem(Keys.MetamaskAccountKey) == null && getLocalStorageItem(Keys.FisAccountKey) == null) {
+      if (getLocalStorageItem(Keys.FisAccountKey) == null) {
         return '/rETH/home';
-      }
-      if (getLocalStorageItem(Keys.MetamaskAccountKey) == null && getLocalStorageItem(Keys.FisAccountKey)) {
-        return '/rETH/wallet';
       }
       return true;
     case Symbol.Sol:
-      if (getLocalStorageItem(Keys.SolAccountKey) == null || getLocalStorageItem(Keys.FisAccountKey) == null) {
+      if (getLocalStorageItem(Keys.FisAccountKey) == null) {
         return '/rSOL/home';
       }
       return true;
     case Symbol.Matic:
-      if (getLocalStorageItem(Keys.MaticAccountKey) == null || getLocalStorageItem(Keys.FisAccountKey) == null) {
+      if (getLocalStorageItem(Keys.FisAccountKey) == null) {
         return '/rMATIC/home';
       }
       return true;
     case Symbol.Bnb:
-      if (getLocalStorageItem(Keys.MetamaskAccountKey) == null || getLocalStorageItem(Keys.FisAccountKey) == null) {
+      if (getLocalStorageItem(Keys.FisAccountKey) == null) {
         return '/rBNB/home';
       }
       return true;

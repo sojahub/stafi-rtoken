@@ -27,15 +27,18 @@ export default function Index(props: any) {
   useEffect(() => {
     dispatch(bondFees());
     dispatch(bondSwitch());
-    if (getLocalStorageItem(Keys.KsmAccountKey) && getLocalStorageItem(Keys.FisAccountKey)) {
+    if (getLocalStorageItem(Keys.KsmAccountKey)) {
       dispatch(reloadData(Symbol.Ksm));
+    }
+    if (getLocalStorageItem(Keys.FisAccountKey)) {
       dispatch(reloadData(Symbol.Fis));
     }
     dispatch(getPools());
     setTimeout(() => {
       dispatch(continueProcess());
     }, 50);
-  }, []);
+  }, [dispatch]);
+
   const { loading } = useSelector((state: any) => {
     return {
       loading: state.globalModule.loading,

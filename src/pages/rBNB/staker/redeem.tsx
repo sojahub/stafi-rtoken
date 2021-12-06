@@ -8,6 +8,7 @@ import CommonClice from 'src/features/commonClice';
 import { setLoading } from 'src/features/globalClice';
 import { getUnbondCommission, query_rBalances_account, rTokenRate, unbond, unbondFees } from 'src/features/rBNBClice';
 import { checkEthAddress } from 'src/features/rETHClice';
+import { useMetaMaskAccount } from 'src/hooks/useMetaMaskAccount';
 import NumberUtil from 'src/util/numberUtil';
 
 const commonClice = new CommonClice();
@@ -17,41 +18,32 @@ export default function Index(props: any) {
   const [recipient, setRecipient] = useState<string>();
   const [amount, setAmount] = useState<any>();
   const [visible, setVisible] = useState(false);
+  const { metaMaskAddress } = useMetaMaskAccount();
 
-  const {
-    tokenAmount,
-    unbondCommission,
-    ratio,
-    fisFee,
-    address,
-    unBondFees,
-    willAmount,
-    estimateUnBondTxFees,
-    fisBalance,
-  } = useSelector((state: any) => {
-    let unbondCommission: any = 0;
-    let ratio = state.rBNBModule.ratio;
-    let tokenAmount = state.rBNBModule.tokenAmount;
+  const { tokenAmount, unbondCommission, ratio, fisFee, unBondFees, willAmount, estimateUnBondTxFees, fisBalance } =
+    useSelector((state: any) => {
+      let unbondCommission: any = 0;
+      let ratio = state.rBNBModule.ratio;
+      let tokenAmount = state.rBNBModule.tokenAmount;
 
-    if (state.rBNBModule.unbondCommission && amount) {
-      unbondCommission = amount * state.rBNBModule.unbondCommission;
-    }
-    return {
-      ratio: ratio,
-      tokenAmount: tokenAmount,
-      unbondCommission: unbondCommission,
-      fisFee: state.rBNBModule.unbondCommission,
-      address: state.rETHModule.ethAccount && state.rETHModule.ethAccount.address,
-      unBondFees: state.rBNBModule.unBondFees,
-      willAmount: commonClice.getWillAmount(ratio, state.rBNBModule.unbondCommission, amount),
-      estimateUnBondTxFees: state.FISModule.estimateUnBondTxFees,
-      fisBalance: state.FISModule.fisAccount.balance,
-    };
-  });
+      if (state.rBNBModule.unbondCommission && amount) {
+        unbondCommission = amount * state.rBNBModule.unbondCommission;
+      }
+      return {
+        ratio: ratio,
+        tokenAmount: tokenAmount,
+        unbondCommission: unbondCommission,
+        fisFee: state.rBNBModule.unbondCommission,
+        unBondFees: state.rBNBModule.unBondFees,
+        willAmount: commonClice.getWillAmount(ratio, state.rBNBModule.unbondCommission, amount),
+        estimateUnBondTxFees: state.FISModule.estimateUnBondTxFees,
+        fisBalance: state.FISModule.fisAccount.balance,
+      };
+    });
 
   useEffect(() => {
-    setRecipient(address);
-  }, [address]);
+    setRecipient(metaMaskAddress);
+  }, [metaMaskAddress]);
 
   useEffect(() => {
     dispatch(query_rBalances_account());
@@ -61,7 +53,7 @@ export default function Index(props: any) {
     return () => {
       dispatch(setLoading(false));
     };
-  }, []);
+  }, [dispatch]);
 
   return (
     <>

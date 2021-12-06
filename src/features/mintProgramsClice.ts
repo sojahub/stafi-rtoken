@@ -249,7 +249,7 @@ export const claimREthFisReward =
     dispatch(setLoading(true));
     const notice_uuid = stafi_uuid();
     const fisAddress = getState().FISModule.fisAccount.address;
-    const ethAddress = getState().rETHModule.ethAccount && getState().rETHModule.ethAccount.address;
+    const ethAddress = getState().globalModule.metaMaskAddress;
 
     const keyringInstance = keyring.init('fis');
     const fisPubkey = u8aToHex(keyringInstance.decodeAddress(fisAddress), -1, false);

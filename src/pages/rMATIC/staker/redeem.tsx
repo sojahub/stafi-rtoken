@@ -41,7 +41,7 @@ export default function Index(props: any) {
       tokenAmount: tokenAmount,
       unbondCommission: unbondCommission,
       fisFee: state.rMATICModule.unbondCommission,
-      address: state.rMATICModule.maticAccount.address,
+      address: state.globalModule.metaMaskAddress,
       unBondFees: state.rMATICModule.unBondFees,
       willAmount: commonClice.getWillAmount(ratio, state.rMATICModule.unbondCommission, amount),
       estimateUnBondTxFees: state.FISModule.estimateUnBondTxFees,

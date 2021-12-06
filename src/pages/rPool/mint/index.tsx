@@ -18,12 +18,12 @@ import rksmIcon from 'src/assets/images/r_ksm.svg';
 import rmaticIcon from 'src/assets/images/r_matic.svg';
 import stafiWhiteIcon from 'src/assets/images/stafi_white.svg';
 import ClaimModal from 'src/components/modal/ClaimModal';
-import config, { getSymbolRTitle, getSymbolTitle } from 'src/config/index';
+import { getSymbolRTitle, getSymbolTitle } from 'src/config/index';
 import { getRtokenPriceList } from 'src/features/bridgeClice';
 import { queryBalance as fis_queryBalance } from 'src/features/FISClice';
-import { connectPolkadot_fis } from 'src/features/globalClice';
+import { connectPolkadot_fis, initMetaMaskAccount } from 'src/features/globalClice';
 import { claimFisReward, claimREthFisReward } from 'src/features/mintProgramsClice';
-import { connectMetamask, monitoring_Method } from 'src/features/rETHClice';
+import { useMetaMaskAccount } from 'src/hooks/useMetaMaskAccount';
 import { rSymbol } from 'src/keyring/defaults';
 import RPoolServer from 'src/servers/rpool';
 import Button from 'src/shared/components/button/connect_button';
@@ -54,23 +54,25 @@ export default function MintOverview() {
   const [claimModalVisible, setClaimModalVisible] = useState(false);
   const [fisAccountModalVisible, setFisAccountModalVisible] = useState(false);
 
-  const { fisAccount, ethAccount, unitPriceList } = useSelector((state: any) => {
+  const { metaMaskAddress } = useMetaMaskAccount();
+
+  const { fisAccount, fisAddress, unitPriceList } = useSelector((state: any) => {
     return {
       fisAccount: state.FISModule.fisAccount,
-      ethAccount: state.rETHModule.ethAccount,
+      fisAddress: state.FISModule.fisAccount && state.FISModule.fisAccount.address,
       unitPriceList: state.bridgeModule.priceList,
     };
   });
 
   useEffect(() => {
-    if (fisAccount && fisAccount.address) {
+    if (fisAddress) {
       dispatch(getRtokenPriceList());
     }
-  }, [fisAccount && fisAccount.address]);
+  }, [dispatch, fisAddress]);
 
   useEffect(() => {
     initData();
-  }, [fisAccount && fisAccount.address, unitPriceList]);
+  }, [fisAddress, unitPriceList]);
 
   useInterval(() => {
     initData();
@@ -83,11 +85,11 @@ export default function MintOverview() {
 
   const showContent = useMemo(() => {
     if (Number(tokenSymbol) === rSymbol.Eth) {
-      return ethAccount && ethAccount && fisAccount && fisAccount.address;
+      return metaMaskAddress && fisAddress;
     } else {
-      return fisAccount && fisAccount.address;
+      return fisAddress;
     }
-  }, [fisAccount && fisAccount.address, ethAccount && ethAccount.address]);
+  }, [fisAddress, metaMaskAddress, tokenSymbol]);
 
   const mintedValue = useMemo(() => {
     let res: any = '--';
@@ -101,10 +103,10 @@ export default function MintOverview() {
       }
     }
     return res;
-  }, [unitPriceList, actData, rTokenName]);
+  }, [unitPriceList, actData, rTokenName, tokenSymbol]);
 
   const initData = async () => {
-    if (fisAccount) {
+    if (fisAddress) {
       dispatch(fis_queryBalance(fisAccount));
     }
     let unitPrice = unitPriceList?.find((item: any) => {
@@ -116,8 +118,8 @@ export default function MintOverview() {
     if (tokenSymbol && cycle) {
       let response;
       if (Number(tokenSymbol) === rSymbol.Eth) {
-        if (ethAccount && ethAccount.address) {
-          response = await rPoolServer.getREthMintOverview(cycle, ethAccount.address, fisPrice && fisPrice.price);
+        if (metaMaskAddress) {
+          response = await rPoolServer.getREthMintOverview(cycle, metaMaskAddress, fisPrice && fisPrice.price);
         }
       } else {
         if (fisAccount && fisAccount.address) {
@@ -295,11 +297,11 @@ export default function MintOverview() {
 
           {Number(tokenSymbol) === rSymbol.Eth && (
             <Button
-              disabled={ethAccount && ethAccount.address}
+              disabled={metaMaskAddress}
               icon={metamask}
               width={'400px'}
               onClick={() => {
-                dispatch(connectMetamask(config.ethChainId()));
+                dispatch(initMetaMaskAccount());
               }}>
               Connect to MetaMask
             </Button>

@@ -4,26 +4,26 @@ import { Redirect } from 'react-router';
 import metamask from 'src/assets/images/metamask.png';
 import rFIS_svg from 'src/assets/images/rFIS.svg';
 import HomeCard from 'src/components/card/homeCard';
-import config from "src/config/index";
-import { connectPolkadot_fis } from 'src/features/globalClice';
-import { connectMetamask } from 'src/features/rETHClice';
+import { connectPolkadot_fis, initMetaMaskAccount } from 'src/features/globalClice';
+import { useMetaMaskAccount } from 'src/hooks/useMetaMaskAccount';
 import Button from 'src/shared/components/button/connect_button';
 import Modal from 'src/shared/components/modal/connectModal';
 import Page_FIS from '../../rATOM/selectWallet_rFIS/index';
 import './index.scss';
 
 export default function Inde(props: any) {
-  const [visible, setVisible] = useState(false);
   const dispatch = useDispatch();
-  const { fisAccount, ethAccount, fisAccounts } = useSelector((state: any) => {
+  const { metaMaskAddress } = useMetaMaskAccount();
+  const [visible, setVisible] = useState(false);
+
+  const { fisAccount, fisAccounts } = useSelector((state: any) => {
     return {
       fisAccount: state.FISModule.fisAccount,
       fisAccounts: state.FISModule.fisAccounts,
-      ethAccount: state.rETHModule.ethAccount,
     };
   });
 
-  if (fisAccount && fisAccount.address && ethAccount && ethAccount.address) {
+  if (fisAccount && fisAccount.address && metaMaskAddress) {
     return <Redirect to='/rBNB/type' />;
   }
 
@@ -37,10 +37,10 @@ export default function Inde(props: any) {
       subTitle={'Staking via StaFi Staking Contract and get rMATIC in return'}
       onIntroUrl=''>
       <Button
-        disabled={!!(ethAccount && ethAccount.address)}
+        disabled={!!metaMaskAddress}
         icon={metamask}
         onClick={() => {
-          dispatch(connectMetamask(config.bscChainId()));
+          dispatch(initMetaMaskAccount());
           if (fisAccount) {
             props.history.push('/rBNB/type');
           } else if (fisAccounts && fisAccounts.length > 0) {

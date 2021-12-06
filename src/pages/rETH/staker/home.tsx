@@ -49,7 +49,7 @@ export default function Index(props: any) {
           dispatch(
             send(amount, () => {
               dispatch(reloadData());
-              props.history.push('/rETH/staker/insurance');
+              props.history.push('/rETH/staker/info');
             }),
           );
         }}

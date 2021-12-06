@@ -17,7 +17,6 @@ import RpcServer, { pageCount } from 'src/servers/rpc/index';
 import Stafi from 'src/servers/stafi/index';
 import { getLocalStorageItem, Keys, removeLocalStorageItem, setLocalStorageItem, stafi_uuid } from 'src/util/common';
 import localStorageUtil from 'src/util/localStorage';
-import numberUtil from 'src/util/numberUtil';
 import NumberUtil from 'src/util/numberUtil';
 import { AppThunk } from '../store';
 import { ETH_CHAIN_ID, STAFI_CHAIN_ID, updateSwapParamsOfBep, updateSwapParamsOfErc } from './bridgeClice';
@@ -1034,9 +1033,9 @@ export const rTokenLedger = (): AppThunk => async (dispatch, getState) => {
 export const getLastEraRate = (): AppThunk => async (dispatch, getState) => {
   try {
     const fisSource = getState().FISModule.fisAccount && getState().FISModule.fisAccount.address;
-    const ethAddress = getState().rETHModule.ethAccount && getState().rETHModule.ethAccount.address;
-    const solAddress = getState().rSOLModule.solAccount && getState().rSOLModule.solAccount.address;
-    const bscAddress = getState().BSCModule.bscAccount && getState().BSCModule.bscAccount.address;
+    const ethAddress = getState().globalModule.metaMaskAddress;
+    const solAddress = getState().rSOLModule.solAddress;
+    const bscAddress = getState().globalModule.metaMaskAddress;
     const result = await rpcServer.getReward(fisSource, ethAddress, rSymbol.Atom, 0, bscAddress, solAddress);
     if (result.status === 80000) {
       if (result.data.rewardList.length > 1) {
@@ -1113,19 +1112,14 @@ export const getReward =
   (pageIndex: Number, cb: Function): AppThunk =>
   async (dispatch, getState) => {
     const fisSource = getState().FISModule.fisAccount.address;
-    const ethAccount = getState().rETHModule.ethAccount;
+    const ethAddress = getState().globalModule.metaMaskAddress;
     dispatch(setLoading(true));
     try {
       if (pageIndex == 0) {
         dispatch(setRewardList([]));
         dispatch(setRewardList_lastdata(null));
       }
-      const result = await rpcServer.getReward(
-        fisSource,
-        ethAccount ? ethAccount.address : '',
-        rSymbol.Atom,
-        pageIndex,
-      );
+      const result = await rpcServer.getReward(fisSource, ethAddress, rSymbol.Atom, pageIndex);
       if (result.status == 80000) {
         const rewardList = getState().rATOMModule.rewardList;
         if (result.data.rewardList.length > 0) {

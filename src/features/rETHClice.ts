@@ -57,7 +57,6 @@ const rETHClice = createSlice({
     currentPoolStatus: null,
     currentTotalDeposit: 0,
     selfDeposited: '--',
-    isload_monitoring: false,
     status_Apr: '--',
     totalStakedETH: '--',
     totalStakedETHShow: '--',
@@ -141,9 +140,6 @@ const rETHClice = createSlice({
     setSelfDeposited(state, { payload }) {
       state.selfDeposited = payload;
     },
-    setIsloadMonitoring(state, { payload }) {
-      state.isload_monitoring = payload;
-    },
     setStatus_Apr(state, { payload }) {
       state.status_Apr = payload;
     },
@@ -212,7 +208,6 @@ export const {
   setCurrentPoolStatus,
   setCurrentTotalDeposit,
   setSelfDeposited,
-  setIsloadMonitoring,
   setStatus_Apr,
   setTotalStakedETH,
   setTotalStakedETHShow,
@@ -232,57 +227,6 @@ export const {
 
 declare const window: any;
 declare const ethereum: any;
-
-export const connectMetamask =
-  (targetChainId: string, isAutoConnect?: boolean): AppThunk =>
-  async (dispatch, getState) => {
-    if (typeof window.ethereum !== 'undefined' && ethereum.isMetaMask) {
-      ethereum.autoRefreshOnNetworkChange = false;
-
-      ethereum.request({ method: 'eth_chainId' }).then((chainId: any) => {
-        if (isdev()) {
-          if (chainId != targetChainId) {
-            if (targetChainId === '0x3') {
-              if (!isAutoConnect) {
-                message.warning('Please connect to Ropsten Test Network!');
-              }
-            }
-            if (targetChainId === '0x5') {
-              if (!isAutoConnect) {
-                message.warning('Please connect to Goerli Test Network!');
-              }
-            }
-            return;
-          }
-        } else if (chainId != targetChainId) {
-          if (!isAutoConnect) {
-            if (targetChainId === config.ethChainId()) {
-              message.warning('Please connect to Ethereum Main Network!');
-            } else if (targetChainId === config.bscChainId()) {
-              message.warning('Please connect to BSC Main Network!');
-            }
-          }
-          return;
-        }
-
-        ethereum
-          .request({ method: 'eth_requestAccounts' })
-          .then((accounts: any) => {
-            dispatch(handleEthAccount(accounts[0]));
-          })
-          .catch((error: any) => {
-            dispatch(setEthAccount(null));
-            if (error.code === 4001) {
-              message.error('Please connect to MetaMask.');
-            } else {
-              message.error('error.message');
-            }
-          });
-      });
-    } else {
-      message.warning('Please install MetaMask!');
-    }
-  };
 
 export const handleEthAccount =
   (address: string, targetChainId?: any): AppThunk =>
@@ -304,42 +248,6 @@ export const handleEthAccount =
         message.error(error.message);
       });
   };
-
-export const monitoring_Method = (): AppThunk => (dispatch, getState) => {
-  const isload_monitoring = getState().rETHModule.isload_monitoring;
-
-  if (isload_monitoring) {
-    return;
-  }
-  if (typeof window.ethereum !== 'undefined' && window.ethereum.isMetaMask) {
-    dispatch(setIsloadMonitoring(true));
-    window.ethereum.autoRefreshOnNetworkChange = false;
-    window.ethereum.on('accountsChanged', (accounts: any) => {
-      if (accounts.length > 0) {
-        dispatch(handleEthAccount(accounts[0]));
-
-        setTimeout(() => {
-          // dispatch(getAssetBalanceAll());
-          dispatch(reloadData());
-        }, 200);
-      } else {
-        // MetaMask is locked or the user has not connected any accounts
-        // dispatch(handleEthAccount(null));
-      }
-    });
-
-    // ethereum.on('chainChanged', (chainId: any) => {
-    //   if (isdev()) {
-    //     if (ethereum.chainId != '0x3' && location.pathname.includes('/rAsset/erc')) {
-    //       dispatch(setEthAccount(null));
-    //     }
-    //     if (ethereum.chainId != '0x5' && location.pathname.includes('/rETH')) {
-    //       dispatch(setEthAccount(null));
-    //     }
-    //   }
-    // });
-  }
-};
 
 export const checkAddressChecksum = (address: string) => {
   // Check each case

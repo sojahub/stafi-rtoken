@@ -22,6 +22,7 @@ import { bondStates, bound, fisUnbond, rTokenSeries_bondStates } from './FISClic
 import {
   initProcess,
   processStatus,
+  requestMetaMaskBalance,
   setLoading,
   setProcessDestChainId,
   setProcessSending,
@@ -30,7 +31,7 @@ import {
   setStakeSwapLoadingStatus,
 } from './globalClice';
 import { add_Notice, findUuid, noticeStatus, noticesubType, noticeType } from './noticeClice';
-import { checkEthAddress, connectMetamask, get_eth_getBalance } from './rETHClice';
+import { checkEthAddress } from './rETHClice';
 
 const commonClice = new CommonClice();
 
@@ -175,9 +176,8 @@ declare const ethereum: any;
 export const transfer =
   (amountparam: string, destChainId: number, targetAddress: string, cb?: Function): AppThunk =>
   async (dispatch, getState) => {
-    const isUnlocked = await ethereum._metamask.isUnlocked();
-    if (!isUnlocked) {
-      dispatch(connectMetamask(config.bscChainId()));
+    const metaMaskAddress = getState().globalModule.metaMaskAddress;
+    if (!metaMaskAddress) {
       return;
     }
 
@@ -186,7 +186,7 @@ export const transfer =
 
     dispatch(initProcess(null));
 
-    const address = getState().rETHModule.ethAccount && getState().rETHModule.ethAccount.address;
+    const address = getState().globalModule.metaMaskAddress;
     const validPools = getState().rBNBModule.validPools;
     const poolLimit = getState().rBNBModule.poolLimit;
 
@@ -253,7 +253,7 @@ export const transfer =
         throw new Error('tx error');
       }
 
-      dispatch(get_eth_getBalance());
+      dispatch(requestMetaMaskBalance());
 
       const processSendingParams = {
         brocasting: processStatus.success,
@@ -557,7 +557,7 @@ export const onProceed =
     });
 
     if (result) {
-      const address = getstate().rETHModule.ethAccount && getstate().rETHModule.ethAccount.address;
+      const address = getstate().globalModule.metaMaskAddress;
       if (address.toLowerCase() != result.from.toLowerCase()) {
         message.error('Please select your Bnb account that sent the transaction');
         return;
@@ -622,7 +622,7 @@ export const getBlock =
   async (dispatch, getState) => {
     try {
       const web3 = ethServer.getWeb3();
-      const address = getState().rETHModule.ethAccount && getState().rETHModule.ethAccount.address;
+      const address = getState().globalModule.metaMaskAddress;
       const validPools = getState().rBNBModule.validPools;
 
       const processParameter = getState().rBNBModule.processParameter;
@@ -863,9 +863,9 @@ export const rTokenLedger = (): AppThunk => async (dispatch, getState) => {
 export const getLastEraRate = (): AppThunk => async (dispatch, getState) => {
   try {
     const fisSource = getState().FISModule.fisAccount && getState().FISModule.fisAccount.address;
-    const ethAddress = getState().rETHModule.ethAccount && getState().rETHModule.ethAccount.address;
-    const solAddress = getState().rSOLModule.solAccount && getState().rSOLModule.solAccount.address;
-    const bscAddress = getState().BSCModule.bscAccount && getState().BSCModule.bscAccount.address;
+    const ethAddress = getState().globalModule.metaMaskAddress;
+    const solAddress = getState().rSOLModule.solAddress;
+    const bscAddress = getState().globalModule.metaMaskAddress;
     const result = await rpcServer.getReward(fisSource, ethAddress, rSymbol.Bnb, 0, bscAddress, solAddress);
     if (result.status === 80000) {
       if (result.data.rewardList.length > 1) {
@@ -931,24 +931,17 @@ export const getReward =
   (pageIndex: Number, cb: Function): AppThunk =>
   async (dispatch, getState) => {
     const fisSource = getState().FISModule.fisAccount && getState().FISModule.fisAccount.address;
-    const ethAccount = getState().rETHModule.ethAccount;
-    const bscAccount = getState().BSCModule.bscAccount;
-    const solAccount = getState().rSOLModule.solAccount;
+    const ethAddress = getState().globalModule.metaMaskAddress;
+    const bscAddress = getState().globalModule.metaMaskAddress;
+    const solAddress = getState().rSOLModule.solAddress;
 
     dispatch(setLoading(true));
     try {
-      if (pageIndex == 0) {
+      if (pageIndex === 0) {
         dispatch(setRewardList([]));
         dispatch(setRewardList_lastdata(null));
       }
-      const result = await rpcServer.getReward(
-        fisSource,
-        ethAccount ? ethAccount.address : '',
-        rSymbol.Bnb,
-        pageIndex,
-        bscAccount && bscAccount.address,
-        solAccount && solAccount.address,
-      );
+      const result = await rpcServer.getReward(fisSource, ethAddress, rSymbol.Bnb, pageIndex, bscAddress, solAddress);
       if (result.status === 80000) {
         const rewardList = getState().rBNBModule.rewardList;
         if (result.data.rewardList.length > 0) {

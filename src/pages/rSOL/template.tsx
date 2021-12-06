@@ -6,66 +6,55 @@ import { bondSwitch } from 'src/features/FISClice';
 import { reloadData } from 'src/features/globalClice';
 import {
   bondFees,
+  rTokenRate,
   continueProcess,
+  earglyConnectPhantom,
   getPools,
   getTotalIssuance,
-  rTokenRate,
-  setSolAccount,
 } from 'src/features/rSOLClice';
 import { Symbol } from 'src/keyring/defaults';
-import SolServer from 'src/servers/sol/index';
 import Content from 'src/shared/components/content';
-import { getLocalStorageItem, Keys, removeLocalStorageItem, timeout } from 'src/util/common';
 import '../template/index.scss';
-
-const solServer = new SolServer();
 
 export default function Index(props: any) {
   const dispatch = useDispatch();
 
-  const { fisAccount, solAccount } = useSelector((state: any) => {
+  const { fisAccount, solAddress } = useSelector((state: any) => {
     return {
       fisAccount: state.FISModule.fisAccount,
-      solAccount: state.rSOLModule.solAccount,
+      solAddress: state.rSOLModule.solAddress,
     };
   });
 
   useEffect(() => {
-    checkSolanaWallet();
-  }, []);
+    dispatch(earglyConnectPhantom());
+  }, [dispatch]);
 
   useEffect(() => {
     dispatch(getTotalIssuance());
     dispatch(rTokenRate());
-  }, [fisAccount, solAccount]);
+  }, [dispatch, fisAccount, solAddress]);
 
   useEffect(() => {
     dispatch(bondFees());
     dispatch(bondSwitch());
-    if (getLocalStorageItem(Keys.SolAccountKey) && getLocalStorageItem(Keys.FisAccountKey)) {
-      dispatch(reloadData(Symbol.Sol));
+    if (fisAccount) {
       dispatch(reloadData(Symbol.Fis));
+    }
+    if (solAddress) {
+      dispatch(reloadData(Symbol.Sol));
     }
     dispatch(getPools());
     setTimeout(() => {
       dispatch(continueProcess());
     }, 50);
-  }, []);
+  }, [dispatch, solAddress, fisAccount && fisAccount.address]);
 
   const { loading } = useSelector((state: any) => {
     return {
       loading: state.globalModule.loading,
     };
   });
-
-  const checkSolanaWallet = async () => {
-    await timeout(500);
-    const solana = solServer.getProvider();
-    if (!solana) {
-      dispatch(setSolAccount(null));
-      removeLocalStorageItem(Keys.SolAccountKey);
-    }
-  };
 
   return (
     <div className='stafi_layout'>

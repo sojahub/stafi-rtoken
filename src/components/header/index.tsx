@@ -1,7 +1,7 @@
 import qs from 'querystring';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useHistory } from 'react-router';
+import { useHistory, useLocation } from 'react-router-dom';
 import notice from 'src/assets/images/notice.svg';
 import report_icon from 'src/assets/images/report_icon.svg';
 import wrong_network from 'src/assets/images/wrong_network.svg';
@@ -20,7 +20,7 @@ import {
   query_rBalances_account as dotquery_rBalances_account,
   reloadData as dotReloadData,
 } from 'src/features/rDOTClice';
-import { connectMetamask, get_eth_getBalance, monitoring_Method } from 'src/features/rETHClice';
+import { get_eth_getBalance } from 'src/features/rETHClice';
 import {
   query_rBalances_account as ksmquery_rBalances_account,
   reloadData as ksmReloadData,
@@ -29,7 +29,6 @@ import { useMetaMaskAccount } from 'src/hooks/useMetaMaskAccount';
 import { rSymbol, Symbol } from 'src/keyring/defaults';
 import Modal from 'src/shared/components/modal/connectModal';
 import { getLpPlatformFromUrl, getMetaMaskTokenSymbol, liquidityPlatformMatchMetaMask } from 'src/util/metaMaskUtil';
-import NumberUtil from 'src/util/numberUtil';
 import StringUtil from 'src/util/stringUtil';
 import Tool from 'src/util/toolUtil';
 import Page from '../../pages/rDOT/selectWallet/index';
@@ -39,339 +38,361 @@ import PageKsm from '../../pages/rKSM/selectWallet/index';
 import './index.scss';
 import Popover from './popover';
 
-declare const location: any;
-
 type Props = {
   route: any;
   history: any;
 };
 
+interface HeaderConfig {
+  showFisAccount?: boolean;
+  showMetaMaskAccount?: boolean;
+  showMaticAccount?: boolean;
+  showSolAccount?: boolean;
+  showAtomAccount?: boolean;
+  showKsmAccount?: boolean;
+  showDotAccount?: boolean;
+  type?: string;
+  wrongNetwork?: boolean;
+}
+
 export default function Index(props: Props) {
   const dispatch = useDispatch();
   const history = useHistory();
+  const location = useLocation();
   const { metaMaskAddress, metaMaskBalance, metaMaskNetworkId } = useMetaMaskAccount();
+  const [visible, setVisible] = useState(false);
+  const [modalType, setModalType] = useState<any>();
+  const [noticePopoverVisible, setNoticePopoverVisible] = useState(false);
+
+  const maticBalance = useSelector((state: any) => {
+    return state.rMATICModule.transferrableAmountShow;
+  });
+
+  const { fisAccount, dotAccount, ksmAccount, atomAccount } = useSelector((state: any) => {
+    return {
+      fisAccount: state.FISModule.fisAccount,
+      dotAccount: state.rDOTModule.dotAccount,
+      ksmAccount: state.rKSMModule.ksmAccount,
+      atomAccount: state.rATOMModule.atomAccount,
+    };
+  });
+
+  const { solAddress, solTransferrableAmount } = useSelector((state: any) => {
+    return {
+      solAddress: state.rSOLModule.solAddress,
+      solTransferrableAmount: state.rSOLModule.transferrableAmountShow,
+    };
+  });
+
+  const metaMaskAccount = useMemo(() => {
+    return {
+      address: metaMaskAddress,
+      balance: metaMaskBalance,
+    };
+  }, [metaMaskAddress, metaMaskBalance]);
+
+  const maticAccount = useMemo(() => {
+    return {
+      address: metaMaskAddress,
+      balance: maticBalance,
+    };
+  }, [metaMaskAddress, maticBalance]);
+
+  const solAccount = useMemo(() => {
+    return {
+      address: solAddress,
+      balance: solTransferrableAmount,
+    };
+  }, [solAddress, solTransferrableAmount]);
 
   let platform = 'Native';
   if (history.location.search) {
     platform = qs.parse(history.location.search.slice(1)).platform as string;
   }
 
-  const [visible, setVisible] = useState(false);
-  const [modalType, setModalType] = useState<any>();
-  const [noticePopoverVisible, setNoticePopoverVisible] = useState(false);
-
-  const account = useSelector((state: any) => {
-    if (location.pathname.includes('/rDOT')) {
-      if (state.rDOTModule.dotAccount && state.FISModule.fisAccount) {
-        if (location.pathname.includes('/rDOT/staker/info')) {
-          return {
-            ethAccount: state.rETHModule.ethAccount,
-            fisAccount: state.FISModule.fisAccount,
-            noticeData: state.noticeModule.noticeData,
-            type: 'staker/status',
-          };
-        }
-        if (location.pathname.includes('/rDOT/staker/reward')) {
-          return {
-            ethAccount: state.rETHModule.ethAccount,
-            fisAccount: state.FISModule.fisAccount,
-            noticeData: state.noticeModule.noticeData,
-            type: 'staker/reward',
-          };
-        }
-        return {
-          dotAccount: state.rDOTModule.dotAccount,
-          fisAccount: state.FISModule.fisAccount,
-          noticeData: state.noticeModule.noticeData,
-        };
-      }
-    }
-    if (location.pathname.includes('/rKSM')) {
-      if (state.rKSMModule.ksmAccount && state.FISModule.fisAccount) {
-        if (location.pathname.includes('/rKSM/staker/info')) {
-          return {
-            ethAccount: state.rETHModule.ethAccount,
-            fisAccount: state.FISModule.fisAccount,
-            noticeData: state.noticeModule.noticeData,
-            type: 'staker/status',
-          };
-        }
-        if (location.pathname.includes('/rKSM/staker/reward')) {
-          return {
-            ethAccount: state.rETHModule.ethAccount,
-            fisAccount: state.FISModule.fisAccount,
-            noticeData: state.noticeModule.noticeData,
-            type: 'staker/reward',
-          };
-        }
-        return {
-          ksmAccount: state.rKSMModule.ksmAccount,
-          fisAccount: state.FISModule.fisAccount,
-          noticeData: state.noticeModule.noticeData,
-        };
-      }
-    }
-    if (location.pathname.includes('/rATOM')) {
-      if (state.rATOMModule.atomAccount || state.FISModule.fisAccount) {
-        if (location.pathname.includes('/rATOM/staker/info')) {
-          return {
-            ethAccount: state.rETHModule.ethAccount,
-            fisAccount: state.FISModule.fisAccount,
-            noticeData: state.noticeModule.noticeData,
-            type: 'staker/status',
-          };
-        }
-        if (location.pathname.includes('/rATOM/staker/reward')) {
-          return {
-            ethAccount: state.rETHModule.ethAccount,
-            fisAccount: state.FISModule.fisAccount,
-            noticeData: state.noticeModule.noticeData,
-            type: 'staker/reward',
-          };
-        }
-        return {
-          atomAccount: state.rATOMModule.atomAccount,
-          fisAccount: state.FISModule.fisAccount,
-          noticeData: state.noticeModule.noticeData,
-          type: 'rATOM',
-        };
-      }
-    }
+  const account: HeaderConfig = useSelector((state: any) => {
     if (location.pathname.includes('/rAsset')) {
       if (location.pathname.includes('/rAsset/home/native')) {
-        if (state.FISModule.fisAccount) {
-          return {
-            fisAccount: state.FISModule.fisAccount,
-          };
-        }
+        return {
+          showFisAccount: true,
+        };
       }
 
       if (location.pathname.includes('/rAsset/home/erc')) {
-        if (state.rETHModule.ethAccount) {
-          return {
-            ethAccount: state.rETHModule.ethAccount,
-          };
-        }
+        return {
+          showMetaMaskAccount: true,
+          wrongNetwork: !config.metaMaskNetworkIsGoerliEth(metaMaskNetworkId),
+        };
       }
       if (location.pathname.includes('/rAsset/home/bep')) {
-        if (state.BSCModule.bscAccount) {
-          return {
-            bscAccount: state.BSCModule.bscAccount,
-          };
-        }
+        return {
+          showMetaMaskAccount: true,
+          wrongNetwork: !config.metaMaskNetworkIsBsc(metaMaskNetworkId),
+        };
       }
       if (location.pathname.includes('/rAsset/home/spl')) {
-        if (state.rSOLModule.solAccount) {
-          return {
-            solAccount: state.rSOLModule.solAccount,
-            type: 'rAsset',
-          };
-        }
+        return {
+          showSolAccount: true,
+        };
       }
 
       if (location.pathname.includes('/rAsset/swap')) {
-        const returnValue: any = {};
         if (location.pathname.includes('/rAsset/swap/native')) {
-          if (state.FISModule.fisAccount) {
-            returnValue.fisAccount = state.FISModule.fisAccount;
-          }
+          return {
+            showFisAccount: true,
+          };
         }
 
         if (location.pathname.includes('/rAsset/swap/erc20')) {
-          if (state.rETHModule.ethAccount) {
-            returnValue.ethAccount = state.rETHModule.ethAccount;
-          }
+          return {
+            showMetaMaskAccount: true,
+            wrongNetwork: !config.metaMaskNetworkIsGoerliEth(metaMaskNetworkId),
+          };
         }
 
         if (location.pathname.includes('/rAsset/swap/bep20')) {
-          if (state.BSCModule.bscAccount) {
-            returnValue.bscAccount = state.BSCModule.bscAccount;
-          }
+          return {
+            showMetaMaskAccount: true,
+            wrongNetwork: !config.metaMaskNetworkIsBsc(metaMaskNetworkId),
+          };
         }
 
         if (location.pathname.includes('/rAsset/swap/spl')) {
-          if (state.rSOLModule.solAccount) {
-            returnValue.solAccount = state.rSOLModule.solAccount;
-            returnValue.type = 'rAsset';
-          }
+          return {
+            showSolAccount: true,
+          };
         }
 
-        return returnValue;
+        return {};
       }
     }
+
+    if (location.pathname.includes('/rSwap')) {
+      return {
+        showFisAccount: true,
+      };
+    }
+
+    if (location.pathname.includes('/rPool/mint')) {
+      return {
+        showFisAccount: true,
+      };
+    }
+
+    if (location.pathname.includes('/rPool/lp')) {
+      return {
+        showMetaMaskAccount: true,
+        wrongNetwork: !liquidityPlatformMatchMetaMask(metaMaskNetworkId, getLpPlatformFromUrl(location.pathname)),
+        type: 'rPool/lp',
+      };
+    }
+
     if (location.pathname.includes('/rETH')) {
-      if (state.rETHModule.ethAccount) {
-        if (location.pathname.includes('/rETH/staker/info')) {
-          return {
-            ethAccount: state.rETHModule.ethAccount,
-            type: 'staker/status',
-          };
-        }
-        if (location.pathname.includes('/rETH/staker/reward')) {
-          return {
-            ethAccount: state.rETHModule.ethAccount,
-            type: 'staker/reward',
-          };
-        }
+      if (location.pathname.includes('/rETH/staker/info')) {
         return {
-          ethAccount: state.rETHModule.ethAccount,
+          showMetaMaskAccount: true,
+          wrongNetwork:
+            (platform === 'ERC20' && !config.metaMaskNetworkIsGoerliEth(metaMaskNetworkId)) ||
+            (platform === 'BEP20' && !config.metaMaskNetworkIsBsc(metaMaskNetworkId)),
         };
       }
+      return {
+        showMetaMaskAccount: true,
+      };
+    }
+
+    if (location.pathname.includes('/rBNB')) {
+      if (location.pathname.includes('rBNB/staker/info')) {
+        return {
+          showFisAccount: true,
+          showMetaMaskAccount: platform !== 'Native',
+          wrongNetwork: platform === 'BEP20' && !config.metaMaskNetworkIsBsc(metaMaskNetworkId),
+        };
+      }
+      return {
+        showFisAccount: true,
+        showMetaMaskAccount: true,
+        wrongNetwork: !config.metaMaskNetworkIsBsc(metaMaskNetworkId),
+      };
+    }
+
+    if (location.pathname.includes('/rFIS')) {
+      if (location.pathname.includes('/rFIS/staker/info')) {
+        return {
+          showFisAccount: true,
+          showMetaMaskAccount: platform !== 'Native',
+          wrongNetwork:
+            (platform === 'ERC20' && !config.metaMaskNetworkIsGoerliEth(metaMaskNetworkId)) ||
+            (platform === 'BEP20' && !config.metaMaskNetworkIsBsc(metaMaskNetworkId)),
+        };
+      }
+
+      if (location.pathname.includes('/rFIS/home') || location.pathname.includes('/rFIS/fiswallet')) {
+        return {
+          showFisAccount: !!fisAccount,
+        };
+      }
+
+      return {
+        showFisAccount: true,
+      };
+    }
+
+    if (location.pathname.includes('/rDOT')) {
+      if (location.pathname.includes('/rDOT/staker/info')) {
+        return {
+          showFisAccount: true,
+          showMetaMaskAccount: platform !== 'Native',
+          wrongNetwork:
+            (platform === 'ERC20' && !config.metaMaskNetworkIsGoerliEth(metaMaskNetworkId)) ||
+            (platform === 'BEP20' && !config.metaMaskNetworkIsBsc(metaMaskNetworkId)),
+        };
+      }
+
+      if (
+        location.pathname.includes('/rDOT/home') ||
+        location.pathname.includes('/rDOT/wallet') ||
+        location.pathname.includes('/rDOT/fiswallet')
+      ) {
+        return {
+          showFisAccount: !!fisAccount,
+          showDotAccount: !!dotAccount,
+        };
+      }
+
+      return {
+        showFisAccount: true,
+        showDotAccount: true,
+      };
+    }
+
+    if (location.pathname.includes('/rKSM')) {
+      if (location.pathname.includes('/rKSM/staker/info')) {
+        return {
+          showFisAccount: true,
+          showMetaMaskAccount: platform !== 'Native',
+          wrongNetwork:
+            (platform === 'ERC20' && !config.metaMaskNetworkIsGoerliEth(metaMaskNetworkId)) ||
+            (platform === 'BEP20' && !config.metaMaskNetworkIsBsc(metaMaskNetworkId)),
+        };
+      }
+
+      if (
+        location.pathname.includes('/rKSM/home') ||
+        location.pathname.includes('/rKSM/wallet') ||
+        location.pathname.includes('/rKSM/fiswallet')
+      ) {
+        return {
+          showFisAccount: !!fisAccount,
+          showKsmAccount: !!ksmAccount,
+        };
+      }
+
+      return {
+        showFisAccount: true,
+        showKsmAccount: true,
+      };
+    }
+
+    if (location.pathname.includes('/rATOM')) {
+      if (location.pathname.includes('/rATOM/staker/info')) {
+        return {
+          showFisAccount: true,
+          showMetaMaskAccount: platform !== 'Native',
+          wrongNetwork:
+            (platform === 'ERC20' && !config.metaMaskNetworkIsGoerliEth(metaMaskNetworkId)) ||
+            (platform === 'BEP20' && !config.metaMaskNetworkIsBsc(metaMaskNetworkId)),
+        };
+      }
+
+      if (location.pathname.includes('/rATOM/home')) {
+        return {
+          showFisAccount: !!fisAccount,
+          showAtomAccount: !!atomAccount,
+        };
+      }
+
+      return {
+        showFisAccount: true,
+        showAtomAccount: true,
+      };
     }
 
     if (location.pathname.includes('/rSOL')) {
-      if (state.rSOLModule.solAccount && state.FISModule.fisAccount) {
-        if (location.pathname.includes('rSOL/staker/info')) {
-          return {
-            fisAccount: state.FISModule.fisAccount,
-            solAccount: state.rSOLModule.solAccount,
-            noticeData: state.noticeModule.noticeData,
-            type: 'staker/status',
-          };
-        }
-        if (location.pathname.includes('rSOL/staker/reward')) {
-          return {
-            fisAccount: state.FISModule.fisAccount,
-            solAccount: state.rSOLModule.solAccount,
-            noticeData: state.noticeModule.noticeData,
-            type: 'staker/reward',
-          };
-        }
+      if (location.pathname.includes('rSOL/staker/info')) {
         return {
-          solAccount: state.rSOLModule.solAccount,
-          fisAccount: state.FISModule.fisAccount,
-          noticeData: state.noticeModule.noticeData,
-          type: 'rSOL',
+          showFisAccount: true,
+          showSolAccount: platform !== 'Native',
         };
       }
+
+      if (location.pathname.includes('/rSOL/home')) {
+        return {
+          showFisAccount: !!fisAccount,
+          showSolAccount: !!solAccount.address,
+        };
+      }
+
+      return {
+        showFisAccount: true,
+        showSolAccount: true,
+      };
     }
+
     if (location.pathname.includes('/rMATIC')) {
-      if (state.rMATICModule.maticAccount || state.FISModule.fisAccount) {
-        if (location.pathname.includes('/rMATIC/staker/info')) {
-          return {
-            fisAccount: state.FISModule.fisAccount,
-            ethAccount: state.rETHModule.ethAccount,
-            noticeData: state.noticeModule.noticeData,
-            type: 'staker/status',
-          };
-        }
-        if (location.pathname.includes('/rMATIC/staker/reward')) {
-          return {
-            fisAccount: state.FISModule.fisAccount,
-            ethAccount: state.rETHModule.ethAccount,
-            noticeData: state.noticeModule.noticeData,
-            type: 'staker/reward',
-          };
-        }
+      if (location.pathname.includes('/rMATIC/staker/info')) {
         return {
-          maticAccount: state.rMATICModule.maticAccount,
-          fisAccount: state.FISModule.fisAccount,
-          noticeData: state.noticeModule.noticeData,
-          type: 'rMATIC',
+          showFisAccount: true,
+          showMetaMaskAccount: platform !== 'Native',
+          wrongNetwork:
+            (platform === 'ERC20' && !config.metaMaskNetworkIsGoerliEth(metaMaskNetworkId)) ||
+            (platform === 'BEP20' && !config.metaMaskNetworkIsBsc(metaMaskNetworkId)),
         };
       }
-    }
-    if (location.pathname.includes('/rBNB')) {
-      if (state.rETHModule.ethAccount || state.FISModule.fisAccount) {
-        if (location.pathname.includes('rBNB/staker/info')) {
-          return {
-            fisAccount: state.FISModule.fisAccount,
-            ethAccount: state.rETHModule.ethAccount,
-            noticeData: state.noticeModule.noticeData,
-            type: 'staker/status',
-          };
-        }
-        if (location.pathname.includes('rBNB/staker/reward')) {
-          return {
-            fisAccount: state.FISModule.fisAccount,
-            ethAccount: state.rETHModule.ethAccount,
-            noticeData: state.noticeModule.noticeData,
-            type: 'staker/reward',
-          };
-        }
+
+      if (location.pathname.includes('/rMATIC/home')) {
         return {
-          ethAccount: state.rETHModule.ethAccount,
-          fisAccount: state.FISModule.fisAccount,
-          noticeData: state.noticeModule.noticeData,
-          type: 'rBNB',
+          showFisAccount: !!fisAccount,
+          showMaticAccount: !!maticAccount.address,
+          wrongNetwork: !config.metaMaskNetworkIsGoerliEth(metaMaskNetworkId),
         };
       }
+
+      return {
+        showFisAccount: true,
+        showMaticAccount: true,
+        wrongNetwork: !config.metaMaskNetworkIsGoerliEth(metaMaskNetworkId),
+      };
     }
-    if (location.pathname.includes('/rFIS')) {
-      if (state.FISModule.fisAccount) {
-        if (location.pathname.includes('/rFIS/staker/info')) {
-          return {
-            fisAccount: state.FISModule.fisAccount,
-            ethAccount: state.rETHModule.ethAccount,
-            noticeData: state.noticeModule.noticeData,
-            type: 'staker/status',
-          };
-        }
-        if (location.pathname.includes('/rFIS/staker/reward')) {
-          return {
-            fisAccount: state.FISModule.fisAccount,
-            ethAccount: state.rETHModule.ethAccount,
-            noticeData: state.noticeModule.noticeData,
-            type: 'staker/reward',
-          };
-        }
-        return {
-          fisAccount: state.FISModule.fisAccount,
-          noticeData: state.noticeModule.noticeData,
-          type: 'rFIS',
-        };
-      }
-    }
-    if (location.pathname.includes('/rSwap')) {
-      if (state.FISModule.fisAccount) {
-        return {
-          fisAccount: state.FISModule.fisAccount,
-          type: 'rSwap',
-        };
-      }
-    }
+
     if (location.pathname.includes('/feeStation')) {
-      const returnValue: any = { type: 'feeStation' };
-      if (state.FISModule.fisAccount) {
-        returnValue.fisAccount = state.FISModule.fisAccount;
-      }
       if (location.pathname.includes('/feeStation/eth')) {
-        if (state.rETHModule.ethAccount) {
-          returnValue.ethAccount = state.rETHModule.ethAccount;
-        }
+        return {
+          showFisAccount: true,
+          showMetaMaskAccount: !!metaMaskAccount.address,
+          wrongNetwork: !config.metaMaskNetworkIsGoerliEth(metaMaskNetworkId),
+        };
       }
       if (location.pathname.includes('/feeStation/dot')) {
-        if (state.rDOTModule.dotAccount) {
-          returnValue.dotAccount = state.rDOTModule.dotAccount;
-        }
+        return {
+          showFisAccount: true,
+          showDotAccount: !!dotAccount,
+        };
       }
       if (location.pathname.includes('/feeStation/ksm')) {
-        if (state.rKSMModule.ksmAccount) {
-          returnValue.ksmAccount = state.rKSMModule.ksmAccount;
-        }
+        return {
+          showFisAccount: true,
+          showKsmAccount: !!ksmAccount,
+        };
       }
       if (location.pathname.includes('/feeStation/atom')) {
-        if (state.rATOMModule.atomAccount) {
-          returnValue.atomAccount = state.rATOMModule.atomAccount;
-        }
+        return {
+          showFisAccount: true,
+          showAtomAccount: !!atomAccount,
+        };
       }
-      return returnValue;
     }
-    if (location.pathname.includes('/rPool/mint')) {
-      const returnValue: any = { type: 'rPool' };
-      if (state.FISModule.fisAccount) {
-        returnValue.fisAccount = state.FISModule.fisAccount;
-      }
-      return returnValue;
-    }
-    if (location.pathname.includes('/rPool/lp')) {
-      const returnValue: any = { type: 'rPool/lp' };
-      returnValue.metaMaskAccount = {
-        address: metaMaskAddress,
-        balance: metaMaskBalance,
-      };
-      return returnValue;
-    }
+
     return null;
   });
 
@@ -391,12 +412,14 @@ export default function Index(props: Props) {
   }, [noticeData]);
 
   useEffect(() => {
-    dispatch(monitoring_Method());
-  }, [account, dispatch]);
-
-  useEffect(() => {
     dispatch(get_eth_getBalance());
   }, [metaMaskNetworkId, dispatch]);
+
+  const connectDotWallet = () => {
+    setModalType('dot');
+    dispatch(connectPolkadotjs(Symbol.Dot));
+    setVisible(true);
+  };
 
   if (location.pathname.includes('/rPool/home')) {
     return <></>;
@@ -428,6 +451,7 @@ export default function Index(props: Props) {
             }}
           />
         )}
+
         {modalType === 'fis' && location.pathname.includes('/rFIS') && (
           <PageRFis
             location={{}}
@@ -437,6 +461,7 @@ export default function Index(props: Props) {
             }}
           />
         )}
+
         {modalType === 'ksm' && (
           <PageKsm
             location={{}}
@@ -487,33 +512,40 @@ export default function Index(props: Props) {
               </div>
             </Popover>
 
-            {account.fisAccount && (
+            {account.showFisAccount && (
               <div
                 onClick={() => {
                   setModalType('fis');
                   dispatch(connectPolkadotjs(Symbol.Fis));
                   setVisible(true);
                 }}
-                className='header_tool account fis'>
-                <div>{account.fisAccount.balance} FIS</div>
-                <div>{StringUtil.replacePkh(account.fisAccount.address, 6, 44)}</div>
+                className={`header_tool account ${fisAccount && 'fis'}`}>
+                {fisAccount && fisAccount.address ? (
+                  <>
+                    <div>{fisAccount.balance} FIS</div>
+                    <div>{StringUtil.replacePkh(fisAccount.address, 6, 44)}</div>
+                  </>
+                ) : (
+                  <>connect to Polkadotjs</>
+                )}
               </div>
             )}
 
-            {account.dotAccount && (
-              <div
-                onClick={() => {
-                  setModalType('dot');
-                  dispatch(connectPolkadotjs(Symbol.Dot));
-                  setVisible(true);
-                }}
-                className='header_tool account'>
-                <div>{account.dotAccount.balance} DOT</div>
-                <div>{StringUtil.replacePkh(account.dotAccount.address, 6, 44)}</div>
+            {account.showDotAccount && (
+              <div onClick={connectDotWallet} className='header_tool account'>
+                {dotAccount ? (
+                  <>
+                    <div>{dotAccount.balance} DOT</div>
+
+                    <div>{StringUtil.replacePkh(dotAccount.address, 6, 44)}</div>
+                  </>
+                ) : (
+                  <>connect to Polkadotjs</>
+                )}
               </div>
             )}
 
-            {account.ksmAccount && (
+            {account.showKsmAccount && (
               <div
                 onClick={() => {
                   setModalType('ksm');
@@ -521,102 +553,68 @@ export default function Index(props: Props) {
                   setVisible(true);
                 }}
                 className='header_tool account'>
-                <div>{account.ksmAccount.balance} KSM</div>
-                <div>{StringUtil.replacePkh(account.ksmAccount.address, 6, 44)}</div>
+                {ksmAccount ? (
+                  <>
+                    <div>{ksmAccount.balance} KSM</div>
+                    <div>{StringUtil.replacePkh(ksmAccount.address, 6, 44)}</div>
+                  </>
+                ) : (
+                  <>connect to Polkadotjs</>
+                )}
               </div>
             )}
 
-            {account.type === 'rATOM' &&
-              (account.atomAccount ? (
-                <div className='header_tool account'>
-                  <div>{account.atomAccount.balance} ATOM</div>
-                  <div>{StringUtil.replacePkh(account.atomAccount.address, 6, 38)}</div>
-                </div>
-              ) : (
-                <div
-                  onClick={() => {
-                    dispatch(connectAtomjs());
-                  }}
-                  className='header_tool account'>
-                  connect to Kepir
-                </div>
-              ))}
-
-            {account.type === 'rATOM/status' && account.atomAccount && (
+            {account.showAtomAccount && (
               <div className='header_tool account'>
-                <div>{account.atomAccount.balance} ATOM</div>
-                <div>{StringUtil.replacePkh(account.atomAccount.address, 6, 38)}</div>
+                {atomAccount ? (
+                  <>
+                    <div>{atomAccount.balance} ATOM</div>
+                    <div>{StringUtil.replacePkh(atomAccount.address, 6, 38)}</div>
+                  </>
+                ) : (
+                  <>
+                    <div
+                      onClick={() => {
+                        dispatch(connectAtomjs());
+                      }}
+                      className='header_tool account'>
+                      connect to Kepir
+                    </div>
+                  </>
+                )}
               </div>
             )}
 
-            {account.type === 'feeStation' &&
-              (account.atomAccount ? (
-                <div className='header_tool account'>
-                  <div>{account.atomAccount.balance} ATOM</div>
-                  <div>{StringUtil.replacePkh(account.atomAccount.address, 6, 38)}</div>
-                </div>
-              ) : null)}
+            {account.showSolAccount && (
+              <div
+                onClick={() => {
+                  dispatch(connectSoljs());
+                }}
+                className={`header_tool account`}>
+                {solAccount && solAccount.address ? (
+                  <>
+                    <div>{solAccount.balance} SOL</div>
+                    <div>{StringUtil.replacePkh(solAccount.address, 6, 38)}</div>
+                  </>
+                ) : (
+                  <>connect to Phantom</>
+                )}
+              </div>
+            )}
 
-            {(account.type === 'rSOL' || account.type === 'rAsset') &&
-              (account.solAccount ? (
-                <div
-                  className='header_tool account'
-                  onClick={() => {
-                    dispatch(connectSoljs());
-                  }}>
-                  <div>{account.solAccount.balance} SOL</div>
-                  <div>{StringUtil.replacePkh(account.solAccount.address, 6, 38)}</div>
-                </div>
-              ) : (
-                <div
-                  onClick={() => {
-                    dispatch(connectSoljs());
-                  }}
-                  className='header_tool account'>
-                  connect to Phantom
-                </div>
-              ))}
-
-            {account.type !== 'rBNB' &&
-              account.type !== 'staker/status' &&
-              account.type !== 'staker/reward' &&
-              account.ethAccount && (
-                <div style={{ display: 'flex', flexDirection: 'column' }}>
-                  <div className='header_tool account'>
-                    <div>
-                      {account.ethAccount.balance || '--'} {getMetaMaskTokenSymbol(metaMaskNetworkId)}
-                    </div>
-                    <div>{StringUtil.replacePkh(account.ethAccount.address, 4, 38)}</div>
-                  </div>
-                  {account.type === 'rPool/lp' &&
-                    metaMaskNetworkId &&
-                    !liquidityPlatformMatchMetaMask(metaMaskNetworkId, getLpPlatformFromUrl(location.pathname)) && (
-                      <img src={wrong_network} className={'wrong_network'} alt='wrong network' />
-                    )}
-                  {account.type !== 'rPool/lp' &&
-                    metaMaskNetworkId &&
-                    !config.metaMaskNetworkIsGoerliEth(metaMaskNetworkId) && (
-                      <img src={wrong_network} className={'wrong_network'} alt='wrong network' />
-                    )}
-                </div>
-              )}
-
-            {account.type === 'rPool/lp' && account.metaMaskAccount && (
+            {account.showMaticAccount && (
               <>
-                {account.metaMaskAccount.address ? (
+                {maticAccount.address ? (
                   <div style={{ display: 'flex', flexDirection: 'column' }}>
                     <div className='header_tool account'>
-                      <div>
-                        {account.metaMaskAccount.balance || '--'} {getMetaMaskTokenSymbol(metaMaskNetworkId)}
-                      </div>
+                      <div>{maticAccount.balance || '--'} MATIC</div>
 
-                      <div>{StringUtil.replacePkh(account.metaMaskAccount.address, 4, 38)}</div>
+                      <div>{StringUtil.replacePkh(maticAccount.address, 4, 38)}</div>
                     </div>
 
-                    {metaMaskNetworkId &&
-                      !liquidityPlatformMatchMetaMask(metaMaskNetworkId, getLpPlatformFromUrl(location.pathname)) && (
-                        <img src={wrong_network} className={'wrong_network'} alt='wrong network' />
-                      )}
+                    {account.wrongNetwork && (
+                      <img src={wrong_network} className={'wrong_network'} alt='wrong network' />
+                    )}
                   </div>
                 ) : (
                   <div
@@ -630,105 +628,33 @@ export default function Index(props: Props) {
               </>
             )}
 
-            {account.type === 'rBNB' && account.ethAccount && (
-              <div style={{ display: 'flex', flexDirection: 'column' }}>
-                <div className='header_tool account'>
-                  <div>
-                    {(config.metaMaskNetworkIsBsc(metaMaskNetworkId) && account.ethAccount.balance) || '--'} BNB
-                  </div>
-                  <div>{StringUtil.replacePkh(account.ethAccount.address, 4, 38)}</div>
-                </div>
-                {metaMaskNetworkId && !config.metaMaskNetworkIsBsc(metaMaskNetworkId) && (
-                  <img src={wrong_network} className={'wrong_network'} alt='wrong network' />
-                )}
-              </div>
-            )}
-
-            {account.bscAccount && (
-              <div style={{ display: 'flex', flexDirection: 'column' }}>
-                <div className='header_tool account'>
-                  <div>{account.bscAccount.balance} BNB</div>
-                  <div>{StringUtil.replacePkh(account.bscAccount.address, 4, 38)}</div>
-                </div>
-                {metaMaskNetworkId && !config.metaMaskNetworkIsBsc(metaMaskNetworkId) && (
-                  <img src={wrong_network} className={'wrong_network'} alt='wrong network' />
-                )}
-              </div>
-            )}
-
-            {account.maticAccount && (
-              <div style={{ display: 'flex', flexDirection: 'column' }}>
-                <div className='header_tool account'>
-                  <div>{NumberUtil.handleFisAmountToFixed(account.maticAccount.balance)} MATIC</div>
-                  <div>{StringUtil.replacePkh(account.maticAccount.address, 4, 38)}</div>
-                </div>
-                {metaMaskNetworkId && !config.metaMaskNetworkIsGoerliEth(metaMaskNetworkId) && (
-                  <img src={wrong_network} className={'wrong_network'} alt='wrong network' />
-                )}
-              </div>
-            )}
-
-            {(account.type === 'staker/status' || account.type === 'staker/reward') &&
-              (platform === 'ERC20' || platform === 'BEP20' || platform === 'SPL') && (
-                <div style={{ display: 'flex', flexDirection: 'column' }}>
-                  {platform === 'ERC20' || platform === 'BEP20' ? (
-                    account.ethAccount ? (
-                      <div className='header_tool account'>
-                        {platform === 'BEP20' && (
-                          <div>
-                            {(config.metaMaskNetworkIsBsc(metaMaskNetworkId) && account.ethAccount.balance) || '--'} BNB
-                          </div>
-                        )}
-                        {platform === 'ERC20' && (
-                          <div>
-                            {(config.metaMaskNetworkIsGoerliEth(metaMaskNetworkId) && account.ethAccount.balance) ||
-                              '--'}{' '}
-                            ETH
-                          </div>
-                        )}
-                        <div>{StringUtil.replacePkh(account.ethAccount.address, 4, 38)}</div>
+            {account.showMetaMaskAccount && (
+              <>
+                {metaMaskAccount.address ? (
+                  <div style={{ display: 'flex', flexDirection: 'column' }}>
+                    <div className='header_tool account'>
+                      <div>
+                        {metaMaskAccount.balance || '--'} {getMetaMaskTokenSymbol(metaMaskNetworkId)}
                       </div>
-                    ) : (
-                      <div
-                        onClick={() => {
-                          dispatch(connectMetamask(platform === 'ERC20' ? config.ethChainId() : config.bscChainId()));
-                        }}
-                        className='header_tool account'>
-                        connect to MetaMask
-                      </div>
-                    )
-                  ) : null}
 
-                  {platform === 'SPL' &&
-                    (account.solAccount ? (
-                      <div
-                        className='header_tool account'
-                        onClick={() => {
-                          dispatch(connectSoljs());
-                        }}>
-                        <div>{account.solAccount.balance} SOL</div>
-                        <div>{StringUtil.replacePkh(account.solAccount.address, 6, 38)}</div>
-                      </div>
-                    ) : (
-                      <div
-                        onClick={() => {
-                          dispatch(connectSoljs());
-                        }}
-                        className='header_tool account'>
-                        connect to Phantom
-                      </div>
-                    ))}
+                      <div>{StringUtil.replacePkh(metaMaskAccount.address, 4, 38)}</div>
+                    </div>
 
-                  {platform === 'BEP20' && metaMaskNetworkId && !config.metaMaskNetworkIsBsc(metaMaskNetworkId) && (
-                    <img src={wrong_network} className={'wrong_network'} alt='wrong network' />
-                  )}
-                  {platform === 'ERC20' &&
-                    metaMaskNetworkId &&
-                    !config.metaMaskNetworkIsGoerliEth(metaMaskNetworkId) && (
+                    {account.wrongNetwork && (
                       <img src={wrong_network} className={'wrong_network'} alt='wrong network' />
                     )}
-                </div>
-              )}
+                  </div>
+                ) : (
+                  <div
+                    onClick={() => {
+                      dispatch(initMetaMaskAccount());
+                    }}
+                    className='header_tool account'>
+                    connect to MetaMask
+                  </div>
+                )}
+              </>
+            )}
           </div>
         )}
         <div className='report_icon'>

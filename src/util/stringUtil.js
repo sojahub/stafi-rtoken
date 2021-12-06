@@ -1,4 +1,4 @@
-export default {
+const stringUtil = {
   //Replace the address string with
   replacePkh: function (pkh, start, end) {
     if (!pkh) {
@@ -50,3 +50,5 @@ export default {
     }
   },
 };
+
+export default stringUtil;

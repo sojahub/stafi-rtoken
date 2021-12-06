@@ -19,7 +19,7 @@ import rpool_rmatic_Icon from 'src/assets/images/rpool_rmatic_matic.svg';
 import config from 'src/config/index';
 import { getRtokenPriceList } from 'src/features/bridgeClice';
 import { initMetaMaskAccount } from 'src/features/globalClice';
-import { connectMetamask, get_eth_getBalance, monitoring_Method } from 'src/features/rETHClice';
+import { get_eth_getBalance } from 'src/features/rETHClice';
 import { useMetaMaskAccount } from 'src/hooks/useMetaMaskAccount';
 import RPoolServer from 'src/servers/rpool';
 import Button from 'src/shared/components/button/connect_button';
@@ -364,18 +364,6 @@ export default function LiquidityOverview() {
               icon={metamask}
               width={'400px'}
               onClick={() => {
-                // dispatch(
-                //   connectMetamask(
-                //     lpPlatform === 'Ethereum'
-                //       ? config.metaMaskEthNetworkId()
-                //       : lpPlatform === 'BSC'
-                //       ? config.metaMaskBscNetworkId()
-                //       : lpPlatform === 'Polygon'
-                //       ? config.metaMaskPolygonNetworkId()
-                //       : '',
-                //   ),
-                // );
-                // dispatch(monitoring_Method());
                 dispatch(initMetaMaskAccount());
               }}>
               Connect to MetaMask

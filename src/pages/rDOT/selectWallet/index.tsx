@@ -1,6 +1,7 @@
 import { message } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useHistory } from 'react-router-dom';
 import WalletCard from 'src/components/card/walletCard';
 import Item from 'src/components/card/walletCardItem';
 import { connectPolkadotjs } from 'src/features/globalClice';
@@ -9,8 +10,8 @@ import { Symbol } from 'src/keyring/defaults';
 import { getLocalStorageItem, Keys } from 'src/util/common';
 import './index.scss';
 
-
 export default function Index(props: any) {
+  const history = useHistory();
   const dispatch = useDispatch();
   const { dotAccounts, dotAccount } = useSelector((state: any) => {
     return {
@@ -27,6 +28,7 @@ export default function Index(props: any) {
       setAccount(dotAccount);
     }
   }, [dotAccounts]);
+
   useEffect(() => {
     if (getLocalStorageItem(Keys.DotAccountKey) == null && getLocalStorageItem(Keys.FisAccountKey)) {
       dispatch(connectPolkadotjs(Symbol.Dot));
@@ -37,6 +39,7 @@ export default function Index(props: any) {
       //   }));
     }
   }, []);
+
   return (
     <WalletCard
       title='Select a DOT wallet'
@@ -73,7 +76,7 @@ export default function Index(props: any) {
             data={item}
             type='DOT'
             key={item.address}
-            selected={account ? item.address == account.address : false}
+            selected={account ? item.address === account.address : false}
             onClick={() => {
               setAccount(item);
             }}

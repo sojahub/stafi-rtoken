@@ -5,25 +5,25 @@ import { renderRoutes } from 'react-router-config';
 import config from 'src/config/index';
 import { bondSwitch } from 'src/features/FISClice';
 import { reloadData } from 'src/features/globalClice';
-import { bondFees, continueProcess, getPools, rTokenRate } from 'src/features/rBNBClice';
-import { get_eth_getBalance } from 'src/features/rETHClice';
+import { bondFees, continueProcess, getPools } from 'src/features/rBNBClice';
+import { useMetaMaskAccount } from 'src/hooks/useMetaMaskAccount';
 import { Symbol } from 'src/keyring/defaults';
 import Content from 'src/shared/components/content';
 import '../template/index.scss';
 
 export default function Index(props: any) {
   const dispatch = useDispatch();
+  const { metaMaskAddress, metaMaskNetworkId } = useMetaMaskAccount();
 
-  const { fisAccount } = useSelector((state: any) => {
+  const { fisAddress } = useSelector((state: any) => {
     return {
-      fisAccount: state.FISModule.fisAccount,
+      fisAddress: state.FISModule.fisAccount && state.FISModule.fisAccount.address,
     };
   });
 
   useEffect(() => {
-    fisAccount && fisAccount.address && dispatch(reloadData(Symbol.Bnb));
-    dispatch(rTokenRate());
-  }, [fisAccount && fisAccount.address]);
+    fisAddress && dispatch(reloadData(Symbol.Fis));
+  }, [dispatch, fisAddress]);
 
   useEffect(() => {
     dispatch(bondFees());
@@ -32,21 +32,13 @@ export default function Index(props: any) {
     setTimeout(() => {
       dispatch(continueProcess());
     }, 50);
-  }, []);
-
-  const { ethAccount, metaMaskNetworkId } = useSelector((state: any) => {
-    return {
-      metaMaskNetworkId: state.globalModule.metaMaskNetworkId,
-      ethAccount: state.rETHModule.ethAccount,
-    };
-  });
+  }, [dispatch]);
 
   useEffect(() => {
-    if (config.metaMaskNetworkIsBsc(metaMaskNetworkId) && ethAccount && ethAccount.address) {
-      dispatch(get_eth_getBalance());
+    if (config.metaMaskNetworkIsBsc(metaMaskNetworkId) && metaMaskAddress) {
       dispatch(reloadData(Symbol.Bnb));
     }
-  }, [ethAccount && ethAccount.address, fisAccount && fisAccount.address, metaMaskNetworkId]);
+  }, [dispatch, metaMaskAddress, fisAddress, metaMaskNetworkId]);
 
   const { loading } = useSelector((state: any) => {
     return {

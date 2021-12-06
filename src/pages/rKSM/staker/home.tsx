@@ -20,7 +20,7 @@ export default function Index(props: any) {
   const { transferrableAmount, ratio, stafiStakerApr, fisCompare, validPools, totalIssuance, bondFees } = useSelector(
     (state: any) => {
       const fisCompare =
-        NumberUtil.fisAmountToChain(state.FISModule.fisAccount.balance) <
+        NumberUtil.fisAmountToChain(state.FISModule.fisAccount && state.FISModule.fisAccount.balance) <
         state.rKSMModule.bondFees + state.FISModule.estimateBondTxFees;
       return {
         transferrableAmount: state.rKSMModule.transferrableAmountShow,

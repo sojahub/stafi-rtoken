@@ -18,9 +18,9 @@ export default function Index(props: any) {
   useEffect(() => {
     dispatch(getTotalIssuance());
     dispatch(rTokenLedger());
-  }, []);
+  }, [dispatch]);
 
-  if (tokenAmount != '--' && Number(tokenAmount) != 0) {
+  if (tokenAmount !== '--' && Number(tokenAmount) !== 0) {
     return <Redirect to='/rFIS/staker/info' />;
   }
   return (
