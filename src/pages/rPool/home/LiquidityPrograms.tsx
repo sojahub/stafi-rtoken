@@ -13,6 +13,7 @@ import config from 'src/config/index';
 import { getLPList, getRPoolList } from 'src/features/rPoolClice';
 import Doubt from 'src/shared/components/doubt';
 import { RootState } from 'src/store';
+import lpConfig from 'src/util/lpConfig';
 import numberUtil from 'src/util/numberUtil';
 import { useInterval } from 'src/util/utils';
 import CardItem from './components/cardItem';
@@ -51,16 +52,20 @@ export default function LiquidityPrograms(props: any) {
     }
   }, [rPoolList, dispatch]);
 
-  const { ethCurveData, atomSifData } = useMemo(() => {
+  const { ethCurveData, atomSifData, solData } = useMemo(() => {
     const ethCurveData = rPoolList.find((item) => {
-      return item.platform == 2 && item.contract == config.rETHLpContract();
+      return item.platform.toString() === '2' && item.contract === lpConfig.rEthLpContract;
     });
     const atomSifData = rPoolList.find((item) => {
       return false;
     });
+    const solData = rPoolList.find((item) => {
+      return item.contract === lpConfig.rSolLpContract;
+    });
     return {
       ethCurveData,
       atomSifData,
+      solData,
     };
   }, [rPoolList]);
 
@@ -84,6 +89,14 @@ export default function LiquidityPrograms(props: any) {
       });
       slippageSum += Number(atomSifData.slippage);
       liquiditySum += Number(atomSifData.liquidity);
+    }
+    if (solData) {
+      count++;
+      solData?.apy?.forEach((apyitem: any) => {
+        apySum += Number(apyitem.apy);
+      });
+      slippageSum += Number(solData.slippage);
+      liquiditySum += Number(solData.liquidity);
     }
     lpList?.forEach((data: any) => {
       data.children?.forEach((item: any) => {
@@ -151,6 +164,19 @@ export default function LiquidityPrograms(props: any) {
               platform='Ethereum'
             />
 
+            <OldTableItem
+              wrapFiUrl={'https://drop.wrapfi.io'}
+              liquidityUrl='https://curve.fi/reth'
+              history={props.history}
+              pairIcon={rpool_reth_Icon}
+              pairValue='rSOL/SOL'
+              apyList={solData ? solData.apy : []}
+              liquidity={solData && solData.liquidity}
+              slippage={solData && solData.slippage}
+              poolOn={solData && solData.platform}
+              platform='Ethereum'
+            />
+
             {/* <OldTableItem
               wrapFiUrl={'https://drop.wrapfi.io'}
               liquidityUrl='https://dex.sifchain.finance/#/pool/add-liquidity/setup/cratom'
@@ -203,7 +229,7 @@ export default function LiquidityPrograms(props: any) {
                             history={props.history}
                             pairIcon={index == 0 ? icon : null}
                             pairValue={index == 0 ? type : null}
-                            apr={item.apr}
+                            apyList={item.apy || []}
                             liquidity={item.liquidity}
                             slippage={item.slippage}
                             poolOn={1}

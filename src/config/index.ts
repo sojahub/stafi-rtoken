@@ -757,20 +757,6 @@ const config = {
       return '0xF9440930043eb3997fc70e1339dBb11F341de7A8';
     }
   },
-  rDOTBSCLpContract: () => {
-    if (!isdev()) {
-      return '0xc1f6d716d5d3a6cc53ce9387b03cf2d777779502';
-    } else {
-      return '0xc1f6d716d5d3a6cc53ce9387b03cf2d777779502';
-    }
-  },
-  rBNBBSCLpContract: () => {
-    if (!isdev()) {
-      return '0xbdc8ee55d888784fb90b4d3d6632e19db72cd992';
-    } else {
-      return '0xbdc8ee55d888784fb90b4d3d6632e19db72cd992';
-    }
-  },
 };
 
 export default config;

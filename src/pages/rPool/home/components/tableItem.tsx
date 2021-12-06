@@ -9,7 +9,7 @@ import numberUtil from 'src/util/numberUtil';
 type Props = {
   pairIcon: any;
   pairValue: string;
-  apr: any;
+  apyList: any[];
   liquidity: any;
   slippage: any;
   poolOn: 1 | 2 | 3;
@@ -61,7 +61,7 @@ export default function Index(props: Props) {
       <div className='col col5'>{props.platform}</div>
 
       <div className='col col2' style={{ display: 'flex', flexDirection: 'row', alignItems: 'flex-end' }}>
-        <div style={{ fontSize: '14px', lineHeight: '14px' }}>{props.apr !== '--' ? `+${props.apr}%` : '--'}</div>
+        {/* <div style={{ fontSize: '14px', lineHeight: '14px' }}>{props.apr !== '--' ? `+${props.apr}%` : '--'}</div>
         <div
           style={{
             lineHeight: '12px',
@@ -74,7 +74,28 @@ export default function Index(props: Props) {
             marginBottom: '1px',
           }}>
           FIS
-        </div>
+        </div> */}
+        {props.apyList.length === 0 && '0.00%'}
+        {props.apyList.map((item, i) => {
+          return (
+            <div key={i} style={{ display: 'flex', flexDirection: 'row', alignItems: 'flex-end', marginBottom: '5px' }}>
+              <div style={{ fontSize: '14px', lineHeight: '14px' }}>+{item.apy}% </div>
+              <div
+                style={{
+                  lineHeight: '12px',
+                  marginLeft: '2px',
+                  fontSize: '12px',
+                  color: '#7c7c7c',
+                  transform: 'scale(0.8)',
+                  transformOrigin: 'bottom',
+                  marginRight: '6px',
+                  marginBottom: '1px',
+                }}>
+                {item.symbol}
+              </div>
+            </div>
+          );
+        })}
       </div>
 
       <div className='col  col4'>{!isNaN(props.slippage) ? `$${numberUtil.amount_format(props.liquidity)}` : '--'}</div>

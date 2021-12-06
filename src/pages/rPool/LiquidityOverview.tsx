@@ -24,6 +24,7 @@ import { useMetaMaskAccount } from 'src/hooks/useMetaMaskAccount';
 import RPoolServer from 'src/servers/rpool';
 import Button from 'src/shared/components/button/connect_button';
 import Modal from 'src/shared/components/modal/connectModal';
+import lpConfig from 'src/util/lpConfig';
 import { liquidityPlatformMatchMetaMask } from 'src/util/metaMaskUtil';
 import numberUtil from 'src/util/numberUtil';
 import { useInterval } from 'src/util/utils';
@@ -43,10 +44,10 @@ export default function LiquidityOverview() {
 
   let lpName = null,
     rTokenName = null;
-  if (lpContract === config.rBNBBSCLpContract()) {
+  if (lpContract === lpConfig.rBNBBSCLpContract1) {
     lpName = 'rBNB/BNB LP';
     rTokenName = 'rBNB';
-  } else if (lpContract === config.rDOTBSCLpContract()) {
+  } else if (lpContract === lpConfig.rDOTBSCLpContract1) {
     lpName = 'rDOT/DOT LP';
     rTokenName = 'rDOT';
   }

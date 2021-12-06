@@ -53,6 +53,16 @@ export default class Index {
               poolItem.liquidity = lpPool.liquidity;
               poolItem.slippage = lpPool.slippage;
               poolItem.lpPrice = lpPool.lpPrice;
+              const newApyList = lpPool.apy.map((element) => {
+                if (element.status === 2) {
+                  return {
+                    ...element,
+                    apy: 0,
+                  };
+                }
+                return { ...element };
+              });
+              poolItem.apy = newApyList;
             } else {
               poolItem.lpPrice = 1;
             }
