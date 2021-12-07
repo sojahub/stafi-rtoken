@@ -129,6 +129,12 @@ export const NewReward = (props: NewRewardProps) => {
 
         <Divider />
 
+        {rewardList !== undefined && rewardList.length === 0 && (
+          <div style={{ height: '200px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+            <NoDataImage src={no_data_png} />
+          </div>
+        )}
+
         <InfiniteScroll
           className='list-contents'
           initialLoad={false}
@@ -137,55 +143,59 @@ export const NewReward = (props: NewRewardProps) => {
           hasMore={hasMore}
           loader={<div key={0}></div>}
           useWindow={false}>
-          {rewardList.map((item) => (
-            <div key={item.era}>
-              <HContainer height='37px'>
-                <Box width='53px'>
-                  <Text size='14px' color='white' bold>
-                    {item.era}
-                  </Text>
-                </Box>
+          {rewardList ? (
+            rewardList.map((item) => (
+              <div key={item.era}>
+                <HContainer height='37px'>
+                  <Box width='53px'>
+                    <Text size='14px' color='white' bold>
+                      {item.era}
+                    </Text>
+                  </Box>
 
-                <Box width='118px'>
-                  <Text size='14px' color='white' bold>
-                    {item.stakeValue}
-                  </Text>
-                </Box>
+                  <Box width='118px'>
+                    <Text size='14px' color='white' bold>
+                      {item.stakeValue}
+                    </Text>
+                  </Box>
 
-                <Box width='118px'>
-                  <Text size='14px' color='white' bold>
-                    {item.rate}
-                  </Text>
-                </Box>
+                  <Box width='118px'>
+                    <Text size='14px' color='white' bold>
+                      {item.rate}
+                    </Text>
+                  </Box>
 
-                <Box width='130px'>
-                  <Text size='14px' color='white' bold>
-                    {item.rTokenBalance}
-                  </Text>
-                </Box>
+                  <Box width='130px'>
+                    <Text size='14px' color='white' bold>
+                      {item.rTokenBalance}
+                    </Text>
+                  </Box>
 
-                <Box width='80px'>
-                  <Text size='14px' color='#00F3AB' bold>
-                    {!isNaN(Number(item.reward)) &&
-                      Number(item.reward) > 0 &&
-                      Number(item.reward) < config.minReward &&
-                      `<${config.minReward}`}
-                    {!isNaN(Number(item.reward)) &&
-                      Number(item.reward) >= config.minReward &&
-                      `+${numberUtil.fixedAmountLength(item.reward)}`}
-                    {(isNaN(Number(item.reward)) || isEmpty(item.reward)) && 'Fetching'}
-                  </Text>
-                </Box>
-              </HContainer>
+                  <Box width='80px'>
+                    <Text size='14px' color='#00F3AB' bold>
+                      {!isNaN(Number(item.reward)) &&
+                        Number(item.reward) > 0 &&
+                        Number(item.reward) < config.minReward &&
+                        `<${config.minReward}`}
+                      {!isNaN(Number(item.reward)) &&
+                        Number(item.reward) >= config.minReward &&
+                        `+${numberUtil.fixedAmountLength(item.reward)}`}
+                      {(isNaN(Number(item.reward)) || isEmpty(item.reward)) && 'Fetching'}
+                    </Text>
+                  </Box>
+                </HContainer>
 
-              <div
-                style={{
-                  height: '1px',
-                  backgroundColor: '#383e44',
-                }}
-              />
-            </div>
-          ))}
+                <div
+                  style={{
+                    height: '1px',
+                    backgroundColor: '#383e44',
+                  }}
+                />
+              </div>
+            ))
+          ) : (
+            <div></div>
+          )}
         </InfiniteScroll>
       </Scrollbars>
 

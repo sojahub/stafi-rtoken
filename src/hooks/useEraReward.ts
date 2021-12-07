@@ -35,7 +35,7 @@ export function useEraReward(
   const [chartData, setChartData] = useState<ChartData>();
   const [pageIndex, setPageIndex] = useState(1);
   const [chainType, setChainType] = useState(STAFI_CHAIN_ID);
-  const [rewardList, setRewardList] = useState<EraRewardModel[]>([]);
+  const [rewardList, setRewardList] = useState<EraRewardModel[]>();
   const [hasMore, setHasMore] = useState(true);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [userAddress, setUserAddress] = useState<string>();
