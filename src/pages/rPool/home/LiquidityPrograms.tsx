@@ -100,12 +100,15 @@ export default function LiquidityPrograms(props: any) {
     }
     lpList?.forEach((data: any) => {
       data.children?.forEach((item: any) => {
-        if (!isNaN(Number(item.apr))) {
-          count++;
-          apySum += Number(item.apr);
-          slippageSum += Number(item.slippage);
-          liquiditySum += Number(item.liquidity);
-        }
+        count++;
+        slippageSum += Number(item.slippage);
+        liquiditySum += Number(item.liquidity);
+
+        item.apy?.forEach((apyItem: any) => {
+          if (!isNaN(Number(apyItem.apy))) {
+            apySum += Number(apyItem.apy);
+          }
+        });
       });
     });
 
