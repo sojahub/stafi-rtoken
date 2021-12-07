@@ -78,8 +78,7 @@ export default function DexSwapLoading(props: Props) {
         }, 500);
       }
     } else if (swapLoadingStatus === 3) {
-      clearTimeout(stage1IntervalId);
-      clearTimeout(stage2IntervalId);
+      setStatusToSuccess();
     } else {
       setSuccess(false);
     }
@@ -174,7 +173,7 @@ export default function DexSwapLoading(props: Props) {
 
   return (
     <Modal
-      visible={swapLoadingStatus === 1 || swapLoadingStatus === 2}
+      visible={swapLoadingStatus === 1 || swapLoadingStatus === 2 || swapLoadingStatus === 3}
       className='swap_loading_modal'
       destroyOnClose={false}
       closable={false}

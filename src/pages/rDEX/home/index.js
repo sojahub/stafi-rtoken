@@ -171,6 +171,8 @@ export default function RDEXHome() {
     dispatch(sol_query_rBalances_account());
     // matic
     dispatch(matic_query_rBalances_account());
+
+    updateTokenReserves();
   };
 
   useEffect(() => {
@@ -357,7 +359,7 @@ export default function RDEXHome() {
         return;
       }
       symbol = rSymbol.Matic;
-      setViewTxUrl(config.etherScanAddressUrl(address));
+      setViewTxUrl(config.etherScanErc20TxInAddressUrl(address));
     } else if (selectedToken.type === 'rfis') {
       if (!fis_checkAddress(address)) {
         message.error('Address input error');

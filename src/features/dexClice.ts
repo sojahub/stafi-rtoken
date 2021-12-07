@@ -125,21 +125,22 @@ export const swap =
                     }
                   }
                 } else if (method === 'ExtrinsicSuccess') {
-                  if (tokenSymbol !== rSymbol.Fis) {
-                    api.rpc.chain.getBlock(result.status.asInBlock.toString()).then((res: any) => {
-                      dispatch(
-                        setSwapLoadingParams({
-                          noticeUuid: notice_uuid,
-                          blockHeight: res.block.header.number.toString(),
-                          tokenSymbol: tokenSymbol,
-                        }),
-                      );
-                    });
+                  api.rpc.chain.getBlock(result.status.asInBlock.toString()).then((res: any) => {
+                    dispatch(
+                      setSwapLoadingParams({
+                        noticeUuid: notice_uuid,
+                        blockHeight: res.block.header.number.toString(),
+                        tokenSymbol: tokenSymbol,
+                      }),
+                    );
 
-                    dispatch(setSwapLoadingStatus(2));
-                  } else {
-                    dispatch(setLoading(false));
-                  }
+                    if (tokenSymbol === rSymbol.Fis) {
+                      dispatch(setSwapLoadingStatus(3));
+                      dispatch(setLoading(false));
+                    } else {
+                      dispatch(setSwapLoadingStatus(2));
+                    }
+                  });
 
                   dispatch(
                     add_Swap_Notice(

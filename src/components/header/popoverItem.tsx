@@ -85,7 +85,7 @@ export default function Index(props: Props) {
               } else if (tokenSymbol === rSymbol.Sol) {
                 viewTxUrl = config.solScanAddressUrl(address);
               } else if (tokenSymbol === rSymbol.Matic) {
-                viewTxUrl = config.etherScanAddressUrl(address);
+                viewTxUrl = config.etherScanErc20TxInAddressUrl(address);
               } else if (tokenSymbol === rSymbol.Fis) {
                 viewTxUrl = config.stafiScanUrl(address);
               }
