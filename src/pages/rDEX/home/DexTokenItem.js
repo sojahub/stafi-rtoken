@@ -32,7 +32,12 @@ export default function DexTokenItem(props) {
           </Text>
         </div>
 
-        <Text size='18px' sameLineHeight color='#BABABA' style={{ position: 'absolute', right: '18px', top: '1px' }}>
+        <Text
+          size='18px'
+          bold
+          sameLineHeight
+          color='#BABABA'
+          style={{ position: 'absolute', right: '18px', top: '1px' }}>
           {totalRate}
         </Text>
       </div>

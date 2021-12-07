@@ -56,24 +56,11 @@ import numberUtil from 'src/util/numberUtil';
 import styled from 'styled-components';
 import Page_FIS from '../../rATOM/selectWallet_rFIS/index';
 import DexTokenItem from './DexTokenItem';
+import { SwapTokenSlider } from './SwapTokenSlider';
 
 const stafiServer = new Stafi();
 
 const allTokenDatas = [
-  {
-    icon: rasset_rfis_svg,
-    title: 'rFIS',
-    content: '--',
-    type: 'rfis',
-  },
-  {
-    icon: rasset_ratom_svg,
-    title: 'rATOM',
-    type: 'ratom',
-    content: '--',
-    ratio: '--',
-    totalRate: '--',
-  },
   {
     icon: rasset_rbnb_svg,
     title: 'rBNB',
@@ -83,9 +70,23 @@ const allTokenDatas = [
     totalRate: '--',
   },
   {
+    icon: rasset_rfis_svg,
+    title: 'rFIS',
+    content: '--',
+    type: 'rfis',
+  },
+  {
     icon: rasset_rdot_svg,
     title: 'rDOT',
     type: 'rdot',
+    content: '--',
+    ratio: '--',
+    totalRate: '--',
+  },
+  {
+    icon: rasset_ratom_svg,
+    title: 'rATOM',
+    type: 'ratom',
     content: '--',
     ratio: '--',
     totalRate: '--',
@@ -764,11 +765,13 @@ export default function RDEXHome() {
         </Spin>
       </Container>
 
-      <div style={{ flex: 1, marginTop: '140px', marginLeft: '100px', marginRight: '50px' }}>
+      {/* <div style={{ flex: 1, marginTop: '140px', marginLeft: '100px', marginRight: '50px' }}>
         {tokenTypes.map((tokenData) => (
           <DexTokenItem key={tokenData.type} {...tokenData} />
         ))}
-      </div>
+      </div> */}
+
+      <SwapTokenSlider items={tokenTypes} />
 
       <DexSwapLoading transferDetail={transferDetail} viewTxUrl={viewTxUrl} />
 
