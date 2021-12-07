@@ -230,8 +230,8 @@ export default function LiquidityPrograms(props: any) {
                           <TableItem
                             key={`${data.name}${item.platform}${index}`}
                             history={props.history}
-                            pairIcon={index == 0 ? icon : null}
-                            pairValue={index == 0 ? type : null}
+                            pairIcon={index === 0 ? icon : null}
+                            pairValue={index === 0 ? type : null}
                             apyList={item.apy || []}
                             liquidity={item.liquidity}
                             slippage={item.slippage}

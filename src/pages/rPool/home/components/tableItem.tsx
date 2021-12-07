@@ -21,6 +21,7 @@ type Props = {
 
 export default function Index(props: Props) {
   const history = useHistory();
+  const isEnd = props.apyList && props.apyList.length >= 1 && props.apyList[0].status === 2;
 
   return (
     <div className='row' style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
@@ -80,31 +81,41 @@ export default function Index(props: Props) {
         {props.apyList.map((item, i) => {
           return (
             <div key={i} style={{ display: 'flex', flexDirection: 'row', alignItems: 'flex-end', margin: '15px 0' }}>
-              <div style={{ fontSize: '14px', lineHeight: '14px' }}>+{item.apy}% </div>
+              {isEnd ? (
+                <>
+                  <div style={{ fontSize: '14px', lineHeight: '14px', color: '#7c7c7c' }}>Completed</div>
+                </>
+              ) : (
+                <>
+                  <div style={{ fontSize: '14px', lineHeight: '14px' }}>+{item.apy}%</div>
 
-              <div
-                style={{
-                  lineHeight: '12px',
-                  marginLeft: '2px',
-                  fontSize: '12px',
-                  color: '#7c7c7c',
-                  transform: 'scale(0.8)',
-                  transformOrigin: 'bottom',
-                  marginRight: '6px',
-                  marginBottom: '1px',
-                }}>
-                {item.symbol}
-              </div>
+                  <div
+                    style={{
+                      lineHeight: '12px',
+                      marginLeft: '2px',
+                      fontSize: '12px',
+                      color: '#7c7c7c',
+                      transform: 'scale(0.8)',
+                      transformOrigin: 'bottom',
+                      marginRight: '6px',
+                      marginBottom: '1px',
+                    }}>
+                    {item.symbol}
+                  </div>
+                </>
+              )}
             </div>
           );
         })}
       </div>
 
       <div style={{ flex: '0 0 16%' }}>
-        {!isNaN(props.slippage) ? `$${numberUtil.amount_format(props.liquidity)}` : '--'}
+        {!isNaN(props.slippage) && !isEnd ? `$${numberUtil.amount_format(props.liquidity)}` : '--'}
       </div>
 
-      <div style={{ flex: '0 0 14%' }}>{!isNaN(props.slippage) ? `${Number(props.slippage).toFixed(2)}%` : '--'}</div>
+      <div style={{ flex: '0 0 14%' }}>
+        {!isNaN(props.slippage) && !isEnd ? `${Number(props.slippage).toFixed(2)}%` : '--'}
+      </div>
 
       <div style={{ flex: '0 0 14%' }}>
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
