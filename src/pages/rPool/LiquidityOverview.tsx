@@ -40,6 +40,7 @@ export default function LiquidityOverview() {
   const dispatch = useDispatch();
   const history = useHistory();
   const { lpPlatform, poolIndex, lpContract } = useParams<any>();
+  const lpStatus = history.location.state?.status;
   const refreshInterval = lpPlatform === 'BSC' || lpPlatform === 'Polygon' ? 3000 : 15000;
 
   let lpName = null,
@@ -246,7 +247,11 @@ export default function LiquidityOverview() {
               <div className='title'>{lpNameWithPrefix}</div>
 
               <div className='apr_container'>
-                <div className='number'>{overviewData && !isNaN(overviewData.apr) ? overviewData.apr + '%' : '--'}</div>
+                <div className='number'>
+                  {history.location.state?.apy !== undefined && !isNaN(history.location.state?.apy)
+                    ? history.location.state?.apy + '%'
+                    : '--'}
+                </div>
                 <div className='label'>APY</div>
               </div>
 
@@ -352,6 +357,7 @@ export default function LiquidityOverview() {
             <LiquidityStaker
               disabled={false}
               lpData={overviewData}
+              lpStatus={lpStatus}
               initData={initData}
               lpNameWithPrefix={lpNameWithPrefix}
             />

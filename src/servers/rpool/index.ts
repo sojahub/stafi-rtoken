@@ -62,6 +62,9 @@ export default class Index {
                 }
                 return { ...element };
               });
+              newApyList.sort((item1, item2) => {
+                return item2.apy * 1 - item1.apy * 1;
+              });
               poolItem.apy = newApyList;
             } else {
               poolItem.lpPrice = 1;

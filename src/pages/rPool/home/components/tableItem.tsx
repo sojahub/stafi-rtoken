@@ -5,6 +5,7 @@ import poolUniswapIcon from 'src/assets/images/poolUniswapIcon.png';
 import poolQuickSwapIcon from 'src/assets/images/quick_swap.png';
 import GhostButton from 'src/shared/components/button/ghostButton';
 import numberUtil from 'src/util/numberUtil';
+import styled from 'styled-components';
 
 type Props = {
   pairIcon: any;
@@ -60,7 +61,7 @@ export default function Index(props: Props) {
 
       <div className='col col5'>{props.platform}</div>
 
-      <div className='col col2' style={{ display: 'flex', flexDirection: 'row', alignItems: 'flex-end' }}>
+      <div className='col col2'>
         {/* <div style={{ fontSize: '14px', lineHeight: '14px' }}>{props.apr !== '--' ? `+${props.apr}%` : '--'}</div>
         <div
           style={{
@@ -75,11 +76,13 @@ export default function Index(props: Props) {
           }}>
           FIS
         </div> */}
-        {props.apyList.length === 0 && '0.00%'}
+        {props.apyList.length === 0 && '0%'}
+
         {props.apyList.map((item, i) => {
           return (
-            <div key={i} style={{ display: 'flex', flexDirection: 'row', alignItems: 'flex-end', marginBottom: '5px' }}>
+            <div key={i} style={{ display: 'flex', flexDirection: 'row', alignItems: 'flex-end', margin: '15px 0' }}>
               <div style={{ fontSize: '14px', lineHeight: '14px' }}>+{item.apy}% </div>
+
               <div
                 style={{
                   lineHeight: '12px',
@@ -103,14 +106,33 @@ export default function Index(props: Props) {
       <div className='col col5'>{!isNaN(props.slippage) ? `${Number(props.slippage).toFixed(2)}%` : '--'}</div>
 
       <div className='col col2'>
-        <GhostButton
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+          {props.apyList.map((item) => (
+            <div style={{ padding: '5px 0' }} key={item.index}>
+              <GhostButton
+                className='liquidity_btn'
+                onClick={() => {
+                  history.push(`/rPool/lp/${props.platform}/${item.index}/${props.lpContract}`, {
+                    apy: item.apy,
+                    status: item.status,
+                  });
+                }}>
+                {' '}
+                Earn
+              </GhostButton>
+            </div>
+          ))}
+        </div>
+
+        {/* <GhostButton
           className='liquidity_btn'
           onClick={() => {
             history.push(`/rPool/lp/${props.platform}/${props.poolIndex}/${props.lpContract}`);
           }}>
           {' '}
           Earn
-        </GhostButton>
+        </GhostButton> */}
+
         {/* {props.poolOn==3?<BottonPopover data={[{label:"StaFi",url:props.stakeUrl},{label:"WrapFi",url:props.wrapFiUrl}]}>
                       Stake 
                     </BottonPopover>:<GhostButton onClick={()=>{

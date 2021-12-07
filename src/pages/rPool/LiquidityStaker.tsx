@@ -14,6 +14,7 @@ declare const window: any;
 type LiquidityStakerProps = {
   disabled: boolean;
   lpData: any;
+  lpStatus: number;
   lpNameWithPrefix: string;
   initData?: Function;
 };
@@ -24,25 +25,24 @@ export default function LiquidityStaker(props: LiquidityStakerProps) {
 
   const [index, setIndex] = useState(0);
   const [amount, setAmount] = useState<any>();
-  const [isEnd, setIsEnd] = useState(false);
 
   const { metaMaskAddress, metaMaskNetworkId } = useMetaMaskAccount();
 
   const { lpData, initData, lpNameWithPrefix } = props;
 
-  useEffect(() => {
-    if (window.ethereum && typeof window.ethereum !== 'undefined' && window.ethereum.isMetaMask) {
-      window.ethereum
-        .request({ method: 'eth_getBlockByNumber', params: ['latest', true] })
-        .then((result: any) => {
-          const currentBlock = Number(result.number);
-          if (lpData && !isNaN(Number(lpData.endBlock)) && currentBlock > Number(lpData.endBlock)) {
-            setIsEnd(true);
-          }
-        })
-        .catch((error: any) => {});
-    }
-  }, [lpData]);
+  // useEffect(() => {
+  //   if (window.ethereum && typeof window.ethereum !== 'undefined' && window.ethereum.isMetaMask) {
+  //     window.ethereum
+  //       .request({ method: 'eth_getBlockByNumber', params: ['latest', true] })
+  //       .then((result: any) => {
+  //         const currentBlock = Number(result.number);
+  //         if (lpData && !isNaN(Number(lpData.endBlock)) && currentBlock > Number(lpData.endBlock)) {
+  //           setIsEnd(true);
+  //         }
+  //       })
+  //       .catch((error: any) => {});
+  //   }
+  // }, [lpData]);
 
   const metaMaskNetworkMatched = useMemo(() => {
     return liquidityPlatformMatchMetaMask(metaMaskNetworkId, lpPlatform);
@@ -117,7 +117,7 @@ export default function LiquidityStaker(props: LiquidityStakerProps) {
       message.error('waiting for data');
       return;
     }
-    if (isEnd) {
+    if (props.lpStatus === 2) {
       message.info('The yield farming of this pool has ended');
       return;
     }
@@ -142,7 +142,7 @@ export default function LiquidityStaker(props: LiquidityStakerProps) {
       message.error('eth address empty');
       return;
     }
-    if (isEnd) {
+    if (props.lpStatus === 2) {
       message.info('The yield farming of this pool has ended');
       return;
     }
