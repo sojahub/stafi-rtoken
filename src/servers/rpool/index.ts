@@ -62,10 +62,10 @@ export default class Index {
                 }
                 return { ...element };
               });
-              newApyList.sort((item1, item2) => {
-                return item2.apy * 1 - item1.apy * 1;
+              const filterApyList = newApyList.filter((item) => {
+                return item.index === poolItem.poolIndex;
               });
-              poolItem.apy = newApyList;
+              poolItem.apy = filterApyList;
             } else {
               poolItem.lpPrice = 1;
             }

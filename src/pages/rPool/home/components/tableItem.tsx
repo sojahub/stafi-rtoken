@@ -5,7 +5,6 @@ import poolUniswapIcon from 'src/assets/images/poolUniswapIcon.png';
 import poolQuickSwapIcon from 'src/assets/images/quick_swap.png';
 import GhostButton from 'src/shared/components/button/ghostButton';
 import numberUtil from 'src/util/numberUtil';
-import styled from 'styled-components';
 
 type Props = {
   pairIcon: any;
@@ -25,7 +24,7 @@ export default function Index(props: Props) {
 
   return (
     <div className='row' style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-      <div className='col col2'>
+      <div style={{ flex: '0 0 14%' }}>
         {props.pairIcon && (
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
             <img src={props.pairIcon} />
@@ -34,7 +33,7 @@ export default function Index(props: Props) {
         )}
       </div>
 
-      <div className='col col5'>
+      <div style={{ flex: '0 0 14%' }}>
         {props.platform === 'Ethereum' && (
           <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
             <img src={poolUniswapIcon} style={{ width: '20px', height: '20px', marginRight: '5px' }} />
@@ -59,9 +58,9 @@ export default function Index(props: Props) {
         )}
       </div>
 
-      <div className='col col5'>{props.platform}</div>
+      <div style={{ flex: '0 0 14%' }}>{props.platform}</div>
 
-      <div className='col col2'>
+      <div style={{ flex: '0 0 14%' }}>
         {/* <div style={{ fontSize: '14px', lineHeight: '14px' }}>{props.apr !== '--' ? `+${props.apr}%` : '--'}</div>
         <div
           style={{
@@ -101,18 +100,20 @@ export default function Index(props: Props) {
         })}
       </div>
 
-      <div className='col  col4'>{!isNaN(props.slippage) ? `$${numberUtil.amount_format(props.liquidity)}` : '--'}</div>
+      <div style={{ flex: '0 0 16%' }}>
+        {!isNaN(props.slippage) ? `$${numberUtil.amount_format(props.liquidity)}` : '--'}
+      </div>
 
-      <div className='col col5'>{!isNaN(props.slippage) ? `${Number(props.slippage).toFixed(2)}%` : '--'}</div>
+      <div style={{ flex: '0 0 14%' }}>{!isNaN(props.slippage) ? `${Number(props.slippage).toFixed(2)}%` : '--'}</div>
 
-      <div className='col col2'>
+      <div style={{ flex: '0 0 14%' }}>
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
           {props.apyList.map((item) => (
             <div style={{ padding: '5px 0' }} key={item.index}>
               <GhostButton
                 className='liquidity_btn'
                 onClick={() => {
-                  history.push(`/rPool/lp/${props.platform}/${item.index}/${props.lpContract}`, {
+                  history.push(`/rPool/lp/${props.platform}/${props.poolIndex}/${props.lpContract}`, {
                     apy: item.apy,
                     status: item.status,
                   });

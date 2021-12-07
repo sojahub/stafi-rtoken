@@ -8,8 +8,8 @@ import rpool_reth_Icon from 'src/assets/images/rpool_reth.svg';
 import rpool_rfis_Icon from 'src/assets/images/rpool_rfis_fis.svg';
 import rpool_rksm_Icon from 'src/assets/images/rpool_rksm_ksm.svg';
 import rpool_rmatic_Icon from 'src/assets/images/rpool_rmatic_matic.svg';
+import rpool_rsol_Icon from 'src/assets/images/rpool_rsol_sol.svg';
 import Card from 'src/components/card/index';
-import config from 'src/config/index';
 import { getLPList, getRPoolList } from 'src/features/rPoolClice';
 import Doubt from 'src/shared/components/doubt';
 import { RootState } from 'src/store';
@@ -160,21 +160,21 @@ export default function LiquidityPrograms(props: any) {
               apyList={ethCurveData ? ethCurveData.apy : []}
               liquidity={ethCurveData && ethCurveData.liquidity}
               slippage={ethCurveData && ethCurveData.slippage}
-              poolOn={ethCurveData && ethCurveData.platform}
+              poolOn={2}
               platform='Ethereum'
             />
 
             <OldTableItem
               wrapFiUrl={'https://drop.wrapfi.io'}
-              liquidityUrl='https://curve.fi/reth'
+              liquidityUrl='https://app.atrix.finance/#/pools/2Jufhrr5w2zbavrUZgwkv91z6phoCFrjNDzvp3YCaveD/deposit'
               history={props.history}
-              pairIcon={rpool_reth_Icon}
+              pairIcon={rpool_rsol_Icon}
               pairValue='rSOL/SOL'
               apyList={solData ? solData.apy : []}
               liquidity={solData && solData.liquidity}
               slippage={solData && solData.slippage}
-              poolOn={solData && solData.platform}
-              platform='Ethereum'
+              poolOn={6}
+              platform='Solana'
             />
 
             {/* <OldTableItem
