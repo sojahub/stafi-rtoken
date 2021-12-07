@@ -23,7 +23,9 @@ export default function Index(props: Props) {
   }
   return (
     <div className='popover_item'>
-      <div className='title'>{props.data.title === 'DexSwap' ? 'Swap' : props.data.title}</div>
+      <div className='title'>
+        {props.data.title === 'DexSwap' ? 'Swap' : props.data.title === 'Swap' ? 'Bridge' : props.data.title}
+      </div>
 
       <div className='context'>
         {/* {props.data.content} */}
@@ -80,6 +82,12 @@ export default function Index(props: Props) {
                 viewTxUrl = config.dotScanAddressUrl(address);
               } else if (tokenSymbol === rSymbol.Bnb) {
                 viewTxUrl = config.bnbScanAddressUrl(address);
+              } else if (tokenSymbol === rSymbol.Sol) {
+                viewTxUrl = config.solScanAddressUrl(address);
+              } else if (tokenSymbol === rSymbol.Matic) {
+                viewTxUrl = config.etherScanAddressUrl(address);
+              } else if (tokenSymbol === rSymbol.Fis) {
+                viewTxUrl = config.stafiScanUrl(address);
               }
               viewTxUrl && window.open(viewTxUrl);
               props.hideNoticePopover && props.hideNoticePopover();

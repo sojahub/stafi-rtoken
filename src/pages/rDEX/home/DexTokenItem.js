@@ -1,7 +1,17 @@
 import React from 'react';
 import { Text } from 'src/components/commonComponents';
+import { useSwapRates } from 'src/hooks/useSwapRates';
+import numberUtil from 'src/util/numberUtil';
 
 export default function DexTokenItem(props) {
+  const { tokenRate, liquidityRate } = useSwapRates({ type: props.type });
+
+  const formatTokenRate = isNaN(Number(tokenRate)) ? '--' : numberUtil.handleAmountRoundToFixed(tokenRate, 3);
+
+  const totalRate = isNaN(Number(tokenRate * liquidityRate))
+    ? '--'
+    : numberUtil.handleAmountRoundToFixed(tokenRate * liquidityRate, 3);
+
   return (
     <div style={{ maxWidth: '280px', marginBottom: '22px', position: 'relative' }}>
       <div
@@ -18,16 +28,12 @@ export default function DexTokenItem(props) {
           </Text>
 
           <Text size='14px' sameLineHeight color='#676767' mt='20px'>
-            Redeem rate: {props.ratio}
+            Redeem rate: {formatTokenRate}
           </Text>
         </div>
 
-        <Text
-          size='18px'
-          sameLineHeight
-          color='#BABABA'
-          style={{ position: 'absolute', right: '18px', top: '1px' }}>
-          {props.totalRate}
+        <Text size='18px' sameLineHeight color='#BABABA' style={{ position: 'absolute', right: '18px', top: '1px' }}>
+          {totalRate}
         </Text>
       </div>
 

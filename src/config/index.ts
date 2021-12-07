@@ -553,6 +553,12 @@ const config = {
     }
     return `https://solscan.io/account/${address}#tokenAccounts`;
   },
+  solScanAddressUrl: (address: any) => {
+    if (!isdev()) {
+      return `https://solscan.io/account/${address}`;
+    }
+    return `https://solscan.io/account/${address}`;
+  },
   etherScanTokenUrl: (tokenAddress: any, userAddress: any) => {
     if (!isdev()) {
       return `https://etherscan.io/token/${tokenAddress}?a=${userAddress}`;
@@ -588,6 +594,12 @@ const config = {
       return `https://etherscan.io/tx/${txHash}`;
     }
     return `https://goerli.etherscan.io/tx/${txHash}`;
+  },
+  etherScanAddressUrl: (address: any) => {
+    if (!isdev()) {
+      return `https://etherscan.io/address/${address}`;
+    }
+    return `https://goerli.etherscan.io/address/${address}`;
   },
   bscScanTxUrl: (txHash: any) => {
     if (!isdev()) {
