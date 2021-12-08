@@ -24,7 +24,7 @@ interface EraRewardModel {
   reward: string;
 }
 
-const PAGE_COUNT = 20;
+const PAGE_COUNT = 50;
 
 export function useEraReward(
   platform: string,
