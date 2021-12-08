@@ -12,12 +12,13 @@ import { stafi_uuid } from 'src/util/common';
 import { AppThunk } from '../store';
 import { setLoading } from './globalClice';
 import { add_Notice, noticeStatus, noticesubType, noticeType } from './noticeClice';
+import lpConfig from 'src/util/lpConfig';
 
 const lpActs: Array<any> = [
   // {
   //   name: 'rETH/ETH LP',
   //   extraName: 'rETH',
-  //   children: [
+  //   children: [en e
   //     {
   //       platform: 'Ethereum',
   //       poolIndex: 0,
@@ -104,8 +105,27 @@ const lpActs: Array<any> = [
     children: [
       {
         platform: 'BSC',
+        poolIndex: 2,
+        lpContract: lpConfig.rBNBBSCLpContract1,
+        stakeTokenAddress: '',
+        apr: '0',
+        toDate: '--',
+        totalReward: '--',
+        tvl: '--',
+        rewardPerBlockValue: '',
+        totalRewardValue: '',
+        startBlock: '',
+        endBlock: '',
+        stakeTokenSupply: '',
+        stakeTokenPrice: '',
+        lpPrice: '--',
+        liquidity: '--',
+        slippage: '--',
+      },
+      {
+        platform: 'BSC',
         poolIndex: 0,
-        lpContract: config.rBNBBSCLpContract(),
+        lpContract: lpConfig.rBNBBSCLpContract1,
         stakeTokenAddress: '',
         apr: '0',
         toDate: '--',
@@ -129,8 +149,27 @@ const lpActs: Array<any> = [
     children: [
       {
         platform: 'BSC',
+        poolIndex: 3,
+        lpContract: lpConfig.rDOTBSCLpContract1,
+        stakeTokenAddress: '',
+        apr: '0',
+        toDate: '--',
+        totalReward: '--',
+        tvl: '--',
+        rewardPerBlockValue: '',
+        totalRewardValue: '',
+        startBlock: '',
+        endBlock: '',
+        stakeTokenSupply: '',
+        stakeTokenPrice: '',
+        lpPrice: '--',
+        liquidity: '--',
+        slippage: '--',
+      },
+      {
+        platform: 'BSC',
         poolIndex: 1,
-        lpContract: config.rDOTBSCLpContract(),
+        lpContract: lpConfig.rDOTBSCLpContract1,
         stakeTokenAddress: '',
         apr: '0',
         toDate: '--',
@@ -314,7 +353,7 @@ export const getLPList =
       }
       const promiseList = [];
       for (let index = 0; index < lpList.length; index++) {
-        promiseList.push(rPoolServer.fillLpData(lpList[index], fisPrice));
+        // promiseList.push(rPoolServer.fillLpData(lpList[index], fisPrice));
       }
 
       const resultList = await Promise.all(promiseList);
