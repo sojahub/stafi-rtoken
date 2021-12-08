@@ -1,6 +1,7 @@
 import { Spin } from 'antd';
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useHistory } from 'react-router-dom';
 import { renderRoutes } from 'react-router-config';
 import config from 'src/config/index';
 import { bondSwitch } from 'src/features/FISClice';
@@ -13,6 +14,7 @@ import '../template/index.scss';
 
 export default function Index(props: any) {
   const dispatch = useDispatch();
+  const history = useHistory();
   const { metaMaskAddress, metaMaskNetworkId } = useMetaMaskAccount();
 
   const { fisAddress } = useSelector((state: any) => {
@@ -45,6 +47,12 @@ export default function Index(props: any) {
       loading: state.globalModule.loading,
     };
   });
+
+  useEffect(() => {
+    if (!metaMaskAddress) {
+      history.push('/rBNB/home');
+    }
+  }, [history, metaMaskAddress]);
 
   return (
     <div className='stafi_layout'>

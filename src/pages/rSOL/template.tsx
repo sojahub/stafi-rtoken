@@ -1,6 +1,7 @@
 import { Spin } from 'antd';
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useHistory } from 'react-router-dom';
 import { renderRoutes } from 'react-router-config';
 import { bondSwitch } from 'src/features/FISClice';
 import { reloadData } from 'src/features/globalClice';
@@ -18,6 +19,7 @@ import '../template/index.scss';
 
 export default function Index(props: any) {
   const dispatch = useDispatch();
+  const history = useHistory();
 
   const { fisAccount, solAddress } = useSelector((state: any) => {
     return {
@@ -55,6 +57,12 @@ export default function Index(props: any) {
       loading: state.globalModule.loading,
     };
   });
+
+  useEffect(() => {
+    if (!solAddress) {
+      history.push('/rSOL/staker/home');
+    }
+  }, [solAddress]);
 
   return (
     <div className='stafi_layout'>

@@ -14,12 +14,11 @@ import './index.scss';
 export default function Inde(props: any) {
   const [visible, setVisible] = useState(false);
   const dispatch = useDispatch();
-  const { metaMaskAddress, metaMaskNetworkId } = useMetaMaskAccount();
+  const { metaMaskAddress } = useMetaMaskAccount();
 
-  const { fisAccount, fisAccounts } = useSelector((state: any) => {
+  const { fisAccount } = useSelector((state: any) => {
     return {
       fisAccount: state.FISModule.fisAccount,
-      fisAccounts: state.FISModule.fisAccounts,
     };
   });
 

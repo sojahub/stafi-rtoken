@@ -297,7 +297,7 @@ export default function MintOverview() {
 
           {Number(tokenSymbol) === rSymbol.Eth && (
             <Button
-              disabled={metaMaskAddress}
+              disabled={!!metaMaskAddress}
               icon={metamask}
               width={'400px'}
               onClick={() => {

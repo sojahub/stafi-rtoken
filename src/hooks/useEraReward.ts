@@ -94,7 +94,7 @@ export function useEraReward(
           const newRate = numberUtil.rTokenRateToHuman(element.rate).toFixed(6);
           let newStakeValue = '--';
           let newRTokenBalance = '--';
-          let newReward = '--';
+          let newReward: number | string = '--';
           if (platform === 'ERC20' || platform === 'BEP20') {
             newStakeValue = numberUtil.handleAmountRoundToFixed(
               numberUtil.tokenAmountToHuman(element.stakeValue, rSymbol.Eth),
@@ -105,10 +105,7 @@ export function useEraReward(
               6,
             );
             if (!isEmpty(element.reward)) {
-              newReward = numberUtil.handleAmountFloorToFixed(
-                numberUtil.tokenAmountToHuman(element.reward, rSymbol.Eth),
-                6,
-              );
+              newReward = numberUtil.tokenAmountToHuman(element.reward, rSymbol.Eth);
             }
           } else if (platform === 'Native') {
             newStakeValue = numberUtil.handleAmountRoundToFixed(
@@ -120,10 +117,7 @@ export function useEraReward(
               6,
             );
             if (!isEmpty(element.reward)) {
-              newReward = numberUtil.handleAmountFloorToFixed(
-                numberUtil.tokenAmountToHuman(element.reward, getRsymbolByTokenTitle(type)),
-                6,
-              );
+              newReward = numberUtil.tokenAmountToHuman(element.reward, getRsymbolByTokenTitle(type));
             }
           }
 
@@ -170,7 +164,9 @@ export function useEraReward(
         ? SOL_CHAIN_ID
         : -1,
     );
-    dispatch(setLoading(true));
+    if (userAddress) {
+      dispatch(setLoading(true));
+    }
   }, [dispatch, platform, type, userAddress]);
 
   useEffect(() => {
@@ -181,6 +177,7 @@ export function useEraReward(
     if (isLoadingMore) {
       return;
     }
+    dispatch(setLoading(true));
     setIsLoadingMore(true);
     setPageIndex(pageIndex + 1);
   };

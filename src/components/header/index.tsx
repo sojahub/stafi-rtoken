@@ -188,7 +188,7 @@ export default function Index(props: Props) {
     }
 
     if (location.pathname.includes('/rETH')) {
-      if (location.pathname.includes('/rETH/staker/info')) {
+      if (location.pathname.includes('/rETH/staker/info') || location.pathname.includes('/rETH/staker/reward')) {
         return {
           showMetaMaskAccount: true,
           wrongNetwork:
@@ -203,7 +203,7 @@ export default function Index(props: Props) {
     }
 
     if (location.pathname.includes('/rBNB')) {
-      if (location.pathname.includes('rBNB/staker/info')) {
+      if (location.pathname.includes('rBNB/staker/info') || location.pathname.includes('rBNB/staker/reward')) {
         return {
           showFisAccount: true,
           showMetaMaskAccount: platform !== 'Native',
@@ -218,7 +218,7 @@ export default function Index(props: Props) {
     }
 
     if (location.pathname.includes('/rFIS')) {
-      if (location.pathname.includes('/rFIS/staker/info')) {
+      if (location.pathname.includes('/rFIS/staker/info') || location.pathname.includes('/rFIS/staker/reward')) {
         return {
           showFisAccount: true,
           showMetaMaskAccount: platform !== 'Native',
@@ -240,7 +240,7 @@ export default function Index(props: Props) {
     }
 
     if (location.pathname.includes('/rDOT')) {
-      if (location.pathname.includes('/rDOT/staker/info')) {
+      if (location.pathname.includes('/rDOT/staker/info') || location.pathname.includes('/rDOT/staker/reward')) {
         return {
           showFisAccount: true,
           showMetaMaskAccount: platform !== 'Native',
@@ -268,7 +268,7 @@ export default function Index(props: Props) {
     }
 
     if (location.pathname.includes('/rKSM')) {
-      if (location.pathname.includes('/rKSM/staker/info')) {
+      if (location.pathname.includes('/rKSM/staker/info') || location.pathname.includes('/rKSM/staker/reward')) {
         return {
           showFisAccount: true,
           showMetaMaskAccount: platform !== 'Native',
@@ -296,7 +296,7 @@ export default function Index(props: Props) {
     }
 
     if (location.pathname.includes('/rATOM')) {
-      if (location.pathname.includes('/rATOM/staker/info')) {
+      if (location.pathname.includes('/rATOM/staker/info') || location.pathname.includes('/rATOM/staker/reward')) {
         return {
           showFisAccount: true,
           showMetaMaskAccount: platform !== 'Native',
@@ -320,7 +320,7 @@ export default function Index(props: Props) {
     }
 
     if (location.pathname.includes('/rSOL')) {
-      if (location.pathname.includes('rSOL/staker/info')) {
+      if (location.pathname.includes('rSOL/staker/info') || location.pathname.includes('rSOL/staker/reward')) {
         return {
           showFisAccount: true,
           showSolAccount: platform !== 'Native',
@@ -341,7 +341,7 @@ export default function Index(props: Props) {
     }
 
     if (location.pathname.includes('/rMATIC')) {
-      if (location.pathname.includes('/rMATIC/staker/info')) {
+      if (location.pathname.includes('/rMATIC/staker/info') || location.pathname.includes('/rMATIC/staker/reward')) {
         return {
           showFisAccount: true,
           showMetaMaskAccount: platform !== 'Native',

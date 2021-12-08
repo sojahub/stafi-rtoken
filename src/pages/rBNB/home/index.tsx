@@ -41,16 +41,16 @@ export default function Inde(props: any) {
         icon={metamask}
         onClick={() => {
           dispatch(initMetaMaskAccount());
-          if (fisAccount) {
-            props.history.push('/rBNB/type');
-          } else if (fisAccounts && fisAccounts.length > 0) {
-            props.history.push({
-              pathname: '/rBNB/fiswallet',
-              state: {
-                showBackIcon: false,
-              },
-            });
-          }
+          // if (fisAccount) {
+          //   props.history.push('/rBNB/type');
+          // } else if (fisAccounts && fisAccounts.length > 0) {
+          //   props.history.push({
+          //     pathname: '/rBNB/fiswallet',
+          //     state: {
+          //       showBackIcon: false,
+          //     },
+          //   });
+          // }
           // props.history.push("/rMATIC/type")
         }}>
         Connect to Metamask

@@ -2,6 +2,7 @@ import { includes } from 'lodash';
 import React from 'react';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router-dom';
+import { useMetaMaskAccount } from 'src/hooks/useMetaMaskAccount';
 import { Symbol } from 'src/keyring/defaults';
 import { getLocalStorageItem, Keys } from 'src/util/common';
 export const authorized = (allowed: any[], currentRole: any) => includes(allowed, currentRole);

@@ -367,7 +367,7 @@ export default function LiquidityOverview() {
         {!showContent && (
           <div style={{ marginTop: '150px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
             <Button
-              disabled={metaMaskAddress}
+              disabled={!!metaMaskAddress}
               icon={metamask}
               width={'400px'}
               onClick={() => {

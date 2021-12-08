@@ -173,6 +173,7 @@ export const NewReward = (props: NewRewardProps) => {
 
                   <Box width='80px'>
                     <Text size='14px' color='#00F3AB' bold>
+                      {Number(item.reward) === 0 && `0`}
                       {!isNaN(Number(item.reward)) &&
                         Number(item.reward) > 0 &&
                         Number(item.reward) < config.minReward &&
@@ -180,7 +181,7 @@ export const NewReward = (props: NewRewardProps) => {
                       {!isNaN(Number(item.reward)) &&
                         Number(item.reward) >= config.minReward &&
                         `+${numberUtil.fixedAmountLength(item.reward)}`}
-                      {(isNaN(Number(item.reward)) || isEmpty(item.reward)) && 'Fetching'}
+                      {isNaN(Number(item.reward)) && 'Fetching'}
                     </Text>
                   </Box>
                 </HContainer>

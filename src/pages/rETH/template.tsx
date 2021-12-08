@@ -2,7 +2,7 @@ import { Spin } from 'antd';
 import qs from 'querystring';
 import React, { useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useLocation } from 'react-router';
+import { useHistory, useLocation } from 'react-router-dom';
 import { renderRoutes } from 'react-router-config';
 import config from 'src/config/index';
 import { getETHAssetBalance } from 'src/features/ETHClice';
@@ -14,6 +14,7 @@ import './index.scss';
 
 export default function Index(props: any) {
   const dispatch = useDispatch();
+  const history = useHistory();
   const location = useLocation();
   const { metaMaskAddress, metaMaskNetworkId } = useMetaMaskAccount();
 
@@ -23,8 +24,10 @@ export default function Index(props: any) {
   }
 
   useEffect(() => {
-    metaMaskAddress && dispatch(reloadData());
-    dispatch(getETHAssetBalance());
+    if (metaMaskNetworkId === config.goerliChainId()) {
+      metaMaskAddress && dispatch(reloadData());
+      dispatch(getETHAssetBalance());
+    }
   }, [metaMaskAddress, metaMaskNetworkId, dispatch]);
 
   const { loading } = useSelector((state: any) => {
@@ -32,6 +35,12 @@ export default function Index(props: any) {
       loading: state.globalModule.loading,
     };
   });
+
+  useEffect(() => {
+    if (!metaMaskAddress) {
+      history.push('/rETH/home');
+    }
+  }, [history, metaMaskAddress]);
 
   const showSwitchMetamaskButton = useMemo(() => {
     return (

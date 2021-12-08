@@ -1,5 +1,6 @@
 import ReactEcharts from 'echarts-for-react';
 import React from 'react';
+import { graphic } from 'echarts';
 
 export default function EraRewardChart(props) {
   const getChartOption = () => {
@@ -51,7 +52,7 @@ export default function EraRewardChart(props) {
           show: false,
           type: 'value',
           min: function (value) {
-            return value.min - (value.max - value.min);
+            return Math.max(0, value.min - (value.max - value.min));
           },
           max: 'dataMax',
           axisLabel: {
@@ -73,8 +74,19 @@ export default function EraRewardChart(props) {
         {
           name: 'value',
           type: 'line',
+          showSymbol: false,
           areaStyle: {
-            color: '#40CB92',
+            // color: '#40CB92',
+            color: new graphic.LinearGradient(0, 0, 0, 1, [
+              {
+                offset: 0,
+                color: 'rgba(73,255,200,0.3)',
+              },
+              {
+                offset: 1,
+                color: 'rgba(226,255,246,0.3)',
+              },
+            ]),
           },
           barWidth: '60%',
           data: props.data,

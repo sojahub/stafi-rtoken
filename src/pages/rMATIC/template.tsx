@@ -1,6 +1,7 @@
 import { Spin } from 'antd';
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useHistory } from 'react-router-dom';
 import { renderRoutes } from 'react-router-config';
 import config from 'src/config/index';
 import { bondSwitch } from 'src/features/FISClice';
@@ -21,6 +22,7 @@ import '../template/index.scss';
 
 export default function Index(props: any) {
   const dispatch = useDispatch();
+  const history = useHistory();
   const { metaMaskAddress, metaMaskNetworkId } = useMetaMaskAccount();
 
   const { fisAccount } = useSelector((state: any) => {
@@ -52,6 +54,12 @@ export default function Index(props: any) {
       dispatch(reloadData(Symbol.Matic));
     }
   }, [dispatch, metaMaskAddress, metaMaskNetworkId]);
+
+  useEffect(() => {
+    if (!metaMaskAddress) {
+      history.push('/rMATIC/home');
+    }
+  }, [history, metaMaskAddress]);
 
   const { loading } = useSelector((state: any) => {
     return {
