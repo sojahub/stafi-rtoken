@@ -668,7 +668,10 @@ export default function RDEXHome() {
                         Slippage Tolerance :
                       </Text>
                       <Text size='10px' color='white' sameLineHeight>
-                        {slippageTolerance}%
+                        {customSlippageTolerance && Number(customSlippageTolerance) > Number(0)
+                          ? customSlippageTolerance
+                          : slippageTolerance}
+                        %
                       </Text>
                     </HContainer>
 
