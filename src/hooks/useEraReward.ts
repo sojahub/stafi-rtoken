@@ -174,7 +174,7 @@ export function useEraReward(
   }, [pageIndex, userAddress, chainType]);
 
   const loadMore = () => {
-    if (isLoadingMore) {
+    if (isLoadingMore || !hasMore) {
       return;
     }
     dispatch(setLoading(true));
