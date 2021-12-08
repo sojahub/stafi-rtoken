@@ -1,5 +1,6 @@
 import React from 'react';
 import poolCurveIcon from 'src/assets/images/poolCurveIcon.svg';
+import poolAtrixIcon from 'src/assets/images/pool_atrix.svg';
 import GhostButton from 'src/shared/components/button/ghostButton';
 import numberUtil from 'src/util/numberUtil';
 
@@ -9,7 +10,7 @@ type Props = {
   apyList: any[];
   liquidity: any;
   slippage: any;
-  poolOn: 1 | 2 | 3;
+  poolOn: number;
   history: any;
   liquidityUrl: string;
   wrapFiUrl: string;
@@ -17,6 +18,9 @@ type Props = {
 };
 
 export default function OldTableItem(props: Props) {
+  const poolName = props.poolOn === 2 ? 'Curve' : props.poolOn === 6 ? 'Atrix' : '';
+  const poolIcon = props.poolOn === 2 ? poolCurveIcon : props.poolOn === 6 ? poolAtrixIcon : null;
+
   return (
     <div
       className='row'
@@ -27,25 +31,25 @@ export default function OldTableItem(props: Props) {
         flexDirection: 'row',
         alignItems: 'center',
       }}>
-      <div className='col col2'>
+      <div style={{ flex: '0 0 14%' }}>
         {props.pairIcon && (
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-            <img src={props.pairIcon} />
+            <img src={props.pairIcon} alt='pair' />
             <div style={{ textAlign: 'center', marginTop: '3px' }}>{props.pairValue}</div>
           </div>
         )}
       </div>
 
-      <div className='col col5'>
+      <div style={{ flex: '0 0 14%' }}>
         <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-          <img src={poolCurveIcon} style={{ width: '20px', height: '20px', marginRight: '5px' }} />
-          <div style={{ fontSize: '14px' }}>Curve</div>
+          <img src={poolIcon} style={{ width: '20px', height: '20px', marginRight: '5px' }} alt={poolName} />
+          <div style={{ fontSize: '14px' }}>{poolName}</div>
         </div>
       </div>
 
-      <div className='col col5'>{props.platform}</div>
+      <div style={{ flex: '0 0 14%' }}>{props.platform}</div>
 
-      <div className='col col2'>
+      <div style={{ flex: '0 0 14%' }}>
         {props.apyList.length == 0 && '0.00%'}
         {props.apyList.map((item, i) => {
           return (
@@ -69,30 +73,21 @@ export default function OldTableItem(props: Props) {
         })}
       </div>
 
-      <div className='col  col4'>${numberUtil.amount_format(props.liquidity)}</div>
+      <div style={{ flex: '0 0 16%' }}>${numberUtil.amount_format(props.liquidity)}</div>
 
-      <div className='col col5'>
+      <div style={{ flex: '0 0 14%' }}>
         {props.slippage && !isNaN(Number(props.slippage)) ? `${Number(props.slippage).toFixed(2)}%` : '--'}
       </div>
 
-      <div className='col col2'>
+      <div style={{ flex: '0 0 14%' }}>
         <GhostButton
           className='liquidity_btn'
           onClick={() => {
-            if (props.poolOn == 3) {
-              window.open(props.wrapFiUrl);
-            } else {
-              window.open(props.liquidityUrl);
-            }
+            window.open(props.liquidityUrl);
           }}>
           {' '}
           Add liquidity
         </GhostButton>
-        {/* {props.poolOn==3?<BottonPopover data={[{label:"StaFi",url:props.stakeUrl},{label:"WrapFi",url:props.wrapFiUrl}]}>
-                      Stake 
-                    </BottonPopover>:<GhostButton onClick={()=>{
-                      window.open(props.stakeUrl);
-                    }} className="stake_btn">Stake</GhostButton> } */}
       </div>
     </div>
   );

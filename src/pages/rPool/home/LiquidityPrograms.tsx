@@ -8,11 +8,12 @@ import rpool_reth_Icon from 'src/assets/images/rpool_reth.svg';
 import rpool_rfis_Icon from 'src/assets/images/rpool_rfis_fis.svg';
 import rpool_rksm_Icon from 'src/assets/images/rpool_rksm_ksm.svg';
 import rpool_rmatic_Icon from 'src/assets/images/rpool_rmatic_matic.svg';
+import rpool_rsol_Icon from 'src/assets/images/rpool_rsol_sol.svg';
 import Card from 'src/components/card/index';
-import config from 'src/config/index';
 import { getLPList, getRPoolList } from 'src/features/rPoolClice';
 import Doubt from 'src/shared/components/doubt';
 import { RootState } from 'src/store';
+import lpConfig from 'src/util/lpConfig';
 import numberUtil from 'src/util/numberUtil';
 import { useInterval } from 'src/util/utils';
 import CardItem from './components/cardItem';
@@ -51,16 +52,20 @@ export default function LiquidityPrograms(props: any) {
     }
   }, [rPoolList, dispatch]);
 
-  const { ethCurveData, atomSifData } = useMemo(() => {
+  const { ethCurveData, atomSifData, solData } = useMemo(() => {
     const ethCurveData = rPoolList.find((item) => {
-      return item.platform == 2 && item.contract == config.rETHLpContract();
+      return item.platform.toString() === '2' && item.contract === lpConfig.rEthLpContract;
     });
     const atomSifData = rPoolList.find((item) => {
       return false;
     });
+    const solData = rPoolList.find((item) => {
+      return item.contract === lpConfig.rSolLpContract;
+    });
     return {
       ethCurveData,
       atomSifData,
+      solData,
     };
   }, [rPoolList]);
 
@@ -85,14 +90,25 @@ export default function LiquidityPrograms(props: any) {
       slippageSum += Number(atomSifData.slippage);
       liquiditySum += Number(atomSifData.liquidity);
     }
+    if (solData) {
+      count++;
+      solData?.apy?.forEach((apyitem: any) => {
+        apySum += Number(apyitem.apy);
+      });
+      slippageSum += Number(solData.slippage);
+      liquiditySum += Number(solData.liquidity);
+    }
     lpList?.forEach((data: any) => {
       data.children?.forEach((item: any) => {
-        if (!isNaN(Number(item.apr))) {
-          count++;
-          apySum += Number(item.apr);
-          slippageSum += Number(item.slippage);
-          liquiditySum += Number(item.liquidity);
-        }
+        count++;
+        slippageSum += Number(item.slippage);
+        liquiditySum += Number(item.liquidity);
+
+        item.apy?.forEach((apyItem: any) => {
+          if (!isNaN(Number(apyItem.apy))) {
+            apySum += Number(apyItem.apy);
+          }
+        });
       });
     });
 
@@ -147,8 +163,21 @@ export default function LiquidityPrograms(props: any) {
               apyList={ethCurveData ? ethCurveData.apy : []}
               liquidity={ethCurveData && ethCurveData.liquidity}
               slippage={ethCurveData && ethCurveData.slippage}
-              poolOn={ethCurveData && ethCurveData.platform}
+              poolOn={2}
               platform='Ethereum'
+            />
+
+            <OldTableItem
+              wrapFiUrl={'https://drop.wrapfi.io'}
+              liquidityUrl='https://app.atrix.finance/#/pools/2Jufhrr5w2zbavrUZgwkv91z6phoCFrjNDzvp3YCaveD/deposit'
+              history={props.history}
+              pairIcon={rpool_rsol_Icon}
+              pairValue='rSOL/SOL'
+              apyList={solData ? solData.apy : []}
+              liquidity={solData && solData.liquidity}
+              slippage={solData && solData.slippage}
+              poolOn={6}
+              platform='Solana'
             />
 
             {/* <OldTableItem
@@ -201,9 +230,9 @@ export default function LiquidityPrograms(props: any) {
                           <TableItem
                             key={`${data.name}${item.platform}${index}`}
                             history={props.history}
-                            pairIcon={index == 0 ? icon : null}
-                            pairValue={index == 0 ? type : null}
-                            apr={item.apr}
+                            pairIcon={index === 0 ? icon : null}
+                            pairValue={index === 0 ? type : null}
+                            apyList={item.apy || []}
                             liquidity={item.liquidity}
                             slippage={item.slippage}
                             poolOn={1}

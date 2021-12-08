@@ -16,8 +16,7 @@ import RpcServer, { pageCount } from 'src/servers/rpc/index';
 import Stafi from 'src/servers/stafi/index';
 import { getLocalStorageItem, Keys, removeLocalStorageItem, setLocalStorageItem, stafi_uuid } from 'src/util/common';
 import localStorageUtil from 'src/util/localStorage';
-import numberUtil from 'src/util/numberUtil';
-import NumberUtil from 'src/util/numberUtil';
+import { default as numberUtil, default as NumberUtil } from 'src/util/numberUtil';
 import { AppThunk } from '../store';
 import { ETH_CHAIN_ID, STAFI_CHAIN_ID, updateSwapParamsOfBep, updateSwapParamsOfErc } from './bridgeClice';
 import CommonClice from './commonClice';
@@ -34,6 +33,7 @@ import {
   setStakeSwapLoadingStatus,
 } from './globalClice';
 import { add_Notice, findUuid, noticeStatus, noticesubType, noticeType } from './noticeClice';
+import { checkEthAddress } from './rETHClice';
 
 declare const window: any;
 declare const ethereum: any;
@@ -918,9 +918,9 @@ const handleStakerApr =
     }
   };
 export const checkAddress = (address: string) => {
-  const keyringInstance = keyring.init(Symbol.Matic);
-  return keyringInstance.checkAddress(address);
+  return checkEthAddress(address);
 };
+
 export const accountUnbonds = (): AppThunk => async (dispatch, getState) => {
   // dispatch(getTotalUnbonding(rSymbol.Matic,(total:any)=>{
   //   dispatch(setTotalUnbonding(total));

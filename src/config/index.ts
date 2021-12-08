@@ -553,6 +553,12 @@ const config = {
     }
     return `https://solscan.io/account/${address}#tokenAccounts`;
   },
+  solScanAddressUrl: (address: any) => {
+    if (!isdev()) {
+      return `https://solscan.io/account/${address}`;
+    }
+    return `https://solscan.io/account/${address}`;
+  },
   etherScanTokenUrl: (tokenAddress: any, userAddress: any) => {
     if (!isdev()) {
       return `https://etherscan.io/token/${tokenAddress}?a=${userAddress}`;
@@ -588,6 +594,12 @@ const config = {
       return `https://etherscan.io/tx/${txHash}`;
     }
     return `https://goerli.etherscan.io/tx/${txHash}`;
+  },
+  etherScanAddressUrl: (address: any) => {
+    if (!isdev()) {
+      return `https://etherscan.io/address/${address}`;
+    }
+    return `https://goerli.etherscan.io/address/${address}`;
   },
   bscScanTxUrl: (txHash: any) => {
     if (!isdev()) {
@@ -755,20 +767,6 @@ const config = {
       return '0xF9440930043eb3997fc70e1339dBb11F341de7A8';
     } else {
       return '0xF9440930043eb3997fc70e1339dBb11F341de7A8';
-    }
-  },
-  rDOTBSCLpContract: () => {
-    if (!isdev()) {
-      return '0xc1f6d716d5d3a6cc53ce9387b03cf2d777779502';
-    } else {
-      return '0xc1f6d716d5d3a6cc53ce9387b03cf2d777779502';
-    }
-  },
-  rBNBBSCLpContract: () => {
-    if (!isdev()) {
-      return '0xbdc8ee55d888784fb90b4d3d6632e19db72cd992';
-    } else {
-      return '0xbdc8ee55d888784fb90b4d3d6632e19db72cd992';
     }
   },
 };

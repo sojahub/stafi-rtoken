@@ -6,6 +6,7 @@ import { rSymbol } from 'src/keyring/defaults';
 import EthServer from 'src/servers/eth';
 import StafiServer from 'src/servers/stafi';
 import { formatDuration } from 'src/util/dateUtil';
+import { api } from 'src/util/http';
 import numberUtil from 'src/util/numberUtil';
 import rpc from 'src/util/rpc';
 
@@ -53,6 +54,19 @@ export default class Index {
               poolItem.liquidity = lpPool.liquidity;
               poolItem.slippage = lpPool.slippage;
               poolItem.lpPrice = lpPool.lpPrice;
+              const newApyList = lpPool.apy.map((element) => {
+                if (element.status === 2) {
+                  return {
+                    ...element,
+                    apy: 0,
+                  };
+                }
+                return { ...element };
+              });
+              const filterApyList = newApyList.filter((item) => {
+                return item.index === poolItem.poolIndex;
+              });
+              poolItem.apy = filterApyList;
             } else {
               poolItem.lpPrice = 1;
             }
@@ -592,7 +606,15 @@ export default class Index {
         from: ethAddress,
       });
 
-      const poolStakeTokenSupply = await stakeTokenContract.methods.balanceOf(contractAddress).call();
+      const res = await api.post(`https://test-rtoken-api2.stafi.io/stafi/webapi/stake/poolStakeAmount`, {
+        poolId: poolIndex * 1,
+      });
+      let poolStakeTokenSupply = 0;
+      if (res.status === '80000' && res.data) {
+        poolStakeTokenSupply = res.data.poolStakeAmount;
+      }
+
+      // const poolStakeTokenSupply = await stakeTokenContract.methods.balanceOf(contractAddress).call();
       const stakeTokenSupply = web3.utils.fromWei(poolStakeTokenSupply, 'ether');
 
       const balance = await stakeTokenContract.methods.balanceOf(ethAddress).call();

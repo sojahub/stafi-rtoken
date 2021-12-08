@@ -1,15 +1,16 @@
-import { message, Tooltip } from 'antd';
+import { message, Spin, Tooltip } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 // import { query_rBalances_account, rTokenRate as ksm_rTokenRate } from 'src/features/rKSMClice';
 import arrowDownIcon from 'src/assets/images/arrow_down.svg';
 import doubt from 'src/assets/images/doubt.svg';
 import left_arrow from 'src/assets/images/left_arrow.svg';
+import rasset_rsol_svg from 'src/assets/images/rSOL.svg';
 import rasset_ratom_svg from 'src/assets/images/r_atom.svg';
-// import rasset_rfis_svg from 'src/assets/images/r_fis.svg';
-// import rasset_rksm_svg from 'src/assets/images/r_ksm.svg';
 import rasset_rbnb_svg from 'src/assets/images/r_bnb.svg';
 import rasset_rdot_svg from 'src/assets/images/r_dot.svg';
+import rasset_rfis_svg from 'src/assets/images/r_fis.svg';
+import rasset_rmatic_svg from 'src/assets/images/r_matic.svg';
 import settingIcon from 'src/assets/images/setting.svg';
 import CommonButton from 'src/components/CommonButton';
 import { CardContainer, HContainer, Text } from 'src/components/commonComponents';
@@ -20,31 +21,31 @@ import { swap } from 'src/features/dexClice';
 import {
   fetchRTokenStatDetail as fis_fetchRTokenStatDetail,
   reloadData as fis_reloadData,
-  rTokenRate as fis_rTokenRate,
+  checkAddress as fis_checkAddress,
 } from 'src/features/FISClice';
 import { connectPolkadot_fis } from 'src/features/globalClice';
 import {
   checkAddress as atom_checkAddress,
   fetchRTokenStatDetail as atomFetchRTokenStatDetail,
   query_rBalances_account as atom_query_rBalances_account,
-  rLiquidityRate as atom_rLiquidityRate,
-  rSwapFee as atom_rSwapFee,
-  rTokenRate as atom_rTokenRate,
 } from 'src/features/rATOMClice';
 import {
   checkAddress as bnb_checkAddress,
   query_rBalances_account as bnb_query_rBalances_account,
-  rLiquidityRate as bnb_rLiquidityRate,
-  rSwapFee as bnb_rSwapFee,
-  rTokenRate as bnb_rTokenRate,
 } from 'src/features/rBNBClice';
+import {
+  checkAddress as sol_checkAddress,
+  query_rBalances_account as sol_query_rBalances_account,
+} from 'src/features/rSOLClice';
+import {
+  checkAddress as matic_checkAddress,
+  query_rBalances_account as matic_query_rBalances_account,
+} from 'src/features/rMATICClice';
 import {
   checkAddress as dot_checkAddress,
   query_rBalances_account as dot_query_rBalances_account,
-  rLiquidityRate as dot_rLiquidityRate,
-  rSwapFee as dot_rSwapFee,
-  rTokenRate as dot_rTokenRate,
 } from 'src/features/rDOTClice';
+import { useSwapRates } from 'src/hooks/useSwapRates';
 import { rSymbol } from 'src/keyring/defaults';
 import Stafi from 'src/servers/stafi';
 import AddressInputEmbedNew from 'src/shared/components/input/addressInputEmbedNew';
@@ -55,24 +56,11 @@ import numberUtil from 'src/util/numberUtil';
 import styled from 'styled-components';
 import Page_FIS from '../../rATOM/selectWallet_rFIS/index';
 import DexTokenItem from './DexTokenItem';
+import { SwapTokenSlider } from './SwapTokenSlider';
 
 const stafiServer = new Stafi();
 
 const allTokenDatas = [
-  // {
-  //   icon: rasset_rfis_svg,
-  //   title: 'rFIS',
-  //   content: '--',
-  //   type: 'rfis',
-  // },
-  {
-    icon: rasset_ratom_svg,
-    title: 'rATOM',
-    type: 'ratom',
-    content: '--',
-    ratio: '--',
-    totalRate: '--',
-  },
   {
     icon: rasset_rbnb_svg,
     title: 'rBNB',
@@ -82,6 +70,12 @@ const allTokenDatas = [
     totalRate: '--',
   },
   {
+    icon: rasset_rfis_svg,
+    title: 'rFIS',
+    content: '--',
+    type: 'rfis',
+  },
+  {
     icon: rasset_rdot_svg,
     title: 'rDOT',
     type: 'rdot',
@@ -89,18 +83,26 @@ const allTokenDatas = [
     ratio: '--',
     totalRate: '--',
   },
-  // {
-  //   icon: rasset_rsol_svg,
-  //   title: 'rSOL',
-  //   content: '--',
-  //   type: 'rsol',
-  // },
-  // {
-  //   icon: rasset_rmatic_svg,
-  //   title: 'rMATIC',
-  //   content: '--',
-  //   type: 'rmatic',
-  // },
+  {
+    icon: rasset_ratom_svg,
+    title: 'rATOM',
+    type: 'ratom',
+    content: '--',
+    ratio: '--',
+    totalRate: '--',
+  },
+  {
+    icon: rasset_rsol_svg,
+    title: 'rSOL',
+    content: '--',
+    type: 'rsol',
+  },
+  {
+    icon: rasset_rmatic_svg,
+    title: 'rMATIC',
+    content: '--',
+    type: 'rmatic',
+  },
 ];
 
 export default function RDEXHome() {
@@ -113,9 +115,6 @@ export default function RDEXHome() {
   const [minReceiveTokenAmount, setMinReceiveTokenAmount] = useState('--');
   const [tokenTypes, setTokenTypes] = useState([]);
   const [selectedToken, setSelectedToken] = useState();
-  const [currentSwapFee, setCurrentSwapFee] = useState('--');
-  const [currentRatio, setCurrentRatio] = useState('--');
-  const [currentLiquidityRate, setCurrentLiquidityRate] = useState('--');
   const [currentTotalRate, setCurrentTotalRate] = useState('--');
   const [address, setAddress] = useState('');
   const [slippageTolerance, setSlippageTolerance] = useState(1);
@@ -129,41 +128,30 @@ export default function RDEXHome() {
 
   const [chartTimeUnit, setChartTimeUnit] = useState('d');
 
-  const { fisAccount, transferrableAmount, rDOTTokenAmount, rATOMTokenAmount, rBNBTokenAmount } = useSelector(
-    (state) => {
-      return {
-        fisAccount: state.FISModule.fisAccount,
-        transferrableAmount: state.FISModule.transferrableAmountShow,
-        rFISTokenAmount: numberUtil.handleFisAmountToFixed(state.FISModule.tokenAmount),
-        rKSMTokenAmount: numberUtil.handleFisAmountToFixed(state.rKSMModule.tokenAmount),
-        rDOTTokenAmount: numberUtil.handleFisAmountToFixed(state.rDOTModule.tokenAmount),
-        rATOMTokenAmount: numberUtil.handleFisAmountToFixed(state.rATOMModule.tokenAmount),
-        rBNBTokenAmount: numberUtil.handleFisAmountToFixed(state.rBNBModule.tokenAmount),
-      };
-    },
-  );
+  const { tokenRate, liquidityRate, swapFee } = useSwapRates(selectedToken);
 
   const {
-    rDOTSwapFee,
-    rDOTRatio,
-    rDOTLiquidityRate,
-    rATOMSwapFee,
-    rATOMRatio,
-    rATOMLiquidityRate,
-    rBNBSwapFee,
-    rBNBRatio,
-    rBNBLiquidityRate,
+    loading,
+    fisAccount,
+    transferrableAmount,
+    rDOTTokenAmount,
+    rATOMTokenAmount,
+    rBNBTokenAmount,
+    rFISTokenAmount,
+    rSOLTokenAmount,
+    rMATICTokenAmount,
   } = useSelector((state) => {
     return {
-      rDOTSwapFee: state.rDOTModule.swapFee,
-      rDOTRatio: state.rDOTModule.ratio,
-      rDOTLiquidityRate: state.rDOTModule.liquidityRate,
-      rATOMSwapFee: state.rATOMModule.swapFee,
-      rATOMRatio: state.rATOMModule.ratio,
-      rATOMLiquidityRate: state.rATOMModule.liquidityRate,
-      rBNBSwapFee: state.rBNBModule.swapFee,
-      rBNBRatio: state.rBNBModule.ratio,
-      rBNBLiquidityRate: state.rBNBModule.liquidityRate,
+      loading: state.globalModule.loading,
+      fisAccount: state.FISModule.fisAccount,
+      transferrableAmount: state.FISModule.transferrableAmountShow,
+      rFISTokenAmount: numberUtil.handleFisAmountToFixed(state.FISModule.tokenAmount),
+      rKSMTokenAmount: numberUtil.handleFisAmountToFixed(state.rKSMModule.tokenAmount),
+      rDOTTokenAmount: numberUtil.handleFisAmountToFixed(state.rDOTModule.tokenAmount),
+      rATOMTokenAmount: numberUtil.handleFisAmountToFixed(state.rATOMModule.tokenAmount),
+      rBNBTokenAmount: numberUtil.handleFisAmountToFixed(state.rBNBModule.tokenAmount),
+      rSOLTokenAmount: numberUtil.handleFisAmountToFixed(state.rSOLModule.tokenAmount),
+      rMATICTokenAmount: numberUtil.handleFisAmountToFixed(state.rMATICModule.tokenAmount),
     };
   });
 
@@ -174,92 +162,75 @@ export default function RDEXHome() {
 
   const updateAllData = () => {
     dispatch(fis_reloadData());
-    dispatch(fis_rTokenRate());
     // atom
     dispatch(atom_query_rBalances_account());
-    dispatch(atom_rSwapFee());
-    dispatch(atom_rTokenRate());
-    dispatch(atom_rLiquidityRate());
     // dot
     dispatch(dot_query_rBalances_account());
-    dispatch(dot_rSwapFee());
-    dispatch(dot_rTokenRate());
-    dispatch(dot_rLiquidityRate());
     // bnb
     dispatch(bnb_query_rBalances_account());
-    dispatch(bnb_rSwapFee());
-    dispatch(bnb_rTokenRate());
-    dispatch(bnb_rLiquidityRate());
-  };
+    // sol
+    dispatch(sol_query_rBalances_account());
+    // matic
+    dispatch(matic_query_rBalances_account());
 
-  useEffect(() => {
-    if (!selectedToken) {
-      setCurrentSwapFee('--');
-      return;
-    }
-    if (selectedToken.type === 'ratom') {
-      setCurrentSwapFee(rATOMSwapFee);
-    }
-    if (selectedToken.type === 'rdot') {
-      setCurrentSwapFee(rDOTSwapFee);
-    }
-    if (selectedToken.type === 'rbnb') {
-      setCurrentSwapFee(rBNBSwapFee);
-    }
-  }, [selectedToken, rATOMSwapFee, rDOTSwapFee, rBNBSwapFee]);
+    updateTokenReserves();
+  };
 
   useEffect(() => {
     updateTokenReserves();
   }, [selectedToken]);
 
+  useEffect(() => {
+    if (scene === 1 && selectedToken && selectedToken.type === 'rfis') {
+      setAddress(fisAccount.address);
+    }
+  }, [scene, selectedToken, fisAccount]);
+
   const updateTokenReserves = async () => {
     if (!selectedToken) {
       return;
     }
-    let rTokenSymbol;
-    if (selectedToken.type === 'ratom') {
-      rTokenSymbol = rSymbol.Atom;
-    } else if (selectedToken.type === 'rdot') {
-      rTokenSymbol = rSymbol.Dot;
-    } else if (selectedToken.type === 'rbnb') {
-      rTokenSymbol = rSymbol.Bnb;
-    }
-    if (!rTokenSymbol) {
-      return;
-    }
-    const stafiApi = await stafiServer.createStafiApi();
-    const reserves = await stafiApi.query.rDexnSwap.nativeTokenReserves(rTokenSymbol);
-    if (reserves) {
-      setCurrentNativeTokenReserves(numberUtil.tokenAmountToHuman(reserves.toJSON(), rTokenSymbol));
+    try {
+      const stafiApi = await stafiServer.createStafiApi();
+
+      let reserves;
+      if (selectedToken.type === 'rfis') {
+        const fisPoolAddress = await stafiApi.query.rDexnSwap.nativePoolAddress();
+        const result = await stafiApi.query.system.account(fisPoolAddress.toJSON());
+
+        setCurrentNativeTokenReserves(numberUtil.tokenAmountToHuman(result.toJSON().data.free, rSymbol.Fis));
+      } else {
+        let rTokenSymbol;
+        if (selectedToken.type === 'ratom') {
+          rTokenSymbol = rSymbol.Atom;
+        } else if (selectedToken.type === 'rdot') {
+          rTokenSymbol = rSymbol.Dot;
+        } else if (selectedToken.type === 'rbnb') {
+          rTokenSymbol = rSymbol.Bnb;
+        } else if (selectedToken.type === 'rsol') {
+          rTokenSymbol = rSymbol.Sol;
+        } else if (selectedToken.type === 'rmatic') {
+          rTokenSymbol = rSymbol.Matic;
+        } else if (selectedToken.type === 'rfis') {
+          rTokenSymbol = rSymbol.Fis;
+        }
+        reserves = await stafiApi.query.rDexnSwap.nativeTokenReserves(rTokenSymbol);
+        if (reserves) {
+          setCurrentNativeTokenReserves(numberUtil.tokenAmountToHuman(reserves.toJSON(), rTokenSymbol));
+        }
+      }
+    } catch (e) {
+      setCurrentNativeTokenReserves('--');
     }
   };
 
   useEffect(() => {
-    if (!selectedToken) {
-      setCurrentLiquidityRate('--');
-      return;
-    }
-    if (selectedToken.type === 'rdot') {
-      setCurrentRatio(rDOTRatio);
-      setCurrentLiquidityRate(rDOTLiquidityRate);
-    }
-    if (selectedToken.type === 'ratom') {
-      setCurrentRatio(rATOMRatio);
-      setCurrentLiquidityRate(rATOMLiquidityRate);
-    }
-    if (selectedToken.type === 'rbnb') {
-      setCurrentRatio(rBNBRatio);
-      setCurrentLiquidityRate(rBNBLiquidityRate);
-    }
-  }, [selectedToken, rDOTLiquidityRate, rATOMLiquidityRate, rBNBLiquidityRate, rDOTRatio, rATOMRatio, rBNBRatio]);
-
-  useEffect(() => {
-    if (!currentRatio || isNaN(currentRatio) || !currentLiquidityRate || isNaN(currentLiquidityRate)) {
+    if (!tokenRate || isNaN(tokenRate) || !liquidityRate || isNaN(liquidityRate)) {
       setCurrentTotalRate('--');
     } else {
-      setCurrentTotalRate(currentRatio * currentLiquidityRate);
+      setCurrentTotalRate(tokenRate * liquidityRate);
     }
-  }, [currentRatio, currentLiquidityRate]);
+  }, [liquidityRate, tokenRate]);
 
   useEffect(() => {
     if (!rTokenAmount || isNaN(rTokenAmount) || Number(rTokenAmount) <= Number(0)) {
@@ -283,40 +254,27 @@ export default function RDEXHome() {
 
   useEffect(() => {
     allTokenDatas.forEach((item) => {
+      if (item.type === 'rfis') {
+        item.content = rFISTokenAmount;
+      }
       if (item.type === 'rdot') {
         item.content = rDOTTokenAmount;
-        item.ratio = isNaN(Number(rDOTRatio)) ? '--' : numberUtil.handleAmountRoundToFixed(rDOTRatio, 3);
-        item.totalRate = isNaN(Number(rDOTRatio * rDOTLiquidityRate))
-          ? '--'
-          : numberUtil.handleAmountRoundToFixed(rDOTRatio * rDOTLiquidityRate, 3);
       }
       if (item.type === 'ratom') {
         item.content = rATOMTokenAmount;
-        item.ratio = isNaN(Number(rATOMRatio)) ? '--' : numberUtil.handleAmountRoundToFixed(rATOMRatio, 3);
-        item.totalRate = isNaN(Number(rATOMRatio * rATOMLiquidityRate))
-          ? '--'
-          : numberUtil.handleAmountRoundToFixed(rATOMRatio * rATOMLiquidityRate, 3);
       }
       if (item.type === 'rbnb') {
         item.content = rBNBTokenAmount;
-        item.ratio = isNaN(Number(rBNBRatio)) ? '--' : numberUtil.handleAmountRoundToFixed(rBNBRatio, 3);
-        item.totalRate = isNaN(Number(rBNBRatio * rBNBLiquidityRate))
-          ? '--'
-          : numberUtil.handleAmountRoundToFixed(rBNBRatio * rBNBLiquidityRate, 3);
+      }
+      if (item.type === 'rsol') {
+        item.content = rSOLTokenAmount;
+      }
+      if (item.type === 'rmatic') {
+        item.content = rMATICTokenAmount;
       }
     });
     setTokenTypes([...allTokenDatas]);
-  }, [
-    rDOTTokenAmount,
-    rATOMTokenAmount,
-    rBNBTokenAmount,
-    rDOTRatio,
-    rATOMRatio,
-    rBNBRatio,
-    rDOTLiquidityRate,
-    rATOMLiquidityRate,
-    rBNBLiquidityRate,
-  ]);
+  }, [rDOTTokenAmount, rATOMTokenAmount, rBNBTokenAmount, rFISTokenAmount, rSOLTokenAmount, rMATICTokenAmount]);
 
   const updateChartData = () => {
     const cycle = chartTimeUnit === 'd' ? 1 : chartTimeUnit === 'w' ? 2 : 3;
@@ -359,7 +317,7 @@ export default function RDEXHome() {
       return;
     }
 
-    let leastFee = Number(currentSwapFee) + 0.003;
+    let leastFee = Number(swapFee) + 0.003;
     let leastFeeStr = parseInt(leastFee * 1000) / 1000;
     if (Number(transferrableAmount) < Number(leastFeeStr)) {
       message.error('Insufficient available FIS balance, at least ' + leastFeeStr + 'FIS');
@@ -389,6 +347,27 @@ export default function RDEXHome() {
       }
       symbol = rSymbol.Bnb;
       setViewTxUrl(config.bnbScanAddressUrl(address));
+    } else if (selectedToken.type === 'rsol') {
+      if (!sol_checkAddress(address)) {
+        message.error('Address input error');
+        return;
+      }
+      symbol = rSymbol.Sol;
+      setViewTxUrl(config.solScanAddressUrl(address));
+    } else if (selectedToken.type === 'rmatic') {
+      if (!matic_checkAddress(address)) {
+        message.error('Address input error');
+        return;
+      }
+      symbol = rSymbol.Matic;
+      setViewTxUrl(config.etherScanErc20TxInAddressUrl(address));
+    } else if (selectedToken.type === 'rfis') {
+      if (!fis_checkAddress(address)) {
+        message.error('Address input error');
+        return;
+      }
+      symbol = rSymbol.Fis;
+      setViewTxUrl(config.stafiScanUrl(address));
     }
 
     dispatch(
@@ -419,7 +398,7 @@ export default function RDEXHome() {
           rSwap
         </Text>
 
-        <Text size={'14px'} color={'#a5a5a5'} sameLineHeight mt={'5px'}>
+        <Text size={'14px'} color={'#a5a5a5'} sameLineHeight mt={'5px'} mb='50px'>
           Protocol Liquidity for rTokens. Read{' '}
           <span
             style={{ color: '#00F3AB', cursor: 'pointer', textDecoration: 'underline' }}
@@ -428,367 +407,371 @@ export default function RDEXHome() {
           </span>
         </Text>
 
-        <CardContainer width={'342px'} mt={'50px'} pt={'17px'} pb={'8px'} style={{ minHeight: '468px' }}>
-          <HContainer mb={'20px'} ml={'20px'} mr={'20px'}>
-            <div style={{ height: '20px', display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-              {scene === 0 && (
-                <Text size={'18px'} sameLineHeight bold>
-                  Swap
-                </Text>
-              )}
-              {scene === 1 && (
-                <img
-                  alt='back'
-                  src={left_arrow}
-                  style={{ cursor: 'pointer', width: '12px', height: '12px' }}
-                  onClick={() => {
-                    setAddress('');
-                    setScene(0);
-                  }}
-                />
-              )}
-              {scene === 2 && (
-                <HContainer>
-                  <img
-                    alt='back'
-                    src={left_arrow}
-                    style={{ cursor: 'pointer', width: '12px', height: '12px' }}
-                    onClick={() => {
-                      setScene(lastScene);
-                    }}
-                  />
-
-                  <Text size={'18px'} ml={'12px'} sameLineHeight bold>
-                    Setting
+        <Spin spinning={loading} size='large' tip='loading'>
+          <CardContainer width={'342px'} pt={'17px'} pb={'8px'} style={{ minHeight: '468px' }}>
+            <HContainer mb={'20px'} ml={'20px'} mr={'20px'}>
+              <div style={{ height: '20px', display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+                {scene === 0 && (
+                  <Text size={'18px'} sameLineHeight bold>
+                    Swap
                   </Text>
-                </HContainer>
-              )}
-              {scene === 3 && (
-                <HContainer>
+                )}
+                {scene === 1 && (
                   <img
                     alt='back'
                     src={left_arrow}
                     style={{ cursor: 'pointer', width: '12px', height: '12px' }}
                     onClick={() => {
+                      setAddress('');
                       setScene(0);
                     }}
                   />
+                )}
+                {scene === 2 && (
+                  <HContainer>
+                    <img
+                      alt='back'
+                      src={left_arrow}
+                      style={{ cursor: 'pointer', width: '12px', height: '12px' }}
+                      onClick={() => {
+                        setScene(lastScene);
+                      }}
+                    />
 
-                  <Text size={'18px'} ml={'12px'} sameLineHeight bold>
-                    Select a rToken
-                  </Text>
-                </HContainer>
-              )}
-            </div>
+                    <Text size={'18px'} ml={'12px'} sameLineHeight bold>
+                      Setting
+                    </Text>
+                  </HContainer>
+                )}
+                {scene === 3 && (
+                  <HContainer>
+                    <img
+                      alt='back'
+                      src={left_arrow}
+                      style={{ cursor: 'pointer', width: '12px', height: '12px' }}
+                      onClick={() => {
+                        setScene(0);
+                      }}
+                    />
 
-            {(scene === 0 || scene === 1) && (
-              <IconContainer clickable>
-                <Icon
-                  src={settingIcon}
-                  onClick={() => {
-                    setLastScene(scene);
-                    setScene(2);
-                  }}
-                />
-              </IconContainer>
-            )}
-          </HContainer>
+                    <Text size={'18px'} ml={'12px'} sameLineHeight bold>
+                      Select a rToken
+                    </Text>
+                  </HContainer>
+                )}
+              </div>
 
-          {scene === 3 && (
-            <InnerContainer>
-              <TokenSelector
-                selectDataSource={tokenTypes}
-                selectedData={selectedToken}
-                onSelectChange={(value) => {
-                  setSelectedToken(value);
-                  setRTokenAmount('');
-                  setScene(0);
-                }}
-              />
-            </InnerContainer>
-          )}
-
-          {scene !== 3 && (
-            <>
-              <InnerContainer>
-                <Content>
-                  {scene === 0 && (
-                    <>
-                      <TypeSelectorInput
-                        selectDataSource={tokenTypes}
-                        showMax={true}
-                        title='From'
-                        maxInput={selectedToken && selectedToken.content !== '--' ? selectedToken.content : 0}
-                        value={rTokenAmount}
-                        selectedData={selectedToken}
-                        selectable={true}
-                        onClickSelect={() => setScene(3)}
-                        onChange={setRTokenAmount}
-                      />
-
-                      <HContainer justifyContent='flex-end' mt={'6px'}>
-                        <Text size={'10px'} color={'#a5a5a5'} sameLineHeight>
-                          Balance: {selectedToken ? selectedToken.content : '--'}
-                        </Text>
-                      </HContainer>
-
-                      <HContainer justifyContent='center' mb={'15px'}>
-                        <IconContainer size='15px'>
-                          <Icon src={arrowDownIcon} />
-                        </IconContainer>
-                      </HContainer>
-
-                      <TypeSelectorInput
-                        selectDataSource={tokenTypes}
-                        title='To'
-                        selectedTitle={getTokenName()}
-                        value={
-                          receiveTokenAmount === '--' || !receiveTokenAmount
-                            ? ''
-                            : numberUtil.handleFisRoundToFixed(receiveTokenAmount)
-                        }
-                        disabled={true}
-                      />
-
-                      <div style={{ marginTop: '24px', height: '15px' }}>
-                        {selectedToken && (
-                          <HContainer justifyContent='center' alignItems='flex-start'>
-                            <Text size={'12px'} color={'#a5a5a5'}>
-                              {`1 ${selectedToken.title} = ${numberUtil.handleFisRoundToFixed(
-                                currentTotalRate,
-                              )} ${getTokenName()}`}
-                            </Text>
-                            <Tooltip
-                              overlayClassName='doubt_overlay'
-                              placement='topLeft'
-                              overlayInnerStyle={{ color: '#A4A4A4' }}
-                              title={`${getTokenName()} = ${
-                                selectedToken.title
-                              } * ExchangeRate * N (N is % of liquidity fee, govered by the protocol, it is ${numberUtil.percentageAmountToHuman(
-                                currentLiquidityRate,
-                              )} atm.)`}>
-                              <img src={doubt} />
-                            </Tooltip>
-                          </HContainer>
-                        )}
-                      </div>
-                    </>
-                  )}
-
-                  {scene === 1 && (
-                    <>
-                      <AddressInputContainer>
-                        <Text size={'14px'} mb={'15px'} mt={'2px'}>
-                          Received
-                        </Text>
-                        <AddressInputEmbedNew
-                          placeholder={getTokenName() + ' Address'}
-                          value={address}
-                          onChange={(e) => {
-                            setAddress(e.target.value);
-                          }}
-                        />
-                      </AddressInputContainer>
-                    </>
-                  )}
-
-                  {scene === 2 && (
-                    <>
-                      <Text size={'12px'} mt={'10px'}>
-                        Slippage Tolerance
-                      </Text>
-
-                      <SlippageToleranceContainer>
-                        <SlippageToleranceItem
-                          active={
-                            slippageTolerance.toString() === '0.1' &&
-                            (!customSlippageTolerance || Number(customSlippageTolerance) <= Number(0))
-                          }
-                          onClick={() => {
-                            setCustomSlippageTolerance('');
-                            setSlippageTolerance(0.1);
-                          }}>
-                          0.1%
-                        </SlippageToleranceItem>
-
-                        <SlippageToleranceItem
-                          active={
-                            slippageTolerance.toString() === '0.5' &&
-                            (!customSlippageTolerance || Number(customSlippageTolerance) <= Number(0))
-                          }
-                          onClick={() => {
-                            setCustomSlippageTolerance('');
-                            setSlippageTolerance(0.5);
-                          }}>
-                          0.5%
-                        </SlippageToleranceItem>
-
-                        <SlippageToleranceItem
-                          active={
-                            slippageTolerance.toString() === '1' &&
-                            (!customSlippageTolerance || Number(customSlippageTolerance) <= Number(0))
-                          }
-                          onClick={() => {
-                            setCustomSlippageTolerance('');
-                            setSlippageTolerance(1);
-                          }}>
-                          1%
-                        </SlippageToleranceItem>
-
-                        <HContainer mt={'8px'}>
-                          <SlippageToleranceInputEmbed
-                            onChange={setCustomSlippageTolerance}
-                            value={customSlippageTolerance}
-                          />
-                          <Text size={'14px'}>%</Text>
-                        </HContainer>
-                      </SlippageToleranceContainer>
-                    </>
-                  )}
-                </Content>
-
-                {scene === 0 && (
-                  <CommonButton
-                    text={fisAccount && fisAccount.address ? 'Next' : 'Connect Wallet'}
-                    disabled={
-                      fisAccount &&
-                      fisAccount.address &&
-                      (!selectedToken || Number(rTokenAmount) <= Number(0) || isNaN(currentNativeTokenReserves))
-                    }
-                    mt='25px'
+              {(scene === 0 || scene === 1) && (
+                <IconContainer clickable>
+                  <Icon
+                    src={settingIcon}
                     onClick={() => {
-                      if (fisAccount && fisAccount.address) {
-                        if (!isNaN(receiveTokenAmount) && !isNaN(currentNativeTokenReserves)) {
-                          if (Number(receiveTokenAmount) > Number(currentNativeTokenReserves)) {
-                            message.error(`No enough ${selectedToken.title.slice(1)} to be swapped in the pool`);
-                            return;
-                          }
-                        }
-                        setScene(1);
-                      } else {
-                        dispatch(
-                          connectPolkadot_fis(() => {
-                            setFisAccountModalVisible(true);
-                          }),
-                        );
-                      }
+                      setLastScene(scene);
+                      setScene(2);
                     }}
                   />
-                )}
+                </IconContainer>
+              )}
+            </HContainer>
 
-                {scene === 1 && <CommonButton text={'Swap'} disabled={!address} mt='25px' onClick={startSwap} />}
+            {scene === 3 && (
+              <InnerContainer>
+                <TokenSelector
+                  selectDataSource={tokenTypes}
+                  selectedData={selectedToken}
+                  onSelectChange={(value) => {
+                    setSelectedToken(value);
+                    setRTokenAmount('');
+                    setScene(0);
+                  }}
+                />
               </InnerContainer>
+            )}
 
-              <div style={{ visibility: scene === 2 ? 'hidden' : 'visible' }}>
-                <Divider />
-
+            {scene !== 3 && (
+              <>
                 <InnerContainer>
-                  <HContainer mb='8px'>
-                    <Text size='10px' color='#a5a5a5' sameLineHeight>
-                      Slippage Tolerance :
-                    </Text>
-                    <Text size='10px' color='white' sameLineHeight>
-                      {slippageTolerance}%
-                    </Text>
-                  </HContainer>
+                  <Content>
+                    {scene === 0 && (
+                      <>
+                        <TypeSelectorInput
+                          selectDataSource={tokenTypes}
+                          showMax={true}
+                          title='From'
+                          maxInput={selectedToken && selectedToken.content !== '--' ? selectedToken.content : 0}
+                          value={rTokenAmount}
+                          selectedData={selectedToken}
+                          selectable={true}
+                          onClickSelect={() => setScene(3)}
+                          onChange={setRTokenAmount}
+                        />
 
-                  <HContainer mb='8px'>
-                    <Text size='10px' color='#a5a5a5' sameLineHeight>
-                      Minimum receive :
-                    </Text>
-                    <Text size='10px' color='white' sameLineHeight>
-                      {minReceiveTokenAmount === '--' || !minReceiveTokenAmount
-                        ? '--'
-                        : numberUtil.handleFisRoundToFixed(minReceiveTokenAmount)}{' '}
-                      {getTokenName()}
-                    </Text>
-                  </HContainer>
+                        <HContainer justifyContent='flex-end' mt={'6px'}>
+                          <Text size={'10px'} color={'#a5a5a5'} sameLineHeight>
+                            Balance: {selectedToken ? selectedToken.content : '--'}
+                          </Text>
+                        </HContainer>
 
-                  <HContainer mb='8px'>
-                    <HContainer alignItems='flex-start'>
-                      <Text size='10px' color='#a5a5a5' mr='2px' sameLineHeight>
-                        Fee
-                      </Text>
+                        <HContainer justifyContent='center' mb={'15px'}>
+                          <IconContainer size='15px'>
+                            <Icon src={arrowDownIcon} />
+                          </IconContainer>
+                        </HContainer>
 
-                      <Tooltip
-                        overlayClassName='doubt_overlay'
-                        placement='topLeft'
-                        overlayInnerStyle={{ color: '#A4A4A4' }}
-                        title={'Fee charged by the rSwap, it will be distributed to the Treasury.'}>
-                        <img src={doubt} />
-                      </Tooltip>
+                        <TypeSelectorInput
+                          selectDataSource={tokenTypes}
+                          title='To'
+                          selectedTitle={getTokenName()}
+                          value={
+                            receiveTokenAmount === '--' || !receiveTokenAmount
+                              ? ''
+                              : numberUtil.handleFisRoundToFixed(receiveTokenAmount)
+                          }
+                          disabled={true}
+                        />
 
-                      <Text size='10px' color='#a5a5a5' ml='2px' sameLineHeight>
-                        :
-                      </Text>
-                    </HContainer>
+                        <div style={{ marginTop: '24px', height: '15px' }}>
+                          {selectedToken && (
+                            <HContainer justifyContent='center' alignItems='flex-start'>
+                              <Text size={'12px'} color={'#a5a5a5'}>
+                                {`1 ${selectedToken.title} = ${numberUtil.handleFisRoundToFixed(
+                                  currentTotalRate,
+                                )} ${getTokenName()}`}
+                              </Text>
+                              <Tooltip
+                                overlayClassName='doubt_overlay'
+                                placement='topLeft'
+                                overlayInnerStyle={{ color: '#A4A4A4' }}
+                                title={`${getTokenName()} = ${
+                                  selectedToken.title
+                                } * ExchangeRate * N (N is % of liquidity fee, govered by the protocol, it is ${numberUtil.percentageAmountToHuman(
+                                  liquidityRate,
+                                )} atm.)`}>
+                                <img src={doubt} alt='doubt' />
+                              </Tooltip>
+                            </HContainer>
+                          )}
+                        </div>
+                      </>
+                    )}
 
-                    <Text size='10px' color='white' sameLineHeight>
-                      {currentSwapFee} FIS
-                    </Text>
-                  </HContainer>
+                    {scene === 1 && (
+                      <>
+                        <AddressInputContainer>
+                          <Text size={'14px'} mb={'15px'} mt={'2px'}>
+                            Received
+                          </Text>
+                          <AddressInputEmbedNew
+                            placeholder={getTokenName() + ' Address'}
+                            value={address}
+                            onChange={(e) => {
+                              setAddress(e.target.value);
+                            }}
+                          />
+                        </AddressInputContainer>
+                      </>
+                    )}
 
-                  <HContainer mb='8px'>
-                    <HContainer alignItems='flex-start'>
-                      <Text size='10px' color='#a5a5a5' mr='2px' sameLineHeight>
-                        Liquidity Rate
-                      </Text>
+                    {scene === 2 && (
+                      <>
+                        <Text size={'12px'} mt={'10px'}>
+                          Slippage Tolerance
+                        </Text>
 
-                      <Tooltip
-                        overlayClassName='doubt_overlay'
-                        placement='topLeft'
-                        overlayInnerStyle={{ color: '#A4A4A4' }}
-                        title={'Liquidity Rate is used to cover the risk and potential loss of holding rTokens.'}>
-                        <img src={doubt} />
-                      </Tooltip>
+                        <SlippageToleranceContainer>
+                          <SlippageToleranceItem
+                            active={
+                              slippageTolerance.toString() === '0.1' &&
+                              (!customSlippageTolerance || Number(customSlippageTolerance) <= Number(0))
+                            }
+                            onClick={() => {
+                              setCustomSlippageTolerance('');
+                              setSlippageTolerance(0.1);
+                            }}>
+                            0.1%
+                          </SlippageToleranceItem>
 
-                      <Text size='10px' color='#a5a5a5' ml='2px' sameLineHeight>
-                        :
-                      </Text>
-                    </HContainer>
+                          <SlippageToleranceItem
+                            active={
+                              slippageTolerance.toString() === '0.5' &&
+                              (!customSlippageTolerance || Number(customSlippageTolerance) <= Number(0))
+                            }
+                            onClick={() => {
+                              setCustomSlippageTolerance('');
+                              setSlippageTolerance(0.5);
+                            }}>
+                            0.5%
+                          </SlippageToleranceItem>
 
-                    <Text size='10px' color='white' sameLineHeight>
-                      {numberUtil.percentageAmountToHuman(currentLiquidityRate)}
-                    </Text>
-                  </HContainer>
+                          <SlippageToleranceItem
+                            active={
+                              slippageTolerance.toString() === '1' &&
+                              (!customSlippageTolerance || Number(customSlippageTolerance) <= Number(0))
+                            }
+                            onClick={() => {
+                              setCustomSlippageTolerance('');
+                              setSlippageTolerance(1);
+                            }}>
+                            1%
+                          </SlippageToleranceItem>
 
-                  <HContainer style={{ visibility: !selectedToken || !selectedToken.title ? 'hidden' : '' }}>
-                    <HContainer alignItems='flex-start'>
-                      <Text size='10px' color='#a5a5a5' mr='2px' sameLineHeight>
-                        Pooled {selectedToken && selectedToken.title.slice(1)}
-                      </Text>
+                          <HContainer mt={'8px'}>
+                            <SlippageToleranceInputEmbed
+                              onChange={setCustomSlippageTolerance}
+                              value={customSlippageTolerance}
+                            />
+                            <Text size={'14px'}>%</Text>
+                          </HContainer>
+                        </SlippageToleranceContainer>
+                      </>
+                    )}
+                  </Content>
 
-                      <Tooltip
-                        overlayClassName='doubt_overlay'
-                        placement='topLeft'
-                        overlayInnerStyle={{ color: '#A4A4A4' }}
-                        title={`Available ${selectedToken && selectedToken.title.slice(1)} amount in the pool`}>
-                        <img src={doubt} />
-                      </Tooltip>
+                  {scene === 0 && (
+                    <CommonButton
+                      text={fisAccount && fisAccount.address ? 'Next' : 'Connect Wallet'}
+                      disabled={
+                        fisAccount &&
+                        fisAccount.address &&
+                        (!selectedToken || Number(rTokenAmount) <= Number(0) || isNaN(currentNativeTokenReserves))
+                      }
+                      mt='25px'
+                      onClick={() => {
+                        if (fisAccount && fisAccount.address) {
+                          if (!isNaN(receiveTokenAmount) && !isNaN(currentNativeTokenReserves)) {
+                            if (Number(receiveTokenAmount) > Number(currentNativeTokenReserves)) {
+                              message.error(`No enough ${selectedToken.title.slice(1)} to be swapped in the pool`);
+                              return;
+                            }
+                          }
+                          setScene(1);
+                        } else {
+                          dispatch(
+                            connectPolkadot_fis(() => {
+                              setFisAccountModalVisible(true);
+                            }),
+                          );
+                        }
+                      }}
+                    />
+                  )}
 
-                      <Text size='10px' color='#a5a5a5' ml='2px' sameLineHeight>
-                        :
-                      </Text>
-                    </HContainer>
-
-                    <Text size='10px' color='white' sameLineHeight>
-                      {!isNaN(Number(currentNativeTokenReserves))
-                        ? Math.floor(currentNativeTokenReserves * 100) / 100
-                        : '--'}
-                    </Text>
-                  </HContainer>
+                  {scene === 1 && <CommonButton text={'Swap'} disabled={!address} mt='25px' onClick={startSwap} />}
                 </InnerContainer>
-              </div>
-            </>
-          )}
-        </CardContainer>
+
+                <div style={{ visibility: scene === 2 ? 'hidden' : 'visible' }}>
+                  <Divider />
+
+                  <InnerContainer>
+                    <HContainer mb='8px'>
+                      <Text size='10px' color='#a5a5a5' sameLineHeight>
+                        Slippage Tolerance :
+                      </Text>
+                      <Text size='10px' color='white' sameLineHeight>
+                        {slippageTolerance}%
+                      </Text>
+                    </HContainer>
+
+                    <HContainer mb='8px'>
+                      <Text size='10px' color='#a5a5a5' sameLineHeight>
+                        Minimum receive :
+                      </Text>
+                      <Text size='10px' color='white' sameLineHeight>
+                        {minReceiveTokenAmount === '--' || !minReceiveTokenAmount
+                          ? '--'
+                          : numberUtil.handleFisRoundToFixed(minReceiveTokenAmount)}{' '}
+                        {getTokenName()}
+                      </Text>
+                    </HContainer>
+
+                    <HContainer mb='8px'>
+                      <HContainer alignItems='flex-start'>
+                        <Text size='10px' color='#a5a5a5' mr='2px' sameLineHeight>
+                          Fee
+                        </Text>
+
+                        <Tooltip
+                          overlayClassName='doubt_overlay'
+                          placement='topLeft'
+                          overlayInnerStyle={{ color: '#A4A4A4' }}
+                          title={'Fee charged by the rSwap, it will be distributed to the Treasury.'}>
+                          <img src={doubt} />
+                        </Tooltip>
+
+                        <Text size='10px' color='#a5a5a5' ml='2px' sameLineHeight>
+                          :
+                        </Text>
+                      </HContainer>
+
+                      <Text size='10px' color='white' sameLineHeight>
+                        {swapFee} FIS
+                      </Text>
+                    </HContainer>
+
+                    <HContainer mb='8px'>
+                      <HContainer alignItems='flex-start'>
+                        <Text size='10px' color='#a5a5a5' mr='2px' sameLineHeight>
+                          Liquidity Rate
+                        </Text>
+
+                        <Tooltip
+                          overlayClassName='doubt_overlay'
+                          placement='topLeft'
+                          overlayInnerStyle={{ color: '#A4A4A4' }}
+                          title={'Liquidity Rate is used to cover the risk and potential loss of holding rTokens.'}>
+                          <img src={doubt} />
+                        </Tooltip>
+
+                        <Text size='10px' color='#a5a5a5' ml='2px' sameLineHeight>
+                          :
+                        </Text>
+                      </HContainer>
+
+                      <Text size='10px' color='white' sameLineHeight>
+                        {numberUtil.percentageAmountToHuman(liquidityRate)}
+                      </Text>
+                    </HContainer>
+
+                    <HContainer style={{ visibility: !selectedToken || !selectedToken.title ? 'hidden' : '' }}>
+                      <HContainer alignItems='flex-start'>
+                        <Text size='10px' color='#a5a5a5' mr='2px' sameLineHeight>
+                          Pooled {selectedToken && selectedToken.title.slice(1)}
+                        </Text>
+
+                        <Tooltip
+                          overlayClassName='doubt_overlay'
+                          placement='topLeft'
+                          overlayInnerStyle={{ color: '#A4A4A4' }}
+                          title={`Available ${selectedToken && selectedToken.title.slice(1)} amount in the pool`}>
+                          <img src={doubt} />
+                        </Tooltip>
+
+                        <Text size='10px' color='#a5a5a5' ml='2px' sameLineHeight>
+                          :
+                        </Text>
+                      </HContainer>
+
+                      <Text size='10px' color='white' sameLineHeight>
+                        {!isNaN(Number(currentNativeTokenReserves))
+                          ? Math.floor(currentNativeTokenReserves * 100) / 100
+                          : '--'}
+                      </Text>
+                    </HContainer>
+                  </InnerContainer>
+                </div>
+              </>
+            )}
+          </CardContainer>
+        </Spin>
       </Container>
 
-      <div style={{ flex: 1, marginTop: '140px', marginLeft: '100px', marginRight: '50px' }}>
+      {/* <div style={{ flex: 1, marginTop: '140px', marginLeft: '100px', marginRight: '50px' }}>
         {tokenTypes.map((tokenData) => (
           <DexTokenItem key={tokenData.type} {...tokenData} />
         ))}
-      </div>
+      </div> */}
+
+      <SwapTokenSlider items={tokenTypes} />
 
       <DexSwapLoading transferDetail={transferDetail} viewTxUrl={viewTxUrl} />
 
