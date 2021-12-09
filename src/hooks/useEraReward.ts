@@ -5,7 +5,9 @@ import config, { getRsymbolByTokenTitle } from 'src/config';
 import { BSC_CHAIN_ID, ETH_CHAIN_ID, SOL_CHAIN_ID, STAFI_CHAIN_ID } from 'src/features/bridgeClice';
 import { setLoading } from 'src/features/globalClice';
 import { rSymbol } from 'src/keyring/defaults';
+import SolServer from 'src/servers/sol/index';
 import { api } from 'src/util/http';
+import { u8aToHex } from '@polkadot/util';
 import numberUtil from 'src/util/numberUtil';
 import { useMetaMaskAccount } from './useMetaMaskAccount';
 import { useSolAccount } from './useSolAccount';
@@ -25,6 +27,7 @@ interface EraRewardModel {
 }
 
 const PAGE_COUNT = 50;
+const solServer = new SolServer();
 
 export function useEraReward(
   platform: string,
@@ -41,7 +44,7 @@ export function useEraReward(
   const [userAddress, setUserAddress] = useState<string>();
   const { metaMaskAddress } = useMetaMaskAccount();
   const { stafiPubKey } = useStafiAccount();
-  const { solPubKey } = useSolAccount();
+  const { solAddress } = useSolAccount();
 
   const fetchData = async () => {
     if (!userAddress || chainType === -1) {
@@ -81,7 +84,7 @@ export function useEraReward(
           setLastEraReward(
             numberUtil.handleAmountFloorToFixed(numberUtil.tokenAmountToHuman(res.data.lastEraReward, rSymbol.Eth), 6),
           );
-        } else if (platform === 'Native') {
+        } else if (platform === 'Native' || platform === 'SPL') {
           setLastEraReward(
             numberUtil.handleAmountFloorToFixed(
               numberUtil.tokenAmountToHuman(res.data.lastEraReward, getRsymbolByTokenTitle(type)),
@@ -107,7 +110,7 @@ export function useEraReward(
             if (!isEmpty(element.reward)) {
               newReward = numberUtil.tokenAmountToHuman(element.reward, rSymbol.Eth);
             }
-          } else if (platform === 'Native') {
+          } else if (platform === 'Native' || platform === 'SPL') {
             newStakeValue = numberUtil.handleAmountRoundToFixed(
               numberUtil.tokenAmountToHuman(element.stakeValue, getRsymbolByTokenTitle(type)),
               6,
@@ -145,11 +148,15 @@ export function useEraReward(
     if (platform === 'Native') {
       setUserAddress(stafiPubKey);
     } else if (platform === 'SPL') {
-      setUserAddress(solPubKey);
+      solServer.getTokenAccountPubkey(solAddress, type.toLowerCase()).then((pubKey) => {
+        if (pubKey) {
+          setUserAddress(u8aToHex(pubKey.toBytes()));
+        }
+      });
     } else {
       setUserAddress(metaMaskAddress);
     }
-  }, [platform, stafiPubKey, metaMaskAddress, solPubKey]);
+  }, [platform, stafiPubKey, metaMaskAddress, solAddress]);
 
   useEffect(() => {
     setPageIndex(1);

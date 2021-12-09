@@ -20,6 +20,7 @@ import {
   rTokenRate as sol_rTokenRate,
 } from 'src/features/rSOLClice';
 import { getSlp20AssetBalanceAll } from 'src/features/SOLClice';
+import { useSolAccount } from 'src/hooks/useSolAccount';
 import Button from 'src/shared/components/button/connect_button';
 import NumberUtil from 'src/util/numberUtil';
 import CountAmount from './components/countAmount';
@@ -32,27 +33,25 @@ const commonClice = new CommonClice();
 export default function Index(props: any) {
   const dispatch = useDispatch();
   const history = useHistory();
+  const { solAddress } = useSolAccount();
 
-  const { solAddress, fis_slpBalance, rsol_slpBalance, fisWillAmount, solWillAmount, unitPriceList } = useSelector(
-    (state: any) => {
-      return {
-        solAddress: state.rSOLModule.solAddress,
-        unitPriceList: state.bridgeModule.priceList,
-        fis_slpBalance: state.SOLModule.fisBalance,
-        rsol_slpBalance: state.SOLModule.rSOLBalance,
-        fisWillAmount: commonClice.getWillAmount(
-          state.FISModule.ratio,
-          state.FISModule.unbondCommission,
-          state.SOLModule.fisBalance,
-        ),
-        solWillAmount: commonClice.getWillAmount(
-          state.rSOLModule.ratio,
-          state.rSOLModule.unbondCommission,
-          state.SOLModule.rSOLBalance,
-        ),
-      };
-    },
-  );
+  const { fis_slpBalance, rsol_slpBalance, fisWillAmount, solWillAmount, unitPriceList } = useSelector((state: any) => {
+    return {
+      unitPriceList: state.bridgeModule.priceList,
+      fis_slpBalance: state.SOLModule.fisBalance,
+      rsol_slpBalance: state.SOLModule.rSOLBalance,
+      fisWillAmount: commonClice.getWillAmount(
+        state.FISModule.ratio,
+        state.FISModule.unbondCommission,
+        state.SOLModule.fisBalance,
+      ),
+      solWillAmount: commonClice.getWillAmount(
+        state.rSOLModule.ratio,
+        state.rSOLModule.unbondCommission,
+        state.SOLModule.rSOLBalance,
+      ),
+    };
+  });
 
   const totalPrice = useMemo(() => {
     let count: any = '--';
