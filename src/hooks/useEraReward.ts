@@ -41,7 +41,7 @@ export function useEraReward(
   const [userAddress, setUserAddress] = useState<string>();
   const { metaMaskAddress } = useMetaMaskAccount();
   const { stafiPubKey } = useStafiAccount();
-  const { solAddress } = useSolAccount();
+  const { solPubKey } = useSolAccount();
 
   const fetchData = async () => {
     if (!userAddress || chainType === -1) {
@@ -145,11 +145,11 @@ export function useEraReward(
     if (platform === 'Native') {
       setUserAddress(stafiPubKey);
     } else if (platform === 'SPL') {
-      setUserAddress(solAddress);
+      setUserAddress(solPubKey);
     } else {
       setUserAddress(metaMaskAddress);
     }
-  }, [platform, stafiPubKey, metaMaskAddress, solAddress]);
+  }, [platform, stafiPubKey, metaMaskAddress, solPubKey]);
 
   useEffect(() => {
     setPageIndex(1);
@@ -194,7 +194,7 @@ export function useLastEraReward(
   const [userAddress, setUserAddress] = useState<string>();
   const { metaMaskAddress } = useMetaMaskAccount();
   const { stafiPubKey } = useStafiAccount();
-  const { solAddress } = useSolAccount();
+  const { solPubKey } = useSolAccount();
 
   const fetchData = async () => {
     if (!userAddress || chainType === -1) {
@@ -231,11 +231,11 @@ export function useLastEraReward(
     if (platform === 'Native') {
       setUserAddress(stafiPubKey);
     } else if (platform === 'SPL') {
-      setUserAddress(solAddress);
+      setUserAddress(solPubKey);
     } else {
       setUserAddress(metaMaskAddress);
     }
-  }, [platform, stafiPubKey, metaMaskAddress, solAddress]);
+  }, [platform, stafiPubKey, metaMaskAddress, solPubKey]);
 
   useEffect(() => {
     setChainType(
