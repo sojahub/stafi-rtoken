@@ -6,3 +6,8 @@ const lpConfig = {
 };
 
 export default lpConfig;
+
+export enum LPType {
+  ADD_LIQUIDITY,
+  EARN,
+}

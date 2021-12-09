@@ -17,6 +17,7 @@ export default function Index(props: any) {
   if (!isNaN(Number(tokenAmount)) && Number(tokenAmount) !== 0) {
     return <Redirect to='/rETH/staker/info' />;
   }
+
   return (
     <TypeCard
       type='rETH'

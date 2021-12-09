@@ -34,7 +34,7 @@ export default function Inde(props: any) {
           <label>Liquify</label> Your Staking BNB
         </>
       }
-      subTitle={'Staking via StaFi Staking Contract and get rMATIC in return'}
+      subTitle={'Staking via StaFi Staking Contract and get rBNB in return'}
       onIntroUrl=''>
       <Button
         disabled={!!metaMaskAddress}

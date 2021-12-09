@@ -37,9 +37,9 @@ const account = (type: string) => {
       }
       return true;
     case Symbol.Eth:
-      if (getLocalStorageItem(Keys.FisAccountKey) == null) {
-        return '/rETH/home';
-      }
+      // if (getLocalStorageItem(Keys.FisAccountKey) == null) {
+      //   return '/rETH/home';
+      // }
       return true;
     case Symbol.Sol:
       if (getLocalStorageItem(Keys.FisAccountKey) == null) {

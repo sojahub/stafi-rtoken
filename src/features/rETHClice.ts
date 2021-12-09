@@ -36,7 +36,6 @@ const rETHClice = createSlice({
   name: 'rETHModule',
   initialState: {
     chainId: '',
-    ethAccount: getLocalStorageItem(Keys.MetamaskAccountKey),
     ratio: '--',
     ratioShow: '--',
     balance: '--',
@@ -72,20 +71,6 @@ const rETHClice = createSlice({
     lastEraRate: '--',
   },
   reducers: {
-    setEthAccount(state, { payload }) {
-      if (payload == null) {
-        state.ethAccount = payload;
-        removeLocalStorageItem(Keys.MetamaskAccountKey);
-      } else {
-        if (state.ethAccount && state.ethAccount.address == payload.address) {
-          state.ethAccount = { ...state.ethAccount, ...payload };
-          setLocalStorageItem(Keys.MetamaskAccountKey, { address: payload.address });
-        } else {
-          state.ethAccount = payload;
-          setLocalStorageItem(Keys.MetamaskAccountKey, { address: payload.address });
-        }
-      }
-    },
     setRatio(state, { payload }) {
       state.ratio = payload;
     },
@@ -189,7 +174,6 @@ const rETHClice = createSlice({
 });
 
 export const {
-  setEthAccount,
   setRatio,
   setBalance,
   setMinimumDeposit,
@@ -227,27 +211,6 @@ export const {
 
 declare const window: any;
 declare const ethereum: any;
-
-export const handleEthAccount =
-  (address: string, targetChainId?: any): AppThunk =>
-  (dispatch, getState) => {
-    if (isdev() && targetChainId && getState().globalModule.metaMaskNetworkId !== targetChainId) {
-      dispatch(setEthAccount({ address: address, balance: '--' }));
-      return;
-    }
-    // dispatch(setEthAccount({address:address,balance:'--'}));
-    ethereum
-      .request({ method: 'eth_getBalance', params: [address, 'latest'] })
-      .then((result: any) => {
-        //const address = StringUtil.replacePkh(address, 4, 38);
-        const balance = NumberUtil.handleEthAmountToFixed(Web3Utils.fromWei(result, 'ether'));
-        dispatch(setEthAccount({ address: address, balance: balance }));
-      })
-      .catch((error: any) => {
-        dispatch(setEthAccount({ address: address, balance: '--' }));
-        message.error(error.message);
-      });
-  };
 
 export const checkAddressChecksum = (address: string) => {
   // Check each case
@@ -311,19 +274,18 @@ export const get_eth_getBalance = (): AppThunk => async (dispatch, getState) => 
   }
 
   let web3 = ethServer.getWeb3();
-  if (!getState().rETHModule.ethAccount) {
+  if (!getState().globalModule.metaMaskAddress) {
     return;
   }
-  const address = getState().rETHModule.ethAccount.address;
+  const address = getState().globalModule.metaMaskAddress;
   const result = await ethereum.request({ method: 'eth_getBalance', params: [address, 'latest'] });
   const balance = web3.utils.fromWei(result, 'ether');
-  dispatch(setEthAccount({ address: address, balance: NumberUtil.handleEthAmountToFixed(balance) }));
   dispatch(setBalance(balance));
 };
 
 export const getMinimumDeposit = (): AppThunk => async (dispatch, getState) => {
   let web3 = ethServer.getWeb3();
-  const address = getState().rETHModule.ethAccount.address;
+  const address = getState().globalModule.metaMaskAddress;
   let userDepositContract = new web3.eth.Contract(
     ethServer.getStafiUserDepositAbi(),
     ethServer.getStafiUserDepositAddress(),
@@ -338,7 +300,7 @@ export const getMinimumDeposit = (): AppThunk => async (dispatch, getState) => {
 
 export const getNextCapacity = (): AppThunk => async (dispatch, getState) => {
   let web3 = ethServer.getWeb3();
-  const address = getState().rETHModule.ethAccount.address;
+  const address = getState().globalModule.metaMaskAddress;
   let poolQueueContract = new web3.eth.Contract(
     ethServer.getStafiStakingPoolQueueAbi(),
     ethServer.getStafiStakingPoolQueueAddress(),
@@ -396,7 +358,7 @@ export const getValidatorApr = (): AppThunk => async (dispatch, getState) => {
 
 export const getPoolCount = (): AppThunk => async (dispatch, getState) => {
   let web3 = ethServer.getWeb3();
-  const address = getState().rETHModule.ethAccount.address;
+  const address = getState().globalModule.metaMaskAddress;
   let managerContract = new web3.eth.Contract(
     ethServer.getStafiStakingPoolManagerAbi(),
     ethServer.getStafiStakingPoolManagerAddress(),
@@ -413,7 +375,7 @@ export const send =
   async (dispatch, getState) => {
     dispatch(setLoading(true));
     let web3 = ethServer.getWeb3();
-    const address = getState().rETHModule.ethAccount.address;
+    const address = getState().globalModule.metaMaskAddress;
     let contract = new web3.eth.Contract(ethServer.getStafiUserDepositAbi(), ethServer.getStafiUserDepositAddress(), {
       from: address,
     });
@@ -454,7 +416,7 @@ export const swapEthForFis =
       dispatch(setSwapLoadingStatus(1));
       const notice_uuid = stafi_uuid();
       let web3 = ethServer.getWeb3();
-      const address = getState().rETHModule.ethAccount && getState().rETHModule.ethAccount.address;
+      const address = getState().globalModule.metaMaskAddress;
       if (!address) {
         dispatch(setSwapLoadingStatus(0));
         return;
@@ -628,14 +590,14 @@ function sleep(ms: any) {
 }
 
 export const getRethAmount = (): AppThunk => async (dispatch, getState) => {
-  const address = getState().rETHModule.ethAccount.address;
+  const address = getState().globalModule.metaMaskAddress;
   getAssetBalance(address, ethServer.getRETHTokenAbi(), ethServer.getRETHTokenAddress(), (v: any) => {
     dispatch(setRethAmount(v));
   });
 };
 
 export const getDepositBalance = (): AppThunk => async (dispatch, getState) => {
-  const address = getState().rETHModule.ethAccount.address;
+  const address = getState().globalModule.metaMaskAddress;
   let web3 = ethServer.getWeb3();
   let userDepositContract = new web3.eth.Contract(
     ethServer.getStafiUserDepositAbi(),
@@ -710,7 +672,7 @@ export const handleDeposit =
 
 export const getNodeStakingPoolCount = (): AppThunk => async (dispatch, getState) => {
   let web3 = ethServer.getWeb3();
-  const currentAddress = getState().rETHModule.ethAccount.address;
+  const currentAddress = getState().globalModule.metaMaskAddress;
   const poolAddressItems = [];
   let contract = new web3.eth.Contract(
     ethServer.getStafiStakingPoolManagerAbi(),
@@ -751,7 +713,7 @@ export const handleCurrentPool =
   (currentPoolAddress: string): AppThunk =>
   async (dispatch, getState) => {
     let web3 = ethServer.getWeb3();
-    const currentAddress = getState().rETHModule.ethAccount.address;
+    const currentAddress = getState().globalModule.metaMaskAddress;
     let poolContract = new web3.eth.Contract(ethServer.getStafiStakingPoolAbi(), currentPoolAddress, {
       from: currentAddress,
     });
@@ -781,7 +743,7 @@ export const handleOffboard =
     let web3 = ethServer.getWeb3();
     const currentPoolAddress = getState().rETHModule.poolAddress;
 
-    const currentAddress = getState().rETHModule.ethAccount.address;
+    const currentAddress = getState().globalModule.metaMaskAddress;
     const currentPoolStatus = getState().rETHModule.currentPoolStatus;
     let poolContract = new web3.eth.Contract(ethServer.getStafiStakingPoolAbi(), currentPoolAddress, {
       from: currentAddress,
@@ -850,7 +812,7 @@ export const handleStake =
   (validatorKeys: any[], cb?: Function): AppThunk =>
   async (dispatch, getState) => {
     let web3 = ethServer.getWeb3();
-    const currentAddress = getState().rETHModule.ethAccount.address;
+    const currentAddress = getState().globalModule.metaMaskAddress;
     const currentPoolAddress = getState().rETHModule.poolAddress;
 
     let poolContract = new web3.eth.Contract(ethServer.getStafiStakingPoolAbi(), currentPoolAddress, {
@@ -887,7 +849,7 @@ export const handleStake =
 
 export const getSelfDeposited = (): AppThunk => async (dispatch, getState) => {
   let web3 = ethServer.getWeb3();
-  const currentAddress = getState().rETHModule.ethAccount.address;
+  const currentAddress = getState().globalModule.metaMaskAddress;
   let contract = new web3.eth.Contract(
     ethServer.getStafiStakingPoolManagerAbi(),
     ethServer.getStafiStakingPoolManagerAddress(),
@@ -1053,7 +1015,7 @@ export const getStakingPoolStatus = (): AppThunk => async (dispatch, getState) =
 
 export const getUnmatchedValidators = (): AppThunk => async (dispatch, getState) => {
   const web3 = ethServer.getWeb3();
-  const address = getState().rETHModule.ethAccount.address;
+  const address = getState().globalModule.metaMaskAddress;
   let poolQueueContract = new web3.eth.Contract(
     ethServer.getStafiStakingPoolQueueAbi(),
     ethServer.getStafiStakingPoolQueueAddress(),
@@ -1068,7 +1030,7 @@ export const getUnmatchedValidators = (): AppThunk => async (dispatch, getState)
 };
 
 export const getTotalRETH = (): AppThunk => async (dispatch, getState) => {
-  const address = getState().rETHModule.ethAccount.address;
+  const address = getState().globalModule.metaMaskAddress;
   let web3 = ethServer.getWeb3();
   let contract = new web3.eth.Contract(ethServer.getRETHTokenAbi(), ethServer.getRETHTokenAddress(), {
     from: address,
@@ -1078,7 +1040,7 @@ export const getTotalRETH = (): AppThunk => async (dispatch, getState) => {
   dispatch(setPoolStatusTotalRETH(NumberUtil.handleEthAmountToFixed(totalRETH)));
 };
 export const getUnmatchedETH = (): AppThunk => async (dispatch, getState) => {
-  const address = getState().rETHModule.ethAccount.address;
+  const address = getState().globalModule.metaMaskAddress;
   let web3 = ethServer.getWeb3();
   let userContract = new web3.eth.Contract(ethServer.getStafiUserDepositAbi(), ethServer.getStafiUserDepositAddress(), {
     from: address,
@@ -1093,7 +1055,7 @@ export const getPoolInfo =
   (poolAddress: string): AppThunk =>
   async (dispatch, getState) => {
     dispatch(setStakingPoolDetail(null));
-    const currentAddress = getState().rETHModule.ethAccount.address;
+    const currentAddress = getState().globalModule.metaMaskAddress;
 
     let poolPubkey = localStorage_poolPubKey.getPoolPubKey(poolAddress);
     if (poolPubkey) {
@@ -1155,7 +1117,7 @@ export const getStakingPoolDetail =
 
 export const getDepositAmount = (): AppThunk => async (dispatch, getState) => {
   const web3 = ethServer.getWeb3();
-  const currentAddress = getState().rETHModule.ethAccount.address;
+  const currentAddress = getState().globalModule.metaMaskAddress;
   let nodeDepositContract = new web3.eth.Contract(
     ethServer.getStafiNodeDepositAbi(),
     ethServer.getStafiNodeDepositAddress(),
@@ -1197,14 +1159,13 @@ export const rewardDetails = [
 export const getReward =
   (pageIndex: Number, cb: Function): AppThunk =>
   async (dispatch, getState) => {
-    const ethAccount = getState().rETHModule.ethAccount;
     dispatch(setLoading(true));
     try {
       if (pageIndex === 0) {
         dispatch(setRewardList([]));
         dispatch(setRewardList_lastdata(null));
       }
-      const result = await rpcServer.getReward('', ethAccount.address, -1, pageIndex);
+      const result = await rpcServer.getReward('', getState().globalModule.metaMaskAddress, -1, pageIndex);
       if (result.status === 80000) {
         const rewardList = getState().rETHModule.rewardList;
         if (result.data.rewardList.length > 0) {
@@ -1243,7 +1204,7 @@ export const getReward =
   };
 
 export const getLastEraRate = (): AppThunk => async (dispatch, getState) => {
-  const ethAddress = getState().rETHModule.ethAccount && getState().rETHModule.ethAccount.address;
+  const ethAddress = getState().globalModule.metaMaskAddress;
   const result = await rpcServer.getReward('', ethAddress, -1, 0);
   if (result.status === 80000) {
     if (result.data.rewardList.length > 1) {

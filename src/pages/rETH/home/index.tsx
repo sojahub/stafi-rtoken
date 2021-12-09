@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import { Redirect } from 'react-router';
+import { Redirect, useHistory } from 'react-router-dom';
 import metamask_png from 'src/assets/images/metamask.png';
 import HomeCard from 'src/components/card/homeCard';
 import { initMetaMaskAccount } from 'src/features/globalClice';
@@ -10,11 +10,18 @@ import './index.scss';
 
 export default function Inde(props: any) {
   const dispatch = useDispatch();
+  const history = useHistory();
   const { metaMaskAddress } = useMetaMaskAccount();
 
-  if (metaMaskAddress) {
-    return <Redirect to='/rETH/type' />;
-  }
+  // if (metaMaskAddress) {
+  //   return <Redirect to='/rETH/type' />;
+  // }
+
+  // useEffect(() => {
+  //   if (metaMaskAddress) {
+  //     history.push('/rETH/type');
+  //   }
+  // }, [history, metaMaskAddress]);
 
   return (
     <HomeCard

@@ -51,6 +51,8 @@ export default function Index(props: any) {
   useEffect(() => {
     if (!metaMaskAddress) {
       history.push('/rBNB/home');
+    } else {
+      history.push('/rBNB/type');
     }
   }, [history, metaMaskAddress]);
 

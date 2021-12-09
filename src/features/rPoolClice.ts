@@ -12,13 +12,13 @@ import { stafi_uuid } from 'src/util/common';
 import { AppThunk } from '../store';
 import { setLoading } from './globalClice';
 import { add_Notice, noticeStatus, noticesubType, noticeType } from './noticeClice';
-import lpConfig from 'src/util/lpConfig';
+import lpConfig, { LPType } from 'src/util/lpConfig';
 
 const lpActs: Array<any> = [
   // {
   //   name: 'rETH/ETH LP',
   //   extraName: 'rETH',
-  //   children: [en e
+  //   children: [
   //     {
   //       platform: 'Ethereum',
   //       poolIndex: 0,
@@ -99,6 +99,52 @@ const lpActs: Array<any> = [
   //     },
   //   ],
   // },
+  {
+    name: 'rETH/ETH LP',
+    extraName: 'rETH',
+    children: [
+      {
+        platform: 'Ethereum',
+        type: LPType.ADD_LIQUIDITY,
+        poolIndex: 0,
+        lpContract: lpConfig.rBNBBSCLpContract1,
+        stakeTokenAddress: '',
+        apr: '0',
+        toDate: '--',
+        totalReward: '--',
+        tvl: '--',
+        rewardPerBlockValue: '',
+        totalRewardValue: '',
+        startBlock: '',
+        endBlock: '',
+        stakeTokenSupply: '',
+        stakeTokenPrice: '',
+        lpPrice: '--',
+        liquidity: '--',
+        slippage: '--',
+      },
+      {
+        platform: 'Ethereum',
+        type: LPType.EARN,
+        poolIndex: 0,
+        lpContract: lpConfig.rBNBBSCLpContract1,
+        stakeTokenAddress: '',
+        apr: '0',
+        toDate: '--',
+        totalReward: '--',
+        tvl: '--',
+        rewardPerBlockValue: '',
+        totalRewardValue: '',
+        startBlock: '',
+        endBlock: '',
+        stakeTokenSupply: '',
+        stakeTokenPrice: '',
+        lpPrice: '--',
+        liquidity: '--',
+        slippage: '--',
+      },
+    ],
+  },
   {
     name: 'rBNB/BNB LP',
     extraName: 'rBNB',
