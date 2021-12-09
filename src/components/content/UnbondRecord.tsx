@@ -95,6 +95,7 @@ export const UnbondRecord = (props: Props) => {
                   <Text size='12px' color='#C8C8C8' scale={0.83} transformOrigin='center left' sameLineHeight>
                     ≈ {itemObj.lockTotalTimeInDays} days
                   </Text>
+
                   {Number(itemObj.lockLeftTimeInDays) > 0 && (
                     <Text size='12px' color='#C8C8C8' scale={0.83} transformOrigin='center left' sameLineHeight>
                       {Number(itemObj.lockLeftTimeInDays) === 1 ? '<1' : itemObj.lockLeftTimeInDays}d left

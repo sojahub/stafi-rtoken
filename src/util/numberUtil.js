@@ -179,8 +179,8 @@ const numberUtil = {
     if (amount === '--' || isNaN(Number(amount))) {
       return '--';
     }
-    const factor = Math.pow(10, powNumber || 2);
-    return (Math.floor(Number(amount) * factor) / factor).toFixed(powNumber || 2);
+    const factor = Math.pow(10, powNumber);
+    return (Math.floor(Number(amount) * factor) / factor).toFixed(powNumber);
   },
 
   handleAmountCeilToFixed(amount, powNumber) {
