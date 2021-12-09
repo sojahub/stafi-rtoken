@@ -21,7 +21,8 @@ export const Text = styled.div<TextProps>`
   font-size: ${(props) => props.size};
   cursor: ${(props) => (props.clickable ? 'pointer' : 'default')};
   color: ${(props) => props.color || '#fff'};
-  font-family: ${(props) => (props.bold ? 'Helvetica-Bold' : 'Helvetica')};
+  font-family: ${(props) =>
+    props.bold ? 'Helvetica-Bold, "Avenir", Arial, sans-serif' : 'Helvetica, "Avenir", Arial, sans-serif'};
   font-weight: ${(props) => (props.bold ? 'bold' : 'normal')};
   line-height: ${(props) => (props.sameLineHeight ? props.size : props.lineHeight ? props.lineHeight : '')};
   margin-top: ${(props) => props.mt};
