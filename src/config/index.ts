@@ -2,7 +2,6 @@ import { clusterApiUrl } from '@solana/web3.js';
 import { rSymbol, Symbol } from 'src/keyring/defaults';
 
 export const isdev = () => {
-  // return false;
   let host = window.location.host;
   var local = /192\.168\./.test(host) || /127\.0\./.test(host) || /localhost/.test(host);
   let demo = /test/.test(host);
@@ -199,8 +198,6 @@ const config = {
   },
   api2: () => {
     if (!isdev()) {
-      return 'https://test-rtoken-api2.stafi.io';
-
       return 'https://rtoken-api2.stafi.io';
     } else {
       return 'https://test-rtoken-api2.stafi.io';
