@@ -606,7 +606,7 @@ export default class Index {
         from: ethAddress,
       });
 
-      const res = await api.post(`https://test-rtoken-api2.stafi.io/stafi/webapi/stake/poolStakeAmount`, {
+      const res = await api.post(`${config.api2()}/stafi/webapi/stake/poolStakeAmount`, {
         poolId: poolIndex * 1,
       });
       let poolStakeTokenSupply = 0;
