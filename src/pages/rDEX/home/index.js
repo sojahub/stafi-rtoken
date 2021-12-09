@@ -5,12 +5,12 @@ import { useDispatch, useSelector } from 'react-redux';
 import arrowDownIcon from 'src/assets/images/arrow_down.svg';
 import doubt from 'src/assets/images/doubt.svg';
 import left_arrow from 'src/assets/images/left_arrow.svg';
-import rasset_rsol_svg from 'src/assets/images/rSOL.svg';
+// import rasset_rsol_svg from 'src/assets/images/rSOL.svg';
 import rasset_ratom_svg from 'src/assets/images/r_atom.svg';
 import rasset_rbnb_svg from 'src/assets/images/r_bnb.svg';
 import rasset_rdot_svg from 'src/assets/images/r_dot.svg';
 import rasset_rfis_svg from 'src/assets/images/r_fis.svg';
-import rasset_rmatic_svg from 'src/assets/images/r_matic.svg';
+// import rasset_rmatic_svg from 'src/assets/images/r_matic.svg';
 import settingIcon from 'src/assets/images/setting.svg';
 import CommonButton from 'src/components/CommonButton';
 import { CardContainer, HContainer, Text } from 'src/components/commonComponents';
@@ -91,18 +91,18 @@ const allTokenDatas = [
     ratio: '--',
     totalRate: '--',
   },
-  {
-    icon: rasset_rsol_svg,
-    title: 'rSOL',
-    content: '--',
-    type: 'rsol',
-  },
-  {
-    icon: rasset_rmatic_svg,
-    title: 'rMATIC',
-    content: '--',
-    type: 'rmatic',
-  },
+  // {
+  //   icon: rasset_rsol_svg,
+  //   title: 'rSOL',
+  //   content: '--',
+  //   type: 'rsol',
+  // },
+  // {
+  //   icon: rasset_rmatic_svg,
+  //   title: 'rMATIC',
+  //   content: '--',
+  //   type: 'rmatic',
+  // },
 ];
 
 export default function RDEXHome() {

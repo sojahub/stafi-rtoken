@@ -19,18 +19,20 @@ export const SwapTokenSlider = (props: { items: any[] }) => {
           ))}
         </div>
 
-        <div>
-          {secondPageItems.map((tokenData) => (
-            <DexTokenItem key={tokenData.type} {...tokenData} />
-          ))}
-        </div>
+        {items && items.length > 4 && (
+          <div>
+            {secondPageItems.map((tokenData) => (
+              <DexTokenItem key={tokenData.type} {...tokenData} />
+            ))}
+          </div>
+        )}
       </Carousel>
 
       <div style={{ width: '52px', marginLeft: '124px' }}>
         <HContainer justifyContent='center'>
           <Dot selected={current === 0} />
 
-          <Dot selected={current === 1} />
+          {items && items.length > 4 && <Dot selected={current === 1} />}
         </HContainer>
       </div>
     </div>
