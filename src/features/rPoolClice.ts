@@ -132,7 +132,7 @@ const lpActs: Array<any> = [
         apy: [
           {
             index: 0,
-            apy: '1',
+            apy: '0',
             status: 1,
             symbol: 'FIS',
           },
