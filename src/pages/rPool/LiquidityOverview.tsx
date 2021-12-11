@@ -51,6 +51,9 @@ export default function LiquidityOverview() {
   } else if (lpContract === lpConfig.rDOTBSCLpContract1) {
     lpName = 'rDOT/DOT LP';
     rTokenName = 'rDOT';
+  } else if (lpContract === lpConfig.rETHLpContract2()) {
+    lpName = 'rETH/ETH LP';
+    rTokenName = 'rETH';
   }
 
   const [showStaker, setShowStaker] = useState(false);

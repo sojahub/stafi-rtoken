@@ -67,6 +67,7 @@ export default class Index {
                 return item.index === poolItem.poolIndex;
               });
               poolItem.apy = filterApyList;
+              poolItem.isEnd = filterApyList && filterApyList.length >= 1 && filterApyList[0].status === 2;
             } else {
               poolItem.lpPrice = 1;
             }
@@ -606,15 +607,18 @@ export default class Index {
         from: ethAddress,
       });
 
-      const res = await api.post(`${config.api2()}/stafi/webapi/stake/poolStakeAmount`, {
-        poolId: poolIndex * 1,
-      });
       let poolStakeTokenSupply = 0;
-      if (res.status === '80000' && res.data) {
-        poolStakeTokenSupply = res.data.poolStakeAmount;
-      }
 
-      // const poolStakeTokenSupply = await stakeTokenContract.methods.balanceOf(contractAddress).call();
+      if (platform === 'Ethereum') {
+        poolStakeTokenSupply = await stakeTokenContract.methods.balanceOf(contractAddress).call();
+      } else {
+        const res = await api.post(`${config.api2()}/stafi/webapi/stake/poolStakeAmount`, {
+          poolId: poolIndex * 1,
+        });
+        if (res.status === '80000' && res.data) {
+          poolStakeTokenSupply = res.data.poolStakeAmount;
+        }
+      }
       const stakeTokenSupply = web3.utils.fromWei(poolStakeTokenSupply, 'ether');
 
       const balance = await stakeTokenContract.methods.balanceOf(ethAddress).call();

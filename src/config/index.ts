@@ -726,7 +726,7 @@ const config = {
       if (!isdev()) {
         return '';
       } else {
-        return '0x2f34b2be8e739ac24c79bcef0e3504cf8f1f4c10';
+        return '0xb22b8b5ed337006696d20b85f2050e456810cc2b';
       }
     }
     if (platform === 'BSC') {
