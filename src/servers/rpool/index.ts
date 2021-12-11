@@ -610,7 +610,9 @@ export default class Index {
       let poolStakeTokenSupply = 0;
 
       if (platform === 'Ethereum') {
-        poolStakeTokenSupply = await stakeTokenContract.methods.balanceOf(contractAddress).call();
+        // poolStakeTokenSupply = await stakeTokenContract.methods.balanceOf(contractAddress).call();
+        console.log('sdfsdfsdf', poolInfo.stakeTokenSupply);
+        poolStakeTokenSupply = poolInfo.stakeTokenSupply;
       } else {
         const res = await api.post(`${config.api2()}/stafi/webapi/stake/poolStakeAmount`, {
           poolId: poolIndex * 1,
