@@ -10,7 +10,7 @@ import rasset_ratom_svg from 'src/assets/images/r_atom.svg';
 import rasset_rbnb_svg from 'src/assets/images/r_bnb.svg';
 import rasset_rdot_svg from 'src/assets/images/r_dot.svg';
 import rasset_rfis_svg from 'src/assets/images/r_fis.svg';
-// import rasset_rmatic_svg from 'src/assets/images/r_matic.svg';
+import rasset_rmatic_svg from 'src/assets/images/r_matic.svg';
 import settingIcon from 'src/assets/images/setting.svg';
 import CommonButton from 'src/components/CommonButton';
 import { CardContainer, HContainer, Text } from 'src/components/commonComponents';
@@ -97,12 +97,12 @@ const allTokenDatas = [
   //   content: '--',
   //   type: 'rsol',
   // },
-  // {
-  //   icon: rasset_rmatic_svg,
-  //   title: 'rMATIC',
-  //   content: '--',
-  //   type: 'rmatic',
-  // },
+  {
+    icon: rasset_rmatic_svg,
+    title: 'rMATIC',
+    content: '--',
+    type: 'rmatic',
+  },
 ];
 
 export default function RDEXHome() {
