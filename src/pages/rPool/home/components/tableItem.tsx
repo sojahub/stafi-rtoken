@@ -8,6 +8,7 @@ import poolCurveIcon from 'src/assets/images/poolCurveIcon.svg';
 import poolAtrixIcon from 'src/assets/images/pool_atrix.svg';
 import { LPPoolName, LPType } from 'src/util/lpConfig';
 import numberUtil from 'src/util/numberUtil';
+import styled from 'styled-components';
 
 type Props = {
   type: LPType;
@@ -108,7 +109,16 @@ export default function Index(props: Props) {
                 </>
               ) : (
                 <>
-                  <div style={{ fontSize: '14px', lineHeight: '14px' }}>+{item.apy}%</div>
+                  {item.status === -1 ? (
+                    <EmptyApyText
+                      onClick={() => {
+                        props.addLiquidityUrl && window.open(props.addLiquidityUrl);
+                      }}>
+                      ? ?
+                    </EmptyApyText>
+                  ) : (
+                    <div style={{ fontSize: '14px', lineHeight: '14px' }}>+{item.apy}%</div>
+                  )}
 
                   <div
                     style={{
@@ -186,3 +196,11 @@ export default function Index(props: Props) {
     </div>
   );
 }
+
+const EmptyApyText = styled.div`
+  cursor: pointer;
+  font-size: 14px;
+  line-height: 14px;
+  text-decoration: underLine;
+  margin-right: 6px;
+`;
