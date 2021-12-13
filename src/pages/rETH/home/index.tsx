@@ -13,9 +13,9 @@ export default function Inde(props: any) {
   const history = useHistory();
   const { metaMaskAddress } = useMetaMaskAccount();
 
-  // if (metaMaskAddress) {
-  //   return <Redirect to='/rETH/type' />;
-  // }
+  if (metaMaskAddress) {
+    return <Redirect to='/rETH/type' />;
+  }
 
   // useEffect(() => {
   //   if (metaMaskAddress) {
