@@ -624,7 +624,8 @@ export default class Index {
       const stakeTokenSupply = web3.utils.fromWei(poolStakeTokenSupply, 'ether');
 
       const balance = await stakeTokenContract.methods.balanceOf(ethAddress).call();
-      response.lpBalance = web3.utils.fromWei(balance, 'ether');
+      // response.lpBalance = web3.utils.fromWei(balance, 'ether');
+      response.lpBalance = numberUtil.tokenAmountToHuman(balance, rSymbol.Eth);
       const allowance = await stakeTokenContract.methods.allowance(ethAddress, contractAddress).call();
       response.lpAllowance = allowance;
 

@@ -70,14 +70,14 @@ export default function LiquidityStaker(props: LiquidityStakerProps) {
     if (!lpData || isNaN(Number(lpData.lpBalance))) {
       return '--';
     }
-    return Math.floor(lpData.lpBalance * 100) / 100;
+    return Math.floor(lpData.lpBalance * 1000000) / 1000000;
   }, [lpData && lpData.lpBalance]);
 
   const unstakableAmount = useMemo(() => {
     if (!lpData || isNaN(Number(lpData.userStakedAmount))) {
       return '--';
     }
-    return Math.floor(lpData.userStakedAmount * 100) / 100;
+    return Math.floor(lpData.userStakedAmount * 1000000) / 1000000;
   }, [lpData && lpData.userStakedAmount]);
 
   const maxInput = useMemo(() => {
