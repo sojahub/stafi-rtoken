@@ -24,7 +24,7 @@ export default function Index(props: any) {
   }
 
   useEffect(() => {
-    if (metaMaskNetworkId === config.goerliChainId()) {
+    if (metaMaskNetworkId === config.ethChainId()) {
       metaMaskAddress && dispatch(reloadData());
       dispatch(getETHAssetBalance());
     }
@@ -40,7 +40,6 @@ export default function Index(props: any) {
     if (!metaMaskAddress) {
       history.push('/rETH/home');
     } else {
-      console.log('sdfsdfsd');
       history.push('/rETH/type');
     }
   }, [history, metaMaskAddress]);
