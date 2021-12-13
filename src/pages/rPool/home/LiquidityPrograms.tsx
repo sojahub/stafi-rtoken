@@ -74,14 +74,14 @@ export default function LiquidityPrograms(props: any) {
     let apySum = 0;
     let slippageSum = 0;
     let liquiditySum = 0;
-    if (ethCurveData) {
-      count++;
-      ethCurveData?.apy?.forEach((apyitem: any) => {
-        apySum += Number(apyitem.apy);
-      });
-      slippageSum += Number(ethCurveData.slippage);
-      liquiditySum += Number(ethCurveData.liquidity);
-    }
+    // if (ethCurveData) {
+    //   count++;
+    //   ethCurveData?.apy?.forEach((apyitem: any) => {
+    //     apySum += Number(apyitem.apy);
+    //   });
+    //   slippageSum += Number(ethCurveData.slippage);
+    //   liquiditySum += Number(ethCurveData.liquidity);
+    // }
     if (atomSifData) {
       count++;
       atomSifData?.apy?.forEach((apyitem: any) => {
@@ -100,6 +100,9 @@ export default function LiquidityPrograms(props: any) {
     }
     lpList?.forEach((data: any) => {
       data.children?.forEach((item: any) => {
+        if (isNaN(Number(item.slippage)) || isNaN(Number(item.liquidity)) || item.isEnd) {
+          return;
+        }
         count++;
         slippageSum += Number(item.slippage);
         liquiditySum += Number(item.liquidity);
@@ -154,7 +157,7 @@ export default function LiquidityPrograms(props: any) {
 
         <Spin spinning={loadingLpList} size='large' tip='loading'>
           <div className='table_body' style={{ minHeight: '300px' }}>
-            <OldTableItem
+            {/* <OldTableItem
               wrapFiUrl={'https://drop.wrapfi.io'}
               liquidityUrl='https://curve.fi/reth'
               history={props.history}
@@ -165,7 +168,7 @@ export default function LiquidityPrograms(props: any) {
               slippage={ethCurveData && ethCurveData.slippage}
               poolOn={2}
               platform='Ethereum'
-            />
+            /> */}
 
             <OldTableItem
               wrapFiUrl={'https://drop.wrapfi.io'}
@@ -230,12 +233,15 @@ export default function LiquidityPrograms(props: any) {
                           <TableItem
                             key={`${data.name}${item.platform}${index}`}
                             history={props.history}
+                            type={item.type}
+                            isEnd={item.isEnd}
+                            addLiquidityUrl={item.addLiquidityUrl}
                             pairIcon={index === 0 ? icon : null}
                             pairValue={index === 0 ? type : null}
                             apyList={item.apy || []}
                             liquidity={item.liquidity}
                             slippage={item.slippage}
-                            poolOn={1}
+                            poolOn={item.poolOn}
                             platform={item.platform}
                             poolIndex={item.poolIndex}
                             lpContract={item.lpContract}

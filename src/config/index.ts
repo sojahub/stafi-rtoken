@@ -724,9 +724,9 @@ const config = {
   lockContractAddress: (platform: any) => {
     if (platform === 'Ethereum') {
       if (!isdev()) {
-        return '';
+        return '0x630e78c7ac331d89e2fedbbaa93fecade842d460';
       } else {
-        return '0x2f34b2be8e739ac24c79bcef0e3504cf8f1f4c10';
+        return '0xb22b8b5ed337006696d20b85f2050e456810cc2b';
       }
     }
     if (platform === 'BSC') {
