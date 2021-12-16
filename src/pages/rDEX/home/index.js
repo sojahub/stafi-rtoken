@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import arrowDownIcon from 'src/assets/images/arrow_down.svg';
 import doubt from 'src/assets/images/doubt.svg';
 import left_arrow from 'src/assets/images/left_arrow.svg';
-// import rasset_rsol_svg from 'src/assets/images/rSOL.svg';
+import rasset_rsol_svg from 'src/assets/images/rSOL.svg';
 import rasset_ratom_svg from 'src/assets/images/r_atom.svg';
 import rasset_rbnb_svg from 'src/assets/images/r_bnb.svg';
 import rasset_rdot_svg from 'src/assets/images/r_dot.svg';
@@ -55,7 +55,6 @@ import Modal from 'src/shared/components/modal/connectModal';
 import numberUtil from 'src/util/numberUtil';
 import styled from 'styled-components';
 import Page_FIS from '../../rATOM/selectWallet_rFIS/index';
-import DexTokenItem from './DexTokenItem';
 import { SwapTokenSlider } from './SwapTokenSlider';
 
 const stafiServer = new Stafi();
@@ -91,12 +90,12 @@ const allTokenDatas = [
     ratio: '--',
     totalRate: '--',
   },
-  // {
-  //   icon: rasset_rsol_svg,
-  //   title: 'rSOL',
-  //   content: '--',
-  //   type: 'rsol',
-  // },
+  {
+    icon: rasset_rsol_svg,
+    title: 'rSOL',
+    content: '--',
+    type: 'rsol',
+  },
   {
     icon: rasset_rmatic_svg,
     title: 'rMATIC',
@@ -767,12 +766,6 @@ export default function RDEXHome() {
           </CardContainer>
         </Spin>
       </Container>
-
-      {/* <div style={{ flex: 1, marginTop: '140px', marginLeft: '100px', marginRight: '50px' }}>
-        {tokenTypes.map((tokenData) => (
-          <DexTokenItem key={tokenData.type} {...tokenData} />
-        ))}
-      </div> */}
 
       <SwapTokenSlider items={tokenTypes} />
 
