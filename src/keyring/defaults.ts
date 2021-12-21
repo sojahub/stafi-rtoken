@@ -14,7 +14,6 @@ enum Symbol {
 }
 
 enum rSymbol {
-  Eth = -2,
   Asset = -1,
   Fis = 0,
   Dot = 1,
@@ -23,6 +22,7 @@ enum rSymbol {
   Sol = 4,
   Matic = 5,
   Bnb = 6,
+  Eth = 7,
 }
 
 const ACCOUNT_PREFIX = 'account:';
@@ -48,4 +48,3 @@ export {
   PKCS8_HEADER,
   PUB_LENGTH,
 };
-
