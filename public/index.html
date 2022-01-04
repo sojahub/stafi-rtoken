@@ -3,6 +3,10 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self';style-src 'self' 'unsafe-inline';script-src 'self' 'unsafe-inline' 'unsafe-eval' https://api-js.mixpanel.com; img-src 'self' data:; connect-src 'self' data:"
+    />
     <link rel="icon" href="/favicon.ico" />
     <title>StaFi</title>
     <style id="antiClickjack">
