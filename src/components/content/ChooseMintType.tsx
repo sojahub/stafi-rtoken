@@ -3,6 +3,7 @@ import { isEmpty } from 'lodash';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import leftArrowSvg from 'src/assets/images/left_arrow.svg';
+import { Connection } from '@solana/web3.js';
 import config from 'src/config/index';
 import {
   bridgeCommon_ChainFees,
@@ -13,7 +14,7 @@ import {
 } from 'src/features/bridgeClice';
 import { connectSoljs, setLoading } from 'src/features/globalClice';
 import { checkEthAddress } from 'src/features/rETHClice';
-import { checkAddress as checkSOLAddress } from 'src/features/rSOLClice';
+import { checkAddress as checkSOLAddress, queryBalance } from 'src/features/rSOLClice';
 import SolServer from 'src/servers/sol';
 import Button from 'src/shared/components/button/button';
 import AddressInputEmbed from 'src/shared/components/input/addressInputEmbed';
@@ -21,6 +22,10 @@ import web3Utils from 'web3-utils';
 import StakeOverviewModal from '../../modal/StakeOverviewModal';
 import './index.scss';
 import MintTypeCard from './MintTypeCard';
+import numberUtil from 'src/util/numberUtil';
+import { rSymbol } from 'src/keyring/defaults';
+
+const splToken = require('@solana/spl-token');
 
 declare const ethereum: any;
 declare const solana: any;
@@ -54,11 +59,12 @@ export default function ChooseMintType(props: ChooseMintTypeProps) {
     },
   );
 
-  const { metaMaskNetworkId, metaMaskAddress, solAddress } = useSelector((state: any) => {
+  const { metaMaskNetworkId, metaMaskAddress, solAddress, solBalance } = useSelector((state: any) => {
     return {
       metaMaskAddress: state.globalModule.metaMaskAddress,
       metaMaskNetworkId: state.globalModule.metaMaskNetworkId,
       solAddress: state.rSOLModule.solAddress,
+      solBalance: state.rSOLModule.transferrableAmountShow,
     };
   });
 
@@ -406,10 +412,21 @@ export default function ChooseMintType(props: ChooseMintTypeProps) {
               }
               if (showAddSplTokenButton) {
                 dispatch(setLoading(true));
+                const connection = new Connection(config.solRpcApi(), { wsEndpoint: config.solRpcWs() });
+
+                const createTokenFeeRes = await splToken.Token.getMinBalanceRentForExemptAccount(connection);
+                const createTokenFee = numberUtil.tokenAmountToHuman(createTokenFeeRes, rSymbol.Sol);
+                if (Number(solBalance) < Number(createTokenFee)) {
+                  message.error(`Insufficient available SOL balance, at least ${createTokenFee} SOL`);
+                  dispatch(setLoading(false));
+                  return;
+                }
+
                 const createSplTokenAccountResult = await solServer.createTokenAccount(targetAddress, 'rsol');
                 if (createSplTokenAccountResult) {
                   setShowAddSplTokenButton(false);
                 }
+                dispatch(queryBalance());
                 dispatch(setLoading(false));
                 return;
               }

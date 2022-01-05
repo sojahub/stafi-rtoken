@@ -1,5 +1,6 @@
+import { Connection } from '@solana/web3.js';
 import { message } from 'antd';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Redirect, useHistory, useLocation, useParams } from 'react-router-dom';
 import bsc_white from 'src/assets/images/bsc_white.svg';
@@ -64,14 +65,15 @@ import {
 } from 'src/features/rMATICClice';
 import {
   checkAddress as checkSOLAddress,
-  queryBalance as solQueryBalance,
+  earglyConnectPhantom,
   getUnbondCommission as sol_getUnbondCommission,
+  queryBalance as solQueryBalance,
   query_rBalances_account as sol_query_rBalances_account,
   rTokenRate as sol_rTokenRate,
-  earglyConnectPhantom,
 } from 'src/features/rSOLClice';
 import { getSlp20Allowances, getSlp20AssetBalanceAll } from 'src/features/SOLClice';
 import { useMetaMaskAccount } from 'src/hooks/useMetaMaskAccount';
+import { rSymbol } from 'src/keyring/defaults';
 import SolServer from 'src/servers/sol';
 import Back from 'src/shared/components/backIcon';
 import Button from 'src/shared/components/button/button';
@@ -80,9 +82,12 @@ import Content from 'src/shared/components/content';
 import AddressInputEmbed from 'src/shared/components/input/addressInputEmbed';
 import AmountInputEmbed from 'src/shared/components/input/amountInputEmbed';
 import TypeSelector from 'src/shared/components/input/typeSelector';
+import numberUtil from 'src/util/numberUtil';
 import NumberUtil from 'src/util/numberUtil';
 import { useInterval } from 'src/util/utils';
 import './index.scss';
+
+const splToken = require('@solana/spl-token');
 
 const solServer = new SolServer();
 
@@ -266,15 +271,16 @@ export default function Index(props: any) {
     }
   });
 
-  const { fisAccount, solAddress, solTransferrableAmount } = useSelector((state: any) => {
+  const { fisAccount, solAddress, solBalance, solTransferrableAmount } = useSelector((state: any) => {
     return {
       fisAccount: state.FISModule.fisAccount,
       solAddress: state.rSOLModule.solAddress,
+      solBalance: state.rSOLModule.transferrableAmountShow,
       solTransferrableAmount: state.rSOLModule.transferrableAmountShow,
     };
   });
 
-  const updateSplTokenStatus = async () => {
+  const updateSplTokenStatus = useCallback(async () => {
     if (destType !== 'spl' || !tokenType) {
       setShowAddSplTokenButton(false);
       return;
@@ -283,13 +289,14 @@ export default function Index(props: any) {
       setShowAddSplTokenButton(false);
       return;
     }
+    setShowAddSplTokenButton(true);
     const splTokenAccountPubkey = await solServer.getTokenAccountPubkey(address, tokenType.type);
     setShowAddSplTokenButton(!splTokenAccountPubkey);
-  };
+  }, [address, destType, tokenType && tokenType.type]);
 
   useEffect(() => {
     updateSplTokenStatus();
-  }, [address, destType, tokenType && tokenType.type]);
+  }, [updateSplTokenStatus]);
 
   useEffect(() => {
     if (fromType && destType) {
@@ -818,10 +825,22 @@ export default function Index(props: any) {
                 }
                 if (showAddSplTokenButton) {
                   dispatch(setLoading(true));
+
+                  const connection = new Connection(config.solRpcApi(), { wsEndpoint: config.solRpcWs() });
+
+                  const createTokenFeeRes = await splToken.Token.getMinBalanceRentForExemptAccount(connection);
+                  const createTokenFee = numberUtil.tokenAmountToHuman(createTokenFeeRes, rSymbol.Sol);
+                  if (Number(solBalance) < Number(createTokenFee)) {
+                    message.error(`Insufficient available SOL balance, at least ${createTokenFee} SOL`);
+                    dispatch(setLoading(false));
+                    return;
+                  }
+
                   const createSplTokenAccountResult = await solServer.createTokenAccount(address, tokenType.type);
                   if (createSplTokenAccountResult) {
                     setShowAddSplTokenButton(false);
                   }
+                  dispatch(solQueryBalance());
                   dispatch(setLoading(false));
                   return;
                 }

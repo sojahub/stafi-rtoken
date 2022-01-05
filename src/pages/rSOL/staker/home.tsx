@@ -1,3 +1,4 @@
+import { message } from 'antd';
 import PubSub from 'pubsub-js';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -13,9 +14,10 @@ export default function Index(props: any) {
   const dispatch = useDispatch();
   const [amount, setAmount] = useState<any>();
 
-  const { solAddress } = useSelector((state: any) => {
+  const { solAddress, solBalance } = useSelector((state: any) => {
     return {
       solAddress: state.rSOLModule.solAddress,
+      solBalance: state.rSOLModule.transferrableAmountShow,
     };
   });
 
@@ -42,8 +44,12 @@ export default function Index(props: any) {
     },
   );
 
-  const clickStake = (chainId: number, targetAddress: string) => {
+  const clickStake = async (chainId: number, targetAddress: string) => {
     if (amount) {
+      if (Number(solBalance) < Number(amount)) {
+        message.error(`Insufficient available SOL balance, at least ${amount} SOL`);
+        return;
+      }
       dispatch(
         transfer(Number(amount).toString(), chainId, targetAddress, () => {
           dispatch(setProcessSlider(false));
