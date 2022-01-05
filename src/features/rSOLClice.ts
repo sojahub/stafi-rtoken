@@ -633,7 +633,9 @@ export const getBlock =
       const address = getState().rSOLModule.solAddress;
       const validPools = getState().rSOLModule.validPools;
       const processParameter = getState().rSOLModule.processParameter;
-      const { destChainId, targetAddress } = processParameter;
+      // const { destChainId, targetAddress } = processParameter;
+      const destChainId = STAFI_CHAIN_ID;
+      const targetAddress = getState().FISModule.fisAccount && getState().FISModule.fisAccount.address;
 
       const solServer = new SolServer();
       const { amount, poolAddress, blockhash } = await solServer.getTransactionDetail(

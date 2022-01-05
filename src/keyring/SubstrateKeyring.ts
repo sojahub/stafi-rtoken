@@ -5,8 +5,6 @@ import {
   encodeAddress,
   mnemonicToMiniSecret,
   mnemonicValidate,
-  naclKeypairFromSeed as naclFromSeed,
-  schnorrkelKeypairFromSeed as schnorrkelFromSeed,
 } from '@polkadot/util-crypto';
 import { KeypairType } from '@polkadot/util-crypto/types';
 import Base from './Base';
@@ -87,17 +85,23 @@ export class SubstrateKeyring extends Base implements KeyringStruct {
   }
 
   private createAccountFromSeed(seed: Uint8Array): KeyringPair {
-    const keypair = this._type === 'sr25519' ? schnorrkelFromSeed(seed) : naclFromSeed(seed);
+    // const keypair = this._type === 'sr25519' ? schnorrkelFromSeed(seed) : naclFromSeed(seed);
 
-    const secretKey = u8aToHex(keypair.secretKey);
-    const publicKey = u8aToHex(keypair.publicKey);
+    // const secretKey = u8aToHex(keypair.secretKey);
+    // const publicKey = u8aToHex(keypair.publicKey);
 
-    const address = this.encodeAddress(keypair.publicKey);
+    // const address = this.encodeAddress(keypair.publicKey);
+
+    // return {
+    //   secretKey: secretKey,
+    //   publicKey: publicKey,
+    //   address: address,
+    // };
 
     return {
-      secretKey: secretKey,
-      publicKey: publicKey,
-      address: address,
+      secretKey: '',
+      publicKey: '',
+      address: '',
     };
   }
 

@@ -1,6 +1,6 @@
 import { message } from 'antd';
 import { isEmpty } from 'lodash';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import leftArrowSvg from 'src/assets/images/left_arrow.svg';
 import config from 'src/config/index';
@@ -38,7 +38,7 @@ export default function ChooseMintType(props: ChooseMintTypeProps) {
   const [selectedChainId, setSelectedChainId] = useState(STAFI_CHAIN_ID);
   const [targetAddress, setTargetAddress] = useState('');
   const [stakeOverviewModalVisible, setStakeOverviewModalVisible] = useState(false);
-  const [showAddSplTokenButton, setShowAddSplTokenButton] = useState(false);
+  const [showAddSplTokenButton, setShowAddSplTokenButton] = useState(props.type === 'rSOL');
   const [maticStakeEthFee, setMaticStakeEthFee] = useState('-- ETH');
 
   const { processSlider, erc20SwapFee, bep20SwapFee, slp20SwapFee, gasPrice, fisAccountAddress } = useSelector(
@@ -249,24 +249,25 @@ export default function ChooseMintType(props: ChooseMintTypeProps) {
     setTargetAddress('');
   }, [selectedChainId]);
 
-  useEffect(() => {
-    if (props.type === 'rSOL') {
-      updateSplTokenStatus();
-    }
-  }, [selectedChainId, targetAddress]);
-
-  const updateSplTokenStatus = async () => {
+  const updateSplTokenStatus = useCallback(async () => {
     if (selectedChainId !== SOL_CHAIN_ID || props.type !== 'rSOL') {
       setShowAddSplTokenButton(false);
       return;
     }
     if (!targetAddress || !checkSOLAddress(targetAddress)) {
-      setShowAddSplTokenButton(false);
+      setShowAddSplTokenButton(true);
       return;
     }
+    setShowAddSplTokenButton(true);
     const splTokenAccountPubkey = await solServer.getTokenAccountPubkey(targetAddress, 'rsol');
     setShowAddSplTokenButton(!splTokenAccountPubkey);
-  };
+  }, [selectedChainId, targetAddress, props.type]);
+
+  useEffect(() => {
+    if (props.type === 'rSOL') {
+      updateSplTokenStatus();
+    }
+  }, [props.type, updateSplTokenStatus]);
 
   const fillSolAddress = () => {
     if (solana && solana.isPhantom) {
