@@ -14,9 +14,7 @@ export default function Index() {
     <MyErrorBoundary>
       <Provider store={store}>
         <Fragment>
-          <BrowserRouter>
-            {routesFactory()}
-          </BrowserRouter>
+          <BrowserRouter>{routesFactory()}</BrowserRouter>
         </Fragment>
       </Provider>
     </MyErrorBoundary>
