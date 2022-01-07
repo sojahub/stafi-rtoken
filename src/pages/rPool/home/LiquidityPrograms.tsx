@@ -1,4 +1,5 @@
 import { Spin } from 'antd';
+import { cloneDeep } from 'lodash';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import rpool_ratom_Icon from 'src/assets/images/rpool_ratom_atom.svg';
@@ -10,6 +11,7 @@ import rpool_rksm_Icon from 'src/assets/images/rpool_rksm_ksm.svg';
 import rpool_rmatic_Icon from 'src/assets/images/rpool_rmatic_matic.svg';
 import rpool_rsol_Icon from 'src/assets/images/rpool_rsol_sol.svg';
 import Card from 'src/components/card/index';
+import { Text } from 'src/components/commonComponents';
 import { getLPList, getRPoolList } from 'src/features/rPoolClice';
 import Doubt from 'src/shared/components/doubt';
 import { RootState } from 'src/store';
@@ -24,6 +26,7 @@ import './index.scss';
 
 export default function LiquidityPrograms(props: any) {
   const dispatch = useDispatch();
+  const [selectedTab, setSelectedTab] = useState<'In Progress' | 'Completed'>('In Progress');
 
   useEffect(() => {
     dispatch(getRPoolList());
@@ -51,6 +54,44 @@ export default function LiquidityPrograms(props: any) {
       dispatch(getLPList(rPoolList));
     }
   }, [rPoolList, dispatch]);
+
+  const { inProgressList, completedList } = useMemo(() => {
+    const inProgress = [];
+    const completed = [];
+    lpList.forEach((data) => {
+      const name = data.name;
+      const extraName = data.extraName;
+      const inProgressChildren = data.children?.filter((item) => {
+        return !item.isEnd;
+      });
+      const completedChildren = data.children?.filter((item) => {
+        return item.isEnd;
+      });
+
+      inProgress.push({
+        name,
+        extraName,
+        children: cloneDeep(inProgressChildren),
+      });
+
+      completed.push({
+        name,
+        extraName,
+        children: cloneDeep(completedChildren),
+      });
+    });
+    return {
+      inProgressList: inProgress,
+      completedList: completed,
+    };
+  }, [lpList]);
+
+  const displayList = useMemo(() => {
+    if (selectedTab === 'In Progress') {
+      return inProgressList;
+    }
+    return completedList;
+  }, [selectedTab, inProgressList, completedList]);
 
   const { ethCurveData, atomSifData, solData } = useMemo(() => {
     const ethCurveData = rPoolList.find((item) => {
@@ -136,6 +177,43 @@ export default function LiquidityPrograms(props: any) {
         />
       </div>
 
+      <div style={{ display: 'flex', alignItems: 'center', marginTop: '20px', marginBottom: '30px' }}>
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            borderRadius: '17px',
+            height: '34px',
+            width: '100px',
+            backgroundColor: '#293038',
+            marginRight: '20px',
+            cursor: 'pointer',
+          }}
+          onClick={() => setSelectedTab('In Progress')}>
+          <Text bold sameLineHeight clickable size='12px' color={selectedTab === 'In Progress' ? '#00F3AB' : '#7c7c7c'}>
+            In Progress
+          </Text>
+        </div>
+
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            borderRadius: '17px',
+            height: '34px',
+            width: '100px',
+            backgroundColor: '#293038',
+            cursor: 'pointer',
+          }}
+          onClick={() => setSelectedTab('Completed')}>
+          <Text bold sameLineHeight clickable size='12px' color={selectedTab === 'Completed' ? '#00F3AB' : '#7c7c7c'}>
+            Completed
+          </Text>
+        </div>
+      </div>
+
       <div className='table'>
         <TableHead
           sortField={sortField}
@@ -169,19 +247,20 @@ export default function LiquidityPrograms(props: any) {
               poolOn={2}
               platform='Ethereum'
             /> */}
-
-            <OldTableItem
-              wrapFiUrl={'https://drop.wrapfi.io'}
-              liquidityUrl='https://app.atrix.finance/#/pools/2Jufhrr5w2zbavrUZgwkv91z6phoCFrjNDzvp3YCaveD/deposit'
-              history={props.history}
-              pairIcon={rpool_rsol_Icon}
-              pairValue='rSOL/SOL'
-              apyList={solData ? solData.apy : []}
-              liquidity={solData && solData.liquidity}
-              slippage={solData && solData.slippage}
-              poolOn={6}
-              platform='Solana'
-            />
+            {selectedTab === 'In Progress' && (
+              <OldTableItem
+                wrapFiUrl={'https://drop.wrapfi.io'}
+                liquidityUrl='https://app.atrix.finance/#/pools/2Jufhrr5w2zbavrUZgwkv91z6phoCFrjNDzvp3YCaveD/deposit'
+                history={props.history}
+                pairIcon={rpool_rsol_Icon}
+                pairValue='rSOL/SOL'
+                apyList={solData ? solData.apy : []}
+                liquidity={solData && solData.liquidity}
+                slippage={solData && solData.slippage}
+                poolOn={6}
+                platform='Solana'
+              />
+            )}
 
             {/* <OldTableItem
               wrapFiUrl={'https://drop.wrapfi.io'}
@@ -196,8 +275,8 @@ export default function LiquidityPrograms(props: any) {
               platform='Cosmos'
             /> */}
 
-            {lpList &&
-              lpList.map((data: any, i: number) => {
+            {displayList &&
+              displayList.map((data: any, i: number) => {
                 return (
                   <div key={`${data.name}${i}`} className='rtoken_type'>
                     {data.children &&
