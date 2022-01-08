@@ -252,7 +252,7 @@ export default class CommonClice {
   }
   getPool(tokenAmount: any, validPools: any, poolLimit: any, errorMessage?: string) {
     const data = validPools.find((item: any) => {
-      if (poolLimit == 0 || Number(item.active) + Number(tokenAmount) <= Number(poolLimit)) {
+      if (Number(poolLimit) == 0 || Number(item.active) + Number(tokenAmount) <= Number(poolLimit)) {
         return true;
       }
     });
@@ -265,7 +265,7 @@ export default class CommonClice {
   }
   getFisPool(tokenAmount: any, validPools: any, poolLimit: any, errorMessage?: string) {
     const data = validPools.find((item: any) => {
-      if (Number(item.active) + Number(tokenAmount) <= Number(poolLimit)) {
+      if (Number(poolLimit) == 0 || Number(item.active) + Number(tokenAmount) <= Number(poolLimit)) {
         return true;
       }
     });
