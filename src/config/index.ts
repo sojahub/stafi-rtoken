@@ -265,21 +265,21 @@ const config = {
     if (!isdev()) {
       return '0xc82eb6dea0c93edb8b697b89ad1b13d19469d635';
     } else {
-      return '0x630a0549feb82229e2a9ad51a94202cf9e902630';
+      return '0x9bd574d12a86d648196159700f21e5734b7fb9cb';
     }
   },
   rFISBep20TokenAddress: () => {
     if (!isdev()) {
       return '0x8962a0f6c00ecad3b420ddeb03a6ef624d645fed';
     } else {
-      return '0x2ed2c9f3cc1c69c82be35449d7c285dc30b97b5e';
+      return '0x40cc0f7a3600c31aab1970b9df7d96b0813ab136';
     }
   },
   FISTokenAddress: () => {
     if (!isdev()) {
       return '0xef3a930e1ffffacd2fc13434ac81bd278b0ecc8d';
     } else {
-      return '0x756139e441107c7dd66d2f080a182c2810e927f3';
+      return '0x5cb831aec601635190b987a816a7b2b4a0a58068';
     }
   },
   FISBep20TokenAddress: () => {
@@ -294,42 +294,42 @@ const config = {
     if (!isdev()) {
       return '0x3c3842c4d3037ae121d69ea1e7a0b61413be806c';
     } else {
-      return '0xd0b16dd375fa75889a0f0e209aff05b2b1de815b';
+      return '0xc8acfdbe0634d041f529d130e7cd33a5be3f73d3';
     }
   },
   rKSMBep20TokenAddress: () => {
     if (!isdev()) {
       return '0xfa1df7c727d56d5fec8c79ef38a9c69aa9f784a3';
     } else {
-      return '0xe2bcc4e638ecaa2f1f257054afcc5a4fd37ed027';
+      return '0xfc42de640aa9759d460e1a11416eca95d25c5908';
     }
   },
   rDOTTokenAddress: () => {
     if (!isdev()) {
       return '0x505f5a4ff10985fe9f93f2ae3501da5fe665f08a';
     } else {
-      return '0xab91a1b93b62e14b803515172abda88dc2072a8a';
+      return '0x5561eecdabd404e36259a8b4edb198be838a1b02';
     }
   },
   rDOTBep20TokenAddress: () => {
     if (!isdev()) {
       return '0x1dab2a526c8ac1ddea86838a7b968626988d33de';
     } else {
-      return '0x690c309f48843b37697d98d66b410adc45265efd';
+      return '0x2ac784f009704a0e69a41abd43a6ec8e0e951979';
     }
   },
   rATOMTokenAddress: () => {
     if (!isdev()) {
       return '0xd01cb3d113a864763dd3977fe1e725860013b0ed';
     } else {
-      return '0x6aaad947283d6ed676a6fd5ca60486a323001060';
+      return '0x36bff48eb520cee3ba51599d4ea99c7b5d3814c7';
     }
   },
   rATOMBep20TokenAddress: () => {
     if (!isdev()) {
       return '0x1e5f6d5355ae5f1c5c687d3041c55f0aeec57eab';
     } else {
-      return '0x5ffb6c41296b46fa365215358e261319fff347fb';
+      return '0x6ca61f2763b2dd1c846a87f7812bb5f702ae416c';
     }
   },
   rSOLTokenAddress: () => {
@@ -341,7 +341,7 @@ const config = {
   },
   rSOLBep20TokenAddress: () => {
     if (!isdev()) {
-      return '0x22e7b055a0c756067e33c9acc1c3ca789dec6eba';
+      return '';
     } else {
       return '0x22e7b055a0c756067e33c9acc1c3ca789dec6eba';
     }
@@ -350,28 +350,28 @@ const config = {
     if (!isdev()) {
       return '0x3dbb00c9be5a327e25caf4f650844c5dba81e34b';
     } else {
-      return '0x1a80c8874e4bf1516c02aa92b838b33e11cde7e8';
+      return '0xcc75b43d3e43a7a26efd88c1c1e231fc42487bb8';
     }
   },
   rMATICBep20TokenAddress: () => {
     if (!isdev()) {
       return '0x117eefdde5e5aed6626ffedbb5d2ac955f64dbf3';
     } else {
-      return '0xbc45fda97bb810cec5fb888a355e7252c8ceca83';
+      return '0x482030aac2d537d6e9a5805a66e3a4023a2e401f';
     }
   },
   rETHBep20TokenAddress: () => {
     if (!isdev()) {
       return '0xa7a0a9fda65cd786b3dc718616cee25afb110544';
     } else {
-      return '0x8dd855d062475f65d3b3eb27795fa3f2ba247eca';
+      return '0x3b507040b02c55aa3363baf7ed4f4a6439b98771';
     }
   },
   rBNBBep20TokenAddress: () => {
     if (!isdev()) {
       return '0xf027e525d491ef6ffcc478555fbb3cfabb3406a6';
     } else {
-      return '0xa8cc91264ddd4430b3e5b95d1ea701dcee734f14';
+      return '0x03c73f69282e3a1b2a22948bd5a23ce7414490f2';
     }
   },
   MATICTokenAddress: () => {
@@ -385,28 +385,28 @@ const config = {
     if (!isdev()) {
       return '0x2b6b6fce3af32efe4430e446717bda72b95ebb9a';
     } else {
-      return '0xed70d0dab69f63f5217fee1a8fa37eeba29e689b';
+      return '0xc4e7ab051af21f1196b6a91a66802abafd8cd740';
     }
   },
   bep20HandlerAddress: () => {
     if (!isdev()) {
       return '0x13ef51f0525df6045267baed411f535d86586bc1';
     } else {
-      return '0xf341278f930c81719aad507b8796af353959e876';
+      return '0x3e597c59c9da74ef4253b4935bdeee52d15d65e6';
     }
   },
   bridgeAddress: () => {
     if (!isdev()) {
       return '0xc0609ea6e4345555276fac1636b5c27ebc17d817';
     } else {
-      return '0x9058545891f6dcc18f2950b7a13e3079ef5548a3';
+      return '0x5ad90c4c30c7f9989e0748fce3da6aec1a612279';
     }
   },
   bep20BridgeAddress: () => {
     if (!isdev()) {
       return '0xef3a930e1ffffacd2fc13434ac81bd278b0ecc8d';
     } else {
-      return '0x50ba879767654756458dbb29674a8545de83e096';
+      return '0xb5ca27d75723342902fb91c329ca90f69cec73fb';
     }
   },
   txHashAndBlockhashURl: {
