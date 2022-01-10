@@ -392,7 +392,7 @@ const config = {
     if (!isdev()) {
       return '0x13ef51f0525df6045267baed411f535d86586bc1';
     } else {
-      return '0x3e597c59c9da74ef4253b4935bdeee52d15d65e6';
+      return '0xa49f8f958f77b46fc8912d8218eeef8fabb26a85';
     }
   },
   bridgeAddress: () => {
@@ -406,7 +406,7 @@ const config = {
     if (!isdev()) {
       return '0xef3a930e1ffffacd2fc13434ac81bd278b0ecc8d';
     } else {
-      return '0xb5ca27d75723342902fb91c329ca90f69cec73fb';
+      return '0x6921857409ea0970cbf0a6fa464ab805ce9715e0';
     }
   },
   txHashAndBlockhashURl: {
