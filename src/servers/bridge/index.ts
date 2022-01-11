@@ -29,7 +29,7 @@ export default class Index {
       return '0x000000000000000000000000000000b2c61e66d44fd65f6070c628e20b44dd01';
     } else if (tokenType == 'rmatic') {
       return '0x00000000000000000000000000000014c28bae959bb2de5085d17682eca7b001';
-    }else if (tokenType == 'rbnb') {
+    } else if (tokenType == 'rbnb') {
       return '0x000000000000000000000000000000ab226cdfdcd7e0d15fa85810f500d8e601';
     }
   }
@@ -49,6 +49,8 @@ export default class Index {
         return rSymbol.Matic;
       case 'rbnb':
         return rSymbol.Bnb;
+      case 'reth':
+        return rSymbol.Eth;
       default:
         return rSymbol.Fis;
     }

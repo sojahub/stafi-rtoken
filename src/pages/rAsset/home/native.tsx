@@ -7,6 +7,7 @@ import rasset_rsol_svg from 'src/assets/images/rSOL.svg';
 import rasset_ratom_svg from 'src/assets/images/r_atom.svg';
 import rasset_rbnb_svg from 'src/assets/images/r_bnb.svg';
 import rasset_rdot_svg from 'src/assets/images/r_dot.svg';
+import rasset_reth_svg from 'src/assets/images/r_eth.svg';
 import rasset_rfis_svg from 'src/assets/images/r_fis.svg';
 import rasset_rksm_svg from 'src/assets/images/r_ksm.svg';
 import rasset_rmatic_svg from 'src/assets/images/r_matic.svg';
@@ -34,6 +35,12 @@ import {
   query_rBalances_account as dot_query_rBalances_account,
   rTokenRate as dot_rTokenRate,
 } from 'src/features/rDOTClice';
+import {
+  getNativeRethAmount,
+  rTokenRate as eth_rTokenRate,
+  getUnbondCommission as eth_getUnbondCommission,
+  nativerTokenRate,
+} from 'src/features/rETHClice';
 import { getUnbondCommission, query_rBalances_account, rTokenRate as ksm_rTokenRate } from 'src/features/rKSMClice';
 import {
   getUnbondCommission as matic_getUnbondCommission,
@@ -71,7 +78,7 @@ export default function Index(props: any) {
     fis_tokenAmount,
     fisWillAmount,
     dot_tokenAmount,
-
+    reth_tokenAmount,
     dotWillAmount,
     unitPriceList,
     atom_tokenAmount,
@@ -82,6 +89,7 @@ export default function Index(props: any) {
     maticWillAmount,
     bnb_tokenAmount,
     bnbWillAmount,
+    ethWillAmount,
   } = useSelector((state: any) => {
     return {
       unitPriceList: state.bridgeModule.priceList,
@@ -129,6 +137,12 @@ export default function Index(props: any) {
         state.rBNBModule.unbondCommission,
         state.rBNBModule.tokenAmount,
       ),
+      reth_tokenAmount: state.rETHModule.nativeTokenAmount,
+      ethWillAmount: commonClice.getWillAmount(
+        state.rETHModule.nativerTokenRate,
+        state.rETHModule.unbondCommission,
+        state.rETHModule.nativeTokenAmount,
+      ),
     };
   });
 
@@ -154,6 +168,8 @@ export default function Index(props: any) {
         count = count + item.price * matic_tokenAmount;
       } else if (item.symbol == 'rBNB' && bnb_tokenAmount && bnb_tokenAmount != '--') {
         count = count + item.price * bnb_tokenAmount;
+      } else if (item.symbol == 'rETH' && reth_tokenAmount && reth_tokenAmount != '--') {
+        count = count + item.price * reth_tokenAmount;
       }
     });
     return count;
@@ -186,6 +202,7 @@ export default function Index(props: any) {
       dispatch(sol_query_rBalances_account());
       dispatch(matic_query_rBalances_account());
       dispatch(bnb_query_rBalances_account());
+      dispatch(getNativeRethAmount());
       dispatch(ksm_rTokenRate());
       dispatch(fis_rTokenRate());
       dispatch(dot_rTokenRate());
@@ -193,6 +210,7 @@ export default function Index(props: any) {
       dispatch(sol_rTokenRate());
       dispatch(matic_rTokenRate());
       dispatch(bnb_rTokenRate());
+      dispatch(nativerTokenRate());
       dispatch(getUnbondCommission());
       dispatch(fis_getUnbondCommission());
       dispatch(dot_getUnbondCommission());
@@ -200,6 +218,7 @@ export default function Index(props: any) {
       dispatch(sol_getUnbondCommission());
       dispatch(matic_getUnbondCommission());
       dispatch(bnb_getUnbondCommission());
+      dispatch(eth_getUnbondCommission());
     }
   }, [fisAccount && fisAccount.address]);
 
@@ -238,6 +257,21 @@ export default function Index(props: any) {
               onSwapClick={() => {
                 history.push(`/rAsset/swap/native/default`, {
                   rSymbol: 'rFIS',
+                });
+              }}
+            />
+
+            <DataItem
+              rSymbol='rETH'
+              icon={rasset_reth_svg}
+              fullName='Ethereum'
+              balance={reth_tokenAmount === '--' ? '--' : NumberUtil.handleFisAmountToFixed(reth_tokenAmount)}
+              willGetBalance={ethWillAmount}
+              unit='ETH'
+              operationType='native'
+              onSwapClick={() => {
+                history.push(`/rAsset/swap/native/erc20`, {
+                  rSymbol: 'rETH',
                 });
               }}
             />

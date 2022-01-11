@@ -177,7 +177,7 @@ export const nativeToOtherSwap =
       let currentAccount = getState().FISModule.fisAccount.address;
       let tx: any = '';
 
-      if (tokenType == 'fis') {
+      if (tokenType === 'fis') {
         const amount = NumberUtil.tokenAmountToChain(tokenAmount.toString());
         tx = await api.tx.bridgeSwap.transferNative(amount.toString(), txAddress, chainId);
       } else {

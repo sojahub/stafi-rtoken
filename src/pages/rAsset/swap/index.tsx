@@ -56,7 +56,12 @@ import {
   query_rBalances_account as dot_query_rBalances_account,
   rTokenRate as dot_rTokenRate,
 } from 'src/features/rDOTClice';
-import { checkEthAddress } from 'src/features/rETHClice';
+import {
+  checkEthAddress,
+  getNativeRethAmount,
+  nativerTokenRate,
+  getUnbondCommission as eth_getUnbondCommission,
+} from 'src/features/rETHClice';
 import { getUnbondCommission, query_rBalances_account, rTokenRate as ksm_rTokenRate } from 'src/features/rKSMClice';
 import {
   getUnbondCommission as matic_getUnbondCommission,
@@ -264,6 +269,7 @@ export default function Index(props: any) {
         rsol_balance: NumberUtil.handleFisAmountToFixed(state.rSOLModule.tokenAmount),
         rmatic_balance: NumberUtil.handleFisAmountToFixed(state.rMATICModule.tokenAmount),
         rbnb_balance: NumberUtil.handleFisAmountToFixed(state.rBNBModule.tokenAmount),
+        reth_balance: NumberUtil.handleFisAmountToFixed(state.rETHModule.nativeTokenAmount),
         erc20EstimateFee: state.bridgeModule.erc20EstimateFee,
         bep20EstimateFee: state.bridgeModule.bep20EstimateFee,
         slp20EstimateFee: state.bridgeModule.slp20EstimateFee,
@@ -406,7 +412,11 @@ export default function Index(props: any) {
       });
     } else if ((fromType === 'native' && destType === 'erc20') || (fromType === 'erc20' && destType === 'native')) {
       filterTokenDatas = allTokenDatas.filter((item: any) => {
-        return item.type !== 'reth' && item.type !== 'rbnb' && item.type !== 'rsol';
+        return item.type !== 'rbnb' && item.type !== 'rsol';
+      });
+    } else if ((fromType === 'native' && destType === 'bep20') || (fromType === 'bep20' && destType === 'native')) {
+      filterTokenDatas = allTokenDatas.filter((item: any) => {
+        return item.type !== 'fis' && item.type !== 'rsol';
       });
     } else if ((fromType === 'erc20' && destType === 'bep20') || (fromType === 'bep20' && destType === 'erc20')) {
       filterTokenDatas = allTokenDatas.filter((item: any) => {
@@ -498,6 +508,7 @@ export default function Index(props: any) {
       dispatch(sol_query_rBalances_account());
       dispatch(matic_query_rBalances_account());
       dispatch(bnb_query_rBalances_account());
+      dispatch(getNativeRethAmount());
       dispatch(ksm_rTokenRate());
       dispatch(fis_rTokenRate());
       dispatch(dot_rTokenRate());
@@ -505,6 +516,7 @@ export default function Index(props: any) {
       dispatch(sol_rTokenRate());
       dispatch(matic_rTokenRate());
       dispatch(bnb_rTokenRate());
+      dispatch(nativerTokenRate);
       dispatch(getUnbondCommission());
       dispatch(fis_getUnbondCommission());
       dispatch(dot_getUnbondCommission());
@@ -512,6 +524,7 @@ export default function Index(props: any) {
       dispatch(sol_getUnbondCommission());
       dispatch(matic_getUnbondCommission());
       dispatch(bnb_getUnbondCommission());
+      dispatch(eth_getUnbondCommission());
     }
   };
 

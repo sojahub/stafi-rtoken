@@ -10,19 +10,11 @@ import EthServer from 'src/servers/eth/index';
 import FeeStationServer from 'src/servers/feeStation';
 import keyring from 'src/servers/index';
 import RpcServer, { pageCount } from 'src/servers/rpc/index';
-import {
-  getLocalStorageItem,
-  Keys,
-  localStorage_currentEthPool,
-  localStorage_poolPubKey,
-  removeLocalStorageItem,
-  setLocalStorageItem,
-  stafi_uuid,
-} from 'src/util/common';
+import { localStorage_currentEthPool, localStorage_poolPubKey, stafi_uuid } from 'src/util/common';
 import NumberUtil from 'src/util/numberUtil';
 import StringUtil from 'src/util/stringUtil';
-import Web3Utils from 'web3-utils';
 import { AppThunk } from '../store';
+import CommonClice from './commonClice';
 import { getAssetBalance } from './ETHClice';
 import { setSwapLoadingStatus, uploadSwapInfo } from './feeStationClice';
 import { setLoading, trackEvent } from './globalClice';
@@ -31,6 +23,7 @@ import { add_Notice, noticeStatus, noticesubType, noticeType } from './noticeCli
 const ethServer = new EthServer();
 const rpcServer = new RpcServer();
 const feeStationServer = new FeeStationServer();
+const commonClice = new CommonClice();
 
 const rETHClice = createSlice({
   name: 'rETHModule',
@@ -69,6 +62,9 @@ const rETHClice = createSlice({
     rewardList: [],
     rewardList_lastdata: null,
     lastEraRate: '--',
+    nativeTokenAmount: '--',
+    unbondCommission: '--',
+    nativerTokenRate: '--',
   },
   reducers: {
     setRatio(state, { payload }) {
@@ -170,6 +166,15 @@ const rETHClice = createSlice({
     setLastEraRate(state, { payload }) {
       state.lastEraRate = payload;
     },
+    setNativeTokenAmount(state, { payload }) {
+      state.nativeTokenAmount = payload;
+    },
+    setUnbondCommission(state, { payload }) {
+      state.unbondCommission = payload;
+    },
+    setNativerTokenRate(state, { payload }) {
+      state.nativerTokenRate = payload;
+    },
   },
 });
 
@@ -207,6 +212,9 @@ export const {
   setRewardList,
   setRewardList_lastdata,
   setLastEraRate,
+  setNativeTokenAmount,
+  setUnbondCommission,
+  setNativerTokenRate,
 } = rETHClice.actions;
 
 declare const window: any;
@@ -594,6 +602,26 @@ export const getRethAmount = (): AppThunk => async (dispatch, getState) => {
   getAssetBalance(address, ethServer.getRETHTokenAbi(), ethServer.getRETHTokenAddress(), (v: any) => {
     dispatch(setRethAmount(v));
   });
+};
+
+export const getNativeRethAmount = (): AppThunk => async (dispatch, getState) => {
+  commonClice.query_rBalances_account(getState().FISModule.fisAccount, rSymbol.Eth, (data: any) => {
+    if (data == null) {
+      dispatch(setNativeTokenAmount(NumberUtil.handleFisAmountToFixed(0)));
+    } else {
+      dispatch(setNativeTokenAmount(NumberUtil.tokenAmountToHuman(data.free, rSymbol.Eth)));
+    }
+  });
+};
+
+export const nativerTokenRate = (): AppThunk => async (dispatch, getState) => {
+  const ratio = await commonClice.rTokenRate(rSymbol.Eth);
+  dispatch(setNativerTokenRate(ratio));
+};
+
+export const getUnbondCommission = (): AppThunk => async (dispatch, getState) => {
+  const unbondCommission = await commonClice.getUnbondCommission();
+  dispatch(setUnbondCommission(unbondCommission));
 };
 
 export const getDepositBalance = (): AppThunk => async (dispatch, getState) => {
