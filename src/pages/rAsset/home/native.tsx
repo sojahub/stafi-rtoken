@@ -266,7 +266,7 @@ export default function Index(props: any) {
               icon={rasset_reth_svg}
               fullName='Ethereum'
               balance={reth_tokenAmount === '--' ? '--' : NumberUtil.handleFisAmountToFixed(reth_tokenAmount)}
-              willGetBalance={ethWillAmount}
+              willGetBalance={'0.000000'}
               unit='ETH'
               operationType='native'
               onSwapClick={() => {
