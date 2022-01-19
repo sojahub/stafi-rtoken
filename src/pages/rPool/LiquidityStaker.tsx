@@ -274,7 +274,7 @@ export default function LiquidityStaker(props: LiquidityStakerProps) {
               cursor: Number(amount) > Number(0) && metaMaskNetworkMatched ? 'pointer' : 'not-allowed',
             }}
             onClick={clickUnstake}>
-            Untake
+            Unstake
           </div>
         )}
       </div>

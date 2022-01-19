@@ -55,7 +55,7 @@ export default function Inde(props: any) {
             }),
           );
         }}>
-        Connect to FIS extension
+        Connect to PolkadotJS extension
       </Button>
 
       <Modal visible={visible}>
