@@ -77,8 +77,10 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin-top: 10px;
-    margin-bottom: 10px;
+    position: absolute;
+    bottom: 30px;
+    left: 0;
+    right: 0;
 
     .text {
       color: #a5a5a5;

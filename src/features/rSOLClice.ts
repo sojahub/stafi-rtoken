@@ -201,15 +201,19 @@ export const queryBalance = (): AppThunk => async (dispatch, getState) => {
     return;
   }
 
-  const connection = new solanaWeb3.Connection(config.solRpcApi(), {
-    wsEndpoint: config.solRpcWs(),
-    commitment: 'singleGossip',
-  });
+  try {
+    const connection = new solanaWeb3.Connection(config.solRpcApi(), {
+      wsEndpoint: config.solRpcWs(),
+      commitment: 'singleGossip',
+    });
 
-  const balance = await connection.getBalance(new solanaWeb3.PublicKey(solAddress));
-  let solBalance = NumberUtil.tokenAmountToHuman(balance, rSymbol.Sol);
+    const balance = await connection.getBalance(new solanaWeb3.PublicKey(solAddress));
+    let solBalance = NumberUtil.tokenAmountToHuman(balance, rSymbol.Sol);
 
-  dispatch(setTransferrableAmountShow(solBalance ? NumberUtil.handleEthAmountRound(solBalance) : 0));
+    dispatch(setTransferrableAmountShow(solBalance ? NumberUtil.handleEthAmountRound(solBalance) : 0));
+  } catch (err) {
+    dispatch(setTransferrableAmountShow('--'));
+  }
 };
 
 export const transfer =

@@ -15,7 +15,7 @@ export default function Index(props: any) {
     };
   });
   return (
-    <div className='stafi_layout'>
+    <div className='stafi_layout' style={{ marginTop: '-30px' }}>
       <div className='stafi_container'>
         <Spin spinning={loading} size='large' tip='loading'>
           {renderRoutes(props.route.routes)}

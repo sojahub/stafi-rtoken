@@ -26,13 +26,16 @@ import {
   rTokenRate as matic_rTokenRate,
 } from 'src/features/rMATICClice';
 import { getUnbondCommission as sol_getUnbondCommission, rTokenRate as sol_rTokenRate } from 'src/features/rSOLClice';
+import { useRToken } from 'src/hooks/rToken';
 import { useMetaMaskAccount } from 'src/hooks/useMetaMaskAccount';
 import Button from 'src/shared/components/button/connect_button';
+import { RootState } from 'src/store';
 import { requestSwitchMetaMaskNetwork } from 'src/util/metaMaskUtil';
 import NumberUtil from 'src/util/numberUtil';
 import CountAmount from './components/countAmount';
 import DataList from './components/list';
 import DataItem from './components/list/item';
+import { NewDataItem } from './components/NewDataItem';
 import './page.scss';
 
 const commonClice = new CommonClice();
@@ -93,30 +96,64 @@ export default function Index(props: any) {
     };
   });
 
+  const {
+    rFisStakedAmount,
+    rFisStakedAmountShow,
+    rEthStakedAmount,
+    rEthStakedAmountShow,
+    rDotStakedAmount,
+    rDotStakedAmountShow,
+    rKsmStakedAmount,
+    rKsmStakedAmountShow,
+    rAtomStakedAmount,
+    rAtomStakedAmountShow,
+    rMaticStakedAmount,
+    rMaticStakedAmountShow,
+  } = useRToken('erc');
+
   const totalPrice = useMemo(() => {
     let count: any = '--';
     unitPriceList.forEach((item: any) => {
-      if (count == '--') {
+      if (count === '--') {
         count = 0;
       }
-      if (item.symbol == 'rFIS' && rfis_ercBalance && rfis_ercBalance != '--') {
-        count = count + item.price * rfis_ercBalance;
-      } else if (item.symbol == 'FIS' && fis_ercBalance && fis_ercBalance != '--') {
-        count = count + item.price * fis_ercBalance;
-      } else if (item.symbol == 'rKSM' && ksm_ercBalance && ksm_ercBalance != '--') {
-        count = count + item.price * ksm_ercBalance;
-      } else if (item.symbol == 'rDOT' && dot_ercBalance && dot_ercBalance != '--') {
-        count = count + item.price * dot_ercBalance;
-      } else if (item.symbol == 'rETH' && eth_ercBalance && eth_ercBalance != '--') {
-        count = count + item.price * eth_ercBalance;
-      } else if (item.symbol == 'rATOM' && atom_ercBalance && atom_ercBalance != '--') {
-        count = count + item.price * atom_ercBalance;
-      } else if (item.symbol == 'rMATIC' && matic_ercBalance && matic_ercBalance != '--') {
-        count = count + item.price * matic_ercBalance;
+      if (item.symbol === 'rFIS' && rFisStakedAmount && rFisStakedAmount !== '--') {
+        count = count + item.price * Number(rFisStakedAmount);
+      } else if (item.symbol === 'rKSM' && rKsmStakedAmount && rKsmStakedAmount !== '--') {
+        count = count + item.price * Number(rKsmStakedAmount);
+      } else if (item.symbol === 'rDOT' && rDotStakedAmount && rDotStakedAmount !== '--') {
+        count = count + item.price * Number(rDotStakedAmount);
+      } else if (item.symbol === 'rETH' && rEthStakedAmount && rEthStakedAmount !== '--') {
+        count = count + item.price * Number(rEthStakedAmount);
+      } else if (item.symbol === 'rATOM' && rAtomStakedAmount && rAtomStakedAmount !== '--') {
+        count = count + item.price * Number(rAtomStakedAmount);
+      } else if (item.symbol === 'rMATIC' && rMaticStakedAmount && rMaticStakedAmount !== '--') {
+        count = count + item.price * Number(rMaticStakedAmount);
       }
     });
     return count;
-  }, [unitPriceList, ksm_ercBalance, fis_ercBalance, rfis_ercBalance, eth_ercBalance, dot_ercBalance, atom_ercBalance]);
+  }, [
+    unitPriceList,
+    rFisStakedAmount,
+    rEthStakedAmount,
+    rDotStakedAmount,
+    rKsmStakedAmount,
+    rAtomStakedAmount,
+    rMaticStakedAmount,
+  ]);
+
+  const { ethApr, fisApr, bnbApr, dotApr, atomApr, solApr, maticApr, ksmApr } = useSelector((state: RootState) => {
+    return {
+      ethApr: state.rETHModule.stakerApr,
+      fisApr: state.FISModule.stakerApr,
+      bnbApr: state.rBNBModule.stakerApr,
+      dotApr: state.rDOTModule.stakerApr,
+      atomApr: state.rATOMModule.stakerApr,
+      solApr: state.rSOLModule.stakerApr,
+      maticApr: state.rMATICModule.stakerApr,
+      ksmApr: state.rKSMModule.stakerApr,
+    };
+  });
 
   let time: any;
   useEffect(() => {
@@ -177,7 +214,72 @@ export default function Index(props: any) {
     <div>
       {metaMaskAddress ? (
         <>
-          <DataList>
+          <div>
+            <NewDataItem
+              rTokenName='FIS'
+              icon={rasset_fis_svg}
+              rTokenAmount='--'
+              source='native'
+              myStaked='--'
+              apy={fisApr}
+              onSwapClick={() => toSwap('FIS')}
+            />
+            <NewDataItem
+              rTokenName='rFIS'
+              icon={rasset_rfis_svg}
+              rTokenAmount={rfis_ercBalance === '--' ? '--' : NumberUtil.handleFisAmountToFixed(rfis_ercBalance)}
+              source='native'
+              myStaked={rFisStakedAmountShow}
+              apy={fisApr}
+              onSwapClick={() => toSwap('rFIS')}
+            />
+            <NewDataItem
+              rTokenName='rETH'
+              icon={rasset_reth_svg}
+              rTokenAmount={eth_ercBalance === '--' ? '--' : NumberUtil.handleFisAmountToFixed(eth_ercBalance)}
+              source='native'
+              myStaked={rEthStakedAmountShow}
+              apy={ethApr}
+              onSwapClick={() => toSwapBep20('rETH')}
+            />
+            <NewDataItem
+              rTokenName='rDOT'
+              icon={rasset_rdot_svg}
+              rTokenAmount={dot_ercBalance === '--' ? '--' : NumberUtil.handleFisAmountToFixed(dot_ercBalance)}
+              source='native'
+              myStaked={rDotStakedAmountShow}
+              apy={dotApr}
+              onSwapClick={() => toSwap('rDOT')}
+            />
+            <NewDataItem
+              rTokenName='rKSM'
+              icon={rasset_rksm_svg}
+              rTokenAmount={ksm_ercBalance === '--' ? '--' : NumberUtil.handleFisAmountToFixed(ksm_ercBalance)}
+              source='native'
+              myStaked={rKsmStakedAmountShow}
+              apy={dotApr}
+              onSwapClick={() => toSwap('rKSM')}
+            />
+            <NewDataItem
+              rTokenName='rATOM'
+              icon={rasset_ratom_svg}
+              rTokenAmount={atom_ercBalance === '--' ? '--' : NumberUtil.handleFisAmountToFixed(atom_ercBalance)}
+              source='native'
+              myStaked={rAtomStakedAmountShow}
+              apy={atomApr}
+              onSwapClick={() => toSwap('rATOM')}
+            />
+            <NewDataItem
+              rTokenName='rMATIC'
+              icon={rasset_rmatic_svg}
+              rTokenAmount={matic_ercBalance === '--' ? '--' : NumberUtil.handleFisAmountToFixed(matic_ercBalance)}
+              source='native'
+              myStaked={rMaticStakedAmountShow}
+              apy={maticApr}
+              onSwapClick={() => toSwap('rMATIC')}
+            />
+          </div>
+          {/* <DataList>
             <DataItem
               disabled={!config.metaMaskNetworkIsGoerliEth(metaMaskNetworkId)}
               rSymbol='FIS'
@@ -271,7 +373,7 @@ export default function Index(props: any) {
               operationType='erc20'
               onSwapClick={() => toSwap('rMATIC')}
             />
-          </DataList>{' '}
+          </DataList>{' '} */}
           <CountAmount totalValue={totalPrice} />
         </>
       ) : (

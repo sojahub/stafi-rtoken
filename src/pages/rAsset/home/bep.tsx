@@ -27,13 +27,16 @@ import {
   rTokenRate as matic_rTokenRate,
 } from 'src/features/rMATICClice';
 import { getUnbondCommission as sol_getUnbondCommission } from 'src/features/rSOLClice';
+import { useRToken } from 'src/hooks/rToken';
 import { useMetaMaskAccount } from 'src/hooks/useMetaMaskAccount';
 import Button from 'src/shared/components/button/connect_button';
+import { RootState } from 'src/store';
 import { requestSwitchMetaMaskNetwork } from 'src/util/metaMaskUtil';
 import NumberUtil from 'src/util/numberUtil';
 import CountAmount from './components/countAmount';
 import DataList from './components/list';
 import DataItem from './components/list/item';
+import { NewDataItem } from './components/NewDataItem';
 import './page.scss';
 
 const commonClice = new CommonClice();
@@ -102,39 +105,69 @@ export default function Index(props: any) {
     };
   });
 
+  const {
+    rFisStakedAmount,
+    rFisStakedAmountShow,
+    rEthStakedAmount,
+    rEthStakedAmountShow,
+    rDotStakedAmount,
+    rDotStakedAmountShow,
+    rKsmStakedAmount,
+    rKsmStakedAmountShow,
+    rAtomStakedAmount,
+    rAtomStakedAmountShow,
+    rMaticStakedAmount,
+    rMaticStakedAmountShow,
+    rBnbStakedAmount,
+    rBnbStakedAmountShow,
+  } = useRToken('bep');
+
   const totalPrice = useMemo(() => {
     let count: any = '--';
     unitPriceList.forEach((item: any) => {
       if (count === '--') {
         count = 0;
       }
-      if (item.symbol === 'rFIS' && rfis_bepBalance && rfis_bepBalance !== '--') {
-        count = count + item.price * rfis_bepBalance;
-      } else if (item.symbol === 'FIS' && fis_bepBalance && fis_bepBalance !== '--') {
-        count = count + item.price * fis_bepBalance;
-      } else if (item.symbol === 'rKSM' && ksm_bepBalance && ksm_bepBalance !== '--') {
-        count = count + item.price * ksm_bepBalance;
-      } else if (item.symbol === 'rDOT' && dot_bepBalance && dot_bepBalance !== '--') {
-        count = count + item.price * dot_bepBalance;
-      } else if (item.symbol === 'rATOM' && atom_bepBalance && atom_bepBalance !== '--') {
-        count = count + item.price * atom_bepBalance;
-      } else if (item.symbol === 'rETH' && reth_bepBalance && reth_bepBalance !== '--') {
-        count = count + item.price * reth_bepBalance;
-      } else if (item.symbol === 'rBNB' && rbnb_bepBalance && rbnb_bepBalance !== '--') {
-        count = count + item.price * rbnb_bepBalance;
+      if (item.symbol === 'rFIS' && rFisStakedAmount && rFisStakedAmount !== '--') {
+        count = count + item.price * Number(rFisStakedAmount);
+      } else if (item.symbol === 'rKSM' && rKsmStakedAmount && rKsmStakedAmount !== '--') {
+        count = count + item.price * Number(rKsmStakedAmount);
+      } else if (item.symbol === 'rDOT' && rDotStakedAmount && rDotStakedAmount !== '--') {
+        count = count + item.price * Number(rDotStakedAmount);
+      } else if (item.symbol === 'rATOM' && rAtomStakedAmount && rAtomStakedAmount !== '--') {
+        count = count + item.price * Number(rAtomStakedAmount);
+      } else if (item.symbol === 'rETH' && rEthStakedAmount && rEthStakedAmount !== '--') {
+        count = count + item.price * Number(rEthStakedAmount);
+      } else if (item.symbol === 'rBNB' && rBnbStakedAmount && rBnbStakedAmount !== '--') {
+        count = count + item.price * Number(rBnbStakedAmount);
+      } else if (item.symbol === 'rMATIC' && rMaticStakedAmount && rMaticStakedAmount !== '--') {
+        count = count + item.price * Number(rMaticStakedAmount);
       }
     });
     return count;
   }, [
     unitPriceList,
-    ksm_bepBalance,
-    fis_bepBalance,
-    rfis_bepBalance,
-    dot_bepBalance,
-    atom_bepBalance,
-    reth_bepBalance,
-    rbnb_bepBalance,
+    rFisStakedAmount,
+    rDotStakedAmount,
+    rEthStakedAmount,
+    rKsmStakedAmount,
+    rMaticStakedAmount,
+    rAtomStakedAmount,
+    rBnbStakedAmount,
   ]);
+
+  const { ethApr, fisApr, bnbApr, dotApr, atomApr, solApr, maticApr, ksmApr } = useSelector((state: RootState) => {
+    return {
+      ethApr: state.rETHModule.stakerApr,
+      fisApr: state.FISModule.stakerApr,
+      bnbApr: state.rBNBModule.stakerApr,
+      dotApr: state.rDOTModule.stakerApr,
+      atomApr: state.rATOMModule.stakerApr,
+      solApr: state.rSOLModule.stakerApr,
+      maticApr: state.rMATICModule.stakerApr,
+      ksmApr: state.rKSMModule.stakerApr,
+    };
+  });
 
   let time: any;
   useEffect(() => {
@@ -196,19 +229,72 @@ export default function Index(props: any) {
     <div>
       {metaMaskAddress ? (
         <>
-          <DataList>
-            {/* <DataItem
-              disabled={!config.metaMaskNetworkIsBsc(metaMaskNetworkId)}
-              rSymbol='FIS'
-              icon={rasset_fis_svg}
-              fullName='StaFi'
-              balance={fis_bepBalance == '--' ? '--' : NumberUtil.handleFisAmountToFixed(fis_bepBalance)}
-              willGetBalance={0}
-              unit='FIS'
-              operationType='bep20'
-              onSwapClick={() => toSwap('FIS')}
-            /> */}
-
+          <div>
+            <NewDataItem
+              rTokenName='rFIS'
+              icon={rasset_rfis_svg}
+              rTokenAmount={rfis_bepBalance === '--' ? '--' : NumberUtil.handleFisAmountToFixed(rfis_bepBalance)}
+              source='native'
+              myStaked={rFisStakedAmountShow}
+              apy={fisApr}
+              onSwapClick={() => toSwap('rFIS')}
+            />
+            <NewDataItem
+              rTokenName='rETH'
+              icon={rasset_reth_svg}
+              rTokenAmount={reth_bepBalance === '--' ? '--' : NumberUtil.handleFisAmountToFixed(reth_bepBalance)}
+              source='native'
+              myStaked={rEthStakedAmountShow}
+              apy={ethApr}
+              onSwapClick={() => toSwapErc20('rFIS')}
+            />
+            <NewDataItem
+              rTokenName='rDOT'
+              icon={rasset_rdot_svg}
+              rTokenAmount={dot_bepBalance === '--' ? '--' : NumberUtil.handleFisAmountToFixed(dot_bepBalance)}
+              source='native'
+              myStaked={rDotStakedAmountShow}
+              apy={dotApr}
+              onSwapClick={() => toSwap('rDOT')}
+            />
+            <NewDataItem
+              rTokenName='rKSM'
+              icon={rasset_rksm_svg}
+              rTokenAmount={ksm_bepBalance === '--' ? '--' : NumberUtil.handleFisAmountToFixed(ksm_bepBalance)}
+              source='native'
+              myStaked={rKsmStakedAmountShow}
+              apy={dotApr}
+              onSwapClick={() => toSwap('rKSM')}
+            />
+            <NewDataItem
+              rTokenName='rATOM'
+              icon={rasset_ratom_svg}
+              rTokenAmount={atom_bepBalance === '--' ? '--' : NumberUtil.handleFisAmountToFixed(atom_bepBalance)}
+              source='native'
+              myStaked={rAtomStakedAmountShow}
+              apy={atomApr}
+              onSwapClick={() => toSwap('rATOM')}
+            />
+            <NewDataItem
+              rTokenName='rMATIC'
+              icon={rasset_rmatic_svg}
+              rTokenAmount={rmatic_bepBalance == '--' ? '--' : NumberUtil.handleFisAmountToFixed(rmatic_bepBalance)}
+              source='native'
+              myStaked={rMaticStakedAmountShow}
+              apy={maticApr}
+              onSwapClick={() => toSwap('rMATIC')}
+            />
+            <NewDataItem
+              rTokenName='rBNB'
+              icon={rasset_rmatic_svg}
+              rTokenAmount={rbnb_bepBalance == '--' ? '--' : NumberUtil.handleFisAmountToFixed(rbnb_bepBalance)}
+              source='native'
+              myStaked={rBnbStakedAmountShow}
+              apy={bnbApr}
+              onSwapClick={() => toSwap('rBNB')}
+            />
+          </div>
+          {/* <DataList>
             <DataItem
               disabled={!config.metaMaskNetworkIsBsc(metaMaskNetworkId)}
               rSymbol='rFIS'
@@ -295,7 +381,7 @@ export default function Index(props: any) {
               tradeList={[{ label: 'Pancake', url: config.pancake.rbnbURL }]}
               onSwapClick={() => toSwap('rBNB')}
             />
-          </DataList>{' '}
+          </DataList> */}
           <CountAmount totalValue={totalPrice} />
         </>
       ) : (

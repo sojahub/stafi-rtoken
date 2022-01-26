@@ -125,6 +125,8 @@ import RSOLStakerUnbondRecords from './pages/rSOL/staker/unbondRecords';
 import RSOLHomeTemplate from './pages/rSOL/template';
 import RSOLValidator from './pages/rSOL/validator';
 import HomeTemplate from './pages/template/homeTemplate';
+import { TokenListTemplate } from './pages/TokenList/template';
+import { TokenList } from './pages/TokenList';
 
 const routesFactory = (role?: any) => {
   const routes = [
@@ -1076,6 +1078,23 @@ const routesFactory = (role?: any) => {
             {
               path: '*',
               component: () => <Redirect to='/rFIS/home' />,
+            },
+          ],
+        },
+        {
+          id: 'token_list',
+          path: '/tokenList',
+          type: 'tokenList',
+          component: TokenListTemplate,
+          routes: [
+            {
+              id: 'token_list',
+              path: '/tokenList',
+              component: TokenList,
+            },
+            {
+              path: '*',
+              component: () => <Redirect to='/tokenList' />,
             },
           ],
         },

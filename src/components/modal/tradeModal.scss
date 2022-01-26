@@ -1,0 +1,25 @@
+.stafi_trade_modal {
+  width: 390px !important;
+
+  .ant-modal-content {
+    border-radius: 6px;
+    height: 477px !important;
+
+    .ant-modal-body {
+      padding: 0;
+      .title {
+        width: 100%;
+        text-align: center;
+        color: #282b2a;
+        font-size: 18px;
+        font-weight: bold;
+        position: relative;
+      }
+      .context {
+        // margin-top:16px;
+        font-size: 15px;
+        color: #22243d;
+      }
+    }
+  }
+}

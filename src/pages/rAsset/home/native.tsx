@@ -11,7 +11,6 @@ import rasset_reth_svg from 'src/assets/images/r_eth.svg';
 import rasset_rfis_svg from 'src/assets/images/r_fis.svg';
 import rasset_rksm_svg from 'src/assets/images/r_ksm.svg';
 import rasset_rmatic_svg from 'src/assets/images/r_matic.svg';
-import config from 'src/config/index';
 import { getRtokenPriceList } from 'src/features/bridgeClice';
 import CommonClice from 'src/features/commonClice';
 import {
@@ -37,7 +36,6 @@ import {
 } from 'src/features/rDOTClice';
 import {
   getNativeRethAmount,
-  rTokenRate as eth_rTokenRate,
   getUnbondCommission as eth_getUnbondCommission,
   nativerTokenRate,
 } from 'src/features/rETHClice';
@@ -52,14 +50,16 @@ import {
   query_rBalances_account as sol_query_rBalances_account,
   rTokenRate as sol_rTokenRate,
 } from 'src/features/rSOLClice';
+import { useRToken } from 'src/hooks/rToken';
 import { Symbol } from 'src/keyring/defaults';
 import Button from 'src/shared/components/button/connect_button';
 import Modal from 'src/shared/components/modal/connectModal';
+import { RootState } from 'src/store';
 import NumberUtil from 'src/util/numberUtil';
+import styled from 'styled-components';
 import Page_FIS from '../../rDOT/selectWallet_rFIS/index';
 import CountAmount from './components/countAmount';
-import DataList from './components/list';
-import DataItem from './components/list/item';
+import { NewDataItem } from './components/NewDataItem';
 import './page.scss';
 
 const commonClice = new CommonClice();
@@ -146,43 +146,73 @@ export default function Index(props: any) {
     };
   });
 
+  const {
+    rFisStakedAmount,
+    rFisStakedAmountShow,
+    rEthStakedAmount,
+    rEthStakedAmountShow,
+    rDotStakedAmount,
+    rDotStakedAmountShow,
+    rKsmStakedAmount,
+    rKsmStakedAmountShow,
+    rAtomStakedAmount,
+    rAtomStakedAmountShow,
+    rSolStakedAmount,
+    rSolStakedAmountShow,
+    rMaticStakedAmount,
+    rMaticStakedAmountShow,
+    rBnbStakedAmount,
+    rBnbStakedAmountShow,
+  } = useRToken('native');
+
+  const { ethApr, fisApr, bnbApr, dotApr, atomApr, solApr, maticApr, ksmApr } = useSelector((state: RootState) => {
+    return {
+      ethApr: state.rETHModule.stakerApr,
+      fisApr: state.FISModule.stakerApr,
+      bnbApr: state.rBNBModule.stakerApr,
+      dotApr: state.rDOTModule.stakerApr,
+      atomApr: state.rATOMModule.stakerApr,
+      solApr: state.rSOLModule.stakerApr,
+      maticApr: state.rMATICModule.stakerApr,
+      ksmApr: state.rKSMModule.stakerApr,
+    };
+  });
+
   const totalPrice = useMemo(() => {
     let count: any = '--';
     unitPriceList.forEach((item: any) => {
-      if (count == '--') {
+      if (count === '--') {
         count = 0;
       }
-      if (item.symbol == 'rFIS' && fis_tokenAmount && fis_tokenAmount != '--') {
-        count = count + item.price * fis_tokenAmount;
-      } else if (item.symbol == 'FIS' && fisAccount && fisAccount.balance) {
-        count = count + item.price * fisAccount.balance;
-      } else if (item.symbol == 'rKSM' && tokenAmount && tokenAmount != '--') {
-        count = count + item.price * tokenAmount;
-      } else if (item.symbol == 'rDOT' && dot_tokenAmount && dot_tokenAmount != '--') {
-        count = count + item.price * dot_tokenAmount;
-      } else if (item.symbol == 'rATOM' && atom_tokenAmount && atom_tokenAmount != '--') {
-        count = count + item.price * atom_tokenAmount;
-      } else if (item.symbol == 'rSOL' && sol_tokenAmount && sol_tokenAmount != '--') {
-        count = count + item.price * sol_tokenAmount;
-      } else if (item.symbol == 'rMATIC' && matic_tokenAmount && matic_tokenAmount != '--') {
-        count = count + item.price * matic_tokenAmount;
-      } else if (item.symbol == 'rBNB' && bnb_tokenAmount && bnb_tokenAmount != '--') {
-        count = count + item.price * bnb_tokenAmount;
-      } else if (item.symbol == 'rETH' && reth_tokenAmount && reth_tokenAmount != '--') {
-        count = count + item.price * reth_tokenAmount;
+      if (item.symbol === 'rFIS' && rFisStakedAmount && rFisStakedAmount !== '--') {
+        count = count + item.price * Number(rFisStakedAmount);
+      } else if (item.symbol === 'rKSM' && rKsmStakedAmount && rKsmStakedAmount !== '--') {
+        count = count + item.price * Number(rKsmStakedAmount);
+      } else if (item.symbol === 'rDOT' && rDotStakedAmount && rDotStakedAmount !== '--') {
+        count = count + item.price * Number(rDotStakedAmount);
+      } else if (item.symbol === 'rATOM' && rAtomStakedAmount && rAtomStakedAmount !== '--') {
+        count = count + item.price * Number(rAtomStakedAmount);
+      } else if (item.symbol === 'rSOL' && rSolStakedAmount && rSolStakedAmount !== '--') {
+        count = count + item.price * Number(rSolStakedAmount);
+      } else if (item.symbol === 'rMATIC' && rMaticStakedAmount && rMaticStakedAmount !== '--') {
+        count = count + item.price * Number(rMaticStakedAmount);
+      } else if (item.symbol === 'rBNB' && rBnbStakedAmount && rBnbStakedAmount !== '--') {
+        count = count + item.price * Number(rBnbStakedAmount);
+      } else if (item.symbol === 'rETH' && rEthStakedAmount && rEthStakedAmount !== '--') {
+        count = count + item.price * Number(rEthStakedAmount);
       }
     });
     return count;
   }, [
     unitPriceList,
-    tokenAmount,
-    fisAccount,
-    fis_tokenAmount,
-    dot_tokenAmount,
-    atom_tokenAmount,
-    sol_tokenAmount,
-    matic_tokenAmount,
-    bnb_tokenAmount,
+    rFisStakedAmount,
+    rEthStakedAmount,
+    rDotStakedAmount,
+    rKsmStakedAmount,
+    rAtomStakedAmount,
+    rSolStakedAmount,
+    rMaticStakedAmount,
+    rBnbStakedAmount,
   ]);
 
   useEffect(() => {
@@ -226,7 +256,126 @@ export default function Index(props: any) {
     <div>
       {fisAccount ? (
         <>
-          <DataList>
+          <ListContainer>
+            <NewDataItem
+              rTokenName='FIS'
+              icon={rasset_fis_svg}
+              rTokenAmount='--'
+              source='native'
+              myStaked='--'
+              apy={fisApr}
+              onSwapClick={() => {
+                history.push(`/rAsset/swap/native/default`, {
+                  rSymbol: 'FIS',
+                });
+              }}
+            />
+            <NewDataItem
+              rTokenName='rFIS'
+              icon={rasset_rfis_svg}
+              rTokenAmount={fis_tokenAmount === '--' ? '--' : NumberUtil.handleFisAmountToFixed(fis_tokenAmount)}
+              source='native'
+              myStaked={rFisStakedAmountShow}
+              apy={fisApr}
+              onSwapClick={() => {
+                history.push(`/rAsset/swap/native/default`, {
+                  rSymbol: 'rFIS',
+                });
+              }}
+            />
+            <NewDataItem
+              rTokenName='rETH'
+              icon={rasset_reth_svg}
+              rTokenAmount={reth_tokenAmount === '--' ? '--' : NumberUtil.handleFisAmountToFixed(reth_tokenAmount)}
+              source='native'
+              myStaked={rEthStakedAmountShow}
+              apy={ethApr}
+              onSwapClick={() => {
+                history.push(`/rAsset/swap/native/erc20`, {
+                  rSymbol: 'rETH',
+                });
+              }}
+            />
+            <NewDataItem
+              rTokenName='rDOT'
+              icon={rasset_rdot_svg}
+              rTokenAmount={dot_tokenAmount === '--' ? '--' : NumberUtil.handleFisAmountToFixed(dot_tokenAmount)}
+              source='native'
+              myStaked={rDotStakedAmountShow}
+              apy={dotApr}
+              onSwapClick={() => {
+                history.push(`/rAsset/swap/native/default`, {
+                  rSymbol: 'rDOT',
+                });
+              }}
+            />
+            <NewDataItem
+              rTokenName='rKSM'
+              icon={rasset_rksm_svg}
+              rTokenAmount={tokenAmount === '--' ? '--' : NumberUtil.handleFisAmountToFixed(tokenAmount)}
+              source='native'
+              myStaked={rKsmStakedAmountShow}
+              apy={ksmApr}
+              onSwapClick={() => {
+                history.push(`/rAsset/swap/native/default`, {
+                  rSymbol: 'rKSM',
+                });
+              }}
+            />
+            <NewDataItem
+              rTokenName='rATOM'
+              icon={rasset_ratom_svg}
+              rTokenAmount={atom_tokenAmount === '--' ? '--' : NumberUtil.handleFisAmountToFixed(atom_tokenAmount)}
+              source='native'
+              myStaked={rAtomStakedAmountShow}
+              apy={atomApr}
+              onSwapClick={() => {
+                history.push(`/rAsset/swap/native/default`, {
+                  rSymbol: 'rATOM',
+                });
+              }}
+            />
+            <NewDataItem
+              rTokenName='rSOL'
+              icon={rasset_rsol_svg}
+              rTokenAmount={sol_tokenAmount === '--' ? '--' : NumberUtil.handleFisAmountToFixed(sol_tokenAmount)}
+              source='native'
+              myStaked={rSolStakedAmountShow}
+              apy={solApr}
+              onSwapClick={() => {
+                history.push(`/rAsset/swap/native/default`, {
+                  rSymbol: 'rSOL',
+                });
+              }}
+            />
+            <NewDataItem
+              rTokenName='rMATIC'
+              icon={rasset_rmatic_svg}
+              rTokenAmount={matic_tokenAmount === '--' ? '--' : NumberUtil.handleFisAmountToFixed(matic_tokenAmount)}
+              source='native'
+              myStaked={rMaticStakedAmountShow}
+              apy={maticApr}
+              onSwapClick={() => {
+                history.push(`/rAsset/swap/native/default`, {
+                  rSymbol: 'rMATIC',
+                });
+              }}
+            />
+            <NewDataItem
+              rTokenName='rBNB'
+              icon={rasset_rbnb_svg}
+              rTokenAmount={bnb_tokenAmount === '--' ? '--' : NumberUtil.handleFisAmountToFixed(bnb_tokenAmount)}
+              source='native'
+              myStaked={rBnbStakedAmountShow}
+              apy={bnbApr}
+              onSwapClick={() => {
+                history.push(`/rAsset/swap/native/default`, {
+                  rSymbol: 'rBNB',
+                });
+              }}
+            />
+          </ListContainer>
+          {/* <DataList>
             <DataItem
               rSymbol='FIS'
               icon={rasset_fis_svg}
@@ -373,7 +522,7 @@ export default function Index(props: any) {
                 });
               }}
             />
-          </DataList>
+          </DataList> */}
           <CountAmount totalValue={totalPrice} />{' '}
         </>
       ) : (
@@ -415,3 +564,8 @@ export default function Index(props: any) {
     </div>
   );
 }
+
+const ListContainer = styled.div`
+  /* height: 420px;
+  overflow: auto; */
+`;

@@ -6,17 +6,25 @@ import StakeSwapLoading from 'src/components/modal/StakeSwapLoading';
 import Sider from 'src/components/slider';
 import LiquidingProcesSlider from 'src/components/slider/liquidingProcessSlider';
 import { queryBalance } from 'src/features/FISClice';
-import { checkMetaMaskNetworkId, initMetaMaskAccount, monitorMetaMaskChainChange } from 'src/features/globalClice';
+import {
+  checkMetaMaskNetworkId,
+  getAllApr,
+  initMetaMaskAccount,
+  monitorMetaMaskChainChange,
+} from 'src/features/globalClice';
+import { useInit } from 'src/hooks/init';
 import { useStafiAccount } from 'src/hooks/useStafiAccount';
 
 export default function Index(props: any) {
   const dispatch = useDispatch();
   const { fisAccount } = useStafiAccount();
+  useInit();
 
   useEffect(() => {
     dispatch(initMetaMaskAccount());
     dispatch(checkMetaMaskNetworkId());
     dispatch(monitorMetaMaskChainChange());
+    dispatch(getAllApr());
   }, [dispatch]);
 
   useEffect(() => {

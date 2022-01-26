@@ -1,13 +1,15 @@
 .rAsset_tag {
   display: flex;
-  height: 78px;
+  justify-content: center;
+  height: 32px;
   width: 100%;
   > div {
-    flex: 1;
+    // flex: 1;
+    margin: 0 25px;
     color: #fff;
     font-weight: bold;
     font-size: 24px;
-    line-height: 78px;
+    line-height: 24px;
     text-align: center;
     cursor: pointer;
     label {
@@ -25,7 +27,7 @@
   }
 
   > div:hover {
-    background: #343c44;
+    // background: #343c44;
     color: #00f3ab;
   }
   > div:first-child {
@@ -35,7 +37,7 @@
     border-top-right-radius: 19px;
   }
   .tag_active {
-    background: #343c44;
+    // background: #343c44;
     color: #00f3ab;
     position: relative;
   }
@@ -44,7 +46,7 @@
     display: block;
     position: absolute;
     height: 1px;
-    width: 136px;
+    width: 140px;
     bottom: 0px;
     left: 50%;
     transform: translateX(-50%);
@@ -60,21 +62,21 @@
 }
 
 .rAsset_tag_right .arrow_down {
-  margin-left: 20px;
+  margin-left: 10px;
   padding: 10px;
   width: 36px;
   background: url('../../../../../assets/images/arrow_down_white.svg') no-repeat center center;
 }
 
 .rAsset_tag_right .arrow_down_selected {
-  margin-left: 20px;
+  margin-left: 10px;
   padding: 10px;
   width: 36px;
   background: url('../../../../../assets/images/arrow_down_green.svg') no-repeat center center;
 }
 
 .rAsset_tag_right:hover .arrow_down {
-  margin-left: 20px;
+  margin-left: 10px;
   padding: 10px;
   width: 36px;
   background: url('../../../../../assets/images/arrow_down_green.svg') no-repeat center center;

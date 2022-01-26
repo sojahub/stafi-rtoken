@@ -20,12 +20,15 @@ import {
   rTokenRate as sol_rTokenRate,
 } from 'src/features/rSOLClice';
 import { getSlp20AssetBalanceAll } from 'src/features/SOLClice';
+import { useRToken } from 'src/hooks/rToken';
 import { useSolAccount } from 'src/hooks/useSolAccount';
 import Button from 'src/shared/components/button/connect_button';
+import { RootState } from 'src/store';
 import NumberUtil from 'src/util/numberUtil';
 import CountAmount from './components/countAmount';
 import DataList from './components/list';
 import DataItem from './components/list/item';
+import { NewDataItem } from './components/NewDataItem';
 import './page.scss';
 
 const commonClice = new CommonClice();
@@ -53,20 +56,33 @@ export default function Index(props: any) {
     };
   });
 
+  const { rSolStakedAmountShow, rSolStakedAmount } = useRToken('spl');
+
+  const { ethApr, fisApr, bnbApr, dotApr, atomApr, solApr, maticApr, ksmApr } = useSelector((state: RootState) => {
+    return {
+      ethApr: state.rETHModule.stakerApr,
+      fisApr: state.FISModule.stakerApr,
+      bnbApr: state.rBNBModule.stakerApr,
+      dotApr: state.rDOTModule.stakerApr,
+      atomApr: state.rATOMModule.stakerApr,
+      solApr: state.rSOLModule.stakerApr,
+      maticApr: state.rMATICModule.stakerApr,
+      ksmApr: state.rKSMModule.stakerApr,
+    };
+  });
+
   const totalPrice = useMemo(() => {
     let count: any = '--';
     unitPriceList.forEach((item: any) => {
-      if (count == '--') {
+      if (count === '--') {
         count = 0;
       }
-      if (item.symbol == 'FIS' && fis_slpBalance && fis_slpBalance != '--') {
-        count = count + item.price * fis_slpBalance;
-      } else if (item.symbol == 'rSOL' && rsol_slpBalance && rsol_slpBalance != '--') {
-        count = count + item.price * rsol_slpBalance;
+      if (item.symbol === 'rSOL' && rSolStakedAmount && rSolStakedAmount != '--') {
+        count = count + item.price * Number(rSolStakedAmount);
       }
     });
     return count;
-  }, [unitPriceList, fis_slpBalance, rsol_slpBalance]);
+  }, [unitPriceList, rSolStakedAmount]);
 
   useEffect(() => {
     dispatch(earglyConnectPhantom());
@@ -112,7 +128,27 @@ export default function Index(props: any) {
     <div>
       {solAddress ? (
         <>
-          <DataList>
+          <div>
+            <NewDataItem
+              rTokenName='FIS'
+              icon={rasset_fis_svg}
+              rTokenAmount='--'
+              source='native'
+              myStaked='--'
+              apy={fisApr}
+              onSwapClick={() => toSwap('FIS')}
+            />
+            <NewDataItem
+              rTokenName='rSOL'
+              icon={rasset_rsol_svg}
+              rTokenAmount={rsol_slpBalance === '--' ? '--' : NumberUtil.handleFisAmountToFixed(rsol_slpBalance)}
+              source='native'
+              myStaked={rSolStakedAmountShow}
+              apy={solApr}
+              onSwapClick={() => toSwap('rSOL')}
+            />
+          </div>
+          {/* <DataList>
             <DataItem
               rSymbol='FIS'
               icon={rasset_fis_svg}
@@ -136,7 +172,7 @@ export default function Index(props: any) {
               operationType='spl'
               onSwapClick={() => toSwap('rSOL')}
             />
-          </DataList>{' '}
+          </DataList>{' '} */}
           <CountAmount totalValue={totalPrice} />
         </>
       ) : (

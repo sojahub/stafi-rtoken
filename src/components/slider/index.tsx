@@ -2,28 +2,32 @@ import React from 'react';
 import { useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import logo from 'src/assets/images/logo2.png';
-import rAsset_svg from 'src/assets/images/rAsset.svg';
+import rAsset_svg from 'src/assets/images/rAsset.png';
 import selected_rDEX_svg from 'src/assets/images/rDEX_active.svg';
 import rDEX_svg from 'src/assets/images/rDEX_inactive.svg';
-import rSOL_svg from 'src/assets/images/rSOL.svg';
-import rATOM_svg from 'src/assets/images/r_atom.svg';
-import rBnb_svg from 'src/assets/images/r_bnb.svg';
-import rDOT_svg from 'src/assets/images/r_dot.svg';
-import rETH_svg from 'src/assets/images/r_eth.svg';
-import rFIS_svg from 'src/assets/images/r_fis.svg';
-import rKSM_svg from 'src/assets/images/r_ksm.svg';
-import rMatic_svg from 'src/assets/images/r_matic.svg';
+// import rSOL_svg from 'src/assets/images/rSOL.svg';
+// import rATOM_svg from 'src/assets/images/r_atom.svg';
+import rToken_svg from 'src/assets/images/icon_rtoken.svg';
+import selected_rToken_svg from 'src/assets/images/icon_rtoken_selected.svg';
+import rBridge_svg from 'src/assets/images/icon_rbridge.svg';
+import selected_rBridge_svg from 'src/assets/images/icon_rbridge_selected.svg';
+// import rBnb_svg from 'src/assets/images/r_bnb.svg';
+// import rDOT_svg from 'src/assets/images/r_dot.svg';
+// import rETH_svg from 'src/assets/images/r_eth.svg';
+// import rFIS_svg from 'src/assets/images/r_fis.svg';
+// import rKSM_svg from 'src/assets/images/r_ksm.svg';
+// import rMatic_svg from 'src/assets/images/r_matic.svg';
 import rPool_svg from 'src/assets/images/r_pool.svg';
 import selected_rAsset_svg from 'src/assets/images/selected_rAssets.svg';
-import selected_rATOM_svg from 'src/assets/images/selected_r_atom.svg';
-import selected_rBnb_svg from 'src/assets/images/selected_r_bnb.svg';
-import selected_rDOT_svg from 'src/assets/images/selected_r_dot.svg';
-import selected_rETH_svg from 'src/assets/images/selected_r_eth.svg';
-import selected_rFIS_svg from 'src/assets/images/selected_r_fis.svg';
-import selected_rKSM_svg from 'src/assets/images/selected_r_ksm.svg';
-import selected_rMatic_svg from 'src/assets/images/selected_r_matic.svg';
+// import selected_rATOM_svg from 'src/assets/images/selected_r_atom.svg';
+// import selected_rBnb_svg from 'src/assets/images/selected_r_bnb.svg';
+// import selected_rDOT_svg from 'src/assets/images/selected_r_dot.svg';
+// import selected_rETH_svg from 'src/assets/images/selected_r_eth.svg';
+// import selected_rFIS_svg from 'src/assets/images/selected_r_fis.svg';
+// import selected_rKSM_svg from 'src/assets/images/selected_r_ksm.svg';
+// import selected_rMatic_svg from 'src/assets/images/selected_r_matic.svg';
 import selected_rPool_svg from 'src/assets/images/selected_r_pool.svg';
-import selected_rSOL_svg from 'src/assets/images/selected_r_sol.svg';
+// import selected_rSOL_svg from 'src/assets/images/selected_r_sol.svg';
 import { trackEvent } from 'src/features/globalClice';
 import { isdev } from '../../config/index';
 import './index.scss';
@@ -34,8 +38,15 @@ const siderData = [
     icon: rAsset_svg,
     selectedIcon: selected_rAsset_svg,
     text: 'rAsset',
-    urlKeywords: '/rAsset',
+    urlKeywords: '/rAsset/home',
     url: '/rAsset/home/native',
+  },
+  {
+    icon: rToken_svg,
+    selectedIcon: selected_rToken_svg,
+    text: 'rToken',
+    urlKeywords: '/tokenList',
+    url: '/tokenList',
   },
   {
     icon: rDEX_svg,
@@ -52,63 +63,70 @@ const siderData = [
     url: '/rPool/home?tab=mp',
   },
   {
-    icon: rETH_svg,
-    selectedIcon: selected_rETH_svg,
-    text: 'rETH',
-    urlKeywords: '/rETH',
-    // url:"https://rtoken.stafi.io/reth"
-    url: '/rETH/home',
+    icon: rBridge_svg,
+    selectedIcon: selected_rBridge_svg,
+    text: 'rBridge',
+    urlKeywords: '/rAsset/swap',
+    url: '/rAsset/swap/native/default',
   },
-  {
-    icon: rBnb_svg,
-    selectedIcon: selected_rBnb_svg,
-    text: 'rBNB',
-    urlKeywords: '/rBNB',
-    url: '/rBNB/home',
-  },
-  {
-    icon: rFIS_svg,
-    selectedIcon: selected_rFIS_svg,
-    text: 'rFIS',
-    urlKeywords: '/rFIS',
-    url: '/rFIS/home',
-    // url:"https://rtoken.stafi.io/rfis"
-  },
-  {
-    icon: rDOT_svg,
-    selectedIcon: selected_rDOT_svg,
-    text: 'rDOT',
-    urlKeywords: '/rDOT',
-    url: '/rDOT/home',
-  },
-  {
-    icon: rKSM_svg,
-    selectedIcon: selected_rKSM_svg,
-    text: 'rKSM',
-    urlKeywords: '/rKSM',
-    url: '/rKSM/home',
-  },
-  {
-    icon: rATOM_svg,
-    selectedIcon: selected_rATOM_svg,
-    text: 'rATOM',
-    urlKeywords: '/rATOM',
-    url: '/rATOM/home',
-  },
-  {
-    icon: rSOL_svg,
-    selectedIcon: selected_rSOL_svg,
-    text: 'rSOL',
-    urlKeywords: '/rSOL',
-    url: '/rSOL/home',
-  },
-  {
-    icon: rMatic_svg,
-    selectedIcon: selected_rMatic_svg,
-    text: 'rMATIC',
-    urlKeywords: '/rMATIC',
-    url: '/rMATIC/home',
-  },
+  // {
+  //   icon: rETH_svg,
+  //   selectedIcon: selected_rETH_svg,
+  //   text: 'rETH',
+  //   urlKeywords: '/rETH',
+  //   // url:"https://rtoken.stafi.io/reth"
+  //   url: '/rETH/home',
+  // },
+  // {
+  //   icon: rBnb_svg,
+  //   selectedIcon: selected_rBnb_svg,
+  //   text: 'rBNB',
+  //   urlKeywords: '/rBNB',
+  //   url: '/rBNB/home',
+  // },
+  // {
+  //   icon: rFIS_svg,
+  //   selectedIcon: selected_rFIS_svg,
+  //   text: 'rFIS',
+  //   urlKeywords: '/rFIS',
+  //   url: '/rFIS/home',
+  //   // url:"https://rtoken.stafi.io/rfis"
+  // },
+  // {
+  //   icon: rDOT_svg,
+  //   selectedIcon: selected_rDOT_svg,
+  //   text: 'rDOT',
+  //   urlKeywords: '/rDOT',
+  //   url: '/rDOT/home',
+  // },
+  // {
+  //   icon: rKSM_svg,
+  //   selectedIcon: selected_rKSM_svg,
+  //   text: 'rKSM',
+  //   urlKeywords: '/rKSM',
+  //   url: '/rKSM/home',
+  // },
+  // {
+  //   icon: rATOM_svg,
+  //   selectedIcon: selected_rATOM_svg,
+  //   text: 'rATOM',
+  //   urlKeywords: '/rATOM',
+  //   url: '/rATOM/home',
+  // },
+  // {
+  //   icon: rSOL_svg,
+  //   selectedIcon: selected_rSOL_svg,
+  //   text: 'rSOL',
+  //   urlKeywords: '/rSOL',
+  //   url: '/rSOL/home',
+  // },
+  // {
+  //   icon: rMatic_svg,
+  //   selectedIcon: selected_rMatic_svg,
+  //   text: 'rMATIC',
+  //   urlKeywords: '/rMATIC',
+  //   url: '/rMATIC/home',
+  // },
 ];
 type Props = {
   route: any;

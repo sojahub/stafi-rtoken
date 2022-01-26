@@ -11,13 +11,31 @@ import SolServer from 'src/servers/sol/index';
 import numberUtil from 'src/util/numberUtil';
 import Web3Utils from 'web3-utils';
 import { AppThunk } from '../store';
-import { createSubstrate as fisCreateSubstrate, reloadData as fisReloadData } from './FISClice';
-import { createSubstrate as atomCreateSubstrate, reloadData as atomReloadData } from './rATOMClice';
+import {
+  createSubstrate as fisCreateSubstrate,
+  reloadData as fisReloadData,
+  rTokenLedger as fis_rTokenLedger,
+} from './FISClice';
+import {
+  createSubstrate as atomCreateSubstrate,
+  reloadData as atomReloadData,
+  rTokenLedger as atom_rTokenLedger,
+} from './rATOMClice';
 import { reloadData as bnbReloadData } from './rBNBClice';
-import { createSubstrate as dotCreateSubstrate, reloadData as dotReloadData } from './rDOTClice';
-import { createSubstrate as ksmCreateSubstrate, reloadData as ksmReloadData } from './rKSMClice';
-import { reloadData as maticReloadData } from './rMATICClice';
-import { reloadData as solReloadData, setSolAddress } from './rSOLClice';
+import {
+  createSubstrate as dotCreateSubstrate,
+  reloadData as dotReloadData,
+  rTokenLedger as dot_rTokenLedger,
+} from './rDOTClice';
+import {
+  createSubstrate as ksmCreateSubstrate,
+  reloadData as ksmReloadData,
+  rTokenLedger as ksm_rTokenLedger,
+} from './rKSMClice';
+import { reloadData as maticReloadData, rTokenLedger as matic_rTokenLedger } from './rMATICClice';
+import { reloadData as solReloadData, setSolAddress, rTokenLedger as sol_rTokenLedger } from './rSOLClice';
+import { getStakerApr as eth_getStakerApr } from './rETHClice';
+import { rTokenLedger as bnb_rTokenLedger } from './rBNBClice';
 
 export enum processStatus {
   default = 0,
@@ -406,5 +424,16 @@ export const trackEvent =
       extra: params,
     });
   };
+
+export const getAllApr = (): AppThunk => (dispatch, getState) => {
+  dispatch(dot_rTokenLedger());
+  dispatch(ksm_rTokenLedger());
+  dispatch(atom_rTokenLedger());
+  dispatch(matic_rTokenLedger());
+  dispatch(fis_rTokenLedger());
+  dispatch(bnb_rTokenLedger());
+  dispatch(sol_rTokenLedger());
+  dispatch(eth_getStakerApr());
+};
 
 export default globalClice.reducer;

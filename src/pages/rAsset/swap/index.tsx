@@ -612,13 +612,13 @@ export default function Index(props: any) {
 
   return (
     <Content className='stafi_rasset_swap '>
-      <Back
+      {/* <Back
         top={'40px'}
         left={'50px'}
         onClick={() => {
           history.go(-1);
         }}
-      />
+      /> */}
       <div className={'title_container'}>
         <Title label='rBridge Swap' padding={'30px 0'} />
       </div>

@@ -173,6 +173,12 @@ export default function Index(props: Props) {
       };
     }
 
+    if (location.pathname.includes('/tokenList')) {
+      return {
+        showFisAccount: true,
+      };
+    }
+
     if (location.pathname.includes('/rPool/mint')) {
       return {
         showFisAccount: true,

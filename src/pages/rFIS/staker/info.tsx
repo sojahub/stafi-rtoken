@@ -95,7 +95,7 @@ export default function Index(props: any) {
         dispatch(setRatioShow(NumberUtil.handleFisAmountRateToFixed(ratioAmount)));
       }, 100);
     }
-  }, [ratio]);
+  }, [dispatch, ratio]);
 
   return (
     <Content
