@@ -133,7 +133,7 @@ export default function Index(props: any) {
               rTokenName='FIS'
               icon={rasset_fis_svg}
               rTokenAmount='--'
-              source='native'
+              source='SPL'
               myStaked='--'
               apy={fisApr}
               onSwapClick={() => toSwap('FIS')}
@@ -142,7 +142,7 @@ export default function Index(props: any) {
               rTokenName='rSOL'
               icon={rasset_rsol_svg}
               rTokenAmount={rsol_slpBalance === '--' ? '--' : NumberUtil.handleFisAmountToFixed(rsol_slpBalance)}
-              source='native'
+              source='SPL'
               myStaked={rSolStakedAmountShow}
               apy={solApr}
               onSwapClick={() => toSwap('rSOL')}

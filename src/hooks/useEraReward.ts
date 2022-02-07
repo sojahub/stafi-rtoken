@@ -192,10 +192,7 @@ export function useEraReward(
   return { lastEraReward, chartData, loadMore, rewardList, hasMore };
 }
 
-export function useLastEraReward(
-  platform: string,
-  type: 'rDOT' | 'rETH' | 'rFIS' | 'rKSM' | 'rATOM' | 'rSOL' | 'rMATIC' | 'rBNB',
-) {
+export function useLastEraReward(platform: string, type: string) {
   const [lastEraReward, setLastEraReward] = useState('--');
   const [chainType, setChainType] = useState(STAFI_CHAIN_ID);
   const [userAddress, setUserAddress] = useState<string>();

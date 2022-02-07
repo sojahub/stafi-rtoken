@@ -1,6 +1,9 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import TradeModal from 'src/components/modal/TradeModal';
 import styled from 'styled-components';
+import arrowDown from 'src/assets/images/arrow_down_white.svg';
+import { useLastEraReward } from 'src/hooks/useEraReward';
+import { Tooltip } from 'antd';
 
 interface NewDataItemProps {
   rTokenName: string;
@@ -8,13 +11,27 @@ interface NewDataItemProps {
   myStaked: string;
   rTokenAmount: string;
   apy: string;
-  source: 'native' | 'erc20' | 'bep20' | 'spl';
+  source: 'Native' | 'ERC20' | 'BEP20' | 'SPL';
   onSwapClick: () => void;
   latestReward?: string;
 }
 
 export const NewDataItem = (props: NewDataItemProps) => {
   const [tradeModalVisible, setTradeModalVisible] = useState(false);
+  const { lastEraReward } = useLastEraReward(props.source, props.rTokenName);
+
+  const displayLastEraReward = useMemo(() => {
+    if (isNaN(Number(lastEraReward))) {
+      return '--';
+    }
+    if (Number(lastEraReward) === 0) {
+      return '+0.000';
+    }
+    if (Number(lastEraReward) < 0.001) {
+      return '<0.001';
+    }
+    return '+' + Math.round(1000 * Number(lastEraReward)) / 1000;
+  }, [lastEraReward]);
 
   return (
     <>
@@ -32,7 +49,18 @@ export const NewDataItem = (props: NewDataItemProps) => {
           style={{
             width: '137px',
           }}>
-          {props.myStaked}
+          <HContainer>
+            {props.myStaked}
+            {props.rTokenName !== 'FIS' && (
+              <Tooltip
+                overlayClassName='doubt_overlay'
+                placement='topLeft'
+                overlayInnerStyle={{ color: '#A4A4A4' }}
+                title={`The increased amount of Staked ${props.rTokenName.slice(1)} within the last 24h.`}>
+                <LastEraReward>{displayLastEraReward}</LastEraReward>
+              </Tooltip>
+            )}
+          </HContainer>
         </TableContent>
 
         <TableContent
@@ -61,7 +89,15 @@ export const NewDataItem = (props: NewDataItemProps) => {
               }
               setTradeModalVisible(true);
             }}>
-            Trade
+            <div>Trade</div>
+            <img
+              src={arrowDown}
+              alt='trade'
+              style={{
+                width: '10px',
+                marginLeft: '4px',
+              }}
+            />
           </StakeButton>
           <StakeButton
             style={{
@@ -108,6 +144,13 @@ const TokenTitle = styled.div`
   line-height: 16px;
   font-weight: bold;
   margin-left: 10px;
+`;
+
+const LastEraReward = styled.div`
+  margin-left: 10px;
+  color: #00f3ab;
+  font-size: 12px;
+  border-bottom: dashed 1px #00f3ab91;
 `;
 
 const TableContent = styled.div`

@@ -219,7 +219,7 @@ export default function Index(props: any) {
               rTokenName='FIS'
               icon={rasset_fis_svg}
               rTokenAmount='--'
-              source='native'
+              source='ERC20'
               myStaked='--'
               apy={fisApr}
               onSwapClick={() => toSwap('FIS')}
@@ -228,7 +228,7 @@ export default function Index(props: any) {
               rTokenName='rFIS'
               icon={rasset_rfis_svg}
               rTokenAmount={rfis_ercBalance === '--' ? '--' : NumberUtil.handleFisAmountToFixed(rfis_ercBalance)}
-              source='native'
+              source='ERC20'
               myStaked={rFisStakedAmountShow}
               apy={fisApr}
               onSwapClick={() => toSwap('rFIS')}
@@ -237,7 +237,7 @@ export default function Index(props: any) {
               rTokenName='rETH'
               icon={rasset_reth_svg}
               rTokenAmount={eth_ercBalance === '--' ? '--' : NumberUtil.handleFisAmountToFixed(eth_ercBalance)}
-              source='native'
+              source='ERC20'
               myStaked={rEthStakedAmountShow}
               apy={ethApr}
               onSwapClick={() => toSwapBep20('rETH')}
@@ -246,7 +246,7 @@ export default function Index(props: any) {
               rTokenName='rDOT'
               icon={rasset_rdot_svg}
               rTokenAmount={dot_ercBalance === '--' ? '--' : NumberUtil.handleFisAmountToFixed(dot_ercBalance)}
-              source='native'
+              source='ERC20'
               myStaked={rDotStakedAmountShow}
               apy={dotApr}
               onSwapClick={() => toSwap('rDOT')}
@@ -255,7 +255,7 @@ export default function Index(props: any) {
               rTokenName='rKSM'
               icon={rasset_rksm_svg}
               rTokenAmount={ksm_ercBalance === '--' ? '--' : NumberUtil.handleFisAmountToFixed(ksm_ercBalance)}
-              source='native'
+              source='ERC20'
               myStaked={rKsmStakedAmountShow}
               apy={dotApr}
               onSwapClick={() => toSwap('rKSM')}
@@ -264,7 +264,7 @@ export default function Index(props: any) {
               rTokenName='rATOM'
               icon={rasset_ratom_svg}
               rTokenAmount={atom_ercBalance === '--' ? '--' : NumberUtil.handleFisAmountToFixed(atom_ercBalance)}
-              source='native'
+              source='ERC20'
               myStaked={rAtomStakedAmountShow}
               apy={atomApr}
               onSwapClick={() => toSwap('rATOM')}
@@ -273,7 +273,7 @@ export default function Index(props: any) {
               rTokenName='rMATIC'
               icon={rasset_rmatic_svg}
               rTokenAmount={matic_ercBalance === '--' ? '--' : NumberUtil.handleFisAmountToFixed(matic_ercBalance)}
-              source='native'
+              source='ERC20'
               myStaked={rMaticStakedAmountShow}
               apy={maticApr}
               onSwapClick={() => toSwap('rMATIC')}

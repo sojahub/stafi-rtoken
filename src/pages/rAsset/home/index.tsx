@@ -1,7 +1,7 @@
+import { Tooltip } from 'antd';
 import React from 'react';
 import { Redirect, useParams } from 'react-router';
-import TradeModal from 'src/components/modal/TradeModal';
-import Content from 'src/shared/components/content';
+import doubt from 'src/assets/images/doubt.svg';
 import styled from 'styled-components';
 import BepPage from './bep';
 import Tag from './components/carTag/index';
@@ -49,14 +49,44 @@ export default function Index() {
           style={{
             width: '137px',
           }}>
-          My Staked
+          <HContainer style={{ alignItems: 'flex-start' }}>
+            <div
+              style={{
+                marginRight: '2px',
+              }}>
+              My Staked
+            </div>
+
+            <Tooltip
+              overlayClassName='doubt_overlay'
+              placement='topLeft'
+              overlayInnerStyle={{ color: '#A4A4A4' }}
+              title={'xxxxx'}>
+              <img src={doubt} alt='tooltip' />
+            </Tooltip>
+          </HContainer>
         </TableHeader>
 
         <TableHeader
           style={{
             width: '106px',
           }}>
-          rToken
+          <HContainer style={{ alignItems: 'flex-start' }}>
+            <div
+              style={{
+                marginRight: '2px',
+              }}>
+              rToken
+            </div>
+
+            <Tooltip
+              overlayClassName='doubt_overlay'
+              placement='topLeft'
+              overlayInnerStyle={{ color: '#A4A4A4' }}
+              title={'This amount only includes the rToken of the selected network.'}>
+              <img src={doubt} alt='tooltip' />
+            </Tooltip>
+          </HContainer>
         </TableHeader>
 
         <TableHeader

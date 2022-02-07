@@ -261,7 +261,7 @@ export default function Index(props: any) {
               rTokenName='FIS'
               icon={rasset_fis_svg}
               rTokenAmount='--'
-              source='native'
+              source='Native'
               myStaked='--'
               apy={fisApr}
               onSwapClick={() => {
@@ -274,7 +274,7 @@ export default function Index(props: any) {
               rTokenName='rFIS'
               icon={rasset_rfis_svg}
               rTokenAmount={fis_tokenAmount === '--' ? '--' : NumberUtil.handleFisAmountToFixed(fis_tokenAmount)}
-              source='native'
+              source='Native'
               myStaked={rFisStakedAmountShow}
               apy={fisApr}
               onSwapClick={() => {
@@ -287,7 +287,7 @@ export default function Index(props: any) {
               rTokenName='rETH'
               icon={rasset_reth_svg}
               rTokenAmount={reth_tokenAmount === '--' ? '--' : NumberUtil.handleFisAmountToFixed(reth_tokenAmount)}
-              source='native'
+              source='Native'
               myStaked={rEthStakedAmountShow}
               apy={ethApr}
               onSwapClick={() => {
@@ -300,7 +300,7 @@ export default function Index(props: any) {
               rTokenName='rDOT'
               icon={rasset_rdot_svg}
               rTokenAmount={dot_tokenAmount === '--' ? '--' : NumberUtil.handleFisAmountToFixed(dot_tokenAmount)}
-              source='native'
+              source='Native'
               myStaked={rDotStakedAmountShow}
               apy={dotApr}
               onSwapClick={() => {
@@ -313,7 +313,7 @@ export default function Index(props: any) {
               rTokenName='rKSM'
               icon={rasset_rksm_svg}
               rTokenAmount={tokenAmount === '--' ? '--' : NumberUtil.handleFisAmountToFixed(tokenAmount)}
-              source='native'
+              source='Native'
               myStaked={rKsmStakedAmountShow}
               apy={ksmApr}
               onSwapClick={() => {
@@ -326,7 +326,7 @@ export default function Index(props: any) {
               rTokenName='rATOM'
               icon={rasset_ratom_svg}
               rTokenAmount={atom_tokenAmount === '--' ? '--' : NumberUtil.handleFisAmountToFixed(atom_tokenAmount)}
-              source='native'
+              source='Native'
               myStaked={rAtomStakedAmountShow}
               apy={atomApr}
               onSwapClick={() => {
@@ -339,7 +339,7 @@ export default function Index(props: any) {
               rTokenName='rSOL'
               icon={rasset_rsol_svg}
               rTokenAmount={sol_tokenAmount === '--' ? '--' : NumberUtil.handleFisAmountToFixed(sol_tokenAmount)}
-              source='native'
+              source='Native'
               myStaked={rSolStakedAmountShow}
               apy={solApr}
               onSwapClick={() => {
@@ -352,7 +352,7 @@ export default function Index(props: any) {
               rTokenName='rMATIC'
               icon={rasset_rmatic_svg}
               rTokenAmount={matic_tokenAmount === '--' ? '--' : NumberUtil.handleFisAmountToFixed(matic_tokenAmount)}
-              source='native'
+              source='Native'
               myStaked={rMaticStakedAmountShow}
               apy={maticApr}
               onSwapClick={() => {
@@ -365,7 +365,7 @@ export default function Index(props: any) {
               rTokenName='rBNB'
               icon={rasset_rbnb_svg}
               rTokenAmount={bnb_tokenAmount === '--' ? '--' : NumberUtil.handleFisAmountToFixed(bnb_tokenAmount)}
-              source='native'
+              source='Native'
               myStaked={rBnbStakedAmountShow}
               apy={bnbApr}
               onSwapClick={() => {

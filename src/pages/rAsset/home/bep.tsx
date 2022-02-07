@@ -234,7 +234,7 @@ export default function Index(props: any) {
               rTokenName='rFIS'
               icon={rasset_rfis_svg}
               rTokenAmount={rfis_bepBalance === '--' ? '--' : NumberUtil.handleFisAmountToFixed(rfis_bepBalance)}
-              source='native'
+              source='BEP20'
               myStaked={rFisStakedAmountShow}
               apy={fisApr}
               onSwapClick={() => toSwap('rFIS')}
@@ -243,7 +243,7 @@ export default function Index(props: any) {
               rTokenName='rETH'
               icon={rasset_reth_svg}
               rTokenAmount={reth_bepBalance === '--' ? '--' : NumberUtil.handleFisAmountToFixed(reth_bepBalance)}
-              source='native'
+              source='BEP20'
               myStaked={rEthStakedAmountShow}
               apy={ethApr}
               onSwapClick={() => toSwapErc20('rFIS')}
@@ -252,7 +252,7 @@ export default function Index(props: any) {
               rTokenName='rDOT'
               icon={rasset_rdot_svg}
               rTokenAmount={dot_bepBalance === '--' ? '--' : NumberUtil.handleFisAmountToFixed(dot_bepBalance)}
-              source='native'
+              source='BEP20'
               myStaked={rDotStakedAmountShow}
               apy={dotApr}
               onSwapClick={() => toSwap('rDOT')}
@@ -261,7 +261,7 @@ export default function Index(props: any) {
               rTokenName='rKSM'
               icon={rasset_rksm_svg}
               rTokenAmount={ksm_bepBalance === '--' ? '--' : NumberUtil.handleFisAmountToFixed(ksm_bepBalance)}
-              source='native'
+              source='BEP20'
               myStaked={rKsmStakedAmountShow}
               apy={dotApr}
               onSwapClick={() => toSwap('rKSM')}
@@ -270,7 +270,7 @@ export default function Index(props: any) {
               rTokenName='rATOM'
               icon={rasset_ratom_svg}
               rTokenAmount={atom_bepBalance === '--' ? '--' : NumberUtil.handleFisAmountToFixed(atom_bepBalance)}
-              source='native'
+              source='BEP20'
               myStaked={rAtomStakedAmountShow}
               apy={atomApr}
               onSwapClick={() => toSwap('rATOM')}
@@ -279,7 +279,7 @@ export default function Index(props: any) {
               rTokenName='rMATIC'
               icon={rasset_rmatic_svg}
               rTokenAmount={rmatic_bepBalance == '--' ? '--' : NumberUtil.handleFisAmountToFixed(rmatic_bepBalance)}
-              source='native'
+              source='BEP20'
               myStaked={rMaticStakedAmountShow}
               apy={maticApr}
               onSwapClick={() => toSwap('rMATIC')}
@@ -288,7 +288,7 @@ export default function Index(props: any) {
               rTokenName='rBNB'
               icon={rasset_rmatic_svg}
               rTokenAmount={rbnb_bepBalance == '--' ? '--' : NumberUtil.handleFisAmountToFixed(rbnb_bepBalance)}
-              source='native'
+              source='BEP20'
               myStaked={rBnbStakedAmountShow}
               apy={bnbApr}
               onSwapClick={() => toSwap('rBNB')}

@@ -1,5 +1,7 @@
+import { Tooltip } from 'antd';
 import { useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
+import doubt from 'src/assets/images/doubt.svg';
 import rSOL_svg from 'src/assets/images/rSOL.svg';
 import rATOM_svg from 'src/assets/images/r_atom.svg';
 import rBnb_svg from 'src/assets/images/r_bnb.svg';
@@ -57,7 +59,7 @@ export const TokenList = () => {
     <div>
       <TabContainer>
         <TitleContainer>
-          <TabTitle>Staked</TabTitle>
+          <TabTitle>Stake</TabTitle>
 
           <TabIndicator />
         </TitleContainer>
@@ -108,7 +110,16 @@ export const TokenList = () => {
             style={{
               width: '134px',
             }}>
-            Liquidity
+            <HContainer style={{ alignItems: 'flex-start' }}>
+              <div style={{ marginRight: '2px' }}>Liquidity</div>
+              <Tooltip
+                overlayClassName='doubt_overlay'
+                placement='topLeft'
+                overlayInnerStyle={{ color: '#A4A4A4' }}
+                title={'xxxxx'}>
+                <img src={doubt} alt='tooltip' />
+              </Tooltip>
+            </HContainer>
           </TableHeader>
 
           <TableHeader>Liquify</TableHeader>
@@ -189,7 +200,7 @@ const TabTitle = styled.div`
 const TabIndicator = styled.div`
   background-color: #00f3ab;
   width: 59px;
-  height: 3px;
+  height: 2px;
   margin-top: 10px;
 `;
 
