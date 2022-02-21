@@ -149,6 +149,7 @@ const config = {
   solRpcApi: () => {
     if (!isdev()) {
       return clusterApiUrl('mainnet-beta');
+      // return 'https://solana-mainnet.phantom.tech';
     } else {
       // return clusterApiUrl('devnet');
 
