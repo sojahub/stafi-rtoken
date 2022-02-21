@@ -18,7 +18,7 @@ export default function Index(props: Props) {
       onClick={() => {
         props.onClick && props.onClick();
       }}>
-      <img src={props.icon} /> {props.children}
+      <img src={props.icon} style={{ objectFit: 'cover' }} alt='icon' /> {props.children}
     </Button>
   );
 }

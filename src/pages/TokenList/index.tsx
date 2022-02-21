@@ -1,6 +1,8 @@
 import { Tooltip } from 'antd';
+import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
+import metamask from 'src/assets/images/metamask.png';
 import doubt from 'src/assets/images/doubt.svg';
 import rSOL_svg from 'src/assets/images/rSOL.svg';
 import rATOM_svg from 'src/assets/images/r_atom.svg';
@@ -12,11 +14,36 @@ import rKSM_svg from 'src/assets/images/r_ksm.svg';
 import rMatic_svg from 'src/assets/images/r_matic.svg';
 import { RootState } from 'src/store';
 import styled from 'styled-components';
+import Button from 'src/shared/components/button/connect_button';
+import { useMetaMaskAccount } from 'src/hooks/useMetaMaskAccount';
 
 const stakeList = ['ETH', 'FIS', 'BNB', 'DOT', 'ATOM', 'SOL', 'MATIC', 'KSM'];
 
 export const TokenList = () => {
   const history = useHistory();
+  const { metaMaskAddress } = useMetaMaskAccount();
+
+  const hasDotAcount = useSelector((state: any) => {
+    if (state.FISModule.fisAccount && state.rDOTModule.dotAccount) {
+      return true;
+    } else {
+      return false;
+    }
+  });
+
+  const { fisAccount } = useSelector((state: RootState) => {
+    return {
+      fisAccount: state.FISModule.fisAccount,
+      atomAccount: state.rATOMModule.atomAccount,
+      solAddress: state.rSOLModule.solAddress,
+    };
+  });
+  const [connectExtensionConfig, setConnectExtensionConfig] = useState({
+    polkadot: {
+      display: false,
+      connected: false,
+    },
+  });
 
   const { ethApr, fisApr, bnbApr, dotApr, atomApr, solApr, maticApr, ksmApr } = useSelector((state: RootState) => {
     return {
@@ -78,100 +105,130 @@ export const TokenList = () => {
         </TitleContainer>
       </TabContainer>
 
-      <div style={{ marginTop: '50px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-        <HContainer
-          style={{
-            width: '660px',
-            marginBottom: '12px',
-          }}>
-          <TableHeader
+      <div
+        style={{
+          marginTop: '50px',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          position: 'relative',
+        }}>
+        <ExtensionContainer>
+          <div style={{ display: 'flex', flexDirection: 'column' }}>
+            <Button
+              icon={rDOT_svg}
+              onClick={() => {
+                // PubSub.publish('connectDotWallet');
+              }}>
+              Connect to Polkadotjs extension
+            </Button>
+
+            <Button
+              disabled
+              icon={metamask}
+              onClick={() => {
+                // PubSub.publish('connectDotWallet');
+              }}>
+              Metamask connected
+            </Button>
+          </div>
+        </ExtensionContainer>
+
+        <div style={{ opacity: 0.3 }}>
+          <HContainer
             style={{
-              paddingLeft: '47px',
-              width: '190px',
+              width: '660px',
+              marginBottom: '12px',
             }}>
-            Staked Asset
-          </TableHeader>
-
-          <TableHeader
-            style={{
-              width: '117px',
-            }}>
-            Derivative
-          </TableHeader>
-
-          <TableHeader
-            style={{
-              width: '110px',
-            }}>
-            APY
-          </TableHeader>
-
-          <TableHeader
-            style={{
-              width: '134px',
-            }}>
-            <HContainer style={{ alignItems: 'flex-start' }}>
-              <div style={{ marginRight: '2px' }}>Liquidity</div>
-              <Tooltip
-                overlayClassName='doubt_overlay'
-                placement='topLeft'
-                overlayInnerStyle={{ color: '#A4A4A4' }}
-                title={'xxxxx'}>
-                <img src={doubt} alt='tooltip' />
-              </Tooltip>
-            </HContainer>
-          </TableHeader>
-
-          <TableHeader>Liquify</TableHeader>
-        </HContainer>
-
-        {stakeList.map((tokenName) => (
-          <TokenItemContainer key={tokenName}>
-            <HContainer
+            <TableHeader
               style={{
                 paddingLeft: '47px',
                 width: '190px',
               }}>
-              <img src={getIcon(tokenName)} width='26px' height='26px' alt='icon' />
-              <TokenTitle>{tokenName}</TokenTitle>
-            </HContainer>
+              Staked Asset
+            </TableHeader>
 
-            <TableContent
+            <TableHeader
               style={{
                 width: '117px',
               }}>
-              r{tokenName}
-            </TableContent>
+              Derivative
+            </TableHeader>
 
-            <TableContent
+            <TableHeader
               style={{
                 width: '110px',
               }}>
-              {tokenName === 'ETH' && ethApr}
-              {tokenName === 'FIS' && fisApr}
-              {tokenName === 'BNB' && bnbApr}
-              {tokenName === 'DOT' && dotApr}
-              {tokenName === 'ATOM' && atomApr}
-              {tokenName === 'SOL' && solApr}
-              {tokenName === 'MATIC' && maticApr}
-              {tokenName === 'KSM' && ksmApr}
-            </TableContent>
+              APY
+            </TableHeader>
 
-            <TableContent
+            <TableHeader
               style={{
                 width: '134px',
               }}>
-              83.23M
-            </TableContent>
+              <HContainer style={{ alignItems: 'flex-start' }}>
+                <div style={{ marginRight: '2px' }}>Liquidity</div>
+                <Tooltip
+                  overlayClassName='doubt_overlay'
+                  placement='topLeft'
+                  overlayInnerStyle={{ color: '#A4A4A4' }}
+                  title={'xxxxx'}>
+                  <img src={doubt} alt='tooltip' />
+                </Tooltip>
+              </HContainer>
+            </TableHeader>
 
-            <StakeButton
-              onClick={() => {
-                history.push(`/r${tokenName}/home`);
-              }}>
-              Stake
-            </StakeButton>
-          </TokenItemContainer>
-        ))}
+            <TableHeader>Liquify</TableHeader>
+          </HContainer>
+
+          {stakeList.map((tokenName) => (
+            <TokenItemContainer key={tokenName}>
+              <HContainer
+                style={{
+                  paddingLeft: '47px',
+                  width: '190px',
+                }}>
+                <img src={getIcon(tokenName)} width='26px' height='26px' alt='icon' />
+                <TokenTitle>{tokenName}</TokenTitle>
+              </HContainer>
+
+              <TableContent
+                style={{
+                  width: '117px',
+                }}>
+                r{tokenName}
+              </TableContent>
+
+              <TableContent
+                style={{
+                  width: '110px',
+                }}>
+                {tokenName === 'ETH' && ethApr}
+                {tokenName === 'FIS' && fisApr}
+                {tokenName === 'BNB' && bnbApr}
+                {tokenName === 'DOT' && dotApr}
+                {tokenName === 'ATOM' && atomApr}
+                {tokenName === 'SOL' && solApr}
+                {tokenName === 'MATIC' && maticApr}
+                {tokenName === 'KSM' && ksmApr}
+              </TableContent>
+
+              <TableContent
+                style={{
+                  width: '134px',
+                }}>
+                83.23M
+              </TableContent>
+
+              <StakeButton
+                onClick={() => {
+                  history.push(`/r${tokenName}/home`);
+                }}>
+                Stake
+              </StakeButton>
+            </TokenItemContainer>
+          ))}
+        </div>
       </div>
     </div>
   );
@@ -251,4 +308,17 @@ const StakeButton = styled.div`
   border-radius: 2px;
   border: 1px solid #00f3ab;
   font-size: 12px;
+`;
+
+const ExtensionContainer = styled.div`
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  background-color: transparent;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `;

@@ -10,7 +10,10 @@
   background-color: transparent;
   color: #fff;
   border-color: #bfbfbf;
+  border-radius: 4px;
   font-size: 18px;
+  text-align: start;
+  margin: 10px 0;
   img {
     margin-right: 25px;
     height: 31px;
@@ -19,7 +22,7 @@
 }
 .stafi_connect_button[disabled],
 .stafi_connect_button[disabled]:hover {
-  opacity: 0.5;
+  opacity: 0.6;
 }
 
 .stafi_button,
