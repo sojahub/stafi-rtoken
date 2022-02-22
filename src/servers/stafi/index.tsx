@@ -199,6 +199,9 @@ export default class Index extends SubstrateKeyring {
         deposit_height: 'u32',
         grade_index: 'u32',
         claimed_reward: 'u128'
+      },
+      ValidatorPrefs: {
+        commission: 'Compact<Perbill>'
       }
     };
 
