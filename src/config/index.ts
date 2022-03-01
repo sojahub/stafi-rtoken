@@ -2,6 +2,7 @@ import { clusterApiUrl } from '@solana/web3.js';
 import { rSymbol, Symbol } from 'src/keyring/defaults';
 
 export const isdev = () => {
+  return false;
   let host = window.location.host;
   var local = /192\.168\./.test(host) || /127\.0\./.test(host) || /localhost/.test(host);
   let demo = /test/.test(host);
@@ -148,8 +149,8 @@ const config = {
   },
   solRpcApi: () => {
     if (!isdev()) {
-      return clusterApiUrl('mainnet-beta');
-      // return 'https://solana-mainnet.phantom.tech';
+      // return clusterApiUrl('mainnet-beta');
+      return 'https://free.rpcpool.com';
     } else {
       // return clusterApiUrl('devnet');
 
