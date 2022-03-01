@@ -12,6 +12,7 @@ import rfis_icon from 'src/assets/images/r_fis.svg';
 import rksm_icon from 'src/assets/images/r_ksm.svg';
 import rmatic_icon from 'src/assets/images/r_matic.svg';
 import Card from 'src/components/card/index';
+import { Text } from 'src/components/commonComponents';
 import { getRsymbolByTokenTitle } from 'src/config/index';
 import { getRtokenPriceList } from 'src/features/bridgeClice';
 import { getMintPrograms } from 'src/features/mintProgramsClice';
@@ -60,6 +61,7 @@ const rTokenList: Array<any> = [
 
 export default function MintPrograms(props: any) {
   const dispatch = useDispatch();
+  const [selectedTab, setSelectedTab] = useState<'In Progress' | 'Completed'>('In Progress');
 
   useEffect(() => {
     dispatch(getMintPrograms(true));
@@ -101,6 +103,47 @@ export default function MintPrograms(props: any) {
     };
   });
 
+  const { inProgressList, completedList } = useMemo(() => {
+    const inProgress = [];
+    const completed = [];
+    mintDataList.forEach((data) => {
+      const name = data.name;
+      const token = data.token;
+      const extraName = data.extraName;
+      const inProgressChildren = data.children?.filter((item) => {
+        return item.nowBlock < item.end;
+      });
+      const completedChildren = data.children?.filter((item) => {
+        return item.nowBlock >= item.end;
+      });
+
+      inProgress.push({
+        token,
+        name,
+        extraName,
+        children: cloneDeep(inProgressChildren),
+      });
+
+      completed.push({
+        token,
+        name,
+        extraName,
+        children: cloneDeep(completedChildren),
+      });
+    });
+    return {
+      inProgressList: inProgress,
+      completedList: completed,
+    };
+  }, [mintDataList]);
+
+  const displayList = useMemo(() => {
+    if (selectedTab === 'In Progress') {
+      return inProgressList;
+    }
+    return completedList;
+  }, [selectedTab, inProgressList, completedList]);
+
   const { totalMintedValue, totalFisAmount } = useMemo(() => {
     let total = 0;
     let fisAmount = 0;
@@ -135,15 +178,15 @@ export default function MintPrograms(props: any) {
 
   const showNoData = useMemo(() => {
     let itemCount = 0;
-    mintDataList?.forEach((item) => {
+    displayList?.forEach((item) => {
       itemCount += item.children && item.children.length;
     });
     return loadComplete && itemCount === 0;
-  }, [loadComplete, mintDataList]);
+  }, [loadComplete, displayList]);
 
   useEffect(() => {
     dispatch(getRtokenPriceList());
-  }, []);
+  }, [dispatch]);
 
   useEffect(() => {
     rTokenList.forEach((item: any) => {
@@ -230,6 +273,43 @@ export default function MintPrograms(props: any) {
         <CardItem label='Total reward FIS' value={`${totalFisAmount}`} />
       </div>
 
+      <div style={{ display: 'flex', alignItems: 'center', marginTop: '20px', marginBottom: '30px' }}>
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            borderRadius: '17px',
+            height: '34px',
+            width: '100px',
+            backgroundColor: '#293038',
+            marginRight: '20px',
+            cursor: 'pointer',
+          }}
+          onClick={() => setSelectedTab('In Progress')}>
+          <Text bold sameLineHeight clickable size='12px' color={selectedTab === 'In Progress' ? '#00F3AB' : '#7c7c7c'}>
+            In Progress
+          </Text>
+        </div>
+
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            borderRadius: '17px',
+            height: '34px',
+            width: '100px',
+            backgroundColor: '#293038',
+            cursor: 'pointer',
+          }}
+          onClick={() => setSelectedTab('Completed')}>
+          <Text bold sameLineHeight clickable size='12px' color={selectedTab === 'Completed' ? '#00F3AB' : '#7c7c7c'}>
+            Completed
+          </Text>
+        </div>
+      </div>
+
       <div className='table'>
         <MintTableHead
           sortField={sortField}
@@ -256,7 +336,8 @@ export default function MintPrograms(props: any) {
             )}
 
             {!showNoData &&
-              mintDataList.map((data: any, i: any) => {
+              displayList.map((data: any, i: any) => {
+                console.log(`${data.token}${i}`);
                 return (
                   <div
                     key={`${data.token}${i}`}
@@ -302,6 +383,8 @@ export default function MintPrograms(props: any) {
                       if (type == '') {
                         return <></>;
                       }
+                      console.log(`child ${data.token}${index}`);
+
                       return (
                         <MintTableItem
                           key={`child ${data.token}${index}`}
