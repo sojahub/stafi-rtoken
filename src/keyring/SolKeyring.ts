@@ -54,11 +54,14 @@ export class SolKeyring extends Base implements KeyringStruct {
   }
 
   public checkAddress(address: string): boolean {
-    if (!address || address.length !== 44) {
+    if (!address) {
       return false;
     }
     try {
-      this.decodeAddress(address);
+      const decoded = this.decodeAddress(address);
+      if (decoded.length != 32) {
+        return false;
+      }
       return true;
     } catch (e) {
       return false;
@@ -66,24 +69,11 @@ export class SolKeyring extends Base implements KeyringStruct {
   }
 
   public encodeAddress(pubKeyHex: any): string {
-    // const words = bech32.toWords(pubKeyHash);
-    // return bech32.encode(this._acc_addr_prefix, words);
     return new PublicKey(hexToU8a(pubKeyHex)).toBase58();
   }
 
   public decodeAddress(accAddress: string): Buffer {
     return base58.decode(accAddress);
-    // const { prefix, words } = bech32.decode(accAddress);
-    // if (prefix !== this._acc_addr_prefix) {
-    //   throw Error('Wrong prefix');
-    // }
-
-    // const buffer = Buffer.from(bech32.fromWords(words));
-    // if (buffer.length !== DECODED_ADDRESS_LEN) {
-    //   throw Error('Wrong decoded address len');
-    // }
-
-    // return buffer;
   }
 
   public sign(secretKey: string, message: string): any {

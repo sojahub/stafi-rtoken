@@ -9,14 +9,14 @@
     padding-left: 0px;
     border-color: #23292f;
     box-shadow: none;
-    font-family: 'Helvetica-Bold';
+    font-family: 'Helvetica-Bold', sans-serif;
     input,
     .ant-input-disabled {
       background: #23292f;
       color: #00f3ab;
       font-size: 26px;
       // font-weight: bold;
-      font-family: 'Helvetica-Bold';
+      font-family: 'Helvetica-Bold', sans-serif;
       margin-right: 10px;
     }
     .ant-input-suffix {
@@ -32,7 +32,7 @@
     border-width: 0;
     color: #00f3ab;
     font-size: 26px;
-    font-family: 'Helvetica-Bold';
+    font-family: 'Helvetica-Bold', sans-serif;
     &::placeholder {
       color: rgba(0, 243, 171, 0.5);
     }
@@ -53,14 +53,14 @@
     padding-left: 0px;
     border-color: #23292f;
     box-shadow: none;
-    font-family: 'Helvetica-Bold';
+    font-family: 'Helvetica-Bold', sans-serif;
     input,
     .ant-input-disabled {
       background: #23292f;
       color: #00f3ab;
       font-size: 18px;
       // font-weight: bold;
-      font-family: 'Helvetica-Bold';
+      font-family: 'Helvetica-Bold', sans-serif;
       margin-right: 10px;
     }
     .ant-input::-webkit-input-placeholder {
@@ -79,7 +79,7 @@
     border-width: 0;
     color: #00f3ab;
     font-size: 18px;
-    font-family: 'Helvetica-Bold';
+    font-family: 'Helvetica-Bold', sans-serif;
     &::placeholder {
       color: rgba(0, 243, 171, 0.5);
       font-size: 26px;
