@@ -129,7 +129,7 @@ export default function Index(props: any) {
       {solAddress ? (
         <>
           <div>
-            <NewDataItem
+            {/* <NewDataItem
               rTokenName='FIS'
               icon={rasset_fis_svg}
               rTokenAmount='--'
@@ -137,7 +137,7 @@ export default function Index(props: any) {
               myStaked='--'
               apy={fisApr}
               onSwapClick={() => toSwap('FIS')}
-            />
+            /> */}
             <NewDataItem
               rTokenName='rSOL'
               icon={rasset_rsol_svg}

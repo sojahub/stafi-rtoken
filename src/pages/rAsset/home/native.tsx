@@ -257,7 +257,7 @@ export default function Index(props: any) {
       {fisAccount ? (
         <>
           <ListContainer>
-            <NewDataItem
+            {/* <NewDataItem
               rTokenName='FIS'
               icon={rasset_fis_svg}
               rTokenAmount='--'
@@ -269,7 +269,7 @@ export default function Index(props: any) {
                   rSymbol: 'FIS',
                 });
               }}
-            />
+            /> */}
             <NewDataItem
               rTokenName='rFIS'
               icon={rasset_rfis_svg}

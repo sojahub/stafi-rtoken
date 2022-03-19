@@ -215,7 +215,7 @@ export default function Index(props: any) {
       {metaMaskAddress ? (
         <>
           <div>
-            <NewDataItem
+            {/* <NewDataItem
               rTokenName='FIS'
               icon={rasset_fis_svg}
               rTokenAmount='--'
@@ -223,7 +223,7 @@ export default function Index(props: any) {
               myStaked='--'
               apy={fisApr}
               onSwapClick={() => toSwap('FIS')}
-            />
+            /> */}
             <NewDataItem
               rTokenName='rFIS'
               icon={rasset_rfis_svg}
