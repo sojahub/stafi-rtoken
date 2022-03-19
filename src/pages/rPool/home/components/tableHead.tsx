@@ -1,6 +1,7 @@
 import React from 'react';
 
 type Props = {
+  isCompleted: boolean;
   sortField?: string;
   sortWay?: string;
   onClick?: Function;
@@ -26,7 +27,7 @@ export default function Index(props: Props) {
       </div>
 
       <div className='col  col5' style={{ flex: '0 0 14%' }}>
-        Slippage
+        {props.isCompleted ? 'Ends on' : 'Slippage'}
       </div>
 
       <div className='col col2' style={{ flex: '0 0 14%' }}>

@@ -9,6 +9,7 @@ import poolAtrixIcon from 'src/assets/images/pool_atrix.svg';
 import { LPPoolName, LPType } from 'src/util/lpConfig';
 import numberUtil from 'src/util/numberUtil';
 import styled from 'styled-components';
+import { formatTimeMillis } from 'src/util/dateUtil';
 
 type Props = {
   type: LPType;
@@ -34,7 +35,7 @@ export default function Index(props: Props) {
       <div style={{ flex: '0 0 14%' }}>
         {props.pairIcon && (
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-            <img src={props.pairIcon} />
+            <img src={props.pairIcon} alt='icon' />
             <div style={{ textAlign: 'center', marginTop: '3px' }}>{props.pairValue}</div>
           </div>
         )}
@@ -43,14 +44,14 @@ export default function Index(props: Props) {
       <div style={{ flex: '0 0 14%' }}>
         {props.poolOn === LPPoolName.UNISWAP && (
           <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-            <img src={poolUniswapIcon} style={{ width: '20px', height: '20px', marginRight: '5px' }} />
+            <img src={poolUniswapIcon} style={{ width: '20px', height: '20px', marginRight: '5px' }} alt='icon' />
             <div style={{ fontSize: '14px' }}>Uniswap</div>
           </div>
         )}
 
         {props.poolOn === LPPoolName.PANCAKE && (
           <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-            <img src={poolPancakeIcon} style={{ width: '20px', height: '20px', marginRight: '5px' }} />
+            <img src={poolPancakeIcon} style={{ width: '20px', height: '20px', marginRight: '5px' }} alt='icon' />
 
             <div style={{ fontSize: '14px' }}>Pancake</div>
           </div>
@@ -58,7 +59,7 @@ export default function Index(props: Props) {
 
         {props.poolOn === LPPoolName.QUICKSWAP && (
           <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-            <img src={poolQuickSwapIcon} style={{ width: '20px', height: '20px', marginRight: '5px' }} />
+            <img src={poolQuickSwapIcon} style={{ width: '20px', height: '20px', marginRight: '5px' }} alt='icon' />
 
             <div style={{ fontSize: '14px' }}>QuickSwap</div>
           </div>
@@ -66,7 +67,7 @@ export default function Index(props: Props) {
 
         {props.poolOn === LPPoolName.ATRIX && (
           <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-            <img src={poolAtrixIcon} style={{ width: '20px', height: '20px', marginRight: '5px' }} />
+            <img src={poolAtrixIcon} style={{ width: '20px', height: '20px', marginRight: '5px' }} alt='icon' />
 
             <div style={{ fontSize: '14px' }}>Atrix</div>
           </div>
@@ -74,7 +75,7 @@ export default function Index(props: Props) {
 
         {props.poolOn === LPPoolName.CURVE && (
           <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-            <img src={poolCurveIcon} style={{ width: '20px', height: '20px', marginRight: '5px' }} />
+            <img src={poolCurveIcon} style={{ width: '20px', height: '20px', marginRight: '5px' }} alt='icon' />
 
             <div style={{ fontSize: '14px' }}>Curve</div>
           </div>
@@ -140,13 +141,35 @@ export default function Index(props: Props) {
         })}
       </div>
 
-      <div style={{ flex: '0 0 16%' }}>
-        {!isNaN(props.slippage) && !props.isEnd ? `$${numberUtil.amount_format(props.liquidity)}` : '--'}
-      </div>
+      {props.isEnd &&
+        props.apyList.map((item, i) => {
+          return (
+            <div key={i} style={{ flex: '0 0 16%', margin: '15px 0' }}>
+              {!isNaN(item.liquidity) ? `$${numberUtil.amount_format(item.liquidity)}` : '--'}
+            </div>
+          );
+        })}
 
-      <div style={{ flex: '0 0 14%' }}>
-        {!isNaN(props.slippage) && !props.isEnd ? `${Number(props.slippage).toFixed(2)}%` : '--'}
-      </div>
+      {!props.isEnd && (
+        <div style={{ flex: '0 0 16%' }}>
+          {!isNaN(props.liquidity) ? `$${numberUtil.amount_format(props.liquidity)}` : '--'}
+        </div>
+      )}
+
+      {props.isEnd &&
+        props.apyList.map((item, i) => {
+          return (
+            <div key={i} style={{ flex: '0 0 16%', margin: '15px 0' }}>
+              {!isNaN(Number(item.endTime)) ? `${formatTimeMillis(Number(item.endTime) * 1000, 'DD.MM.yyyy')}` : '--'}
+            </div>
+          );
+        })}
+
+      {!props.isEnd && (
+        <div style={{ flex: '0 0 14%' }}>
+          {!isNaN(props.slippage) && !props.isEnd ? `${Number(props.slippage).toFixed(2)}%` : '--'}
+        </div>
+      )}
 
       <div style={{ flex: '0 0 14%' }}>
         {props.type === LPType.ADD_LIQUIDITY ? (

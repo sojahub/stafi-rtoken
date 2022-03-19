@@ -4,6 +4,8 @@
 //   var minutes = Math.floor((sec_num - hours * 3600) / 60);
 //   var seconds = sec_num - hours * 3600 - minutes * 60;
 
+import moment from 'moment';
+
 //   // if (hours < 10) {
 //   //   hours = '0' + hours;
 //   // }
@@ -39,3 +41,7 @@ export const formatDuration = (milliSeconds) => {
   }
   return `${days}:${hours}:${minutes}:${seconds}`;
 };
+
+export function formatTimeMillis(timeMillis, template = 'yyyy-MM-dd HH:mm:ss') {
+  return moment(timeMillis).format(template);
+}

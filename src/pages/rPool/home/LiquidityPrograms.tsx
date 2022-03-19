@@ -161,7 +161,7 @@ export default function LiquidityPrograms(props: any) {
       avgSlippage: count > 0 ? numberUtil.handleAmountRoundToFixed(slippageSum / count, 2) : '--',
       totalLiquidity: count > 0 ? numberUtil.handleAmountRoundToFixed(liquiditySum, 2) : '--',
     };
-  }, [ethCurveData, atomSifData, lpList]);
+  }, [ethCurveData, atomSifData, lpList, solData]);
 
   return (
     <Card className='stafi_rpool_home_card'>
@@ -216,6 +216,7 @@ export default function LiquidityPrograms(props: any) {
 
       <div className='table'>
         <TableHead
+          isCompleted={selectedTab === 'Completed'}
           sortField={sortField}
           sortWay={sortWay}
           onClick={(field: any) => {
