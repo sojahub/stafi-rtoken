@@ -61,7 +61,7 @@ export default function Index() {
               overlayClassName='doubt_overlay'
               placement='topLeft'
               overlayInnerStyle={{ color: '#A4A4A4' }}
-              title={'xxxxx'}>
+              title={'The amount of your staked token'}>
               <img src={doubt} alt='tooltip' />
             </Tooltip>
           </HContainer>

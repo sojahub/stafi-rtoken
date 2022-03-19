@@ -21,9 +21,9 @@ const account = (type: string) => {
       }
       return true;
     case Symbol.Atom:
-      if (getLocalStorageItem(Keys.AtomAccountKey) == null || getLocalStorageItem(Keys.FisAccountKey) == null) {
-        return '/rATOM/home';
-      }
+      // if (getLocalStorageItem(Keys.AtomAccountKey) == null || getLocalStorageItem(Keys.FisAccountKey) == null) {
+      //   return '/rATOM/home';
+      // }
       return true;
     case Symbol.Dot:
       if (getLocalStorageItem(Keys.DotAccountKey) == null && getLocalStorageItem(Keys.FisAccountKey) == null) {

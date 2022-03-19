@@ -1,13 +1,15 @@
 import { Tooltip } from 'antd';
-import { useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useEffect, useMemo, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import metamask from 'src/assets/images/metamask.png';
 import doubt from 'src/assets/images/doubt.svg';
 import rSOL_svg from 'src/assets/images/rSOL.svg';
 import rATOM_svg from 'src/assets/images/r_atom.svg';
 import rBnb_svg from 'src/assets/images/r_bnb.svg';
+import keplr from 'src/assets/images/keplr.png';
 import rDOT_svg from 'src/assets/images/r_dot.svg';
+import phantom from 'src/assets/images/phantom.png';
 import rETH_svg from 'src/assets/images/r_eth.svg';
 import rFIS_svg from 'src/assets/images/r_fis.svg';
 import rKSM_svg from 'src/assets/images/r_ksm.svg';
@@ -16,12 +18,35 @@ import { RootState } from 'src/store';
 import styled from 'styled-components';
 import Button from 'src/shared/components/button/connect_button';
 import { useMetaMaskAccount } from 'src/hooks/useMetaMaskAccount';
+import {
+  connectAtomjs,
+  connectPolkadot,
+  connectPolkadot_fis,
+  connectPolkadot_ksm,
+  connectSoljs,
+  initMetaMaskAccount,
+} from 'src/features/globalClice';
+import Modal from 'src/shared/components/modal/connectModal';
+import Page_FIS from '../rATOM/selectWallet_rFIS/index';
+import config from 'src/config';
+import { api } from 'src/util/http';
 
 const stakeList = ['ETH', 'FIS', 'BNB', 'DOT', 'ATOM', 'SOL', 'MATIC', 'KSM'];
 
 export const TokenList = () => {
+  const dispatch = useDispatch();
   const history = useHistory();
   const { metaMaskAddress } = useMetaMaskAccount();
+  const [selectFisVisible, setSelectFisVisible] = useState(false);
+
+  const { fisAccount, atomAccounts, solAddress, ksmAccount } = useSelector((state: RootState) => {
+    return {
+      fisAccount: state.FISModule.fisAccount,
+      atomAccounts: state.rATOMModule.atomAccounts,
+      solAddress: state.rSOLModule.solAddress,
+      ksmAccount: state.rKSMModule.ksmAccount,
+    };
+  });
 
   const hasDotAcount = useSelector((state: any) => {
     if (state.FISModule.fisAccount && state.rDOTModule.dotAccount) {
@@ -31,14 +56,11 @@ export const TokenList = () => {
     }
   });
 
-  const { fisAccount } = useSelector((state: RootState) => {
-    return {
-      fisAccount: state.FISModule.fisAccount,
-      atomAccount: state.rATOMModule.atomAccount,
-      solAddress: state.rSOLModule.solAddress,
-    };
-  });
-  const [connectExtensionConfig, setConnectExtensionConfig] = useState({
+  const hasAtomAccount = useMemo(() => {
+    return atomAccounts && atomAccounts.length >= 1;
+  }, [atomAccounts]);
+
+  const [connectExtensionConfig, setConnectExtensionConfig] = useState<any>({
     polkadot: {
       display: false,
       connected: false,
@@ -57,6 +79,17 @@ export const TokenList = () => {
       ksmApr: state.rKSMModule.stakerApr,
     };
   });
+
+  const showConnectWallet = useMemo(() => {
+    return (
+      (connectExtensionConfig.connectFis && !fisAccount) ||
+      (connectExtensionConfig.connectDot && !hasDotAcount) ||
+      (connectExtensionConfig.connectMetamask && !metaMaskAddress) ||
+      (connectExtensionConfig.connectKeplr && !hasAtomAccount) ||
+      (connectExtensionConfig.connectPhantom && !solAddress) ||
+      (connectExtensionConfig.connectKsm && !ksmAccount)
+    );
+  }, [connectExtensionConfig, fisAccount, hasDotAcount, metaMaskAddress, hasAtomAccount, solAddress, ksmAccount]);
 
   const getIcon = (tokenName: string) => {
     switch (tokenName) {
@@ -80,6 +113,56 @@ export const TokenList = () => {
         break;
     }
     return null;
+  };
+
+  useEffect(() => {
+    (async () => {
+      const url = `${config.api()}/stafi/v1/webapi/rtoken/stakevalues`;
+      const res = await api.post(url, {
+        rsymbols: ['reth', 'rfis', 'rdot', 'rksm', 'ratom', 'rmatic', 'rsol', 'rbnb'],
+      });
+    })();
+  }, []);
+
+  const clickStake = (tokenName: string) => {
+    if (tokenName === 'ETH') {
+      if (!metaMaskAddress) {
+        setConnectExtensionConfig({ connectMetamask: true });
+        return;
+      }
+    } else if (tokenName === 'FIS') {
+      if (!fisAccount) {
+        setConnectExtensionConfig({ connectFis: true });
+        return;
+      }
+    } else if (tokenName === 'DOT') {
+      if (!hasDotAcount) {
+        setConnectExtensionConfig({ connectDot: true });
+        return;
+      }
+    } else if (tokenName === 'ATOM') {
+      if (!hasAtomAccount || !fisAccount) {
+        setConnectExtensionConfig({ connectKeplr: true, connectFis: true });
+        return;
+      }
+    } else if (tokenName === 'SOL') {
+      if (!solAddress || !fisAccount) {
+        setConnectExtensionConfig({ connectPhantom: true, connectFis: true });
+        return;
+      }
+    } else if (tokenName === 'MATIC') {
+      if (!metaMaskAddress || !fisAccount) {
+        setConnectExtensionConfig({ connectMetamask: true, connectFis: true });
+        return;
+      }
+    } else if (tokenName === 'KSM') {
+      if (!ksmAccount || !fisAccount) {
+        setConnectExtensionConfig({ connectKsm: true });
+        return;
+      }
+    }
+
+    history.push(`/r${tokenName}/home`);
   };
 
   return (
@@ -113,28 +196,91 @@ export const TokenList = () => {
           alignItems: 'center',
           position: 'relative',
         }}>
-        <ExtensionContainer>
-          <div style={{ display: 'flex', flexDirection: 'column' }}>
-            <Button
-              icon={rDOT_svg}
-              onClick={() => {
-                // PubSub.publish('connectDotWallet');
-              }}>
-              Connect to Polkadotjs extension
-            </Button>
+        {showConnectWallet && (
+          <ExtensionContainer onClick={() => {}}>
+            <div style={{ display: 'flex', flexDirection: 'column' }}>
+              {connectExtensionConfig.connectFis && (
+                <Button
+                  disabled={fisAccount}
+                  icon={rDOT_svg}
+                  onClick={() => {
+                    dispatch(
+                      connectPolkadot_fis(() => {
+                        setSelectFisVisible(true);
+                      }),
+                    );
+                  }}>
+                  Connect to Polkadotjs extension
+                </Button>
+              )}
 
-            <Button
-              disabled
-              icon={metamask}
-              onClick={() => {
-                // PubSub.publish('connectDotWallet');
-              }}>
-              Metamask connected
-            </Button>
-          </div>
-        </ExtensionContainer>
+              {connectExtensionConfig.connectDot && (
+                <Button
+                  disabled={hasDotAcount}
+                  icon={rDOT_svg}
+                  onClick={() => {
+                    dispatch(
+                      connectPolkadot(() => {
+                        history.push('/rDOT/wallet');
+                      }),
+                    );
+                  }}>
+                  Connect to Polkadotjs extension
+                </Button>
+              )}
 
-        <div style={{ opacity: 0.3 }}>
+              {connectExtensionConfig.connectKsm && (
+                <Button
+                  disabled={ksmAccount && fisAccount}
+                  icon={rDOT_svg}
+                  onClick={() => {
+                    dispatch(
+                      connectPolkadot_ksm(() => {
+                        history.push('/rKSM/wallet');
+                      }),
+                    );
+                  }}>
+                  Connect to Polkadotjs extension
+                </Button>
+              )}
+
+              {connectExtensionConfig.connectMetamask && (
+                <Button
+                  disabled={metaMaskAddress}
+                  icon={metamask}
+                  onClick={() => {
+                    dispatch(initMetaMaskAccount());
+                  }}>
+                  Connect to Metamask
+                </Button>
+              )}
+
+              {connectExtensionConfig.connectKeplr && (
+                <Button
+                  disabled={hasAtomAccount}
+                  icon={keplr}
+                  onClick={() => {
+                    dispatch(connectAtomjs(() => {}));
+                  }}>
+                  Connect to Keplr
+                </Button>
+              )}
+
+              {connectExtensionConfig.connectPhantom && (
+                <Button
+                  disabled={solAddress}
+                  icon={phantom}
+                  onClick={() => {
+                    dispatch(connectSoljs());
+                  }}>
+                  Connect to Phantom
+                </Button>
+              )}
+            </div>
+          </ExtensionContainer>
+        )}
+
+        <div style={{ opacity: showConnectWallet ? 0.3 : 1 }}>
           <HContainer
             style={{
               width: '660px',
@@ -167,12 +313,12 @@ export const TokenList = () => {
                 width: '134px',
               }}>
               <HContainer style={{ alignItems: 'flex-start' }}>
-                <div style={{ marginRight: '2px' }}>Liquidity</div>
+                <div style={{ marginRight: '2px' }}>Staked Value</div>
                 <Tooltip
                   overlayClassName='doubt_overlay'
                   placement='topLeft'
                   overlayInnerStyle={{ color: '#A4A4A4' }}
-                  title={'xxxxx'}>
+                  title={'The amount of your staked token'}>
                   <img src={doubt} alt='tooltip' />
                 </Tooltip>
               </HContainer>
@@ -222,7 +368,7 @@ export const TokenList = () => {
 
               <StakeButton
                 onClick={() => {
-                  history.push(`/r${tokenName}/home`);
+                  clickStake(tokenName);
                 }}>
                 Stake
               </StakeButton>
@@ -230,6 +376,16 @@ export const TokenList = () => {
           ))}
         </div>
       </div>
+
+      <Modal visible={selectFisVisible}>
+        <Page_FIS
+          location={{}}
+          type='header'
+          onClose={() => {
+            setSelectFisVisible(false);
+          }}
+        />
+      </Modal>
     </div>
   );
 };

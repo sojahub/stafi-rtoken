@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Redirect } from 'react-router';
 import keplr from 'src/assets/images/keplr.png';
@@ -21,7 +21,11 @@ export default function Inde(props: any) {
       atomAccounts: state.rATOMModule.atomAccounts,
     };
   });
-  if (fisAccount && atomAccount) {
+  const hasAtomAccount = useMemo(() => {
+    return atomAccounts && atomAccounts.length >= 1;
+  }, [atomAccounts]);
+
+  if (fisAccount && hasAtomAccount) {
     return <Redirect to='/rATOM/type' />;
   }
   return (
@@ -35,7 +39,7 @@ export default function Inde(props: any) {
       onIntroUrl=''>
       <Button
         width={'380px'}
-        disabled={!!atomAccount}
+        disabled={hasAtomAccount}
         icon={keplr}
         onClick={() => {
           dispatch(
