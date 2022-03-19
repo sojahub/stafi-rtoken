@@ -388,6 +388,17 @@ const numberUtil = {
     }
     return percentage * 100 + '%';
   },
+  amountToReadable(input) {
+    if (isNaN(Number(input))) {
+      return '--';
+    }
+    if (Number(input) < 100000) {
+      return this.number_format(input, 2, '.', ',');
+    } else {
+      const divide = Number(input) / 1000000;
+      return this.number_format(divide, 2, '.', ',') + 'M';
+    }
+  },
   mul: function (x, y) {
     return multiply(x, y);
   },

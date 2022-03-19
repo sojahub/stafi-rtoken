@@ -30,6 +30,7 @@ import Modal from 'src/shared/components/modal/connectModal';
 import Page_FIS from '../rATOM/selectWallet_rFIS/index';
 import config from 'src/config';
 import { api } from 'src/util/http';
+import numberUtil from 'src/util/numberUtil';
 
 const stakeList = ['ETH', 'FIS', 'BNB', 'DOT', 'ATOM', 'SOL', 'MATIC', 'KSM'];
 
@@ -60,12 +61,29 @@ export const TokenList = () => {
     return atomAccounts && atomAccounts.length >= 1;
   }, [atomAccounts]);
 
-  const [connectExtensionConfig, setConnectExtensionConfig] = useState<any>({
-    polkadot: {
-      display: false,
-      connected: false,
-    },
-  });
+  const [connectExtensionConfig, setConnectExtensionConfig] = useState<any>({});
+
+  const [stakeValueList, setStakeValueList] = useState([]);
+
+  const tokenStakeValueMap = useMemo(() => {
+    const obj = {};
+    stakeValueList.forEach((item) => {
+      obj[item.rsymbol.slice(1).toUpperCase()] = numberUtil.amountToReadable(item.stakeValue);
+    });
+    return obj;
+  }, [stakeValueList]);
+
+  useEffect(() => {
+    (async () => {
+      const url = `${config.api()}/stafi/v1/webapi/rtoken/stakevalues`;
+      const res = await api.post(url, {
+        rsymbols: ['reth', 'rfis', 'rdot', 'rksm', 'ratom', 'rmatic', 'rsol', 'rbnb'],
+      });
+      if (res.status === '80000') {
+        setStakeValueList(res.data?.stakeList || []);
+      }
+    })();
+  }, []);
 
   const { ethApr, fisApr, bnbApr, dotApr, atomApr, solApr, maticApr, ksmApr } = useSelector((state: RootState) => {
     return {
@@ -114,15 +132,6 @@ export const TokenList = () => {
     }
     return null;
   };
-
-  useEffect(() => {
-    (async () => {
-      const url = `${config.api()}/stafi/v1/webapi/rtoken/stakevalues`;
-      const res = await api.post(url, {
-        rsymbols: ['reth', 'rfis', 'rdot', 'rksm', 'ratom', 'rmatic', 'rsol', 'rbnb'],
-      });
-    })();
-  }, []);
 
   const clickStake = (tokenName: string) => {
     if (tokenName === 'ETH') {
@@ -314,13 +323,13 @@ export const TokenList = () => {
               }}>
               <HContainer style={{ alignItems: 'flex-start' }}>
                 <div style={{ marginRight: '2px' }}>Staked Value</div>
-                <Tooltip
+                {/* <Tooltip
                   overlayClassName='doubt_overlay'
                   placement='topLeft'
                   overlayInnerStyle={{ color: '#A4A4A4' }}
                   title={'The amount of your staked token'}>
                   <img src={doubt} alt='tooltip' />
-                </Tooltip>
+                </Tooltip> */}
               </HContainer>
             </TableHeader>
 
@@ -363,7 +372,7 @@ export const TokenList = () => {
                 style={{
                   width: '134px',
                 }}>
-                83.23M
+                {tokenStakeValueMap[tokenName] || '--'}
               </TableContent>
 
               <StakeButton
