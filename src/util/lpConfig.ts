@@ -6,6 +6,7 @@ const lpConfig = {
   rDOTBSCLpContract1: '0xc1f6d716d5d3a6cc53ce9387b03cf2d777779502',
   rEthLpContract: '0xF9440930043eb3997fc70e1339dBb11F341de7A8',
   rETHLpContract2: () => {
+    return '0x5f49da032defe35489ddb205f3dc66d8a76318b3';
     if (!isdev()) {
       return '0x5f49da032defe35489ddb205f3dc66d8a76318b3';
     }

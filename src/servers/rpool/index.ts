@@ -246,7 +246,7 @@ export default class Index {
     const acts: any = [];
     const stafiApi = await stafiServer.createStafiApi();
     const rethActLatestCycle = await stafiApi.query.rClaim.rEthActLatestCycle();
-    if (rethActLatestCycle == 0) {
+    if (rethActLatestCycle === 0) {
       console.log('empty reth mint info');
     } else {
       const lastHeader = await stafiApi.rpc.chain.getHeader();
