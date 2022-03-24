@@ -424,36 +424,28 @@ const config = {
     if (!isdev()) {
       return 'cosmoshub-4';
     } else {
-      return 'StaFi';
+      return 'cosmos-stafi-1';
     }
   },
   rAtomCosmosChainRpc: () => {
     if (!isdev()) {
       return 'https://cosmos-rpc1.stafi.io';
     } else {
-      return 'https://testcosmosrpc.wetez.io';
+      return 'https://test-cosmos-rpc1.stafihub.io';
     }
   },
   rAtomCosmosChainRest: () => {
     if (!isdev()) {
       return 'https://cosmos-rpc1.stafi.io';
     } else {
-      return 'https://testcosmosrest.wetez.io';
+      return 'https://test-cosmos-rest1.stafihub.io';
     }
   },
   rAtomDenom: () => {
-    if (!isdev()) {
-      return 'uatom';
-    } else {
-      return 'stake';
-    }
+    return 'uatom';
   },
   rAtomCoinDenom: () => {
-    if (!isdev()) {
-      return 'ATOM';
-    } else {
-      return 'STAKE';
-    }
+    return 'ATOM';
   },
   rAtomAignature: '0x00',
   txHashUrl: (type: rSymbol, txHash: string) => {

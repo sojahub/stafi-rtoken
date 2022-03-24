@@ -20,7 +20,7 @@ export default class ExtensionDapp extends CosmosKeyring{
               // Chain-id of the Cosmos SDK chain.
               chainId: config.rAtomChainId(),
               // The name of the chain to be displayed to the user.
-              chainName: "Cosmos-StaFi",
+              chainName: "StaFi-Cosmos-Testnet",
               // RPC endpoint of the chain.
               rpc: config.rAtomCosmosChainRpc(),
               // REST endpoint of the chain.
