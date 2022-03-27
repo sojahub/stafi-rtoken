@@ -1,7 +1,6 @@
 import { useMemo, useState } from 'react';
 import TradeModal from 'src/components/modal/TradeModal';
 import styled from 'styled-components';
-import arrowDown from 'src/assets/images/arrow_down_white.svg';
 import { useLastEraReward } from 'src/hooks/useEraReward';
 import { Tooltip } from 'antd';
 
@@ -20,17 +19,23 @@ export const NewDataItem = (props: NewDataItemProps) => {
   const [tradeModalVisible, setTradeModalVisible] = useState(false);
   const { lastEraReward } = useLastEraReward(props.source, props.rTokenName);
 
-  const displayLastEraReward = useMemo(() => {
+  const [displayLastEraReward, rewardType] = useMemo(() => {
     if (isNaN(Number(lastEraReward))) {
-      return '--';
+      return ['--', 0];
     }
     if (Number(lastEraReward) === 0) {
-      return '+0.000';
+      return ['0.000', 0];
     }
-    if (Number(lastEraReward) < 0.001) {
-      return '<0.001';
+    if (Number(lastEraReward) > -0.001 && Number(lastEraReward) < 0) {
+      return ['-<0.001', -1];
     }
-    return '+' + Math.round(1000 * Number(lastEraReward)) / 1000;
+    if (Number(lastEraReward) < 0) {
+      return [Math.round(1000 * Number(lastEraReward)) / 1000, -1];
+    }
+    if (Number(lastEraReward) < 0.001 && Number(lastEraReward) > 0) {
+      return ['+<0.001', 1];
+    }
+    return ['+' + Math.round(1000 * Number(lastEraReward)) / 1000, 1];
   }, [lastEraReward]);
 
   return (
@@ -57,7 +62,13 @@ export const NewDataItem = (props: NewDataItemProps) => {
                 placement='topLeft'
                 overlayInnerStyle={{ color: '#A4A4A4' }}
                 title={`The increased amount of Staked ${props.rTokenName.slice(1)} within the last 24h.`}>
-                <LastEraReward>{displayLastEraReward}</LastEraReward>
+                <LastEraReward
+                  style={{
+                    color: rewardType === 0 ? '#818181' : rewardType > 1 ? '#00f3ab' : '#FF6565',
+                    borderBottomColor: rewardType === 0 ? '#00000000' : rewardType > 1 ? '#00f3ab' : '#FF6565',
+                  }}>
+                  {displayLastEraReward}
+                </LastEraReward>
               </Tooltip>
             )}
           </HContainer>
@@ -80,24 +91,13 @@ export const NewDataItem = (props: NewDataItemProps) => {
         <HContainer>
           <StakeButton
             style={{
-              opacity: props.rTokenName === 'rSOL' ? 0.5 : 1,
-              cursor: props.rTokenName === 'rSOL' ? 'not-allowed' : 'pointer',
+              opacity: 1,
+              cursor: 'pointer',
             }}
             onClick={() => {
-              if (props.rTokenName === 'rSOL') {
-                return;
-              }
               setTradeModalVisible(true);
             }}>
             <div>Trade</div>
-            <img
-              src={arrowDown}
-              alt='trade'
-              style={{
-                width: '10px',
-                marginLeft: '4px',
-              }}
-            />
           </StakeButton>
           <StakeButton
             style={{

@@ -11,6 +11,7 @@ import FeeStationServer from 'src/servers/feeStation';
 import keyring from 'src/servers/index';
 import RpcServer, { pageCount } from 'src/servers/rpc/index';
 import { localStorage_currentEthPool, localStorage_poolPubKey, stafi_uuid } from 'src/util/common';
+import numberUtil from 'src/util/numberUtil';
 import NumberUtil from 'src/util/numberUtil';
 import StringUtil from 'src/util/stringUtil';
 import { AppThunk } from '../store';
@@ -348,7 +349,7 @@ export const getStakerApr = (): AppThunk => async (dispatch, getState) => {
   const result = await ethServer.getArp(1);
   if (result.status == '80000') {
     if (result.data && result.data.stakerApr) {
-      const apr = result.data.stakerApr + '%';
+      const apr = numberUtil.amount_format(result.data.stakerApr, 1) + '%';
       dispatch(setStakerApr(apr));
     }
   }

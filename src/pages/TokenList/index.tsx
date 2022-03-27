@@ -178,35 +178,25 @@ export const TokenList = () => {
     <div>
       <TabContainer>
         <TitleContainer>
-          <TabTitle>Stake</TabTitle>
+          <TabTitle>STAKE</TabTitle>
 
           <TabIndicator />
-        </TitleContainer>
-
-        <TitleContainer
-          style={{
-            marginLeft: '40px',
-          }}
-          onClick={() => history.push('/rAsset/home')}>
-          <TabTitle
-            style={{
-              color: 'white',
-            }}>
-            Dashboard
-          </TabTitle>
         </TitleContainer>
       </TabContainer>
 
       <div
         style={{
-          marginTop: '50px',
+          marginTop: '40px',
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
           position: 'relative',
         }}>
         {showConnectWallet && (
-          <ExtensionContainer onClick={() => {}}>
+          <ExtensionContainer
+            onClick={() => {
+              setConnectExtensionConfig({});
+            }}>
             <div style={{ display: 'flex', flexDirection: 'column' }}>
               {connectExtensionConfig.connectFis && (
                 <Button

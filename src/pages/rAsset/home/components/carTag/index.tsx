@@ -68,7 +68,11 @@ export default function Index(props: Props) {
       </div>
 
       <div
-        className={`${!selectingNative && 'tag_active'}`}
+        className={`${
+          !selectingNative && selectedRTokenData && selectedRTokenData.title === 'ERC20' && 'tag_active_right_erc20'
+        } ${
+          !selectingNative && selectedRTokenData && selectedRTokenData.title === 'BEP20' && 'tag_active_right_bep20'
+        } ${!selectingNative && selectedRTokenData && selectedRTokenData.title === 'SPL' && 'tag_active_right_spl'}`}
         onClick={() => {
           history.push(`/rAsset/home/${selectedRTokenData && selectedRTokenData.type}`);
         }}>

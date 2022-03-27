@@ -35,18 +35,18 @@ import Item from './item';
 
 const siderData = [
   {
+    icon: rToken_svg,
+    selectedIcon: selected_rToken_svg,
+    text: 'rToken',
+    urlKeywords: ['/tokenList', '/staker/', '/type'],
+    url: '/tokenList',
+  },
+  {
     icon: rAsset_svg,
     selectedIcon: selected_rAsset_svg,
     text: 'rAsset',
     urlKeywords: '/rAsset/home',
     url: '/rAsset/home/native',
-  },
-  {
-    icon: rToken_svg,
-    selectedIcon: selected_rToken_svg,
-    text: 'rToken',
-    urlKeywords: '/tokenList',
-    url: '/tokenList',
   },
   {
     icon: rDEX_svg,
@@ -137,6 +137,20 @@ export default function Index(props: Props) {
   const history = useHistory();
   // const [selectIndex,setSelectIndex]=useState(0);
 
+  const isSelected = (urlKeywords: string | string[]) => {
+    if (typeof urlKeywords === 'string') {
+      return history.location.pathname.includes(urlKeywords);
+    } else {
+      let match = false;
+      urlKeywords.forEach((keyword) => {
+        if (history.location.pathname.includes(keyword)) {
+          match = true;
+        }
+      });
+      return match;
+    }
+  };
+
   return (
     <div className='stafi_left_master_sider'>
       <div className='logo_panel'>
@@ -154,7 +168,7 @@ export default function Index(props: Props) {
               selectedIcon={item.selectedIcon}
               text={item.text}
               url={item.url}
-              selected={history.location.pathname.includes(item.urlKeywords)}
+              selected={isSelected(item.urlKeywords)}
               onClick={() => {
                 dispatch(
                   trackEvent('clik_nav_link', {

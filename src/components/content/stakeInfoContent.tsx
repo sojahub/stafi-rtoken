@@ -68,7 +68,7 @@ export default function Index(props: Props) {
       !qs.parse(history.location.search.slice(1)).platform
     ) {
       const defaultPlatform = props.type === 'rETH' ? 'ERC20' : 'Native';
-      history.push(`${history.location.pathname}?platform=${defaultPlatform}`);
+      history.replace(`${history.location.pathname}?platform=${defaultPlatform}`);
     }
   }, [history, props.type]);
 
@@ -80,7 +80,7 @@ export default function Index(props: Props) {
             type={props.type}
             currentPlatform={props.platform}
             onClick={(platform: string) => {
-              history.push(history.location.pathname + `?platform=${platform}`);
+              history.replace(history.location.pathname + `?platform=${platform}`);
             }}
           />
         </div>
@@ -122,7 +122,7 @@ export default function Index(props: Props) {
                   ? '<0.0001'
                   : NumberUtil.handleAmountFloorToFixed(props.tokenAmount * props.ratio, 3)
                 : '--'}{' '}
-              {props.type.slice(1)}
+              {/* {props.type.slice(1)} */}
             </Text>
           </InfoItem>
 
@@ -151,7 +151,7 @@ export default function Index(props: Props) {
                   ? '<0.0001'
                   : NumberUtil.handleAmountFloorToFixed(props.totalUnbonding, 3)
                 : '--'}{' '}
-              {props.type.slice(1)}
+              {/* {props.type.slice(1)} */}
             </Text>
           </InfoItem>
 
@@ -172,7 +172,7 @@ export default function Index(props: Props) {
                   ? '<0.000001'
                   : NumberUtil.handleAmountFloorToFixed(lastEraReward, 6)
                 : '--'}{' '}
-              {props.type.slice(1)}
+              {/* {props.type.slice(1)} */}
             </Text>
           </InfoItem>
         </InfoContainer>

@@ -1,10 +1,11 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Redirect } from 'react-router';
+import { Redirect, useHistory } from 'react-router';
 import TypeCard from 'src/components/card/typeCard';
 
 export default function Index(props: any) {
   const dispatch = useDispatch();
+  const history = useHistory();
   const { totalStakedAmount, stakerApr, tokenAmount } = useSelector((state: any) => {
     return {
       totalStakedAmount: state.rETHModule.totalStakedAmount,
@@ -15,7 +16,9 @@ export default function Index(props: any) {
   });
 
   if (!isNaN(Number(tokenAmount)) && Number(tokenAmount) !== 0) {
-    return <Redirect to='/rETH/staker/info' />;
+    history.replace('/rETH/staker/info');
+    return null;
+    // return <Redirect to='/rETH/staker/info' />;
   }
 
   return (

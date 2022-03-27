@@ -43,7 +43,7 @@ export function usePlatform(type: 'rDOT' | 'rETH' | 'rFIS' | 'rKSM' | 'rATOM' | 
       history.location.search.length < 1 ||
       !qs.parse(history.location.search.slice(1)).platform
     ) {
-      history.push(`${history.location.pathname}?platform=${type === 'rETH' ? 'ERC20' : 'Native'}`);
+      history.replace(`${history.location.pathname}?platform=${type === 'rETH' ? 'ERC20' : 'Native'}`);
     } else {
       setPlatform(qs.parse(history.location.search.slice(1)).platform as string);
     }
@@ -51,7 +51,7 @@ export function usePlatform(type: 'rDOT' | 'rETH' | 'rFIS' | 'rKSM' | 'rATOM' | 
 
   useEffect(() => {
     if (platformArr.indexOf(platform) < 0) {
-      history.push(`${history.location.pathname}?platform=${type === 'rETH' ? 'ERC20' : 'Native'}`);
+      history.replace(`${history.location.pathname}?platform=${type === 'rETH' ? 'ERC20' : 'Native'}`);
     }
   }, [platformArr, platform, history, type]);
 

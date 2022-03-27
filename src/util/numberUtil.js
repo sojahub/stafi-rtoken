@@ -392,8 +392,8 @@ const numberUtil = {
     if (isNaN(Number(input))) {
       return '--';
     }
-    if (Number(input) < 100000) {
-      return this.number_format(input, 2, '.', ',');
+    if (Number(input) < 1000000) {
+      return this.number_format(input, 0, '.', ',');
     } else {
       const divide = Number(input) / 1000000;
       return this.number_format(divide, 2, '.', ',') + 'M';

@@ -487,6 +487,12 @@ const config = {
   curve: {
     rethURL: 'https://curve.fi/reth',
   },
+  sifchain: {
+    ratomURL: 'https://dex.sifchain.finance/#/swap?from=cratom&to=rowan',
+  },
+  atrix: {
+    rsolURL: 'https://app.atrix.finance/#/swap?from=7hUdUTkJLwdcmt3jSEeqx4ep91sm1XwBxMDaJae6bD5D',
+  },
   uniswap: {
     rethURL:
       'https://app.uniswap.org/#/swap?inputCurrency=0x9559aaa82d9649c7a7b220e7c461d2e74c9a3593&outputCurrency=ETH',
@@ -513,6 +519,17 @@ const config = {
   quickswap: {
     rmaticURL:
       'https://quickswap.exchange/#/swap?inputCurrency=0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270&outputCurrency=0x9f28e2455f9ffcfac9ebd6084853417362bc5dbb',
+  },
+  rDex: {
+    fisURL: 'https://rdex.finance?first=FIS',
+    rethURL: 'https://rdex.finance?first=rETH&second=FIS',
+    rbnbURL: 'https://rdex.finance?first=rBNB&second=FIS',
+    rfisURL: 'https://rdex.finance?first=rFIS&second=FIS',
+    rdotURL: 'https://rdex.finance?first=rDOT&second=FIS',
+    rksmURL: 'https://rdex.finance?first=rKSM&second=FIS',
+    ratomURL: 'https://rdex.finance?first=rATOM&second=FIS',
+    rsolURL: 'https://rdex.finance?first=rSOL&second=FIS',
+    rmaticURL: 'https://rdex.finance?first=rMATIC&second=FIS',
   },
   commonAbi: () => {
     const abi =

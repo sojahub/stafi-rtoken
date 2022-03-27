@@ -625,7 +625,22 @@ export default function Index(props: any) {
 
       <div>
         <div className='row' style={{ marginBottom: 0 }}>
-          <div className={'asset_selector_container'}>
+          <div>
+            <TypeSelector
+              popTitle={fromTypeData ? 'Select a ' + fromTypeData.content + ' rToken' : ''}
+              selectDataSource={selectDataSource}
+              selectedData={tokenType}
+              selectedTitle={tokenType ? tokenType.title : ''}
+              selectedDescription={tokenType ? '' : 'Choose a token'}
+              onSelectChange={(e: SelectorType) => {
+                setFormAmount('');
+                setAddress('');
+                setTokenType({ ...e });
+              }}
+            />
+          </div>
+
+          <div className={'asset_selector_container'} style={{ marginTop: '15px' }}>
             <div className={'selector_container'}>
               <TypeSelector
                 popTitle={'Select a Chain'}
@@ -656,20 +671,6 @@ export default function Index(props: any) {
                 onSelectChange={changeDestChain}
               />
             </div>
-          </div>
-
-          <div style={{ marginTop: '15px' }}>
-            <TypeSelector
-              popTitle={fromTypeData ? 'Select a ' + fromTypeData.content + ' rToken' : ''}
-              selectDataSource={selectDataSource}
-              selectedData={tokenType}
-              selectedTitle={tokenType ? tokenType.title : ''}
-              onSelectChange={(e: SelectorType) => {
-                setFormAmount('');
-                setAddress('');
-                setTokenType({ ...e });
-              }}
-            />
           </div>
 
           <div className={'input_container'} style={{ marginTop: '20px' }}>

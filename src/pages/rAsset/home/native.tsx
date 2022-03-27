@@ -250,7 +250,7 @@ export default function Index(props: any) {
       dispatch(bnb_getUnbondCommission());
       dispatch(eth_getUnbondCommission());
     }
-  }, [fisAccount && fisAccount.address]);
+  }, [fisAccount && fisAccount.address, dispatch]);
 
   return (
     <div>

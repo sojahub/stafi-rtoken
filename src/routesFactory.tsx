@@ -1100,7 +1100,7 @@ const routesFactory = (role?: any) => {
         },
         {
           path: '*',
-          component: () => <Redirect to='/rAsset/home' />,
+          component: () => <Redirect to='/tokenList' />,
         },
       ],
     },

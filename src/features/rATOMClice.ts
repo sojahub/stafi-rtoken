@@ -1064,8 +1064,7 @@ const handleStakerApr =
   (currentRate?: any, lastRate?: any): AppThunk =>
   async (dispatch, getState) => {
     if (currentRate && lastRate) {
-      const apr =
-        NumberUtil.handleEthRoundToFixed(((currentRate - lastRate) / 1000000000000 / 8.4) * 365.25 * 100) + '%';
+      const apr = NumberUtil.amount_format(((currentRate - lastRate) / 1000000000000 / 8.4) * 365.25 * 100, 1) + '%';
       dispatch(setStakerApr(apr));
     } else {
       dispatch(setStakerApr('9.8%'));

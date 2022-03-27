@@ -52,6 +52,57 @@
     transform: translateX(-50%);
     background-color: #00f3ab;
   }
+
+  .tag_active_right_erc20 {
+    // background: #343c44;
+    color: #00f3ab;
+    position: relative;
+  }
+  .tag_active_right_erc20::after {
+    content: '';
+    display: block;
+    position: absolute;
+    height: 2px;
+    width: 190px;
+    bottom: 0px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #00f3ab;
+  }
+
+  .tag_active_right_bep20 {
+    // background: #343c44;
+    color: #00f3ab;
+    position: relative;
+  }
+  .tag_active_right_bep20::after {
+    content: '';
+    display: block;
+    position: absolute;
+    height: 2px;
+    width: 160px;
+    bottom: 0px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #00f3ab;
+  }
+
+  .tag_active_right_spl {
+    // background: #343c44;
+    color: #00f3ab;
+    position: relative;
+  }
+  .tag_active_right_spl::after {
+    content: '';
+    display: block;
+    position: absolute;
+    height: 2px;
+    width: 160px;
+    bottom: 0px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #00f3ab;
+  }
 }
 
 .rAsset_tag_right {

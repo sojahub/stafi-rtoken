@@ -38,9 +38,9 @@ export default function Index(props: any) {
 
   useEffect(() => {
     if (!metaMaskAddress) {
-      history.push('/rETH/home');
+      history.replace('/rETH/home');
     } else {
-      history.push('/rETH/type');
+      history.replace('/rETH/type');
     }
   }, [history, metaMaskAddress]);
 

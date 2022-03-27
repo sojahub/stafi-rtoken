@@ -6,7 +6,9 @@ import curveIcon from 'src/assets/images/poolCurveIcon.svg';
 import uniswapIcon from 'src/assets/images/poolUniswapIcon.png';
 import quickSwapIcon from 'src/assets/images/quick_swap.png';
 import pancakeIcon from 'src/assets/images/pancake.svg';
-import rSwapIcon from 'src/assets/images/rSwap.svg';
+import rSwapIcon from 'src/assets/images/rdex.png';
+import sifchainIcon from 'src/assets/images/sifchain.svg';
+import atrixIcon from 'src/assets/images/atrix.svg';
 import './tradeModal.scss';
 import config from 'src/config';
 
@@ -23,13 +25,16 @@ export default function TradeModal(props: Props) {
       if (platform === 'Uniswap') {
         return config.uniswap.fisURL;
       }
+      if (platform === 'rDex') {
+        return config.rDex.fisURL;
+      }
     }
     if (props.rTokenName === 'rFIS') {
       if (platform === 'Uniswap') {
         return config.uniswap.rfisURL;
       }
-      if (platform === 'rSwap') {
-        return '';
+      if (platform === 'rDex') {
+        return config.rDex.rfisURL;
       }
     }
     if (props.rTokenName === 'rETH') {
@@ -39,8 +44,8 @@ export default function TradeModal(props: Props) {
       if (platform === 'Uniswap') {
         return config.uniswap.rethURL;
       }
-      if (platform === 'rSwap') {
-        return '';
+      if (platform === 'rDex') {
+        return config.rDex.rethURL;
       }
     }
     if (props.rTokenName === 'rDOT') {
@@ -50,52 +55,64 @@ export default function TradeModal(props: Props) {
       if (platform === 'Pancake') {
         return config.pancake.rdotURL;
       }
-      if (platform === 'rSwap') {
-        return '';
+      if (platform === 'rDex') {
+        return config.rDex.rdotURL;
       }
     }
     if (props.rTokenName === 'rKSM') {
       if (platform === 'Uniswap') {
         return config.uniswap.rksmURL;
       }
-      if (platform === 'rSwap') {
-        return '';
+      if (platform === 'rDex') {
+        return config.rDex.rksmURL;
       }
     }
     if (props.rTokenName === 'rATOM') {
       if (platform === 'Uniswap') {
         return config.uniswap.ratomURL;
       }
-      if (platform === 'rSwap') {
-        return '';
+      if (platform === 'Sifchain') {
+        return config.sifchain.ratomURL;
+      }
+      if (platform === 'rDex') {
+        return config.rDex.ratomURL;
       }
     }
     if (props.rTokenName === 'rMATIC') {
       if (platform === 'Quickswap') {
         return config.quickswap.rmaticURL;
       }
-      if (platform === 'rSwap') {
-        return '';
+      if (platform === 'rDex') {
+        return config.rDex.rmaticURL;
       }
     }
     if (props.rTokenName === 'rBNB') {
       if (platform === 'Pancake') {
         return config.pancake.rbnbURL;
       }
-      if (platform === 'rSwap') {
-        return '';
+      if (platform === 'rDex') {
+        return config.rDex.rbnbURL;
+      }
+    }
+    if (props.rTokenName === 'rSOL') {
+      if (platform === 'Atrix') {
+        return config.atrix.rsolURL;
+      }
+      if (platform === 'rDex') {
+        return config.rDex.rsolURL;
       }
     }
   };
 
-  const { showCurve, showUniswap, showQuickswap, showPancake, showrSwap } = useMemo(() => {
+  const { showCurve, showUniswap, showQuickswap, showPancake, showrDex, showSifchain, showAtrix } = useMemo(() => {
     return {
       showCurve: props.rTokenName === 'rETH',
       showUniswap: props.rTokenName !== 'rMATIC' && props.rTokenName !== 'rSOL' && props.rTokenName !== 'rBNB',
       showQuickswap: props.rTokenName === 'rMATIC',
       showPancake: props.rTokenName === 'rBNB' || props.rTokenName === 'rDOT',
-      // showrSwap: props.rTokenName === 'rDOT' || props.rTokenName === 'rFIS' || props.rTokenName === 'rETH',
-      showrSwap: false,
+      showSifchain: props.rTokenName === 'rATOM',
+      showAtrix: props.rTokenName === 'rSOL',
+      showrDex: true,
     };
   }, [props.rTokenName]);
 
@@ -267,12 +284,80 @@ export default function TradeModal(props: Props) {
             </Fragment>
           )}
 
-          {showrSwap && (
+          {showSifchain && (
+            <Fragment>
+              <DexItem>
+                <DexTitleContainer>
+                  <DexIcon src={sifchainIcon} />
+                  <div>Sifchain</div>
+                </DexTitleContainer>
+
+                <div style={{ width: '130px' }}>ERC20</div>
+
+                <TradeButton>
+                  <div
+                    style={{
+                      fontSize: '12px',
+                      lineHeight: '12px',
+                      fontWeight: 'bold',
+                      color: '#23292f',
+                      transform: 'scale(0.9)',
+                      transformOrigin: 'center center',
+                    }}
+                    onClick={() => {
+                      if (getTradeUrl('Sifchain')) {
+                        window.open(getTradeUrl('Sifchain'));
+                      }
+                    }}>
+                    Trade
+                  </div>
+                </TradeButton>
+              </DexItem>
+
+              <Divider style={{ margin: '0 15px' }} />
+            </Fragment>
+          )}
+
+          {showAtrix && (
+            <Fragment>
+              <DexItem>
+                <DexTitleContainer>
+                  <DexIcon src={atrixIcon} />
+                  <div>Atrix</div>
+                </DexTitleContainer>
+
+                <div style={{ width: '130px' }}>SPL</div>
+
+                <TradeButton>
+                  <div
+                    style={{
+                      fontSize: '12px',
+                      lineHeight: '12px',
+                      fontWeight: 'bold',
+                      color: '#23292f',
+                      transform: 'scale(0.9)',
+                      transformOrigin: 'center center',
+                    }}
+                    onClick={() => {
+                      if (getTradeUrl('Atrix')) {
+                        window.open(getTradeUrl('Atrix'));
+                      }
+                    }}>
+                    Trade
+                  </div>
+                </TradeButton>
+              </DexItem>
+
+              <Divider style={{ margin: '0 15px' }} />
+            </Fragment>
+          )}
+
+          {showrDex && (
             <Fragment>
               <DexItem>
                 <DexTitleContainer>
                   <DexIcon src={rSwapIcon} />
-                  <div>rSwap</div>
+                  <div>rDex</div>
                 </DexTitleContainer>
 
                 <div style={{ width: '130px' }}>Native</div>
@@ -288,8 +373,8 @@ export default function TradeModal(props: Props) {
                       transformOrigin: 'center center',
                     }}
                     onClick={() => {
-                      if (getTradeUrl('rSwap')) {
-                        window.open(getTradeUrl('rSwap'));
+                      if (getTradeUrl('rDex')) {
+                        window.open(getTradeUrl('rDex'));
                       }
                     }}>
                     Trade
