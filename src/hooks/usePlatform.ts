@@ -5,11 +5,13 @@ import { requestSwitchMetaMaskNetwork } from 'src/util/metaMaskUtil';
 
 export function usePlatform(type: 'rDOT' | 'rETH' | 'rFIS' | 'rKSM' | 'rATOM' | 'rSOL' | 'rMATIC' | 'rBNB') {
   const history = useHistory();
-  const [platform, setPlatform] = useState(type === 'rETH' ? 'ERC20' : 'Native');
+  // const [platform, setPlatform] = useState(type === 'rETH' ? 'ERC20' : 'Native');
+  const [platform, setPlatform] = useState('Native');
 
   const platformArr = useMemo(() => {
     const res = [];
-    const showNative = type !== 'rETH';
+    // const showNative = type !== 'rETH';
+    const showNative = true;
     const showErc20 =
       type === 'rETH' || type === 'rFIS' || type === 'rKSM' || type === 'rDOT' || type === 'rATOM' || type === 'rMATIC';
     const showBep20 =
@@ -43,7 +45,7 @@ export function usePlatform(type: 'rDOT' | 'rETH' | 'rFIS' | 'rKSM' | 'rATOM' | 
       history.location.search.length < 1 ||
       !qs.parse(history.location.search.slice(1)).platform
     ) {
-      history.replace(`${history.location.pathname}?platform=${type === 'rETH' ? 'ERC20' : 'Native'}`);
+      history.replace(`${history.location.pathname}?platform=${'Native'}`);
     } else {
       setPlatform(qs.parse(history.location.search.slice(1)).platform as string);
     }
@@ -51,7 +53,7 @@ export function usePlatform(type: 'rDOT' | 'rETH' | 'rFIS' | 'rKSM' | 'rATOM' | 
 
   useEffect(() => {
     if (platformArr.indexOf(platform) < 0) {
-      history.replace(`${history.location.pathname}?platform=${type === 'rETH' ? 'ERC20' : 'Native'}`);
+      history.replace(`${history.location.pathname}?platform=${'Native'}`);
     }
   }, [platformArr, platform, history, type]);
 

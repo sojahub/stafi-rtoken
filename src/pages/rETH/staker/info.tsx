@@ -6,7 +6,7 @@ import { useHistory } from 'react-router';
 import Content from 'src/components/content/stakeInfoContent';
 import { getRETHAssetBalance as getBEP20RETHAssetBalance } from 'src/features/BSCClice';
 import { getETHAssetBalance } from 'src/features/ETHClice';
-import { getLastEraRate, setRatioShow } from 'src/features/rETHClice';
+import { getLastEraRate, getNativeRethAmount, setRatioShow } from 'src/features/rETHClice';
 import { useMetaMaskAccount } from 'src/hooks/useMetaMaskAccount';
 import NumberUtil from 'src/util/numberUtil';
 
@@ -15,7 +15,7 @@ export default function Index(props: any) {
   const history = useHistory();
   const { metaMaskAddress, metaMaskNetworkId } = useMetaMaskAccount();
 
-  let platform = 'ERC20';
+  let platform = 'Native';
   if (history.location.search) {
     platform = qs.parse(history.location.search.slice(1)).platform as string;
   }
@@ -25,7 +25,9 @@ export default function Index(props: any) {
       ratio: state.rETHModule.ratio,
       ratioShow: state.rETHModule.ratioShow,
       tokenAmount:
-        platform === 'ERC20'
+        platform === 'Native'
+          ? state.rETHModule.nativeTokenAmount
+          : platform === 'ERC20'
           ? state.ETHModule.ercETHBalance
           : platform === 'BEP20'
           ? state.BSCModule.bepRETHBalance
@@ -38,7 +40,11 @@ export default function Index(props: any) {
   }, [dispatch]);
 
   useEffect(() => {
-    if (platform === 'ERC20') {
+    if (platform === 'Native') {
+      setTimeout(() => {
+        dispatch(getNativeRethAmount());
+      }, 500);
+    } else if (platform === 'ERC20') {
       setTimeout(() => {
         dispatch(getETHAssetBalance());
       }, 500);

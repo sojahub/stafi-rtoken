@@ -67,7 +67,9 @@ export default function Index(props: Props) {
       history.location.search.length < 1 ||
       !qs.parse(history.location.search.slice(1)).platform
     ) {
-      const defaultPlatform = props.type === 'rETH' ? 'ERC20' : 'Native';
+      // const defaultPlatform = props.type === 'rETH' ? 'ERC20' : 'Native';
+      const defaultPlatform = 'Native';
+      console.log('defaultPlatform', defaultPlatform);
       history.replace(`${history.location.pathname}?platform=${defaultPlatform}`);
     }
   }, [history, props.type]);

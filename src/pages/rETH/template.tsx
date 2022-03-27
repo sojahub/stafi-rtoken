@@ -18,7 +18,7 @@ export default function Index(props: any) {
   const location = useLocation();
   const { metaMaskAddress, metaMaskNetworkId } = useMetaMaskAccount();
 
-  let platform = 'ERC20';
+  let platform = 'Native';
   if (location.search) {
     platform = qs.parse(location.search.slice(1)).platform as string;
   }
