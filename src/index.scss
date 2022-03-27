@@ -1,55 +1,62 @@
-
-html,body,#root{
-    width:100%;
-    height:100%;
-    margin: 0px;
-    background-color: #E6E6E6; 
-    color:#fff;
-    overflow: auto;
-    font-family: Helvetica, "Avenir", Arial, sans-serif;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-} 
-html,body{
-    display: flex;
-    justify-content: center;;
+html,
+body,
+#root {
+  width: 100%;
+  height: 100%;
+  margin: 0px;
+  background-color: #23292f;
+  color: #fff;
+  overflow: auto;
+  font-family: Helvetica, 'Avenir', Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
-#root{
-    width: 1280px;
-    background-color: #23292F;
+html,
+body {
+  display: flex;
+  justify-content: center;
 }
- 
+#root {
+  //   min-width: 1280px;
+  //   max-width: 1620px;
+  //   width: 1280px;
+  background-color: #23292f;
+}
 
 input:-internal-autofill-previewed,
-input:-internal-autofill-selected  { 
-    -webkit-text-fill-color: #fff !important;
-    transition: background-color 5000s ease-in-out 0s !important;
+input:-internal-autofill-selected {
+  -webkit-text-fill-color: #fff !important;
+  transition: background-color 5000s ease-in-out 0s !important;
 }
-.ant-btn:hover, .ant-btn:focus{
-    color: #00F3AB;
-    background: #fff;
-    border-color: #00F3AB;
+.ant-btn:hover,
+.ant-btn:focus {
+  color: #00f3ab;
+  background: #fff;
+  border-color: #00f3ab;
 }
-.ant-input:focus, .ant-input-focused,
-.ant-input-affix-wrapper:focus, .ant-input-affix-wrapper-focused,
-.ant-input-affix-wrapper:not(.ant-input-affix-wrapper-disabled):hover{
-    border-color:#B3B3B5;
+.ant-input:focus,
+.ant-input-focused,
+.ant-input-affix-wrapper:focus,
+.ant-input-affix-wrapper-focused,
+.ant-input-affix-wrapper:not(.ant-input-affix-wrapper-disabled):hover {
+  border-color: #b3b3b5;
 }
-.stafi_modal_confirm,.stafi_modal_warning{
-    .ant-btn-primary{
-        background-color: #00F3AB;
-        border-color: #00F3AB;
-        color:#23292F
-    }
+.stafi_modal_confirm,
+.stafi_modal_warning {
+  .ant-btn-primary {
+    background-color: #00f3ab;
+    border-color: #00f3ab;
+    color: #23292f;
+  }
 }
 
-.ant-spin{
-    .ant-spin-dot{
-        .ant-spin-dot-item{
-            background-color: #ffffff;
-        }
+.ant-spin {
+  .ant-spin-dot {
+    .ant-spin-dot-item {
+      background-color: #ffffff;
     }
-    .ant-spin-text{
-        color:#ffffff;
-    }
+  }
+  .ant-spin-text {
+    color: #ffffff;
+  }
 }

@@ -33,7 +33,9 @@ export default function Index(props: any) {
 
   return (
     <div className='stafi_layout' style={{ height: '100%' }}>
-      <Sider route={props.route} history={props.history} />
+      <div className='stafi_sider'>
+        <Sider route={props.route} history={props.history} />
+      </div>
 
       <LiquidingProcesSlider route={props.route} history={props.history} />
 
