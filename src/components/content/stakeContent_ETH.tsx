@@ -83,7 +83,7 @@ export default function Index(props: Props) {
                 <>-- ETH is staked in pool contracts</>
               ) : (
                 <>
-                  {numberUtil.amount_format(props.totalStakedAmount)} ETH is staked in{' '}
+                  {numberUtil.amount_format(props.totalStakedAmount)} ETH is currently staked in{' '}
                   <A
                     onClick={() => {
                       props.history && props.history.push('/rETH/poolStatus');
@@ -118,8 +118,10 @@ export default function Index(props: Props) {
 
       <div className='money_panel'>
         <div className='money_panel_item'>
-          <div style={{ fontFamily: 'Helvetica-Bold' }}>You will get {props.type}</div>
-          <div>{props.willAmount}</div>
+          <div style={{ fontFamily: 'Helvetica-Bold' }}>You will get</div>
+          <div>
+            {props.willAmount} {props.type}
+          </div>
         </div>
 
         <div className='money_panel_row'>

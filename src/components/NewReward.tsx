@@ -40,8 +40,9 @@ export const NewReward = (props: NewRewardProps) => {
       <Scrollbars id='list-scrollbars' style={{ height: '595px' }} autoHide>
         <RemidingContainer>
           <Text size='12px' color='#d9d9d9' lineHeight='14px'>
-            Reminding: Holding rTokens still keeps generating staking reward while you depositing them to farm, mine and
-            other yield generation protocols, but it can't be shown in the est.Reward as the calculation limits.
+            Reminder: rTokens will continuously generate staking rewards even when deposited in farms, mines or other
+            yield generation methods, however, it will not be visible in the Est. Reward column as calculations are
+            limited.
           </Text>
         </RemidingContainer>
 
@@ -122,7 +123,7 @@ export const NewReward = (props: NewRewardProps) => {
 
           <Box width='80px'>
             <Text size='14px' color='#7c7c7c' bold>
-              est. Reward
+              Est. Reward
             </Text>
           </Box>
         </HContainer>

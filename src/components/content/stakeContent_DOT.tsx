@@ -194,31 +194,31 @@ export default function Index(props: Props) {
           {props.type == 'rKSM' &&
             `${
               isNaN(props.totalStakedToken) ? '--' : numberUtil.amount_format(props.totalStakedToken, 6)
-            } KSM is staked via rKSM `}
+            } KSM is currently staked`}
           {props.type == 'rDOT' &&
             `${
               isNaN(props.totalStakedToken) ? '--' : numberUtil.amount_format(props.totalStakedToken, 6)
-            } DOT is staked via rDOT `}
+            } DOT is currently staked`}
           {props.type == 'rATOM' &&
             `${
               isNaN(props.totalStakedToken) ? '--' : numberUtil.amount_format(props.totalStakedToken, 6)
-            } ATOM is staked via rATOM `}
+            } ATOM is currently staked`}
           {props.type == 'rFIS' &&
             `${
               isNaN(props.totalStakedToken) ? '--' : numberUtil.amount_format(props.totalStakedToken, 6)
-            } FIS is staked via rFIS `}
+            } FIS is currently staked`}
           {props.type == 'rSOL' &&
             `${
               isNaN(props.totalStakedToken) ? '--' : numberUtil.amount_format(props.totalStakedToken, 6)
-            } SOL is staked via rSOL `}
+            } SOL is currently staked`}
           {props.type == 'rMATIC' &&
             `${
               isNaN(props.totalStakedToken) ? '--' : numberUtil.amount_format(props.totalStakedToken, 6)
-            } MATIC is staked via rMATIC `}
+            } MATIC is currently staked`}
           {props.type == 'rBNB' &&
             `${
               isNaN(props.totalStakedToken) ? '--' : numberUtil.amount_format(props.totalStakedToken, 6)
-            } BNB is staked via rBNB `}
+            } BNB is currently staked`}
           {/* <A>stats</A> */}
         </div>
 
@@ -247,8 +247,10 @@ export default function Index(props: Props) {
 
       <div className='money_panel'>
         <div className='money_panel_item'>
-          <div style={{ fontFamily: 'Helvetica-Bold' }}>You will get {props.type}</div>
-          <div>{props.willAmount}</div>
+          <div style={{ fontFamily: 'Helvetica-Bold' }}>You will get</div>
+          <div>
+            {props.willAmount} {props.type}
+          </div>
         </div>
 
         <div className='money_panel_row'>

@@ -390,7 +390,7 @@ export default function ChooseMintType(props: ChooseMintTypeProps) {
           <div className='divider' />
 
           <div className='note'>
-            Note: Make sure you have the right address, otherwise you will not receive the token.
+            Note: Please ensure you have input the correct address. Failure to do so may cause you to lose your tokens.
           </div>
         </div>
       </div>
