@@ -278,9 +278,7 @@ export default function Index(props: any) {
               myStaked={rFisStakedAmountShow}
               apy={fisApr}
               onSwapClick={() => {
-                history.push(`/rAsset/swap/native/default`, {
-                  rSymbol: 'rFIS',
-                });
+                history.push(`/rAsset/swap/rFIS`, {});
               }}
             />
             <NewDataItem
@@ -291,9 +289,7 @@ export default function Index(props: any) {
               myStaked={rEthStakedAmountShow}
               apy={ethApr}
               onSwapClick={() => {
-                history.push(`/rAsset/swap/native/erc20`, {
-                  rSymbol: 'rETH',
-                });
+                history.push(`/rAsset/swap/rETH`, {});
               }}
             />
             <NewDataItem
@@ -304,9 +300,7 @@ export default function Index(props: any) {
               myStaked={rDotStakedAmountShow}
               apy={dotApr}
               onSwapClick={() => {
-                history.push(`/rAsset/swap/native/default`, {
-                  rSymbol: 'rDOT',
-                });
+                history.push(`/rAsset/swap/rDOT`, {});
               }}
             />
             <NewDataItem
@@ -317,9 +311,7 @@ export default function Index(props: any) {
               myStaked={rKsmStakedAmountShow}
               apy={ksmApr}
               onSwapClick={() => {
-                history.push(`/rAsset/swap/native/default`, {
-                  rSymbol: 'rKSM',
-                });
+                history.push(`/rAsset/swap/rKSM`, {});
               }}
             />
             <NewDataItem
@@ -330,9 +322,7 @@ export default function Index(props: any) {
               myStaked={rAtomStakedAmountShow}
               apy={atomApr}
               onSwapClick={() => {
-                history.push(`/rAsset/swap/native/default`, {
-                  rSymbol: 'rATOM',
-                });
+                history.push(`/rAsset/swap/rATOM`, {});
               }}
             />
             <NewDataItem
@@ -343,9 +333,7 @@ export default function Index(props: any) {
               myStaked={rSolStakedAmountShow}
               apy={solApr}
               onSwapClick={() => {
-                history.push(`/rAsset/swap/native/default`, {
-                  rSymbol: 'rSOL',
-                });
+                history.push(`/rAsset/swap/rSOL`, {});
               }}
             />
             <NewDataItem
@@ -356,9 +344,7 @@ export default function Index(props: any) {
               myStaked={rMaticStakedAmountShow}
               apy={maticApr}
               onSwapClick={() => {
-                history.push(`/rAsset/swap/native/default`, {
-                  rSymbol: 'rMATIC',
-                });
+                history.push(`/rAsset/swap/rMATIC`, {});
               }}
             />
             <NewDataItem
@@ -369,9 +355,7 @@ export default function Index(props: any) {
               myStaked={rBnbStakedAmountShow}
               apy={bnbApr}
               onSwapClick={() => {
-                history.push(`/rAsset/swap/native/default`, {
-                  rSymbol: 'rBNB',
-                });
+                history.push(`/rAsset/swap/rBNB`, {});
               }}
             />
           </ListContainer>

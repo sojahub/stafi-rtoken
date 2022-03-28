@@ -121,7 +121,7 @@ export const NewReward = (props: NewRewardProps) => {
             </Text>
           </Box>
 
-          <Box width='80px'>
+          <Box width='84px'>
             <Text size='14px' color='#7c7c7c' bold>
               Est. Reward
             </Text>

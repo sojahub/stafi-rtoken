@@ -572,7 +572,7 @@ const routesFactory = (role?: any) => {
             },
             {
               id: 'rAssect_swap',
-              path: '/rAsset/swap/:fromType/:destType',
+              path: '/rAsset/swap/:rToken',
               component: RAssetSwap,
             },
             {

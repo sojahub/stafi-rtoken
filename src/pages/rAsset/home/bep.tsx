@@ -214,15 +214,11 @@ export default function Index(props: any) {
   };
 
   const toSwap = (tokenSymbol: string) => {
-    history.push('/rAsset/swap/bep20/default', {
-      rSymbol: tokenSymbol,
-    });
+    history.push(`/rAsset/swap/${tokenSymbol}`, {});
   };
 
   const toSwapErc20 = (tokenSymbol: string) => {
-    history.push('/rAsset/swap/bep20/default', {
-      rSymbol: tokenSymbol,
-    });
+    history.push(`/rAsset/swap/${tokenSymbol}`, {});
   };
 
   return (

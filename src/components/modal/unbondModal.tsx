@@ -51,13 +51,13 @@ export default function Index(props: Props) {
           </div>
         </div>
         <div className='row period'>
-          {props.type == 'rDOT' && `—Period: around ${config.unboundAroundDays(Symbol.Dot)} days`}
-          {props.type == 'rKSM' && `—Period: around ${config.unboundAroundDays(Symbol.Ksm)} days`}
-          {props.type == 'rATOM' && `—Period: around ${config.unboundAroundDays(Symbol.Atom)} days`}
-          {props.type == 'rSOL' && `—Period: around ${config.unboundAroundDays(Symbol.Sol)} days`}
-          {props.type == 'rMATIC' && `—Period: around ${config.unboundAroundDays(Symbol.Matic)} days`}
-          {props.type == 'rFIS' && `—Period: around ${config.unboundAroundDays(Symbol.Fis)} days`}
-          {props.type == 'rBNB' && `—Period: around ${config.unboundAroundDays(Symbol.Bnb)} days`}
+          {props.type == 'rDOT' && `-Date: around ${config.unboundAroundDays(Symbol.Dot)} days`}
+          {props.type == 'rKSM' && `—Date: around ${config.unboundAroundDays(Symbol.Ksm)} days`}
+          {props.type == 'rATOM' && `—Date: around ${config.unboundAroundDays(Symbol.Atom)} days`}
+          {props.type == 'rSOL' && `—Date: around ${config.unboundAroundDays(Symbol.Sol)} days`}
+          {props.type == 'rMATIC' && `—Date: around ${config.unboundAroundDays(Symbol.Matic)} days`}
+          {props.type == 'rFIS' && `—Date: around ${config.unboundAroundDays(Symbol.Fis)} days`}
+          {props.type == 'rBNB' && `—Date: around ${config.unboundAroundDays(Symbol.Bnb)} days`}
 
           <div className='doubt'>
             <Tooltip

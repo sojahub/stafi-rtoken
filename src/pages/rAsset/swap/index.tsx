@@ -1,6 +1,6 @@
 import { Connection } from '@solana/web3.js';
 import { message } from 'antd';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Redirect, useHistory, useLocation, useParams } from 'react-router-dom';
 import bsc_white from 'src/assets/images/bsc_white.svg';
@@ -18,7 +18,7 @@ import rasset_rmatic_svg from 'src/assets/images/r_matic.svg';
 import solana_white from 'src/assets/images/solana_white.svg';
 import stafi_white from 'src/assets/images/stafi_white.svg';
 import SwapLoading from 'src/components/modal/SwapLoading';
-import config from 'src/config/index';
+import config, { getRsymbolByTokenType } from 'src/config/index';
 import {
   bep20ToOtherSwap,
   bridgeCommon_ChainFees,
@@ -101,6 +101,27 @@ type SelectorType = {
   title: string;
   content: string;
   type: string;
+};
+
+const chainSupportTokenMap = {
+  'native-erc20': ['fis', 'rfis', 'reth', 'rdot', 'rksm', 'ratom', 'rmatic'],
+  'erc20-native': ['fis', 'rfis', 'reth', 'rdot', 'rksm', 'ratom', 'rmatic'],
+  'native-bep20': ['rfis', 'reth', 'rdot', 'rksm', 'ratom', 'rmatic', 'rbnb'],
+  'bep20-native': ['rfis', 'reth', 'rdot', 'rksm', 'ratom', 'rmatic', 'rbnb'],
+  'native-spl': ['fis', 'rsol'],
+  'spl-native': ['fis', 'rsol'],
+};
+
+const tokenSupportChainMap = {
+  fis: ['native', 'erc20', 'spl'],
+  rfis: ['native', 'erc20', 'bep20'],
+  reth: ['native', 'erc20', 'bep20'],
+  rdot: ['native', 'erc20', 'bep20'],
+  rksm: ['native', 'erc20', 'bep20'],
+  ratom: ['native', 'erc20', 'bep20'],
+  rmatic: ['native', 'erc20', 'bep20'],
+  rbnb: ['native', 'bep20'],
+  rsol: ['native', 'spl'],
 };
 
 const allTokenDatas = [
@@ -190,17 +211,44 @@ const assetDatas = [
 export default function Index(props: any) {
   let time: any;
   const dispatch = useDispatch();
-  let { fromType, destType } = useParams<any>();
+  let { rToken: rTokenParam } = useParams<any>();
   const history = useHistory();
   const location = useLocation();
   const [fromAoumt, setFormAmount] = useState<any>();
   const [selectDataSource, setSelectDataSource] = useState(allTokenDatas);
-  const [tokenType, setTokenType] = useState(allTokenDatas[0]);
   const [address, setAddress] = useState<any>();
 
-  const [fromTypeData, setFromTypeData] = useState<undefined | SelectorType>();
+  const [tokenRefState, setTokenRefState] = useState<SelectorType>(allTokenDatas[0]);
+  const [fromChainRefState, setFromChainRefState] = useState<SelectorType | null>(null);
+  const [destChainRefState, setDestChainRefState] = useState<SelectorType | null>(null);
+
+  const tokenRef = useRef<SelectorType>(tokenRefState);
+  const fromChainRef = useRef<SelectorType | null>(fromChainRefState);
+  const destChainRef = useRef<SelectorType | null>(destChainRefState);
+
+  useEffect(() => {
+    tokenRef.current = tokenRefState;
+    fromChainRef.current = fromChainRefState;
+    destChainRef.current = destChainRefState;
+  });
+
+  const returnToAsset = useCallback(() => {
+    history.push('/rAsset/home/native');
+  }, [history]);
+
+  useEffect(() => {
+    console.log('rTokenParam', rTokenParam);
+    const tokenData = allTokenDatas.find((item) => item.type === rTokenParam.toLowerCase());
+    if (!tokenData) {
+      returnToAsset();
+    } else {
+      setTokenRefState(tokenData);
+    }
+  }, [rTokenParam, returnToAsset]);
+
+  // const [fromTypeData, setFromTypeData] = useState<null | SelectorType>(null);
+  // const [destTypeData, setDestTypeData] = useState<null | SelectorType>(null);
   const [fromTypeSelections, setFromTypeSelections] = useState(assetDatas);
-  const [destTypeData, setDestTypeData] = useState<undefined | SelectorType>();
   const [destTypeSelections, setDestTypeSelections] = useState(assetDatas);
 
   const [transferDetail, setTransferDetail] = useState('');
@@ -227,7 +275,7 @@ export default function Index(props: any) {
     reth_balance,
     rbnb_balance,
   } = useSelector((state: any) => {
-    if (fromTypeData && fromTypeData.type === 'erc20') {
+    if (fromChainRef.current && fromChainRef.current.type === 'erc20') {
       return {
         rksm_balance: NumberUtil.handleFisAmountToFixed(state.ETHModule.ercRKSMBalance),
         rfis_balance: NumberUtil.handleFisAmountToFixed(state.ETHModule.ercRFISBalance),
@@ -240,7 +288,7 @@ export default function Index(props: any) {
         rbnb_balance: '--',
         estimateEthFee: state.bridgeModule.estimateEthFee,
       };
-    } else if (fromTypeData && fromTypeData.type === 'bep20') {
+    } else if (fromChainRef.current && fromChainRef.current.type === 'bep20') {
       return {
         rksm_balance: NumberUtil.handleFisAmountToFixed(state.BSCModule.bepRKSMBalance),
         rfis_balance: NumberUtil.handleFisAmountToFixed(state.BSCModule.bepRFISBalance),
@@ -253,7 +301,7 @@ export default function Index(props: any) {
         rbnb_balance: NumberUtil.handleFisAmountToFixed(state.BSCModule.bepRBNBBalance),
         estimateBscFee: state.bridgeModule.estimateBscFee,
       };
-    } else if (fromTypeData && fromTypeData.type === 'spl') {
+    } else if (fromChainRef.current && fromChainRef.current.type === 'spl') {
       return {
         fis_balance: NumberUtil.handleFisAmountToFixed(state.SOLModule.fisBalance),
         rsol_balance: NumberUtil.handleFisAmountToFixed(state.SOLModule.rSOLBalance),
@@ -277,9 +325,10 @@ export default function Index(props: any) {
     }
   });
 
-  const { fisAccount, solAddress, solBalance, solTransferrableAmount } = useSelector((state: any) => {
+  const { fisAccount, fisAddress, solAddress, solBalance, solTransferrableAmount } = useSelector((state: any) => {
     return {
       fisAccount: state.FISModule.fisAccount,
+      fisAddress: state.FISModule.fisAccount && state.FISModule.fisAccount.address,
       solAddress: state.rSOLModule.solAddress,
       solBalance: state.rSOLModule.transferrableAmountShow,
       solTransferrableAmount: state.rSOLModule.transferrableAmountShow,
@@ -287,7 +336,7 @@ export default function Index(props: any) {
   });
 
   const updateSplTokenStatus = useCallback(async () => {
-    if (destType !== 'spl' || !tokenType) {
+    if (!destChainRef.current || destChainRef.current.type !== 'spl') {
       setShowAddSplTokenButton(false);
       return;
     }
@@ -296,75 +345,128 @@ export default function Index(props: any) {
       return;
     }
     setShowAddSplTokenButton(true);
-    const splTokenAccountPubkey = await solServer.getTokenAccountPubkey(address, tokenType.type);
+    const splTokenAccountPubkey = await solServer.getTokenAccountPubkey(address, tokenRef.current.type);
     setShowAddSplTokenButton(!splTokenAccountPubkey);
-  }, [address, destType, tokenType && tokenType.type]);
+  }, [address]);
+
+  const update3rdPlatformData = useCallback(() => {
+    if (!fromChainRef.current) {
+      return;
+    }
+    if (fromChainRef.current.type === 'erc20' && metaMaskAddress) {
+      dispatch(getErc20Allowances());
+      dispatch(getAssetBalanceAll());
+    }
+    if (fromChainRef.current.type === 'bep20' && metaMaskAddress) {
+      dispatch(getBep20Allowances());
+      dispatch(getBep20AssetBalanceAll());
+    }
+    if (fromChainRef.current.type === 'spl') {
+      if (solAddress) {
+        dispatch(solQueryBalance());
+        dispatch(getSlp20AssetBalanceAll());
+        dispatch(getSlp20Allowances());
+      } else {
+        dispatch(earglyConnectPhantom());
+      }
+    }
+  }, [dispatch, metaMaskAddress, solAddress]);
+
+  const updateNativePlatformData = useCallback(() => {
+    if (fisAddress) {
+      dispatch(reloadData());
+      dispatch(query_rBalances_account());
+      dispatch(fis_query_rBalances_account());
+      dispatch(dot_query_rBalances_account());
+      dispatch(atom_query_rBalances_account());
+      dispatch(sol_query_rBalances_account());
+      dispatch(matic_query_rBalances_account());
+      dispatch(bnb_query_rBalances_account());
+      dispatch(getNativeRethAmount());
+      dispatch(ksm_rTokenRate());
+      dispatch(fis_rTokenRate());
+      dispatch(dot_rTokenRate());
+      dispatch(atom_rTokenRate());
+      dispatch(sol_rTokenRate());
+      dispatch(matic_rTokenRate());
+      dispatch(bnb_rTokenRate());
+      dispatch(nativerTokenRate);
+      dispatch(getUnbondCommission());
+      dispatch(fis_getUnbondCommission());
+      dispatch(dot_getUnbondCommission());
+      dispatch(atom_getUnbondCommission());
+      dispatch(sol_getUnbondCommission());
+      dispatch(matic_getUnbondCommission());
+      dispatch(bnb_getUnbondCommission());
+      dispatch(eth_getUnbondCommission());
+    }
+  }, [fisAddress, dispatch]);
 
   useEffect(() => {
     updateSplTokenStatus();
   }, [updateSplTokenStatus]);
 
-  useEffect(() => {
-    if (fromType && destType) {
-      if (
-        fromType !== 'native' &&
-        fromType !== 'erc20' &&
-        fromType !== 'bep20' &&
-        fromType !== 'spl' &&
-        fromType !== 'default'
-      ) {
-        returnToAsset();
-        return;
-      }
-      if (
-        destType !== 'native' &&
-        destType !== 'erc20' &&
-        destType !== 'bep20' &&
-        destType !== 'spl' &&
-        destType !== 'default'
-      ) {
-        returnToAsset();
-        return;
-      }
-      if (fromType === destType) {
-        returnToAsset();
-        return;
-      }
+  // useEffect(() => {
+  //   if (fromType && destType) {
+  //     if (
+  //       fromType !== 'native' &&
+  //       fromType !== 'erc20' &&
+  //       fromType !== 'bep20' &&
+  //       fromType !== 'spl' &&
+  //       fromType !== 'default'
+  //     ) {
+  //       returnToAsset();
+  //       return;
+  //     }
+  //     if (
+  //       destType !== 'native' &&
+  //       destType !== 'erc20' &&
+  //       destType !== 'bep20' &&
+  //       destType !== 'spl' &&
+  //       destType !== 'default'
+  //     ) {
+  //       returnToAsset();
+  //       return;
+  //     }
+  //     if (fromType === destType) {
+  //       returnToAsset();
+  //       return;
+  //     }
 
-      const fromData = assetDatas.find((item) => item.type == fromType);
-      setFromTypeData(fromData);
-      const destData = assetDatas.find((item) => item.type == destType);
-      setDestTypeData(destData);
-    } else {
-      returnToAsset();
-    }
-  }, [fromType, destType]);
+  //     const fromData = assetDatas.find((item) => item.type == fromType);
+  //     setFromTypeData(fromData);
+  //     const destData = assetDatas.find((item) => item.type == destType);
+  //     setDestTypeData(destData);
+  //   } else {
+  //     returnToAsset();
+  //   }
+  // }, [fromType, destType]);
 
   useEffect(() => {
     dispatch(bridgeCommon_ChainFees());
     dispatch(getBridgeEstimateEthFee());
-  }, []);
+  }, [dispatch]);
 
   useEffect(() => {
     updateNativePlatformData();
-  }, [fisAccount && fisAccount.address]);
+  }, [updateNativePlatformData]);
 
   useEffect(() => {
     update3rdPlatformData();
-  }, [metaMaskNetworkId, fromType, destType, metaMaskAddress, solAddress]);
+  }, [update3rdPlatformData]);
 
-  useEffect(() => {
-    if (location.state) {
-      const data = selectDataSource.find((item) => item.title == location.state.rSymbol);
-      if (data) {
-        setTokenType({ ...data });
-      } else {
-        setTokenType(null);
-      }
-    } else {
-      setTokenType(null);
-    }
-  }, [location.state && location.state.rSymbol, selectDataSource]);
+  // useEffect(() => {
+  //   if (location.state) {
+  //     const data = selectDataSource.find((item) => item.title == location.state.rSymbol);
+  //     if (data) {
+  //       setTokenType({ ...data });
+  //     } else {
+  //       setTokenType(null);
+  //     }
+  //   } else {
+  //     setTokenType(null);
+  //   }
+  // }, [location.state && location.state.rSymbol, selectDataSource]);
 
   useEffect(() => {
     allTokenDatas.forEach((item: any) => {
@@ -396,79 +498,77 @@ export default function Index(props: any) {
         item.content = rbnb_balance;
       }
     });
-    let filterTokenDatas;
-    if (
-      (fromType === 'erc20' && destType === 'spl') ||
-      (fromType === 'spl' && destType === 'erc20') ||
-      (fromType === 'bep20' && destType === 'spl') ||
-      (fromType === 'spl' && destType === 'bep20')
-    ) {
-      filterTokenDatas = allTokenDatas.filter((item: any) => {
-        return false;
-      });
-    } else if ((fromType === 'native' && destType === 'spl') || (fromType === 'spl' && destType === 'native')) {
-      filterTokenDatas = allTokenDatas.filter((item: any) => {
-        return item.type === 'fis' || item.type === 'rsol';
-      });
-    } else if ((fromType === 'native' && destType === 'erc20') || (fromType === 'erc20' && destType === 'native')) {
-      filterTokenDatas = allTokenDatas.filter((item: any) => {
-        return item.type !== 'rbnb' && item.type !== 'rsol';
-      });
-    } else if ((fromType === 'native' && destType === 'bep20') || (fromType === 'bep20' && destType === 'native')) {
-      filterTokenDatas = allTokenDatas.filter((item: any) => {
-        return item.type !== 'fis' && item.type !== 'rsol';
-      });
-    } else if ((fromType === 'erc20' && destType === 'bep20') || (fromType === 'bep20' && destType === 'erc20')) {
-      filterTokenDatas = allTokenDatas.filter((item: any) => {
-        return item.type !== 'fis' && item.type !== 'rbnb' && item.type !== 'rsol';
-      });
-    } else if (fromType === 'erc20' && destType === 'default') {
-      filterTokenDatas = allTokenDatas.filter((item: any) => {
-        return item.type !== 'rbnb' && item.type !== 'rsol';
-      });
-    } else if (fromType === 'bep20' && destType === 'default') {
-      filterTokenDatas = allTokenDatas.filter((item: any) => {
-        return item.type !== 'fis' && item.type !== 'rsol';
-      });
-    } else if (fromType === 'spl' && destType === 'default') {
-      filterTokenDatas = allTokenDatas.filter((item: any) => {
-        return item.type === 'fis' || item.type === 'rsol';
-      });
-    } else if (fromType === 'native' && destType === 'default') {
-      filterTokenDatas = allTokenDatas.filter((item: any) => {
-        return item.type !== 'reth';
-      });
-    } else {
-      filterTokenDatas = allTokenDatas.filter((item: any) => {
-        return item.type !== 'reth' && item.type !== 'fis' && item.type !== 'rsol';
-      });
-    }
+    // let filterTokenDatas;
+    // if (
+    //   (fromType === 'erc20' && destType === 'spl') ||
+    //   (fromType === 'spl' && destType === 'erc20') ||
+    //   (fromType === 'bep20' && destType === 'spl') ||
+    //   (fromType === 'spl' && destType === 'bep20')
+    // ) {
+    //   filterTokenDatas = allTokenDatas.filter((item: any) => {
+    //     return false;
+    //   });
+    // } else if ((fromType === 'native' && destType === 'spl') || (fromType === 'spl' && destType === 'native')) {
+    //   filterTokenDatas = allTokenDatas.filter((item: any) => {
+    //     return item.type === 'fis' || item.type === 'rsol';
+    //   });
+    // } else if ((fromType === 'native' && destType === 'erc20') || (fromType === 'erc20' && destType === 'native')) {
+    //   filterTokenDatas = allTokenDatas.filter((item: any) => {
+    //     return item.type !== 'rbnb' && item.type !== 'rsol';
+    //   });
+    // } else if ((fromType === 'native' && destType === 'bep20') || (fromType === 'bep20' && destType === 'native')) {
+    //   filterTokenDatas = allTokenDatas.filter((item: any) => {
+    //     return item.type !== 'fis' && item.type !== 'rsol';
+    //   });
+    // } else if ((fromType === 'erc20' && destType === 'bep20') || (fromType === 'bep20' && destType === 'erc20')) {
+    //   filterTokenDatas = allTokenDatas.filter((item: any) => {
+    //     return item.type !== 'fis' && item.type !== 'rbnb' && item.type !== 'rsol';
+    //   });
+    // } else if (fromType === 'erc20' && destType === 'default') {
+    //   filterTokenDatas = allTokenDatas.filter((item: any) => {
+    //     return item.type !== 'rbnb' && item.type !== 'rsol';
+    //   });
+    // } else if (fromType === 'bep20' && destType === 'default') {
+    //   filterTokenDatas = allTokenDatas.filter((item: any) => {
+    //     return item.type !== 'fis' && item.type !== 'rsol';
+    //   });
+    // } else if (fromType === 'spl' && destType === 'default') {
+    //   filterTokenDatas = allTokenDatas.filter((item: any) => {
+    //     return item.type === 'fis' || item.type === 'rsol';
+    //   });
+    // } else if (fromType === 'native' && destType === 'default') {
+    //   filterTokenDatas = allTokenDatas.filter((item: any) => {
+    //     return item.type !== 'reth';
+    //   });
+    // } else {
+    //   filterTokenDatas = allTokenDatas.filter((item: any) => {
+    //     return item.type !== 'reth' && item.type !== 'fis' && item.type !== 'rsol';
+    //   });
+    // }
 
-    setSelectDataSource([...filterTokenDatas]);
+    setSelectDataSource([...allTokenDatas]);
 
-    if (tokenType) {
-      if ((tokenType.title = 'FIS')) {
-        tokenType.content = fis_balance;
-      } else if ((tokenType.title = 'rFIS')) {
-        tokenType.content = rfis_balance;
-      } else if ((tokenType.title = 'rKSM')) {
-        tokenType.content = rksm_balance;
-      } else if ((tokenType.title = 'rDOT')) {
-        tokenType.content = rdot_balance;
-      } else if ((tokenType.title = 'rATOM')) {
-        tokenType.content = ratom_balance;
-      } else if ((tokenType.title = 'rSOL')) {
-        tokenType.content = rsol_balance;
-      } else if ((tokenType.title = 'rMATIC')) {
-        tokenType.content = rmatic_balance;
-      } else if ((tokenType.title = 'rETH')) {
-        tokenType.content = reth_balance;
-      }
-      setTokenType({ ...tokenType });
+    const targetToken = { ...tokenRef.current };
+    if ((targetToken.title = 'FIS')) {
+      targetToken.content = fis_balance;
+    } else if ((targetToken.title = 'rFIS')) {
+      targetToken.content = rfis_balance;
+    } else if ((targetToken.title = 'rKSM')) {
+      targetToken.content = rksm_balance;
+    } else if ((targetToken.title = 'rDOT')) {
+      targetToken.content = rdot_balance;
+    } else if ((targetToken.title = 'rATOM')) {
+      targetToken.content = ratom_balance;
+    } else if ((targetToken.title = 'rSOL')) {
+      targetToken.content = rsol_balance;
+    } else if ((targetToken.title = 'rMATIC')) {
+      targetToken.content = rmatic_balance;
+    } else if ((targetToken.title = 'rETH')) {
+      targetToken.content = reth_balance;
     }
+    // tokenRef.current = { ...targetToken };
+    // setTokenRefState({ ...targetToken });
   }, [
-    fromType,
-    destType,
     rksm_balance,
     rfis_balance,
     fis_balance,
@@ -481,133 +581,123 @@ export default function Index(props: any) {
   ]);
 
   useEffect(() => {
-    if (time) {
-      clearInterval(time);
+    const supportChainTypes = tokenSupportChainMap[tokenRefState.type];
+    const supportChains = supportChainTypes.map((chainType) => {
+      return assetDatas.find((asset) => asset.type === chainType);
+    });
+
+    setFromTypeSelections(supportChains);
+    setDestTypeSelections(supportChains);
+
+    if (fromChainRef.current && destChainRef.current) {
+      if (
+        chainSupportTokenMap[`${fromChainRef.current.type}-${destChainRef.current.type}`].indexOf(tokenRefState.type) <
+        0
+      ) {
+        setFromChainRefState(null);
+        setDestChainRefState(null);
+        // fromChainRef.current = null;
+        // destChainRef.current = null;
+      }
+    } else if (fromChainRef.current) {
+      if (supportChainTypes.indexOf(fromChainRef.current.type) < 0) {
+        // fromChainRef.current = null;
+        setFromChainRefState(null);
+      }
+    } else if (destChainRef.current) {
+      if (supportChainTypes.indexOf(destChainRef.current.type) < 0) {
+        // destChainRef.current = null;
+        setDestChainRefState(null);
+      }
     }
-  }, [fromTypeData && fromTypeData.type, destTypeData && destTypeData.type]);
+  }, [tokenRefState]);
+
+  // useEffect(() => {
+  //   if (time) {
+  //     clearInterval(time);
+  //   }
+  // }, [fromTypeData && fromTypeData.type, destTypeData && destTypeData.type]);
 
   useInterval(() => {
     updateData();
   }, 30000);
 
   const updateData = () => {
-    if (fromTypeData && fromTypeData.type === 'native') {
+    if (fromChainRef.current && fromChainRef.current.type === 'native') {
       updateNativePlatformData();
     } else {
       update3rdPlatformData();
     }
   };
 
-  const updateNativePlatformData = () => {
-    if (fisAccount && fisAccount.address) {
-      dispatch(reloadData());
-      dispatch(query_rBalances_account());
-      dispatch(fis_query_rBalances_account());
-      dispatch(dot_query_rBalances_account());
-      dispatch(atom_query_rBalances_account());
-      dispatch(sol_query_rBalances_account());
-      dispatch(matic_query_rBalances_account());
-      dispatch(bnb_query_rBalances_account());
-      dispatch(getNativeRethAmount());
-      dispatch(ksm_rTokenRate());
-      dispatch(fis_rTokenRate());
-      dispatch(dot_rTokenRate());
-      dispatch(atom_rTokenRate());
-      dispatch(sol_rTokenRate());
-      dispatch(matic_rTokenRate());
-      dispatch(bnb_rTokenRate());
-      dispatch(nativerTokenRate);
-      dispatch(getUnbondCommission());
-      dispatch(fis_getUnbondCommission());
-      dispatch(dot_getUnbondCommission());
-      dispatch(atom_getUnbondCommission());
-      dispatch(sol_getUnbondCommission());
-      dispatch(matic_getUnbondCommission());
-      dispatch(bnb_getUnbondCommission());
-      dispatch(eth_getUnbondCommission());
-    }
-  };
-
-  const update3rdPlatformData = () => {
-    if (fromType === 'erc20' && metaMaskAddress) {
-      dispatch(getErc20Allowances());
-      dispatch(getAssetBalanceAll());
-    }
-    if (fromType === 'bep20' && metaMaskAddress) {
-      dispatch(getBep20Allowances());
-      dispatch(getBep20AssetBalanceAll());
-    }
-    if (fromType === 'spl') {
-      if (solAddress) {
-        dispatch(solQueryBalance());
-        dispatch(getSlp20AssetBalanceAll());
-        dispatch(getSlp20Allowances());
-      } else {
-        dispatch(earglyConnectPhantom());
-      }
-    }
-  };
-
   const reverseExchangeType = () => {
-    history.replace(
-      `/rAsset/swap/${destTypeData ? destTypeData.type : 'default'}/${fromTypeData ? fromTypeData.type : 'default'}`,
-      {
-        rSymbol: tokenType && tokenType.title,
-      },
-    );
+    // history.replace(
+    //   `/rAsset/swap/${destTypeData ? destTypeData.type : 'default'}/${fromTypeData ? fromTypeData.type : 'default'}`,
+    //   {
+    //     rSymbol: tokenType && tokenType.title,
+    //   },
+    // );
+
+    const temp = { ...fromChainRef.current };
+
+    // fromChainRef.current = destChainRef.current;
+    // destChainRef.current = temp;
+
+    setFromChainRefState(destChainRef.current);
+    setDestChainRefState(temp);
 
     setFormAmount('');
     setAddress('');
   };
 
-  if (fromTypeData && fromTypeData.type === 'native' && (!fisAccount || !fisAccount.address)) {
-    return <Redirect to='/rAsset/home/native' />;
-  }
+  // if (fromChainRef.current && fromChainRef.current.type === 'native' && (!fisAccount || !fisAccount.address)) {
+  //   return <Redirect to='/rAsset/home/native' />;
+  // }
 
-  if (fromTypeData && fromTypeData.type === 'erc20' && !metaMaskAddress) {
-    return <Redirect to='/rAsset/home/erc' />;
-  }
+  // if (fromTypeData && fromTypeData.type === 'erc20' && !metaMaskAddress) {
+  //   return <Redirect to='/rAsset/home/erc' />;
+  // }
 
-  if (fromTypeData && fromTypeData.type === 'bep20' && !metaMaskAddress) {
-    return <Redirect to='/rAsset/home/bep' />;
-  }
+  // if (fromTypeData && fromTypeData.type === 'bep20' && !metaMaskAddress) {
+  //   return <Redirect to='/rAsset/home/bep' />;
+  // }
 
   const checkAddress = (address: string) => {
     return fis_checkAddress(address);
-  };
-
-  const returnToAsset = () => {
-    history.push('/rAsset/home/native');
   };
 
   const changeFromChain = (type: SelectorType) => {
     if (!type) {
       return;
     }
-    if (destTypeData && type.type === destTypeData.type) {
+    if (destChainRef.current && type.type === destChainRef.current.type) {
       reverseExchangeType();
       return;
     }
     setFormAmount('');
     setAddress('');
-    history.replace(`/rAsset/swap/${type.type}/${destType}`, {
-      rSymbol: tokenType && tokenType.title,
-    });
+    // history.replace(`/rAsset/swap/${type.type}/${destType}`, {
+    //   rSymbol: tokenType && tokenType.title,
+    // });
+    // fromChainRef.current = type;
+    setFromChainRefState(type);
   };
 
   const changeDestChain = (type: SelectorType) => {
     if (!type) {
       return;
     }
-    if (fromTypeData && type.type === fromTypeData.type) {
+    if (fromChainRef.current && type.type === fromChainRef.current.type) {
       reverseExchangeType();
       return;
     }
     setFormAmount('');
     setAddress('');
-    history.replace(`/rAsset/swap/${fromType}/${type.type}`, {
-      rSymbol: tokenType && tokenType.title,
-    });
+    // history.replace(`/rAsset/swap/${fromType}/${type.type}`, {
+    //   rSymbol: tokenType && tokenType.title,
+    // });
+    // destChainRef.current = type;
+    setDestChainRefState(type);
   };
 
   return (
@@ -627,15 +717,17 @@ export default function Index(props: any) {
         <div className='row' style={{ marginBottom: 0 }}>
           <div>
             <TypeSelector
-              popTitle={fromTypeData ? 'Select a ' + fromTypeData.content + ' rToken' : ''}
+              popTitle={'Select a rToken'}
               selectDataSource={selectDataSource}
-              selectedData={tokenType}
-              selectedTitle={tokenType ? tokenType.title : ''}
-              selectedDescription={tokenType ? '' : 'Choose a token'}
+              selectedData={tokenRefState}
+              selectedTitle={tokenRefState.title}
+              selectedDescription={tokenRefState ? '' : 'Choose a token'}
               onSelectChange={(e: SelectorType) => {
                 setFormAmount('');
                 setAddress('');
-                setTokenType({ ...e });
+                // tokenRef.current = { ...e };
+                // setTokenRefState({ ...e });
+                history.push(`/rAsset/swap/${e.title}`);
               }}
             />
           </div>
@@ -645,9 +737,9 @@ export default function Index(props: any) {
               <TypeSelector
                 popTitle={'Select a Chain'}
                 selectDataSource={fromTypeSelections}
-                selectedData={fromTypeData}
-                selectedTitle={fromTypeData ? fromTypeData.content : ''}
-                selectedDescription={fromTypeData ? fromTypeData.title : 'Choose a token standard'}
+                selectedData={fromChainRefState}
+                selectedTitle={fromChainRefState ? fromChainRefState.content : ''}
+                selectedDescription={fromChainRefState ? fromChainRefState.title : 'Choose a token standard'}
                 onSelectChange={changeFromChain}
               />
             </div>
@@ -665,9 +757,9 @@ export default function Index(props: any) {
               <TypeSelector
                 popTitle={'Select a Chain'}
                 selectDataSource={destTypeSelections}
-                selectedData={destTypeData}
-                selectedTitle={destTypeData ? destTypeData.content : ''}
-                selectedDescription={destTypeData ? destTypeData.title : 'Choose a token standard'}
+                selectedData={destChainRefState}
+                selectedTitle={destChainRefState ? destChainRefState.content : ''}
+                selectedDescription={destChainRefState ? destChainRefState.title : 'Choose a token standard'}
                 onSelectChange={changeDestChain}
               />
             </div>
@@ -677,13 +769,13 @@ export default function Index(props: any) {
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <div className={'title'}>Swap Amount</div>
               <div className={'balance_amount'}>
-                Balance: {tokenType && tokenType.content !== '--' ? tokenType.content : '--'}
+                Balance: {tokenRefState.content !== '--' ? tokenRefState.content : '--'}
               </div>
             </div>
 
             <AmountInputEmbed
-              maxInput={tokenType && tokenType.content !== '--' ? tokenType.content : 0}
-              showMax={tokenType && !isNaN(Number(tokenType.content))}
+              maxInput={tokenRefState.content !== '--' ? tokenRefState.content : 0}
+              showMax={!isNaN(Number(tokenRefState.content))}
               placeholder='0.0'
               value={fromAoumt}
               onChange={(value: any) => {
@@ -695,7 +787,13 @@ export default function Index(props: any) {
           <div className={'input_container'} style={{ marginTop: '20px' }}>
             <div className={'title'}>Received Address</div>
             <AddressInputEmbed
-              placeholder={destType === 'native' || destType === 'spl' ? '...' : '0x...'}
+              placeholder={
+                destChainRefState
+                  ? destChainRefState.type === 'native' || destChainRefState.type === 'spl'
+                    ? '...'
+                    : '0x...'
+                  : ''
+              }
               value={address}
               onChange={(e: any) => {
                 setAddress(e.target.value);
@@ -737,28 +835,28 @@ export default function Index(props: any) {
         </div>
 
         <div className='fee'>
-          {fromTypeData && fromTypeData.type === 'erc20' && `Estimate Fee: ${estimateEthFee} ETH`}
+          {fromChainRefState && fromChainRefState.type === 'erc20' && `Estimate Fee: ${estimateEthFee} ETH`}
 
-          {fromTypeData && fromTypeData.type === 'bep20' && `Estimate Fee: ${estimateBscFee} BNB`}
+          {fromChainRefState && fromChainRefState.type === 'bep20' && `Estimate Fee: ${estimateBscFee} BNB`}
 
-          {fromTypeData && fromTypeData.type === 'spl' && `Estimate Fee: ${estimateSolFee} SOL`}
+          {fromChainRefState && fromChainRefState.type === 'spl' && `Estimate Fee: ${estimateSolFee} SOL`}
 
-          {fromTypeData &&
-            fromTypeData.type === 'native' &&
-            destTypeData &&
-            destTypeData.type === 'erc20' &&
+          {fromChainRefState &&
+            fromChainRefState.type === 'native' &&
+            destChainRefState &&
+            destChainRefState.type === 'erc20' &&
             `Estimate Fee: ${erc20EstimateFee} FIS`}
 
-          {fromTypeData &&
-            fromTypeData.type === 'native' &&
-            destTypeData &&
-            destTypeData.type === 'bep20' &&
+          {fromChainRefState &&
+            fromChainRefState.type === 'native' &&
+            destChainRefState &&
+            destChainRefState.type === 'bep20' &&
             `Estimate Fee: ${bep20EstimateFee} FIS`}
 
-          {fromTypeData &&
-            fromTypeData.type === 'native' &&
-            destTypeData &&
-            destTypeData.type === 'spl' &&
+          {fromChainRefState &&
+            fromChainRefState.type === 'native' &&
+            destChainRefState &&
+            destChainRefState.type === 'spl' &&
             `Estimate Fee: ${slp20EstimateFee} FIS`}
         </div>
 
@@ -768,71 +866,80 @@ export default function Index(props: any) {
               !(
                 fromAoumt &&
                 address &&
-                fromTypeData &&
-                destTypeData &&
-                (fromTypeData.type === 'native' ||
-                  fromTypeData.type === 'spl' ||
-                  (fromTypeData.type === 'erc20' && config.metaMaskNetworkIsGoerliEth(metaMaskNetworkId)) ||
-                  (fromTypeData.type === 'bep20' && config.metaMaskNetworkIsBsc(metaMaskNetworkId)))
+                fromChainRefState &&
+                destChainRefState &&
+                (fromChainRefState.type === 'native' ||
+                  fromChainRefState.type === 'spl' ||
+                  (fromChainRefState.type === 'erc20' && config.metaMaskNetworkIsGoerliEth(metaMaskNetworkId)) ||
+                  (fromChainRefState.type === 'bep20' && config.metaMaskNetworkIsBsc(metaMaskNetworkId)))
               )
             }
             onClick={async () => {
-              if (!tokenType) {
-                return;
-              }
-              if (!fromTypeData || !destTypeData) {
+              if (!fromChainRef.current || !destChainRef.current) {
                 message.error(`Please select chain to transfer`);
                 return;
               }
-              if (fromTypeData && fromTypeData.type === 'erc20') {
+              if (fromChainRef.current && fromChainRef.current.type === 'erc20') {
                 if (isNaN(Number(metaMaskBalance)) || Number(metaMaskBalance) <= Number(estimateEthFee)) {
                   message.error(`No enough ETH to pay for the fee`);
                   return;
                 }
               }
-              if (fromTypeData && fromTypeData.type === 'bep20') {
+              if (fromChainRef.current && fromChainRef.current.type === 'bep20') {
                 if (isNaN(Number(metaMaskBalance)) || Number(metaMaskBalance) <= Number(estimateBscFee)) {
                   message.error(`No enough BNB to pay for the fee`);
                   return;
                 }
               }
-              if (fromTypeData && fromTypeData.type === 'spl') {
+              if (fromChainRef.current && fromChainRef.current.type === 'spl') {
                 if (isNaN(Number(solTransferrableAmount)) || Number(solTransferrableAmount) <= Number(estimateSolFee)) {
                   message.error(`No enough SOL to pay for the fee`);
                   return;
                 }
               }
-              if (fromTypeData.type === 'native' && destTypeData && destTypeData.type === 'erc20') {
+              if (
+                fromChainRef.current.type === 'native' &&
+                destChainRef.current &&
+                destChainRef.current.type === 'erc20'
+              ) {
                 if (Number(fis_balance) <= Number(erc20EstimateFee)) {
                   message.error(`No enough FIS to pay for the fee`);
                   return;
                 }
               }
-              if (fromTypeData.type === 'native' && destTypeData && destTypeData.type === 'bep20') {
+              if (
+                fromChainRef.current.type === 'native' &&
+                destChainRef.current &&
+                destChainRef.current.type === 'bep20'
+              ) {
                 if (Number(fis_balance) <= Number(bep20EstimateFee)) {
                   message.error(`No enough FIS to pay for the fee`);
                   return;
                 }
               }
-              if (fromTypeData.type === 'native' && destTypeData && destTypeData.type === 'spl') {
+              if (
+                fromChainRef.current.type === 'native' &&
+                destChainRef.current &&
+                destChainRef.current.type === 'spl'
+              ) {
                 if (Number(fis_balance) <= Number(slp20EstimateFee)) {
                   message.error(`No enough FIS to pay for the fee`);
                   return;
                 }
               }
-              if (destTypeData.type === 'erc20' || destTypeData.type === 'bep20') {
+              if (destChainRef.current.type === 'erc20' || destChainRef.current.type === 'bep20') {
                 if (!checkEthAddress(address)) {
                   message.error('Input address error');
                   return;
                 }
               }
-              if (destTypeData.type === 'native') {
+              if (destChainRef.current.type === 'native') {
                 if (!checkAddress(address)) {
                   message.error('Input address error');
                   return;
                 }
               }
-              if (destTypeData.type === 'spl') {
+              if (destChainRef.current.type === 'spl') {
                 if (!checkSOLAddress(address)) {
                   message.error('Input address error');
                   return;
@@ -850,7 +957,10 @@ export default function Index(props: any) {
                     return;
                   }
 
-                  const createSplTokenAccountResult = await solServer.createTokenAccount(address, tokenType.type);
+                  const createSplTokenAccountResult = await solServer.createTokenAccount(
+                    address,
+                    tokenRef.current.type,
+                  );
                   if (createSplTokenAccountResult) {
                     setShowAddSplTokenButton(false);
                   }
@@ -860,26 +970,28 @@ export default function Index(props: any) {
                 }
               }
 
-              if (destTypeData && destTypeData.type === 'erc20') {
+              if (destChainRef.current && destChainRef.current.type === 'erc20') {
                 setViewTxUrl(config.etherScanErc20TxInAddressUrl(address));
-              } else if (destTypeData && destTypeData.type === 'bep20') {
+              } else if (destChainRef.current && destChainRef.current.type === 'bep20') {
                 setViewTxUrl(config.bscScanBep20TxInAddressUrl(address));
-              } else if (destTypeData && destTypeData.type === 'spl') {
+              } else if (destChainRef.current && destChainRef.current.type === 'spl') {
                 setViewTxUrl(config.solScanSlp20TxInAddressUrl(address));
               } else {
                 setViewTxUrl(config.stafiScanUrl(address));
               }
-              setTransferDetail(`${fromAoumt} ${tokenType && tokenType.title} ${fromTypeData && fromTypeData.content}`);
+              setTransferDetail(
+                `${fromAoumt} ${tokenRef.current.title} ${fromChainRef.current && fromChainRef.current.content}`,
+              );
 
-              if (fromTypeData && fromTypeData.type === 'native') {
+              if (fromChainRef.current && fromChainRef.current.type === 'native') {
                 let chainId = ETH_CHAIN_ID;
-                if (destTypeData && destTypeData.type === 'bep20') {
+                if (destChainRef.current && destChainRef.current.type === 'bep20') {
                   chainId = BSC_CHAIN_ID;
-                } else if (destTypeData && destTypeData.type === 'spl') {
+                } else if (destChainRef.current && destChainRef.current.type === 'spl') {
                   chainId = SOL_CHAIN_ID;
                 }
                 dispatch(
-                  nativeToOtherSwap(chainId, tokenType.title, tokenType.type, fromAoumt, address, () => {
+                  nativeToOtherSwap(chainId, tokenRef.current.title, tokenRef.current.type, fromAoumt, address, () => {
                     setFormAmount('');
                     setAddress('');
                     updateData();
@@ -888,21 +1000,21 @@ export default function Index(props: any) {
               } else {
                 let swapFun;
                 let destChainId;
-                if (fromTypeData && fromTypeData.type === 'erc20') {
+                if (fromChainRef.current && fromChainRef.current.type === 'erc20') {
                   swapFun = erc20ToOtherSwap;
-                } else if (fromTypeData && fromTypeData.type === 'bep20') {
+                } else if (fromChainRef.current && fromChainRef.current.type === 'bep20') {
                   swapFun = bep20ToOtherSwap;
                 } else if (
-                  fromTypeData &&
-                  fromTypeData.type === 'spl' &&
-                  destTypeData &&
-                  destTypeData.type === 'native'
+                  fromChainRef.current &&
+                  fromChainRef.current.type === 'spl' &&
+                  destChainRef.current &&
+                  destChainRef.current.type === 'native'
                 ) {
                   swapFun = slp20ToOtherSwap;
                 }
-                if (destTypeData.type === 'erc20') {
+                if (destChainRef.current.type === 'erc20') {
                   destChainId = ETH_CHAIN_ID;
-                } else if (destTypeData.type === 'bep20') {
+                } else if (destChainRef.current.type === 'bep20') {
                   destChainId = BSC_CHAIN_ID;
                 } else {
                   destChainId = STAFI_CHAIN_ID;
@@ -910,7 +1022,7 @@ export default function Index(props: any) {
 
                 if (swapFun) {
                   dispatch(
-                    swapFun(destChainId, tokenType.title, tokenType.type, fromAoumt, address, () => {
+                    swapFun(destChainId, tokenRef.current.title, tokenRef.current.type, fromAoumt, address, () => {
                       setFormAmount('');
                       setAddress('');
                       updateData();
@@ -925,8 +1037,8 @@ export default function Index(props: any) {
       </div>
 
       <SwapLoading
-        destChainName={destTypeData && destTypeData.title}
-        destChainType={destTypeData && destTypeData.type}
+        destChainName={destChainRefState && destChainRefState.title}
+        destChainType={destChainRefState && destChainRefState.type}
         transferDetail={transferDetail}
         viewTxUrl={viewTxUrl}
       />
