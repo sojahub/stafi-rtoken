@@ -24,7 +24,7 @@ export const NewDataItem = (props: NewDataItemProps) => {
       return ['--', 0];
     }
     if (Number(lastEraReward) === 0) {
-      return ['0.000', 0];
+      return ['0', 0];
     }
     if (Number(lastEraReward) > -0.001 && Number(lastEraReward) < 0) {
       return ['-<0.001', -1];

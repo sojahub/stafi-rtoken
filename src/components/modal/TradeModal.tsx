@@ -147,6 +147,40 @@ export default function TradeModal(props: Props) {
         <Divider style={{ marginTop: '15px' }} />
 
         <div>
+          {showrDex && (
+            <Fragment>
+              <DexItem>
+                <DexTitleContainer>
+                  <DexIcon src={rSwapIcon} />
+                  <div>rDex</div>
+                </DexTitleContainer>
+
+                <div style={{ width: '130px' }}>Native</div>
+
+                <TradeButton>
+                  <div
+                    style={{
+                      fontSize: '12px',
+                      lineHeight: '12px',
+                      fontWeight: 'bold',
+                      color: '#23292f',
+                      transform: 'scale(0.9)',
+                      transformOrigin: 'center center',
+                    }}
+                    onClick={() => {
+                      if (getTradeUrl('rDex')) {
+                        window.open(getTradeUrl('rDex'));
+                      }
+                    }}>
+                    Trade
+                  </div>
+                </TradeButton>
+              </DexItem>
+
+              <Divider style={{ margin: '0 15px' }} />
+            </Fragment>
+          )}
+
           {showCurve && (
             <Fragment>
               <DexItem>
@@ -292,7 +326,7 @@ export default function TradeModal(props: Props) {
                   <div>Sifchain</div>
                 </DexTitleContainer>
 
-                <div style={{ width: '130px' }}>ERC20</div>
+                <div style={{ width: '130px' }}>Sifchain</div>
 
                 <TradeButton>
                   <div
@@ -341,40 +375,6 @@ export default function TradeModal(props: Props) {
                     onClick={() => {
                       if (getTradeUrl('Atrix')) {
                         window.open(getTradeUrl('Atrix'));
-                      }
-                    }}>
-                    Trade
-                  </div>
-                </TradeButton>
-              </DexItem>
-
-              <Divider style={{ margin: '0 15px' }} />
-            </Fragment>
-          )}
-
-          {showrDex && (
-            <Fragment>
-              <DexItem>
-                <DexTitleContainer>
-                  <DexIcon src={rSwapIcon} />
-                  <div>rDex</div>
-                </DexTitleContainer>
-
-                <div style={{ width: '130px' }}>Native</div>
-
-                <TradeButton>
-                  <div
-                    style={{
-                      fontSize: '12px',
-                      lineHeight: '12px',
-                      fontWeight: 'bold',
-                      color: '#23292f',
-                      transform: 'scale(0.9)',
-                      transformOrigin: 'center center',
-                    }}
-                    onClick={() => {
-                      if (getTradeUrl('rDex')) {
-                        window.open(getTradeUrl('rDex'));
                       }
                     }}>
                     Trade

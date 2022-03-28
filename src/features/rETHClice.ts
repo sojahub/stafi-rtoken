@@ -399,7 +399,10 @@ export const send =
       dispatch(setLoading(false));
       if (result && result.status) {
         message.success('Deposit successfully');
-        dispatch(add_ETH_Staker_stake_Notice(stafi_uuid(), value.toString(), noticeStatus.Confirmed));
+        const txHash = result.transactionHash;
+        dispatch(
+          add_ETH_Staker_stake_Notice(stafi_uuid(), value.toString(), noticeStatus.Confirmed, { address, txHash }),
+        );
         cb && cb();
       } else {
         dispatch(add_ETH_Staker_stake_Notice(stafi_uuid(), value.toString(), noticeStatus.Error));

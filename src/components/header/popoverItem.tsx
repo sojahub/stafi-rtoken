@@ -3,6 +3,7 @@
 import { Empty } from 'antd';
 import React from 'react';
 import config from 'src/config/index';
+import { BSC_CHAIN_ID, ETH_CHAIN_ID, STAFI_CHAIN_ID } from 'src/features/bridgeClice';
 import { noticesubType, noticeType, notice_text } from 'src/features/noticeClice';
 import { rSymbol, Symbol } from 'src/keyring/defaults';
 
@@ -129,6 +130,35 @@ export default function Index(props: Props) {
             ) {
               props.hideNoticePopover && props.hideNoticePopover();
               props.onClick && props.onClick();
+            }
+            if (
+              props.data.rSymbol == Symbol.Eth &&
+              props.data.type == noticeType.Staker &&
+              props.data.subType == noticesubType.Stake
+            ) {
+              props.hideNoticePopover && props.hideNoticePopover();
+              const { txHash } = props.data.subData;
+              const viewTxUrl = config.etherScanTxUrl(txHash);
+              viewTxUrl && window.open(viewTxUrl);
+            }
+            if (
+              props.data.rSymbol == Symbol.Fis &&
+              props.data.type == noticeType.Staker &&
+              props.data.subType == noticesubType.Stake
+            ) {
+              props.hideNoticePopover && props.hideNoticePopover();
+              const destChainId = props.data.subData?.processParameter?.destChainId;
+              const address = props.data.subData?.processParameter?.targetAddress;
+              if (destChainId === STAFI_CHAIN_ID) {
+                const viewTxUrl = config.stafiScanUrl(address);
+                viewTxUrl && window.open(viewTxUrl);
+              } else if (destChainId === ETH_CHAIN_ID) {
+                const viewTxUrl = config.etherScanAddressUrl(address);
+                viewTxUrl && window.open(viewTxUrl);
+              } else if (destChainId === BSC_CHAIN_ID) {
+                const viewTxUrl = config.bscScanBep20TxInAddressUrl(address);
+                viewTxUrl && window.open(viewTxUrl);
+              }
             }
             if (props.data.type == noticeType.Lp && props.data.subData) {
               const { txHash, platform } = props.data.subData;

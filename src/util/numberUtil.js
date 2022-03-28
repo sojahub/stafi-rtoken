@@ -145,6 +145,9 @@ const numberUtil = {
     if (amount === '--') {
       return '--';
     }
+    if (Number(amount) === 0) {
+      return '0';
+    }
     return (floor(amount * 1000000) / 1000000).toFixed(6) || '--';
   },
 
@@ -178,6 +181,9 @@ const numberUtil = {
   handleAmountFloorToFixed(amount, powNumber) {
     if (amount === '--' || isNaN(Number(amount))) {
       return '--';
+    }
+    if (Number(amount) === 0) {
+      return '0';
     }
     const factor = Math.pow(10, powNumber);
     return (Math.floor(Number(amount) * factor) / factor).toFixed(powNumber);

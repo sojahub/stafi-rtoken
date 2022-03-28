@@ -422,7 +422,10 @@ export const transfer =
                       destChainId === STAFI_CHAIN_ID ? noticeStatus.Confirmed : noticeStatus.Swapping,
                       {
                         process: getState().globalModule.process,
-                        processParameter: getState().FISModule.processParameter,
+                        processParameter: {
+                          destChainId,
+                          targetAddress: destChainId === STAFI_CHAIN_ID ? currentAccount : targetAddress,
+                        },
                       },
                     ),
                   );

@@ -110,6 +110,7 @@ export function useUnbondList(type: 'rDOT' | 'rETH' | 'rFIS' | 'rKSM' | 'rATOM' 
         setHasMore(res.data.unbondList.length === PAGE_COUNT);
       }
     } finally {
+      setIsLoading(false);
       dispatch(setLoading(false));
     }
   };
@@ -117,11 +118,11 @@ export function useUnbondList(type: 'rDOT' | 'rETH' | 'rFIS' | 'rKSM' | 'rATOM' 
   useEffect(() => {
     setPageIndex(1);
     dispatch(setLoading(true));
-  }, [type, stafiPubKey]);
+  }, [type, stafiPubKey, dispatch]);
 
   useEffect(() => {
     fetchData();
-  }, [pageIndex, stafiPubKey]);
+  }, [pageIndex, stafiPubKey, type]);
 
   const loadMore = () => {
     if (isLoadingMore) {
