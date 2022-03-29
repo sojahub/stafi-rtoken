@@ -1,5 +1,5 @@
 import { isEmpty } from 'lodash';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import config, { getRsymbolByTokenTitle } from 'src/config';
 import { BSC_CHAIN_ID, ETH_CHAIN_ID, SOL_CHAIN_ID, STAFI_CHAIN_ID } from 'src/features/bridgeClice';
@@ -200,7 +200,7 @@ export function useLastEraReward(platform: string, type: string) {
   const { stafiPubKey } = useStafiAccount();
   const { solPubKey } = useSolAccount();
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     if (!userAddress || chainType === -1) {
       return;
     }
@@ -208,6 +208,7 @@ export function useLastEraReward(platform: string, type: string) {
     try {
       const url = `${config.api2()}/stafi/webapi/rtoken/lastEraReward`;
       const res = await api.post(url, {
+        // userAddress: '0x5a47773e001e22ea6d2db06e1e06ce8ad9e9be03dfe150be8477ec048d7f6840',
         userAddress,
         chainType,
         rTokenType: type === 'rETH' ? -1 : getRsymbolByTokenTitle(type),
@@ -229,7 +230,7 @@ export function useLastEraReward(platform: string, type: string) {
       }
     } finally {
     }
-  };
+  }, [chainType, platform, type, userAddress]);
 
   useEffect(() => {
     if (platform === 'Native') {
@@ -257,7 +258,7 @@ export function useLastEraReward(platform: string, type: string) {
 
   useEffect(() => {
     fetchData();
-  }, [userAddress, chainType]);
+  }, [fetchData]);
 
   return { lastEraReward };
 }
