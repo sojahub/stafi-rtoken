@@ -152,7 +152,7 @@ export default function TradeModal(props: Props) {
               <DexItem>
                 <DexTitleContainer>
                   <DexIcon src={rSwapIcon} />
-                  <div>rDex</div>
+                  <div>rDEX</div>
                 </DexTitleContainer>
 
                 <div style={{ width: '130px' }}>Native</div>
