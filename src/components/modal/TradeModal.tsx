@@ -139,9 +139,9 @@ export default function TradeModal(props: Props) {
         <SubTitle>Available Trading DEXes</SubTitle>
 
         <div style={{ display: 'flex', alignItems: 'center', marginTop: '48px' }}>
-          <ListTitle style={{ margin: '0 70px 0 30px' }}>DEX</ListTitle>
+          <ListTitle style={{ margin: '0 70px 0 50px' }}>DEX</ListTitle>
 
-          <ListTitle>Supported Token Standard</ListTitle>
+          <ListTitle>Token Standard</ListTitle>
         </div>
 
         <Divider style={{ marginTop: '15px' }} />
@@ -463,7 +463,7 @@ const DexItem = styled.div`
 const DexTitleContainer = styled.div`
   display: flex;
   align-items: center;
-  width: 155px;
+  width: 145px;
   margin-left: 30px;
 `;
 

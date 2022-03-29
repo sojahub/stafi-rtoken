@@ -99,12 +99,7 @@ export default function Index(props: any) {
         window.open('');
       }}
       onSwapClick={() => {
-        props.history.push({
-          pathname: '/rAsset/swap/native/default',
-          state: {
-            rSymbol: 'rSOL',
-          },
-        });
+        props.history.push('/rAsset/swap/rSOL?first=native');
       }}
       type='rSOL'></Content>
   );

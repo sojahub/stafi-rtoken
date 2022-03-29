@@ -109,12 +109,7 @@ export default function Index(props: any) {
         //
       }}
       onSwapClick={() => {
-        props.history.push({
-          pathname: '/rAsset/swap/native/default',
-          state: {
-            rSymbol: 'rDOT',
-          },
-        });
+        props.history.push('/rAsset/swap/rDOT?first=native');
       }}
       hours={24}
       type='rDOT'></Content>

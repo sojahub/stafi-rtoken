@@ -88,6 +88,9 @@ export default function Index(props: any) {
       onRdeemClick={() => {
         message.info('Redemption will be supported once ETH2.0 Phase 1.5 is released');
       }}
+      onSwapClick={() => {
+        props.history.push('/rAsset/swap/rETH?first=native');
+      }}
       onUniswapClick={() => {
         //
       }}

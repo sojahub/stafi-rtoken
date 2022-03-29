@@ -205,14 +205,6 @@ export default function Index(props: any) {
     dispatch(getRtokenPriceList());
   }, [dispatch]);
 
-  const toSwap = (tokenSymbol: string) => {
-    history.push(`/rAsset/swap/${tokenSymbol}`, {});
-  };
-
-  const toSwapBep20 = (tokenSymbol: string) => {
-    history.push(`/rAsset/swap/${tokenSymbol}`, {});
-  };
-
   const getIcon = (name) => {
     if (name === 'rFIS') {
       return rasset_rfis_svg;

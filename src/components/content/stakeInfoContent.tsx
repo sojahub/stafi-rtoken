@@ -24,6 +24,7 @@ import styled from 'styled-components';
 import { HContainer, Text } from '../commonComponents';
 import RedeemSwapModal from '../modal/RedeemSwapModal';
 import SwapModalNew from '../modal/swapModalNew';
+import TradeModal from '../modal/TradeModal';
 import TradePopover from '../tradePopover';
 import LeftContent from './leftContent';
 import { SelectPlatformPopover } from './SelectPlatformPopover';
@@ -45,6 +46,7 @@ type Props = {
 
 export default function Index(props: Props) {
   const history = useHistory();
+  const [tradeModalVisible, setTradeModalVisible] = useState(false);
 
   const [visibleModal, setVisibleModal] = useState(false);
   const [redeemSwapModalVisible, setRedeemSwapModalVisible] = useState(false);
@@ -195,16 +197,17 @@ export default function Index(props: Props) {
               Redeem
             </Button>
 
-            <TradePopover
+            {/* <TradePopover
               data={tradeList}
               onClick={
-                props.platform === 'ERC20' || props.platform === 'BEP20'
-                  ? null
-                  : (item: any) => {
-                      setVisibleModal(true);
-                      setTradeLabel(item.label);
-                      setSelectedTradeUrl(item.url);
-                    }
+                null
+                // props.platform === 'ERC20' || props.platform === 'BEP20'
+                //   ? null
+                //   : (item: any) => {
+                //       setVisibleModal(true);
+                //       setTradeLabel(item.label);
+                //       setSelectedTradeUrl(item.url);
+                //     }
               }>
               <Button
                 size='small'
@@ -212,8 +215,17 @@ export default function Index(props: Props) {
                 disabled={!tradeList || tradeList.length === 0}
                 btnStyle={{ marginLeft: '0px' }}>
                 Trade <img className='dow_svg' src={dow_svg} alt='down arrow' />{' '}
-              </Button>{' '}
-            </TradePopover>
+              </Button>
+            </TradePopover> */}
+
+            <Button
+              size='small'
+              btnType='ellipse'
+              // disabled={!tradeList || tradeList.length === 0}
+              btnStyle={{ marginLeft: '0px' }}
+              onClick={() => setTradeModalVisible(true)}>
+              Trade
+            </Button>
           </div>
         </div>
       </div>
@@ -242,7 +254,7 @@ export default function Index(props: Props) {
         Updated every {props.hours} hours
       </Text>
 
-      <SwapModalNew
+      {/* <SwapModalNew
         visible={visibleModal}
         type={props.type}
         label={tradeLabel}
@@ -261,7 +273,7 @@ export default function Index(props: Props) {
             });
           }
         }}
-      />
+      /> */}
 
       <RedeemSwapModal
         type={props.type}
@@ -270,6 +282,16 @@ export default function Index(props: Props) {
         onCancel={() => {
           setRedeemSwapModalVisible(false);
         }}
+      />
+
+      <TradeModal
+        rTokenName={props.type}
+        visible={tradeModalVisible}
+        onClickSwap={() => {
+          setTradeModalVisible(false);
+          props.onSwapClick();
+        }}
+        onCancel={() => setTradeModalVisible(false)}
       />
     </LeftContent>
   );
