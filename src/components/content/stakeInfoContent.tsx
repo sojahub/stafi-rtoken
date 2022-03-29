@@ -164,7 +164,7 @@ export default function Index(props: Props) {
           <InfoItem style={{ cursor: 'pointer' }} onClick={() => history.push(`/${props.type}/staker/reward`)}>
             <HContainer>
               <Text size='12px' scale={0.83} bold transformOrigin='center top' color='#C4C4C4' clickable>
-                Reward in last 24h
+                Reward in last era
               </Text>
 
               <img src={arrowIcon} width='3px' height='5.1px' alt='arrow' />

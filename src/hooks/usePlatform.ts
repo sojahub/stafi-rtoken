@@ -1,4 +1,4 @@
-import { useHistory } from 'react-router-dom';
+import { useHistory } from 'react-router';
 import qs from 'querystring';
 import { useEffect, useMemo, useState } from 'react';
 import { requestSwitchMetaMaskNetwork } from 'src/util/metaMaskUtil';

@@ -171,7 +171,7 @@ export const TokenList = () => {
       }
     }
 
-    history.push(`/r${tokenName}/home`);
+    history.push(`/r${tokenName}/staker/index`);
   };
 
   return (

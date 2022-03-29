@@ -268,7 +268,7 @@ export const reloadData = (): AppThunk => async (dispatch, getState) => {
 };
 
 export const rTokenRate = (): AppThunk => async (dispatch, getState) => {
-  let web3 = ethServer.getWeb3();
+  let web3 = ethServer.getWeb3FromPlatform('Ethereum');
   if (!web3) {
     return;
   }

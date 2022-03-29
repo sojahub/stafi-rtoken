@@ -28,6 +28,7 @@ export default function Index() {
     <div
       style={{
         width: '660px',
+        marginTop: '36px',
       }}>
       <Tag type='native' onClick={(type: string) => {}} />
 

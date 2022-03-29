@@ -12,7 +12,9 @@ export function useStakedValue(
 
   const rTokenAmount = useSelector((state: any) => {
     if (type === 'rETH') {
-      if (platform === 'ERC20') {
+      if (platform === 'Native') {
+        return state.rETHModule.nativeTokenAmount;
+      } else if (platform === 'ERC20') {
         return state.ETHModule.ercETHBalance;
       } else if (platform === 'BEP20') {
         return state.BSCModule.bepRETHBalance;

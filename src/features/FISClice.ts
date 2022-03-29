@@ -1166,24 +1166,30 @@ export const fisUnbond =
   };
 
 export const bondSwitch = (): AppThunk => async (dispatch, getState) => {
-  const stafiApi = await stafiServer.createStafiApi();
-  const result = await stafiApi.query.rTokenSeries.bondSwitch();
-  dispatch(setBondSwitch(result.toJSON()));
+  try {
+    const stafiApi = await stafiServer.createStafiApi();
+    const result = await stafiApi.query.rTokenSeries.bondSwitch();
+    dispatch(setBondSwitch(result.toJSON()));
+  } catch {}
 };
 
 export const fis_bondSwitch = (): AppThunk => async (dispatch, getState) => {
-  const stafiApi = await stafiServer.createStafiApi();
-  const result = await stafiApi.query.rFis.nominateSwitch();
-  dispatch(setBondSwitch(result.toJSON()));
+  try {
+    const stafiApi = await stafiServer.createStafiApi();
+    const result = await stafiApi.query.rFis.nominateSwitch();
+    dispatch(setBondSwitch(result.toJSON()));
+  } catch {}
 };
 
 export const getUnbondCommission = (): AppThunk => async (dispatch, getState) => {
-  const stafiApi = await stafiServer.createStafiApi();
-  const result = await stafiApi.query.rFis.unbondCommission();
-  const unbondCommission = NumberUtil.fisFeeToHuman(result.toJSON());
+  try {
+    const stafiApi = await stafiServer.createStafiApi();
+    const result = await stafiApi.query.rFis.unbondCommission();
+    const unbondCommission = NumberUtil.fisFeeToHuman(result.toJSON());
 
-  dispatch(setUnbondCommission(unbondCommission));
-  //const unbondCommissionShow = NumberUtil.fisFeeToFixed(this.unbondCommission) + '%';
+    dispatch(setUnbondCommission(unbondCommission));
+    //const unbondCommissionShow = NumberUtil.fisFeeToFixed(this.unbondCommission) + '%';
+  } catch {}
 };
 
 export default FISClice.reducer;

@@ -364,7 +364,7 @@ export default function Index(props: any) {
                 rTokenName={name}
                 icon={getIcon(name)}
                 rTokenAmount={getrTokenAmount(name)}
-                source='ERC20'
+                source='BEP20'
                 myStaked={getMyStaked(name)}
                 apy={getApy(name)}
                 onSwapClick={() => {

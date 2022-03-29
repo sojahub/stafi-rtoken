@@ -3,6 +3,7 @@ import TradeModal from 'src/components/modal/TradeModal';
 import styled from 'styled-components';
 import { useLastEraReward } from 'src/hooks/useEraReward';
 import { Tooltip } from 'antd';
+import { useHistory } from 'react-router';
 
 interface NewDataItemProps {
   rTokenName: string;
@@ -16,6 +17,7 @@ interface NewDataItemProps {
 }
 
 export const NewDataItem = (props: NewDataItemProps) => {
+  const history = useHistory();
   const [tradeModalVisible, setTradeModalVisible] = useState(false);
   const { lastEraReward } = useLastEraReward(props.source, props.rTokenName);
 
@@ -33,14 +35,17 @@ export const NewDataItem = (props: NewDataItemProps) => {
       return [Math.round(1000 * Number(lastEraReward)) / 1000, -1];
     }
     if (Number(lastEraReward) < 0.001 && Number(lastEraReward) > 0) {
-      return ['+<0.001', 1];
+      return ['<0.001', 1];
     }
     return ['+' + Math.round(1000 * Number(lastEraReward)) / 1000, 1];
   }, [lastEraReward]);
 
   return (
     <>
-      <TokenItemContainer>
+      <TokenItemContainer
+        onClick={() => {
+          history.push(`/${props.rTokenName}/staker/info?platform=${props.source}`);
+        }}>
         <HContainer
           style={{
             paddingLeft: '47px',
@@ -67,7 +72,7 @@ export const NewDataItem = (props: NewDataItemProps) => {
                 overlayClassName='doubt_overlay'
                 placement='topLeft'
                 overlayInnerStyle={{ color: '#A4A4A4' }}
-                title={`The increased amount of Staked ${props.rTokenName.slice(1)} within the last 24h.`}>
+                title={`The increased amount of Staked ${props.rTokenName.slice(1)} within the last era.`}>
                 <LastEraReward
                   style={{
                     color: rewardType === 0 ? '#818181' : rewardType > 1 ? '#00f3ab' : '#FF6565',
@@ -143,6 +148,7 @@ const TokenItemContainer = styled.div`
   margin-bottom: 15px;
   display: flex;
   align-items: center;
+  cursor: pointer;
 `;
 
 const TokenTitle = styled.div`
