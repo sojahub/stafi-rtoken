@@ -90,7 +90,11 @@ import TypeSelector from 'src/shared/components/input/typeSelector';
 import numberUtil from 'src/util/numberUtil';
 import NumberUtil from 'src/util/numberUtil';
 import { useInterval } from 'src/util/utils';
+import StafiServer from 'src/servers/stafi';
+
 import './index.scss';
+
+const stafiServer = new StafiServer();
 
 const splToken = require('@solana/spl-token');
 
@@ -224,6 +228,8 @@ export default function Index(props: any) {
   const tokenRef = useRef<SelectorType>(tokenRefState);
   const fromChainRef = useRef<SelectorType | null>(fromChainRefState);
   const destChainRef = useRef<SelectorType | null>(destChainRefState);
+
+  const [fisTxFee, setFisTxFee] = useState('--');
 
   useEffect(() => {
     const params = new URLSearchParams(history.location.search);
@@ -370,6 +376,31 @@ export default function Index(props: any) {
       solTransferrableAmount: state.rSOLModule.transferrableAmountShow,
     };
   });
+
+  useEffect(() => {
+    (async () => {
+      if (fisAccount && fisAccount.address && !isNaN(fisAccount.balance)) {
+        const api = await stafiServer.createStafiApi();
+        const tx = await api.tx.bridgeSwap.transferNative(
+          fisAccount.balance,
+          '',
+          !destChainRefState
+            ? STAFI_CHAIN_ID
+            : destChainRefState.type === 'spl'
+            ? SOL_CHAIN_ID
+            : destChainRefState.type === 'erc20'
+            ? ETH_CHAIN_ID
+            : destChainRefState.type === 'bep20'
+            ? BSC_CHAIN_ID
+            : STAFI_CHAIN_ID,
+        );
+        const paymentInfo = await tx.paymentInfo(fisAccount.address);
+        const fisFee = numberUtil.fisAmountToHuman(paymentInfo.partialFee.toJSON());
+        // console.log('fisFee', fisFee);
+        setFisTxFee(fisFee.toString());
+      }
+    })();
+  }, [fisAccount, destChainRefState]);
 
   const updateSplTokenStatus = useCallback(async () => {
     if (!destChainRef.current || destChainRef.current.type !== 'spl') {
@@ -875,6 +906,27 @@ export default function Index(props: any) {
               value={fromAoumt}
               onChange={(value: any) => {
                 setFormAmount(value);
+              }}
+              onClickMax={() => {
+                if (tokenRefState.type === 'fis' && fromChainRefState && fromChainRefState.type === 'native') {
+                  try {
+                    let v = selectedTokenBalance;
+                    if (!isNaN(Number(fisTxFee))) {
+                      v = v - Number(fisTxFee);
+                    }
+                    let estimetaFee = erc20EstimateFee;
+                    if (destChainRefState && destChainRefState.type === 'bep20') {
+                      estimetaFee = bep20EstimateFee;
+                    }
+                    if (destChainRefState && destChainRefState.type === 'spl') {
+                      estimetaFee = slp20EstimateFee;
+                    }
+                    v = v - Number(estimetaFee);
+                    setFormAmount(v.toFixed(6));
+                  } catch {}
+                } else {
+                  setFormAmount(selectedTokenBalance);
+                }
               }}
             />
           </div>

@@ -11,6 +11,7 @@ type Props = {
   maxInput?: string | number;
   disabled?: boolean;
   showMax?: Boolean;
+  onClickMax?: () => void;
 };
 export default function Index(props: Props) {
   return (
@@ -55,6 +56,10 @@ export default function Index(props: Props) {
           visibility: props.showMax ? 'visible' : 'hidden',
         }}
         onClick={() => {
+          if (props.onClickMax) {
+            props.onClickMax();
+            return;
+          }
           if (!isNaN(Number(props.maxInput))) {
             props.onChange && props.onChange(props.maxInput);
           }

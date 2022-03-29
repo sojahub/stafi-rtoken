@@ -66,6 +66,7 @@ export const getAssetBalance = async (address: string, tokenType: string, cb?: F
   }
 
   const tokenAccountPubkey = await solServer.getTokenAccountPubkey(address, tokenType);
+  // console.log('tokenAccountPubkey', tokenAccountPubkey);
   if (tokenAccountPubkey) {
     const connection = new Connection(config.solRpcApi(), {
       wsEndpoint: config.solRpcWs(),
