@@ -1,6 +1,6 @@
 import { Connection } from '@solana/web3.js';
 import { message } from 'antd';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Redirect, useHistory, useLocation, useParams } from 'react-router-dom';
 import bsc_white from 'src/assets/images/bsc_white.svg';
@@ -213,7 +213,6 @@ export default function Index(props: any) {
   const dispatch = useDispatch();
   let { rToken: rTokenParam } = useParams<any>();
   const history = useHistory();
-  const location = useLocation();
   const [fromAoumt, setFormAmount] = useState<any>();
   const [selectDataSource, setSelectDataSource] = useState(allTokenDatas);
   const [address, setAddress] = useState<any>();
@@ -227,10 +226,28 @@ export default function Index(props: any) {
   const destChainRef = useRef<SelectorType | null>(destChainRefState);
 
   useEffect(() => {
-    tokenRef.current = tokenRefState;
-    fromChainRef.current = fromChainRefState;
-    destChainRef.current = destChainRefState;
-  });
+    const params = new URLSearchParams(history.location.search);
+    let first = '';
+    let second = '';
+    if (params.has('first')) {
+      first = params.get('first');
+    }
+    if (params.has('second')) {
+      second = params.get('second');
+    }
+    const firstType = assetDatas.find((item) => item.type === first);
+    if (firstType) {
+      setFromChainRefState(firstType);
+    } else {
+      setFromChainRefState(null);
+    }
+    const secondType = assetDatas.find((item) => item.type === second);
+    if (secondType) {
+      setDestChainRefState(secondType);
+    } else {
+      setDestChainRefState(null);
+    }
+  }, [history.location.search]);
 
   const returnToAsset = useCallback(() => {
     history.push('/rAsset/home/native');
@@ -242,9 +259,16 @@ export default function Index(props: any) {
     if (!tokenData) {
       returnToAsset();
     } else {
-      setTokenRefState(tokenData);
+      console.log('tokenData', { ...tokenData });
+      setTokenRefState({ ...tokenData });
     }
   }, [rTokenParam, returnToAsset]);
+
+  useEffect(() => {
+    tokenRef.current = tokenRefState;
+    fromChainRef.current = fromChainRefState;
+    destChainRef.current = destChainRefState;
+  });
 
   // const [fromTypeData, setFromTypeData] = useState<null | SelectorType>(null);
   // const [destTypeData, setDestTypeData] = useState<null | SelectorType>(null);
@@ -275,7 +299,7 @@ export default function Index(props: any) {
     reth_balance,
     rbnb_balance,
   } = useSelector((state: any) => {
-    if (fromChainRef.current && fromChainRef.current.type === 'erc20') {
+    if (fromChainRefState && fromChainRefState.type === 'erc20') {
       return {
         rksm_balance: NumberUtil.handleFisAmountToFixed(state.ETHModule.ercRKSMBalance),
         rfis_balance: NumberUtil.handleFisAmountToFixed(state.ETHModule.ercRFISBalance),
@@ -288,7 +312,7 @@ export default function Index(props: any) {
         rbnb_balance: '--',
         estimateEthFee: state.bridgeModule.estimateEthFee,
       };
-    } else if (fromChainRef.current && fromChainRef.current.type === 'bep20') {
+    } else if (fromChainRefState && fromChainRefState.type === 'bep20') {
       return {
         rksm_balance: NumberUtil.handleFisAmountToFixed(state.BSCModule.bepRKSMBalance),
         rfis_balance: NumberUtil.handleFisAmountToFixed(state.BSCModule.bepRFISBalance),
@@ -301,13 +325,13 @@ export default function Index(props: any) {
         rbnb_balance: NumberUtil.handleFisAmountToFixed(state.BSCModule.bepRBNBBalance),
         estimateBscFee: state.bridgeModule.estimateBscFee,
       };
-    } else if (fromChainRef.current && fromChainRef.current.type === 'spl') {
+    } else if (fromChainRefState && fromChainRefState.type === 'spl') {
       return {
         fis_balance: NumberUtil.handleFisAmountToFixed(state.SOLModule.fisBalance),
         rsol_balance: NumberUtil.handleFisAmountToFixed(state.SOLModule.rSOLBalance),
         estimateSolFee: state.bridgeModule.estimateSolFee,
       };
-    } else {
+    } else if (fromChainRefState && fromChainRefState.type === 'native') {
       return {
         rksm_balance: NumberUtil.handleFisAmountToFixed(state.rKSMModule.tokenAmount),
         rfis_balance: NumberUtil.handleFisAmountToFixed(state.FISModule.tokenAmount),
@@ -321,6 +345,18 @@ export default function Index(props: any) {
         erc20EstimateFee: state.bridgeModule.erc20EstimateFee,
         bep20EstimateFee: state.bridgeModule.bep20EstimateFee,
         slp20EstimateFee: state.bridgeModule.slp20EstimateFee,
+      };
+    } else {
+      return {
+        rksm_balance: '--',
+        rfis_balance: '--',
+        rdot_balance: '--',
+        ratom_balance: '--',
+        fis_balance: '--',
+        rsol_balance: '--',
+        rmatic_balance: '--',
+        rbnb_balance: '--',
+        reth_balance: '--',
       };
     }
   });
@@ -350,18 +386,18 @@ export default function Index(props: any) {
   }, [address]);
 
   const update3rdPlatformData = useCallback(() => {
-    if (!fromChainRef.current) {
+    if (!fromChainRefState) {
       return;
     }
-    if (fromChainRef.current.type === 'erc20' && metaMaskAddress) {
+    if (fromChainRefState.type === 'erc20' && metaMaskAddress) {
       dispatch(getErc20Allowances());
       dispatch(getAssetBalanceAll());
     }
-    if (fromChainRef.current.type === 'bep20' && metaMaskAddress) {
+    if (fromChainRefState.type === 'bep20' && metaMaskAddress) {
       dispatch(getBep20Allowances());
       dispatch(getBep20AssetBalanceAll());
     }
-    if (fromChainRef.current.type === 'spl') {
+    if (fromChainRefState.type === 'spl') {
       if (solAddress) {
         dispatch(solQueryBalance());
         dispatch(getSlp20AssetBalanceAll());
@@ -370,7 +406,7 @@ export default function Index(props: any) {
         dispatch(earglyConnectPhantom());
       }
     }
-  }, [dispatch, metaMaskAddress, solAddress]);
+  }, [dispatch, metaMaskAddress, solAddress, fromChainRefState]);
 
   const updateNativePlatformData = useCallback(() => {
     if (fisAddress) {
@@ -548,27 +584,60 @@ export default function Index(props: any) {
 
     setSelectDataSource([...allTokenDatas]);
 
-    const targetToken = { ...tokenRef.current };
-    if ((targetToken.title = 'FIS')) {
-      targetToken.content = fis_balance;
-    } else if ((targetToken.title = 'rFIS')) {
-      targetToken.content = rfis_balance;
-    } else if ((targetToken.title = 'rKSM')) {
-      targetToken.content = rksm_balance;
-    } else if ((targetToken.title = 'rDOT')) {
-      targetToken.content = rdot_balance;
-    } else if ((targetToken.title = 'rATOM')) {
-      targetToken.content = ratom_balance;
-    } else if ((targetToken.title = 'rSOL')) {
-      targetToken.content = rsol_balance;
-    } else if ((targetToken.title = 'rMATIC')) {
-      targetToken.content = rmatic_balance;
-    } else if ((targetToken.title = 'rETH')) {
-      targetToken.content = reth_balance;
-    }
+    // const targetToken = { ...tokenRef.current };
+    // if ((targetToken.title = 'FIS')) {
+    //   targetToken.content = fis_balance;
+    // } else if ((targetToken.title = 'rFIS')) {
+    //   targetToken.content = rfis_balance;
+    // } else if ((targetToken.title = 'rKSM')) {
+    //   targetToken.content = rksm_balance;
+    // } else if ((targetToken.title = 'rDOT')) {
+    //   targetToken.content = rdot_balance;
+    // } else if ((targetToken.title = 'rATOM')) {
+    //   targetToken.content = ratom_balance;
+    // } else if ((targetToken.title = 'rSOL')) {
+    //   targetToken.content = rsol_balance;
+    // } else if ((targetToken.title = 'rMATIC')) {
+    //   targetToken.content = rmatic_balance;
+    // } else if ((targetToken.title = 'rETH')) {
+    //   targetToken.content = reth_balance;
+    // }
     // tokenRef.current = { ...targetToken };
     // setTokenRefState({ ...targetToken });
   }, [
+    rksm_balance,
+    rfis_balance,
+    fis_balance,
+    reth_balance,
+    rdot_balance,
+    ratom_balance,
+    rsol_balance,
+    rmatic_balance,
+    rbnb_balance,
+  ]);
+
+  const selectedTokenBalance = useMemo(() => {
+    if (tokenRefState.title === 'FIS') {
+      return fis_balance;
+    } else if (tokenRefState.title === 'rFIS') {
+      return rfis_balance;
+    } else if (tokenRefState.title === 'rKSM') {
+      return rksm_balance;
+    } else if (tokenRefState.title === 'rDOT') {
+      return rdot_balance;
+    } else if (tokenRefState.title === 'rATOM') {
+      return ratom_balance;
+    } else if (tokenRefState.title === 'rSOL') {
+      return rsol_balance;
+    } else if (tokenRefState.title === 'rMATIC') {
+      return rmatic_balance;
+    } else if (tokenRefState.title === 'rETH') {
+      return reth_balance;
+    } else if (tokenRefState.title === 'rBNB') {
+      return rbnb_balance;
+    }
+  }, [
+    tokenRefState,
     rksm_balance,
     rfis_balance,
     fis_balance,
@@ -638,13 +707,18 @@ export default function Index(props: any) {
     //   },
     // );
 
-    const temp = { ...fromChainRef.current };
+    const temp = fromChainRef.current ? { ...fromChainRef.current } : null;
 
     // fromChainRef.current = destChainRef.current;
     // destChainRef.current = temp;
 
-    setFromChainRefState(destChainRef.current);
+    setFromChainRefState(destChainRef.current || null);
     setDestChainRefState(temp);
+
+    history.replace(
+      `${history.location.pathname}${getSearchUrl(destChainRef.current?.type, fromChainRef.current?.type)}`,
+      {},
+    );
 
     setFormAmount('');
     setAddress('');
@@ -680,7 +754,8 @@ export default function Index(props: any) {
     //   rSymbol: tokenType && tokenType.title,
     // });
     // fromChainRef.current = type;
-    setFromChainRefState(type);
+    // setFromChainRefState(type);
+    history.replace(`${history.location.pathname}${getSearchUrl(type.type, destChainRef.current?.type)}`, {});
   };
 
   const changeDestChain = (type: SelectorType) => {
@@ -697,8 +772,27 @@ export default function Index(props: any) {
     //   rSymbol: tokenType && tokenType.title,
     // });
     // destChainRef.current = type;
-    setDestChainRefState(type);
+    // setDestChainRefState(type);
+
+    history.replace(`${history.location.pathname}${getSearchUrl(fromChainRef.current?.type, type.type)}`, {});
   };
+
+  const getSearchUrl = (first: string, second: string) => {
+    if (!first && !second) {
+      return '';
+    }
+    if (first && second) {
+      return `?first=${first}&second=${second}`;
+    }
+    if (first) {
+      return `?first=${first}`;
+    }
+    if (second) {
+      return `?second=${second}`;
+    }
+  };
+
+  // console.log('ssssss token', tokenRefState);
 
   return (
     <Content className='stafi_rasset_swap '>
@@ -710,7 +804,7 @@ export default function Index(props: any) {
         }}
       /> */}
       <div className={'title_container'}>
-        <Title label='rBridge Swap' padding={'30px 0'} />
+        <Title label='rBridge' padding={'30px 0'} />
       </div>
 
       <div>
@@ -727,7 +821,7 @@ export default function Index(props: any) {
                 setAddress('');
                 // tokenRef.current = { ...e };
                 // setTokenRefState({ ...e });
-                history.push(`/rAsset/swap/${e.title}`);
+                history.push(`/rAsset/swap/${e.title}${history.location.search || ''}`);
               }}
             />
           </div>
@@ -769,7 +863,8 @@ export default function Index(props: any) {
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <div className={'title'}>Swap Amount</div>
               <div className={'balance_amount'}>
-                Balance: {tokenRefState.content !== '--' ? tokenRefState.content : '--'}
+                {/* Balance: {tokenRefState.content !== '--' ? tokenRefState.content : '--'} */}
+                Balance: {selectedTokenBalance || '--'}
               </div>
             </div>
 
@@ -804,7 +899,7 @@ export default function Index(props: any) {
 
         <div
           className={`row last link_container ${address && 'show_tip'}`}
-          style={{ marginBottom: '4px', marginTop: '4px' }}>
+          style={{ marginBottom: '4px', marginTop: '1px' }}>
           {/* {address && destTypeData && destTypeData.type == 'native' && tokenType && (
             <div className='tip'>
               Click on this{' '}
@@ -834,7 +929,7 @@ export default function Index(props: any) {
           )} */}
         </div>
 
-        <div className='fee'>
+        <div className='fee' style={{ height: '13px' }}>
           {fromChainRefState && fromChainRefState.type === 'erc20' && `Estimate Fee: ${estimateEthFee} ETH`}
 
           {fromChainRefState && fromChainRefState.type === 'bep20' && `Estimate Fee: ${estimateBscFee} BNB`}

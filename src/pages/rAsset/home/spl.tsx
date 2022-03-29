@@ -119,7 +119,7 @@ export default function Index(props: any) {
   };
 
   const toSwap = (tokenSymbol: string) => {
-    history.push(`/rAsset/swap/${tokenSymbol}`, {});
+    history.push(`/rAsset/swap/${tokenSymbol}?first=spl`, {});
   };
 
   return (

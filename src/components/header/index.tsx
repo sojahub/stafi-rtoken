@@ -1,3 +1,4 @@
+import { e } from 'mathjs';
 import qs from 'querystring';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -137,33 +138,27 @@ export default function Index(props: Props) {
       }
 
       if (location.pathname.includes('/rAsset/swap')) {
-        if (location.pathname.includes('/rAsset/swap/native')) {
+        if (location.search.includes('first=native')) {
           return {
             showFisAccount: true,
           };
-        }
-
-        if (location.pathname.includes('/rAsset/swap/erc20')) {
+        } else if (location.search.includes('first=erc20')) {
           return {
             showMetaMaskAccount: true,
             wrongNetwork: !config.metaMaskNetworkIsGoerliEth(metaMaskNetworkId),
           };
-        }
-
-        if (location.pathname.includes('/rAsset/swap/bep20')) {
+        } else if (location.search.includes('first=bep20')) {
           return {
             showMetaMaskAccount: true,
             wrongNetwork: !config.metaMaskNetworkIsBsc(metaMaskNetworkId),
           };
-        }
-
-        if (location.pathname.includes('/rAsset/swap/spl')) {
+        } else if (location.search.includes('first=spl')) {
           return {
             showSolAccount: true,
           };
         }
 
-        return {};
+        return { showFisAccount: true };
       }
     }
 

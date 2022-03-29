@@ -55,8 +55,14 @@ export const NewDataItem = (props: NewDataItemProps) => {
             width: '137px',
           }}>
           <HContainer>
-            {props.myStaked}
-            {props.rTokenName !== 'FIS' && (
+            <div
+              style={{
+                opacity: props.myStaked === '--' || Number(props.myStaked) === 0 ? 0.4 : 1,
+              }}>
+              {props.myStaked}
+            </div>
+
+            {(Number(props.myStaked) > 0 || props.myStaked === '<0.0001') && props.rTokenName !== 'FIS' && (
               <Tooltip
                 overlayClassName='doubt_overlay'
                 placement='topLeft'
@@ -77,6 +83,7 @@ export const NewDataItem = (props: NewDataItemProps) => {
         <TableContent
           style={{
             width: '106px',
+            opacity: props.rTokenAmount === '--' || Number(props.myStaked) === 0 ? 0.4 : 1,
           }}>
           {props.rTokenAmount}
         </TableContent>
@@ -150,6 +157,7 @@ const LastEraReward = styled.div`
   margin-left: 10px;
   color: #00f3ab;
   font-size: 12px;
+  line-height: 12px;
   border-bottom: dashed 1px #00f3ab91;
 `;
 

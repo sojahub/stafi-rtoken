@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useParams } from 'react-router';
 import rDOT_svg from 'src/assets/images/rDOT.svg';
@@ -67,8 +67,16 @@ const commonClice = new CommonClice();
 export default function Index(props: any) {
   const dispatch = useDispatch();
   const history = useHistory();
+  console.log('location', history.location);
   const { rTokenPlatform } = useParams<any>();
   const [visible, setVisible] = useState(false);
+
+  const [assetList, setAssetList] = useState(['rFIS', 'rETH', 'rDOT', 'rKSM', 'rATOM', 'rSOL', 'rMATIC', 'rBNB']);
+  const assetListRef = useRef(assetList);
+
+  useEffect(() => {
+    assetListRef.current = assetList;
+  });
 
   const {
     fisAccount,
@@ -252,6 +260,169 @@ export default function Index(props: any) {
     }
   }, [fisAccount && fisAccount.address, dispatch]);
 
+  // <NewDataItem
+  //               rTokenName={name}
+  //               icon={rasset_rfis_svg}
+  //               rTokenAmount={fis_tokenAmount === '--' ? '--' : NumberUtil.handleFisAmountToFixed(fis_tokenAmount)}
+  //               source='Native'
+  //               myStaked={rFisStakedAmountShow}
+  //               apy={fisApr}
+  //               onSwapClick={() => {
+  //                 history.push(`/rAsset/swap/rFIS`, {});
+  //               }}
+  //             />
+
+  const getIcon = (name) => {
+    if (name === 'rFIS') {
+      return rasset_rfis_svg;
+    }
+    if (name === 'rETH') {
+      return rasset_reth_svg;
+    }
+    if (name === 'rDOT') {
+      return rasset_rdot_svg;
+    }
+    if (name === 'rKSM') {
+      return rasset_rksm_svg;
+    }
+    if (name === 'rATOM') {
+      return rasset_ratom_svg;
+    }
+    if (name === 'rSOL') {
+      return rasset_rsol_svg;
+    }
+    if (name === 'rMATIC') {
+      return rasset_rmatic_svg;
+    }
+    if (name === 'rBNB') {
+      return rasset_rbnb_svg;
+    }
+  };
+
+  const getrTokenAmount = useCallback(
+    (name) => {
+      let amount;
+      if (name === 'rFIS') {
+        amount = fis_tokenAmount;
+      }
+      if (name === 'rETH') {
+        amount = reth_tokenAmount;
+      }
+      if (name === 'rDOT') {
+        amount = dot_tokenAmount;
+      }
+      if (name === 'rKSM') {
+        amount = tokenAmount;
+      }
+      if (name === 'rATOM') {
+        amount = atom_tokenAmount;
+      }
+      if (name === 'rSOL') {
+        amount = sol_tokenAmount;
+      }
+      if (name === 'rMATIC') {
+        amount = matic_tokenAmount;
+      }
+      if (name === 'rBNB') {
+        amount = bnb_tokenAmount;
+      }
+      return amount === '--' ? '--' : NumberUtil.handleFisAmountToFixed(amount);
+    },
+    [
+      fis_tokenAmount,
+      reth_tokenAmount,
+      dot_tokenAmount,
+      tokenAmount,
+      atom_tokenAmount,
+      sol_tokenAmount,
+      matic_tokenAmount,
+      bnb_tokenAmount,
+    ],
+  );
+
+  const getMyStaked = (name) => {
+    if (name === 'rFIS') {
+      return rFisStakedAmountShow;
+    }
+    if (name === 'rETH') {
+      return rEthStakedAmountShow;
+    }
+    if (name === 'rDOT') {
+      return rDotStakedAmountShow;
+    }
+    if (name === 'rKSM') {
+      return rKsmStakedAmountShow;
+    }
+    if (name === 'rATOM') {
+      return rAtomStakedAmountShow;
+    }
+    if (name === 'rSOL') {
+      return rSolStakedAmountShow;
+    }
+    if (name === 'rMATIC') {
+      return rMaticStakedAmountShow;
+    }
+    if (name === 'rBNB') {
+      return rBnbStakedAmountShow;
+    }
+  };
+
+  const getApy = (name) => {
+    if (name === 'rFIS') {
+      return fisApr;
+    }
+    if (name === 'rETH') {
+      return ethApr;
+    }
+    if (name === 'rDOT') {
+      return dotApr;
+    }
+    if (name === 'rKSM') {
+      return ksmApr;
+    }
+    if (name === 'rATOM') {
+      return atomApr;
+    }
+    if (name === 'rSOL') {
+      return solApr;
+    }
+    if (name === 'rMATIC') {
+      return maticApr;
+    }
+    if (name === 'rBNB') {
+      return bnbApr;
+    }
+  };
+
+  useEffect(() => {
+    if (
+      !isNaN(Number(fis_tokenAmount)) &&
+      !isNaN(Number(reth_tokenAmount)) &&
+      !isNaN(Number(dot_tokenAmount)) &&
+      !isNaN(Number(tokenAmount)) &&
+      !isNaN(Number(atom_tokenAmount)) &&
+      !isNaN(Number(sol_tokenAmount)) &&
+      !isNaN(Number(matic_tokenAmount)) &&
+      !isNaN(Number(bnb_tokenAmount))
+    ) {
+      const temp = assetListRef.current;
+      temp.sort((one, two) => {
+        return Number(getrTokenAmount(two)) - Number(getrTokenAmount(one));
+      });
+      setAssetList([...temp]);
+    }
+  }, [
+    getrTokenAmount,
+    fis_tokenAmount,
+    reth_tokenAmount,
+    dot_tokenAmount,
+    tokenAmount,
+    atom_tokenAmount,
+    sol_tokenAmount,
+    matic_tokenAmount,
+    bnb_tokenAmount,
+  ]);
+
   return (
     <div>
       {fisAccount ? (
@@ -270,7 +441,22 @@ export default function Index(props: any) {
                 });
               }}
             /> */}
-            <NewDataItem
+
+            {assetList.map((name) => (
+              <NewDataItem
+                rTokenName={name}
+                icon={getIcon(name)}
+                rTokenAmount={getrTokenAmount(name)}
+                source='Native'
+                myStaked={getMyStaked(name)}
+                apy={getApy(name)}
+                onSwapClick={() => {
+                  history.push(`/rAsset/swap/${name}?first=native`, {});
+                }}
+              />
+            ))}
+
+            {/* <NewDataItem
               rTokenName='rFIS'
               icon={rasset_rfis_svg}
               rTokenAmount={fis_tokenAmount === '--' ? '--' : NumberUtil.handleFisAmountToFixed(fis_tokenAmount)}
@@ -357,7 +543,7 @@ export default function Index(props: any) {
               onSwapClick={() => {
                 history.push(`/rAsset/swap/rBNB`, {});
               }}
-            />
+            /> */}
           </ListContainer>
           {/* <DataList>
             <DataItem

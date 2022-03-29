@@ -201,6 +201,7 @@ export const TokenList = () => {
               {connectExtensionConfig.connectFis && (
                 <Button
                   disabled={fisAccount}
+                  withBackground
                   icon={rDOT_svg}
                   onClick={() => {
                     dispatch(
@@ -216,6 +217,7 @@ export const TokenList = () => {
               {connectExtensionConfig.connectDot && (
                 <Button
                   disabled={hasDotAcount}
+                  withBackground
                   icon={rDOT_svg}
                   onClick={() => {
                     dispatch(
@@ -231,6 +233,7 @@ export const TokenList = () => {
               {connectExtensionConfig.connectKsm && (
                 <Button
                   disabled={ksmAccount && fisAccount}
+                  withBackground
                   icon={rDOT_svg}
                   onClick={() => {
                     dispatch(
@@ -246,6 +249,7 @@ export const TokenList = () => {
               {connectExtensionConfig.connectMetamask && (
                 <Button
                   disabled={metaMaskAddress}
+                  withBackground
                   icon={metamask}
                   onClick={() => {
                     dispatch(initMetaMaskAccount());
@@ -257,6 +261,7 @@ export const TokenList = () => {
               {connectExtensionConfig.connectKeplr && (
                 <Button
                   disabled={hasAtomAccount}
+                  withBackground
                   icon={keplr}
                   onClick={() => {
                     dispatch(connectAtomjs(() => {}));
@@ -268,6 +273,7 @@ export const TokenList = () => {
               {connectExtensionConfig.connectPhantom && (
                 <Button
                   disabled={solAddress}
+                  withBackground
                   icon={phantom}
                   onClick={() => {
                     dispatch(connectSoljs());

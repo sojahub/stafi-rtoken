@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router';
 import metamask from 'src/assets/images/metamask.png';
@@ -43,6 +43,13 @@ export default function Index(props: any) {
   const dispatch = useDispatch();
   const history = useHistory();
   const { metaMaskAddress, metaMaskNetworkId } = useMetaMaskAccount();
+
+  const [assetList, setAssetList] = useState(['rFIS', 'rETH', 'rDOT', 'rKSM', 'rATOM', 'rMATIC']);
+  const assetListRef = useRef(assetList);
+
+  useEffect(() => {
+    assetListRef.current = assetList;
+  });
 
   const {
     ksm_ercBalance,
@@ -206,6 +213,120 @@ export default function Index(props: any) {
     history.push(`/rAsset/swap/${tokenSymbol}`, {});
   };
 
+  const getIcon = (name) => {
+    if (name === 'rFIS') {
+      return rasset_rfis_svg;
+    }
+    if (name === 'rETH') {
+      return rasset_reth_svg;
+    }
+    if (name === 'rDOT') {
+      return rasset_rdot_svg;
+    }
+    if (name === 'rKSM') {
+      return rasset_rksm_svg;
+    }
+    if (name === 'rATOM') {
+      return rasset_ratom_svg;
+    }
+    if (name === 'rMATIC') {
+      return rasset_rmatic_svg;
+    }
+  };
+
+  const getrTokenAmount = useCallback(
+    (name) => {
+      let amount;
+      if (name === 'rFIS') {
+        amount = fis_ercBalance;
+      }
+      if (name === 'rETH') {
+        amount = eth_ercBalance;
+      }
+      if (name === 'rDOT') {
+        amount = dot_ercBalance;
+      }
+      if (name === 'rKSM') {
+        amount = ksm_ercBalance;
+      }
+      if (name === 'rATOM') {
+        amount = atom_ercBalance;
+      }
+      if (name === 'rMATIC') {
+        amount = matic_ercBalance;
+      }
+      return amount === '--' ? '--' : NumberUtil.handleFisAmountToFixed(amount);
+    },
+    [fis_ercBalance, eth_ercBalance, dot_ercBalance, ksm_ercBalance, atom_ercBalance, matic_ercBalance],
+  );
+
+  const getMyStaked = (name) => {
+    if (name === 'rFIS') {
+      return rFisStakedAmountShow;
+    }
+    if (name === 'rETH') {
+      return rEthStakedAmountShow;
+    }
+    if (name === 'rDOT') {
+      return rDotStakedAmountShow;
+    }
+    if (name === 'rKSM') {
+      return rKsmStakedAmountShow;
+    }
+    if (name === 'rATOM') {
+      return rAtomStakedAmountShow;
+    }
+    if (name === 'rMATIC') {
+      return rMaticStakedAmountShow;
+    }
+  };
+
+  const getApy = (name) => {
+    if (name === 'rFIS') {
+      return fisApr;
+    }
+    if (name === 'rETH') {
+      return ethApr;
+    }
+    if (name === 'rDOT') {
+      return dotApr;
+    }
+    if (name === 'rKSM') {
+      return ksmApr;
+    }
+    if (name === 'rATOM') {
+      return atomApr;
+    }
+    if (name === 'rMATIC') {
+      return maticApr;
+    }
+  };
+
+  useEffect(() => {
+    if (
+      !isNaN(Number(fis_ercBalance)) &&
+      !isNaN(Number(eth_ercBalance)) &&
+      !isNaN(Number(dot_ercBalance)) &&
+      !isNaN(Number(ksm_ercBalance)) &&
+      !isNaN(Number(atom_ercBalance)) &&
+      !isNaN(Number(matic_ercBalance))
+    ) {
+      const temp = assetListRef.current;
+      temp.sort((one, two) => {
+        return Number(getrTokenAmount(two)) - Number(getrTokenAmount(one));
+      });
+      setAssetList([...temp]);
+    }
+  }, [
+    getrTokenAmount,
+    fis_ercBalance,
+    eth_ercBalance,
+    dot_ercBalance,
+    ksm_ercBalance,
+    atom_ercBalance,
+    matic_ercBalance,
+  ]);
+
   return (
     <div>
       {metaMaskAddress ? (
@@ -220,7 +341,22 @@ export default function Index(props: any) {
               apy={fisApr}
               onSwapClick={() => toSwap('FIS')}
             /> */}
-            <NewDataItem
+
+            {assetList.map((name) => (
+              <NewDataItem
+                rTokenName={name}
+                icon={getIcon(name)}
+                rTokenAmount={getrTokenAmount(name)}
+                source='ERC20'
+                myStaked={getMyStaked(name)}
+                apy={getApy(name)}
+                onSwapClick={() => {
+                  history.push(`/rAsset/swap/${name}?first=erc20`, {});
+                }}
+              />
+            ))}
+
+            {/* <NewDataItem
               rTokenName='rFIS'
               icon={rasset_rfis_svg}
               rTokenAmount={rfis_ercBalance === '--' ? '--' : NumberUtil.handleFisAmountToFixed(rfis_ercBalance)}
@@ -273,7 +409,7 @@ export default function Index(props: any) {
               myStaked={rMaticStakedAmountShow}
               apy={maticApr}
               onSwapClick={() => toSwap('rMATIC')}
-            />
+            /> */}
           </div>
           {/* <DataList>
             <DataItem

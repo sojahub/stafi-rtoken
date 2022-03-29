@@ -67,7 +67,7 @@ const siderData = [
     selectedIcon: selected_rBridge_svg,
     text: 'rBridge',
     urlKeywords: '/rAsset/swap',
-    url: '/rAsset/swap/native/default',
+    url: '/rAsset/swap/FIS',
   },
   // {
   //   icon: rETH_svg,
