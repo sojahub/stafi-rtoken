@@ -269,6 +269,9 @@ export const reloadData = (): AppThunk => async (dispatch, getState) => {
 
 export const rTokenRate = (): AppThunk => async (dispatch, getState) => {
   let web3 = ethServer.getWeb3();
+  if (!web3) {
+    return;
+  }
   let contract = new web3.eth.Contract(ethServer.getRETHTokenAbi(), ethServer.getRETHTokenAddress());
   const amount = web3.utils.toWei('1');
   const result = await contract.methods.getEthValue(amount).call();
