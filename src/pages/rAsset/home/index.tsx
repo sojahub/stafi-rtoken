@@ -42,7 +42,7 @@ export default function Index() {
             paddingLeft: '47px',
             width: '174px',
           }}>
-          Ticket
+          Derivative
         </TableHeader>
 
         <TableHeader
@@ -54,7 +54,7 @@ export default function Index() {
               style={{
                 marginRight: '2px',
               }}>
-              My Staked
+              Staked
             </div>
 
             <Tooltip

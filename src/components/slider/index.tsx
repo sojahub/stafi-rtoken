@@ -184,7 +184,7 @@ export default function Index(props: Props) {
       <div className='bottom_container'>
         <div className='text'>Need FIS for fees?</div>
         <div className='text'>
-          Try{' '}
+          Try our{' '}
           <span
             className='link'
             onClick={() => {

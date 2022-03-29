@@ -10,7 +10,7 @@ import './index.scss';
 export default function Index(props: any) {
   const [form] = Form.useForm();
   const dispatch = useDispatch();
-  
+
   const onFinish = (values: any) => {
     if (!values.txHash) {
       message.error('Please enter txhash');
@@ -36,9 +36,9 @@ export default function Index(props: any) {
       <div className='title'>Staking Record</div>
 
       <div className='sub_title'>
-        Under special occasions like sudden shutdown of your computer after sending your PoS tokens, you may not receive
-        your rToken tokens because of being not able to sign the staking authorization.
-        <div>You could submit your token sending TX information to proceed. </div>
+        Under certain circumstances such as the sudden shutdown of your computer after staking your PoS Tokens, you may
+        not receive your rTokens due to being unable to sign the staking authorization transaction.
+        <div>Fret not, submit your TX information to recover your rTokens.</div>
       </div>
 
       <Form layout='vertical' form={form} onFinish={onFinish}>
@@ -51,7 +51,7 @@ export default function Index(props: any) {
             <div className='item_title'>
               <label>TxHash</label>
 
-              <a href={config.txHashAndBlockhashURl.bnbURL} target='_blank'>
+              <a href={config.txHashAndBlockhashURl.bnbURL} target='_blank' rel='noreferrer'>
                 How to get TxHash
               </a>
             </div>
