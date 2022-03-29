@@ -42,14 +42,15 @@ export const NewDataItem = (props: NewDataItemProps) => {
 
   return (
     <>
-      <TokenItemContainer
-        onClick={() => {
-          history.push(`/${props.rTokenName}/staker/info?platform=${props.source}`);
-        }}>
+      <TokenItemContainer>
         <HContainer
           style={{
             paddingLeft: '47px',
             width: '174px',
+            cursor: 'pointer',
+          }}
+          onClick={() => {
+            history.push(`/${props.rTokenName}/staker/info?platform=${props.source}`);
           }}>
           <img src={props.icon} width='26px' height='26px' alt='icon' />
           <TokenTitle>{props.rTokenName}</TokenTitle>
@@ -58,6 +59,10 @@ export const NewDataItem = (props: NewDataItemProps) => {
         <TableContent
           style={{
             width: '137px',
+            cursor: 'pointer',
+          }}
+          onClick={() => {
+            history.push(`/${props.rTokenName}/staker/info?platform=${props.source}`);
           }}>
           <HContainer>
             <div
@@ -89,6 +94,10 @@ export const NewDataItem = (props: NewDataItemProps) => {
           style={{
             width: '106px',
             opacity: props.rTokenAmount === '--' || Number(props.myStaked) === 0 ? 0.4 : 1,
+            cursor: 'pointer',
+          }}
+          onClick={() => {
+            history.push(`/${props.rTokenName}/staker/info?platform=${props.source}`);
           }}>
           {props.rTokenAmount}
         </TableContent>
@@ -96,6 +105,10 @@ export const NewDataItem = (props: NewDataItemProps) => {
         <TableContent
           style={{
             width: '96px',
+            cursor: 'pointer',
+          }}
+          onClick={() => {
+            history.push(`/${props.rTokenName}/staker/info?platform=${props.source}`);
           }}>
           {props.apy}
         </TableContent>
@@ -148,7 +161,6 @@ const TokenItemContainer = styled.div`
   margin-bottom: 15px;
   display: flex;
   align-items: center;
-  cursor: pointer;
 `;
 
 const TokenTitle = styled.div`

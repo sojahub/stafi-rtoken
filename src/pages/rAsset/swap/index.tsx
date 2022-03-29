@@ -870,7 +870,7 @@ export default function Index(props: any) {
 
             <AmountInputEmbed
               maxInput={selectedTokenBalance !== '--' ? selectedTokenBalance : 0}
-              showMax={!isNaN(Number(tokenRefState.content))}
+              showMax={!isNaN(Number(selectedTokenBalance))}
               placeholder='0.0'
               value={fromAoumt}
               onChange={(value: any) => {
