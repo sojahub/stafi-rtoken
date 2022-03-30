@@ -361,6 +361,7 @@ export default function Index(props: any) {
           <div>
             {assetList.map((name) => (
               <NewDataItem
+                key={name}
                 rTokenName={name}
                 icon={getIcon(name)}
                 rTokenAmount={getrTokenAmount(name)}
