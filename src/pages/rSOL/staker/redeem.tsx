@@ -74,9 +74,11 @@ export default function Index(props: any) {
     setVisible(false);
     setAmount('');
     dispatch(
-      unbond(amount, recipient, willAmount, () => {
+      unbond(amount, recipient, willAmount, (success) => {
         dispatch(setLoading(false));
-        history.push('/rSOL/staker/unbondRecords');
+        if (success) {
+          history.push('/rSOL/staker/unbondRecords');
+        }
       }),
     );
   };

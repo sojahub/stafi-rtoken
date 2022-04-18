@@ -1085,7 +1085,7 @@ export const unbond =
                     recipient: address,
                   });
                   setTimeout(() => {
-                    cb && cb();
+                    cb && cb(true);
                   }, 500);
                 }
               });

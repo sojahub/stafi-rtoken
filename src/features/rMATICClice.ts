@@ -538,10 +538,11 @@ export const unbond =
                 recipient,
               });
             }
+            cb && cb(true);
             if (r === 'Failed') {
               dispatch(add_Matic_unbond_Notice(uuid, willAmount, noticeStatus.Error));
+              cb && cb();
             }
-            cb && cb();
           },
         ),
       );

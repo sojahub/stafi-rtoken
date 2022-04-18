@@ -119,9 +119,11 @@ export default function Index(props: any) {
           dispatch(setLoading(true));
           setVisible(false);
           dispatch(
-            unbond(amount, recipient, willAmount, () => {
+            unbond(amount, recipient, willAmount, (success) => {
               dispatch(setLoading(false));
-              history.push('/rDOT/staker/unbondRecords');
+              if (success) {
+                history.push('/rDOT/staker/unbondRecords');
+              }
             }),
           );
         }}

@@ -777,10 +777,11 @@ export const unbond =
                 amount: willAmount,
                 recipient,
               });
+              cb && cb(true);
             } else if (r === 'Failed') {
               dispatch(add_DOT_unbond_Notice(uuid, willAmount, noticeStatus.Error));
+              cb && cb();
             }
-            cb && cb();
           },
         ),
       );

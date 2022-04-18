@@ -93,9 +93,11 @@ export default function Index(props: any) {
         willAmount={willAmount}
         onRdeemClick={() => {
           dispatch(
-            unbond(amount, willAmount, () => {
-              setAmount(undefined);
-              history.push('/rFIS/staker/unbondRecords');
+            unbond(amount, willAmount, (success) => {
+              if (success) {
+                setAmount(undefined);
+                history.push('/rFIS/staker/unbondRecords');
+              }
             }),
           );
         }}
