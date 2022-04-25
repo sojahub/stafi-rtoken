@@ -3,7 +3,8 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 import rETH from 'src/assets/images/selected_rETH.svg';
-import { getRsymbolByTokenTitle } from 'src/config/index';
+import config, { getRsymbolByTokenTitle } from 'src/config/index';
+import { useMetaMaskAccount } from 'src/hooks/useMetaMaskAccount';
 import RPoolServer from 'src/servers/rpool';
 import A from 'src/shared/components/button/a';
 import Button from 'src/shared/components/button/button';
@@ -29,10 +30,7 @@ type Props = {
 };
 export default function Index(props: Props) {
   const [mintRewardAct, setMintRewardAct] = useState(null);
-
-  const {} = useSelector((state: any) => {
-    return {};
-  });
+  const { metaMaskNetworkId } = useMetaMaskAccount();
 
   useEffect(() => {
     initMintRewardAct();
@@ -180,7 +178,7 @@ export default function Index(props: Props) {
       <div className='btns'>
         {' '}
         <Button
-          disabled={!props.amount || props.amount == 0}
+          disabled={!props.amount || props.amount === 0 || !config.metaMaskNetworkIsGoerliEth(metaMaskNetworkId)}
           onClick={() => {
             props.onStakeClick && props.onStakeClick();
           }}>
