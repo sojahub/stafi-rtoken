@@ -197,7 +197,7 @@ export const TokenList = () => {
             onClick={() => {
               setConnectExtensionConfig({});
             }}>
-            <div style={{ display: 'flex', flexDirection: 'column' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'stretch', width: '360px' }}>
               {connectExtensionConfig.connectFis && (
                 <Button
                   disabled={fisAccount}
@@ -281,6 +281,18 @@ export const TokenList = () => {
                   Connect to Phantom
                 </Button>
               )}
+
+              <div style={{ fontSize: '12px', color: 'white', marginTop: '10px' }}>
+                Need a Native StaFi Wallet? Create a new wallet or import your existing wallet by following our
+                <a
+                  href='https://docs.stafi.io/chain-library/guides/account-creation#create-an-account'
+                  target='_blank'
+                  rel='noreferrer'
+                  style={{ margin: '0 4px', color: '#00F3AB', textDecoration: 'underline' }}>
+                  guide
+                </a>
+                here.
+              </div>
             </div>
           </ExtensionContainer>
         )}
