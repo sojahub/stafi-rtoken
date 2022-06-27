@@ -553,7 +553,7 @@ export const onProceed =
 
     let blockhash: any;
     try {
-      const result = await solServer.getTransactionDetail(getstate().rSOLModule.solAddress, txHash);
+      const result = await solServer.getTransactionDetail(txHash);
       if (result) {
         blockhash = result.blockhash;
       }
@@ -637,14 +637,11 @@ export const getBlock =
     try {
       const address = getState().rSOLModule.solAddress;
       const validPools = getState().rSOLModule.validPools;
-      const processParameter = getState().rSOLModule.processParameter;
-      // const { destChainId, targetAddress } = processParameter;
       const destChainId = STAFI_CHAIN_ID;
       const targetAddress = getState().FISModule.fisAccount && getState().FISModule.fisAccount.address;
 
       const solServer = new SolServer();
-      const { amount, poolAddress, blockhash } = await solServer.getTransactionDetail(
-        getState().rSOLModule.solAddress,
+      const { amount, source, poolAddress, blockhash } = await solServer.getTransactionDetail(
         txHash,
       );
 
@@ -653,6 +650,12 @@ export const getBlock =
         return;
       }
 
+      if (getState().rSOLModule.solAddress != source) {
+        message.error('Please select your Solana account that sent the transaction');
+        return;
+      }
+      
+
       const poolData = validPools.find((item: any) => {
         if (keyring.init(Symbol.Sol).encodeAddress(item.poolPubkey) == poolAddress) {
           return true;
@@ -660,7 +663,7 @@ export const getBlock =
       });
 
       if (!poolData) {
-        // message.error('The destination address in the transaction does not match the pool address');
+        message.error('The destination address in the transaction does not match the pool address');
         return;
       }
 

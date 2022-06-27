@@ -92,7 +92,7 @@ export default class ExtensionDapp extends SolKeyring {
     }
   };
 
-  getTransactionDetail = async (address: string, txHash: any) => {
+  getTransactionDetail = async (txHash: any) => {
     try {
       const connection = new Connection(config.solRpcApi(), { wsEndpoint: config.solRpcWs() });
       const parsedTx = await connection.getParsedConfirmedTransaction(txHash).catch((error) => {
@@ -105,9 +105,11 @@ export default class ExtensionDapp extends SolKeyring {
       const block = await connection.getBlock(parsedTx.slot);
 
       const lamports = this.getTxLamports(parsedTx.transaction.message.instructions[0]);
+      const source = this.getTxSource(parsedTx.transaction.message.instructions[0]);
       const destination = this.getTxDestination(parsedTx.transaction.message.instructions[0]);
       return {
         amount: lamports,
+        source: source,
         poolAddress: destination,
         blockhash: block.blockhash,
       };
@@ -238,6 +240,10 @@ export default class ExtensionDapp extends SolKeyring {
 
   getTxLamports = (instruction: any) => {
     return instruction.parsed.info.lamports;
+  };
+
+  getTxSource = (instruction: any) => {
+    return instruction.parsed.info.source;
   };
 
   getTxDestination = (instruction: any) => {
