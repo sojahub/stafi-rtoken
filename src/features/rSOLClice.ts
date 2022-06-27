@@ -883,6 +883,21 @@ export const checkAddress = (address: string) => {
   const keyringInstance = keyring.init(Symbol.Sol);
   return keyringInstance.checkAddress(address);
 };
+export const checkTxHash = (txHash: string) => {
+  if (!txHash) {
+    return false;
+  }
+  try {
+    const decoded =  base58.decode(txHash);
+    if (decoded.length != 64) {
+      return false;
+    }
+    return true;
+  } catch (e) {
+    return false;
+  }
+};
+
 export const accountUnbonds = (): AppThunk => async (dispatch, getState) => {
   // dispatch(getTotalUnbonding(rSymbol.Sol,(total:any)=>{
   //   dispatch(setTotalUnbonding(total));

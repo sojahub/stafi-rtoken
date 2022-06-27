@@ -1,9 +1,8 @@
 import { Form, message } from 'antd';
-import React from 'react';
 import { useDispatch } from 'react-redux';
 import leftArrowSvg from 'src/assets/images/left_arrow.svg';
 import config from 'src/config/index';
-import { onProceed } from 'src/features/rSOLClice';
+import { onProceed, checkTxHash } from 'src/features/rSOLClice';
 import Button from 'src/shared/components/button/button';
 import Input from 'src/shared/components/input/index';
 import './index.scss';
@@ -17,7 +16,7 @@ export default function Index(props: any) {
       return;
     }
 
-    if (values.txHash.length !== 88) {
+    if (!checkTxHash(values.txHash)) {
       message.error('Please enter valid txhash');
       return;
     }
