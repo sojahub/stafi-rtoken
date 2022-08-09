@@ -61,6 +61,7 @@ const bridgeClice = createSlice({
     estimateEthFee: '--',
     estimateBscFee: '--',
     estimateSolFee: '--',
+    estimateStafiHubFee: '--',
     priceList: [],
     // 0-invisible, 1-start transferring, 2-start minting
     swapLoadingStatus: 0,
@@ -93,6 +94,9 @@ const bridgeClice = createSlice({
     setEstimateSolFee(state, { payload }) {
       state.estimateSolFee = payload;
     },
+    setEstimateStafiHubFee(state, { payload }) {
+      state.estimateStafiHubFee = payload;
+    },
     setPriceList(state, { payload }) {
       state.priceList = payload;
     },
@@ -116,6 +120,7 @@ export const {
   setEstimateEthFee,
   setEstimateBscFee,
   setEstimateSolFee,
+  setEstimateStafiHubFee,
   setPriceList,
   setSwapLoadingStatus,
   setSwapWaitingTime,
@@ -157,6 +162,7 @@ export const getBridgeEstimateEthFee = (): AppThunk => async (dispatch, getState
   dispatch(setEstimateEthFee(bridgeServer.getBridgeEstimateEthFee()));
   dispatch(setEstimateBscFee(bridgeServer.getBridgeEstimateBscFee()));
   dispatch(setEstimateSolFee(bridgeServer.getBridgeEstimateSolFee()));
+  dispatch(setEstimateStafiHubFee(bridgeServer.getBridgeEstimateStafiHubFee()));
 };
 
 export const nativeToOtherSwap =

@@ -127,7 +127,7 @@
     "decimal.js": "10.3.0"
   },
   "scripts": {
-    "start": "PORT=3111 craco start",
+    "start": "PORT=3113 craco start",
     "build": "craco build",
     "build:csp": "react-csp prod&&craco build",
     "test": "craco test",

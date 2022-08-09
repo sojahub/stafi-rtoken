@@ -595,8 +595,9 @@ export default function Index(props: Props) {
                       onClick={() => {
                         dispatch(connectAtomjs());
                       }}
-                      className='header_tool account'>
-                      connect to Kepir
+                      style={{ lineHeight: '15px', margin: '0 10px' }}>
+                      Connect
+                      <br /> Keplr
                     </div>
                   </>
                 )}
@@ -616,8 +617,9 @@ export default function Index(props: Props) {
                       onClick={() => {
                         dispatch(connectStafiHubAtomjs());
                       }}
-                      className='header_tool account'>
-                      connect to Kepir
+                      style={{ lineHeight: '15px', margin: '0 10px' }}>
+                      Connect
+                      <br /> Keplr
                     </div>
                   </>
                 )}

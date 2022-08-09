@@ -307,6 +307,7 @@ export default function Index(props: any) {
     estimateEthFee,
     estimateBscFee,
     estimateSolFee,
+    estimateStafiHubFee,
     rksm_balance,
     rfis_balance,
     fis_balance,
@@ -353,7 +354,7 @@ export default function Index(props: any) {
       return {
         fis_balance: NumberUtil.handleFisAmountToFixed(state.StafiHubModule.fisBalance),
         ratom_balance: NumberUtil.handleFisAmountToFixed(state.StafiHubModule.rAtomBalance),
-        estimateSolFee: state.bridgeModule.estimateSolFee,
+        estimateStafiHubFee: state.bridgeModule.estimateStafiHubFee,
       };
     } else if (fromChainRefState && fromChainRefState.type === 'native') {
       return {
@@ -386,18 +387,25 @@ export default function Index(props: any) {
     }
   });
 
-  const { fisAccount, fisAddress, solAddress, solBalance, solTransferrableAmount, stafihubAddress } = useSelector(
-    (state: any) => {
-      return {
-        fisAccount: state.FISModule.fisAccount,
-        fisAddress: state.FISModule.fisAccount && state.FISModule.fisAccount.address,
-        solAddress: state.rSOLModule.solAddress,
-        solBalance: state.rSOLModule.transferrableAmountShow,
-        solTransferrableAmount: state.rSOLModule.transferrableAmountShow,
-        stafihubAddress: state.rATOMModule.atomAccount && state.rATOMModule.atomAccount.address,
-      };
-    },
-  );
+  const {
+    fisAccount,
+    fisAddress,
+    solAddress,
+    solBalance,
+    solTransferrableAmount,
+    stafihubFisBalance,
+    stafihubAddress,
+  } = useSelector((state: any) => {
+    return {
+      fisAccount: state.FISModule.fisAccount,
+      fisAddress: state.FISModule.fisAccount && state.FISModule.fisAccount.address,
+      solAddress: state.rSOLModule.solAddress,
+      solBalance: state.rSOLModule.transferrableAmountShow,
+      solTransferrableAmount: state.rSOLModule.transferrableAmountShow,
+      stafihubAddress: state.rATOMModule.atomAccount && state.rATOMModule.atomAccount.address,
+      stafihubFisBalance: state.StafiHubModule.fisBalance,
+    };
+  });
 
   useEffect(() => {
     (async () => {
@@ -740,6 +748,32 @@ export default function Index(props: any) {
   }, [tokenRefState]);
 
   // useEffect(() => {
+  //   const supportChainTypes = tokenSupportChainMap[tokenRefState.type];
+  //   const supportChains = supportChainTypes.map((chainType) => {
+  //     return assetDatas.find((asset) => asset.type === chainType);
+  //   });
+
+  //   if (fromChainRef.current) {
+  //     console.log('supportChains', supportChains);
+  //     setDestTypeSelections(
+  //       supportChains.filter(
+  //         (item) =>
+  //           chainSupportTokenMap[`${fromChainRef.current.type}-${item.type}`] &&
+  //           chainSupportTokenMap[`${fromChainRef.current.type}-${item.type}`].indexOf(tokenRefState.type) >= 0,
+  //       ),
+  //     );
+  //   } else {
+  //     setDestTypeSelections(supportChains);
+  //   }
+
+  //   if (destChainRef.current) {
+  //     setFromTypeSelections(supportChains);
+  //   } else {
+  //     setFromTypeSelections(supportChains);
+  //   }
+  // }, [tokenRefState, fromChainRef, destChainRef]);
+
+  // useEffect(() => {
   //   if (time) {
   //     clearInterval(time);
   //   }
@@ -813,7 +847,15 @@ export default function Index(props: any) {
     // });
     // fromChainRef.current = type;
     // setFromChainRefState(type);
-    history.replace(`${history.location.pathname}${getSearchUrl(type.type, destChainRef.current?.type)}`, {});
+
+    const destType =
+      destChainRef.current &&
+      chainSupportTokenMap[`${fromChainRef.current.type}-${destChainRef.current.type}`] &&
+      chainSupportTokenMap[`${fromChainRef.current.type}-${destChainRef.current.type}`].indexOf(tokenRefState.type) >= 0
+        ? destChainRef.current.type
+        : '';
+
+    history.replace(`${history.location.pathname}${getSearchUrl(type.type, destType)}`, {});
   };
 
   const changeDestChain = (type: SelectorType) => {
@@ -1017,6 +1059,8 @@ export default function Index(props: any) {
 
           {fromChainRefState && fromChainRefState.type === 'spl' && `Estimate Fee: ${estimateSolFee} SOL`}
 
+          {fromChainRefState && fromChainRefState.type === 'ics20' && `Estimate Fee: ${estimateStafiHubFee} FIS`}
+
           {fromChainRefState &&
             fromChainRefState.type === 'native' &&
             destChainRefState &&
@@ -1086,6 +1130,12 @@ export default function Index(props: any) {
               if (fromChainRef.current && fromChainRef.current.type === 'spl') {
                 if (isNaN(Number(solTransferrableAmount)) || Number(solTransferrableAmount) <= Number(estimateSolFee)) {
                   message.error(`No enough SOL to pay for the fee`);
+                  return;
+                }
+              }
+              if (fromChainRef.current && fromChainRef.current.type === 'ics20') {
+                if (isNaN(Number(stafihubFisBalance)) || Number(stafihubFisBalance) <= Number(estimateStafiHubFee)) {
+                  message.error(`No enough FIS to pay for the fee`);
                   return;
                 }
               }

@@ -22,7 +22,7 @@ export default class ExtensionDapp extends CosmosKeyring {
       if (isdev()) {
         if (window.keplr.experimentalSuggestChain) {
           let parameter = {
-            chainId: config.stafihubChainId(),
+            chainId: stafiHubChain.chainId,
             chainName: stafiHubChain.chainName,
             rpc: stafiHubChain.rpc,
             rest: stafiHubChain.restEndpoint,
@@ -102,16 +102,16 @@ export default class ExtensionDapp extends CosmosKeyring {
         }
       }
     }
-    return await window.keplr.enable(config.stafihubChainId());
+    return await window.keplr.enable(config.stafihubChainConfig().chainId);
   }
   async getAccount() {
-    return await window.keplr.getKey(config.stafihubChainId());
+    return await window.keplr.getKey(config.stafihubChainConfig().chainId);
   }
   createApi() {
     if (stafiHubApi) {
       return stafiHubApi;
     }
-    const offlineSigner = window.getOfflineSigner(config.stafihubChainId());
+    const offlineSigner = window.getOfflineSigner(config.stafihubChainConfig().chainId);
     stafiHubApi = SigningStargateClient.connectWithSigner(config.stafihubChainConfig().rpc, offlineSigner);
     return stafiHubApi;
   }

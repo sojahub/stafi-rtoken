@@ -427,13 +427,6 @@ const config = {
       return 'cosmos-stafi-1';
     }
   },
-  stafihubChainId: () => {
-    if (!isdev()) {
-      return 'stafihub-public-devnet-1';
-    } else {
-      return 'stafihub-public-devnet-1';
-    }
-  },
   stafihubChainConfig: () => {
     if (!isdev()) {
       return {
