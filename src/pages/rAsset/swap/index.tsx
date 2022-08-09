@@ -1078,6 +1078,12 @@ export default function Index(props: any) {
             destChainRefState &&
             destChainRefState.type === 'spl' &&
             `Estimate Fee: ${slp20EstimateFee} FIS`}
+
+          {fromChainRefState &&
+            fromChainRefState.type === 'native' &&
+            destChainRefState &&
+            destChainRefState.type === 'ics20' &&
+            `Estimate Fee: ${ics20EstimateFee} FIS`}
         </div>
 
         <div className='btns'>

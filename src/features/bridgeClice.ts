@@ -31,7 +31,7 @@ import { connectSoljs, setLoading, setStakeSwapLoadingParams } from './globalCli
 import { add_Notice, noticeStatus, noticesubType, noticeType } from './noticeClice';
 import { getAssetBalance as getSlpAssetBalance } from './SOLClice';
 import { getAssetBalance as getStafiHubAssetBalance } from './StafiHubClice';
-import { sendBridgeDepositTx } from '@stafihub/apps-wallet';
+import { queryBridgeRelayFee, sendBridgeDepositTx } from '@stafihub/apps-wallet';
 
 export const STAFI_CHAIN_ID = 1;
 export const ETH_CHAIN_ID = 2;
@@ -149,7 +149,7 @@ export const bridgeCommon_ChainFees = (): AppThunk => async (dispatch, getState)
       dispatch(setSlp20EstimateFee(NumberUtil.handleFisAmountToFixed(slpEstimateFee)));
     }
 
-    const resultIcs = await api.query.bridgeCommon.chainFees(STAFI_CHAIN_ID);
+    const resultIcs = await api.query.bridgeCommon.chainFees(STAFIHUB_CHAIN_ID);
     if (resultSlp.toJSON()) {
       let icsEstimateFee = NumberUtil.fisAmountToHuman(resultIcs.toJSON());
       dispatch(setIcs20EstimateFee(NumberUtil.handleFisAmountToFixed(icsEstimateFee)));
@@ -162,7 +162,12 @@ export const getBridgeEstimateEthFee = (): AppThunk => async (dispatch, getState
   dispatch(setEstimateEthFee(bridgeServer.getBridgeEstimateEthFee()));
   dispatch(setEstimateBscFee(bridgeServer.getBridgeEstimateBscFee()));
   dispatch(setEstimateSolFee(bridgeServer.getBridgeEstimateSolFee()));
-  dispatch(setEstimateStafiHubFee(bridgeServer.getBridgeEstimateStafiHubFee()));
+  queryBridgeRelayFee(config.stafihubChainConfig(), STAFI_CHAIN_ID).then((res) => {
+    if (res.value) {
+      const fee = numberUtil.tokenAmountToHuman(res.value.amount, rSymbol.StafiHub);
+      dispatch(setEstimateStafiHubFee(fee.toFixed(6)));
+    }
+  });
 };
 
 export const nativeToOtherSwap =
