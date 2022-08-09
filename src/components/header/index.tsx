@@ -513,8 +513,10 @@ export default function Index(props: Props) {
                   }),
                 );
               }
-            }}>
-            Connect to Polkadotjs
+            }}
+            style={{ lineHeight: '15px', margin: '0 15px' }}>
+            Connect
+            <br /> Polkadotjs
           </div>
         )}
 
@@ -544,7 +546,10 @@ export default function Index(props: Props) {
                     <div>{StringUtil.replacePkh(fisAccount.address, 6, 44)}</div>
                   </>
                 ) : (
-                  <>connect to Polkadotjs</>
+                  <div style={{ lineHeight: '15px', margin: '0 10px' }}>
+                    Connect
+                    <br /> Polkadotjs
+                  </div>
                 )}
               </div>
             )}
@@ -558,7 +563,10 @@ export default function Index(props: Props) {
                     <div>{StringUtil.replacePkh(dotAccount.address, 6, 44)}</div>
                   </>
                 ) : (
-                  <>connect to Polkadotjs</>
+                  <div style={{ lineHeight: '15px', margin: '0 10px' }}>
+                    Connect
+                    <br /> Polkadotjs
+                  </div>
                 )}
               </div>
             )}
@@ -577,7 +585,10 @@ export default function Index(props: Props) {
                     <div>{StringUtil.replacePkh(ksmAccount.address, 6, 44)}</div>
                   </>
                 ) : (
-                  <>connect to Polkadotjs</>
+                  <div style={{ lineHeight: '15px', margin: '0 10px' }}>
+                    Connect
+                    <br /> Polkadotjs
+                  </div>
                 )}
               </div>
             )}
@@ -638,7 +649,11 @@ export default function Index(props: Props) {
                     <div>{StringUtil.replacePkh(solAccount.address, 6, 38)}</div>
                   </>
                 ) : (
-                  <>connect to Phantom</>
+                  <div style={{ lineHeight: '15px', margin: '0 10px' }}>
+                    Connect
+                    <br />
+                    Phantom
+                  </div>
                 )}
               </div>
             )}
@@ -662,8 +677,11 @@ export default function Index(props: Props) {
                     onClick={() => {
                       dispatch(initMetaMaskAccount());
                     }}
-                    className='header_tool account'>
-                    connect to MetaMask
+                    className='header_tool account'
+                    style={{ padding: '0 15px', fontSize: '12px', lineHeight: '15px', fontWeight: 'bold' }}>
+                    Connect
+                    <br />
+                    MetaMask
                   </div>
                 )}
               </>
@@ -690,8 +708,11 @@ export default function Index(props: Props) {
                     onClick={() => {
                       dispatch(initMetaMaskAccount());
                     }}
-                    className='header_tool account'>
-                    connect to MetaMask
+                    className='header_tool account'
+                    style={{ padding: '0 15px', fontSize: '12px', lineHeight: '15px', fontWeight: 'bold' }}>
+                    Connect
+                    <br />
+                    MetaMask
                   </div>
                 )}
               </>
