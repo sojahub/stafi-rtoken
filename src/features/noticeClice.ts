@@ -829,6 +829,10 @@ export const notice_text = (item: any) => {
       if (item.subData.destSwapType == 'native') {
         return `Swap ${item.amount} SPL ${item.rSymbol} to Native, it may take 2~10 minutes to arrive`;
       }
+    } else if (item.subData.swapType === 'ics20') {
+      if (item.subData.destSwapType === 'native') {
+        return `Swap ${item.amount} ICS20 ${item.rSymbol} to Native, it may take 2~10 minutes to arrive`;
+      }
     } else {
       if (item.subData.destSwapType == 'bep20') {
         return `Swap ${item.amount} ERC20 ${item.rSymbol} to BEP20, it may take 2~10 minutes to arrive`;
