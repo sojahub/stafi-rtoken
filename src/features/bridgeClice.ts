@@ -30,7 +30,7 @@ import { getAssetBalance } from './ETHClice';
 import { connectSoljs, setLoading, setStakeSwapLoadingParams } from './globalClice';
 import { add_Notice, noticeStatus, noticesubType, noticeType } from './noticeClice';
 import { getAssetBalance as getSlpAssetBalance } from './SOLClice';
-import { getAssetBalance as getStafiHubAssetBalance } from './StafiHubClice';
+import { getAssetBalance as getStafiHubAssetBalance, getStafiHubBalanceAll } from './StafiHubClice';
 import { queryBridgeRelayFee, sendBridgeDepositTx } from '@stafihub/apps-wallet';
 
 export const STAFI_CHAIN_ID = 1;
@@ -823,11 +823,11 @@ export const ics20ToOtherSwap =
       const notice_uuid = stafi_uuid();
       dispatch(setLoading(true));
 
-      dispatch(setSwapLoadingStatus(1));
-      dispatch(setSwapWaitingTime(600));
       if (destChainId === STAFI_CHAIN_ID) {
         updateSwapParamsOfNative(dispatch, notice_uuid, tokenType, tokenAmount, address);
       }
+      dispatch(setSwapLoadingStatus(1));
+      dispatch(setSwapWaitingTime(600));
 
       let denom;
       if (tokenType === 'fis') {
@@ -847,6 +847,7 @@ export const ics20ToOtherSwap =
       );
 
       if (response?.code === 0) {
+        dispatch(getStafiHubBalanceAll());
         dispatch(
           add_Swap_Notice(notice_uuid, tokenStr, tokenAmount, noticeStatus.Pending, {
             swapType: 'ics20',
