@@ -810,34 +810,34 @@ export const notice_text = (item: any) => {
   } else if (item.subType == noticesubType.Swap) {
     if (item.subData.swapType == 'native') {
       if (item.subData.destSwapType === 'bep20') {
-        return `Swap ${item.amount} Native ${item.rSymbol} to BEP20, it may take 2~10 minutes to arrive`;
+        return `Swap ${item.amount} Native ${item.rSymbol} to BEP20 ${item.rSymbol}, it may take 2~10 minutes to arrive`;
       }
       if (item.subData.destSwapType === 'spl') {
-        return `Swap ${item.amount} Native ${item.rSymbol} to SPL, it may take 2~10 minutes to arrive`;
+        return `Swap ${item.amount} Native ${item.rSymbol} to SPL ${item.rSymbol}, it may take 2~10 minutes to arrive`;
       }
       if (item.subData.destSwapType === 'ics20') {
-        return `Swap ${item.amount} Native ${item.rSymbol} to ICS20, it may take 2~10 minutes to arrive`;
+        return `Swap ${item.amount} Native ${item.rSymbol} to ICS20 ${item.rSymbol}, it may take 2~10 minutes to arrive`;
       }
-      return `Swap ${item.amount} Native ${item.rSymbol} to ERC20, it may take 2~10 minutes to arrive`;
+      return `Swap ${item.amount} Native ${item.rSymbol} to ERC20 ${item.rSymbol}, it may take 2~10 minutes to arrive`;
     } else if (item.subData.swapType == 'bep20') {
       if (item.subData.destSwapType == 'erc20') {
-        return `Swap ${item.amount} BEP20 ${item.rSymbol} to ERC20, it may take 2~10 minutes to arrive`;
+        return `Swap ${item.amount} BEP20 ${item.rSymbol} to ERC20 ${item.rSymbol}, it may take 2~10 minutes to arrive`;
       } else {
-        return `Swap ${item.amount} BEP20 ${item.rSymbol} to Native, it may take 2~10 minutes to arrive`;
+        return `Swap ${item.amount} BEP20 ${item.rSymbol} to Native ${item.rSymbol}, it may take 2~10 minutes to arrive`;
       }
     } else if (item.subData.swapType == 'spl') {
       if (item.subData.destSwapType == 'native') {
-        return `Swap ${item.amount} SPL ${item.rSymbol} to Native, it may take 2~10 minutes to arrive`;
+        return `Swap ${item.amount} SPL ${item.rSymbol} to Native ${item.rSymbol}, it may take 2~10 minutes to arrive`;
       }
     } else if (item.subData.swapType === 'ics20') {
       if (item.subData.destSwapType === 'native') {
-        return `Swap ${item.amount} ICS20 ${item.rSymbol} to Native, it may take 2~10 minutes to arrive`;
+        return `Swap ${item.amount} ICS20 ${item.rSymbol} to Native ${item.rSymbol}, it may take 2~10 minutes to arrive`;
       }
     } else {
       if (item.subData.destSwapType == 'bep20') {
-        return `Swap ${item.amount} ERC20 ${item.rSymbol} to BEP20, it may take 2~10 minutes to arrive`;
+        return `Swap ${item.amount} ERC20 ${item.rSymbol} to BEP20 ${item.rSymbol}, it may take 2~10 minutes to arrive`;
       } else {
-        return `Swap ${item.amount} ERC20 ${item.rSymbol} to Native, it may take 2~10 minutes to arrive`;
+        return `Swap ${item.amount} ERC20 ${item.rSymbol} to Native ${item.rSymbol}, it may take 2~10 minutes to arrive`;
       }
     }
   } else if (item.subType == noticesubType.Deposit) {
