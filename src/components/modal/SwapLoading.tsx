@@ -25,7 +25,12 @@ import {
 import { queryTokenBalances } from 'src/features/FISClice';
 import { noticeStatus, update_NoticeStatus } from 'src/features/noticeClice';
 import { getAssetBalance as getSlpAssetBalance, getSlp20AssetBalanceAll } from 'src/features/SOLClice';
-import { getAssetBalance as getStafiHubAssetBalance } from 'src/features/StafiHubClice';
+import {
+  getAssetBalance as getStafiHubAssetBalance,
+  getStafiHubBalanceAll,
+  getStafiHubFisAssetBalance,
+  getStafiHubRAtomAssetBalance,
+} from 'src/features/StafiHubClice';
 import { rSymbol } from 'src/keyring/defaults';
 import Stafi from 'src/servers/stafi/index';
 import numberUtil from 'src/util/numberUtil';
@@ -280,7 +285,7 @@ export default function SwapLoading(props: Props) {
           Number(v) - Number(swapLoadingParams.oldBalance) >= Number(swapLoadingParams.amount) * 0.9
         ) {
           setSwapStatus(1);
-          dispatch(getSlp20AssetBalanceAll());
+          dispatch(getStafiHubBalanceAll());
           dispatch(update_NoticeStatus(swapLoadingParams.noticeUuid, noticeStatus.Confirmed));
         }
       });

@@ -402,7 +402,7 @@ export default function Index(props: any) {
       solAddress: state.rSOLModule.solAddress,
       solBalance: state.rSOLModule.transferrableAmountShow,
       solTransferrableAmount: state.rSOLModule.transferrableAmountShow,
-      stafihubAddress: state.rATOMModule.atomAccount && state.rATOMModule.atomAccount.address,
+      stafihubAddress: state.StafiHubModule.stafihubAddress,
       stafihubFisBalance: state.StafiHubModule.fisBalance,
     };
   });
@@ -848,14 +848,7 @@ export default function Index(props: any) {
     // fromChainRef.current = type;
     // setFromChainRefState(type);
 
-    const destType =
-      destChainRef.current &&
-      chainSupportTokenMap[`${fromChainRef.current.type}-${destChainRef.current.type}`] &&
-      chainSupportTokenMap[`${fromChainRef.current.type}-${destChainRef.current.type}`].indexOf(tokenRefState.type) >= 0
-        ? destChainRef.current.type
-        : '';
-
-    history.replace(`${history.location.pathname}${getSearchUrl(type.type, destType)}`, {});
+    history.replace(`${history.location.pathname}${getSearchUrl(type.type, destChainRef?.current?.type)}`, {});
   };
 
   const changeDestChain = (type: SelectorType) => {

@@ -30,6 +30,11 @@ const StafiHubClice = createSlice({
 
 export const { setFisBalance, setRAtomBalance, setStafiHubAddress } = StafiHubClice.actions;
 
+export const getStafiHubBalanceAll = (): AppThunk => (dispatch, getState) => {
+  dispatch(getStafiHubFisAssetBalance());
+  dispatch(getStafiHubRAtomAssetBalance());
+};
+
 export const getStafiHubFisAssetBalance = (): AppThunk => (dispatch, getState) => {
   const address = getState().StafiHubModule.stafiHubAddress;
   getAssetBalance(address, 'ufis', (v: any) => {
