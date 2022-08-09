@@ -5,6 +5,7 @@ import { createSlice } from '@reduxjs/toolkit';
 import mixpanel from 'mixpanel-browser';
 import { rSymbol, Symbol } from 'src/keyring/defaults';
 import AtomServer from 'src/servers/atom/index';
+import StafiHubServer from 'src/servers/stafihub/index';
 import keyring from 'src/servers/index';
 import PolkadotServer from 'src/servers/polkadot/index';
 import SolServer from 'src/servers/sol/index';
@@ -36,6 +37,8 @@ import { reloadData as maticReloadData, rTokenLedger as matic_rTokenLedger } fro
 import { reloadData as solReloadData, setSolAddress, rTokenLedger as sol_rTokenLedger } from './rSOLClice';
 import { getStakerApr as eth_getStakerApr } from './rETHClice';
 import { rTokenLedger as bnb_rTokenLedger } from './rBNBClice';
+import { setStafiHubAddress } from './StafiHubClice';
+import { Keys, setLocalStorageItem } from 'src/util/common';
 
 export enum processStatus {
   default = 0,
@@ -48,6 +51,7 @@ export enum processStatus {
 const polkadotServer = new PolkadotServer();
 
 const atomServer = new AtomServer();
+const stafiHubServer = new StafiHubServer();
 const solServer = new SolServer();
 
 export const process = {
@@ -304,6 +308,21 @@ export const connectAtomjs =
         balance: '--',
       };
       dispatch(clice(Symbol.Atom).createSubstrate(account));
+      cb && cb();
+    } catch (e) {
+      // message.error('Please create an account');
+    }
+  };
+export const connectStafiHubAtomjs =
+  (cb?: Function): AppThunk =>
+  async (dispatch, getState) => {
+    try {
+      await stafiHubServer.connectAtomjs();
+      const account = await stafiHubServer.getAccount();
+      if (account && account.bech32Address) {
+        setLocalStorageItem(Keys.StafiHubWalletAllowed, '1');
+      }
+      dispatch(setStafiHubAddress(account.bech32Address));
       cb && cb();
     } catch (e) {
       // message.error('Please create an account');

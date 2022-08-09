@@ -14,6 +14,7 @@ import {
   connectPolkadotjs,
   connectPolkadot_ksm,
   connectSoljs,
+  connectStafiHubAtomjs,
   initMetaMaskAccount,
 } from 'src/features/globalClice';
 import { noticeStatus } from 'src/features/noticeClice';
@@ -26,6 +27,7 @@ import {
   query_rBalances_account as ksmquery_rBalances_account,
   reloadData as ksmReloadData,
 } from 'src/features/rKSMClice';
+import { getStafiHubFisAssetBalance, getStafiHubRAtomAssetBalance } from 'src/features/StafiHubClice';
 import { useMetaMaskAccount } from 'src/hooks/useMetaMaskAccount';
 import { rSymbol, Symbol } from 'src/keyring/defaults';
 import Modal from 'src/shared/components/modal/connectModal';
@@ -50,6 +52,7 @@ interface HeaderConfig {
   showMaticAccount?: boolean;
   showSolAccount?: boolean;
   showAtomAccount?: boolean;
+  showStafiHubAccount?: boolean;
   showKsmAccount?: boolean;
   showDotAccount?: boolean;
   type?: string;
@@ -69,14 +72,18 @@ export default function Index(props: Props) {
     return state.rMATICModule.transferrableAmountShow;
   });
 
-  const { fisAccount, dotAccount, ksmAccount, atomAccount } = useSelector((state: any) => {
-    return {
-      fisAccount: state.FISModule.fisAccount,
-      dotAccount: state.rDOTModule.dotAccount,
-      ksmAccount: state.rKSMModule.ksmAccount,
-      atomAccount: state.rATOMModule.atomAccount,
-    };
-  });
+  const { fisAccount, dotAccount, ksmAccount, atomAccount, stafiHubAddress, stafiHubBalance } = useSelector(
+    (state: any) => {
+      return {
+        fisAccount: state.FISModule.fisAccount,
+        dotAccount: state.rDOTModule.dotAccount,
+        ksmAccount: state.rKSMModule.ksmAccount,
+        atomAccount: state.rATOMModule.atomAccount,
+        stafiHubAddress: state.StafiHubModule.stafiHubAddress,
+        stafiHubBalance: state.StafiHubModule.fisBalance,
+      };
+    },
+  );
 
   const { solAddress, solTransferrableAmount } = useSelector((state: any) => {
     return {
@@ -105,6 +112,11 @@ export default function Index(props: Props) {
       balance: solTransferrableAmount,
     };
   }, [solAddress, solTransferrableAmount]);
+
+  useEffect(() => {
+    dispatch(getStafiHubFisAssetBalance());
+    dispatch(getStafiHubRAtomAssetBalance());
+  }, [stafiHubAddress, dispatch]);
 
   let platform = 'Native';
   if (history.location.search) {
@@ -155,6 +167,10 @@ export default function Index(props: Props) {
         } else if (location.search.includes('first=spl')) {
           return {
             showSolAccount: true,
+          };
+        } else if (location.search.includes('first=ics20')) {
+          return {
+            showStafiHubAccount: true,
           };
         }
 
@@ -578,6 +594,27 @@ export default function Index(props: Props) {
                     <div
                       onClick={() => {
                         dispatch(connectAtomjs());
+                      }}
+                      className='header_tool account'>
+                      connect to Kepir
+                    </div>
+                  </>
+                )}
+              </div>
+            )}
+
+            {account.showStafiHubAccount && (
+              <div className='header_tool account'>
+                {stafiHubAddress ? (
+                  <>
+                    <div>{stafiHubBalance} FIS</div>
+                    <div>{StringUtil.replacePkh(stafiHubAddress, 6, 38)}</div>
+                  </>
+                ) : (
+                  <>
+                    <div
+                      onClick={() => {
+                        dispatch(connectStafiHubAtomjs());
                       }}
                       className='header_tool account'>
                       connect to Kepir

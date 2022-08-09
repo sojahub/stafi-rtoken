@@ -815,6 +815,9 @@ export const notice_text = (item: any) => {
       if (item.subData.destSwapType === 'spl') {
         return `Swap ${item.amount} Native ${item.rSymbol} to SPL, it may take 2~10 minutes to arrive`;
       }
+      if (item.subData.destSwapType === 'ics20') {
+        return `Swap ${item.amount} Native ${item.rSymbol} to ICS20, it may take 2~10 minutes to arrive`;
+      }
       return `Swap ${item.amount} Native ${item.rSymbol} to ERC20, it may take 2~10 minutes to arrive`;
     } else if (item.subData.swapType == 'bep20') {
       if (item.subData.destSwapType == 'erc20') {

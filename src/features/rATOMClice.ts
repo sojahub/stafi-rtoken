@@ -222,7 +222,7 @@ const queryBalance = async (account: any, dispatch: any, getState: any) => {
 
     if (balances.length > 0) {
       const balanace = balances.find((item: any) => {
-        return item.denom == config.rAtomDenom();
+        return item.denom === config.rAtomDenom();
       });
       account2.balance = balanace ? NumberUtil.tokenAmountToHuman(balanace.amount, rSymbol.Atom) : 0;
     } else {

@@ -31,7 +31,7 @@ export default function Index(props: Props) {
         <Popover
           visible={showSelect}
           onVisibleChange={setShowSelect}
-          trigger="click"
+          trigger='click'
           placement='bottomRight'
           overlayClassName='stafi_type_input_select'
           title={
@@ -91,35 +91,44 @@ type SelectProps = {
 function Select(props: SelectProps) {
   return (
     <div className='content'>
-      {props.selectDataSource && props.selectDataSource.length > 0 ?
+      {props.selectDataSource && props.selectDataSource.length > 0 ? (
         props.selectDataSource.map((item, index) => {
           return (
             <div
               key={index}
-              className={`item ${props.selectedData && props.selectedData.title == item.title ? 'active' : ''}`}
+              className={`item ${props.selectedData && props.selectedData.title === item.title ? 'active' : ''}`}
               onClick={() => {
                 props.onSelectChange && props.onSelectChange(item);
               }}>
               <div className='title'>
                 <div>
-                  <img src={item.icon} />
+                  <img
+                    src={item.icon}
+                    style={{
+                      backgroundColor: 'white',
+                      borderRadius: '50%',
+                      padding: item.title === 'StaFiHub' ? '3px' : '0',
+                    }}
+                    alt='icon'
+                  />
                 </div>
                 {item.title}
               </div>
               <label className='amount'>{item.content}</label>
             </div>
           );
-        }) : (
-          <div className='select_token_empty_container'>
-            <div className='left_container'>
-              <img src={icNone} className='icon' />
+        })
+      ) : (
+        <div className='select_token_empty_container'>
+          <div className='left_container'>
+            <img src={icNone} className='icon' />
 
-              <div className='text'>NONE</div>
-            </div>
-
-            <div className='content'>None</div>
+            <div className='text'>NONE</div>
           </div>
-        )}
+
+          <div className='content'>None</div>
+        </div>
+      )}
     </div>
   );
 }

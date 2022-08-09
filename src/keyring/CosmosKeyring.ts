@@ -1,4 +1,3 @@
-
 import { KeyringPair, KeyringStruct, KeyringJson } from './types';
 import { mnemonicValidate } from '@polkadot/util-crypto';
 
@@ -6,7 +5,7 @@ import Base from './Base';
 
 import * as bip32 from 'bip32';
 import * as crypto from 'crypto';
-import * as bech32 from "bech32";
+import { bech32 } from 'bech32';
 
 const ENTROPY_SIZE = 256;
 const MNEMONIC_TO_SEED_PASSWORD = '';
@@ -14,7 +13,6 @@ const MNEMONIC_TO_SEED_PASSWORD = '';
 const DECODED_ADDRESS_LEN = 20;
 
 export class CosmosKeyring extends Base implements KeyringStruct {
-
   protected _acc_addr_prefix = 'cosmos';
   protected _derivation_path = "m/44'/118'/0'/0/0";
 
@@ -76,12 +74,12 @@ export class CosmosKeyring extends Base implements KeyringStruct {
   public decodeAddress(accAddress: string): Buffer {
     const { prefix, words } = bech32.decode(accAddress);
     if (prefix !== this._acc_addr_prefix) {
-      throw Error("Wrong prefix");
+      throw Error('Wrong prefix');
     }
 
     const buffer = Buffer.from(bech32.fromWords(words));
     if (buffer.length !== DECODED_ADDRESS_LEN) {
-      throw Error("Wrong decoded address len");
+      throw Error('Wrong decoded address len');
     }
 
     return buffer;
@@ -89,7 +87,7 @@ export class CosmosKeyring extends Base implements KeyringStruct {
 
   public sign(secretKey: string, message: string): any {
     // console.log(secretKey, message);
-    return {}
+    return {};
   }
 
   private createAccountFromSeed(seed: Buffer): KeyringPair {
@@ -101,22 +99,16 @@ export class CosmosKeyring extends Base implements KeyringStruct {
     return {
       secretKey: '',
       publicKey: '',
-      address: address
-    }
+      address: address,
+    };
   }
 
   private hash160(buffer: Buffer): Buffer {
-    const sha256Hash: Buffer = crypto.createHash('sha256')
-      .update(buffer)
-      .digest();
+    const sha256Hash: Buffer = crypto.createHash('sha256').update(buffer).digest();
     try {
-      return crypto.createHash('rmd160')
-        .update(sha256Hash)
-        .digest();
+      return crypto.createHash('rmd160').update(sha256Hash).digest();
     } catch (err) {
-      return crypto.createHash('ripemd160')
-        .update(sha256Hash)
-        .digest();
+      return crypto.createHash('ripemd160').update(sha256Hash).digest();
     }
   }
 
@@ -127,8 +119,7 @@ export class CosmosKeyring extends Base implements KeyringStruct {
     } catch (error) {
       return false;
     }
-    
+
     return len == this._secLength;
   }
-
 }

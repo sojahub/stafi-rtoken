@@ -14,6 +14,7 @@ enum Symbol {
 }
 
 enum rSymbol {
+  StafiHub = -2,
   Asset = -1,
   Fis = 0,
   Dot = 1,

@@ -16,6 +16,7 @@ import rasset_rfis_svg from 'src/assets/images/r_fis.svg';
 import rasset_rksm_svg from 'src/assets/images/r_ksm.svg';
 import rasset_rmatic_svg from 'src/assets/images/r_matic.svg';
 import solana_white from 'src/assets/images/solana_white.svg';
+import stafihub from 'src/assets/images/icon_stafi_hub.png';
 import stafi_white from 'src/assets/images/stafi_white.svg';
 import SwapLoading from 'src/components/modal/SwapLoading';
 import config, { getRsymbolByTokenType } from 'src/config/index';
@@ -26,9 +27,11 @@ import {
   erc20ToOtherSwap,
   ETH_CHAIN_ID,
   getBridgeEstimateEthFee,
+  ics20ToOtherSwap,
   nativeToOtherSwap,
   slp20ToOtherSwap,
   SOL_CHAIN_ID,
+  STAFIHUB_CHAIN_ID,
   STAFI_CHAIN_ID,
 } from 'src/features/bridgeClice';
 import { getAssetBalanceAll as getBep20AssetBalanceAll, getBep20Allowances } from 'src/features/BSCClice';
@@ -89,10 +92,11 @@ import AmountInputEmbed from 'src/shared/components/input/amountInputEmbed';
 import TypeSelector from 'src/shared/components/input/typeSelector';
 import numberUtil from 'src/util/numberUtil';
 import NumberUtil from 'src/util/numberUtil';
-import { useInterval } from 'src/util/utils';
+import { checkCosmosAddress, useInterval } from 'src/util/utils';
 import StafiServer from 'src/servers/stafi';
 
 import './index.scss';
+import { getStafiHubFisAssetBalance, getStafiHubRAtomAssetBalance } from 'src/features/StafiHubClice';
 
 const stafiServer = new StafiServer();
 
@@ -114,15 +118,17 @@ const chainSupportTokenMap = {
   'bep20-native': ['rfis', 'reth', 'rdot', 'rksm', 'ratom', 'rmatic', 'rbnb'],
   'native-spl': ['fis', 'rsol'],
   'spl-native': ['fis', 'rsol'],
+  'native-ics20': ['fis', 'ratom'],
+  'ics20-native': ['fis'],
 };
 
 const tokenSupportChainMap = {
-  fis: ['native', 'erc20', 'spl'],
+  fis: ['native', 'erc20', 'spl', 'ics20'],
   rfis: ['native', 'erc20', 'bep20'],
   reth: ['native', 'erc20', 'bep20'],
   rdot: ['native', 'erc20', 'bep20'],
   rksm: ['native', 'erc20', 'bep20'],
-  ratom: ['native', 'erc20', 'bep20'],
+  ratom: ['native', 'erc20', 'bep20', 'ics20'],
   rmatic: ['native', 'erc20', 'bep20'],
   rbnb: ['native', 'bep20'],
   rsol: ['native', 'spl'],
@@ -210,6 +216,12 @@ const assetDatas = [
     content: 'SPL',
     type: 'spl',
   },
+  {
+    icon: stafihub,
+    title: 'StaFiHub',
+    content: 'ICS20',
+    type: 'ics20',
+  },
 ];
 
 export default function Index(props: any) {
@@ -265,7 +277,6 @@ export default function Index(props: any) {
     if (!tokenData) {
       returnToAsset();
     } else {
-      console.log('tokenData', { ...tokenData });
       setTokenRefState({ ...tokenData });
     }
   }, [rTokenParam, returnToAsset]);
@@ -292,6 +303,7 @@ export default function Index(props: any) {
     erc20EstimateFee,
     bep20EstimateFee,
     slp20EstimateFee,
+    ics20EstimateFee,
     estimateEthFee,
     estimateBscFee,
     estimateSolFee,
@@ -337,6 +349,12 @@ export default function Index(props: any) {
         rsol_balance: NumberUtil.handleFisAmountToFixed(state.SOLModule.rSOLBalance),
         estimateSolFee: state.bridgeModule.estimateSolFee,
       };
+    } else if (fromChainRefState && fromChainRefState.type === 'ics20') {
+      return {
+        fis_balance: NumberUtil.handleFisAmountToFixed(state.StafiHubModule.fisBalance),
+        ratom_balance: NumberUtil.handleFisAmountToFixed(state.StafiHubModule.rAtomBalance),
+        estimateSolFee: state.bridgeModule.estimateSolFee,
+      };
     } else if (fromChainRefState && fromChainRefState.type === 'native') {
       return {
         rksm_balance: NumberUtil.handleFisAmountToFixed(state.rKSMModule.tokenAmount),
@@ -351,6 +369,7 @@ export default function Index(props: any) {
         erc20EstimateFee: state.bridgeModule.erc20EstimateFee,
         bep20EstimateFee: state.bridgeModule.bep20EstimateFee,
         slp20EstimateFee: state.bridgeModule.slp20EstimateFee,
+        ics20EstimateFee: state.bridgeModule.ics20EstimateFee,
       };
     } else {
       return {
@@ -367,15 +386,18 @@ export default function Index(props: any) {
     }
   });
 
-  const { fisAccount, fisAddress, solAddress, solBalance, solTransferrableAmount } = useSelector((state: any) => {
-    return {
-      fisAccount: state.FISModule.fisAccount,
-      fisAddress: state.FISModule.fisAccount && state.FISModule.fisAccount.address,
-      solAddress: state.rSOLModule.solAddress,
-      solBalance: state.rSOLModule.transferrableAmountShow,
-      solTransferrableAmount: state.rSOLModule.transferrableAmountShow,
-    };
-  });
+  const { fisAccount, fisAddress, solAddress, solBalance, solTransferrableAmount, stafihubAddress } = useSelector(
+    (state: any) => {
+      return {
+        fisAccount: state.FISModule.fisAccount,
+        fisAddress: state.FISModule.fisAccount && state.FISModule.fisAccount.address,
+        solAddress: state.rSOLModule.solAddress,
+        solBalance: state.rSOLModule.transferrableAmountShow,
+        solTransferrableAmount: state.rSOLModule.transferrableAmountShow,
+        stafihubAddress: state.rATOMModule.atomAccount && state.rATOMModule.atomAccount.address,
+      };
+    },
+  );
 
   useEffect(() => {
     (async () => {
@@ -437,7 +459,11 @@ export default function Index(props: any) {
         dispatch(earglyConnectPhantom());
       }
     }
-  }, [dispatch, metaMaskAddress, solAddress, fromChainRefState]);
+    if (fromChainRefState.type === 'ics20' && stafihubAddress) {
+      dispatch(getStafiHubFisAssetBalance());
+      dispatch(getStafiHubRAtomAssetBalance());
+    }
+  }, [dispatch, metaMaskAddress, solAddress, fromChainRefState, stafihubAddress]);
 
   const updateNativePlatformData = useCallback(() => {
     if (fisAddress) {
@@ -691,8 +717,9 @@ export default function Index(props: any) {
 
     if (fromChainRef.current && destChainRef.current) {
       if (
+        !chainSupportTokenMap[`${fromChainRef.current.type}-${destChainRef.current.type}`] ||
         chainSupportTokenMap[`${fromChainRef.current.type}-${destChainRef.current.type}`].indexOf(tokenRefState.type) <
-        0
+          0
       ) {
         setFromChainRefState(null);
         setDestChainRefState(null);
@@ -938,6 +965,8 @@ export default function Index(props: any) {
                 destChainRefState
                   ? destChainRefState.type === 'native' || destChainRefState.type === 'spl'
                     ? '...'
+                    : destChainRefState.type === 'ics20'
+                    ? 'stafi...'
                     : '0x...'
                   : ''
               }
@@ -1017,6 +1046,7 @@ export default function Index(props: any) {
                 destChainRefState &&
                 (fromChainRefState.type === 'native' ||
                   fromChainRefState.type === 'spl' ||
+                  fromChainRefState.type === 'ics20' ||
                   (fromChainRefState.type === 'erc20' && config.metaMaskNetworkIsGoerliEth(metaMaskNetworkId)) ||
                   (fromChainRefState.type === 'bep20' && config.metaMaskNetworkIsBsc(metaMaskNetworkId)))
               )
@@ -1026,6 +1056,21 @@ export default function Index(props: any) {
                 message.error(`Please select chain to transfer`);
                 return;
               }
+
+              if (tokenRef.current.type === 'ratom' && fromChainRef.current.type === 'ics20') {
+                message.warn('You can only swap rATOM from StaFi Chain to StaFiHub for now');
+                return;
+              }
+
+              if (
+                tokenRef.current.type === 'fis' &&
+                fromChainRef.current.type === 'ics20' &&
+                destChainRef.current.type !== 'native'
+              ) {
+                message.warn('You can only swap FIS in StaFiHub to StaFi Chain for now');
+                return;
+              }
+
               if (fromChainRef.current && fromChainRef.current.type === 'erc20') {
                 if (isNaN(Number(metaMaskBalance)) || Number(metaMaskBalance) <= Number(estimateEthFee)) {
                   message.error(`No enough ETH to pay for the fee`);
@@ -1074,6 +1119,16 @@ export default function Index(props: any) {
                   return;
                 }
               }
+              if (
+                fromChainRef.current.type === 'native' &&
+                destChainRef.current &&
+                destChainRef.current.type === 'ics20'
+              ) {
+                if (Number(fis_balance) <= Number(ics20EstimateFee)) {
+                  message.error(`No enough FIS to pay for the fee`);
+                  return;
+                }
+              }
               if (destChainRef.current.type === 'erc20' || destChainRef.current.type === 'bep20') {
                 if (!checkEthAddress(address)) {
                   message.error('Input address error');
@@ -1082,6 +1137,12 @@ export default function Index(props: any) {
               }
               if (destChainRef.current.type === 'native') {
                 if (!checkAddress(address)) {
+                  message.error('Input address error');
+                  return;
+                }
+              }
+              if (destChainRef.current.type === 'ics20') {
+                if (!checkCosmosAddress(address, 'stafi')) {
                   message.error('Input address error');
                   return;
                 }
@@ -1123,6 +1184,8 @@ export default function Index(props: any) {
                 setViewTxUrl(config.bscScanBep20TxInAddressUrl(address));
               } else if (destChainRef.current && destChainRef.current.type === 'spl') {
                 setViewTxUrl(config.solScanSlp20TxInAddressUrl(address));
+              } else if (destChainRef.current && destChainRef.current.type === 'ics20') {
+                setViewTxUrl(`${config.stafihubChainConfig().explorerUrl}/account/${address}`);
               } else {
                 setViewTxUrl(config.stafiScanUrl(address));
               }
@@ -1136,6 +1199,8 @@ export default function Index(props: any) {
                   chainId = BSC_CHAIN_ID;
                 } else if (destChainRef.current && destChainRef.current.type === 'spl') {
                   chainId = SOL_CHAIN_ID;
+                } else if (destChainRef.current && destChainRef.current.type === 'ics20') {
+                  chainId = STAFIHUB_CHAIN_ID;
                 }
                 dispatch(
                   nativeToOtherSwap(chainId, tokenRef.current.title, tokenRef.current.type, fromAoumt, address, () => {
@@ -1158,11 +1223,20 @@ export default function Index(props: any) {
                   destChainRef.current.type === 'native'
                 ) {
                   swapFun = slp20ToOtherSwap;
+                } else if (
+                  fromChainRef.current &&
+                  fromChainRef.current.type === 'ics20' &&
+                  destChainRef.current &&
+                  destChainRef.current.type === 'native'
+                ) {
+                  swapFun = ics20ToOtherSwap;
                 }
                 if (destChainRef.current.type === 'erc20') {
                   destChainId = ETH_CHAIN_ID;
                 } else if (destChainRef.current.type === 'bep20') {
                   destChainId = BSC_CHAIN_ID;
+                } else if (destChainRef.current.type === 'ics20') {
+                  destChainId = STAFIHUB_CHAIN_ID;
                 } else {
                   destChainId = STAFI_CHAIN_ID;
                 }

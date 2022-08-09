@@ -290,6 +290,9 @@ const numberUtil = {
       case rSymbol.Bnb:
         factor = 100000000;
         break;
+      case rSymbol.StafiHub:
+        factor = 1000000;
+        break;
       default:
         factor = 1000000000000;
         break;
@@ -316,6 +319,8 @@ const numberUtil = {
         return Web3Utils.toWei(amount.toString()).toString();
       case rSymbol.Eth:
         return Web3Utils.toWei(amount.toString()).toString();
+      case rSymbol.StafiHub:
+        return Math.round(Number(amount) * 1000000).toString();
       default:
         return Math.round(Number(amount) * 1000000000000).toString();
     }

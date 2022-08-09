@@ -9,6 +9,8 @@ import { rTokenRate as rSolTokenRate } from 'src/features/rSOLClice';
 import { rTokenRate as rMaticTokenRate } from 'src/features/rMATICClice';
 import { rTokenRate as rBnbTokenRate } from 'src/features/rBNBClice';
 import { useStafiAccount } from './useStafiAccount';
+import { Keys } from 'src/util/common';
+import { connectStafiHubAtomjs } from 'src/features/globalClice';
 
 export function useInit() {
   const dispatch = useDispatch();
@@ -26,4 +28,10 @@ export function useInit() {
     dispatch(rMaticTokenRate());
     dispatch(rBnbTokenRate());
   }, [dispatch, stafiAddress]);
+
+  useEffect(() => {
+    if (localStorage.getItem(Keys.StafiHubWalletAllowed)) {
+      dispatch(connectStafiHubAtomjs());
+    }
+  }, [dispatch]);
 }

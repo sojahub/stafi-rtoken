@@ -10,6 +10,7 @@ import {
   ETH_CHAIN_ID,
   setSwapLoadingStatus,
   SOL_CHAIN_ID,
+  STAFIHUB_CHAIN_ID,
   STAFI_CHAIN_ID,
 } from 'src/features/bridgeClice';
 import {
@@ -24,6 +25,7 @@ import {
 import { queryTokenBalances } from 'src/features/FISClice';
 import { noticeStatus, update_NoticeStatus } from 'src/features/noticeClice';
 import { getAssetBalance as getSlpAssetBalance, getSlp20AssetBalanceAll } from 'src/features/SOLClice';
+import { getAssetBalance as getStafiHubAssetBalance } from 'src/features/StafiHubClice';
 import { rSymbol } from 'src/keyring/defaults';
 import Stafi from 'src/servers/stafi/index';
 import numberUtil from 'src/util/numberUtil';
@@ -259,6 +261,24 @@ export default function SwapLoading(props: Props) {
       getSlpAssetBalance(swapLoadingParams.address, swapLoadingParams.tokenType, (v: any) => {
         // console.log('new amount:', v);
         if (Number(v) === Number(swapLoadingParams.oldBalance) + Number(swapLoadingParams.amount)) {
+          setSwapStatus(1);
+          dispatch(getSlp20AssetBalanceAll());
+          dispatch(update_NoticeStatus(swapLoadingParams.noticeUuid, noticeStatus.Confirmed));
+        }
+      });
+    } else if (swapLoadingParams.destChainId === STAFIHUB_CHAIN_ID) {
+      let denom = '';
+      if (swapLoadingParams.tokenType === 'fis') {
+        denom = 'ufis';
+      } else if (swapLoadingParams.tokenType === 'ratom') {
+        denom = 'uratom';
+      }
+      getStafiHubAssetBalance(swapLoadingParams.address, denom, (v: any) => {
+        console.log(swapLoadingParams.oldBalance, swapLoadingParams.amount);
+        if (
+          Number(v) - Number(swapLoadingParams.oldBalance) <= Number(swapLoadingParams.amount) * 1.1 &&
+          Number(v) - Number(swapLoadingParams.oldBalance) >= Number(swapLoadingParams.amount) * 0.9
+        ) {
           setSwapStatus(1);
           dispatch(getSlp20AssetBalanceAll());
           dispatch(update_NoticeStatus(swapLoadingParams.noticeUuid, noticeStatus.Confirmed));

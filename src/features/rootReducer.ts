@@ -20,6 +20,7 @@ import rMATICReducer from './rMATICClice';
 import rPoolReducer from './rPoolClice';
 import rSOLReducer from './rSOLClice';
 import SOLReducer from './SOLClice';
+import StafiHubReducer from './StafiHubClice';
 
 export default function createRootReducer(history?: History) {
   return combineReducers({
@@ -29,6 +30,7 @@ export default function createRootReducer(history?: History) {
     rSOLModule: rSOLReducer,
     SOLModule: SOLReducer,
     FISModule: FISReducer,
+    StafiHubModule: StafiHubReducer,
     noticeModule: noticeReducer,
     router: connectRouter(history),
     rAssetModule: rAssetReducer,

@@ -1,7 +1,7 @@
 // @ts-nocheck
 
 import { web3Enable, web3FromSource } from '@polkadot/extension-dapp';
-import { u8aToHex } from '@polkadot/util';
+import { bufferToU8a, u8aToHex } from '@polkadot/util';
 import { createSlice } from '@reduxjs/toolkit';
 import { Connection, PublicKey, Transaction, TransactionInstruction } from '@solana/web3.js';
 import { message } from 'antd';
@@ -12,6 +12,7 @@ import AtomServer from 'src/servers/atom';
 import BridgeServer from 'src/servers/bridge';
 import BscServer from 'src/servers/bsc';
 import EthServer from 'src/servers/eth';
+import { bech32 } from 'bech32';
 import keyring from 'src/servers/index';
 import KsmServer from 'src/servers/ksm';
 import MaticServer from 'src/servers/matic';
@@ -20,7 +21,7 @@ import SolServer from 'src/servers/sol';
 import { default as FisServer, default as StafiServer } from 'src/servers/stafi';
 import Stafi from 'src/servers/stafi/index';
 import { stafi_uuid, timeout } from 'src/util/common';
-import { default as NumberUtil } from 'src/util/numberUtil';
+import numberUtil, { default as NumberUtil } from 'src/util/numberUtil';
 import rpc from 'src/util/rpc';
 import { AppThunk } from '../store';
 import { getAssetBalance as getBscAssetBalance } from './BSCClice';
@@ -29,11 +30,14 @@ import { getAssetBalance } from './ETHClice';
 import { connectSoljs, setLoading, setStakeSwapLoadingParams } from './globalClice';
 import { add_Notice, noticeStatus, noticesubType, noticeType } from './noticeClice';
 import { getAssetBalance as getSlpAssetBalance } from './SOLClice';
+import { getAssetBalance as getStafiHubAssetBalance } from './StafiHubClice';
+import { sendBridgeDepositTx } from '@stafihub/apps-wallet';
 
 export const STAFI_CHAIN_ID = 1;
 export const ETH_CHAIN_ID = 2;
 export const BSC_CHAIN_ID = 3;
 export const SOL_CHAIN_ID = 4;
+export const STAFIHUB_CHAIN_ID = 5;
 
 const bridgeServer = new BridgeServer();
 const bscServer = new BscServer();
@@ -53,6 +57,7 @@ const bridgeClice = createSlice({
     erc20EstimateFee: '--',
     bep20EstimateFee: '--',
     slp20EstimateFee: '--',
+    ics20EstimateFee: '--',
     estimateEthFee: '--',
     estimateBscFee: '--',
     estimateSolFee: '--',
@@ -75,6 +80,9 @@ const bridgeClice = createSlice({
     },
     setSlp20EstimateFee(state, { payload }) {
       state.slp20EstimateFee = payload;
+    },
+    setIcs20EstimateFee(state, { payload }) {
+      state.ics20EstimateFee = payload;
     },
     setEstimateEthFee(state, { payload }) {
       state.estimateEthFee = payload;
@@ -104,6 +112,7 @@ export const {
   setErc20EstimateFee,
   setBep20EstimateFee,
   setSlp20EstimateFee,
+  setIcs20EstimateFee,
   setEstimateEthFee,
   setEstimateBscFee,
   setEstimateSolFee,
@@ -134,6 +143,12 @@ export const bridgeCommon_ChainFees = (): AppThunk => async (dispatch, getState)
       let slpEstimateFee = NumberUtil.fisAmountToHuman(resultSlp.toJSON());
       dispatch(setSlp20EstimateFee(NumberUtil.handleFisAmountToFixed(slpEstimateFee)));
     }
+
+    const resultIcs = await api.query.bridgeCommon.chainFees(STAFI_CHAIN_ID);
+    if (resultSlp.toJSON()) {
+      let icsEstimateFee = NumberUtil.fisAmountToHuman(resultIcs.toJSON());
+      dispatch(setIcs20EstimateFee(NumberUtil.handleFisAmountToFixed(icsEstimateFee)));
+    }
   } catch (e) {}
 };
 
@@ -159,6 +174,12 @@ export const nativeToOtherSwap =
           throw new Error('Please add the SPL token account first.');
         }
         txAddress = u8aToHex(tokenMintPublicKey.toBytes());
+      } else if (chainId === STAFIHUB_CHAIN_ID) {
+        const { words } = bech32.decode(destAddress);
+        const buffer = Buffer.from(bech32.fromWords(words));
+        const hex = u8aToHex(bufferToU8a(buffer));
+        txAddress = '0x' + hex.substr(2).toUpperCase();
+        // txAddress = hex;
       }
 
       dispatch(setSwapLoadingStatus(1));
@@ -169,6 +190,8 @@ export const nativeToOtherSwap =
         updateSwapParamsOfBep(dispatch, notice_uuid, tokenType, tokenAmount, destAddress);
       } else if (chainId === SOL_CHAIN_ID) {
         updateSwapParamsOfSlp(dispatch, notice_uuid, tokenType, tokenAmount, destAddress);
+      } else if (chainId === STAFIHUB_CHAIN_ID) {
+        updateSwapParamsOfStafiHub(dispatch, notice_uuid, tokenType, tokenAmount, destAddress);
       }
 
       web3Enable(stafiServer.getWeb3EnalbeName());
@@ -180,6 +203,7 @@ export const nativeToOtherSwap =
       if (tokenType === 'fis') {
         const amount = NumberUtil.tokenAmountToChain(tokenAmount.toString());
         tx = await api.tx.bridgeSwap.transferNative(amount.toString(), txAddress, chainId);
+        console.log('transferNative params', currentAccount, amount.toString(), chainId, txAddress);
       } else {
         let rsymbol = bridgeServer.getRsymbolByTokenType(tokenType);
         const amount = NumberUtil.tokenAmountToChain(tokenAmount.toString(), rsymbol);
@@ -204,23 +228,25 @@ export const nativeToOtherSwap =
                     const error = data.registry.findMetaError(
                       new Uint8Array([mod.index.toNumber(), mod.error.toNumber()]),
                     );
+                    console.log('error', error);
+                    console.log('c', chainId);
                     let message_str = 'Something is wrong, please make sure you have enough FIS balance';
-                    if (tokenType == 'rfis') {
+                    if (tokenType === 'rfis') {
                       message_str = 'Something is wrong, please make sure you have enough FIS and rFIS balance';
-                    } else if (tokenType == 'rdot') {
+                    } else if (tokenType === 'rdot') {
                       message_str = 'Something is wrong, please make sure you have enough FIS and rDOT balance';
-                    } else if (tokenType == 'rksm') {
+                    } else if (tokenType === 'rksm') {
                       message_str = 'Something is wrong, please make sure you have enough FIS and rKSM balance';
-                    } else if (tokenType == 'ratom') {
+                    } else if (tokenType === 'ratom') {
                       message_str = 'Something is wrong, please make sure you have enough FIS and rATOM balance';
-                    } else if (tokenType == 'rsol') {
+                    } else if (tokenType === 'rsol') {
                       message_str = 'Something is wrong, please make sure you have enough FIS and rSOL balance';
-                    } else if (tokenType == 'rmatic') {
+                    } else if (tokenType === 'rmatic') {
                       message_str = 'Something is wrong, please make sure you have enough FIS and rMATIC balance';
-                    } else if (tokenType == 'rbnb') {
+                    } else if (tokenType === 'rbnb') {
                       message_str = 'Something is wrong, please make sure you have enough FIS and rBNB balance';
                     }
-                    if (error.name == 'ServicePaused') {
+                    if (error.name === 'ServicePaused') {
                       message_str = 'Service is paused, please try again later!';
                     }
                     dispatch(setLoading(false));
@@ -238,7 +264,14 @@ export const nativeToOtherSwap =
                 dispatch(
                   add_Swap_Notice(notice_uuid, tokenStr, tokenAmount, noticeStatus.Pending, {
                     swapType: 'native',
-                    destSwapType: chainId === BSC_CHAIN_ID ? 'bep20' : chainId === SOL_CHAIN_ID ? 'spl' : 'erc20',
+                    destSwapType:
+                      chainId === BSC_CHAIN_ID
+                        ? 'bep20'
+                        : chainId === SOL_CHAIN_ID
+                        ? 'spl'
+                        : chainId === STAFIHUB_CHAIN_ID
+                        ? 'ics20'
+                        : 'erc20',
                     address: destAddress,
                   }),
                 );
@@ -760,6 +793,69 @@ export const slp20ToOtherSwap =
     }
   };
 
+export const ics20ToOtherSwap =
+  (
+    destChainId: number,
+    tokenStr: string,
+    tokenType: string,
+    tokenAmount: any,
+    address: string,
+    cb?: Function,
+  ): AppThunk =>
+  async (dispatch, getState) => {
+    try {
+      const stafiHubAddress = getState().StafiHubModule.stafiHubAddress;
+      if (!stafiHubAddress) {
+        return;
+      }
+
+      const notice_uuid = stafi_uuid();
+      dispatch(setLoading(true));
+
+      dispatch(setSwapLoadingStatus(1));
+      dispatch(setSwapWaitingTime(600));
+      if (destChainId === STAFI_CHAIN_ID) {
+        updateSwapParamsOfNative(dispatch, notice_uuid, tokenType, tokenAmount, address);
+      }
+
+      let denom;
+      if (tokenType === 'fis') {
+        denom = 'ufis';
+      }
+
+      const keyringInstance = keyring.init('fis');
+      const addressHex = u8aToHex(keyringInstance.decodeAddress(address));
+
+      const response = await sendBridgeDepositTx(
+        config.stafihubChainConfig(),
+        stafiHubAddress,
+        STAFI_CHAIN_ID,
+        denom,
+        numberUtil.tokenAmountToChain(tokenAmount, rSymbol.StafiHub),
+        addressHex.substr(2),
+      );
+
+      if (response?.code === 0) {
+        dispatch(
+          add_Swap_Notice(notice_uuid, tokenStr, tokenAmount, noticeStatus.Pending, {
+            swapType: 'ics20',
+            destSwapType: 'native',
+            address: address,
+          }),
+        );
+        dispatch(setSwapLoadingStatus(2));
+        cb && cb({});
+      } else {
+        throw new Error(response.rawLog || 'Something went wrong, please try again later');
+      }
+    } catch (error) {
+      dispatch(setSwapLoadingStatus(0));
+      message.error(error.message);
+    } finally {
+      dispatch(setLoading(false));
+    }
+  };
+
 const add_Swap_Notice =
   (uuid: string, token: string, amount: string, status: string, subData: any): AppThunk =>
   async (dispatch, getState) => {
@@ -949,6 +1045,46 @@ export const updateSwapParamsOfSlp = (
           noticeUuid: notice_uuid,
           address: solAddress,
           destChainId: SOL_CHAIN_ID,
+          amount: tokenAmount,
+          tokenType: tokenType,
+          oldBalance: v,
+        }),
+      );
+    }
+  });
+};
+
+export const updateSwapParamsOfStafiHub = (
+  dispatch: any,
+  notice_uuid: string,
+  tokenType: string,
+  tokenAmount: any,
+  stafiHubAddress: string,
+  isInStake?: boolean,
+) => {
+  let denom = '';
+  if (tokenType === 'fis') {
+    denom = 'ufis';
+  } else if (tokenType === 'ratom') {
+    denom = 'uratom';
+  }
+  getStafiHubAssetBalance(stafiHubAddress, denom, (v: any) => {
+    if (isInStake) {
+      dispatch(
+        setStakeSwapLoadingParams({
+          noticeUuid: notice_uuid,
+          address: stafiHubAddress,
+          destChainId: STAFIHUB_CHAIN_ID,
+          tokenType: tokenType,
+          oldBalance: v,
+        }),
+      );
+    } else {
+      dispatch(
+        setSwapLoadingParams({
+          noticeUuid: notice_uuid,
+          address: stafiHubAddress,
+          destChainId: STAFIHUB_CHAIN_ID,
           amount: tokenAmount,
           tokenType: tokenType,
           oldBalance: v,

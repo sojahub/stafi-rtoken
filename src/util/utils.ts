@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react';
+import { bech32 } from 'bech32';
 
 export const regular = {
   urlParameterReg: /([^?&=]+)=([^&]+)/g,
@@ -45,4 +46,30 @@ export function useInterval(callback: any, delay: number, clearCb?: any) {
       clearCb && clearCb();
     };
   }, [delay]);
+}
+
+export function checkCosmosAddress(address: string, addrPrefix: string): boolean {
+  if (!address || address.length < 0) {
+    return false;
+  }
+  try {
+    decodeCosmosAddress(address, addrPrefix);
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+
+function decodeCosmosAddress(accAddress: string, addrPrefix: string) {
+  const { prefix, words } = bech32.decode(accAddress);
+  if (prefix !== addrPrefix) {
+    throw Error('Wrong prefix');
+  }
+
+  //   const buffer = Buffer.from(bech32.fromWords(words));
+  //   if (buffer.length !== DECODED_ADDRESS_LEN) {
+  //     throw Error("Wrong decoded address len");
+  //   }
+
+  //   return buffer;
 }

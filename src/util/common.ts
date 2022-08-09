@@ -32,6 +32,8 @@ export enum Keys {
   BscAccountKey = 'stafi_bsc_account',
 
   UnbondRecordsKey = 'stafi_unbond_records',
+
+  StafiHubWalletAllowed = 'stafiHub_wallet_allowed',
 }
 
 export const setSessionStorageItem = (key: string, val: any) => {

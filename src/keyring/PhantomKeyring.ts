@@ -1,5 +1,5 @@
 import { mnemonicValidate } from '@polkadot/util-crypto';
-import * as bech32 from 'bech32';
+import { bech32 } from 'bech32';
 import * as bip32 from 'bip32';
 import * as crypto from 'crypto';
 import Base from './Base';

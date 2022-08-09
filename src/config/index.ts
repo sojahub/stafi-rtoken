@@ -135,8 +135,8 @@ const config = {
     if (!isdev()) {
       return 'wss://mainnet-rpc.stafi.io';
     } else {
-      // return 'wss://stafi-seiya.stafi.io';
-      return 'wss://stafi-seiya-rewrite.stafi.io';
+      return 'wss://stafi-seiya.stafi.io';
+      // return 'wss://stafi-seiya-rewrite.stafi.io';
     }
   },
   kusamaChain: () => {
@@ -426,6 +426,55 @@ const config = {
     } else {
       return 'cosmos-stafi-1';
     }
+  },
+  stafihubChainId: () => {
+    if (!isdev()) {
+      return 'stafihub-public-devnet-1';
+    } else {
+      return 'stafihub-public-devnet-1';
+    }
+  },
+  stafihubChainConfig: () => {
+    if (!isdev()) {
+      return {
+        chainName: 'StaFi-Hub-Testnet',
+        chainId: 'stafihub-testnet-1',
+        displayHubName: 'StaFiHub',
+        rpc: 'https://test-rpc1.stafihub.io',
+        restEndpoint: 'https://test-rest-rpc1.stafihub.io',
+        denom: 'ufis',
+        coinDenom: 'FIS',
+        decimals: 6,
+        bech32Config: {
+          bech32PrefixAccAddr: 'stafi',
+          bech32PrefixAccPub: 'stafipub',
+          bech32PrefixValAddr: 'stafivaloper',
+          bech32PrefixValPub: 'stafivaloperpub',
+          bech32PrefixConsAddr: 'stafivalcons',
+          bech32PrefixConsPub: 'stafivalconspub',
+        },
+        explorerUrl: 'https://testnet-explorer.stafihub.io/stafi-hub-testnet',
+      };
+    }
+    return {
+      chainName: 'StaFi-Hub-Testnet',
+      chainId: 'stafihub-testnet-1',
+      displayHubName: 'StaFiHub',
+      rpc: 'https://test-rpc1.stafihub.io',
+      restEndpoint: 'https://test-rest-rpc1.stafihub.io',
+      denom: 'ufis',
+      coinDenom: 'FIS',
+      decimals: 6,
+      bech32Config: {
+        bech32PrefixAccAddr: 'stafi',
+        bech32PrefixAccPub: 'stafipub',
+        bech32PrefixValAddr: 'stafivaloper',
+        bech32PrefixValPub: 'stafivaloperpub',
+        bech32PrefixConsAddr: 'stafivalcons',
+        bech32PrefixConsPub: 'stafivalconspub',
+      },
+      explorerUrl: 'https://testnet-explorer.stafihub.io/stafi-hub-testnet',
+    };
   },
   rAtomCosmosChainRpc: () => {
     if (!isdev()) {
