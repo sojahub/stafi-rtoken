@@ -187,10 +187,8 @@ export const nativeToOtherSwap =
         txAddress = u8aToHex(tokenMintPublicKey.toBytes());
       } else if (chainId === STAFIHUB_CHAIN_ID) {
         const { words } = bech32.decode(destAddress);
-        const buffer = Buffer.from(bech32.fromWords(words));
-        const hex = u8aToHex(bufferToU8a(buffer));
+        const hex = u8aToHex(bech32.fromWords(words));
         txAddress = '0x' + hex.substr(2).toUpperCase();
-        // txAddress = hex;
       }
 
       dispatch(setSwapLoadingStatus(1));
@@ -214,7 +212,6 @@ export const nativeToOtherSwap =
       if (tokenType === 'fis') {
         const amount = NumberUtil.tokenAmountToChain(tokenAmount.toString());
         tx = await api.tx.bridgeSwap.transferNative(amount.toString(), txAddress, chainId);
-        console.log('transferNative params', currentAccount, amount.toString(), chainId, txAddress);
       } else {
         let rsymbol = bridgeServer.getRsymbolByTokenType(tokenType);
         const amount = NumberUtil.tokenAmountToChain(tokenAmount.toString(), rsymbol);

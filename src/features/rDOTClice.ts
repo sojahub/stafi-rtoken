@@ -433,8 +433,6 @@ export const transfer =
           message.error(result.toHuman());
         }
       } catch (e) {
-        console.log('sdfsdfsfsdf11');
-
         message.error(e.message);
       }
     }).catch((e: any) => {

@@ -67,7 +67,6 @@ const commonClice = new CommonClice();
 export default function Index(props: any) {
   const dispatch = useDispatch();
   const history = useHistory();
-  console.log('location', history.location);
   const { rTokenPlatform } = useParams<any>();
   const [visible, setVisible] = useState(false);
 

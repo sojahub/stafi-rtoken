@@ -542,7 +542,6 @@ export const stakeLp =
         },
       );
       const result = await lockDropContract.methods.deposit(poolIndex, amountInWei).send();
-      console.log('result: ', result);
       if (result && result.status) {
         dispatch(
           add_Notice(stafi_uuid(), '', noticeType.Lp, noticesubType.Stake, amount.toString(), noticeStatus.Confirmed, {

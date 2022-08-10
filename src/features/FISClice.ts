@@ -619,7 +619,6 @@ export const bound =
             targetAddress,
             getSymbolRTitle(type).toLowerCase(),
           );
-          console.log('spl token account', tokenAccount.toString());
           swapAddress = u8aToHex(tokenAccount.toBytes());
         } else {
           swapAddress = targetAddress;

@@ -279,7 +279,6 @@ export default function SwapLoading(props: Props) {
         denom = 'uratom';
       }
       getStafiHubAssetBalance(swapLoadingParams.address, denom, (v: any) => {
-        console.log(swapLoadingParams.oldBalance, swapLoadingParams.amount);
         if (
           Number(v) - Number(swapLoadingParams.oldBalance) <= Number(swapLoadingParams.amount) * 1.1 &&
           Number(v) - Number(swapLoadingParams.oldBalance) >= Number(swapLoadingParams.amount) * 0.9

@@ -699,7 +699,6 @@ export const getBlock =
           },
         }),
       );
-      console.log('recovery amount', amount.toString());
       dispatch(
         bound(
           address,

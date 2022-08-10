@@ -337,7 +337,6 @@ export default function MintPrograms(props: any) {
 
             {!showNoData &&
               displayList.map((data: any, i: any) => {
-                console.log(`${data.token}${i}`);
                 return (
                   <div
                     key={`${data.token}${i}`}
@@ -383,7 +382,6 @@ export default function MintPrograms(props: any) {
                       if (type == '') {
                         return <></>;
                       }
-                      console.log(`child ${data.token}${index}`);
 
                       return (
                         <MintTableItem
