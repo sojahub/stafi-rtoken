@@ -237,7 +237,7 @@ export default function MintOverview() {
               <div className='label'>My Mint</div>
 
               <div className='content_text'>
-                {userMintToken !== '--' ? `${userMintToken}` : '--'} (
+                {userMintToken !== '--' ? `${numberUtil.amount_format(userMintToken)}` : '--'} (
                 {userMintRatio !== '--' ? `${userMintRatio}` : '--'}
                 %)
               </div>
@@ -248,7 +248,9 @@ export default function MintOverview() {
 
               <div className='label'>My Reward</div>
 
-              <div className='content_text'>{userMintReward !== '--' ? `$${userMintReward}` : '--'}</div>
+              <div className='content_text'>
+                {userMintReward !== '--' ? `$${numberUtil.amount_format(userMintReward)}` : '--'}
+              </div>
             </div>
 
             <div className='content_row'>
