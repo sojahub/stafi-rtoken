@@ -295,7 +295,7 @@ export default class Index {
   }
 
   async getMintOverview(tokenSymbol: any, cycle: any, fisAddress: string, fisPrice: any) {
-    // fisAddress = '33URnrxK5jBoPaZ1hMjj7yMG27aimxbSruYpBZsRFBkbsJne';
+    // fisAddress = '33y9fyaUYoxYNCjjZ3FMhsrJiLmpGm2vY8XTo8tkCqjqCGJi';
     const response: any = {
       actData: null,
       myMint: '--',
@@ -328,7 +328,7 @@ export default class Index {
       arr2.push(Number(cycle));
       const userMintsCount = await stafiApi.query.rClaim.userMintsCount(arr2);
       if (userMintsCount) {
-        let totalReward = 0;
+        let totalReward = BigInt(0);
         let fisClaimableReward = 0;
         let fisClaimedReward = 0;
         let userMint = BigInt(0);
@@ -345,7 +345,7 @@ export default class Index {
               if (claimInfo.toJSON()) {
                 const claimInfoJson = claimInfo.toJSON();
                 // console.log('claimInfo: ', claimInfoJson);
-                totalReward += claimInfoJson.total_reward;
+                totalReward += BigInt(claimInfoJson.total_reward);
 
                 let finalBlock = claimInfoJson.mint_block + actJson.locked_blocks;
                 const lastHeader = await stafiApi.rpc.chain.getHeader();
@@ -376,7 +376,7 @@ export default class Index {
             }
           }
 
-          const formatTotalReward = numberUtil.fisAmountToHuman(totalReward);
+          const formatTotalReward = numberUtil.fisAmountToHuman(totalReward.toString(10));
           response.myMint =
             Math.round(numberUtil.tokenAmountToHuman(userMint, Number(tokenSymbol)) * 1000000) / 1000000;
 
