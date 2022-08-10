@@ -187,7 +187,7 @@ export const nativeToOtherSwap =
         txAddress = u8aToHex(tokenMintPublicKey.toBytes());
       } else if (chainId === STAFIHUB_CHAIN_ID) {
         const { words } = bech32.decode(destAddress);
-        const hex = u8aToHex(bech32.fromWords(words));
+        const hex = u8aToHex(new Uint8Array(bech32.fromWords(words)));
         txAddress = '0x' + hex.substr(2).toUpperCase();
       }
 
