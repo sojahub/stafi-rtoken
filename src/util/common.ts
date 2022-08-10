@@ -100,7 +100,7 @@ export const localStorage_currentEthPool = {
    * set current pool
    */
   setCurrentEthPool: function (validatorAddress: string, poolAddress: string) {
-    Keys.rEthCurrentPoolPrefix + validatorAddress, poolAddress;
+    // Keys.rEthCurrentPoolPrefix + validatorAddress, poolAddress;
   },
 
   /**

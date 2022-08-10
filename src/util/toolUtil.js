@@ -29,27 +29,27 @@ export default {
     }
   },
   pageType() {
-    if (location.pathname.includes('/rDOT')) {
+    if (window.location.pathname.includes('/rDOT')) {
       return rSymbol.Dot;
     }
-    if (location.pathname.includes('/rKSM')) {
+    if (window.location.pathname.includes('/rKSM')) {
       return rSymbol.Ksm;
     }
-    if (location.pathname.includes('/rATOM')) {
+    if (window.location.pathname.includes('/rATOM')) {
       return rSymbol.Atom;
     }
-    if (location.pathname.includes('/rAsset')) {
+    if (window.location.pathname.includes('/rAsset')) {
       return rSymbol.Asset;
-    } 
-    if (location.pathname.includes('/rSOL')) {
+    }
+    if (window.location.pathname.includes('/rSOL')) {
       return rSymbol.Sol;
-    } 
-    if(location.pathname.includes("/rMATIC")){
-      return rSymbol.Matic
-    } 
-    if(location.pathname.includes("/rBNB")){
-      return rSymbol.Bnb
-    } 
+    }
+    if (window.location.pathname.includes('/rMATIC')) {
+      return rSymbol.Matic;
+    }
+    if (window.location.pathname.includes('/rBNB')) {
+      return rSymbol.Bnb;
+    }
     return rSymbol.Asset;
   },
   getTokenTypeBySymbol(symbol) {

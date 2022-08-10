@@ -74,7 +74,7 @@ export const UnbondRecord = (props: Props) => {
               <HContainer ml='20px' mr='10px' justifyContent='flex-start'>
                 <div style={{ width: '20px' }}>
                   <img
-                    src={itemObj.lockLeftTimeInDays <= 0 ? successIcon : pendingIcon}
+                    src={itemObj && itemObj.lockLeftTimeInDays <= 0 ? successIcon : pendingIcon}
                     alt='success'
                     width='12px'
                     height='12px'
