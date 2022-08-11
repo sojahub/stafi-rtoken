@@ -229,7 +229,7 @@ export default function Index(props: any) {
   const dispatch = useDispatch();
   let { rToken: rTokenParam } = useParams<any>();
   const history = useHistory();
-  const [fromAoumt, setFormAmount] = useState<any>();
+  const [fromAmount, setFormAmount] = useState<any>();
   const [selectDataSource, setSelectDataSource] = useState(allTokenDatas);
   const [address, setAddress] = useState<any>();
 
@@ -965,7 +965,7 @@ export default function Index(props: any) {
               maxInput={selectedTokenBalance !== '--' ? selectedTokenBalance : 0}
               showMax={!isNaN(Number(selectedTokenBalance))}
               placeholder='0.0'
-              value={fromAoumt}
+              value={fromAmount}
               onChange={(value: any) => {
                 setFormAmount(value);
               }}
@@ -1083,7 +1083,8 @@ export default function Index(props: any) {
           <Button
             disabled={
               !(
-                fromAoumt &&
+                fromAmount &&
+                Number(fromAmount) > 0 &&
                 address &&
                 fromChainRefState &&
                 destChainRefState &&
@@ -1239,7 +1240,7 @@ export default function Index(props: any) {
                 setViewTxUrl(config.stafiScanUrl(address));
               }
               setTransferDetail(
-                `${fromAoumt} ${tokenRef.current.title} ${fromChainRef.current && fromChainRef.current.content}`,
+                `${fromAmount} ${tokenRef.current.title} ${fromChainRef.current && fromChainRef.current.content}`,
               );
 
               if (fromChainRef.current && fromChainRef.current.type === 'native') {
@@ -1252,7 +1253,7 @@ export default function Index(props: any) {
                   chainId = STAFIHUB_CHAIN_ID;
                 }
                 dispatch(
-                  nativeToOtherSwap(chainId, tokenRef.current.title, tokenRef.current.type, fromAoumt, address, () => {
+                  nativeToOtherSwap(chainId, tokenRef.current.title, tokenRef.current.type, fromAmount, address, () => {
                     setFormAmount('');
                     setAddress('');
                     updateData();
@@ -1292,7 +1293,7 @@ export default function Index(props: any) {
 
                 if (swapFun) {
                   dispatch(
-                    swapFun(destChainId, tokenRef.current.title, tokenRef.current.type, fromAoumt, address, () => {
+                    swapFun(destChainId, tokenRef.current.title, tokenRef.current.type, fromAmount, address, () => {
                       setFormAmount('');
                       setAddress('');
                       updateData();
