@@ -1,3 +1,4 @@
+import { cloneDeep } from 'lodash';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useParams } from 'react-router-dom';
@@ -139,7 +140,7 @@ export default function MintOverview() {
         setFisTotalReward(response.fisTotalReward);
         setFisClaimableReward(response.fisClaimableReward);
         setFisLockedReward(response.fisLockedReward);
-        setClaimIndexs(response.claimIndexs);
+        setClaimIndexs(cloneDeep(response.claimIndexs));
         if (isNaN(response.vesting)) {
           setVesting('--');
         } else if (response.vesting * 1 > 0) {
