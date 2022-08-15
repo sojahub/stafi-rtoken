@@ -295,7 +295,7 @@ export default class Index {
   }
 
   async getMintOverview(tokenSymbol: any, cycle: any, fisAddress: string, fisPrice: any) {
-    // fisAddress = '33y9fyaUYoxYNCjjZ3FMhsrJiLmpGm2vY8XTo8tkCqjqCGJi';
+    // fisAddress = '31UDZUBSpsYaNzBgDwkvw5mTwmfex7BFbbH45nffYky5NjRM';
     const response: any = {
       actData: null,
       myMint: '--',
@@ -362,6 +362,7 @@ export default class Index {
                     shouldClaimAmount = leftClaimAmount;
                   }
                 }
+
                 if (Number(shouldClaimAmount) > Number(0)) {
                   claimIndexs.push(i);
                   fisClaimableReward += shouldClaimAmount;
@@ -407,7 +408,7 @@ export default class Index {
           response.fisTotalReward = formatTotalReward.toFixed(4);
           response.fisClaimableReward = numberUtil.fisAmountToHuman(fisClaimableReward).toFixed(4);
           response.fisLockedReward = numberUtil
-            .fisAmountToHuman(totalReward - fisClaimableReward - fisClaimedReward)
+            .fisAmountToHuman(Number(totalReward.toString(10)) - fisClaimableReward - fisClaimedReward)
             .toFixed(4);
         } else {
           response.myMint = 0;
@@ -419,6 +420,7 @@ export default class Index {
         }
         response.claimIndexs = claimIndexs;
       }
+    } catch (err: unknown) {
     } finally {
       return response;
     }
