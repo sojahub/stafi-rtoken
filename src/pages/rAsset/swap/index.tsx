@@ -258,6 +258,8 @@ export default function Index(props: any) {
     if (params.has('mode')) {
       mode = params.get('mode');
       setMode(mode);
+    } else {
+      setMode('');
     }
     const firstType = assetDatas.find((item) => item.type === first);
     if (firstType) {
@@ -1024,7 +1026,7 @@ export default function Index(props: any) {
                   color: '#00F3AB',
                   fontSize: '12px',
                   textDecoration: 'underline',
-                  visibility: mode === 'migrate' ? 'visible' : 'hidden',
+                  visibility: destChainRefState && destChainRefState.type === 'ics20' ? 'visible' : 'hidden',
                 }}
                 href='https://www.google.com'
                 target='_blank'
