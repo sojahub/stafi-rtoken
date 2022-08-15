@@ -229,6 +229,7 @@ export default function Index(props: any) {
   const dispatch = useDispatch();
   let { rToken: rTokenParam } = useParams<any>();
   const history = useHistory();
+  const [mode, setMode] = useState<string>('');
   const [fromAmount, setFormAmount] = useState<any>();
   const [selectDataSource, setSelectDataSource] = useState(allTokenDatas);
   const [address, setAddress] = useState<any>();
@@ -247,11 +248,16 @@ export default function Index(props: any) {
     const params = new URLSearchParams(history.location.search);
     let first = '';
     let second = '';
+    let mode = '';
     if (params.has('first')) {
       first = params.get('first');
     }
     if (params.has('second')) {
       second = params.get('second');
+    }
+    if (params.has('mode')) {
+      mode = params.get('mode');
+      setMode(mode);
     }
     const firstType = assetDatas.find((item) => item.type === first);
     if (firstType) {
@@ -715,6 +721,14 @@ export default function Index(props: any) {
   ]);
 
   useEffect(() => {
+    if (mode === 'migrate') {
+      if (!isNaN(Number(selectedTokenBalance))) {
+        setFormAmount(selectedTokenBalance);
+      }
+    }
+  }, [mode, selectedTokenBalance]);
+
+  useEffect(() => {
     const supportChainTypes = tokenSupportChainMap[tokenRefState.type];
     const supportChains = supportChainTypes.map((chainType) => {
       return assetDatas.find((asset) => asset.type === chainType);
@@ -798,6 +812,11 @@ export default function Index(props: any) {
     //     rSymbol: tokenType && tokenType.title,
     //   },
     // );
+
+    if (mode === 'migrate') {
+      message.warn('You can only migrate from Native to ICS20.');
+      return;
+    }
 
     const temp = fromChainRef.current ? { ...fromChainRef.current } : null;
 
@@ -904,6 +923,7 @@ export default function Index(props: any) {
         <div className='row' style={{ marginBottom: 0 }}>
           <div>
             <TypeSelector
+              disabled={mode === 'migrate'}
               popTitle={'Select a rToken'}
               selectDataSource={selectDataSource}
               selectedData={tokenRefState}
@@ -922,6 +942,7 @@ export default function Index(props: any) {
           <div className={'asset_selector_container'} style={{ marginTop: '15px' }}>
             <div className={'selector_container'}>
               <TypeSelector
+                disabled={mode === 'migrate'}
                 popTitle={'Select a Chain'}
                 selectDataSource={fromTypeSelections}
                 selectedData={fromChainRefState}
@@ -942,6 +963,7 @@ export default function Index(props: any) {
 
             <div className={'selector_container'}>
               <TypeSelector
+                disabled={mode === 'migrate'}
                 popTitle={'Select a Chain'}
                 selectDataSource={destTypeSelections}
                 selectedData={destChainRefState}
@@ -962,8 +984,9 @@ export default function Index(props: any) {
             </div>
 
             <AmountInputEmbed
+              disabled={mode === 'migrate' || isNaN(Number(selectedTokenBalance))}
               maxInput={selectedTokenBalance !== '--' ? selectedTokenBalance : 0}
-              showMax={!isNaN(Number(selectedTokenBalance))}
+              showMax={!isNaN(Number(selectedTokenBalance)) && mode !== 'migrate'}
               placeholder='0.0'
               value={fromAmount}
               onChange={(value: any) => {
@@ -994,7 +1017,22 @@ export default function Index(props: any) {
           </div>
 
           <div className={'input_container'} style={{ marginTop: '20px' }}>
-            <div className={'title'}>Received Address</div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div className={'title'}>Received Address</div>
+              <a
+                style={{
+                  color: '#00F3AB',
+                  fontSize: '12px',
+                  textDecoration: 'underline',
+                  visibility: mode === 'migrate' ? 'visible' : 'hidden',
+                }}
+                href='https://www.google.com'
+                target='_blank'
+                rel='noreferrer'>
+                How to get a StaFiHub address?
+              </a>
+            </div>
+
             <AddressInputEmbed
               placeholder={
                 destChainRefState
@@ -1302,7 +1340,7 @@ export default function Index(props: any) {
                 }
               }
             }}>
-            {showAddSplTokenButton ? 'Approve' : 'Swap'}
+            {mode === 'migrate' ? 'Migrate' : showAddSplTokenButton ? 'Approve' : 'Swap'}
           </Button>
         </div>
       </div>

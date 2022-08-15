@@ -6,6 +6,7 @@ import icNone from 'src/assets/images/ic_none.svg';
 import './index.scss';
 
 type Props = {
+  disabled?: boolean;
   selectedTitle: string;
   selectedDescription?: string;
   onSelectChange?: Function;
@@ -20,7 +21,11 @@ export default function Index(props: Props) {
     <div className='type_selector_container'>
       <div
         className='left_container'
+        style={{ cursor: props.disabled ? 'default' : 'pointer' }}
         onClick={() => {
+          if (props.disabled) {
+            return;
+          }
           setShowSelect(true);
         }}>
         <div className='title'>{props.selectedTitle}</div>
@@ -53,6 +58,7 @@ export default function Index(props: Props) {
             />
           }>
           <a
+            style={{ visibility: props.disabled ? 'hidden' : 'visible' }}
             onClick={() => {
               setShowSelect(true);
             }}>

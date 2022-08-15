@@ -228,24 +228,44 @@ export default function Index(props: Props) {
           {haswarn && <div className='warn'>Unable to stake, system is waiting for matching validators</div>}
         </div>
 
-        <Input
-          placeholder='AMOUNT'
-          value={props.amount}
-          maxInput={isNaN(props.transferrableAmount) ? 0 : props.transferrableAmount}
-          onChange={(e: any) => {
-            props.onChange && props.onChange(e);
-          }}
-          icon={getIcon()}
-        />
+        {props.type === 'rATOM' ? (
+          <div
+            style={{
+              backgroundColor: '#00F3AB',
+              borderRadius: '4px',
+              color: '#2B3239',
+              fontSize: '14px',
+              padding: '22px 14px',
+            }}>
+            rATOM is updated to V2 and migrated from StaFiChain to StaFiHub, stake ATOM from the V2{' '}
+            <a
+              style={{ fontWeight: 'bold', textDecoration: 'underline', color: '#2B3239' }}
+              href='https://test-app.stafihub.io/rToken/rATOM/stake'
+              target='_blank'
+              rel='noreferrer'>
+              Portal
+            </a>
+          </div>
+        ) : (
+          <>
+            <Input
+              placeholder='AMOUNT'
+              value={props.amount}
+              maxInput={isNaN(props.transferrableAmount) ? 0 : props.transferrableAmount}
+              onChange={(e: any) => {
+                props.onChange && props.onChange(e);
+              }}
+              icon={getIcon()}
+            />
 
-        <div className='tip'>
-          {props.type == 'rDOT' ? `Stakable` : 'Transferable'} {props.transferrableAmount}
-        </div>
-        {/* selected_rKSM */}
-        {/* unit={"Max"} */}
+            <div className='tip'>
+              {props.type == 'rDOT' ? `Stakable` : 'Transferable'} {props.transferrableAmount}
+            </div>
+          </>
+        )}
       </div>
 
-      <div className='money_panel'>
+      <div className='money_panel' style={{ visibility: props.type === 'rATOM' ? 'hidden' : 'visible' }}>
         <div className='money_panel_item'>
           <div style={{ fontFamily: 'Helvetica-Bold' }}>You will get</div>
           <div>
@@ -331,10 +351,15 @@ export default function Index(props: Props) {
       </div>
 
       <div className='btns'>
-        {' '}
-        <Button disabled={!props.amount || props.amount == 0 || haswarn || processSlider} onClick={clickNext}>
-          Next
-        </Button>
+        {props.type === 'rATOM' ? (
+          <a href='https://test-app.stafihub.io/rToken/rATOM/stake' target='_blank' rel='noreferrer'>
+            <Button>rATOM V2</Button>
+          </a>
+        ) : (
+          <Button disabled={!props.amount || props.amount == 0 || haswarn || processSlider} onClick={clickNext}>
+            Next
+          </Button>
+        )}
       </div>
     </LeftContent>
   );

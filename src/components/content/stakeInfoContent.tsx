@@ -79,6 +79,22 @@ export default function Index(props: Props) {
   return (
     <LeftContent className='stafi_stake_info_context'>
       <div className='item'>
+        {props.type === 'rATOM' && (
+          <div
+            style={{
+              marginTop: '18px',
+              backgroundColor: '#49FFC918',
+              border: '1px solid #00F3AB20',
+              borderRadius: '8px',
+              padding: '7px 9px',
+              color: 'white',
+              fontSize: '12px',
+            }}>
+            Reminding: rATOM V1 is updated to V2 and migrated from StaFiChain to StaFiHub, please migrate your rATOM and
+            proceed the operations on the StaFiHub rToken app.
+          </div>
+        )}
+
         <div style={{ marginLeft: '20px', marginTop: '20px' }}>
           <SelectPlatformPopover
             type={props.type}
@@ -183,49 +199,41 @@ export default function Index(props: Props) {
 
         <div className='content'>
           <div className='btns'>
-            <Button
-              size='small'
-              btnType='ellipse'
-              onClick={() => {
-                if (props.platform === 'Native' || (props.platform === 'ERC20' && props.type === 'rETH')) {
-                  props.onRdeemClick && props.onRdeemClick();
-                } else {
-                  setRedeemSwapModalVisible(true);
-                }
-              }}
-              btnStyle={{ marginRight: '10px' }}>
-              Redeem
-            </Button>
-
-            {/* <TradePopover
-              data={tradeList}
-              onClick={
-                null
-                // props.platform === 'ERC20' || props.platform === 'BEP20'
-                //   ? null
-                //   : (item: any) => {
-                //       setVisibleModal(true);
-                //       setTradeLabel(item.label);
-                //       setSelectedTradeUrl(item.url);
-                //     }
-              }>
+            {props.type === 'rATOM' ? (
               <Button
                 size='small'
                 btnType='ellipse'
-                disabled={!tradeList || tradeList.length === 0}
-                btnStyle={{ marginLeft: '0px' }}>
-                Trade <img className='dow_svg' src={dow_svg} alt='down arrow' />{' '}
+                onClick={() => {
+                  history.push(`/rAsset/swap/rATOM?first=native&second=ics20&mode=migrate`, {});
+                }}>
+                Migrate
               </Button>
-            </TradePopover> */}
+            ) : (
+              <>
+                <Button
+                  size='small'
+                  btnType='ellipse'
+                  onClick={() => {
+                    if (props.platform === 'Native' || (props.platform === 'ERC20' && props.type === 'rETH')) {
+                      props.onRdeemClick && props.onRdeemClick();
+                    } else {
+                      setRedeemSwapModalVisible(true);
+                    }
+                  }}
+                  btnStyle={{ marginRight: '10px' }}>
+                  Redeem
+                </Button>
 
-            <Button
-              size='small'
-              btnType='ellipse'
-              // disabled={!tradeList || tradeList.length === 0}
-              btnStyle={{ marginLeft: '0px' }}
-              onClick={() => setTradeModalVisible(true)}>
-              Trade
-            </Button>
+                <Button
+                  size='small'
+                  btnType='ellipse'
+                  // disabled={!tradeList || tradeList.length === 0}
+                  btnStyle={{ marginLeft: '0px' }}
+                  onClick={() => setTradeModalVisible(true)}>
+                  Trade
+                </Button>
+              </>
+            )}
           </div>
         </div>
       </div>

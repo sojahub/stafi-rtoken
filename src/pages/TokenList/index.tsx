@@ -6,6 +6,7 @@ import metamask from 'src/assets/images/metamask.png';
 import doubt from 'src/assets/images/doubt.svg';
 import rSOL_svg from 'src/assets/images/rSOL.svg';
 import rATOM_svg from 'src/assets/images/r_atom.svg';
+import arrowUp from 'src/assets/images/icon_arrow_up_green.png';
 import rBnb_svg from 'src/assets/images/r_bnb.svg';
 import keplr from 'src/assets/images/keplr.png';
 import rDOT_svg from 'src/assets/images/r_dot.svg';
@@ -39,6 +40,7 @@ export const TokenList = () => {
   const history = useHistory();
   const { metaMaskAddress } = useMetaMaskAccount();
   const [selectFisVisible, setSelectFisVisible] = useState(false);
+  const [showAtomHint, setShowAtomHint] = useState(false);
 
   const { fisAccount, atomAccounts, solAddress, ksmAccount } = useSelector((state: RootState) => {
     return {
@@ -345,51 +347,84 @@ export const TokenList = () => {
           </HContainer>
 
           {stakeList.map((tokenName) => (
-            <TokenItemContainer key={tokenName}>
-              <HContainer
-                style={{
-                  paddingLeft: '47px',
-                  width: '190px',
-                }}>
-                <img src={getIcon(tokenName)} width='26px' height='26px' alt='icon' />
-                <TokenTitle>{tokenName}</TokenTitle>
-              </HContainer>
-
-              <TableContent
-                style={{
-                  width: '117px',
-                }}>
-                r{tokenName}
-              </TableContent>
-
-              <TableContent
-                style={{
-                  width: '110px',
-                }}>
-                {tokenName === 'ETH' && ethApr}
-                {tokenName === 'FIS' && fisApr}
-                {tokenName === 'BNB' && bnbApr}
-                {tokenName === 'DOT' && dotApr}
-                {tokenName === 'ATOM' && atomApr}
-                {tokenName === 'SOL' && solApr}
-                {tokenName === 'MATIC' && maticApr}
-                {tokenName === 'KSM' && ksmApr}
-              </TableContent>
-
-              <TableContent
-                style={{
-                  width: '134px',
-                }}>
-                {tokenStakeValueMap[tokenName] || '--'}
-              </TableContent>
-
-              <StakeButton
+            <>
+              <TokenItemContainer
+                key={tokenName}
+                style={{ cursor: tokenName === 'ATOM' ? 'pointer' : '' }}
                 onClick={() => {
-                  clickStake(tokenName);
+                  if (tokenName === 'ATOM') {
+                    setShowAtomHint(!showAtomHint);
+                  }
                 }}>
-                Stake
-              </StakeButton>
-            </TokenItemContainer>
+                <HContainer
+                  style={{
+                    paddingLeft: '47px',
+                    width: '190px',
+                  }}>
+                  <img src={getIcon(tokenName)} width='26px' height='26px' alt='icon' />
+                  <TokenTitle>{tokenName}</TokenTitle>
+                </HContainer>
+
+                <TableContent
+                  style={{
+                    width: '117px',
+                  }}>
+                  r{tokenName}
+                </TableContent>
+
+                <TableContent
+                  style={{
+                    width: '110px',
+                  }}>
+                  {tokenName === 'ETH' && ethApr}
+                  {tokenName === 'FIS' && fisApr}
+                  {tokenName === 'BNB' && bnbApr}
+                  {tokenName === 'DOT' && dotApr}
+                  {tokenName === 'ATOM' && atomApr}
+                  {tokenName === 'SOL' && solApr}
+                  {tokenName === 'MATIC' && maticApr}
+                  {tokenName === 'KSM' && ksmApr}
+                </TableContent>
+
+                <TableContent
+                  style={{
+                    width: '134px',
+                  }}>
+                  {tokenStakeValueMap[tokenName] || '--'}
+                </TableContent>
+
+                <StakeButton
+                  onClick={() => {
+                    if (tokenName === 'ATOM') {
+                      setShowAtomHint(!showAtomHint);
+                    } else {
+                      clickStake(tokenName);
+                    }
+                  }}>
+                  Stake
+                  {tokenName === 'ATOM' && (
+                    <img
+                      src={arrowUp}
+                      alt='arrow'
+                      style={{ width: '8px', marginLeft: '2px', transform: showAtomHint ? '' : 'rotate(180deg)' }}
+                    />
+                  )}
+                </StakeButton>
+              </TokenItemContainer>
+
+              {showAtomHint && tokenName === 'ATOM' && (
+                <div style={{ fontSize: '14px', color: '#A5A5A5', marginLeft: '15px', marginBottom: '15px' }}>
+                  rATOM is updated to V2 and migrated from StaFi Chain to StaFiHub, stake ATOM from this{' '}
+                  <a
+                    style={{ color: '#00F3AB', textDecoration: 'underline' }}
+                    href='https://test-app.stafihub.io/rToken/rATOM/stake'
+                    target='_blank'
+                    rel='noreferrer'>
+                    Portal
+                  </a>
+                </div>
+              )}
+            </>
           ))}
         </div>
       </div>

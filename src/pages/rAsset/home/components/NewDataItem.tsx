@@ -1,10 +1,10 @@
-import { useMemo, useState } from 'react';
-import TradeModal from 'src/components/modal/TradeModal';
-import styled from 'styled-components';
-import { useLastEraReward } from 'src/hooks/useEraReward';
 import { Tooltip } from 'antd';
+import { useMemo, useState } from 'react';
 import { useHistory } from 'react-router';
-import { e } from 'mathjs';
+import doubt from 'src/assets/images/doubt.svg';
+import TradeModal from 'src/components/modal/TradeModal';
+import { useLastEraReward } from 'src/hooks/useEraReward';
+import styled from 'styled-components';
 
 interface NewDataItemProps {
   rTokenName: string;
@@ -101,29 +101,69 @@ export const NewDataItem = (props: NewDataItemProps) => {
           {props.apy}
         </TableContent>
 
-        <HContainer>
-          <StakeButton
-            style={{
-              opacity: 1,
-              cursor: 'pointer',
-            }}
-            onClick={(e) => {
-              e.stopPropagation();
-              setTradeModalVisible(true);
-            }}>
-            <div>Trade</div>
-          </StakeButton>
-          <StakeButton
-            style={{
-              marginLeft: '5px',
-            }}
-            onClick={(e) => {
-              e.stopPropagation();
-              props.onSwapClick();
-            }}>
-            Bridge
-          </StakeButton>
-        </HContainer>
+        {props.rTokenName === 'rATOM' ? (
+          <MigrationContainer>
+            <StakeButton
+              style={{
+                opacity: 1,
+                cursor: 'pointer',
+                visibility: 'hidden',
+              }}
+              onClick={(e) => {
+                e.stopPropagation();
+              }}>
+              <div>Migrate</div>
+            </StakeButton>
+
+            <StakeButton
+              style={{
+                opacity: 1,
+                cursor: 'pointer',
+                marginLeft: '5px',
+              }}
+              onClick={(e) => {
+                e.stopPropagation();
+                history.push(`/rAsset/swap/rATOM?first=native&second=ics20&mode=migrate`, {});
+              }}>
+              <div>Migrate</div>
+            </StakeButton>
+            <Tooltip
+              overlayClassName='doubt_overlay'
+              placement='topLeft'
+              overlayInnerStyle={{ color: '#A4A4A4' }}
+              title={'rATOM is migrated to StaFiHub app, use rBridge to migrate.'}>
+              <img src={doubt} alt='tooltip' style={{ marginTop: '-7px' }} />
+            </Tooltip>
+          </MigrationContainer>
+        ) : (
+          <HContainer>
+            <StakeButton
+              style={{
+                opacity: 1,
+                cursor: 'pointer',
+              }}
+              onClick={(e) => {
+                e.stopPropagation();
+                setTradeModalVisible(true);
+              }}>
+              <div>Trade</div>
+            </StakeButton>
+            <StakeButton
+              style={{
+                marginLeft: '5px',
+              }}
+              onClick={(e) => {
+                e.stopPropagation();
+                if (props.rTokenName === 'rATOM') {
+                  history.push(`/rAsset/swap/rATOM?first=native&second=ics20&mode=migrate`, {});
+                } else {
+                  props.onSwapClick();
+                }
+              }}>
+              Bridge
+            </StakeButton>
+          </HContainer>
+        )}
       </TokenItemContainer>
 
       <TradeModal
@@ -142,6 +182,12 @@ export const NewDataItem = (props: NewDataItemProps) => {
 const HContainer = styled.div`
   display: flex;
   align-items: center;
+`;
+
+const MigrationContainer = styled.div`
+  display: flex;
+  align-items: start;
+  justify-content: end;
 `;
 
 const TokenItemContainer = styled.div`
