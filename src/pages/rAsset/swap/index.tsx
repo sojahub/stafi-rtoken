@@ -1020,7 +1020,9 @@ export default function Index(props: any) {
 
           <div className={'input_container'} style={{ marginTop: '20px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <div className={'title'}>Received Address</div>
+              <div className={'title'}>
+                {destChainRefState && destChainRefState.type === 'ics20' ? 'StaFiHub Address' : 'Received Address'}
+              </div>
               <a
                 style={{
                   color: '#00F3AB',
