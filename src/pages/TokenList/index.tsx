@@ -348,14 +348,7 @@ export const TokenList = () => {
 
           {stakeList.map((tokenName) => (
             <>
-              <TokenItemContainer
-                key={tokenName}
-                style={{ cursor: tokenName === 'ATOM' ? 'pointer' : '' }}
-                onClick={() => {
-                  if (tokenName === 'ATOM') {
-                    setShowAtomHint(!showAtomHint);
-                  }
-                }}>
+              <TokenItemContainer key={tokenName}>
                 <HContainer
                   style={{
                     paddingLeft: '47px',
@@ -402,7 +395,7 @@ export const TokenList = () => {
                     }
                   }}>
                   Stake
-                  {tokenName === 'ATOM' && (
+                  {tokenName === 'ATOM' && showAtomHint && (
                     <img
                       src={arrowUp}
                       alt='arrow'

@@ -816,7 +816,7 @@ export default function Index(props: any) {
     // );
 
     if (mode === 'migrate') {
-      message.warn('You can only migrate from Native to ICS20.');
+      message.warn('rATOM can only be migrated from Native to ICS20.');
       return;
     }
 
@@ -1144,7 +1144,7 @@ export default function Index(props: any) {
               }
 
               if (tokenRef.current.type === 'ratom' && fromChainRef.current.type === 'ics20') {
-                message.warn('You can only swap rATOM from StaFi Chain to StaFiHub for now');
+                message.warn('rATOM can only be migrated from Native to ICS20.');
                 return;
               }
 

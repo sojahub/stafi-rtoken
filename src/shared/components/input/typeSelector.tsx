@@ -113,7 +113,6 @@ function Select(props: SelectProps) {
                     style={{
                       backgroundColor: 'white',
                       borderRadius: '50%',
-                      padding: item.title === 'StaFiHub' ? '3px' : '0',
                     }}
                     alt='icon'
                   />
