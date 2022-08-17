@@ -182,7 +182,7 @@ export default function FeeStationSwapLoading(props: Props) {
           <>
             <div className='title'>Congratulations!</div>
 
-            <div className='context'>You have successfully swapped your tokens.Please check your wallet</div>
+            <div className='context'>You have successfully swapped your tokens. Please check your wallet</div>
 
             <div className={'center_container'}>
               <img src={complete_svg} className={'success_icon'} />

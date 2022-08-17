@@ -1030,7 +1030,7 @@ export default function Index(props: any) {
                   textDecoration: 'underline',
                   visibility: destChainRefState && destChainRefState.type === 'ics20' ? 'visible' : 'hidden',
                 }}
-                href='https://www.google.com'
+                href='https://docs.stafihub.io/welcome-to-stafihub/user/user-guide/how-to-get-a-stafihub-address'
                 target='_blank'
                 rel='noreferrer'>
                 How to get a StaFiHub address?
