@@ -410,7 +410,7 @@ export const TokenList = () => {
                   rATOM is updated to V2 and migrated from StaFi Chain to StaFiHub, stake ATOM from this{' '}
                   <a
                     style={{ color: '#00F3AB', textDecoration: 'underline' }}
-                    href='https://test-app.stafihub.io/rToken/rATOM/stake'
+                    href={config.stafiHubAtomUrl()}
                     target='_blank'
                     rel='noreferrer'>
                     Portal

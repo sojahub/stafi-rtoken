@@ -430,11 +430,11 @@ const config = {
   stafihubChainConfig: () => {
     if (!isdev()) {
       return {
-        chainName: 'StaFi-Hub-Testnet',
-        chainId: 'stafihub-testnet-1',
+        chainName: 'StaFi Hub',
+        chainId: 'stafihub-1',
         displayHubName: 'StaFiHub',
-        rpc: 'https://test-rpc1.stafihub.io',
-        restEndpoint: 'https://test-rest-rpc1.stafihub.io',
+        rpc: 'https://public-rpc1.stafihub.io',
+        restEndpoint: 'https://public-rest-rpc1.stafihub.io',
         denom: 'ufis',
         coinDenom: 'FIS',
         decimals: 6,
@@ -446,7 +446,7 @@ const config = {
           bech32PrefixConsAddr: 'stafivalcons',
           bech32PrefixConsPub: 'stafivalconspub',
         },
-        explorerUrl: 'https://testnet-explorer.stafihub.io/stafi-hub-testnet',
+        explorerUrl: 'https://ping.pub/stafihub',
       };
     }
     return {
@@ -468,6 +468,13 @@ const config = {
       },
       explorerUrl: 'https://testnet-explorer.stafihub.io/stafi-hub-testnet',
     };
+  },
+  stafiHubAtomUrl: () => {
+    if (!isdev()) {
+      return 'https://app.stafihub.io/rToken/rATOM/stake';
+    } else {
+      return 'https://test-app.stafihub.io/rToken/rATOM/stake';
+    }
   },
   rAtomCosmosChainRpc: () => {
     if (!isdev()) {
