@@ -91,7 +91,7 @@ export default function Index(props:any){
         <div className="reth_title upload_title"> Upload </div>
        <div className="reth_sub_title upload_sub_title">
             Follow the <A onClick={()=>{
-              window.open("https://docs.stafi.io/rproduct/reth-solution/original-validator-guide#2-use-deposit-cli-to-generate-a-key-file");
+              window.open("https://docs.stafi.io/rtoken-app/reth-solution/original-validator-guide#2.-use-deposit-cli-to-generate-a-key-file");
               }}  underline={true}>instruction</A> and upload your file(deposit_data-*.json)
        </div>
         <Upload currentPoolStatus={currentPoolStatus} onChange={(e:any)=>{
