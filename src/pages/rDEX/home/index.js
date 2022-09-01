@@ -6,7 +6,6 @@ import arrowDownIcon from 'src/assets/images/arrow_down.svg';
 import doubt from 'src/assets/images/doubt.svg';
 import left_arrow from 'src/assets/images/left_arrow.svg';
 import rasset_rsol_svg from 'src/assets/images/rSOL.svg';
-import rasset_ratom_svg from 'src/assets/images/r_atom.svg';
 import rasset_rbnb_svg from 'src/assets/images/r_bnb.svg';
 import rasset_rdot_svg from 'src/assets/images/r_dot.svg';
 import rasset_rfis_svg from 'src/assets/images/r_fis.svg';
@@ -19,9 +18,9 @@ import TokenSelector from 'src/components/selector/TokenSelector';
 import config from 'src/config/index';
 import { swap } from 'src/features/dexClice';
 import {
+  checkAddress as fis_checkAddress,
   fetchRTokenStatDetail as fis_fetchRTokenStatDetail,
   reloadData as fis_reloadData,
-  checkAddress as fis_checkAddress,
 } from 'src/features/FISClice';
 import { connectPolkadot_fis } from 'src/features/globalClice';
 import {
@@ -34,17 +33,17 @@ import {
   query_rBalances_account as bnb_query_rBalances_account,
 } from 'src/features/rBNBClice';
 import {
-  checkAddress as sol_checkAddress,
-  query_rBalances_account as sol_query_rBalances_account,
-} from 'src/features/rSOLClice';
+  checkAddress as dot_checkAddress,
+  query_rBalances_account as dot_query_rBalances_account,
+} from 'src/features/rDOTClice';
 import {
   checkAddress as matic_checkAddress,
   query_rBalances_account as matic_query_rBalances_account,
 } from 'src/features/rMATICClice';
 import {
-  checkAddress as dot_checkAddress,
-  query_rBalances_account as dot_query_rBalances_account,
-} from 'src/features/rDOTClice';
+  checkAddress as sol_checkAddress,
+  query_rBalances_account as sol_query_rBalances_account,
+} from 'src/features/rSOLClice';
 import { useSwapRates } from 'src/hooks/useSwapRates';
 import { rSymbol } from 'src/keyring/defaults';
 import Stafi from 'src/servers/stafi';
@@ -78,14 +77,6 @@ const allTokenDatas = [
     icon: rasset_rdot_svg,
     title: 'rDOT',
     type: 'rdot',
-    content: '--',
-    ratio: '--',
-    totalRate: '--',
-  },
-  {
-    icon: rasset_ratom_svg,
-    title: 'rATOM',
-    type: 'ratom',
     content: '--',
     ratio: '--',
     totalRate: '--',
