@@ -32,7 +32,7 @@ import { add_Notice, noticeStatus, noticesubType, noticeType } from './noticeCli
 import { getAssetBalance as getSlpAssetBalance } from './SOLClice';
 import { getAssetBalance as getStafiHubAssetBalance, getStafiHubBalanceAll } from './StafiHubClice';
 import { queryBridgeRelayFee, sendBridgeDepositTx } from '@stafihub/apps-wallet';
-import Buffer from 'buffer';
+import { Buffer } from 'buffer';
 
 export const STAFI_CHAIN_ID = 1;
 export const ETH_CHAIN_ID = 2;
