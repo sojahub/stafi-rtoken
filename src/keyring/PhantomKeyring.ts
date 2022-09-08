@@ -4,6 +4,7 @@ import * as bip32 from 'bip32';
 import * as crypto from 'crypto';
 import Base from './Base';
 import { KeyringPair, KeyringStruct } from './types';
+import Buffer from 'buffer';
 
 const ENTROPY_SIZE = 256;
 const MNEMONIC_TO_SEED_PASSWORD = '';

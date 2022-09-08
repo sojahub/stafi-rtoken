@@ -6,6 +6,7 @@ import Base from './Base';
 import * as bip32 from 'bip32';
 import * as crypto from 'crypto';
 import { bech32 } from 'bech32';
+import Buffer from 'buffer';
 
 const ENTROPY_SIZE = 256;
 const MNEMONIC_TO_SEED_PASSWORD = '';
