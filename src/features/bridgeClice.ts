@@ -684,7 +684,7 @@ export const slp20ToOtherSwap =
       await timeout(500);
       if (solana && !solana.isConnected) {
         solServer.connectSolJs();
-        await timeout(500);
+        await timeout(1000);
         if (!solana.isConnected) {
           message.info('Please connect Phantom extension first');
           return;
