@@ -1,7 +1,8 @@
 const path = require('path');
 const fs = require('fs');
 const webpack = require('webpack');
-const NodePolyfillPlugin = require('node-polyfill-webpack-plugin');
+// const NodePolyfillPlugin = require('node-polyfill-webpack-plugin');
+// const ModuleScopePlugin = require('react-dev-utils/ModuleScopePlugin');
 
 const resolve = (dir) => path.resolve(__dirname, dir);
 const cracoBabelLoader = require('craco-babel-loader');
@@ -87,7 +88,10 @@ module.exports = {
       return {
         ...webpackConfig,
         plugins: [
-          ...webpackConfig.plugins.filter(({ constructor }) => constructor && constructor.name !== 'ModuleScopePlugin'),
+          ...webpackConfig.plugins,
+          // ...webpackConfig.plugins.filter((plugin) => {
+          //   return !(plugin instanceof ModuleScopePlugin);
+          // }),
           // new BundleAnalyzerPlugin({ analyzerPort: 8919 }),
           new webpack.ProvidePlugin({
             Buffer: ['buffer', 'Buffer'],
@@ -97,20 +101,20 @@ module.exports = {
         resolve: {
           ...webpackConfig.resolve,
 
-          fallback: {
-            ...webpackConfig.resolve.fallback,
-            buffer: require.resolve('buffer/'),
-            stream: require.resolve('stream-browserify'),
-            path: require.resolve('path-browserify'),
-            fs: false,
-            crypto: false,
-            https: false,
-            http: false,
-            // crypto: require.resolve('crypto-browserify'),
-            // querystring: false,
-            // url: false,
-            // path: false,
-          },
+          // fallback: {
+          //   ...webpackConfig.resolve.fallback,
+          //   buffer: require.resolve('buffer/'),
+          //   stream: require.resolve('stream-browserify'),
+          //   path: require.resolve('path-browserify'),
+          //   // crypto: false,
+          //   // crypto: require.resolve('crypto-browserify'),
+          //   fs: false,
+          //   https: false,
+          //   http: false,
+          //   // querystring: false,
+          //   // url: false,
+          //   // path: false,
+          // },
         },
       };
     },

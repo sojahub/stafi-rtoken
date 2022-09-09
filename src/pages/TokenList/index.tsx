@@ -347,8 +347,8 @@ export const TokenList = () => {
           </HContainer>
 
           {stakeList.map((tokenName) => (
-            <>
-              <TokenItemContainer key={tokenName}>
+            <div key={tokenName}>
+              <TokenItemContainer>
                 <HContainer
                   style={{
                     paddingLeft: '47px',
@@ -417,7 +417,7 @@ export const TokenList = () => {
                   </a>
                 </div>
               )}
-            </>
+            </div>
           ))}
         </div>
       </div>
