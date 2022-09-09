@@ -149,7 +149,7 @@ const config = {
   solRpcApi: () => {
     if (!isdev()) {
       // return clusterApiUrl('mainnet-beta');
-      return 'https://solana.public-rpc.com';
+      return 'https://mainnet-rpc.wetez.io/solana/v1/c06bde6963933337ce7cf260c8aa16a5';
     } else {
       // return clusterApiUrl('devnet');
 
@@ -159,7 +159,7 @@ const config = {
   solRpcWs: () => {
     if (!isdev()) {
       // return clusterApiUrl('mainnet-beta');
-      return '';
+      return 'wss://mainnet-rpc.wetez.io/ws/solana/v1/c06bde6963933337ce7cf260c8aa16a5';
     } else {
       // return '';
       // return clusterApiUrl('devnet');

@@ -280,7 +280,6 @@ export default function Index(props: any) {
   }, [history]);
 
   useEffect(() => {
-    console.log('rTokenParam', rTokenParam);
     const tokenData = allTokenDatas.find((item) => item.type === rTokenParam.toLowerCase());
     if (!tokenData) {
       returnToAsset();
