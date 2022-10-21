@@ -27,10 +27,10 @@ export default function Index(props: any) {
       total={totalStakedAmount}
       apr={stakerApr}
       onClick={(e: string) => {
-        if (e == 'Staker') {
+        if (e === 'Staker') {
           props.history.push('/rETH/staker');
         } else {
-          props.history.push('/rETH/validator/index');
+          window.open('https://reth-validator.stafi.io');
         }
       }}
     />

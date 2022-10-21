@@ -19,7 +19,7 @@ export const rDOT_data = [
   },
   {
     text: 'Validator',
-    url: '/rETH/validator/index',
+    url: 'https://reth-validator.stafi.io',
     child: [
       {
         text: '-Deposit',
