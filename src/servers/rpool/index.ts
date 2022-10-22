@@ -287,11 +287,15 @@ export default class Index {
   }
 
   async getCurrentActiveEthAct() {
-    const acts = await this.getEthMintRewardActs();
-    const activeAct = acts.find((item: any) => {
-      return item.nowBlock >= item.begin && item.nowBlock <= item.end - 10;
-    });
-    return activeAct;
+    try {
+      const acts = await this.getEthMintRewardActs();
+      const activeAct = acts.find((item: any) => {
+        return item.nowBlock >= item.begin && item.nowBlock <= item.end - 10;
+      });
+      return activeAct;
+    } catch {
+      return [];
+    }
   }
 
   async getMintOverview(tokenSymbol: any, cycle: any, fisAddress: string, fisPrice: any) {

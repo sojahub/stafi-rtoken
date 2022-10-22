@@ -167,6 +167,10 @@ export default class Index {
     const url = config.api() + '/stafi/v1/webapi/rtoken/getrethlist';
     return api.post(url);
   }
+  getEthPoolData() {
+    const url = config.dropApiHost() + '/reth/v1/poolData';
+    return api.get(url);
+  }
 }
 
 // export default{

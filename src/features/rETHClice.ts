@@ -14,6 +14,7 @@ import { localStorage_currentEthPool, localStorage_poolPubKey, stafi_uuid } from
 import numberUtil from 'src/util/numberUtil';
 import NumberUtil from 'src/util/numberUtil';
 import StringUtil from 'src/util/stringUtil';
+import Web3 from 'web3';
 import { AppThunk } from '../store';
 import CommonClice from './commonClice';
 import { getAssetBalance } from './ETHClice';
@@ -336,11 +337,12 @@ export const getNextCapacity = (): AppThunk => async (dispatch, getState) => {
     dispatch(setWaitingStaked(waitingStaked));
   } else {
     dispatch(setIsPoolWaiting(false));
-    const result = await ethServer.getStakingPoolStatus();
-    if (result.status == '80000') {
+    // const result = await ethServer.getStakingPoolStatus();
+    const result = await ethServer.getEthPoolData();
+    if (result.status === '80000') {
       if (result.data) {
-        if (result.data.stakeAmount) {
-          const totalStakedAmount = NumberUtil.handleEthAmountToFixed(result.data.stakeAmount);
+        if (result.data.allEth) {
+          const totalStakedAmount = NumberUtil.handleEthAmountToFixed(Web3.utils.fromWei(result.data.allEth));
           dispatch(setTotalStakedAmount(totalStakedAmount));
         }
       }

@@ -641,9 +641,7 @@ export const getBlock =
       const targetAddress = getState().FISModule.fisAccount && getState().FISModule.fisAccount.address;
 
       const solServer = new SolServer();
-      const { amount, source, poolAddress, blockhash } = await solServer.getTransactionDetail(
-        txHash,
-      );
+      const { amount, source, poolAddress, blockhash } = await solServer.getTransactionDetail(txHash);
 
       if (!amount || !poolAddress || !blockhash) {
         message.error('Transaction record not found');
@@ -654,7 +652,6 @@ export const getBlock =
         message.error('Please select your Solana account that sent the transaction');
         return;
       }
-      
 
       const poolData = validPools.find((item: any) => {
         if (keyring.init(Symbol.Sol).encodeAddress(item.poolPubkey) == poolAddress) {
@@ -828,18 +825,20 @@ export const getTotalIssuance = (): AppThunk => async (dispatch, getState) => {
 };
 
 export const rTokenLedger = (): AppThunk => async (dispatch, getState) => {
-  const stafiApi = await stafiServer.createStafiApi();
-  const eraResult = await stafiApi.query.rTokenLedger.chainEras(rSymbol.Sol);
-  let currentEra = eraResult.toJSON();
-  if (currentEra) {
-    let rateResult = await stafiApi.query.rTokenRate.eraRate(rSymbol.Sol, currentEra - 1);
-    const currentRate = rateResult.toJSON();
-    const rateResult2 = await stafiApi.query.rTokenRate.eraRate(rSymbol.Sol, currentEra - 2);
-    let lastRate = rateResult2.toJSON();
-    dispatch(handleStakerApr(currentRate, lastRate));
-  } else {
-    dispatch(handleStakerApr());
-  }
+  try {
+    const stafiApi = await stafiServer.createStafiApi();
+    const eraResult = await stafiApi.query.rTokenLedger.chainEras(rSymbol.Sol);
+    let currentEra = eraResult.toJSON();
+    if (currentEra) {
+      let rateResult = await stafiApi.query.rTokenRate.eraRate(rSymbol.Sol, currentEra - 1);
+      const currentRate = rateResult.toJSON();
+      const rateResult2 = await stafiApi.query.rTokenRate.eraRate(rSymbol.Sol, currentEra - 2);
+      let lastRate = rateResult2.toJSON();
+      dispatch(handleStakerApr(currentRate, lastRate));
+    } else {
+      dispatch(handleStakerApr());
+    }
+  } catch {}
 };
 
 export const getLastEraRate = (): AppThunk => async (dispatch, getState) => {
@@ -891,7 +890,7 @@ export const checkTxHash = (txHash: string) => {
     return false;
   }
   try {
-    const decoded =  base58.decode(txHash);
+    const decoded = base58.decode(txHash);
     if (decoded.length != 64) {
       return false;
     }

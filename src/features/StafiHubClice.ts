@@ -61,16 +61,20 @@ export const getAssetBalance = async (address: string, tokenDenom: string, cb?: 
     return;
   }
 
-  const client = await stafihubServer.createApi();
-  let balances = await client.getAllBalances(address);
+  try {
+    const client = await stafihubServer.createApi();
+    let balances = await client.getAllBalances(address);
 
-  const coin = balances.find((item) => item.denom === tokenDenom);
+    const coin = balances.find((item) => item.denom === tokenDenom);
 
-  if (coin) {
-    const format = numberUtil.tokenAmountToHuman(coin.amount, rSymbol.StafiHub);
-    cb && cb(format.toFixed(6));
-  } else {
-    cb && cb('0');
+    if (coin) {
+      const format = numberUtil.tokenAmountToHuman(coin.amount, rSymbol.StafiHub);
+      cb && cb(format.toFixed(6));
+    } else {
+      cb && cb('0');
+    }
+  } catch {
+    cb('--');
   }
 };
 

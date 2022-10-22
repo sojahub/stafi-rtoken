@@ -1051,18 +1051,20 @@ export const getTotalIssuance = (): AppThunk => async (dispatch, getState) => {
 };
 
 export const rTokenLedger = (): AppThunk => async (dispatch, getState) => {
-  const stafiApi = await stafiServer.createStafiApi();
-  const eraResult = await stafiApi.query.rTokenLedger.chainEras(rSymbol.Dot);
-  let currentEra = eraResult.toJSON();
-  if (currentEra) {
-    let rateResult = await stafiApi.query.rTokenRate.eraRate(rSymbol.Dot, currentEra - 1);
-    const currentRate = rateResult.toJSON();
-    const rateResult2 = await stafiApi.query.rTokenRate.eraRate(rSymbol.Dot, currentEra - 8);
-    let lastRate = rateResult2.toJSON();
-    dispatch(handleStakerApr(currentRate, lastRate));
-  } else {
-    dispatch(handleStakerApr());
-  }
+  try {
+    const stafiApi = await stafiServer.createStafiApi();
+    const eraResult = await stafiApi.query.rTokenLedger.chainEras(rSymbol.Dot);
+    let currentEra = eraResult.toJSON();
+    if (currentEra) {
+      let rateResult = await stafiApi.query.rTokenRate.eraRate(rSymbol.Dot, currentEra - 1);
+      const currentRate = rateResult.toJSON();
+      const rateResult2 = await stafiApi.query.rTokenRate.eraRate(rSymbol.Dot, currentEra - 8);
+      let lastRate = rateResult2.toJSON();
+      dispatch(handleStakerApr(currentRate, lastRate));
+    } else {
+      dispatch(handleStakerApr());
+    }
+  } catch {}
 };
 
 export const getLastEraRate = (): AppThunk => async (dispatch, getState) => {

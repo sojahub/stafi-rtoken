@@ -176,29 +176,31 @@ export default class CommonClice {
     return result.toJSON();
   }
   async getTotalUnbonding(fisAddress: string, rSymbol: any, cb?: Function) {
-    // let fisAddress = getState().FISModule.fisAccount.address;
-    let totalUnbonding: any = BigInt(0);
-    const stafiApi = await stafiServer.createStafiApi();
-    const eraResult = await stafiApi.query.rTokenLedger.chainEras(rSymbol);
-    let currentEra = eraResult.toJSON();
-    if (currentEra) {
-      const result = await stafiApi.query.rTokenSeries.accountUnbonds(fisAddress, rSymbol);
-      let accountUnbonds = result.toJSON();
-      if (accountUnbonds && accountUnbonds.length > 0) {
-        accountUnbonds.forEach((accountUnbond: any) => {
-          if (Number(accountUnbond.unlock_era) > Number(currentEra)) {
-            totalUnbonding += BigInt(BigInt(accountUnbond.value).toString(10));
-          }
-        });
+    try {
+      // let fisAddress = getState().FISModule.fisAccount.address;
+      let totalUnbonding: any = BigInt(0);
+      const stafiApi = await stafiServer.createStafiApi();
+      const eraResult = await stafiApi.query.rTokenLedger.chainEras(rSymbol);
+      let currentEra = eraResult.toJSON();
+      if (currentEra) {
+        const result = await stafiApi.query.rTokenSeries.accountUnbonds(fisAddress, rSymbol);
+        let accountUnbonds = result.toJSON();
+        if (accountUnbonds && accountUnbonds.length > 0) {
+          accountUnbonds.forEach((accountUnbond: any) => {
+            if (Number(accountUnbond.unlock_era) > Number(currentEra)) {
+              totalUnbonding += BigInt(BigInt(accountUnbond.value).toString(10));
+            }
+          });
 
-        totalUnbonding = NumberUtil.handleFisAmountToFixed(NumberUtil.tokenAmountToHuman(totalUnbonding, rSymbol));
-        cb && cb(totalUnbonding);
+          totalUnbonding = NumberUtil.handleFisAmountToFixed(NumberUtil.tokenAmountToHuman(totalUnbonding, rSymbol));
+          cb && cb(totalUnbonding);
+        } else {
+          cb && cb(0);
+        }
       } else {
         cb && cb(0);
       }
-    } else {
-      cb && cb(0);
-    }
+    } catch {}
   }
 
   async getUnbondRecords(fisAddress: string, symbol: any, cb?: Function) {

@@ -149,6 +149,7 @@ const config = {
   solRpcApi: () => {
     if (!isdev()) {
       // return clusterApiUrl('mainnet-beta');
+      // return 'https://solana.public-rpc.com';
       return 'https://mainnet-rpc.wetez.io/solana/v1/c06bde6963933337ce7cf260c8aa16a5';
     } else {
       // return clusterApiUrl('devnet');
@@ -215,21 +216,21 @@ const config = {
   },
   stafiUserDepositAddress: () => {
     if (!isdev()) {
-      return '0x430cf6dd3e289adae63b50ff661d6bba2dbb3f28';
+      return '0x625b7fd68b35ee8dc2c9405a712fa450ccd357be';
     } else {
       return '0x6b3d7a220b96f3be9ff48e6be36a7e16f46b1393';
     }
   },
   stafiNodeDepositAddress: () => {
     if (!isdev()) {
-      return '0xafcf0e333614286d8e20000781121adb28cef33d';
+      return '0x3ad9a923a56172ec6cac363b7a9487971b93353f';
     } else {
       return '0xf072c7e6e36639870c3986196237a97fcccb0331';
     }
   },
   stafiNodeManagerAddress: () => {
     if (!isdev()) {
-      return '0x342702e87e8714c759a21299402d9ec99efa0caf';
+      return '0xd8575c32bbc1ea9d33856a6de74be258712307a8';
     } else {
       return '0x68b749894c5484687916d57616b5214cf9fc63cb';
     }
@@ -260,6 +261,13 @@ const config = {
       return 'https://drop-api.stafi.io/feeStation';
     } else {
       return 'https://test-drop-api.stafi.io/feeStation';
+    }
+  },
+  dropApiHost: () => {
+    if (!isdev()) {
+      return 'https://drop-api.stafi.io';
+    } else {
+      return 'https://test-drop-api.stafi.io';
     }
   },
   rFISTokenAddress: () => {
