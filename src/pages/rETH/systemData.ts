@@ -19,7 +19,7 @@ export const rDOT_data = [
   },
   {
     text: 'Validator',
-    url: 'https://reth-validator.stafi.io/reth/token-stake',
+    url: 'https://reth-validator.stafi.io/reth/token-stake?checkNewUser=true',
     child: [
       {
         text: '-Deposit',
