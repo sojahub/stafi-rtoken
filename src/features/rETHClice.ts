@@ -55,6 +55,7 @@ const rETHClice = createSlice({
     totalStakedETH: '--',
     totalStakedETHShow: '--',
     addressItems: [],
+    matchedValidators: '--',
     unmatchedValidators: '--',
     poolStatusTotalRETH: '--',
     poolStatusUnmatchedETH: '--',
@@ -138,6 +139,9 @@ const rETHClice = createSlice({
     setPoolStakerApr(state, { payload }) {
       state.poolStakerApr = payload;
     },
+    setPoolMatchedValidators(state, { payload }) {
+      state.matchedValidators = payload;
+    },
     setPoolValidatorApr(state, { payload }) {
       state.poolValidatorApr = payload;
     },
@@ -204,6 +208,7 @@ export const {
   setTotalStakedETHShow,
   setAddressItems,
   setPoolStakerApr,
+  setPoolMatchedValidators,
   setPoolValidatorApr,
   setUnmatchedValidators,
   setPoolStatusTotalRETH,
@@ -1045,6 +1050,10 @@ export const getStakingPoolStatus = (): AppThunk => async (dispatch, getState) =
       }
       if (result.data.stakeApr) {
         dispatch(setPoolStakerApr(numberUtil.amount_format(result.data.stakeApr, 1) + '%'));
+      }
+      if (result.data.matchedValidators) {
+        dispatch(setPoolMatchedValidators(result.data.matchedValidators));
+
       }
     }
   }
