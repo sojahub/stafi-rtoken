@@ -30,7 +30,7 @@ export default function Index(props: any) {
         if (e === 'Staker') {
           props.history.push('/rETH/staker');
         } else {
-          window.open('https://reth-validator.stafi.io/reth/token-stake?checkNewUser=true');
+          window.open('https://reth-validator.stafi.io/validator/reth/token-stake?checkNewUser=true');
         }
       }}
     />
