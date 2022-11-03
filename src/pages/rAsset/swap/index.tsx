@@ -1010,7 +1010,7 @@ export default function Index(props: any) {
                     if (destChainRefState && destChainRefState.type === 'ics20') {
                       estimetaFee = ics20EstimateFee;
                     }
-                    v = v - Number(estimetaFee);
+                    v = Math.max(0, v - Number(estimetaFee));
                     setFormAmount(v.toFixed(6));
                   } catch {}
                 } else if (tokenRefState.type === 'fis' && fromChainRefState && fromChainRefState.type === 'ics20') {
@@ -1020,7 +1020,7 @@ export default function Index(props: any) {
                       v = v - Number(fisTxFee);
                     }
                     let estimetaFee = estimateStafiHubFee;
-                    v = v - Number(estimetaFee);
+                    v = Math.max(0, v - Number(estimetaFee));
                     setFormAmount(v.toFixed(6));
                   } catch {}
                 } else {
