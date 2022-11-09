@@ -102,7 +102,7 @@ export default class ExtensionDapp extends SolKeyring {
       if (!parsedTx || !parsedTx.slot) {
         return {};
       }
-      const block = await connection.getBlock(parsedTx.slot);
+      const block = await connection.getBlock(parsedTx.slot, {maxSupportedTransactionVersion: 0});
 
       const lamports = this.getTxLamports(parsedTx.transaction.message.instructions[0]);
       const source = this.getTxSource(parsedTx.transaction.message.instructions[0]);

@@ -15,7 +15,7 @@
     "@reduxjs/toolkit": "^1.5.0",
     "@solana/spl-token": "^0.1.8",
     "@solana/spl-token-registry": "^0.2.136",
-    "@solana/web3.js": "^1.29.0",
+    "@solana/web3.js": "^1.66.2",
     "@stafihub/apps-wallet": "1.0.6",
     "antd": "^4.11.2",
     "assert": "^2.0.0",
