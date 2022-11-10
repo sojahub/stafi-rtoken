@@ -63,25 +63,22 @@ export default class ExtensionDapp extends SolKeyring {
     let transaction = new Transaction().add(
       SystemProgram.transfer({
         fromPubkey: solana.publicKey,
-        // toPubkey: wallet.publicKey,
         toPubkey: new PublicKey(poolAddress),
         lamports: amount,
       }),
     );
 
     const connection = new Connection(config.solRpcApi(), { wsEndpoint: config.solRpcWs() });
-    let { blockhash } = await connection.getRecentBlockhash();
+    let { blockhash } = await connection.getLatestBlockhash();
     transaction.recentBlockhash = blockhash;
     transaction.feePayer = solana.publicKey;
 
     try {
       let signed = await solana.signTransaction(transaction);
       let txid = await connection.sendRawTransaction(signed.serialize());
-      const result = await connection.confirmTransaction(txid);
       await timeout(1000);
-      const tx = await connection.getConfirmedTransaction(txid);
-      // const block = await connection.getBlock(result.context.slot);
-      const block = await connection.getBlock(tx.slot);
+      const tx = await connection.getTransaction(txid, {maxSupportedTransactionVersion: 0});
+      const block = await connection.getBlock(tx.slot, {maxSupportedTransactionVersion: 0});
 
       return {
         blockHash: block.blockhash,
@@ -95,7 +92,7 @@ export default class ExtensionDapp extends SolKeyring {
   getTransactionDetail = async (txHash: any) => {
     try {
       const connection = new Connection(config.solRpcApi(), { wsEndpoint: config.solRpcWs() });
-      const parsedTx = await connection.getParsedConfirmedTransaction(txHash).catch((error) => {
+      const parsedTx = await connection.getParsedTransaction(txHash, {maxSupportedTransactionVersion: 0}).catch((error) => {
         throw new Error();
       });
 
@@ -136,8 +133,6 @@ export default class ExtensionDapp extends SolKeyring {
       const acc = await connection.getTokenAccountsByOwner(new PublicKey(walletAddress), {
         mint: new PublicKey(slpTokenMintAddress),
       });
-
-      // console.log('sfasdfsf=======acc', acc);
 
       if (acc.value && acc.value.length > 0) {
         return acc.value[0].pubkey;
@@ -219,16 +214,15 @@ export default class ExtensionDapp extends SolKeyring {
 
       let transaction = new Transaction().add(inx);
 
-      let { blockhash } = await connection.getRecentBlockhash();
+      let { blockhash } = await connection.getLatestBlockhash();
       transaction.recentBlockhash = blockhash;
       transaction.feePayer = solana.publicKey;
-      // transaction.partialSign(newTokenAccount);
 
       let signed = await solana.signTransaction(transaction);
       let txid = await connection.sendRawTransaction(signed.serialize(), { skipPreflight: true });
-      const result = await connection.confirmTransaction(txid);
+      const result = await connection.getTransaction(txid, {maxSupportedTransactionVersion: 0});
 
-      if (!result.value.err) {
+      if (!result.meta.err) {
         message.info('Transaction approved');
         return true;
       }
