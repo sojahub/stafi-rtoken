@@ -69,13 +69,14 @@ export default class ExtensionDapp extends SolKeyring {
     );
 
     const connection = new Connection(config.solRpcApi(), { wsEndpoint: config.solRpcWs() });
-    let { blockhash } = await connection.getLatestBlockhash();
+    let { blockhash, lastValidBlockHeight } = await connection.getLatestBlockhash();
     transaction.recentBlockhash = blockhash;
     transaction.feePayer = solana.publicKey;
 
     try {
       let signed = await solana.signTransaction(transaction);
       let txid = await connection.sendRawTransaction(signed.serialize());
+      await connection.confirmTransaction({blockhash: blockhash, lastValidBlockHeight: lastValidBlockHeight, signature: txid});
       await timeout(1000);
       const tx = await connection.getTransaction(txid, {maxSupportedTransactionVersion: 0});
       const block = await connection.getBlock(tx.slot, {maxSupportedTransactionVersion: 0});
