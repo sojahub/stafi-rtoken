@@ -215,15 +215,15 @@ export default class ExtensionDapp extends SolKeyring {
 
       let transaction = new Transaction().add(inx);
 
-      let { blockhash } = await connection.getLatestBlockhash();
+      let { blockhash, lastValidBlockHeight } = await connection.getLatestBlockhash();
       transaction.recentBlockhash = blockhash;
       transaction.feePayer = solana.publicKey;
 
       let signed = await solana.signTransaction(transaction);
       let txid = await connection.sendRawTransaction(signed.serialize(), { skipPreflight: true });
-      const result = await connection.getTransaction(txid, {maxSupportedTransactionVersion: 0});
+      const result = await connection.confirmTransaction({blockhash: blockhash, lastValidBlockHeight: lastValidBlockHeight, signature: txid});
 
-      if (!result.meta.err) {
+      if (!result.value.err) {
         message.info('Transaction approved');
         return true;
       }
