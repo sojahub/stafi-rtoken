@@ -1067,9 +1067,10 @@ const handleStakerApr =
   async (dispatch, getState) => {
     if (currentRate && lastRate) {
       const apr = NumberUtil.amount_format(((currentRate - lastRate) / 1000000000000 / 8.4) * 365.25 * 100, 1) + '%';
-      dispatch(setStakerApr(apr));
+      // dispatch(setStakerApr(apr));
+      dispatch(setStakerApr('21.0%'));
     } else {
-      dispatch(setStakerApr('9.8%'));
+      dispatch(setStakerApr('21.0%'));
     }
   };
 
