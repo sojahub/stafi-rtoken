@@ -92,7 +92,7 @@ export default class ExtensionDapp extends SolKeyring {
 
   getTransactionDetail = async (txHash: any) => {
     try {
-      const connection = new Connection(config.solRpcApi(), { wsEndpoint: config.solRpcWs() });
+      const connection = new Connection(config.solRpcApi());
       const parsedTx = await connection.getParsedTransaction(txHash, {maxSupportedTransactionVersion: 0}).catch((error) => {
         throw new Error();
       });

@@ -562,6 +562,11 @@ export const onProceed =
       return;
     }
 
+    if (!blockhash) {
+      message.error('Transaction record not found!');
+      return;
+    }
+
     dispatch(_onProceedInternal(noticeData, blockhash, txHash, cb));
   };
 
