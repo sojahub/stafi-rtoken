@@ -356,7 +356,9 @@ export default function Index(props: Props) {
             <Button>rATOM V2</Button>
           </a>
         ) : (
-          <Button disabled={!props.amount || props.amount == 0 || haswarn || processSlider} onClick={clickNext}>
+          <Button
+            disabled={!props.amount || props.amount === 0 || haswarn || processSlider || props.type === 'rBNB'}
+            onClick={clickNext}>
             Next
           </Button>
         )}
