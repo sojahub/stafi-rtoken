@@ -397,7 +397,9 @@ export default function ChooseMintType(props: ChooseMintTypeProps) {
 
       <div className='btns'>
         <Button
-          disabled={(isEmpty(targetAddress) && selectedChainId !== STAFI_CHAIN_ID) || processSlider}
+          disabled={
+            (isEmpty(targetAddress) && selectedChainId !== STAFI_CHAIN_ID) || processSlider || props.type === 'rBNB'
+          }
           onClick={async () => {
             if (selectedChainId === ETH_CHAIN_ID || selectedChainId === BSC_CHAIN_ID) {
               if (!checkEthAddress(targetAddress)) {
