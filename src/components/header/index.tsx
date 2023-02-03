@@ -720,7 +720,7 @@ export default function Index(props: Props) {
           </div>
         )}
         <div className='report_icon'>
-          <a target='_blank' href='https://info.stafi.io/' rel='noreferrer'>
+          <a target='_blank' href='https://analytics.stafi.io' rel='noreferrer'>
             <img src={report_icon} alt='report' />
           </a>
         </div>
