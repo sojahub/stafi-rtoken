@@ -102,7 +102,7 @@ export default function Index(props: any) {
         props.history.push('/rBNB/staker/index');
       }}
       onRdeemClick={() => {
-        props.history.push('/rBNB/staker/redeem');
+        // props.history.push('/rBNB/staker/redeem');
       }}
       onUniswapClick={() => {
         window.open('');
