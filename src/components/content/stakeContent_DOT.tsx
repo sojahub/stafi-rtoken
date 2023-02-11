@@ -357,7 +357,14 @@ export default function Index(props: Props) {
           </a>
         ) : (
           <Button
-            disabled={!props.amount || props.amount === 0 || haswarn || processSlider || props.type === 'rBNB'}
+            disabled={
+              !props.amount ||
+              props.amount === 0 ||
+              haswarn ||
+              processSlider ||
+              props.type === 'rBNB' ||
+              props.type === 'rSOL'
+            }
             onClick={clickNext}>
             Next
           </Button>

@@ -212,7 +212,7 @@ export default function Index(props: Props) {
               <>
                 <Button
                   size='small'
-                  disabled={props.type === 'rBNB'}
+                  disabled={props.type === 'rBNB' || props.type === 'rSOL'}
                   btnType='ellipse'
                   onClick={() => {
                     if (props.platform === 'Native' || (props.platform === 'ERC20' && props.type === 'rETH')) {
